@@ -1,9 +1,6 @@
 #ifndef __STAN__PROB__DISTRIBUTIONS__UNIVARIATE__DISCRETE__POISSON_HPP__
 #define __STAN__PROB__DISTRIBUTIONS__UNIVARIATE__DISCRETE__POISSON_HPP__
 
-#include <boost/random/poisson_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
 #include <limits>
 #include <boost/math/special_functions/fpclassify.hpp>
 
@@ -24,8 +21,8 @@ namespace stan {
 
     //ZIPoisson(n|exp(eta), zeta)
     template <bool propto,
-              typename T_n, typename T_log_rate>
-    typename return_type<T_log_rate>::type
+              typename T_n, typename T_log_rate, typename T_zi>
+    typename return_type<T_log_rate, T_zi>::type
     zi_poisson_log_log(const T_n& n, const T_log_rate& eta, const T_zi& zeta) {
 
       static const char* function = "stan::prob::zi_poisson_log_log(%1%)";
@@ -35,6 +32,7 @@ namespace stan {
       using stan::math::check_nonnegative;
       using stan::math::value_of;
       using stan::math::check_consistent_sizes;
+      using stan::math::check_finite;
       using stan::prob::include_summand;
       using stan::math::multiply_log;
       using stan::math::log_sum_exp;
@@ -54,18 +52,27 @@ namespace stan {
       // validate args
       if (!check_nonnegative(function, n, "Random variable", &logp))
         return logp;
+
       if (!check_not_nan(function, eta,
+                         "Log rate parameter", &logp))
+        return logp;
+      if (!check_finite(function, eta,
                          "Log rate parameter", &logp))
         return logp;
       if (!(check_consistent_sizes(function,
                                    n, eta, "Random variable",
                                    "Log rate parameter", &logp)))
         return logp;
+        
       if (!check_not_nan(function, zeta,
                          "Zero probability parameter", &logp))
         return logp;
-      if (!check_bounded(function, zeta, 0.0, 1.0,
+      if (!check_finite(function, zeta,
                          "Zero probability parameter", &logp))
+        return logp;
+      if (!(check_consistent_sizes(function,
+                                   n, zeta, "Random variable",
+                                   "Zero probability parameter", &logp)))
         return logp;
       
       // check if no variables are involved and prop-to
@@ -105,34 +112,34 @@ namespace stan {
         if (n_vec[i] == 0) {
           
           if (include_summand<propto, T_log_rate, T_zi>::value)
-            logp += log_sum_exp(-exp(eta__), zeta__);
+            logp += log_sum_exp(-exp(eta__[i]), zeta__[i]);
           if (include_summand<propto, T_zi>::value)
-            logp -=  log1p_exp(zeta__);
+            logp -=  log1p_exp(zeta__[i]);
 
           // gradients
           if (!is_constant_struct<T_log_rate>::value)
             operands_and_partials.d_x1[i] -= 1
-            / exp(log_sum_exp(-eta__, exp(eta__) + zeta__ - eta__));
+            / exp(log_sum_exp(-eta__[i], exp(eta__[i]) + zeta__[i] - eta__[i]));
           if (!is_constant_struct<T_zi>::value)
-            operands_and_partials.d_x2[i] += 1/(1+exp(zeta__))
-            - 1/(1+exp(exp(eta__)+zeta__));
+            operands_and_partials.d_x2[i] += 1/(1+exp(zeta__[i]))
+            - 1/(1+exp(exp(eta__[i])+zeta__[i]));
 
         } else {
           
           if (include_summand<propto>::value)
             logp += lgamma(n_vec[i]+1);
           if (include_summand<propto, T_log_rate>::value) {
-            logp -= exp(eta__);
-            logp += n_vec[i]*eta__;
+            logp -= exp(eta__[i]);
+            logp += n_vec[i]*eta__[i];
           }
           if (include_summand<propto, T_zi>::value)
-            logp -=  log1p_exp(zeta__);
+            logp -=  log1p_exp(zeta__[i]);
 
           // gradients
           if (!is_constant_struct<T_log_rate>::value)
-            operands_and_partials.d_x1[i] += n_vec[i] - exp(eta__);
+            operands_and_partials.d_x1[i] += n_vec[i] - exp(eta__[i]);
           if (!is_constant_struct<T_zi>::value)
-            operands_and_partials.d_x2[i] -= 1/(1+exp(-zeta__));
+            operands_and_partials.d_x2[i] -= 1/(1+exp(-zeta__[i]));
 
         }
       }
@@ -140,11 +147,11 @@ namespace stan {
     }
     
     template <typename T_n,
-              typename T_log_rate>
+              typename T_log_rate, typename T_zi>
     inline
-    typename return_type<T_log_rate>::type
-    poisson_log_log(const T_n& n, const T_log_rate& eta) {
-      return poisson_log_log<false>(n, eta);
+    typename return_type<T_log_rate, T_zi>::type
+    zi_poisson_log_log(const T_n& n, const T_log_rate& eta, const T_zi& zeta) {
+      return zi_poisson_log_log<false>(n, eta, zeta);
     }
   
   }
