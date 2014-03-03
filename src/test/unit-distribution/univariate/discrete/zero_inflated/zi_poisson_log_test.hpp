@@ -104,12 +104,10 @@ public:
 
     var logp(0);
     if (n==0) {
-      
       if (include_summand<true, T_log_rate, T_zi>::value)
         logp += log_sum_exp(-exp(eta), zeta);
       if (include_summand<true, T_zi>::value)
         logp -= log1p_exp(zeta);
-
     } else {
       //logp += lgamma(n+1);
       if (include_summand<true, T_log_rate>::value) {

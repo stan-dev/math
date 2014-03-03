@@ -812,3 +812,9 @@ for (size_t i = 0; i < vector_types.size(); ++i)
 add_binary("weibull_rng");
 add("wishart_log",DOUBLE_T, MATRIX_T,DOUBLE_T,MATRIX_T);
 add("wishart_rng",MATRIX_T, DOUBLE_T,MATRIX_T);
+for (size_t i = 0; i < int_vector_types.size(); ++i) 
+  for (size_t j = 0; j < vector_types.size(); ++j) 
+    for (size_t k = 0; k < vector_types.size(); ++k) {
+      add("zi_poisson_log_log", DOUBLE_T,
+          int_vector_types[i], vector_types[j], vector_types[k]);
+    }
