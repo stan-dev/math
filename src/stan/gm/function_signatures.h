@@ -815,6 +815,11 @@ add("wishart_rng",MATRIX_T, DOUBLE_T,MATRIX_T);
 for (size_t i = 0; i < int_vector_types.size(); ++i) 
   for (size_t j = 0; j < vector_types.size(); ++j) 
     for (size_t k = 0; k < vector_types.size(); ++k) {
+      for (size_t l = 0; l < vector_types.size(); ++l) {
+        add("zi_neg_binomial_log_log", DOUBLE_T,
+            int_vector_types[i], vector_types[j],
+            vector_types[k], vector_types[l]);
+      }
       add("zi_poisson_log_log", DOUBLE_T,
           int_vector_types[i], vector_types[j], vector_types[k]);
     }
