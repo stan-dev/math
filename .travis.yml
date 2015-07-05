@@ -7,7 +7,7 @@ os:
 compiler:
   - clang
 
-before_install: git clone --quiet git://github.com/stan-dev/stan.git stan.git
+before_install: rm -rf stan.git; git clone --depth 1 --quiet git://github.com/stan-dev/stan.git stan.git
 
 before_script:
   - echo "CC=$CXX" > make/local
