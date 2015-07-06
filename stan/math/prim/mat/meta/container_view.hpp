@@ -185,6 +185,9 @@ namespace stan {
            if(x.size() > 0) {
              rows = x[0].rows();
              cols = x[0].cols();
+           } else {
+             rows = 0;
+             cols = 0;
            }
          }
 
