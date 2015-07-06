@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/fun/quad_form_sym.hpp>
+#include <stan/math/fwd/mat/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/multiply.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
@@ -118,6 +119,47 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_fd) {
   EXPECT_FLOAT_EQ(810, resd(1,1).d_);
 }
 
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_dfd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fd;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_fd bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double>
+  matrix_fd resd = quad_form_sym(ad,bd);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_fdd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fd;
+  
+  matrix_fd ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double>
+  matrix_fd resd = quad_form_sym(ad,bd);
+}
+
+
 TEST(AgradFwdMatrixQuadForm, quad_form_vec_fd) {
   using stan::math::quad_form;
   using stan::math::matrix_fd;
@@ -201,6 +243,42 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_fd) {
   res = quad_form_sym(ad,bd);
   EXPECT_FLOAT_EQ(25433, res.val_);
   EXPECT_FLOAT_EQ(14320, res.d_);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_dfd) {
+  using stan::math::quad_form_sym;
+  using stan::math::vector_fd;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  vector_fd bd(4);
+  fvar<double> res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double> 
+  res = quad_form_sym(ad,bd);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_fdd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fd;
+  
+  matrix_fd ad(4,4);
+  Eigen::Matrix<double, -1, 1> bd(4);
+  fvar<double> res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double> 
+  res = quad_form_sym(ad,bd);
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_symmetry_fd) {
@@ -428,6 +506,48 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_ffd) {
   EXPECT_FLOAT_EQ(810, resd(1,1).d_.val_);
 }
 
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_dffd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffd;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_ffd bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<fvar<double> > - fvar<fvar<double> >
+  matrix_ffd resd = quad_form_sym(ad,bd);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_ffdd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffd;
+  
+  matrix_ffd ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<fvar<double> > - fvar<fvar<double> >
+  matrix_ffd resd = quad_form_sym(ad,bd);
+}
+
 TEST(AgradFwdMatrixQuadForm, quad_form_vec_ffd) {
   using stan::math::quad_form;
   using stan::math::matrix_ffd;
@@ -469,6 +589,42 @@ TEST(AgradFwdMatrixQuadForm, quad_form_vec_ffd) {
   res = quad_form(ad,bd);
   EXPECT_FLOAT_EQ(26033, res.val_.val_);
   EXPECT_FLOAT_EQ(15226, res.d_.val_);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_dffd) {
+  using stan::math::quad_form_sym;
+  using stan::math::vector_ffd;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  vector_ffd bd(4);
+  fvar<fvar<double> > res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double> 
+  res = quad_form_sym(ad,bd);
+}
+
+TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffdd) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffd;
+  
+  matrix_ffd ad(4,4);
+  Eigen::Matrix<double, -1, 1> bd(4);
+  fvar<fvar<double> > res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<double> - fvar<double> 
+  res = quad_form_sym(ad,bd);
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffd) {
