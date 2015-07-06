@@ -79,7 +79,7 @@ TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_ffd) {
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
-  stan::agrad::matrix_fd m0(2,2);
+  stan::math::matrix_fd m0(2,2);
   m0 << 2, 1, 1, 2;
   m0(0,0).d_ = 1.0;
   m0(0,1).d_ = 1.0;
@@ -88,7 +88,7 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
 
   using stan::math::cholesky_decompose;
 
-  stan::agrad::matrix_fd res = cholesky_decompose(m0);
+  stan::math::matrix_fd res = cholesky_decompose(m0);
   Eigen::Matrix<double,-1,-1> res_mat(2,2);
   Eigen::Matrix<double,-1,-1> d_mat(2,2);
   deriv_chol_fwd(m0, res_mat, d_mat);
@@ -101,7 +101,7 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
 }
 
 TEST(AgradFwdMatrixCholeskyDecompose, mat_ffd) {
-  stan::agrad::matrix_ffd m0(2,2);
+  stan::math::matrix_ffd m0(2,2);
   m0 << 4, 1, 1, 4;
   m0(0,0).d_ = 1.0;
   m0(0,1).d_ = 1.0;
@@ -110,7 +110,7 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_ffd) {
 
   using stan::math::cholesky_decompose;
 
-  stan::agrad::matrix_ffd res = cholesky_decompose(m0);
+  stan::math::matrix_ffd res = cholesky_decompose(m0);
   Eigen::Matrix<double,-1,-1> res_mat(2,2);
   Eigen::Matrix<double,-1,-1> d_mat(2,2);
   deriv_chol_fwd(m0, res_mat, d_mat);
