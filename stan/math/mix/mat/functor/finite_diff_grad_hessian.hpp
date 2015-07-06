@@ -34,6 +34,7 @@ namespace stan {
      * @param[in] f Function
      * @param[in] x Argument to function
      * @param[out] fx Function applied to argument
+     * @param[out] hess Hessian matrix
      * @param[out] grad_hess_fx gradient of Hessian of function at argument
      * @param[in] epsilon perturbation size
      */

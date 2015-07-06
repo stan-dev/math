@@ -26,7 +26,7 @@ namespace stan {
      * @param a a
      * @param b b
      * @param z upper bound of the integral
-     * @param digamma_a value of digamma(a)
+     * @param digamma_b value of digamma(b)
      * @param digamma_ab value of digamma(b)
      * @return partial derivative of the incomplete beta with respect to b
      *

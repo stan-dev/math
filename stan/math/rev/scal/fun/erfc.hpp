@@ -26,7 +26,7 @@ namespace stan {
     /**
      * The complementary error function for variables (C99).
      *
-     * For non-variable function, see ::erfc() from <cmath>.
+     * For non-variable function, see ::erfc() from \<cmath\>.
      *
      * The derivative is
      *

@@ -48,9 +48,9 @@ namespace stan {
   namespace math {
 
      /**
-     * The log of the first passage time density function for a (Wiener) drift diffusion model for the given $y$,
-     * boundary separation $\alpha$, nondecision time $\tau$, relative bias $\beta$, and drift rate $\delta$.
-     * $\alpha$ and $\tau$ must be greater than 0, and $\beta$ must be between 0 and 1. $y$ should contain
+     * The log of the first passage time density function for a (Wiener) drift diffusion model for the given \f$y\f$,
+     * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$, relative bias \f$\beta\f$, and drift rate \f$\delta\f$.
+     * \f$\alpha\f$ and \f$\tau\f$ must be greater than 0, and \f$\beta\f$ must be between 0 and 1. \f$y\f$ should contain
      * reaction times in seconds, with upper-boundary responses strictly positive and lower-boundary response
      * times coded as strictly negative numbers.
      *
