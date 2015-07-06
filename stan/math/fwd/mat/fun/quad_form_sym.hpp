@@ -20,7 +20,7 @@ namespace stan {
                                                 "A", A,
                                                 "B", B);
       stan::math::check_symmetric("quad_form_sym", "A", A);
-      Eigen::Matrix<stan::math::fvar<T>, CB, CB> 
+      Eigen::Matrix<stan::math::fvar<T>, CB, CB>
         ret(multiply(transpose(B), multiply(A, B)));
       return T(0.5) * (ret + transpose(ret));
     }
@@ -50,7 +50,7 @@ namespace stan {
                                                 "A", A,
                                                 "B", B);
       stan::math::check_symmetric("quad_form_sym", "A", A);
-      Eigen::Matrix<stan::math::fvar<T>, CB, CB> 
+      Eigen::Matrix<stan::math::fvar<T>, CB, CB>
         ret(multiply(transpose(B), multiply(A, B)));
       return T(0.5) * (ret + transpose(ret));
     }
