@@ -1,5 +1,0 @@
-#ifndef STAN__SERVICES__DIAGNOSE_HPP
-#define STAN__SERVICES__DIAGNOSE_HPP
-
-
-#endif
