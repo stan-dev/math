@@ -110,6 +110,89 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
   EXPECT_FLOAT_EQ(576,h[23]);
 }
 
+TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
+  using stan::math::trace_quad_form;
+  using stan::math::matrix_fv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_fv bd(4,2);
+  fvar<var> res;
+  bd << 100, 10,
+          0,  1,
+         -3, -3,
+          5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  6.0, 10.0, 2.0,   2.0,
+  7.0,  2.0, 7.0,   1.0,
+  8.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<var> - fvar<var>
+  res = trace_quad_form(ad,bd);
+}
+
+TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
+  using stan::math::trace_quad_form;
+  using stan::math::matrix_fv;
+  
+  matrix_fv ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  fvar<var> res;
+  bd << 100, 10,
+          0,  1,
+         -3, -3,
+          5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  6.0, 10.0, 2.0,   2.0,
+  7.0,  2.0, 7.0,   1.0,
+  8.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<var> - fvar<var>
+  res = trace_quad_form(ad,bd);
+}
+
+TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
+  using stan::math::trace_quad_form;
+  using stan::math::matrix_ffv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_ffv bd(4,2);
+  fvar<fvar<var> > res;
+  bd << 100, 10,
+          0,  1,
+         -3, -3,
+          5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  6.0, 10.0, 2.0,   2.0,
+  7.0,  2.0, 7.0,   1.0,
+  8.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<var> - fvar<var>
+  res = trace_quad_form(ad,bd);
+}
+
+TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
+  using stan::math::trace_quad_form;
+  using stan::math::matrix_ffv;
+  
+  matrix_ffv ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  fvar<fvar<var> > res;
+  bd << 100, 10,
+          0,  1,
+         -3, -3,
+          5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  6.0, 10.0, 2.0,   2.0,
+  7.0,  2.0, 7.0,   1.0,
+  8.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<var> - fvar<var>
+  res = trace_quad_form(ad,bd);
+}
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
   using stan::math::trace_quad_form;
