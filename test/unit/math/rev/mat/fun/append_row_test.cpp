@@ -15,6 +15,8 @@ using stan::math::sum;
 using stan::math::append_row;
 using stan::math::matrix_v;
 using stan::math::vector_v;
+using stan::math::set_zero_all_adjoints;
+using stan::math::square;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -33,7 +35,7 @@ TEST(AgradRevMatrix, append_row_matrix) {
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
       x.push_back(a(i,j));
-      a_square(i, j) = stan::math::square(a(i, j));
+      a_square(i, j) = square(a(i, j));
     }
   }
 
@@ -45,6 +47,7 @@ TEST(AgradRevMatrix, append_row_matrix) {
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(a(i, j).val()*2.0, g[idx++]);
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, append_row_row_vector) {
@@ -59,16 +62,42 @@ TEST(AgradRevMatrix, append_row_row_vector) {
   AVEC x;
   for (int i = 0; i < 3; ++i) {
     x.push_back(a(i));
-    a_square(i) = stan::math::square(a(i));
+    a_square(i) = square(a(i));
   }
 
   AVAR append_row_ab = sum(append_row(a_square, b));
-
   VEC g = cgradvec(append_row_ab, x);
 
   size_t idx = 0;
   for (int i = 0; i < 3; i++)
     EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_row_ab = sum(append_row(a_square, 2.1));
+  g = cgradvec(append_row_ab, x);
+
+  idx = 0;
+  for (int i = 0; i < 3; i++)
+    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_row_ab = sum(append_row(2.1, a_square));
+  g = cgradvec(append_row_ab, x);
+
+  idx = 0;
+  for (int i = 0; i < 3; i++)
+    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_row_ab = sum(append_row(a_square(2)*3.0, b));
+  append_row_ab.grad();
+  EXPECT_FLOAT_EQ(a(2).val()*6.0, x[2].adj());
+
+  set_zero_all_adjoints();
+  append_row_ab = sum(append_row(b, a_square(1)*3.0));
+  append_row_ab.grad();
+  EXPECT_FLOAT_EQ(a(1).val()*6.0, x[1].adj());
+  stan::math::recover_memory();
 }
 
 template <typename T, int R, int C>
