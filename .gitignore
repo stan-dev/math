@@ -5,6 +5,9 @@
 /*.dSYM
 /bin
 
+# libraries
+/stan.git
+
 # other binary
 *.o
 *.exe
