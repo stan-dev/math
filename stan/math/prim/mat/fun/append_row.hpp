@@ -70,7 +70,7 @@ namespace stan {
      * @tparam R1 Row specification of first vector.
      * @tparam R2 Row specification of second vector.
      * @param A First vector.
-     * @param B Second vector
+     * @param B Second vector.
      * @return Result of stacking first vector on top of the second
      * vector.
      */
@@ -146,7 +146,7 @@ namespace stan {
      * @tparam R1 Row specification of first vector.
      * @tparam R2 Row specification of second vector.
      * @param A First vector.
-     * @param B Second vector
+     * @param B Second vector.
      * @return Result of stacking first vector on top of the second
      * vector.
      */
@@ -159,6 +159,64 @@ namespace stan {
 
       Matrix<T, Dynamic, 1>  result(A.size()+B.size());
       result << A, B;
+      return result;
+    }
+
+
+    /**
+     * Return the result of stacking an scalar on top of the
+     * a vector, with the result being a vector.
+     *
+     * This function applies to (scalar, vector) and returns a vector.
+     *
+     * @tparam T1 Scalar type of the scalar
+     * @tparam T2 Scalar type of the vector.
+     * @tparam R Row specification of the vector.
+     * @param A scalar.
+     * @param B vector.
+     * @return Result of stacking the scalar on top of the vector.
+     */
+    template <typename T1, typename T2, int R, int C>
+    inline Eigen::Matrix<typename return_type<T1, T2>::type,
+                         Eigen::Dynamic, 1>
+    append_row(const T1& A,
+               const Eigen::Matrix<T2, R, C>& B) {
+      using Eigen::Dynamic;
+      using Eigen::Matrix;
+      typedef typename return_type<T1, T2>::type return_type;
+
+      Matrix<return_type, Dynamic, 1>
+        result (B.size() + 1);
+      result << A, B.template cast<return_type>();
+      return result;
+    }
+
+
+    /**
+     * Return the result of stacking a vector on top of the
+     * an scalar, with the result being a vector.
+     *
+     * This function applies to (vector, scalar) and returns a vector.
+     *
+     * @tparam T1 Scalar type of the vector.
+     * @tparam T2 Scalar type of the scalar
+     * @tparam R Row specification of the vector.
+     * @param A vector.
+     * @param B scalar.
+     * @return Result of stacking the vector on top of the scalar.
+     */
+    template <typename T1, typename T2, int R, int C>
+    inline Eigen::Matrix<typename return_type<T1, T2>::type,
+                         Eigen::Dynamic, 1>
+    append_row(const Eigen::Matrix<T1, R, C>& A,
+               const T2& B) {
+      using Eigen::Dynamic;
+      using Eigen::Matrix;
+      typedef typename return_type<T1, T2>::type return_type;
+
+      Matrix<return_type, Dynamic, 1>
+        result (A.size() + 1);
+      result << A.template cast<return_type>(), B;
       return result;
     }
 
