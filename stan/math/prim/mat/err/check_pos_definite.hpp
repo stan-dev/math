@@ -82,7 +82,7 @@ namespace stan {
         domain_error(function, "LDLT decomposition of", " failed", name);
       return true;
     }
-    
+
     /**
      * Return <code>true</code> if the specified LLT transform of a matrix
      * is positive definite.
@@ -107,7 +107,7 @@ namespace stan {
         domain_error(function, "Cholesky decomposition of", " failed", name);
       return true;
     }
-    
+
   }
 }
 #endif
