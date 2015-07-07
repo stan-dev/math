@@ -56,7 +56,7 @@ namespace stan {
       public:
         typedef typename stan::scalar_type<T2>::type scalar_t;
         template <typename T1>
-        container_view(const T1& x, scalar_t* y){ };
+        container_view(const T1& x, scalar_t* y){ }
         scalar_t operator[](int n) const {
           throw std::out_of_range("can't access dummy elements.");
         }

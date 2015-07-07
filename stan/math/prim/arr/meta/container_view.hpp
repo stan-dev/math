@@ -29,7 +29,7 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<std::vector<T1>, T2> {
       public:
-        container_view(const std::vector<T1>& x, T2* y) 
+        container_view(const std::vector<T1>& x, T2* y)
          : y_(y) { }
 
         T2& operator[](int i) {

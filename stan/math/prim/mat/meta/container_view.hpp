@@ -28,7 +28,7 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<Eigen::Matrix<T1, -1, 1>, Eigen::Matrix<T2, -1, 1> > {
       public:
-        container_view(const Eigen::Matrix<T1, -1, 1>& x, T2* y) 
+        container_view(const Eigen::Matrix<T1, -1, 1>& x, T2* y)
          : y_(y, x.rows(), x.cols()) { }
 
         Eigen::Map<Eigen::Matrix<T2, -1, 1> >& operator[](int i) {
@@ -59,7 +59,7 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<Eigen::Matrix<T1, -1, 1>, T2> {
       public:
-        container_view(const Eigen::Matrix<T1, -1, 1>& x, T2* y) 
+        container_view(const Eigen::Matrix<T1, -1, 1>& x, T2* y)
          : y_(y) { }
 
         T2& operator[](int i) {
@@ -88,7 +88,7 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<Eigen::Matrix<T1, 1, -1>, Eigen::Matrix<T2, 1, -1> > {
       public:
-        container_view(const Eigen::Matrix<T1, 1, -1>& x, T2* y) 
+        container_view(const Eigen::Matrix<T1, 1, -1>& x, T2* y)
          : y_(y, x.rows(), x.cols()) { }
 
         Eigen::Map<Eigen::Matrix<T2, 1, -1> >& operator[](int i) {
@@ -119,7 +119,7 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<Eigen::Matrix<T1, 1, -1>, T2> {
       public:
-        container_view(const Eigen::Matrix<T1, 1, -1>& x, T2* y) 
+        container_view(const Eigen::Matrix<T1, 1, -1>& x, T2* y)
          : y_(y) { }
 
         T2& operator[](int i) {
@@ -148,7 +148,7 @@ namespace stan {
     template <typename T1, typename T2, int M, int N>
     class container_view<Eigen::Matrix<T1, M, N>, Eigen::Matrix<T2, M, N> > {
       public:
-        container_view(const Eigen::Matrix<T1, M, N>& x, T2* y) 
+        container_view(const Eigen::Matrix<T1, M, N>& x, T2* y)
          : y_(y, x.rows(), x.cols()) { }
 
         Eigen::Map<Eigen::Matrix<T2, M, N> >& operator[](int i) {
@@ -180,9 +180,9 @@ namespace stan {
     class container_view<std::vector<Eigen::Matrix<T1, M, N> >,
                           Eigen::Matrix<T2, M, N> > {
       public:
-        container_view(const std::vector<Eigen::Matrix<T1, M, N> >& x, T2* y) 
+        container_view(const std::vector<Eigen::Matrix<T1, M, N> >& x, T2* y)
          : y_view(y, 1, 1), y_(y) {
-           if(x.size() > 0) {
+           if (x.size() > 0) {
              rows = x[0].rows();
              cols = x[0].cols();
            } else {
@@ -192,8 +192,9 @@ namespace stan {
          }
 
         Eigen::Map<Eigen::Matrix<T2, M, N> >& operator[](int i) {
-          int offset = i * rows * cols; 
-          new (&y_view) Eigen::Map<Eigen::Matrix<T2, M, N> >(y_ + offset, rows, cols); 
+          int offset = i * rows * cols;
+          new (&y_view) Eigen::Map<Eigen::Matrix<T2, M, N> >
+            (y_ + offset, rows, cols);
           return y_view;
         }
       private:
