@@ -1,24 +1,29 @@
 language: cpp
+
+os:
+  - linux
+  - osx
+  
 compiler:
   - clang
-  - gcc
-env:
-  - RUN_TARGET=build TEST_TARGET=test-unit
-#  - RUN_TARGET=docs
-script: make CC="$CXX" ${RUN_TARGET} ${TEST_TARGET}
-branches:
-  only:
-    - develop
-    - master
-#notifications:
-#  recipients:
-#    - mc.stanislaw@gmail.com
-#  email:
-#    on_success: change
-#    on_failure: always
+
+before_install: rm -rf stan.git; git clone --depth 1 --quiet git://github.com/stan-dev/stan.git stan.git
+
+before_script:
+  - echo "CC=$CXX" > make/local
+  - echo "EIGEN = stan.git/lib/eigen_3.2.4" >> make/local
+  - echo "BOOST = stan.git/lib/boost_1.58.0" >> make/local
+  - echo "GTEST = stan.git/lib/gtest_1.7.0" >> make/local
+  - echo "CPPLINT = stan.git/lib/cpplint_4.45" >> make/local
+
 matrix:
-  exclude: # only make docs once:
-    - compiler: clang
- #     env: RUN_TARGET=docs
-      script: make CC="$CXX" "${RUN_TARGET}" "${TEST_TARGET}"
-      
+  fast_finish: true
+
+env:
+  - TESTFOLDER=test/unit/math/memory
+  - TESTFOLDER=test/unit/math/prim
+  - TESTFOLDER=test/unit/math/rev
+  - TESTFOLDER=test/unit/math/fwd
+ # - TESTFOLDER=test/unit/math/mix  ## commenting this out due to segfault on travis
+
+script: ./runTests.py $TESTFOLDER
