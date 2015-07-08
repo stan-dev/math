@@ -12,12 +12,19 @@
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/fwd/scal/fun/log.hpp>
+#include <stan/math/rev/scal/fun/exp.hpp>
+#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_constrain.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
+#include <stan/math/mix/mat/functor/hessian.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
+#include <stan/math/mix/mat/functor/grad_hessian.hpp>
+#include <stan/math/mix/mat/functor/finite_diff_grad_hessian.hpp>
 
 struct chol_functor {
   int i, j, K;
@@ -67,6 +74,89 @@ void test_gradients(int size) {
     }
 }
 
+void test_hessians(int size) {
+  std::vector<std::vector<chol_functor> > functowns;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_fd;
+  Eigen::Matrix<double, -1, -1> evals_ad(size,size);
+  Eigen::Matrix<double, -1, -1> evals_fd(size,size);
+  functowns.resize(size);
+  grads_ad.resize(size);
+  grads_fd.resize(size);
+  hess_ad.resize(size);
+  hess_fd.resize(size);
+
+  for (int i = 0; i < size; ++i)
+    for (int j = 0; j < size; ++j) {
+      functowns[i].push_back(chol_functor(i, j, size));
+      grads_fd[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+      grads_ad[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+      hess_fd[i].push_back(Eigen::Matrix<double, -1, -1>(size, size));
+      hess_ad[i].push_back(Eigen::Matrix<double, -1, -1>(size, size));
+    }
+
+  int numels = size + size * (size - 1) / 2;
+  Eigen::Matrix<double, -1, 1> x(numels);
+  for (int i = 0; i < numels; ++i)
+    x(i) = i / 10.0;
+
+  for (size_t i = 0; i < static_cast<size_t>(size); ++i)
+    for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
+      stan::math::hessian(functowns[i][j], x, evals_ad(i,j), grads_ad[i][j], hess_ad[i][j]);
+      stan::math::finite_diff_hessian(functowns[i][j], x,
+                                       evals_fd(i,j), grads_fd[i][j], 
+                                       hess_fd[i][j]);
+      for (int m = 0; m < numels; ++m) 
+        for (int n = 0; n < numels; ++n)
+          EXPECT_NEAR(hess_fd[i][j](m,n), hess_ad[i][j](m,n), 1e-08);
+      EXPECT_FLOAT_EQ(evals_fd(i, j), evals_ad(i, j));
+    }
+}
+
+void test_grad_hessians(int size) {
+  std::vector<std::vector<chol_functor> > functowns;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > hess_fd;
+  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > > grad_hess_ad;
+  std::vector<std::vector<std::vector<Eigen::Matrix<double, -1, -1> > > > grad_hess_fd;
+  Eigen::Matrix<double, -1, -1> evals_ad(size,size);
+  Eigen::Matrix<double, -1, -1> evals_fd(size,size);
+  functowns.resize(size);
+  grad_hess_ad.resize(size);
+  grad_hess_fd.resize(size);
+  hess_ad.resize(size);
+  hess_fd.resize(size);
+
+  for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) 
+      functowns[i].push_back(chol_functor(i, j, size));
+    grad_hess_fd[i].resize(size);
+    grad_hess_ad[i].resize(size);
+    hess_fd[i].resize(size);
+    hess_ad[i].resize(size);
+  }
+
+  int numels = size + size * (size - 1) / 2;
+  Eigen::Matrix<double, -1, 1> x(numels);
+  for (int i = 0; i < numels; ++i)
+    x(i) = i / 10.0;
+
+  for (size_t i = 0; i < static_cast<size_t>(size); ++i)
+    for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
+      stan::math::grad_hessian(functowns[i][j], x, evals_ad(i,j), hess_ad[i][j], grad_hess_ad[i][j]);
+      stan::math::finite_diff_grad_hessian(functowns[i][j], x,
+                                           evals_fd(i,j), hess_fd[i][j], 
+                                           grad_hess_fd[i][j]);
+      for (size_t k = 0; k < numels; ++k)
+        for (int m = 0; m < numels; ++m) 
+          for (int n = 0; n < numels; ++n)
+            EXPECT_NEAR(grad_hess_fd[i][j][k](m,n), grad_hess_ad[i][j][k](m,n), 1e-08);
+      EXPECT_FLOAT_EQ(evals_fd(i, j), evals_ad(i, j));
+    }
+}
+
 TEST(AgradMixMatrixCholeskyDecompose, exception_mat_fv) {
   stan::math::matrix_fv m;
   
@@ -109,6 +199,14 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_ffv) {
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 
-TEST(AgradMixMatrixCholeskyDecompose, mat_fv_1st_deriv) {
+TEST(AgradMixMatrixCholeskyDecompose, mat_1st_deriv) {
   test_gradients(3);
+}
+
+TEST(AgradMixMatrixCholeskyDecompose, mat_2nd_deriv) {
+  test_hessians(3);
+}
+
+TEST(AgradMixMatrixCholeskyDecompose, mat_3rd_deriv) {
+  test_grad_hessians(3);
 }
