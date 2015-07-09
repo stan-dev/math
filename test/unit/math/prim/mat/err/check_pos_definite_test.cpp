@@ -61,7 +61,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
     1, 1; 
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt(y.rows()); 
  // EXPECT_DEATH(llt.compute(y),"");
-  llt.compute(y)
+  llt.compute(y);
   EXPECT_DEATH(y.ldlt(), ""); 
 }
 
