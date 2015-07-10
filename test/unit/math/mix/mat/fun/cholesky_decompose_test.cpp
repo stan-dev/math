@@ -149,7 +149,7 @@ void test_grad_hessians(int size) {
       stan::math::finite_diff_grad_hessian(functowns[i][j], x,
                                            evals_fd(i,j), hess_fd[i][j], 
                                            grad_hess_fd[i][j]);
-      for (size_t k = 0; k < numels; ++k)
+      for (size_t k = 0; k < static_cast<size_t>(numels); ++k)
         for (int m = 0; m < numels; ++m) 
           for (int n = 0; n < numels; ++n)
             EXPECT_NEAR(grad_hess_fd[i][j][k](m,n), grad_hess_ad[i][j][k](m,n), 1e-08);
