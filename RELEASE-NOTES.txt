@@ -1,0 +1,10 @@
+Stan Math 2.7.0 (first independent release)
+============================================================
+8 July 2015
+
+First release
+--------------------------------------------------
+* Previously included as part of Stan
+* Release numbering started at release number of Stan
+* All work done up to and including the release of Stan Math 2.7.0
+  is documented under the Stan C++ 2.7.0 release notes
