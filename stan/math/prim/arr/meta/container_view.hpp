@@ -19,7 +19,6 @@ namespace stan {
     template <typename T1, typename T2>
     class container_view<std::vector<T1>, T2> {
       public:
-
         /**
          * Constructor
          *
