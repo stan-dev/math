@@ -17,7 +17,6 @@ namespace stan {
     inline fvar<T>
     trace_quad_form(const Eigen::Matrix<fvar<T>, RA, CA> &A,
                     const Eigen::Matrix<fvar<T>, RB, CB> &B) {
-      using stan::math::multiply;
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
                                       "A", A,
@@ -30,7 +29,6 @@ namespace stan {
     inline fvar<T>
     trace_quad_form(const Eigen::Matrix<fvar<T>, RA, CA> &A,
                     const Eigen::Matrix<double, RB, CB> &B) {
-      using stan::math::multiply;
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
                                       "A", A,
@@ -43,7 +41,6 @@ namespace stan {
     inline fvar<T>
     trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
                     const Eigen::Matrix<fvar<T>, RB, CB> &B) {
-      using stan::math::multiply;
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
                                       "A", A,
