@@ -1,4 +1,7 @@
 #include <stan/math/fwd/mat/fun/trace_quad_form.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
@@ -113,6 +116,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
 TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
   using stan::math::trace_quad_form;
   using stan::math::matrix_fv;
+  using stan::math::check_not_nan;
   
   Eigen::Matrix<double, -1, -1> ad(4,4);
   matrix_fv bd(4,2);
@@ -129,11 +133,13 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("trace_quad_form","res",res));
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
   using stan::math::trace_quad_form;
   using stan::math::matrix_fv;
+  using stan::math::check_not_nan;
   
   matrix_fv ad(4,4);
   Eigen::Matrix<double, -1, -1> bd(4,2);
@@ -150,11 +156,13 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("trace_quad_form","res",res));
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
   using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
+  using stan::math::check_not_nan;
   
   Eigen::Matrix<double, -1, -1> ad(4,4);
   matrix_ffv bd(4,2);
@@ -171,11 +179,13 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("trace_quad_form","res",res));
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
   using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
+  using stan::math::check_not_nan;
   
   matrix_ffv ad(4,4);
   Eigen::Matrix<double, -1, -1> bd(4,2);
@@ -192,6 +202,7 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("trace_quad_form","res",res));
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
