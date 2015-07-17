@@ -10,8 +10,12 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
+#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 
 using stan::math::fvar;
+using stan::math::check_not_nan;
 
 TEST(AgradFwdMatrixQuadForm, quad_form_mat_fd) {
   using stan::math::quad_form;
@@ -122,6 +126,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_fd) {
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_dfd) {
   using stan::math::quad_form_sym;
   using stan::math::matrix_fd;
+  using stan::math::check_not_nan;
   
   Eigen::Matrix<double, -1, -1> ad(4,4);
   matrix_fd bd(4,2);
@@ -137,6 +142,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_dfd) {
   
   // fvar<double> - fvar<double>
   matrix_fd resd = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",resd));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_fdd) {
@@ -157,6 +163,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_fdd) {
   
   // fvar<double> - fvar<double>
   matrix_fd resd = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",resd));
 }
 
 
@@ -261,6 +268,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_dfd) {
   
   // fvar<double> - fvar<double> 
   res = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",res));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_fdd) {
@@ -279,6 +287,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_fdd) {
   
   // fvar<double> - fvar<double> 
   res = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",res));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_symmetry_fd) {
@@ -525,6 +534,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_dffd) {
 
   // fvar<fvar<double> > - fvar<fvar<double> >
   matrix_ffd resd = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",resd));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_ffdd) {
@@ -546,6 +556,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_mat_ffdd) {
 
   // fvar<fvar<double> > - fvar<fvar<double> >
   matrix_ffd resd = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",resd));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_vec_ffd) {
@@ -607,6 +618,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_dffd) {
   
   // fvar<double> - fvar<double> 
   res = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",res));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffdd) {
@@ -625,6 +637,7 @@ TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffdd) {
   
   // fvar<double> - fvar<double> 
   res = quad_form_sym(ad,bd);
+  EXPECT_NO_THROW(check_not_nan("quad_form_sym","resd",res));
 }
 
 TEST(AgradFwdMatrixQuadForm, quad_form_sym_vec_ffd) {
