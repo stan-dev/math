@@ -73,6 +73,7 @@ namespace stan {
                                                  Eigen::Dynamic> >::type K,
          T& lp) {
       using std::exp;
+      using std::log;
 
       using Eigen::Dynamic;
       using Eigen::Matrix;
