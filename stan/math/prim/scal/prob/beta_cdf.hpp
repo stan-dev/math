@@ -4,25 +4,31 @@
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
+
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/inc_beta.hpp>
+#include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
+#include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
+#include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
+
 #include <cmath>
 
 namespace stan {
@@ -97,10 +103,9 @@ namespace stan {
       // Compute CDF and its gradients
       using stan::math::inc_beta;
       using stan::math::digamma;
-      using stan::math::lbeta;
-      using std::pow;
-      using std::exp;
-      using std::exp;
+      using stan::math::inc_beta_dda;
+      using stan::math::inc_beta_ddb;
+      using stan::math::inc_beta_ddz;
 
       // Cache a few expensive function calls if alpha or beta is a parameter
       VectorBuilder<contains_nonconstant_struct<T_scale_succ,
@@ -119,13 +124,13 @@ namespace stan {
         digamma_sum_vec(max_size(alpha, beta));
 
       if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-        for (size_t i = 0; i < N; i++) {
-          const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-          const T_partials_return beta_dbl = value_of(beta_vec[i]);
+        for (size_t n = 0; n < N; n++) {
+          const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+          const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
-          digamma_alpha_vec[i] = digamma(alpha_dbl);
-          digamma_beta_vec[i] = digamma(beta_dbl);
-          digamma_sum_vec[i] = digamma(alpha_dbl + beta_dbl);
+          digamma_alpha_vec[n] = digamma(alpha_dbl);
+          digamma_beta_vec[n] = digamma(beta_dbl);
+          digamma_sum_vec[n] = digamma(alpha_dbl + beta_dbl);
         }
       }
 
@@ -139,7 +144,6 @@ namespace stan {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
-        const T_partials_return betafunc_dbl = exp(lbeta(alpha_dbl, beta_dbl));
 
         // Compute
         const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
@@ -147,23 +151,17 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += pow(1-y_dbl, beta_dbl-1)
-            * pow(y_dbl, alpha_dbl-1) / betafunc_dbl / Pn;
-
-        T_partials_return g1 = 0;
-        T_partials_return g2 = 0;
-
-        if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
-                                        digamma_alpha_vec[n],
-                                        digamma_beta_vec[n], digamma_sum_vec[n],
-                                        betafunc_dbl);
-        }
+          operands_and_partials.d_x1[n]
+            += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
 
         if (!is_constant_struct<T_scale_succ>::value)
-          operands_and_partials.d_x2[n] += g1 / Pn;
+          operands_and_partials.d_x2[n]
+            += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl,
+                            digamma_alpha_vec[n], digamma_sum_vec[n]) / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          operands_and_partials.d_x3[n] += g2 / Pn;
+          operands_and_partials.d_x3[n]
+            += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl,
+                            digamma_beta_vec[n], digamma_sum_vec[n]) / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
