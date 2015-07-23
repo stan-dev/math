@@ -20,6 +20,7 @@
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_constrain.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
+#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/mix/mat/functor/hessian.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>

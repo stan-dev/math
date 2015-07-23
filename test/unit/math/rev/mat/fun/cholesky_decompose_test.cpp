@@ -15,6 +15,7 @@
 #include <stan/math/rev/scal/fun/abs.hpp>
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
+#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 
 TEST(AgradRevMatrix,mat_cholesky) {
   using stan::math::matrix_v;
