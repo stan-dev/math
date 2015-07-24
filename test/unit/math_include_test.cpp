@@ -29,10 +29,10 @@ TEST_F(Math, paper_example_1) {
   stan::math::var mu = 0.5, sigma = 1.2;
     
   stan::math::var lp = 0;
-  lp -= pow(2 * stan::math::pi(), -0.5);
+  lp -= 0.5 * log(2 * stan::math::pi());
   lp -= log(sigma);
   lp -= 0.5 * pow((y - mu) / sigma, 2);
-  std::cout << "f(mu,sigma)= " << lp.val() << std::endl;
+  std::cout << "f(mu, sigma) = " << lp.val() << std::endl;
 
   lp.grad();
   std::cout << " d.f / d.mu = " << mu.adj()
@@ -44,7 +44,7 @@ TEST_F(Math, paper_example_2) {
   stan::math::var mu = 0.5, sigma = 1.2;
   
   stan::math::var lp = 0;
-  lp -= pow(2 * boost::math::constants::pi<double>(), -0.5);
+  lp -= 0.5 * log(2 * stan::math::pi());
   lp -= log(sigma);
   lp -= 0.5 * pow((y - mu) / sigma, 2);
 
