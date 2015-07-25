@@ -1,10 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_HPP
 
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -28,6 +24,10 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+
+#include <boost/math/special_functions/gamma.hpp>
+#include <boost/random/gamma_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #include <cmath>
 
@@ -55,22 +55,14 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-
       // Size checks
-      if ( !( stan::length(y) && stan::length(alpha)
-              && stan::length(beta) ) )
+      if (!(stan::length(y) && stan::length(alpha)
+            && stan::length(beta)))
         return 1.0;
 
       // Error checks
       static const char* function("stan::math::beta_cdf");
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
 
       T_partials_return P(1.0);
 
@@ -101,11 +93,6 @@ namespace stan {
       }
 
       // Compute CDF and its gradients
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::inc_beta_dda;
-      using stan::math::inc_beta_ddb;
-      using stan::math::inc_beta_ddz;
 
       // Cache a few expensive function calls if alpha or beta is a parameter
       VectorBuilder<contains_nonconstant_struct<T_scale_succ,
