@@ -19,10 +19,10 @@ namespace stan {
                     const Eigen::Matrix<fvar<T>, RB, CB> &B) {
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
-                                      "A", A,
-                                      "B", B);
+                          "A", A,
+                          "B", B);
       return trace(multiply(transpose(B),
-                                        multiply(A, B)));
+                            multiply(A, B)));
     }
 
     template<int RA, int CA, int RB, int CB, typename T>
@@ -31,10 +31,10 @@ namespace stan {
                     const Eigen::Matrix<double, RB, CB> &B) {
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
-                                      "A", A,
-                                      "B", B);
+                          "A", A,
+                          "B", B);
       return trace(multiply(transpose(B),
-                                        multiply(A, B)));
+                            multiply(A, B)));
     }
 
     template<int RA, int CA, int RB, int CB, typename T>
@@ -43,10 +43,10 @@ namespace stan {
                     const Eigen::Matrix<fvar<T>, RB, CB> &B) {
       check_square("trace_quad_form", "A", A);
       check_multiplicable("trace_quad_form",
-                                      "A", A,
-                                      "B", B);
+                          "A", A,
+                          "B", B);
       return trace(multiply(transpose(B),
-                                        multiply(A, B)));
+                            multiply(A, B)));
     }
   }
 }
