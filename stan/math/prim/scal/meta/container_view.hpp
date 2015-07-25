@@ -45,7 +45,7 @@ namespace stan {
 
     /**
      * Empty struct for use in 
-     * boost::condtional<is_constant_struct<T1>::value, T1, dummy>::type
+     * boost::condtional\<is_constant_struct\<T1\>::value, T1, dummy\>::type
      * as false condtion for safe indexing 
      *
      */
