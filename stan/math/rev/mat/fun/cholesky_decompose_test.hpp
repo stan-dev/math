@@ -12,22 +12,8 @@
 namespace stan {
   namespace math {
 
-    size_t indexer(int i, int j, int N, size_t accum) {
+    inline size_t vech_indexer(int i, int j, int N, size_t accum) {
       return static_cast<size_t>(j * N + i - accum);
-    }
-
-    size_t indexer_t(int i, int j, int N) {
-      int accum = 0;
-      for (int k = 0; k <= j; ++k)
-        accum += k;
-      return static_cast<size_t>(j * N + i - accum);
-    }
-
-    size_t accumer(int i, int j, int N) {
-      int accum = 0;
-      for (int k = 0; k <= j; ++k)
-        accum += k;
-      return static_cast<size_t>(accum);
     }
 
     class cholesky_decompose_v_vari : public vari {
@@ -76,7 +62,6 @@ namespace stan {
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             _variRefA[pos] = A.coeffRef(i, j).vi_;
-          //  L_[pos] = D.matrixL()(i, j);
             _variRefL[pos] = new vari(C.coeffRef(i,j), false);
             pos++;
           }
@@ -85,22 +70,11 @@ namespace stan {
       }
 
       virtual void chain() {
-//        Eigen::Matrix<double, Dynamic, Dynamic> adjA(M_, M_);
-//        Eigen::Matrix<double, Dynamic, Dynamic> adjL(M_, M_);
-//        Eigen::Matrix<double, Dynamic, Dynamic> LA(M_, M_);
-//        size_t pos = -1;
-//        for (size_type j = 0; j < M_; ++j)
-//          for (size_type i = j; i < M_; ++i) {
-//            adjL.coeffRef(i, j) = _variRefL[++pos]->adj_;
-//            LA.coeffRef(i, j) = L_[pos];
-//          }
-
         size_t sum_j = accum_j;
         for (int i = M_ - 1; i >= 0; --i) {
           for (int j = i; j >= 0; --j) {
-            size_t ij = indexer(i, j, M_, sum_j);
-            size_t jj = indexer(j, j, M_, sum_j);
-//            std::cout << "IJ: " << ij << " JJ: " << jj << std::endl;
+            size_t ij = vech_indexer(i, j, M_, sum_j);
+            size_t jj = vech_indexer(j, j, M_, sum_j);
             if (i == j) 
              _variRefA[ij]->adj_ += 0.5 * _variRefL[ij]->adj_ / C.coeffRef(i, j);
             else {
@@ -109,9 +83,8 @@ namespace stan {
             }
             size_t sum_k = sum_j - j;
             for (int k = j - 1; k >=0; --k) {
-              size_t ik = indexer(i, k, M_, sum_k);//, sum_k);
-              size_t jk = indexer(j, k, M_, sum_k);//, sum_k);
-//              std::cout << "IK: " << ik << " JK: " << jk << std::endl;
+              size_t ik = vech_indexer(i, k, M_, sum_k);
+              size_t jk = vech_indexer(j, k, M_, sum_k);
               _variRefL[ik]->adj_ = _variRefL[ik]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(j, k);
               _variRefL[jk]->adj_ = _variRefL[jk]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(i, k);
               sum_k -= k;
@@ -121,10 +94,6 @@ namespace stan {
           accum_j -= i;
           sum_j = accum_j;
         }
-//        size_t pos = 0;
-//        for (size_type j = 0; j < M_; ++j)
-//          for (size_type i = j; i < M_; ++i) 
-//            _variRefA[pos++]->adj_ += adjA.coeffRef(i, j);
       }
     };
 
