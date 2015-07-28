@@ -12,25 +12,31 @@
 namespace stan {
   namespace math {
 
-    size_t indexer(int i, int j, int N) {
-      return static_cast<size_t>(j * N + i);
+    size_t indexer(int i, int j, int N, size_t accum) {
+      return static_cast<size_t>(j * N + i - accum);
+    }
+
+    size_t indexer_t(int i, int j, int N) {
+      int accum = 0;
+      for (int k = 0; k <= j; ++k)
+        accum += k;
+      return static_cast<size_t>(j * N + i - accum);
     }
 
     class cholesky_decompose_v_vari : public vari {
     public:
       int M_;  // A.rows() = A.cols()
-      double* L_;
       double* A_;
       vari** _variRefA;
       vari** _variRefL;
       vari** _dummy;
+      Eigen::Matrix<double, -1, -1> C;
+      size_t accum_j;
+      size_t accum_k;
 
       cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A)
         : vari(0.0),
           M_(A.rows()),
-          L_(reinterpret_cast<double*>
-             (stan::math::ChainableStack::memalloc_
-              .alloc(sizeof(double) * A.rows() * (A.rows() + 1) / 2))),
           A_(reinterpret_cast<double*>
              (stan::math::ChainableStack::memalloc_
               .alloc(sizeof(double) * A.rows() * A.rows()))),
@@ -42,25 +48,32 @@ namespace stan {
                      .alloc(sizeof(vari*) * A.rows() * (A.rows() + 1) / 2))),
           _dummy(reinterpret_cast<vari**>
                     (stan::math::ChainableStack::memalloc_
-                     .alloc(sizeof(vari*))))  {
+                     .alloc(sizeof(vari*)))),
+          C(M_,M_),
+          accum_j(0), accum_k(0) {
           using Eigen::Map;
           using Eigen::Matrix;
 
         size_t posA = 0;
-        for (size_type j = 0; j < M_; ++j) 
+        for (size_type j = 0; j < M_; ++j) {
           for (size_type k = 0; k < M_; ++k)  
             A_[posA++] = A.coeffRef(k, j).vi_->val_;
+          accum_k += j;
+          accum_j += j;
+        }
+        accum_k -= M_ - 1;
 
-        Matrix<double, -1, -1> C = Map<Matrix<double, -1, -1> > (A_,M_,M_);
+        C = Map<Matrix<double, -1, -1> > (A_,M_,M_);
         Eigen::LLT<Eigen::MatrixXd> D = C.selfadjointView<Eigen::Lower>().llt();
         check_pos_definite("cholesky_decompose", "m", D);
+        C = D.matrixL();
 
         size_t pos = 0;
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             _variRefA[pos] = A.coeffRef(i, j).vi_;
-            L_[pos] = D.matrixL()(i, j);
-            _variRefL[pos] = new vari(L_[pos], false);
+          //  L_[pos] = D.matrixL()(i, j);
+            _variRefL[pos] = new vari(C.coeffRef(i,j), false);
             pos++;
           }
         }
@@ -68,34 +81,55 @@ namespace stan {
       }
 
       virtual void chain() {
-        Eigen::Matrix<double, Dynamic, Dynamic> adjA(M_, M_);
-        Eigen::Matrix<double, Dynamic, Dynamic> adjL(M_, M_);
-        Eigen::Matrix<double, Dynamic, Dynamic> LA(M_, M_);
-        size_t pos = -1;
-        for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i) {
-            adjL.coeffRef(i, j) = _variRefL[++pos]->adj_;
-            LA.coeffRef(i, j) = L_[pos];
-          }
+//        Eigen::Matrix<double, Dynamic, Dynamic> adjA(M_, M_);
+//        Eigen::Matrix<double, Dynamic, Dynamic> adjL(M_, M_);
+//        Eigen::Matrix<double, Dynamic, Dynamic> LA(M_, M_);
+//        size_t pos = -1;
+//        for (size_type j = 0; j < M_; ++j)
+//          for (size_type i = j; i < M_; ++i) {
+//            adjL.coeffRef(i, j) = _variRefL[++pos]->adj_;
+//            LA.coeffRef(i, j) = L_[pos];
+//          }
 
+        size_t sum_j = accum_j;
+        size_t sum_k = accum_k;
         for (int i = M_ - 1; i >= 0; --i) {
+          sum_j = accum_j;
           for (int j = i; j >= 0; --j) {
+            size_t ij = indexer(i, j, M_, sum_j);
+            size_t jj = indexer(j, j, M_, sum_j);
+//            std::cout << "IJ: " << ij << " JJ: " << jj << std::endl;
             if (i == j) 
-              adjA.coeffRef(i, j) = 0.5 * adjL.coeffRef(i, j) / LA.coeffRef(i, j);
+             _variRefA[ij]->adj_ += 0.5 * _variRefL[ij]->adj_ / C.coeffRef(i, j);
             else {
-              adjA.coeffRef(i, j) = adjL.coeffRef(i, j) / LA.coeffRef(j, j);
-              adjL.coeffRef(j, j) = adjL.coeffRef(j, j) - adjL.coeffRef(i, j) * LA.coeffRef(i, j) / LA.coeffRef(j, j);
+              _variRefA[ij]->adj_ += _variRefL[ij]->adj_ / C.coeffRef(j, j);
+              _variRefL[jj]->adj_ = _variRefL[jj]->adj_ - _variRefL[ij]->adj_ * C.coeffRef(i, j) / C.coeffRef(j, j);
             }
+            sum_k = accum_k - i;
+            accum_k -= (j - 1);
             for (int k = j - 1; k >=0; --k) {
-              adjL.coeffRef(i, k) = adjL.coeffRef(i, k) - adjA.coeffRef(i, j) * LA.coeffRef(j, k);
-              adjL.coeffRef(j, k) = adjL.coeffRef(j, k) - adjA.coeffRef(i, j) * LA.coeffRef(i, k);
+              if (indexer(i, k, M_, sum_k) != indexer_t(i, k, M_)) {
+                std::cout << "I: " << i << " J: " << j << std::endl;
+                std::cout << "test ik: " << indexer(i, k, M_, sum_k) << std::endl;
+                std::cout << "Real ik: " << indexer_t(i, k, M_) << std::endl;
+                std::cout << "diff: " << static_cast<int>(indexer(i, k, M_, sum_k)) - static_cast<int>(indexer_t(i, k, M_))<< std::endl;
+              }
+              size_t ik = indexer_t(i, k, M_);//, sum_k);
+              size_t jk = indexer_t(j, k, M_);//, sum_k);
+//              std::cout << "IK: " << ik << " JK: " << jk << std::endl;
+              _variRefL[ik]->adj_ = _variRefL[ik]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(j, k);
+              _variRefL[jk]->adj_ = _variRefL[jk]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(i, k);
+              sum_k -= k;
             }
+            sum_j -= j;
           }
+          accum_j -= i;
+          accum_k = accum_j;
         }
-        pos = 0;
-        for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i) 
-            _variRefA[pos++]->adj_ += adjA.coeffRef(i, j);
+//        size_t pos = 0;
+//        for (size_type j = 0; j < M_; ++j)
+//          for (size_type i = j; i < M_; ++i) 
+//            _variRefA[pos++]->adj_ += adjA.coeffRef(i, j);
       }
     };
 
