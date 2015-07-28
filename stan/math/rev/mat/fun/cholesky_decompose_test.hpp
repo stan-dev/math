@@ -23,6 +23,13 @@ namespace stan {
       return static_cast<size_t>(j * N + i - accum);
     }
 
+    size_t accumer(int i, int j, int N) {
+      int accum = 0;
+      for (int k = 0; k <= j; ++k)
+        accum += k;
+      return static_cast<size_t>(accum);
+    }
+
     class cholesky_decompose_v_vari : public vari {
     public:
       int M_;  // A.rows() = A.cols()
@@ -32,7 +39,6 @@ namespace stan {
       vari** _dummy;
       Eigen::Matrix<double, -1, -1> C;
       size_t accum_j;
-      size_t accum_k;
 
       cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A)
         : vari(0.0),
@@ -50,7 +56,7 @@ namespace stan {
                     (stan::math::ChainableStack::memalloc_
                      .alloc(sizeof(vari*)))),
           C(M_,M_),
-          accum_j(0), accum_k(0) {
+          accum_j(0) {
           using Eigen::Map;
           using Eigen::Matrix;
 
@@ -58,10 +64,8 @@ namespace stan {
         for (size_type j = 0; j < M_; ++j) {
           for (size_type k = 0; k < M_; ++k)  
             A_[posA++] = A.coeffRef(k, j).vi_->val_;
-          accum_k += j;
           accum_j += j;
         }
-        accum_k -= M_ - 1;
 
         C = Map<Matrix<double, -1, -1> > (A_,M_,M_);
         Eigen::LLT<Eigen::MatrixXd> D = C.selfadjointView<Eigen::Lower>().llt();
@@ -92,9 +96,7 @@ namespace stan {
 //          }
 
         size_t sum_j = accum_j;
-        size_t sum_k = accum_k;
         for (int i = M_ - 1; i >= 0; --i) {
-          sum_j = accum_j;
           for (int j = i; j >= 0; --j) {
             size_t ij = indexer(i, j, M_, sum_j);
             size_t jj = indexer(j, j, M_, sum_j);
@@ -105,17 +107,10 @@ namespace stan {
               _variRefA[ij]->adj_ += _variRefL[ij]->adj_ / C.coeffRef(j, j);
               _variRefL[jj]->adj_ = _variRefL[jj]->adj_ - _variRefL[ij]->adj_ * C.coeffRef(i, j) / C.coeffRef(j, j);
             }
-            sum_k = accum_k - i;
-            accum_k -= (j - 1);
+            size_t sum_k = sum_j - j;
             for (int k = j - 1; k >=0; --k) {
-              if (indexer(i, k, M_, sum_k) != indexer_t(i, k, M_)) {
-                std::cout << "I: " << i << " J: " << j << std::endl;
-                std::cout << "test ik: " << indexer(i, k, M_, sum_k) << std::endl;
-                std::cout << "Real ik: " << indexer_t(i, k, M_) << std::endl;
-                std::cout << "diff: " << static_cast<int>(indexer(i, k, M_, sum_k)) - static_cast<int>(indexer_t(i, k, M_))<< std::endl;
-              }
-              size_t ik = indexer_t(i, k, M_);//, sum_k);
-              size_t jk = indexer_t(j, k, M_);//, sum_k);
+              size_t ik = indexer(i, k, M_, sum_k);//, sum_k);
+              size_t jk = indexer(j, k, M_, sum_k);//, sum_k);
 //              std::cout << "IK: " << ik << " JK: " << jk << std::endl;
               _variRefL[ik]->adj_ = _variRefL[ik]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(j, k);
               _variRefL[jk]->adj_ = _variRefL[jk]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(i, k);
@@ -124,7 +119,7 @@ namespace stan {
             sum_j -= j;
           }
           accum_j -= i;
-          accum_k = accum_j;
+          sum_j = accum_j;
         }
 //        size_t pos = 0;
 //        for (size_type j = 0; j < M_; ++j)
