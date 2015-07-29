@@ -24,11 +24,11 @@ C++11 = false
 ##
 # Library locations
 ##
-STANAPI_HOME ?= ../../
-EIGEN ?= $(STANAPI_HOME)lib/eigen_3.2.4
-BOOST ?= $(STANAPI_HOME)lib/boost_1.58.0
-GTEST ?= $(STANAPI_HOME)lib/gtest_1.7.0
-CPPLINT ?= $(STANAPI_HOME)lib/cpplint_4.45
+MATH ?= 
+EIGEN ?= lib/eigen_3.2.4
+BOOST ?= lib/boost_1.58.0
+GTEST ?= lib/gtest_1.7.0
+CPPLINT ?= lib/cpplint_4.45
 
 ##
 # Set default compiler options.
