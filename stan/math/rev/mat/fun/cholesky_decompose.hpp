@@ -97,8 +97,9 @@ namespace stan {
        * vech_indexer precomputed and decremented each
        * iteration in appropriate loop.
        * 
-       * Algorithm overwrites L's
-       *
+       * Algorithm overwrites the values in L's vari->adj_ 
+       * (L's varis are stored in _variRefL)
+       * to decrease speed and memory usage.
        * */
       virtual void chain() {
         size_t sum_j = accum_j;
