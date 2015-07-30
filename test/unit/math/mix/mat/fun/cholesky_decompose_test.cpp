@@ -4,6 +4,9 @@
 #include <gtest/gtest.h>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/rev/mat/fun/dot_self.hpp>
+#include <stan/math/fwd/mat/fun/dot_self.hpp>
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
@@ -17,11 +20,9 @@
 #include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
+#include <stan/math/prim/mat/prob/multi_normal_cholesky_log.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_constrain.hpp>
-#include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/mix/mat/functor/hessian.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 #include <stan/math/mix/mat/functor/grad_hessian.hpp>
@@ -41,39 +42,6 @@ struct chol_functor {
     return lp;
   }
 };
-
-void test_gradients(int size) {
-  std::vector<std::vector<chol_functor> > functowns;
-  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
-  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
-  Eigen::Matrix<double, -1, -1> evals_ad(size,size);
-  Eigen::Matrix<double, -1, -1> evals_fd(size,size);
-  functowns.resize(size);
-  grads_ad.resize(size);
-  grads_fd.resize(size);
-
-  for (int i = 0; i < size; ++i)
-    for (int j = 0; j < size; ++j) {
-      functowns[i].push_back(chol_functor(i, j, size));
-      grads_fd[i].push_back(Eigen::Matrix<double, -1, 1>(size));
-      grads_ad[i].push_back(Eigen::Matrix<double, -1, 1>(size));
-    }
-
-  int numels = size + size * (size - 1) / 2;
-  Eigen::Matrix<double, -1, 1> x(numels);
-  for (int i = 0; i < numels; ++i)
-    x(i) = i / 10.0;
-
-  for (size_t i = 0; i < static_cast<size_t>(size); ++i)
-    for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
-      stan::math::gradient(functowns[i][j], x, evals_ad(i,j), grads_ad[i][j]);
-      stan::math::finite_diff_gradient(functowns[i][j], x,
-                                       evals_fd(i,j), grads_fd[i][j]);
-      for (int k = 0; k < numels; ++k) 
-        EXPECT_NEAR(grads_fd[i][j](k), grads_ad[i][j](k), 1e-11);
-      EXPECT_FLOAT_EQ(evals_fd(i, j), evals_ad(i, j));
-    }
-}
 
 void test_hessians(int size) {
   std::vector<std::vector<chol_functor> > functowns;
@@ -101,7 +69,7 @@ void test_hessians(int size) {
   int numels = size + size * (size - 1) / 2;
   Eigen::Matrix<double, -1, 1> x(numels);
   for (int i = 0; i < numels; ++i)
-    x(i) = i / 10.0;
+    x(i) = i / 20.0;
 
   for (size_t i = 0; i < static_cast<size_t>(size); ++i)
     for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
@@ -198,10 +166,6 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_ffv) {
   m << 1.0, 2.0,
     3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-}
-
-TEST(AgradMixMatrixCholeskyDecompose, mat_1st_deriv) {
-  test_gradients(3);
 }
 
 TEST(AgradMixMatrixCholeskyDecompose, mat_2nd_deriv) {

@@ -2,9 +2,6 @@
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
@@ -12,21 +9,26 @@
 namespace stan {
   namespace math {
 
+    inline size_t vech_indexer(int i, int j, int N, size_t accum) {
+      return static_cast<size_t>(j * N + i - accum);
+    }
+
     class cholesky_decompose_v_vari : public vari {
     public:
-      int M_;  // A.rows() = A.cols() = B.rows()
-      double* L_;
+      int M_;  // A.rows() = A.cols()
+      double* A_;
       vari** _variRefA;
       vari** _variRefL;
       vari** _dummy;
+      Eigen::Matrix<double, -1, -1> C;
+      size_t accum_j;
 
-      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
-                                const Eigen::Matrix<double, -1, -1>& L_A)
+      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A)
         : vari(0.0),
           M_(A.rows()),
-          L_(reinterpret_cast<double*>
+          A_(reinterpret_cast<double*>
              (stan::math::ChainableStack::memalloc_
-              .alloc(sizeof(double) * A.rows() * (A.rows() + 1) / 2))),
+              .alloc(sizeof(double) * A.rows() * A.rows()))),
           _variRefA(reinterpret_cast<vari**>
                     (stan::math::ChainableStack::memalloc_
                      .alloc(sizeof(vari*) * A.rows() * (A.cols() + 1) / 2))),
@@ -35,16 +37,29 @@ namespace stan {
                      .alloc(sizeof(vari*) * A.rows() * (A.rows() + 1) / 2))),
           _dummy(reinterpret_cast<vari**>
                     (stan::math::ChainableStack::memalloc_
-                     .alloc(sizeof(vari*))))  {
-        using Eigen::Matrix;
-        using Eigen::Map;
+                     .alloc(sizeof(vari*)))),
+          C(M_,M_),
+          accum_j(0) {
+          using Eigen::Map;
+          using Eigen::Matrix;
+
+        size_t posA = 0;
+        for (size_type j = 0; j < M_; ++j) {
+          for (size_type k = 0; k < M_; ++k)  
+            A_[posA++] = A.coeffRef(k, j).vi_->val_;
+          accum_j += j;
+        }
+
+        C = Map<Matrix<double, -1, -1> > (A_,M_,M_);
+        Eigen::LLT<Eigen::MatrixXd> D = C.selfadjointView<Eigen::Lower>().llt();
+        check_pos_definite("cholesky_decompose", "m", D);
+        C = D.matrixL();
 
         size_t pos = 0;
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             _variRefA[pos] = A.coeffRef(i, j).vi_;
-            L_[pos] = L_A.coeffRef(i, j);
-            _variRefL[pos] = new vari(L_[pos], false);
+            _variRefL[pos] = new vari(C.coeffRef(i,j), false);
             ++pos;
           }
         }
@@ -52,55 +67,46 @@ namespace stan {
       }
 
       virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::Dynamic;
-        using Eigen::TriangularView;
-        using Eigen::Lower;
-        using Eigen::Map;
-        Eigen::Matrix<double, Dynamic, Dynamic> adjA(M_, M_);
-        Eigen::Matrix<double, Dynamic, Dynamic> adjL(M_, M_);
-        Eigen::Matrix<double, Dynamic, Dynamic> LA(M_, M_);
-        size_t pos = -1;
-        for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i) {
-            adjL.coeffRef(i, j) = _variRefL[++pos]->adj_;
-            LA.coeffRef(i, j) = L_[pos];
-          }
-
+        size_t sum_j = accum_j;
         for (int i = M_ - 1; i >= 0; --i) {
           for (int j = i; j >= 0; --j) {
+            size_t ij = vech_indexer(i, j, M_, sum_j);
+            size_t jj = vech_indexer(j, j, M_, sum_j);
             if (i == j) 
-              adjA.coeffRef(i, j) = 0.5 * adjL.coeffRef(i, j) / LA.coeffRef(i, j);
+             _variRefA[ij]->adj_ += 0.5 * _variRefL[ij]->adj_ / C.coeffRef(i, j);
             else {
-              adjA.coeffRef(i, j) = adjL.coeffRef(i, j) / LA.coeffRef(j, j);
-              adjL.coeffRef(j, j) = adjL.coeffRef(j, j) - adjL.coeffRef(i, j) * LA.coeffRef(i, j) / LA.coeffRef(j, j);
+              _variRefA[ij]->adj_ += _variRefL[ij]->adj_ / C.coeffRef(j, j);
+              _variRefL[jj]->adj_ = _variRefL[jj]->adj_ - _variRefL[ij]->adj_ * C.coeffRef(i, j) / C.coeffRef(j, j);
             }
+            size_t sum_k = sum_j - j;
             for (int k = j - 1; k >=0; --k) {
-              adjL.coeffRef(i, k) = adjL.coeffRef(i, k) - adjA.coeffRef(i, j) * LA.coeffRef(j, k);
-              adjL.coeffRef(j, k) = adjL.coeffRef(j, k) - adjA.coeffRef(i, j) * LA.coeffRef(i, k);
+              size_t ik = vech_indexer(i, k, M_, sum_k);
+              size_t jk = vech_indexer(j, k, M_, sum_k);
+              _variRefL[ik]->adj_ = _variRefL[ik]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(j, k);
+              _variRefL[jk]->adj_ = _variRefL[jk]->adj_ - _variRefA[ij]->adj_ * C.coeffRef(i, k);
+              sum_k -= k;
             }
+            sum_j -= j;
           }
+          accum_j -= i;
+          sum_j = accum_j;
         }
-        pos = 0;
-        for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i) 
-            _variRefA[pos++]->adj_ += adjA.coeffRef(i, j);
       }
     };
 
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
     cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
-      Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
-      Eigen::Matrix<double, -1, -1> L_A(A.rows(), A.cols());
+      stan::math::check_square("cholesky_decompose", "A", A);
+      stan::math::check_symmetric("cholesky_decompose", "A", A);
       
-      L_A = cholesky_decompose(value_of_rec(A));
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
       // for the returned matrix.  Memory will be cleaned up with the
       // arena allocator.
       cholesky_decompose_v_vari *baseVari
-        = new cholesky_decompose_v_vari(A, L_A);
+        = new cholesky_decompose_v_vari(A);
 
+      Eigen::Matrix<var, -1, -1> L(A.rows(),A.rows());
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
         for (size_type i = j; i < L.rows(); ++i) 
