@@ -9,6 +9,13 @@
 #include <valarray>
 #include <limits>
 
+#ifdef _MSC_VER
+template<typename T> 
+T fma(T x, T y, T z) {
+    return x*y+z;
+}
+#endif
+
 namespace stan {
   namespace math {
 

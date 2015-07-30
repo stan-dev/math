@@ -6,6 +6,11 @@
 #include <cmath>
 #include <limits>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/atanh.hpp>
+using boost::math::atanh;
+#endif
+
 namespace stan {
   namespace math {
 

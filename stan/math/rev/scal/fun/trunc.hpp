@@ -6,6 +6,11 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/trunc.hpp>
+using boost::math::trunc;
+#endif
+
 namespace stan {
   namespace math {
 
