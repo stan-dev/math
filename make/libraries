@@ -1,0 +1,8 @@
+##
+# Library locations
+##
+MATH ?= 
+EIGEN ?= $(MATH)lib/eigen_3.2.4
+BOOST ?= $(MATH)lib/boost_1.58.0
+GTEST ?= $(MATH)lib/gtest_1.7.0
+CPPLINT ?= $(MATH)lib/cpplint_4.45

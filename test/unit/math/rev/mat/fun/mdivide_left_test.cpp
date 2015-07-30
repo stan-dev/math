@@ -25,22 +25,22 @@ TEST(AgradRevMatrix,mdivide_left_val) {
     5.0, 7.0;
 
   I = mdivide_left(Av,Av);
-  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-12);
-  EXPECT_NEAR(1.0,I(1,1).val(),1.0e-12);
+  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-10);
+  EXPECT_NEAR(1.0,I(1,1).val(),1.0E-10);
 
   I = mdivide_left(Av,Ad);
-  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-12);
-  EXPECT_NEAR(1.0,I(1,1).val(),1.0e-12);
+  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-10);
+  EXPECT_NEAR(1.0,I(1,1).val(),1.0E-10);
 
   I = mdivide_left(Ad,Av);
-  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-12);
-  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-12);
-  EXPECT_NEAR(1.0,I(1,1).val(),1.0e-12);
+  EXPECT_NEAR(1.0,I(0,0).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(0,1).val(),1.0E-10);
+  EXPECT_NEAR(0.0,I(1,0).val(),1.0E-10);
+  EXPECT_NEAR(1.0,I(1,1).val(),1.0E-10);
 }
 
 TEST(AgradRevMatrix,mdivide_left_grad_vv) {
@@ -83,13 +83,13 @@ TEST(AgradRevMatrix,mdivide_left_grad_vv) {
         Ad_tmp.setZero();
         Ad_tmp(k) = 1.0;
         Cd = -mdivide_left(Ad,multiply(Ad_tmp,mdivide_left(Ad,Bd)));
-        EXPECT_NEAR(Cd(i,j),g[k],1.0E-12);
+        EXPECT_NEAR(Cd(i,j),g[k],1.0E-10);
       }
       for (k = 0; k < 4; k++) {
         Bd_tmp.setZero();
         Bd_tmp(k) = 1.0;
         Cd = mdivide_left(Ad,Bd_tmp);
-        EXPECT_NEAR(Cd(i,j),g[4+k],1.0E-12);
+        EXPECT_NEAR(Cd(i,j),g[4+k],1.0E-10);
       }
     }
   }
@@ -132,7 +132,7 @@ TEST(AgradRevMatrix,mdivide_left_grad_dv) {
         Bd_tmp.setZero();
         Bd_tmp(k) = 1.0;
         Cd = mdivide_left(Ad,Bd_tmp);
-        EXPECT_NEAR(Cd(i,j),g[k],1.0E-12);
+        EXPECT_NEAR(Cd(i,j),g[k],1.0E-10);
       }
     }
   }
@@ -175,7 +175,7 @@ TEST(AgradRevMatrix,mdivide_left_grad_vd) {
         Ad_tmp.setZero();
         Ad_tmp(k) = 1.0;
         Cd = -mdivide_left(Ad,multiply(Ad_tmp,mdivide_left(Ad,Bd)));
-        EXPECT_NEAR(Cd(i,j),g[k],1.0E-12);
+        EXPECT_NEAR(Cd(i,j),g[k],1.0E-10);
       }
     }
   }

@@ -6,14 +6,12 @@ The Stan Math Library is licensed under the [new BSD license](https://raw.github
 
 Required Libraries
 ------------------
-In order to run Stan Math, you *must* make available the following two libraries on which it depends:
+Stan Math depends on two libraries:
 
 - Boost (version 1.58): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.24): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 
-These should be downloaded and unpacked into directories where they can be read.  
-
-Only these two versions of the dependent libraries have been tested with Stan Math.
+These are distributed under the `lib/` subdirectory. Only these two versions of the dependent libraries have been tested with Stan Math.
 
 Installation
 ------------
@@ -50,10 +48,10 @@ The `-I` includes point to the three necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan/lib/eigen_3.2.4/ -I ~/stan/lib/boost_1.58.0/ foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.4/ -I ~/stan-dev/math/lib/boost_1.58.0/ foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan/lib/eigen_3.2.4/Eigen` and `~stan/lib/boost_1.58.0/boost`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.4/Eigen` and `~stan-dev/math/lib/boost_1.58.0/boost`.
 
 Other Compilers
 ---------------
