@@ -110,7 +110,7 @@ double test_gradient(int size) {
   int numels = size + size * (size - 1) / 2;
   Eigen::Matrix<double, -1, 1> x(numels);
   for (int i = 0; i < numels; ++i)
-    x(i) = i / 1000.0;
+    x(i) = i / 100.0;
 
   stan::math::gradient(functown, x, evals_ad, grads_ad);
   stan::math::finite_diff_gradient(functown, x,evals_fd, grads_fd);
@@ -175,4 +175,3 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv) {
   test_gradients(9);
   test_gradient(50);
 }
-
