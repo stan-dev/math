@@ -25,7 +25,7 @@ namespace stan {
 
     class cholesky_decompose_v_vari : public vari {
     public:
-      int M_;  
+      int M_;
       double* A_;
       vari** _variRefA;
       vari** _variRefL;
@@ -45,7 +45,7 @@ namespace stan {
        *
        * @param matrix A
        * */
-      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A)
+      explicit cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A)
         : vari(0.0),
           M_(A.rows()),
           A_(reinterpret_cast<double*>
@@ -66,13 +66,14 @@ namespace stan {
 
         size_t posA = 0;
         for (size_type j = 0; j < M_; ++j) {
-          for (size_type k = 0; k < M_; ++k)  
+          for (size_type k = 0; k < M_; ++k)
             A_[posA++] = A.coeffRef(k, j).vi_->val_;
           accum_j += j;
         }
 
-        Matrix<double, -1, -1> L = Map<Matrix<double, -1, -1> > (A_,M_,M_);
-        Eigen::LLT<Eigen::MatrixXd> L_factor = L.selfadjointView<Eigen::Lower>().llt();
+        Matrix<double, -1, -1> L = Map<Matrix<double, -1, -1> > (A_, M_, M_);
+        Eigen::LLT<Eigen::MatrixXd> L_factor
+          = L.selfadjointView<Eigen::Lower>().llt();
         check_pos_definite("cholesky_decompose", "m", L_factor);
         L = L_factor.matrixL();
 
@@ -80,7 +81,7 @@ namespace stan {
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             _variRefA[pos] = A.coeffRef(i, j).vi_;
-            _variRefL[pos] = new vari(L.coeffRef(i,j), false);
+            _variRefL[pos] = new vari(L.coeffRef(i, j), false);
             ++pos;
           }
         }
@@ -107,11 +108,12 @@ namespace stan {
           for (int j = i; j >= 0; --j) {
             size_t ij = vech_indexer(i, j, M_, sum_j);
             size_t jj = vech_indexer(j, j, M_, sum_j);
-            if (i == j) 
-             _variRefA[ij]->adj_ += 0.5 * _variRefL[ij]->adj_ / _variRefL[ij]->val_;
-            else {
+            if (i == j) {
+             _variRefA[ij]->adj_ += 0.5
+               * _variRefL[ij]->adj_ / _variRefL[ij]->val_;
+            } else {
               _variRefA[ij]->adj_ += _variRefL[ij]->adj_ / _variRefL[jj]->val_;
-              _variRefL[jj]->adj_ = _variRefL[jj]->adj_ - _variRefL[ij]->adj_ 
+              _variRefL[jj]->adj_ = _variRefL[jj]->adj_ - _variRefL[ij]->adj_
                 * _variRefL[ij]->val_ / _variRefL[jj]->val_;
             }
             size_t sum_k = sum_j - j;
@@ -147,7 +149,6 @@ namespace stan {
     cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
       stan::math::check_square("cholesky_decompose", "A", A);
       stan::math::check_symmetric("cholesky_decompose", "A", A);
-      
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
       // for the returned matrix.  Memory will be cleaned up with the
@@ -155,12 +156,12 @@ namespace stan {
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A);
 
-      Eigen::Matrix<var, -1, -1> L(A.rows(),A.rows());
+      Eigen::Matrix<var, -1, -1> L(A.rows(), A.rows());
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
-        for (size_type i = j; i < L.rows(); ++i) 
+        for (size_type i = j; i < L.rows(); ++i)
           L.coeffRef(i, j).vi_ = baseVari->_variRefL[pos++];
-        for (size_type k = 0; k < j; ++k) 
+        for (size_type k = 0; k < j; ++k)
           L.coeffRef(k, j).vi_ = baseVari->_dummy[0];
       }
       return L;
