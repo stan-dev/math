@@ -10,9 +10,9 @@
 #include <limits>
 
 #ifdef _MSC_VER
-template<typename T> 
+template<typename T>
 T fma(T x, T y, T z) {
-    return x*y+z;
+  return x*y+z;
 }
 #endif
 
