@@ -36,6 +36,7 @@ WINE =
 ##
 # Library locations
 ##
+MATH ?= 
 include make/libraries
 
 ##
