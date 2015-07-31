@@ -22,15 +22,6 @@ AR = ar
 C++11 = false
 
 ##
-# Library locations
-##
-STANAPI_HOME ?= ../../
-EIGEN ?= $(STANAPI_HOME)lib/eigen_3.2.4
-BOOST ?= $(STANAPI_HOME)lib/boost_1.58.0
-GTEST ?= $(STANAPI_HOME)lib/gtest_1.7.0
-CPPLINT ?= $(STANAPI_HOME)lib/cpplint_4.45
-
-##
 # Set default compiler options.
 ## 
 CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe
@@ -41,6 +32,11 @@ WINE =
 
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
+
+##
+# Library locations
+##
+include make/libraries
 
 ##
 # Get information about the compiler used.

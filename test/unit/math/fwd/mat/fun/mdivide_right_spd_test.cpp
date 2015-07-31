@@ -190,7 +190,18 @@ TEST(AgradFwdMatrixMdivideRightSPD,fd_exceptions) {
   matrix_d fd1(3,3), fd2(4,4);
   row_vector_d rvd1(3), rvd2(4);
   row_vector_d vd1(3), vd2(4);
-
+  fv1.setZero();
+  fv2.setZero();
+  rvf1.setZero();
+  rvf2.setZero();
+  vf1.setZero();
+  vf2.setZero();
+  fd1.setZero();
+  fd2.setZero();
+  rvd1.setZero();
+  rvd2.setZero();
+  vd1.setZero();
+  vd2.setZero();
   EXPECT_THROW(mdivide_right_spd(fd2, fv1), std::invalid_argument);
   EXPECT_THROW(mdivide_right_spd(fv2, fd1), std::invalid_argument);
   EXPECT_THROW(mdivide_right_spd(fv2, fv1), std::invalid_argument);
