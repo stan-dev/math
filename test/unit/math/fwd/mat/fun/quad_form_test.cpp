@@ -11,6 +11,7 @@
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 
