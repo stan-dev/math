@@ -7,6 +7,11 @@
 #include <cmath>
 #include <valarray>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/erf.hpp>
+using boost::math::erfc;
+#endif
+
 namespace stan {
   namespace math {
 

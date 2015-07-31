@@ -7,6 +7,11 @@
 #include <cmath>
 #include <valarray>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/asinh.hpp>
+using boost::math::asinh;
+#endif
+
 namespace stan {
   namespace math {
 
