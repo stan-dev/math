@@ -48,18 +48,22 @@ namespace stan {
   namespace math {
 
      /**
-     * The log of the first passage time density function for a (Wiener) drift diffusion model for the given \f$y\f$,
-     * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$, relative bias \f$\beta\f$, and drift rate \f$\delta\f$.
-     * \f$\alpha\f$ and \f$\tau\f$ must be greater than 0, and \f$\beta\f$ must be between 0 and 1. \f$y\f$ should contain
-     * reaction times in seconds, with upper-boundary responses strictly positive and lower-boundary response
-     * times coded as strictly negative numbers.
+     * The log of the first passage time density function for a (Wiener)
+     *  drift diffusion model for the given \f$y\f$,
+     * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
+     * relative bias \f$\beta\f$, and drift rate \f$\delta\f$.
+     * \f$\alpha\f$ and \f$\tau\f$ must be greater than 0, and
+     * \f$\beta\f$ must be between 0 and 1. \f$y\f$ should contain
+     * reaction times in seconds (strictly positive) with
+     * upper-boundary responses.
      *
      * @param y A scalar variate.
      * @param alpha The boundary separation.
      * @param tau The nondecision time.
      * @param beta The relative bias.
      * @param delta The drift rate.
-     * @return The log of the Wiener first passage time density of the specified arguments.
+     * @return The log of the Wiener first passage time density of
+     *  the specified arguments.
      */
      template <bool propto,
                typename T_y, typename T_alpha, typename T_tau,
