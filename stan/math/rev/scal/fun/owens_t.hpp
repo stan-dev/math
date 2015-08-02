@@ -8,6 +8,11 @@
 #include <boost/math/special_functions/owens_t.hpp>
 #include <cmath>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/erf.hpp>
+using boost::math::erf;
+#endif
+
 namespace stan {
   namespace math {
 
