@@ -9,14 +9,8 @@ os:
 compiler:
   - clang
 
-before_install: rm -rf stan.git; git clone --depth 1 --quiet git://github.com/stan-dev/stan.git stan.git
-
 before_script:
   - echo "CC=$CXX" > make/local
-  - echo "EIGEN = stan.git/lib/eigen_3.2.4" >> make/local
-  - echo "BOOST = stan.git/lib/boost_1.58.0" >> make/local
-  - echo "GTEST = stan.git/lib/gtest_1.7.0" >> make/local
-  - echo "CPPLINT = stan.git/lib/cpplint_4.45" >> make/local
 
 matrix:
   fast_finish: true
