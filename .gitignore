@@ -23,7 +23,6 @@
 *.ind
 *.fdb_latexmk
 *.fls
-*.swp
 
 # temporary emacs files
 *~
