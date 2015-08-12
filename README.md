@@ -2,7 +2,7 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/math-license.txt).
+The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/stan-math-library-license.txt).
 
 Required Libraries
 ------------------
