@@ -6,6 +6,11 @@
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <cmath>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/expm1.hpp>
+using boost::math::expm1;
+#endif
+
 namespace stan {
   namespace math {
 
