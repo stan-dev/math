@@ -1,6 +1,7 @@
-#ifndef STAN__MATH__MATRIX_CSR_EXTRACT_U_HPP
-#define STAN__MATH__MATRIX_CSR_EXTRACT_U_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_U_HPP
+#define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_U_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Sparse>
 #include <vector>
 #include <numeric>
@@ -11,7 +12,6 @@ namespace stan {
     using Eigen::SparseMatrix;
     using Eigen::RowMajor;
     using Eigen::Matrix;
-    using Eigen::Dynamic;
     using std::vector;
 
     /** \addtogroup csr_format 
@@ -26,8 +26,8 @@ namespace stan {
      */
     template <typename T>
     const vector<int>
-    csr_extract_u(SparseMatrix<T,  RowMajor> A) {
-      std::vector<int> u(A.outerSize()+1);
+    csr_extract_u(const SparseMatrix<T,  RowMajor>& A) {
+      vector<int> u(A.outerSize()+1); // last entry is garbage.
       for (int nze = 0; nze <= A.outerSize(); ++nze)
         u[nze] = *(A.outerIndexPtr()+nze) + stan::error_index::value;
       return u;
@@ -39,9 +39,9 @@ namespace stan {
      * @param A Dense matrix.
      * @return vector of indexes into non-zero entries of A.
      */
-    template <typename T, R, C>
+    template <typename T, int R, int C>
     const vector<int>
-    csr_extract_u(Matrix<T,  R, C> A) {
+    csr_extract_u(const Matrix<T,  R, C>& A) {
       SparseMatrix<T, RowMajor> B = A.sparseView();
       vector<int> u = csr_extract_u(B);
       return u;

@@ -1,6 +1,7 @@
-#ifndef STAN__MATH__MATRIX_CSR_EXTRACT_W_HPP
-#define STAN__MATH__MATRIX_CSR_EXTRACT_W_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_W_HPP
+#define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_W_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Sparse>
 #include <vector>
 #include <numeric>
@@ -12,6 +13,7 @@ namespace stan {
     using Eigen::RowMajor;
     using Eigen::Matrix;
     using Eigen::Dynamic;
+    using std::vector;
 
     /** \addtogroup csr_format 
      *  @{
@@ -25,7 +27,7 @@ namespace stan {
      */
     template <typename T>
     const Matrix<T, Dynamic, 1>
-    csr_extract_w(SparseMatrix<T,  RowMajor> A) {
+    csr_extract_w(const SparseMatrix<T,  RowMajor>& A) {
       Matrix<T, Dynamic, 1> w(A.nonZeros());
       w.setZero();
       for (int nze = 0; nze < A.nonZeros(); ++nze)
@@ -40,9 +42,9 @@ namespace stan {
      * @param A dense matrix.
      * @return vector of non-zero entries of A.
      */
-    template <typename T, R, C>
+    template <typename T, int R, int C>
     const Matrix<T, Dynamic, 1>
-    csr_extract_w(Matrix<T,  R, C> A) {
+    csr_extract_w(const Matrix<T,  R, C>& A) {
       SparseMatrix<T, RowMajor> B = A.sparseView();
       Matrix<T, Dynamic, 1> w = csr_extract_w(B);
       return w;

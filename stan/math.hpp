@@ -206,8 +206,12 @@
 #include <stan/math/prim/mat/fun/sort_indices.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_desc.hpp>
-#include <stan/math/prim/mat/fun/csr_sparse_extractors.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_w.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_v.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_u.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_z.hpp>
 #include <stan/math/prim/mat/fun/csr_matrix_times_vector.hpp>
+#include <stan/math/prim/mat/fun/csr_to_dense_matrix.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/stan_print.hpp>
 #include <stan/math/prim/mat/fun/sub_col.hpp>

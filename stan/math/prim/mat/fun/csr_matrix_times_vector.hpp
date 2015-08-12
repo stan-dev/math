@@ -1,5 +1,5 @@
-#ifndef STAN__MATH__MATRIX__CSR_MATRIX_TIMES_VECTOR_HPP
-#define STAN__MATH__MATRIX__CSR_MATRIX_TIMES_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
+#define STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
 #include <vector>
 #include <boost/math/tools/promotion.hpp>
@@ -23,7 +23,7 @@ namespace stan {
      *      is the same length as w.
      *    - u: index of where each row starts in w,  length
      *      is equal to the number of rows plus one.  Last entry is
-     *      one-past-the-end in w.
+     *      one-past-the-end in w, following the Eigen spec.
      *    - z: number of non-zero entries in each row of w,  length is
      *      equal to the number of rows.
      *  Indexing is either zero-based or one-based depending on the value of
@@ -39,6 +39,10 @@ namespace stan {
      *  used for each entry.  If the column index is not needed it is
      *  not checked.  As a result indexing mistakes might produce non-sensical 
      *  operations but out-of-bounds indexing will be caught.
+     *
+     *  Except for possible garbage values in w/v/u, memory usage is
+     *  calculated from the number of non-zero entries (NNZE) and the number of
+     *  rows (NR):  2*NNZE + 2*NR + 1.
      */
 
     /** Return the multiplication of the sparse matrix (specified by
@@ -99,21 +103,21 @@ namespace stan {
       check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
       check_size_match("csr_matrix_times_vector", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
       for (int i=0; i < v.size(); ++i)
-        check_range("csr_matrix_times_vector", "v[" + i + "]", n, v[i]);
+        check_range("csr_matrix_times_vector", "v[]", n, v[i]);
       check_ordered("csr_matrix_times_vector", "u", u);
-      for (int i=0; i < u.size(); ++i) 
-        check_range("csr_matrix_times_vector", "u[" + i + "]", w.size(), u[i]);
+      for (int i=0; i < u.size()-1; ++i) 
+        check_range("csr_matrix_times_vector", "u[]", w.size(), u[i]);
 
       typedef typename boost::math::tools::promote_args<T1, T2>::type fun_scalar_t;
       Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1>  result(m);
       result.setZero();
-      for (int row = 0; row < m; ++i) { 
-        int row_end_in_w = (u[row]-stan::error_index::value) + z[row] - 1;
-        check_range("csr_matrix_times_vector", "z", w.size(), end + stan::error_index::value);
+      for (int row = 0; row < m; ++row) { 
+        int row_end_in_w = (u[row]-stan::error_index::value) + z[row];
+        check_range("csr_matrix_times_vector", "z", w.size(), row_end_in_w);
         int i = 0; // index into dot-product segment entries.
         Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1> b_sub(z[row]);
         b_sub.setZero();
-        for (int nze = u[row]-stan::error_index::value; nze < end; ++nze) {
+        for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {
           b_sub(i) = b(v[nze]-stan::error_index::value);
           ++i;
         }

@@ -1,5 +1,5 @@
-#ifndef STAN__MATH__MATRIX_SPARSE_EXTRACTORS_HPP
-#define STAN__MATH__MATRIX_SPARSE_EXTRACTORS_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_Z_HPP
+#define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_Z_HPP
 
 #include <Eigen/Sparse>
 #include <vector>
@@ -11,7 +11,6 @@ namespace stan {
     using Eigen::SparseMatrix;
     using Eigen::RowMajor;
     using Eigen::Matrix;
-    using Eigen::Dynamic;
     using std::vector;
     using std::adjacent_difference;
 
@@ -28,10 +27,10 @@ namespace stan {
      */
     template <typename T>
     const vector<int>
-    csr_extract_z(SparseMatrix<T,  RowMajor> A) {
+    csr_extract_z(const SparseMatrix<T,  RowMajor>& A) {
       vector<int> u(A.outerSize()+1);
       vector<int> z(A.outerSize()+1);
-      u = extract_u(A);
+      u = csr_extract_u(A);
       adjacent_difference(u.begin(),  u.end(),  z.begin());
       z.erase(z.begin());
       return z;
@@ -44,9 +43,9 @@ namespace stan {
      * @param A dense matrix.
      * @return vector of counts of non-zero entries in each row of A.
      */
-    template <typename T, R, C>
+    template <typename T, int R, int C>
     const vector<int>
-    csr_extract_z(Matrix<T, R, C> A) {
+    csr_extract_z(const Matrix<T, R, C>& A) {
       SparseMatrix<T, RowMajor> B = A.sparseView();
       vector<int> z = csr_extract_z(B);
       return z;

@@ -1,5 +1,5 @@
-#ifndef STAN__MATH__MATRIX_CSR_TO_DENSE_MATRIX_HPP
-#define STAN__MATH__MATRIX_CSR_TO_DENSE_MATRIX_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
+#define STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
 
 #include <vector>
 
@@ -43,25 +43,24 @@ namespace stan {
 
       check_positive("csr_to_dense_matrix", "m", m);
       check_positive("csr_to_dense_matrix", "n", n);
-      check_size_match("csr_to_dense_matrix", "n", n, "b", b.size());
       check_size_match("csr_to_dense_matrix", "m", m, "u", u.size()-1);
       check_size_match("csr_to_dense_matrix", "m", m, "z", z.size());
       check_size_match("csr_to_dense_matrix", "w", w.size(), "v", v.size());
       check_size_match("csr_to_dense_matrix", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
       for (int i=0; i < v.size(); ++i)
-        check_range("csr_to_dense_matrix", "v[" + i + "]", n, v[i]);
+        check_range("csr_to_dense_matrix", "v[]", n, v[i]);
       check_ordered("csr_to_dense_matrix", "u", u);
       for (int i=0; i < u.size(); ++i)
-        check_range("csr_to_dense_matrix", "u[" + i + "]", w.size(), u[i]);
+        check_range("csr_to_dense_matrix", "u[]", w.size(), u[i]);
 
-      Matrix<T, m, n> result(m,n);
+      Matrix<T, R, C> result(m,n);
       result.setZero();
-      for (int row = 0; row < m; ++i) {
-        int row_end_in_w = (u[row]-stan::error_index::value) + z[row] - 1; 
-        check_range("csr_to_dense_matrix", "z", w.size(), row_end_in_w + stan::error_index::value);         
+      for (int row = 0; row < m; ++row) {
+        int row_end_in_w = (u[row]-stan::error_index::value) + z[row]; 
+        check_range("csr_to_dense_matrix", "z", w.size(), row_end_in_w);         
         for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {  
           // row is row index, v[nze] is column index. w[nze] is entry value.
-          result(i,v[nze]-stan::error_index::value) = w(v[nze]-stan::error_index::value);  
+          result(row,v[nze]-stan::error_index::value) = w(v[nze]-stan::error_index::value);  
         }
       }
       return result;
