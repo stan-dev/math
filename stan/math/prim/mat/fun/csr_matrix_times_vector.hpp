@@ -12,6 +12,8 @@
 #include <stan/math/prim/mat/err/check_range.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 
+#include <iostream>
+
 namespace stan {
 
   namespace math {
@@ -93,7 +95,6 @@ namespace stan {
       using stan::math::check_positive;
       using stan::math::check_size_match;
       using stan::math::check_range;
-      using stan::math::check_ordered;
 
       check_positive("csr_matrix_times_vector", "m", m);
       check_positive("csr_matrix_times_vector", "n", n);
@@ -104,23 +105,20 @@ namespace stan {
       check_size_match("csr_matrix_times_vector", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
       for (int i=0; i < v.size(); ++i)
         check_range("csr_matrix_times_vector", "v[]", n, v[i]);
-      check_ordered("csr_matrix_times_vector", "u", u);
-      for (int i=0; i < u.size()-1; ++i) 
-        check_range("csr_matrix_times_vector", "u[]", w.size(), u[i]);
 
       typedef typename boost::math::tools::promote_args<T1, T2>::type fun_scalar_t;
       Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1>  result(m);
       result.setZero();
       for (int row = 0; row < m; ++row) { 
         int row_end_in_w = (u[row]-stan::error_index::value) + z[row];
-        check_range("csr_matrix_times_vector", "z", w.size(), row_end_in_w);
         int i = 0; // index into dot-product segment entries.
         Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1> b_sub(z[row]);
         b_sub.setZero();
         for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {
+          check_range("csr_matrix_times_vector", "j", n, v[nze]);
           b_sub(i) = b(v[nze]-stan::error_index::value);
           ++i;
-        }
+        } // loop skipped when z is zero.
         Eigen::Matrix<T1, Eigen::Dynamic, 1> w_sub(w.segment(u[row]-stan::error_index::value, z[row]));
         result(row) = dot_product(w_sub, b_sub);
       }

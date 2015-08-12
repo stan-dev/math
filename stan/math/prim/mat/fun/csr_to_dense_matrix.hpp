@@ -28,7 +28,7 @@ namespace stan {
      * @throw std::domain_error if m/n/w/v/u/z do not define a matrix.
     */
 
-    template <typename T, int R, int C>
+    template <typename T>
     inline Matrix<T, Dynamic, Dynamic> 
     csr_to_dense_matrix(const int& m,
         const int& n,
@@ -39,7 +39,6 @@ namespace stan {
       using stan::math::check_positive;
       using stan::math::check_size_match;
       using stan::math::check_range;
-      using stan::math::check_ordered;
 
       check_positive("csr_to_dense_matrix", "m", m);
       check_positive("csr_to_dense_matrix", "n", n);
@@ -49,18 +48,16 @@ namespace stan {
       check_size_match("csr_to_dense_matrix", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
       for (int i=0; i < v.size(); ++i)
         check_range("csr_to_dense_matrix", "v[]", n, v[i]);
-      check_ordered("csr_to_dense_matrix", "u", u);
-      for (int i=0; i < u.size(); ++i)
-        check_range("csr_to_dense_matrix", "u[]", w.size(), u[i]);
 
-      Matrix<T, R, C> result(m,n);
+      Matrix<T, Dynamic, Dynamic> result(m,n);
       result.setZero();
       for (int row = 0; row < m; ++row) {
         int row_end_in_w = (u[row]-stan::error_index::value) + z[row]; 
         check_range("csr_to_dense_matrix", "z", w.size(), row_end_in_w);         
         for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {  
           // row is row index, v[nze] is column index. w[nze] is entry value.
-          result(row,v[nze]-stan::error_index::value) = w(v[nze]-stan::error_index::value);  
+          check_range("csr_to_dense_matrix", "j", n, v[nze]);
+          result(row,v[nze]-stan::error_index::value) = w(nze);
         }
       }
       return result;
