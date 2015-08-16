@@ -18,9 +18,8 @@ namespace stan {
     class cholesky_decompose_v_vari : public vari {
     public:
       int M_;  // A.rows() = A.cols()
-      vari** _variRefA;
-      vari** _variRefL;
-      vari* _dummy;
+      vari** variRefA_;
+      vari** variRefL_;
 
       /* ctor for cholesky function
        *
@@ -43,23 +42,18 @@ namespace stan {
                                 const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
-          _variRefA(reinterpret_cast<vari**>
-                    (stan::math::ChainableStack::memalloc_
-                     .alloc(sizeof(vari*) * A.rows() * (A.cols() + 1) / 2))),
-          _variRefL(reinterpret_cast<vari**>
-                    (stan::math::ChainableStack::memalloc_
-                     .alloc(sizeof(vari*) * A.rows() * (A.rows() + 1) / 2))),
-          _dummy(reinterpret_cast<vari*>(stan::math::ChainableStack::memalloc_
-                     .alloc(sizeof(vari)))) {
+          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)),
+          variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)) {
         size_t pos = 0;
         for (size_type i = 0; i < M_; ++i) {
           for (size_type j = 0; j <= i; ++j) {
-            _variRefA[pos] = A.coeffRef(i, j).vi_;
-            _variRefL[pos] = new vari(L_A.coeffRef(i, j), false);
+            variRefA_[pos] = A.coeffRef(i, j).vi_;
+            variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
             ++pos;
           }
         }
-        _dummy = new vari(0.0, false);
       }
 
       /* Reverse mode differentiation 
@@ -79,18 +73,18 @@ namespace stan {
        * */
       virtual void chain() {
         using Eigen::Matrix;
-        using Eigen::Dynamic;
         using Eigen::RowMajor;
-        Matrix<double, Dynamic, Dynamic, RowMajor> adjL(M_, M_);
-        Matrix<double, Dynamic, Dynamic, RowMajor> LA(M_, M_);
-        Matrix<double, Dynamic, Dynamic, RowMajor> adjA(M_, M_);
+        Matrix<double, -1, -1, RowMajor> adjL(M_, M_);
+        Matrix<double, -1, -1, RowMajor> LA(M_, M_);
+        Matrix<double, -1, -1, RowMajor> adjA(M_, M_);
         size_t pos = 0;
-        for (size_type i = 0; i < M_; ++i)
+        for (size_type i = 0; i < M_; ++i) {
           for (size_type j = 0; j <= i; ++j) {
-            adjL.coeffRef(i, j) = _variRefL[pos]->adj_;
-            LA.coeffRef(i, j) = _variRefL[pos]->val_;
+            adjL.coeffRef(i, j) = variRefL_[pos]->adj_;
+            LA.coeffRef(i, j) = variRefL_[pos]->val_;
             ++pos;
           }
+        }
 
         --pos;
         for (int i = M_ - 1; i >= 0; --i) {
@@ -110,7 +104,7 @@ namespace stan {
               adjL.coeffRef(j, k) = adjL.coeffRef(j, k)
                 - adjA.coeffRef(i, j) * LA.coeffRef(i, k);
             }
-            _variRefA[pos--]->adj_ += adjA.coeffRef(i, j);
+            variRefA_[pos--]->adj_ += adjA.coeffRef(i, j);
           }
         }
       }
@@ -129,7 +123,7 @@ namespace stan {
      * @param Matrix A
      * @return L cholesky factor of A
      */
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    Eigen::Matrix<var, -1, -1>
     cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
       stan::math::check_square("cholesky_decompose", "A", A);
       stan::math::check_symmetric("cholesky_decompose", "A", A);
@@ -146,14 +140,14 @@ namespace stan {
       // arena allocator.
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A, L_A);
-
+      stan::math::vari dummy(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       size_t pos = 0;
       for (size_type i = 0; i < L.cols(); ++i) {
         for (size_type j = 0; j <= i; ++j)
-          L.coeffRef(i, j).vi_ = baseVari->_variRefL[pos++];
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
         for (size_type k = (i + 1); k < L.cols(); ++k)
-          L.coeffRef(i, k).vi_ = baseVari->_dummy;
+          L.coeffRef(i, k).vi_ = &dummy;
       }
       return L;
     }
