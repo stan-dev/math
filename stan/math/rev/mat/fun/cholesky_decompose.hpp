@@ -90,19 +90,19 @@ namespace stan {
         for (int i = M_ - 1; i >= 0; --i) {
           for (int j = i; j >= 0; --j) {
             if (i == j) {
-              adjA.coeffRef(i, j) = 0.5 * adjL.coeffRef(i, j)
-                / LA.coeffRef(i, j);
+              adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j)
+                / LA.coeff(i, j);
             } else {
-              adjA.coeffRef(i, j) = adjL.coeffRef(i, j)
-                / LA.coeffRef(j, j);
-              adjL.coeffRef(j, j) = adjL.coeffRef(j, j)
-                - adjL.coeffRef(i, j) * LA.coeffRef(i, j) / LA.coeffRef(j, j);
+              adjA.coeffRef(i, j) = adjL.coeff(i, j)
+                / LA.coeff(j, j);
+              adjL.coeffRef(j, j) -= adjL.coeff(i, j)
+                * LA.coeff(i, j) / LA.coeff(j, j);
             }
             for (int k = j - 1; k >=0; --k) {
-              adjL.coeffRef(i, k) = adjL.coeffRef(i, k)
-                - adjA.coeffRef(i, j) * LA.coeffRef(j, k);
-              adjL.coeffRef(j, k) = adjL.coeffRef(j, k)
-                - adjA.coeffRef(i, j) * LA.coeffRef(i, k);
+              adjL.coeffRef(i, k) -= adjA.coeff(i, j)
+                * LA.coeff(j, k);
+              adjL.coeffRef(j, k) -= adjA.coeff(i, j)
+                * LA.coeff(i, k);
             }
             variRefA_[pos--]->adj_ += adjA.coeffRef(i, j);
           }
