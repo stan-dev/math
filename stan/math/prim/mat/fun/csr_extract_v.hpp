@@ -42,14 +42,14 @@ namespace stan {
      * @return vector of column indexes to non-zero entries of A.
      */
     template <typename T, int R, int C>
-    const vector<int> 
+    const vector<int>
     csr_extract_w(const Matrix<T,  R, C>& A) {
       SparseMatrix<T, RowMajor> B = A.sparseView();
       vector<int> v = csr_extract_v(B);
       return v;
     }
 
-    /** @} */   // end of csr_format group  
+    /** @} */   // end of csr_format group
   }
 }
 

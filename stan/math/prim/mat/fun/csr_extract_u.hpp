@@ -27,7 +27,7 @@ namespace stan {
     template <typename T>
     const vector<int>
     csr_extract_u(const SparseMatrix<T,  RowMajor>& A) {
-      vector<int> u(A.outerSize()+1); // last entry is garbage.
+      vector<int> u(A.outerSize()+1);  // last entry is garbage.
       for (int nze = 0; nze <= A.outerSize(); ++nze)
         u[nze] = *(A.outerIndexPtr()+nze) + stan::error_index::value;
       return u;
@@ -47,7 +47,7 @@ namespace stan {
       return u;
     }
 
-    /** @} */   // end of csr_format group  
+    /** @} */   // end of csr_format group
   }
 
 }

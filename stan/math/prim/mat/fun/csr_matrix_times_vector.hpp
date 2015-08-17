@@ -1,17 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
-#include <vector>
-#include <boost/math/tools/promotion.hpp>
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
-
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_range.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
-
+#include <boost/math/tools/promotion.hpp>
+#include <vector>
 #include <iostream>
 
 namespace stan {
@@ -79,18 +76,19 @@ namespace stan {
      */
 
     /** \addtogroup csr_format
-      */
+     */
 
     template <typename T1, typename T2>
     inline
-    Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, Eigen::Dynamic, 1>
+    Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
+                  Eigen::Dynamic, 1>
     csr_matrix_times_vector(const int& m,
-                    const int& n,
-                    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
-                    const std::vector<int>& v,
-                    const std::vector<int>& u,
-                    const std::vector<int>& z,
-                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
+                            const int& n,
+                            const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
+                            const std::vector<int>& v,
+                            const std::vector<int>& u,
+                            const std::vector<int>& z,
+                            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
       using stan::math::dot_product;
       using stan::math::check_positive;
       using stan::math::check_size_match;
@@ -102,35 +100,37 @@ namespace stan {
       check_size_match("csr_matrix_times_vector", "m", m, "u", u.size()-1);
       check_size_match("csr_matrix_times_vector", "m", m, "z", z.size());
       check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
-      check_size_match("csr_matrix_times_vector", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
+      check_size_match("csr_matrix_times_vector", "u/z",
+                       u[m-1] + z[m-1]-1, "v", v.size());
       for (int i=0; i < v.size(); ++i)
         check_range("csr_matrix_times_vector", "v[]", n, v[i]);
 
-      typedef typename boost::math::tools::promote_args<T1, T2>::type fun_scalar_t;
+      typedef typename boost::math::tools::promote_args<T1, T2>::type
+        fun_scalar_t;
       Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1>  result(m);
       result.setZero();
-      for (int row = 0; row < m; ++row) { 
+      for (int row = 0; row < m; ++row) {
         int row_end_in_w = (u[row]-stan::error_index::value) + z[row];
-        int i = 0; // index into dot-product segment entries.
+        int i = 0;  // index into dot-product segment entries.
         Eigen::Matrix<fun_scalar_t, Eigen::Dynamic, 1> b_sub(z[row]);
         b_sub.setZero();
-        for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {
+        for (int nze = u[row] - stan::error_index::value;
+             nze < row_end_in_w; ++nze) {
           check_range("csr_matrix_times_vector", "j", n, v[nze]);
           b_sub(i) = b(v[nze]-stan::error_index::value);
           ++i;
-        } // loop skipped when z is zero.
-        Eigen::Matrix<T1, Eigen::Dynamic, 1> w_sub(w.segment(u[row]-stan::error_index::value, z[row]));
+        }  // loop skipped when z is zero.
+        Eigen::Matrix<T1, Eigen::Dynamic, 1>
+          w_sub(w.segment(u[row]-stan::error_index::value, z[row]));
         result(row) = dot_product(w_sub, b_sub);
       }
       return result;
     }
 
-  /** @}*/   // end of csr_format group
+    /** @}*/   // end of csr_format group
 
   }
 
 }
 
 #endif
-
-

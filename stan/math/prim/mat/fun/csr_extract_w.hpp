@@ -50,7 +50,7 @@ namespace stan {
       return w;
     }
 
-    /** @} */   // end of csr_format group  
+    /** @} */   // end of csr_format group
   }
 }
 

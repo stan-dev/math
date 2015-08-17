@@ -50,7 +50,7 @@ namespace stan {
       vector<int> z = csr_extract_z(B);
       return z;
     }
-    /** @} */   // end of csr_format group  
+    /** @} */   // end of csr_format group
   }
 }
 

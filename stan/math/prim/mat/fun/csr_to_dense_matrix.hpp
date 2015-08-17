@@ -16,7 +16,7 @@ namespace stan {
      */
 
     /** Construct a dense Eigen matrix from the CSR format components.
-     *  
+     *
      * @tparam T Type of matrix entries.
      * @param m Number of matrix rows.
      * @param n Number of matrix columns.
@@ -29,7 +29,7 @@ namespace stan {
     */
 
     template <typename T>
-    inline Matrix<T, Dynamic, Dynamic> 
+    inline Matrix<T, Dynamic, Dynamic>
     csr_to_dense_matrix(const int& m,
         const int& n,
         const Matrix<T, Dynamic, 1>& w,
@@ -45,19 +45,21 @@ namespace stan {
       check_size_match("csr_to_dense_matrix", "m", m, "u", u.size()-1);
       check_size_match("csr_to_dense_matrix", "m", m, "z", z.size());
       check_size_match("csr_to_dense_matrix", "w", w.size(), "v", v.size());
-      check_size_match("csr_to_dense_matrix", "u/z", u[m-1] + z[m-1]-1, "v", v.size());
+      check_size_match("csr_to_dense_matrix", "u/z", u[m-1] + z[m-1]-1,
+                       "v", v.size());
       for (int i=0; i < v.size(); ++i)
         check_range("csr_to_dense_matrix", "v[]", n, v[i]);
 
-      Matrix<T, Dynamic, Dynamic> result(m,n);
+      Matrix<T, Dynamic, Dynamic> result(m, n);
       result.setZero();
       for (int row = 0; row < m; ++row) {
-        int row_end_in_w = (u[row]-stan::error_index::value) + z[row]; 
-        check_range("csr_to_dense_matrix", "z", w.size(), row_end_in_w);         
-        for (int nze = u[row]-stan::error_index::value; nze < row_end_in_w; ++nze) {  
+        int row_end_in_w = (u[row]-stan::error_index::value) + z[row];
+        check_range("csr_to_dense_matrix", "z", w.size(), row_end_in_w);
+        for (int nze = u[row] - stan::error_index::value;
+             nze < row_end_in_w; ++nze) {
           // row is row index, v[nze] is column index. w[nze] is entry value.
           check_range("csr_to_dense_matrix", "j", n, v[nze]);
-          result(row,v[nze]-stan::error_index::value) = w(nze);
+          result(row, v[nze] - stan::error_index::value) = w(nze);
         }
       }
       return result;
@@ -69,5 +71,3 @@ namespace stan {
 }
 
 #endif
-
-
