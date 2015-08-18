@@ -117,12 +117,12 @@ namespace stan {
         for (int nze = u[row] - stan::error_index::value;
              nze < row_end_in_w; ++nze) {
           check_range("csr_matrix_times_vector", "j", n, v[nze]);
-          b_sub(i) = b(v[nze]-stan::error_index::value);
+          b_sub.coeffRef(i) = b.coeffRef(v[nze]-stan::error_index::value);
           ++i;
         }  // loop skipped when z is zero.
         Eigen::Matrix<T1, Eigen::Dynamic, 1>
           w_sub(w.segment(u[row]-stan::error_index::value, z[row]));
-        result(row) = dot_product(w_sub, b_sub);
+        result.coeffRef(row) = dot_product(w_sub, b_sub);
       }
       return result;
     }
