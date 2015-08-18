@@ -47,7 +47,7 @@ namespace stan {
       check_size_match("csr_to_dense_matrix", "w", w.size(), "v", v.size());
       check_size_match("csr_to_dense_matrix", "u/z", u[m-1] + z[m-1]-1,
                        "v", v.size());
-      for (int i=0; i < v.size(); ++i)
+      for (unsigned int i=0; i < v.size(); ++i)
         check_range("csr_to_dense_matrix", "v[]", n, v[i]);
 
       Matrix<T, Dynamic, Dynamic> result(m, n);
