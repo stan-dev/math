@@ -6,10 +6,8 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_range.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
-#include <iostream>
 
 namespace stan {
 
