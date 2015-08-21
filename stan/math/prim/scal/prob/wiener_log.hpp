@@ -133,16 +133,24 @@ namespace stan {
       VectorView<const T_tau> tau_vec(tau);
       VectorView<const T_delta> delta_vec(delta);
 
+      size_t N_y_tau = max_size(y, tau);
+      for (size_t i = 0; i < N_y_tau; i++)
+        if (y_vec[i] <= tau_vec[i]) {
+          std::stringstream msg;
+          msg << ", but must be greater than"
+                 "nondecision time which is ";
+          msg << tau_vec[i];
+          std::string msg_str(msg.str());
+          domain_error(function, "Random variable", y_vec[i],
+                       "is ", msg_str.c_str());
+          throw std::domain_error(msg_str.c_str());
+        }
+
+
       if (!include_summand<propto, T_y, T_alpha, T_tau,
           T_beta, T_delta>::value) {
         return 0;
       }
-
-      for (size_t i = 0; i < N; i++)
-        if (y_vec[i] < tau_vec[i]) {
-          lp = stan::math::negative_infinity();
-          return lp;
-        }
 
       for (size_t i = 0; i < N; i++) {
         typename scalar_type<T_beta>::type one_minus_beta
