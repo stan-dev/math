@@ -149,7 +149,7 @@ namespace stan {
       size_t accum = 0;
       size_t accum_i = accum;
       for (size_type j = 0; j < L.cols(); ++j) {
-        for (size_type i = j; i <= L.cols(); ++i) {
+        for (size_type i = j; i < L.cols(); ++i) {
           accum_i += i;
           size_t pos = j + accum_i;
           L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos];
