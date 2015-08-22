@@ -46,17 +46,13 @@ namespace stan {
                     (A.rows() * (A.rows() + 1) / 2)),
           variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * (A.rows() + 1) / 2)) {
-        size_t accum = 0;
-        size_t accum_i = accum;
-        for (size_type j = 0; j < M_; ++j) {
-          for (size_type i = j; i < M_; ++i) {
-            accum_i += i;
-            size_t pos = j + accum_i;
+            size_t pos = 0;
+        for (size_type i = 0; i < M_; ++i) {
+          for (size_type j = 0; j <= i; ++j) {
             variRefA_[pos] = A.coeffRef(i, j).vi_;
             variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
+            ++pos;
           }
-          accum += j;
-          accum_i = accum;
         }
       }
 
@@ -146,18 +142,12 @@ namespace stan {
         = new cholesky_decompose_v_vari(A, L_A);
       stan::math::vari dummy(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
-      size_t accum = 0;
-      size_t accum_i = accum;
-      for (size_type j = 0; j < L.cols(); ++j) {
-        for (size_type i = j; i < L.cols(); ++i) {
-          accum_i += i;
-          size_t pos = j + accum_i;
-          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos];
-        }
-        for (size_type k = 0; k < j; ++k)
-          L.coeffRef(k, j).vi_ = &dummy;
-        accum += j;
-        accum_i = accum;
+      size_t pos = 0;
+      for (size_type i = 0; i < L.cols(); ++i) {
+        for (size_type j = 0; j <= i; ++j)
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+        for (size_type k = (i + 1); k < L.cols(); ++k)
+          L.coeffRef(i, k).vi_ = &dummy;
       }
       return L;
     }
