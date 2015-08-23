@@ -1463,7 +1463,8 @@ TEST(AgradMixMatrixMdivideRightSPD,ffv_exceptions) {
   matrix_d fd1(3,3), fd2(4,4);
   row_vector_d rvd1(3), rvd2(4);
   row_vector_d vd1(3), vd2(4);
-
+  fd1.setZero();
+  fd2.setZero();
   EXPECT_THROW(mdivide_right_spd(fd2, fv1), std::invalid_argument);
   EXPECT_THROW(mdivide_right_spd(fv2, fd1), std::invalid_argument);
   EXPECT_THROW(mdivide_right_spd(fv2, fv1), std::invalid_argument);
