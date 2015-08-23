@@ -22,9 +22,9 @@ namespace stan {
       int size = static_cast<int>(v.size());
       check_range("rank", "v", size, s);
       --s;
-      int count(0U);
+      int count(0);
       T compare(v[s]);
-      for (int i = 0U; i < size; ++i)
+      for (int i = 0; i < size; ++i)
         if (v[i] < compare)
           ++count;
       return count;
@@ -45,9 +45,9 @@ namespace stan {
       check_range("rank", "v", size, s);
       --s;
       const T * vv = v.data();
-      int count(0U);
+      int count(0);
       T compare(vv[s]);
-      for (int i = 0U; i < size; ++i)
+      for (int i = 0; i < size; ++i)
         if (vv[i] < compare)
           ++count;
       return count;
