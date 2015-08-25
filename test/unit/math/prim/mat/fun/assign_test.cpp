@@ -1,10 +1,75 @@
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 #include <stan/math/prim/mat/fun/assign.hpp>
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixAssign,int) {
+void test_print_mat_size(int n, const std::string& expected) {
+  using stan::math::print_mat_size;
+  std::stringstream ss;
+  stan::math::print_mat_size(n, ss);
+  EXPECT_EQ(expected, ss.str());
+}
+
+TEST(MathMatrixAssign, print_mat_size) {
+  test_print_mat_size(-1, "dynamically sized");
+  test_print_mat_size(0, "0");
+  test_print_mat_size(1, "1");
+  test_print_mat_size(10, "10");
+}
+
+TEST(MathMatrixAssign, realToDouble) {
+  double a = 2.7;
+  int b = 0;
+  EXPECT_NO_THROW(stan::math::assign(b, a));
+  EXPECT_NO_THROW(stan::math::assign(a, b));
+}
+
+TEST(MathMatrixAssign, matSizeMismatch) {
+  using Eigen::Matrix;
+  using stan::math::assign;
+  Matrix<double, 1, -1> x(3);
+  Matrix<double, 1, -1> y(3);
+  EXPECT_NO_THROW(assign(x, y));
+  Matrix<double, 1, -1> z(10);
+  EXPECT_THROW_MSG(assign(x, z), std::exception,
+                   "Columns of left-hand-side (3) and columns"
+                   " of right-hand-side (10) must match in size");
+
+  Matrix<double, -1, 1> a(5);
+  Matrix<double, -1, 1> b(6);
+  EXPECT_THROW_MSG(assign(a, b), std::exception,
+                   "Rows of left-hand-side (5) and rows"
+                   " of right-hand-side (6) must match in size");
+
+  std::vector<double> u(5);
+  std::vector<double> v(7);
+  EXPECT_THROW_MSG(assign(u, v), std::exception,
+                   "size of left-hand side (5) and size of"
+                   " right-hand side (7) must match in size");
+
+  Matrix<double, -1, -1> m1(4, 5);
+  Matrix<double, -1, -1> m2(5, 4);
+  EXPECT_THROW_MSG(assign(m1, m2), std::exception,
+                   "Rows of left-hand-side (4) and rows of"
+                   " right-hand-side (5) must match in size");
+
+  Matrix<double, -1, -1> m3(10, 10);
+  Matrix<double, -1, -1> m4(2, 3);
+  EXPECT_THROW_MSG(assign(m3.block(1,1,7,3), m4), std::exception,
+                   "left-hand side rows (7) and right-hand"
+                   " side rows (2) must match in size");
+  
+  EXPECT_THROW_MSG(assign(m3.block(1,1,2,5), m4), std::exception,
+                   "assign: left-hand side cols (5) and"
+                   " right-hand side cols (3) must match in size");
+}
+
+
+
+TEST(MathMatrixAssign,test_int) {
   using stan::math::assign;
   int a;
   int b = 5;
@@ -15,7 +80,7 @@ TEST(MathMatrixAssign,int) {
   assign(a,12);
   EXPECT_EQ(a,12);
 }
-TEST(MathMatrixAssign,double) {
+TEST(MathMatrixAssign,test_double) {
   using stan::math::assign;
 
   double a;
