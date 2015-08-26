@@ -4,6 +4,42 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
+TEST(MathFunctions, inv_Phi) {
+  using stan::math::var;
+  using stan::math::inv_Phi;
+  using stan::math::Phi;
+  EXPECT_FLOAT_EQ(0.0, inv_Phi(0.5));
+  var p = 0.123456789;
+  EXPECT_FLOAT_EQ(p.val(), Phi(inv_Phi(p)).val());
+  p = 8e-311;
+  EXPECT_FLOAT_EQ(p.val(), Phi(inv_Phi(p)).val());
+  p = 0.99;
+  EXPECT_FLOAT_EQ(p.val(), Phi(inv_Phi(p)).val());
+
+  // breakpoints
+  p = 0.02425;
+  EXPECT_FLOAT_EQ(p.val(), Phi(inv_Phi(p)).val());
+  p = 0.97575;
+  EXPECT_FLOAT_EQ(p.val(), Phi(inv_Phi(p)).val());
+}
+TEST(MathFunctions, inv_Phi_inf) {
+  using stan::math::var;
+  using stan::math::inv_Phi;
+  var p = 7e-311;
+  const var inf = std::numeric_limits<var>::infinity();
+  EXPECT_EQ(inv_Phi(p),-inf);
+  p = 1.0;
+  EXPECT_EQ(inv_Phi(p),inf);
+}
+TEST(MathFunctions, inv_Phi_nan) {
+  using stan::math::var;
+  using stan::math::inv_Phi;
+  var nan = std::numeric_limits<var>::quiet_NaN();
+  EXPECT_THROW(inv_Phi(nan), std::domain_error);
+  EXPECT_THROW(inv_Phi(-2.0), std::domain_error);
+  EXPECT_THROW(inv_Phi(2.0), std::domain_error);
+}
+
 TEST(AgradRev, inv_Phi) {
   using stan::math::var;
 
@@ -35,7 +71,7 @@ struct inv_Phi_fun {
 };
 
 TEST(AgradRev,inv_Phi_NaN) {
-  inv_Phi_fun inv_Phi_;
-  test_nan(inv_Phi_,true,false);
+  inv_Phi_fun foo;
+  test_nan(foo,true,false);
 }
 

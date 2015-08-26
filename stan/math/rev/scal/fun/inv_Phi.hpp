@@ -4,23 +4,22 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/rev/scal/fun/square.hpp>
 
 namespace stan {
   namespace math {
 
     namespace {
       class inv_Phi_vari : public op_v_vari {
-      private:
-        double m_z;
       public:
         explicit inv_Phi_vari(vari* avi) :
-          op_v_vari(m_z = stan::math::inv_Phi(avi->val_), avi) {
+          op_v_vari(stan::math::inv_Phi(avi->val_), avi) {
         }
         void chain() {
           static const double NEG_HALF = -0.5;
           avi_->adj_ += adj_
             * SQRT_2_TIMES_SQRT_PI
-            / std::exp(NEG_HALF * m_z * m_z);
+            / std::exp(NEG_HALF * val_ * val_);
         }
       };
     }

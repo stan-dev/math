@@ -7,6 +7,42 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/exp.hpp>
 
+TEST(MathFunctions, inv_Phi) {
+  using stan::math::fvar;
+  using stan::math::inv_Phi;
+  using stan::math::Phi;
+  EXPECT_FLOAT_EQ(0.0, inv_Phi(0.5));
+  fvar<double> p = 0.123456789;
+  EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
+  p = 8e-311;
+  EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
+  p = 0.99;
+  EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
+
+  // breakpoints
+  p = 0.02425;
+  EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
+  p = 0.97575;
+  EXPECT_FLOAT_EQ(p.val_, Phi(inv_Phi(p)).val_);
+}
+TEST(MathFunctions, inv_Phi_inf) {
+  using stan::math::fvar;
+  using stan::math::inv_Phi;
+  fvar<double> p = 7e-311;
+  const fvar<double> inf = std::numeric_limits<fvar<double> >::infinity();
+  EXPECT_EQ(inv_Phi(p),-inf);
+  p = 1.0;
+  EXPECT_EQ(inv_Phi(p),inf);
+}
+TEST(MathFunctions, inv_Phi_nan) {
+  using stan::math::fvar;
+  using stan::math::inv_Phi;
+  fvar<double> nan = std::numeric_limits<fvar<double> >::quiet_NaN();
+  EXPECT_THROW(inv_Phi(nan), std::domain_error);
+  EXPECT_THROW(inv_Phi(-2.0), std::domain_error);
+  EXPECT_THROW(inv_Phi(2.0), std::domain_error);
+}
+
 TEST(AgradFwdinv_Phi,Fvar) {
   using stan::math::fvar;
   using stan::math::inv_Phi;
@@ -46,6 +82,6 @@ struct inv_Phi_fun {
 };
 
 TEST(AgradFwdinv_Phi,inv_Phi_NaN) {
-  inv_Phi_fun inv_Phi_;
-  test_nan_fwd(inv_Phi_,true);
+  inv_Phi_fun foo;
+  test_nan_fwd(foo,true);
 }

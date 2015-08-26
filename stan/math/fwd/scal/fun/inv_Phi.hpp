@@ -5,6 +5,7 @@
 
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
 
@@ -14,10 +15,9 @@ namespace stan {
     inline fvar<T> inv_Phi(const fvar<T>& p) {
       using stan::math::inv_Phi;
       using std::exp;
-      using std::log;
       T xv = inv_Phi(p.val_);
       return fvar<T>(xv,
-                     p.d_ / exp(-0.5 * xv * xv) * SQRT_2_TIMES_SQRT_PI);
+                     p.d_ / exp(-0.5 * square(xv)) * SQRT_2_TIMES_SQRT_PI);
     }
   }
 }

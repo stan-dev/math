@@ -26,15 +26,11 @@ namespace stan {
      * @param p Argument between 0 and 1.
      * @return Real number
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    inv_Phi(const T p) {
+    inline double
+    inv_Phi(double p) {
       // overridden in fvar and var, so can hard-code
       // here for scalars only
-      using stan::math::check_not_nan;
-
-      check_not_nan("inv_Phi",  "p", p);
-      stan::math::check_bounded<T, double, double>
+      stan::math::check_bounded<double, double, double>
         ("inv_Phi", "Probability variable", p, 0, 1);
 
       // if T is not double, the gradient will overflow before inv_Phi does
@@ -43,29 +39,29 @@ namespace stan {
       if (p == 1)
         return INFTY;
 
-      const double a[6] = {
+      static const double a[6] = {
         -3.969683028665376e+01,  2.209460984245205e+02,
         -2.759285104469687e+02,  1.383577518672690e+02,
         -3.066479806614716e+01,  2.506628277459239e+00
       };
-      const double b[5] = {
+      static const double b[5] = {
         -5.447609879822406e+01,  1.615858368580409e+02,
         -1.556989798598866e+02,  6.680131188771972e+01,
         -1.328068155288572e+01
       };
-      const double c[6] = {
+      static const double c[6] = {
         -7.784894002430293e-03, -3.223964580411365e-01,
         -2.400758277161838e+00, -2.549732539343734e+00,
         4.374664141464968e+00,  2.938163982698783e+00
       };
-      const double d[4] = {
+      static const double d[4] = {
         7.784695709041462e-03,  3.224671290700398e-01,
         2.445134137142996e+00,  3.754408661907416e+00
       };
 
-      const double p_low = 0.02425;
-      const double p_high = 0.97575;
-      T q, r, x;
+      static const double p_low = 0.02425;
+      static const double p_high = 0.97575;
+      double q, r, x;
 
       if ( (p_low <= p) && (p <= p_high) ) {  // central region
         q = p - 0.5;
@@ -83,7 +79,7 @@ namespace stan {
       }
 
       if (x < 37.6) {  // gradient blows up past here anyway
-        T e, u;
+        double e, u;
         e = stan::math::Phi(x) - p;
         u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * x * x);
         x = x - u / (1.0 + 0.5 * x * u);
