@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
 
-#include <boost/math/tools/promotion.hpp>
-#include <boost/math/special_functions/erf.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -26,14 +23,10 @@ namespace stan {
      * @param p Argument between 0 and 1.
      * @return Real number
      */
-    inline double
-    inv_Phi(double p) {
-      // overridden in fvar and var, so can hard-code
-      // here for scalars only
-      stan::math::check_bounded<double, double, double>
-        ("inv_Phi", "Probability variable", p, 0, 1);
+    inline double inv_Phi(double p) {
+      stan::math::check_bounded<double, double, double>("inv_Phi",
+                                        "Probability variable", p, 0, 1);
 
-      // if T is not double, the gradient will overflow before inv_Phi does
       if (p < 8e-311)
         return NEGATIVE_INFTY;
       if (p == 1)
@@ -61,28 +54,27 @@ namespace stan {
 
       static const double p_low = 0.02425;
       static const double p_high = 0.97575;
-      double q, r, x;
 
-      if ( (p_low <= p) && (p <= p_high) ) {  // central region
-        q = p - 0.5;
-        r = q * q;
-        x = (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
-            (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1.0);
-      } else if (p < p_low) {  // lower region
-        q = std::sqrt(-2.0*std::log(p));
-        x = (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-             ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1.0);
-      } else {  // upper region
-        q = std::sqrt(-2.0*stan::math::log1m(p));
-        x = -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-              ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1.0);
+      double x;
+      if ((p_low <= p) && (p <= p_high)) {
+        double q = p - 0.5;
+        double r = q * q;
+        x = (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5])*q
+          / (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1.0);
+      } else if (p < p_low) {
+        double q = std::sqrt(-2.0*std::log(p));
+        x = (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5])
+          / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
+      } else {
+        double q = std::sqrt(-2.0 * stan::math::log1m(p));
+        x = -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5])
+          / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
       }
 
-      if (x < 37.6) {  // gradient blows up past here anyway
-        double e, u;
-        e = stan::math::Phi(x) - p;
-        u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * x * x);
-        x = x - u / (1.0 + 0.5 * x * u);
+      if (x < 37.6) {  // gradient blows up past here
+        double e = stan::math::Phi(x) - p;
+        double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * x * x);
+        x -= u / (1.0 + 0.5 * x * u);
       }
 
       return x;
@@ -90,5 +82,4 @@ namespace stan {
 
   }
 }
-
 #endif
