@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <iostream>
@@ -14,6 +15,20 @@
 namespace stan {
 
   namespace math {
+
+    /**
+     * Helper function to return the matrix size as either "dynamic" or "1".
+     *
+     * @param n Eigen matrix size specification.
+     * @param o Output stream.
+     * @return String representing size.
+     */
+    void print_mat_size(int n, std::ostream& o) {
+      if (n == Eigen::Dynamic)
+        o << "dynamically sized";
+      else
+        o << n;
+    }
 
     // Recursive assignment with size match checking and promotion
 
@@ -63,10 +78,14 @@ namespace stan {
            const Eigen::Matrix<RHS, R2, C2>& y) {
       std::stringstream ss;
       ss << "shapes must match, but found"
-         << " R1=" << R1
-         << "; C1=" << C1
-         << "; R2=" << R2
-         << "; C2=" << C2;
+         << " left-hand side rows=";
+      print_mat_size(R1, ss);
+      ss << "; left-hand side cols=";
+      print_mat_size(C1, ss);
+      ss << "; right-hand side rows=";
+      print_mat_size(R2, ss);
+      ss << "; right-hand side cols=";
+      print_mat_size(C2, ss);
       std::string ss_str(ss.str());
       invalid_argument("assign(Eigen::Matrix, Eigen::Matrix)",
                        "", "", ss_str.c_str());
@@ -94,8 +113,8 @@ namespace stan {
     assign(Eigen::Matrix<LHS, R, C>& x,
            const Eigen::Matrix<RHS, R, C>& y) {
       stan::math::check_matching_dims("assign",
-                                                "x", x,
-                                                "y", y);
+                                      "left-hand-side", x,
+                                      "right-hand-side", y);
       for (int i = 0; i < x.size(); ++i)
         assign(x(i), y(i));
     }
@@ -122,9 +141,12 @@ namespace stan {
     inline void
     assign(Eigen::Block<LHS> x,
            const Eigen::Matrix<RHS, R, C>& y) {
-      stan::math::check_matching_sizes("assign",
-                                                 "x", x,
-                                                 "y", y);
+      stan::math::check_size_match("assign",
+                                   "left-hand side rows", x.rows(),
+                                   "right-hand side rows", y.rows());
+      stan::math::check_size_match("assign",
+                                   "left-hand side cols", x.cols(),
+                                   "right-hand side cols", y.cols());
       for (int n = 0; n < y.cols(); ++n)
         for (int m = 0; m < y.rows(); ++m)
           assign(x(m, n), y(m, n));
@@ -154,12 +176,11 @@ namespace stan {
     inline void
     assign(std::vector<LHS>& x, const std::vector<RHS>& y) {
       stan::math::check_matching_sizes("assign",
-                                                 "x", x,
-                                                 "y", y);
+                                       "left-hand side", x,
+                                       "right-hand side", y);
       for (size_t i = 0; i < x.size(); ++i)
         assign(x[i], y[i]);
     }
-
 
   }
 }
