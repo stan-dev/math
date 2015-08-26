@@ -11,13 +11,13 @@ namespace stan {
   namespace math {
 
     template <typename T>
-    inline fvar<T> inv_Phi(const fvar<T>& x) {
+    inline fvar<T> inv_Phi(const fvar<T>& p) {
       using stan::math::inv_Phi;
       using std::exp;
       using std::log;
-      T xv = inv_Phi(x.val_);
+      T xv = inv_Phi(p.val_);
       return fvar<T>(xv,
-                     x.d_ / exp(-0.5 * xv * xv) * SQRT_2_TIMES_SQRT_PI);
+                     p.d_ / exp(-0.5 * xv * xv) * SQRT_2_TIMES_SQRT_PI);
     }
   }
 }

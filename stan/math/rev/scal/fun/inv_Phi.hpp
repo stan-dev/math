@@ -35,8 +35,8 @@ namespace stan {
      * @param p Probability
      * @return The unit normal inverse cdf evaluated at p
      */
-    inline var inv_Phi(const stan::math::var& a) {
-      return var(new inv_Phi_vari(a.vi_));
+    inline var inv_Phi(const stan::math::var& p) {
+      return var(new inv_Phi_vari(p.vi_));
     }
 
   }
