@@ -540,6 +540,7 @@
 
 #include <stan/math/rev/core.hpp>
 
+#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
