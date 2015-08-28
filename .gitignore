@@ -1,15 +1,29 @@
-# /
-/demo
-/models
-/*.dSYM
-/bin
-
-# libraries
-/stan.git
+# tests
+/test/*/*/*/*/*/*
+/test/*/*/*/*/*
+/test/*/*/*/*
+/test/*/*/*
+/test/*/*
+/test/*
+!/test/*/*/*/*/*/*/
+!/test/*/*/*/*/*/
+!/test/*/*/*/*/
+!/test/*/*/*/
+!/test/*/*/
+!/test/*/
+!/test/*/*/*/*/*/*.*
+!/test/*/*/*/*/*.*
+!/test/*/*/*/*.*
+!/test/*/*/*.*
+!/test/*/*.*
+!/test/*.*
+/test/**/*_generated_*_test.cpp
+/test/**/*.xml
 
 # other binary
 *.o
 *.exe
+*.a
 
 # /doc/
 /doc/api
@@ -31,24 +45,9 @@
 *.d
 *.hpp.d.*
 .Rproj.user
-stan.Rproj
 .kdev4/
-stan.kdev4
 .Rapp.history
 
-# tests: compiled models
-/src/test/test-models/*.hpp
-/src/test/test-models/*/*.hpp
-/src/test/test-models/*/*/*.hpp
-/src/test/test-models/*/*/*/*.hpp
-/src/test/test-models/*/*/*/*/*.hpp
-/src/test/test-models/*/*/*/*/*/*.hpp
-/src/test/test-models/*/*/*/*/*/*/*.hpp
-!/src/test/test-models/**/*.stan
-!/src/test/test-models/**/.gitignore
-
-# tests: generated agrad tests
-/src/test/prob/*/*_generated_*_test.cpp
 
 # For the Mac
 *.DS_Store
