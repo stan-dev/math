@@ -324,6 +324,7 @@
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/inverse_softmax.hpp>
@@ -630,6 +631,7 @@
 #include <stan/math/rev/scal/fun/inv.hpp>
 #include <stan/math/rev/scal/fun/inv_cloglog.hpp>
 #include <stan/math/rev/scal/fun/inv_logit.hpp>
+#include <stan/math/rev/scal/fun/inv_Phi.hpp>
 #include <stan/math/rev/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
