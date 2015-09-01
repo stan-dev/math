@@ -34,16 +34,16 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -I /path/to/stan -I /path/to/Eigen -I /path/to/boost foo.cpp
+> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
 
-The `-I` includes point to the three necessary includes:
+The `-I` includes provide paths pointing to the three necessary includes:
 
-* the Stan Math library:  the path is to the source directory that contains `stan` as a subdirectory
-* the Eigen C++ matrix library:  this path is to the source directory that contains `Eigen` as a subdirectory
-* the Boost C++ library: this path is to the source directory that contains `boost` as a subdirectory
+* Stan Math Library:  path to source directory that contains `stan` as a subdirectory
+* Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
+* Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
