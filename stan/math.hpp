@@ -206,6 +206,12 @@
 #include <stan/math/prim/mat/fun/sort_indices.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_desc.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_w.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_v.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_u.hpp>
+#include <stan/math/prim/mat/fun/csr_extract_z.hpp>
+#include <stan/math/prim/mat/fun/csr_matrix_times_vector.hpp>
+#include <stan/math/prim/mat/fun/csr_to_dense_matrix.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/stan_print.hpp>
 #include <stan/math/prim/mat/fun/sub_col.hpp>
@@ -318,6 +324,7 @@
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/inverse_softmax.hpp>
@@ -534,6 +541,7 @@
 
 #include <stan/math/rev/core.hpp>
 
+#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
@@ -624,6 +632,7 @@
 #include <stan/math/rev/scal/fun/inv.hpp>
 #include <stan/math/rev/scal/fun/inv_cloglog.hpp>
 #include <stan/math/rev/scal/fun/inv_logit.hpp>
+#include <stan/math/rev/scal/fun/inv_Phi.hpp>
 #include <stan/math/rev/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
