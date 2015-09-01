@@ -43,7 +43,7 @@ namespace stan {
      */
     template <typename T, int R, int C>
     const vector<int>
-    csr_extract_w(const Matrix<T,  R, C>& A) {
+    csr_extract_v(const Matrix<T,  R, C>& A) {
       SparseMatrix<T, RowMajor> B = A.sparseView();
       vector<int> v = csr_extract_v(B);
       return v;
