@@ -9,47 +9,45 @@
 namespace stan {
 
   namespace math {
-    using Eigen::SparseMatrix;
-    using Eigen::RowMajor;
-    using Eigen::Matrix;
-    using std::vector;
 
     /** \addtogroup csr_format 
      *  @{
      */
 
-    /* Extract the NZE index for each entry from a sparse matrix.
+    /**
+     * Extract the NZE index for each entry from a sparse matrix.
      *
      * @tparam T Type of matrix entries.
      * @param A Sparse matrix.
-     * @return vector of indexes into non-zero entries of A.
+     * @return Vector of indexes into non-zero entries of A.
      */
     template <typename T>
-    const vector<int>
-    csr_extract_u(const SparseMatrix<T,  RowMajor>& A) {
-      vector<int> u(A.outerSize()+1);  // last entry is garbage.
+    const std::vector<int>
+    csr_extract_u(const Eigen::SparseMatrix<T,  Eigen::RowMajor>& A) {
+      std::vector<int> u(A.outerSize() + 1);  // last entry is garbage.
       for (int nze = 0; nze <= A.outerSize(); ++nze)
-        u[nze] = *(A.outerIndexPtr()+nze) + stan::error_index::value;
+        u[nze] = *(A.outerIndexPtr() + nze) + stan::error_index::value;
       return u;
     }
 
-    /* Extract the NZE index for each entry from a sparse matrix.
+    /**
+     * Extract the NZE index for each entry from a sparse matrix.
      *
      * @tparam T Type of matrix entries.
      * @param A Dense matrix.
-     * @return vector of indexes into non-zero entries of A.
+     * @return Vector of indexes into non-zero entries of A.
      */
     template <typename T, int R, int C>
-    const vector<int>
-    csr_extract_u(const Matrix<T,  R, C>& A) {
-      SparseMatrix<T, RowMajor> B = A.sparseView();
-      vector<int> u = csr_extract_u(B);
+    const std::vector<int>
+    csr_extract_u(const Eigen::Matrix<T,  R, C>& A) {
+      Eigen::SparseMatrix<T, Eigen::RowMajor> B = A.sparseView();
+      std::vector<int> u = csr_extract_u(B);
       return u;
     }
 
     /** @} */   // end of csr_format group
-  }
 
+  }
 }
 
 #endif
