@@ -47,9 +47,11 @@ namespace stan {
       }
 
       void check_flag(int flag, std::string func_name) {
-        std::ostringstream ss;
-        ss << func_name << " failed with error flag " << flag;
-        throw std::runtime_error(ss.str());
+        if (flag < 0) {
+          std::ostringstream ss;
+          ss << func_name << " failed with error flag " << flag;
+          throw std::runtime_error(ss.str());
+        }
       }
 
       // Establish all CVode preliminaries that
@@ -137,7 +139,7 @@ namespace stan {
       public coupled_ode_system<F, double, double> {
     public:
       // Static wrapper for CVode callback
-      int dense_jacobian(long int N,
+      static int dense_jacobian(long int N,
                          realtype t, N_Vector y, N_Vector fy,
                          DlsMat J, void *J_data,
                          N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
@@ -204,6 +206,83 @@ namespace stan {
       // J always initialized to zero by CVode
       void dense_jacobian(const double y[], double *J[], double t) {
         // compute Jacobian here!
+
+        /**
+         * Populates the derivative vector with derivatives of the
+         * coupled ODE system state with respect to time evaluated at the
+         * specified state and specified time.
+         *
+         * @param[in]  y the current state of the coupled ode system,
+         * of size <code>size()</code>.
+         * @param[in, out] dy_dt populate with the derivatives of the
+         * coupled system evaluated at the specified state and time.
+         * @param[in] t time.
+         * @throw exception if the base system does not return a
+         * derivative vector of the same size as the state vector.
+         */
+        void operator()(const std::vector<double>& y,
+                        std::vector<double>& dy_dt,
+                        double t) {
+                using std::vector;
+                using stan::math::var;
+
+                vector<double> y_base(y.begin(), y.begin()+N_);
+                for (size_t n = 0; n < N_; n++)
+                  y_base[n] += y0_dbl_[n];
+
+                dy_dt = f_(t, y_base, theta_dbl_, x_, x_int_, msgs_);
+                stan::math::check_equal("coupled_ode_system",
+                                                  "dy_dt", dy_dt.size(), N_);
+
+                vector<double> coupled_sys(N_ * (N_ + M_));
+                vector<var> theta_temp;
+                vector<var> y_temp;
+                vector<var> dy_dt_temp;
+                vector<double> grad;
+                vector<var> vars;
+
+                for (size_t i = 0; i < N_; i++) {
+                  theta_temp.clear();
+                  y_temp.clear();
+                  dy_dt_temp.clear();
+                  grad.clear();
+                  vars.clear();
+                  try {
+                    stan::math::start_nested();
+
+                    for (size_t j = 0; j < N_; j++) {
+                      y_temp.push_back(y[j] + y0_dbl_[j]);
+                      vars.push_back(y_temp[j]);
+                    }
+
+                    for (size_t j = 0; j < M_; j++) {
+                      theta_temp.push_back(theta_dbl_[j]);
+                      vars.push_back(theta_temp[j]);
+                    }
+
+                    dy_dt_temp = f_(t, y_temp, theta_temp, x_, x_int_, msgs_);
+                    dy_dt_temp[i].grad(vars, grad);
+
+                    for (size_t j = 0; j < N_+M_; j++) {
+                      // orders derivatives by equation (i.e. if there are 2 eqns
+                      // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+                      // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+                      double temp_deriv = grad[j];
+                      for (size_t k = 0; k < N_; k++)
+                        temp_deriv += y[N_ + N_ * j + k] * grad[k];
+
+                      coupled_sys[i + j * N_] = temp_deriv;
+                    }
+                  } catch (const std::exception& e) {
+                    stan::math::recover_memory_nested();
+                    throw;
+                  }
+                  stan::math::recover_memory_nested();
+                }
+                dy_dt.insert(dy_dt.end(), coupled_sys.begin(), coupled_sys.end());
+              }
+
+
       }
 
     };
