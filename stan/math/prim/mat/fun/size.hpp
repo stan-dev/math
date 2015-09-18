@@ -6,10 +6,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return the size of the specified standard vector.
+     *
+     * @tparam T Type of elements.
+     * @param[in] x Input vector.
+     * @return Size of input vector.
+     */
     template <typename T>
-    inline int
-    size(const std::vector<T>& x) {
-      return x.size();
+    inline int size(const std::vector<T>& x) {
+      return static_cast<int>(x.size());
     }
 
   }

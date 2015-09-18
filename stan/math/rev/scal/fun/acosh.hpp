@@ -6,6 +6,11 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/acosh.hpp>
+using boost::math::acosh;
+#endif
+
 namespace stan {
   namespace math {
 

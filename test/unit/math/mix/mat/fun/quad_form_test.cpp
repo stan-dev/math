@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/fun/quad_form_sym.hpp>
+#include <stan/math/fwd/mat/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
@@ -126,6 +127,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_fv_1st_deriv) {
   EXPECT_FLOAT_EQ(0.0,h[23]);
 
 }
+
 TEST(AgradMixMatrixQuadForm, quad_form_mat_fv_2nd_deriv) {
   using stan::math::quad_form;
   using stan::math::matrix_fv;
@@ -331,6 +333,74 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_fv_1st_deriv) {
   EXPECT_FLOAT_EQ(2114,h[22]);
   EXPECT_FLOAT_EQ(0.0,h[23]);
 }
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_fvd_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fv;
+  
+  matrix_fv ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  ad(0,0).d_ = 1.0;
+  ad(0,1).d_ = 1.0;
+  ad(0,2).d_ = 1.0;
+  ad(0,3).d_ = 1.0;
+  ad(1,0).d_ = 1.0;
+  ad(1,1).d_ = 1.0;
+  ad(1,2).d_ = 1.0;
+  ad(1,3).d_ = 1.0;
+  ad(2,0).d_ = 1.0;
+  ad(2,1).d_ = 1.0;
+  ad(2,2).d_ = 1.0;
+  ad(2,3).d_ = 1.0;
+  ad(3,0).d_ = 1.0;
+  ad(3,1).d_ = 1.0;
+  ad(3,2).d_ = 1.0;
+  ad(3,3).d_ = 1.0;
+
+  // fvar<var> - fvar<var>
+  matrix_fv resd = quad_form_sym(ad,bd);
+}
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_dfv_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_fv bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  bd(0,0).d_ = 1.0;
+  bd(0,1).d_ = 1.0;
+  bd(1,0).d_ = 1.0;
+  bd(1,1).d_ = 1.0;
+  bd(2,0).d_ = 1.0;
+  bd(2,1).d_ = 1.0;
+  bd(3,0).d_ = 1.0;
+  bd(3,1).d_ = 1.0;
+
+  // fvar<var> - fvar<var>
+  matrix_fv resd = quad_form_sym(ad,bd);
+}
+
+
 
 TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_fv_2nd_deriv) {
   using stan::math::quad_form_sym;
@@ -603,6 +673,50 @@ TEST(AgradMixMatrixQuadForm, quad_form_vec_fv_2nd_deriv) {
   EXPECT_FLOAT_EQ(235,h[18]);
   EXPECT_FLOAT_EQ(447,h[19]);
 }
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_dfv_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fv;
+  using stan::math::vector_fv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  vector_fv bd(4);
+  fvar<var> res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  bd(0).d_ = 1.0;
+  bd(1).d_ = 1.0;
+  bd(2).d_ = 1.0;
+  bd(3).d_ = 1.0;
+
+  // fvar<var> - fvar<var> 
+  res = quad_form_sym(ad,bd);
+}
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_fvd_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_fv;
+  using stan::math::vector_fv;
+  
+  matrix_fv ad(4,4);
+  Eigen::Matrix<double, -1, 1> bd(4);
+  fvar<var> res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<var> - fvar<var> 
+  res = quad_form_sym(ad,bd);
+}
+
 TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_fv_1st_deriv) {
   using stan::math::quad_form_sym;
   using stan::math::matrix_fv;
@@ -1222,6 +1336,47 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_3rd_deriv) {
   EXPECT_FLOAT_EQ(0.0,h[23]);
 
 }
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_dffv_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  matrix_ffv bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<fvar<var> > - fvar<fvar<var> >
+  matrix_ffv resd = quad_form_sym(ad,bd);
+}
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_ffvd_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffv;
+  
+  matrix_ffv ad(4,4);
+  Eigen::Matrix<double, -1, -1> bd(4,2);
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+  // fvar<fvar<var> > - fvar<fvar<var> >
+  matrix_ffv resd = quad_form_sym(ad,bd);
+}
+
 TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_ffv_1st_deriv) {
   using stan::math::quad_form_sym;
   using stan::math::matrix_ffv;
@@ -1827,6 +1982,46 @@ TEST(AgradMixMatrixQuadForm, quad_form_vec_ffv_3rd_deriv) {
   EXPECT_FLOAT_EQ(16,h[17]);
   EXPECT_FLOAT_EQ(16,h[18]);
   EXPECT_FLOAT_EQ(16,h[19]);
+}
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_dffv_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffv;
+  using stan::math::vector_ffv;
+  
+  Eigen::Matrix<double, -1, -1> ad(4,4);
+  vector_ffv bd(4);
+  fvar<fvar<var> > res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<fvar<var> > - fvar<fvar<var> > 
+  res = quad_form_sym(ad,bd);
+}
+
+TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffvd_instant) {
+  using stan::math::quad_form_sym;
+  using stan::math::matrix_ffv;
+  using stan::math::vector_ffv;
+  
+  matrix_ffv ad(4,4);
+  Eigen::Matrix<double, -1, 1> bd(4);
+  fvar<fvar<var> > res;
+  
+  bd << 100, 0, -3, 5;
+  ad << 2.0,  3.0, 4.0,   5.0, 
+  3.0, 10.0, 2.0,   2.0,
+  4.0,  2.0, 7.0,   1.0,
+  5.0,  2.0, 1.0, 112.0;
+  
+
+  // fvar<fvar<var> > - fvar<fvar<var> > 
+  res = quad_form_sym(ad,bd);
 }
 TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_ffv_1st_deriv) {
   using stan::math::quad_form_sym;

@@ -14,17 +14,39 @@ namespace stan {
   namespace math {
 
     template<int RA, int CA, int RB, int CB, typename T>
-    inline stan::math::fvar<T>
-    trace_quad_form(const Eigen::Matrix<stan::math::fvar<T>, RA, CA> &A,
-                    const Eigen::Matrix<stan::math::fvar<T>, RB, CB> &B) {
-      using stan::math::multiply;
-      using stan::math::multiply;
-      stan::math::check_square("trace_quad_form", "A", A);
-      stan::math::check_multiplicable("trace_quad_form",
-                                      "A", A,
-                                      "B", B);
-      return stan::math::trace(multiply(stan::math::transpose(B),
-                                        multiply(A, B)));
+    inline fvar<T>
+    trace_quad_form(const Eigen::Matrix<fvar<T>, RA, CA> &A,
+                    const Eigen::Matrix<fvar<T>, RB, CB> &B) {
+      check_square("trace_quad_form", "A", A);
+      check_multiplicable("trace_quad_form",
+                          "A", A,
+                          "B", B);
+      return trace(multiply(transpose(B),
+                            multiply(A, B)));
+    }
+
+    template<int RA, int CA, int RB, int CB, typename T>
+    inline fvar<T>
+    trace_quad_form(const Eigen::Matrix<fvar<T>, RA, CA> &A,
+                    const Eigen::Matrix<double, RB, CB> &B) {
+      check_square("trace_quad_form", "A", A);
+      check_multiplicable("trace_quad_form",
+                          "A", A,
+                          "B", B);
+      return trace(multiply(transpose(B),
+                            multiply(A, B)));
+    }
+
+    template<int RA, int CA, int RB, int CB, typename T>
+    inline fvar<T>
+    trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
+                    const Eigen::Matrix<fvar<T>, RB, CB> &B) {
+      check_square("trace_quad_form", "A", A);
+      check_multiplicable("trace_quad_form",
+                          "A", A,
+                          "B", B);
+      return trace(multiply(transpose(B),
+                            multiply(A, B)));
     }
   }
 }

@@ -2,18 +2,16 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/math-license.txt).
+The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/stan-math-library-license.txt).
 
 Required Libraries
 ------------------
-In order to run Stan Math, you *must* make available the following two libraries on which it depends:
+Stan Math depends on two libraries:
 
 - Boost (version 1.58): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.24): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 
-These should be downloaded and unpacked into directories where they can be read.  
-
-Only these two versions of the dependent libraries have been tested with Stan Math.
+These are distributed under the `lib/` subdirectory. Only these two versions of the dependent libraries have been tested with Stan Math.
 
 Installation
 ------------
@@ -36,24 +34,24 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -I /path/to/stan -I /path/to/Eigen -I /path/to/boost foo.cpp
+> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
 
-The `-I` includes point to the three necessary includes:
+The `-I` includes provide paths pointing to the three necessary includes:
 
-* the Stan Math library:  the path is to the source directory that contains `stan` as a subdirectory
-* the Eigen C++ matrix library:  this path is to the source directory that contains `Eigen` as a subdirectory
-* the Boost C++ library: this path is to the source directory that contains `boost` as a subdirectory
+* Stan Math Library:  path to source directory that contains `stan` as a subdirectory
+* Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
+* Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan/lib/eigen_3.2.4/ -I ~/stan/lib/boost_1.58.0/ foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.4/ -I ~/stan-dev/math/lib/boost_1.58.0/ foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan/lib/eigen_3.2.4/Eigen` and `~stan/lib/boost_1.58.0/boost`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.4/Eigen` and `~stan-dev/math/lib/boost_1.58.0/boost`.
 
 Other Compilers
 ---------------

@@ -1,0 +1,28 @@
+Stan Math Library Release Notes
+======================================================================
+
+v2.8.0 (8 September 2015)
+======================================================================
+New Features
+--------------------------------------------------
+* Added standard normal quantile function (#148)
+* Add sparse matrix (csr format) by dense vector multiplication (#127)
+* Faster derivative calculation for cholesky (#125)
+* Fixes for MSVC 2008 and 2010 (#134)
+
+Bug Fixes
+--------------------------------------------------
+* Fixed unit test for `mdivide_right_spd` (#153)
+* Reduced compiler warnings for sing comparisons for sign functions (#151)
+* Fixed gitignore for test directory (#149)
+* Better assignment error messages (#146)
+
+
+v2.7.0 (8 July 2015; first independent release)
+======================================================================
+First release
+--------------------------------------------------
+* Previously included as part of Stan
+* Release numbering started at release number of Stan
+* All work done up to and including the release of Stan Math 2.7.0
+  is documented under the Stan C++ 2.7.0 release notes

@@ -4,6 +4,12 @@
 #include <math.h>
 #include <stan/math/rev/core.hpp>
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/cbrt.hpp>
+using boost::math::cbrt;
+#endif
+
+
 namespace stan {
   namespace math {
 
