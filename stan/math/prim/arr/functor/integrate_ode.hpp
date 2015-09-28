@@ -67,7 +67,6 @@ namespace stan {
                   std::ostream* msgs) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::runge_kutta_dopri5;
-      using boost::numeric::odeint::controlled_runge_kutta;
       using boost::numeric::odeint::make_controlled;
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
@@ -83,7 +82,7 @@ namespace stan {
 
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
-      const double step_size = 0.1;
+      const double step_size = 1.0;
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
