@@ -1,6 +1,12 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
+#include <stan/math/prim/mat/meta/get.hpp>
+#include <stan/math/prim/arr/meta/get.hpp>
+#include <stan/math/prim/mat/meta/length.hpp>
+#include <stan/math/prim/arr/meta/length.hpp>
+
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/err/check_equal.hpp>
