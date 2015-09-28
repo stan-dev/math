@@ -1,10 +1,3 @@
-// For what are these needed?
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
-//
-
 #include <gtest/gtest.h>
 
 #include <iostream>
@@ -14,8 +7,6 @@
 
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode.hpp>
-
-#include <stan/math/rev/scal/fun/value_of_rec.hpp> // needed by check_finite?
 #include <stan/math/rev/mat/functor/gradient.hpp>
 
 using std::cos;
