@@ -66,8 +66,9 @@ namespace stan {
                   const std::vector<int>& x_int,
                   std::ostream* msgs) {
       using boost::numeric::odeint::integrate_times;
-      using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
+      using boost::numeric::odeint::controlled_runge_kutta;
+      using boost::numeric::odeint::make_controlled;
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
       stan::math::check_finite("integrate_ode", "initial time", t0);
@@ -101,12 +102,9 @@ namespace stan {
       std::vector<double> initial_coupled_state
         = coupled_system.initial_state();
 
-      integrate_times(make_dense_output(absolute_tolerance,
-                                        relative_tolerance,
-                                        runge_kutta_dopri5<std::vector<double>,
-                                                           double,
-                                                           std::vector<double>,
-                                                           double>() ),
+      typedef runge_kutta_dopri5<std::vector<double>, double, std::vector<double>, double> error_stepper_type;
+      
+      integrate_times(make_controlled<error_stepper_type>(absolute_tolerance, relative_tolerance),
                       coupled_system,
                       initial_coupled_state,
                       boost::begin(ts_vec), boost::end(ts_vec),
