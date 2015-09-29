@@ -6,7 +6,7 @@
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
- 
+
   namespace math {
 
     template <typename T1, typename T2, typename T3, typename T4>
@@ -16,16 +16,17 @@ namespace stan {
       using std::exp;
       return Asym + (R0 - Asym) * exp((-exp_lrc * x));
     }	
-   
+
     template <typename T1, typename T2, typename T3, typename T4> inline
     std::vector<typename boost::math::tools::promote_args<T1, T2, T3, T4>::type>
     selfstart_asymp(const std::vector<T1>& x, const T2& Asym, const T3& R0,
                     const T4& lrc) {
       using std::exp;
 
-      std::vector<typename boost::math::tools::promote_args<T1, T2, T3>::type>
+      std::vector<typename
+      boost::math::tools::promote_args<T1, T2, T3, T4>::type>
       value(x.size());
-     
+
       T4 exp_lrc = exp(lrc);
 
       for (std::size_t i = 0; i < x.size(); ++i)
