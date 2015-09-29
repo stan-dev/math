@@ -26,7 +26,7 @@ namespace stan {
       std::vector<typename boost::math::tools::promote_args<T1, T2, T3>::type>
       value(x.size());
      
-      T3 exp_lrc = exp(lrc);
+      T4 exp_lrc = exp(lrc);
 
       for (std::size_t i = 0; i < x.size(); ++i)
         value[i] = selfstart_asymp(x[i], Asym, R0, exp_lrc);
