@@ -6,11 +6,10 @@
 namespace stan {
   namespace math {
 
-    // forward declaration of chainable
-    class chainable;
+    class vari;
     class chainable_alloc;
 
-    typedef AutodiffStackStorage<chainable, chainable_alloc> ChainableStack;
+    typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
 
   }
 }

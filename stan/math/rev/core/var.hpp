@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
-#include <stan/math/rev/core/chainable.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <boost/math/tools/config.hpp>
 #include <ostream>
@@ -14,7 +13,7 @@ namespace stan {
   namespace math {
 
     // forward declare
-    static void grad(chainable* vi);
+    static void grad(vari* vi);
 
     /**
      * Independent (input) and dependent (output) variables for gradients.
@@ -261,7 +260,7 @@ namespace stan {
        */
       void grad(std::vector<var>& x,
                 std::vector<double>& g) {
-        stan::math::grad(vi_);  // defined in chainable.hpp
+        stan::math::grad(vi_);
         g.resize(x.size());
         for (size_t i = 0; i < x.size(); ++i)
           g[i] = x[i].vi_->adj_;
@@ -274,7 +273,7 @@ namespace stan {
        * The grad() function does <i>not</i> recover memory.
        */
       void grad() {
-        stan::math::grad(vi_);  // defined in chainable.hpp
+        stan::math::grad(vi_);
       }
 
       // POINTER OVERRIDES

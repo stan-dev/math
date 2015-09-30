@@ -48,33 +48,6 @@ namespace stan {
        */
       virtual void set_zero_adjoint() {
       }
-
-      /**
-       * Allocate memory from the underlying memory pool.  This memory is
-       * is managed by the gradient program and will be recovered as a whole.
-       * Classes should not be allocated with this operator if they have
-       * non-trivial destructors.
-       *
-       * @param nbytes Number of bytes to allocate.
-       * @return Pointer to allocated bytes.
-       */
-      static inline void* operator new(size_t nbytes) {
-        return ChainableStack::memalloc_.alloc(nbytes);
-      }
-
-      /**
-       * Delete a pointer from the underlying memory pool.  This no-op
-       * implementation enables a subclass to throw exceptions in its
-       * constructor.  An exception thrown in the constructor of a
-       * subclass will result in an error being raised, which is in
-       * turn caught and calls delete().
-       *
-       * See the discussion of "plugging the memory leak" in:
-       *   http://www.parashift.com/c++-faq/memory-pools.html
-       */
-      static inline void operator delete(void* /* ignore arg */) {
-        /* no op */
-      }
     };
 
 
