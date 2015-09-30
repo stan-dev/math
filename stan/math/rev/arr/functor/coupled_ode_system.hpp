@@ -114,15 +114,15 @@ namespace stan {
        * <p>The input state must be of size <code>size()</code>, and
        * the output produced will be of the same size.
        *
-       * @param[in] y state of the coupled ode system.
-       * @param[out] dy_dt populated with the derivatives of
+       * @param[in] z state of the coupled ode system.
+       * @param[out] dz_dt populated with the derivatives of
        * the coupled system at the specified state and time.
        * @param[in]  t time.
        * @throw exception if the system function does not return the
        * same number of derivatives as the state vector size.
        *
        * y is the base ODE system state
-       * z is the coupled ODE system state
+       *
        */
       void operator()(const std::vector<double>& z,
                       std::vector<double>& dz_dt,
@@ -205,7 +205,6 @@ namespace stan {
         return state;
       }
 
-
       /**
        * Returns the base ODE system state corresponding to the
        * specified coupled system state.
@@ -241,11 +240,6 @@ namespace stan {
         return y_return;
       }
     };
-
-
-
-
-
 
     /**
      * The coupled ODE system for unknown initial values and known
@@ -323,9 +317,9 @@ namespace stan {
        * Calculates the derivative of the coupled ode system
        * with respect to the state y at time t.
        *
-       * @param[in] y the current state of the coupled ode
+       * @param[in] z the current state of the coupled, shifted ode
        * system. This is a a vector of double of length size().
-       * @param[out] dy_dt a vector of length size() with the
+       * @param[out] dz_dt a vector of length size() with the
        * derivatives of the coupled system evaluated with state y and
        * time t.
        * @param[in] t time.
@@ -333,7 +327,6 @@ namespace stan {
        * derivative vector of the same size as the state vector.
        *
        * y is the base ODE system state
-       * z is the coupled, shifted ODE system state
        *
        */
       void operator()(const std::vector<double>& z,
@@ -456,12 +449,6 @@ namespace stan {
       }
     };
 
-
-
-
-
-
-
     /**
      * The coupled ode system for unknown intial values and unknown
      * parameters.
@@ -553,16 +540,15 @@ namespace stan {
        * coupled ODE system state with respect to time evaluated at the
        * specified state and specified time.
        *
-       * @param[in]  y the current state of the coupled ode system,
+       * @param[in]  z the current state of the coupled, shifted ode system,
        * of size <code>size()</code>.
-       * @param[in, out] dy_dt populate with the derivatives of the
+       * @param[in, out] dz_dt populate with the derivatives of the
        * coupled system evaluated at the specified state and time.
        * @param[in] t time.
        * @throw exception if the base system does not return a
        * derivative vector of the same size as the state vector.
        *
        * y is the base ODE system state
-       * z is the coupled, shifted ODE system state
        *
        */
       void operator()(const std::vector<double>& z,
