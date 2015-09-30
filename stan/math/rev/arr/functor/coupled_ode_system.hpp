@@ -153,7 +153,7 @@ namespace stan {
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
           
           for (size_t i = 0; i < N_; i++) {
-            set_zero_all_adjoints();
+            set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
             for (size_t j = 0; j < M_; j++) {
@@ -365,7 +365,7 @@ namespace stan {
           vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
           
           for (size_t i = 0; i < N_; i++) {
-            set_zero_all_adjoints();
+            set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
             for (size_t j = 0; j < N_; j++) {
@@ -597,7 +597,7 @@ namespace stan {
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
 
           for (size_t i = 0; i < N_; i++) {
-            set_zero_all_adjoints();
+            set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
             for (size_t j = 0; j < N_ + M_; j++) {
