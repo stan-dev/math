@@ -137,21 +137,21 @@ namespace stan {
 
         vector<double> coupled_sys(N_ * M_);
         vector<double> grad(N_ + M_);
-        
+
         try {
           stan::math::start_nested();
-        
+
           vector<var> z_vars;
           z_vars.reserve(N_ + M_);
-          
+
           vector<var> y_vars(y.begin(), y.end());
           z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
-          
+
           vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
           z_vars.insert(z_vars.end(), theta_vars.begin(), theta_vars.end());
-          
+
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
-          
+
           for (size_t i = 0; i < N_; i++) {
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
@@ -334,7 +334,7 @@ namespace stan {
                       double t) {
         using std::vector;
         using stan::math::var;
-        
+
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
@@ -345,18 +345,18 @@ namespace stan {
 
         std::vector<double> coupled_sys(N_ * N_);
         std::vector<double> grad(N_);
-        
+
         try {
           stan::math::start_nested();
-          
+
           vector<var> z_vars;
           z_vars.reserve(N_);
-          
+
           vector<var> y_vars(y.begin(), y.end());
           z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
-          
+
           vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
-          
+
           for (size_t i = 0; i < N_; i++) {
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
@@ -567,19 +567,19 @@ namespace stan {
 
         vector<double> coupled_sys(N_ * (N_ + M_));
         vector<double> grad(N_ + M_);
-        
+
         try {
           stan::math::start_nested();
-          
+
           vector<var> z_vars;
           z_vars.reserve(N_ + M_);
-          
+
           vector<var> y_vars(y.begin(), y.end());
           z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
-          
+
           vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
           z_vars.insert(z_vars.end(), theta_vars.begin(), theta_vars.end());
-          
+
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
 
           for (size_t i = 0; i < N_; i++) {
@@ -602,7 +602,7 @@ namespace stan {
           throw;
         }
         stan::math::recover_memory_nested();
-        
+
         dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
