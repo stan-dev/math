@@ -28,7 +28,7 @@ TEST(MathMeta, container_view_no_throw) {
   using boost::conditional;
   using stan::math::dummy;
   using stan::is_constant_struct;
-        using stan::math::var;
+  using stan::math::var;
 
   double arr[1];
   container_view<conditional<is_constant_struct<var>::value,dummy,var>::type, double> view_test(var(4.0), arr);
