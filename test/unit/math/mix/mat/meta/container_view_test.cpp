@@ -13,7 +13,7 @@ TEST(MathMeta, container_view_vector_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 10));
   Matrix<fvar<var>, Dynamic, 1> x(10);
   container_view<Matrix<fvar<var>, Dynamic, 1>, var> view_test(x, y);
@@ -43,7 +43,7 @@ TEST(MathMeta, container_view_vector_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 10));
   Matrix<fvar<fvar<var> >, Dynamic, 1> x(10);
   container_view<Matrix<fvar<fvar<var> >, Dynamic, 1>, fvar<var> > view_test(x, y);
@@ -73,7 +73,7 @@ TEST(MathMeta, container_view_row_vector_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 10));
   Matrix<fvar<var>, 1, Dynamic> x(10);
   container_view<Matrix<fvar<var>, 1, Dynamic>, var> view_test(x, y);
@@ -103,7 +103,7 @@ TEST(MathMeta, container_view_row_vector_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 10));
   Matrix<fvar<fvar<var> >, 1, Dynamic> x(10);
   container_view<Matrix<fvar<fvar<var> >, 1, Dynamic>, fvar<var> > view_test(x, y);
@@ -133,7 +133,7 @@ TEST(MathMeta, container_view_matrix_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 9));
   Matrix<fvar<var>, Dynamic, Dynamic> x(3,3);
   container_view<Matrix<fvar<var>, Dynamic, Dynamic>, Matrix<var, Dynamic, Dynamic> > view_test(x, y);
@@ -158,7 +158,7 @@ TEST(MathMeta, container_view_matrix_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 9));
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> x(3,3);
   container_view<Matrix<fvar<fvar<var> >, Dynamic, Dynamic>, Matrix<fvar<var>, Dynamic, Dynamic> > view_test(x, y);
@@ -183,7 +183,7 @@ TEST(MathMeta, container_view_vector_vector_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 15));
   std::vector<Matrix<fvar<var>, Dynamic, 1> > x;
   x.push_back(Matrix<fvar<var>, Dynamic, 1>(5));
@@ -207,7 +207,7 @@ TEST(MathMeta, container_view_vector_vector_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 15));
   std::vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > x;
   x.push_back(Matrix<fvar<fvar<var> >, Dynamic, 1>(5));
@@ -231,7 +231,7 @@ TEST(MathMeta, container_view_vector_row_vector_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 15));
   std::vector<Matrix<fvar<var>, 1, Dynamic> > x;
   x.push_back(Matrix<fvar<var>, 1, Dynamic>(5));
@@ -255,7 +255,7 @@ TEST(MathMeta, container_view_vector_row_vector_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 15));
   std::vector<Matrix<fvar<fvar<var> >, 1, Dynamic> > x;
   x.push_back(Matrix<fvar<fvar<var> >, 1, Dynamic>(5));
@@ -279,7 +279,7 @@ TEST(MathMeta, container_view_vector_matrix_var) {
   using stan::math::fvar;
 
   var* y = static_cast<var*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(var) * 27));
   std::vector<Matrix<fvar<var>, Dynamic, Dynamic> > x;
   x.push_back(Matrix<fvar<var>, Dynamic, Dynamic>(3, 3));
@@ -308,7 +308,7 @@ TEST(MathMeta, container_view_vector_matrix_fvar_var) {
   using stan::math::fvar;
 
   fvar<var>* y = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 27));
   std::vector<Matrix<fvar<fvar<var> >, Dynamic, Dynamic> > x;
   x.push_back(Matrix<fvar<fvar<var> >, Dynamic, Dynamic>(3, 3));
@@ -340,7 +340,7 @@ TEST(MathMeta, container_view_no_throw_vector_matrix_var) {
   using stan::is_constant_struct;
 
   var* arr = static_cast<var*>
-             (stan::math::chainable::operator new
+             (stan::math::vari::operator new
               (sizeof(var) * 1));
   std::vector<Matrix<fvar<var>, Dynamic, Dynamic> > x;
   x.push_back(Matrix<fvar<var>, Dynamic, Dynamic>(1,1));
@@ -359,7 +359,7 @@ TEST(MathMeta, container_view_no_throw_vector_matrix_matrix_view) {
   using stan::is_constant_struct;
 
   var* arr = static_cast<var*>
-             (stan::math::chainable::operator new
+             (stan::math::vari::operator new
               (sizeof(var) * 1));
   std::vector<Matrix<fvar<var>, Dynamic, Dynamic> > x;
   x.push_back(Matrix<fvar<var>, Dynamic, Dynamic>(1,1));
@@ -378,7 +378,7 @@ TEST(MathMeta, container_view_no_throw_vector_matrix_fvar_var) {
   using stan::is_constant_struct;
 
   fvar<var>* arr = static_cast<fvar<var>*>
-                       (stan::math::chainable::operator new
+                       (stan::math::vari::operator new
                         (sizeof(fvar<var>) * 1));
   std::vector<Matrix<fvar<fvar<var> >, Dynamic, Dynamic> > x;
   x.push_back(Matrix<fvar<fvar<var> >, Dynamic, Dynamic>(1,1));

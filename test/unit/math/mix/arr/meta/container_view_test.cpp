@@ -10,7 +10,7 @@ TEST(MathMeta, container_view_var) {
   using stan::math::var;
   using stan::math::fvar;
 
-  var* y = static_cast<var*>(stan::math::chainable::operator new(sizeof(var) * 1));
+  var* y = static_cast<var*>(stan::math::vari::operator new(sizeof(var) * 1));
   std::vector<fvar<var> > x;
   container_view<std::vector<fvar<var> >, var> view_test(x, y);
   view_test[0] = 1.0;
@@ -23,7 +23,9 @@ TEST(MathMeta, container_view_fvar_var) {
   using stan::math::var;
   using stan::math::fvar;
 
-  fvar<var>* y = static_cast<fvar<var>*>(stan::math::chainable::operator new(sizeof(fvar<var>) * 1));
+  fvar<var>* y 
+    = static_cast<fvar<var>*>(stan::math::vari::operator new(sizeof(fvar<var>)
+                                                             * 1));
   std::vector<fvar<fvar<var> > > x;
   container_view<std::vector<fvar<fvar<var> > >, fvar<var> > view_test(x, y);
   view_test[0] = 1.0;
@@ -40,7 +42,7 @@ TEST(MathMeta, container_view_no_throw_var) {
   using stan::math::var;
   using stan::math::fvar;
 
-  var* arr = static_cast<var*>(stan::math::chainable::operator new(sizeof(var) * 1));
+  var* arr = static_cast<var*>(stan::math::vari::operator new(sizeof(var) * 1));
   std::vector<fvar<var> > x;
   container_view<conditional<is_constant_struct<std::vector<fvar<var> > >::value, dummy, std::vector<fvar<var> > >::type, var> view_test(x, arr);
   EXPECT_NO_THROW(view_test[0]);
@@ -54,7 +56,9 @@ TEST(MathMeta, container_view_no_throw_fvar_var) {
   using stan::math::var;
   using stan::math::fvar;
 
-  fvar<var>* arr = static_cast<fvar<var>*>(stan::math::chainable::operator new(sizeof(fvar<var>) * 1));
+  fvar<var>* arr 
+    = static_cast<fvar<var>*>(stan::math::vari::operator new(sizeof(fvar<var>)
+                                                             * 1));
   std::vector<fvar<fvar<var> > > x;
   container_view<conditional<is_constant_struct<std::vector<fvar<fvar<var> > > >::value, 
                              dummy, std::vector<fvar<fvar<var> > > >::type, fvar<var> > view_test(x, arr);
