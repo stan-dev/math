@@ -67,6 +67,7 @@ namespace stan {
                   std::ostream* msgs) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::runge_kutta_dopri5;
+      using boost::numeric::odeint::controlled_runge_kutta;
       using boost::numeric::odeint::make_controlled;
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
@@ -82,36 +83,30 @@ namespace stan {
 
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
-      const double step_size = 1.0;
+      const double step_size = 0.1;
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
         coupled_system(f, y0, theta, x, x_int, msgs);
 
-      // first time in the vector must be time of initial state
-      std::vector<double> ts_vec(ts.size() + 1);
-      ts_vec[0] = t0;
-      for (size_t n = 0; n < ts.size(); n++)
-        ts_vec[n+1] = ts[n];
-
-      std::vector<std::vector<double> > y_coupled(ts_vec.size());
-      coupled_ode_observer observer(y_coupled);
+      std::vector<std::vector<double> > y_coupled(ts.size());
 
       // the coupled system creates the coupled initial state
-      std::vector<double> initial_coupled_state
+      std::vector<double> coupled_state
         = coupled_system.initial_state();
 
-      typedef runge_kutta_dopri5<std::vector<double>, double, std::vector<double>, double> error_stepper_type;
-      
-      integrate_times(make_controlled<error_stepper_type>(absolute_tolerance, relative_tolerance),
-                      coupled_system,
-                      initial_coupled_state,
-                      boost::begin(ts_vec), boost::end(ts_vec),
-                      step_size,
-                      observer);
+      typedef runge_kutta_dopri5<std::vector<double>, double, std::vector<double>, double> stepper_type;
+      typedef controlled_runge_kutta< stepper_type > controlled_stepper_type;
 
-      // remove the first state corresponding to the initial value
-      y_coupled.erase(y_coupled.begin());
+      controlled_stepper_type rk45 = make_controlled<stepper_type>(absolute_tolerance, relative_tolerance);
+
+      integrate_adaptive(rk45, coupled_system, coupled_state, t0, ts[0], step_size);
+      y_coupled[0] = coupled_state;
+      
+      for (size_t t = 0; t < ts.size() - 1; t++) {
+	integrate_adaptive(rk45, coupled_system, coupled_state, ts[t], ts[t+1], step_size);
+	y_coupled[t+1] = coupled_state;
+      }
 
       // the coupled system also encapsulates the decoupling operation
       return coupled_system.decouple_states(y_coupled);
