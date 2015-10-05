@@ -74,9 +74,10 @@ namespace stan {
         throw std::domain_error("arg vector to log_softmax() "
                                 "must have size > 0");
 
+      // TODO(carpenter): replace with array alloc
       vari** alpha_vi_array
         = reinterpret_cast<vari**>
-        (chainable::operator new(sizeof(vari*) * alpha.size()));
+        (vari::operator new(sizeof(vari*) * alpha.size()));
       for (int i = 0; i < alpha.size(); ++i)
         alpha_vi_array[i] = alpha(i).vi_;
 
@@ -107,10 +108,10 @@ namespace stan {
         log_softmax_alpha_d(i) = (alpha_d(i) - max_v) - log_sum;
 
       // end fold
-
+      // TODO(carpenter): replace with array alloc
       double* softmax_alpha_d_array
         = reinterpret_cast<double*>
-        (chainable::operator new(sizeof(double) * alpha_d.size()));
+        (vari::operator new(sizeof(double) * alpha_d.size()));
 
       for (int i = 0; i < alpha_d.size(); ++i)
         softmax_alpha_d_array[i] = softmax_alpha_d(i);

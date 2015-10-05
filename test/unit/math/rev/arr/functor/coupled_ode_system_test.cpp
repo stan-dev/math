@@ -166,7 +166,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, n+1);
+    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
     
     std::vector<double> y0_d(N, 0.0);
     std::vector<var> theta_v(M, 0.0);
@@ -344,7 +344,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, n+1);
+    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
     
     std::vector<var> y0_v(N, 0.0);
     std::vector<double> theta_d(M, 0.0);
@@ -523,7 +523,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, n+1);
+    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
     
     std::vector<var> y0_v(N, 0.0);
     std::vector<var> theta_v(M, 0.0);
