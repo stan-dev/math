@@ -107,7 +107,7 @@ namespace stan {
                                                            double,
                                                            std::vector<double>,
                                                            double>() ),
-                      coupled_system,
+                      boost::ref(coupled_system),
                       initial_coupled_state,
                       boost::begin(ts_vec), boost::end(ts_vec),
                       step_size,

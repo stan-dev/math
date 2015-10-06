@@ -10,9 +10,11 @@
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/err/check_equal.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <ostream>
 #include <vector>
+#include <iostream>
 
 namespace stan {
 
@@ -73,6 +75,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      size_t evals_;
       std::ostream* msgs_;
 
       /**
@@ -102,6 +105,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * M_),
+	  evals_(0),
                 msgs_(msgs) {
         for (size_t m = 0; m < M_; m++)
           theta_dbl_[m] = stan::math::value_of(theta[m]);
@@ -130,6 +134,8 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	
         vector<double> y(z.begin(), z.begin() + N_);
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_equal("coupled_ode_system",
@@ -279,6 +285,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      size_t evals_;
 
       /**
        * Construct a coupled ODE system for an unknown initial state
@@ -307,8 +314,10 @@ namespace stan {
           x_int_(x_int),
           msgs_(msgs),
           N_(y0.size()),
-        M_(theta.size()),
-        size_(N_ + N_ * N_) {
+	  M_(theta.size()),
+	  size_(N_ + N_ * N_),
+	  evals_(0)
+      {
         for (size_t n = 0; n < N_; n++)
           y0_dbl_[n] = stan::math::value_of(y0_[n]);
       }
@@ -335,6 +344,8 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
@@ -496,6 +507,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      size_t evals_;
       std::ostream* msgs_;
 
       /**
@@ -527,6 +539,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * (N_ + M_)),
+	  evals_(0),
           msgs_(msgs) {
         for (size_t n = 0; n < N_; n++)
           y0_dbl_[n] = stan::math::value_of(y0[n]);
@@ -557,6 +570,8 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	
         vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];

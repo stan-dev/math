@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
 #include <ostream>
 #include <vector>
 
@@ -47,6 +48,7 @@ namespace stan {
       const int N_;
       const int M_;
       const int size_;
+      size_t evals_;
       std::ostream* msgs_;
 
       /**
@@ -75,6 +77,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_),
+	  evals_(0),
           msgs_(msgs) {
       }
 
@@ -96,6 +99,9 @@ namespace stan {
       void operator()(const std::vector<double>& y,
                       std::vector<double>& dy_dt,
                       double t) {
+
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_matching_sizes("coupled_ode_system",
                                                    "y", y,
