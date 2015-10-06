@@ -14,7 +14,6 @@
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <ostream>
 #include <vector>
-#include <iostream>
 
 namespace stan {
 
