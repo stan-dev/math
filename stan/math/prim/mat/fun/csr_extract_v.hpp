@@ -9,43 +9,42 @@
 namespace stan {
 
   namespace math {
-    using Eigen::SparseMatrix;
-    using Eigen::RowMajor;
-    using Eigen::Matrix;
-    using std::vector;
 
     /** \addtogroup csr_format 
      *  @{
      */
 
-    /* Extract the column indexes for non-zero value from a sparse
+    /**
+     * Extract the column indexes for non-zero value from a sparse
      * matrix.
+     *
      * @tparam T Type of matrix entries.
-     * @param A sparse matrix.
-     * @return vector of column indexes for non-zero entries of A.
+     * @param A Sparse matrix.
+     * @return Vector of column indexes for non-zero entries of A.
      */
     template <typename T>
-    const vector<int>
-    csr_extract_v(const SparseMatrix<T, RowMajor>& A) {
-      vector<int> v(A.nonZeros());
+    const std::vector<int>
+    csr_extract_v(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
+      std::vector<int> v(A.nonZeros());
       for (int nze = 0; nze < A.nonZeros(); ++nze)
-        v[nze] = *(A.innerIndexPtr()+nze) + stan::error_index::value;
+        v[nze] = *(A.innerIndexPtr() + nze) + stan::error_index::value;
       return v;
     }
 
-    /* Extract the column indexes for non-zero values from a dense 
+    /**
+     * Extract the column indexes for non-zero values from a dense 
      * matrix by converting to sparse and calling the sparse matrix 
      * extractor. 
      *
      * @tparam T Type of matrix entries.
-     * @param A dense matrix.
-     * @return vector of column indexes to non-zero entries of A.
+     * @param[in] A dense matrix.
+     * @return Vector of column indexes to non-zero entries of A.
      */
     template <typename T, int R, int C>
-    const vector<int>
-    csr_extract_w(const Matrix<T,  R, C>& A) {
-      SparseMatrix<T, RowMajor> B = A.sparseView();
-      vector<int> v = csr_extract_v(B);
+    const std::vector<int>
+    csr_extract_v(const Eigen::Matrix<T,  R, C>& A) {
+      Eigen::SparseMatrix<T, Eigen::RowMajor> B = A.sparseView();
+      std::vector<int> v = csr_extract_v(B);
       return v;
     }
 

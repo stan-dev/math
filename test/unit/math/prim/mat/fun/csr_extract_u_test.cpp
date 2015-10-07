@@ -16,6 +16,17 @@ TEST(SparseStuff, csr_extract_u_dense) {
 }
 
 // Test that start of each row's values in NZE vector (w) is correctly
+// extracted from a dense matrix in sparse format.
+TEST(SparseStuff, csr_extract_u_dense_dense) {
+  stan::math::matrix_d m(2, 3);
+  m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
+  std::vector<int> result = stan::math::csr_extract_u(m);
+  EXPECT_EQ(1, result[0]);
+  EXPECT_EQ(4, result[1]);
+  EXPECT_EQ(7, result[2]);
+}
+
+// Test that start of each row's values in NZE vector (w) is correctly
 // extracted from a dense matrix in sparse format after
 // makeCompressed().
 TEST(SparseStuff, csr_extract_u_dense_compressed) {
