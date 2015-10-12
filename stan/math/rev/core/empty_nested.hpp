@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_EMPTY_NESTED_HPP
 #define STAN_MATH_REV_CORE_EMPTY_NESTED_HPP
 
-#include <stan/math/rev/core/chainable.hpp>
-#include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
 namespace stan {
