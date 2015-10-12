@@ -33,6 +33,7 @@ namespace stan {
         vari(eval_gevv(alpha, v1, stride1, v2, stride2, length, &dotval_)),
         length_(length) {
         alpha_ = alpha->vi_;
+        // TODO(carpenter): replace this with array alloc fun call
         v1_ = reinterpret_cast<stan::math::vari**>
           (stan::math::ChainableStack::memalloc_
            .alloc(2 * length_ * sizeof(stan::math::vari*)));
