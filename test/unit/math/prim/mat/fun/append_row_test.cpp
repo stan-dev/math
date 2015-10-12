@@ -142,6 +142,19 @@ TEST(MathMatrix, append_row) {
     EXPECT_EQ(cvec(i), v3b(i));
   for (int i = 3; i < 6; i++)
     EXPECT_EQ(cvec(i), v3(i-3));
+
+   
+  //matrix append_row(vector, scalar)
+  cvec = append_row(v3, 3.11);
+  for (int i = 0; i < 3; i++)
+    EXPECT_EQ(cvec(i), v3(i));
+  EXPECT_EQ(cvec(3), 3.11);
+   
+  //matrix append_row(vector, scalar)
+  cvec = append_row(-6.512, v3);
+  EXPECT_EQ(cvec(0), -6.512);  
+  for (int i = 1; i < 4; i++)
+    EXPECT_EQ(cvec(i), v3(i-1));
     
   EXPECT_THROW(append_row(m32, m33), std::invalid_argument);
   EXPECT_THROW(append_row(m32, m23), std::invalid_argument);
@@ -171,4 +184,6 @@ TEST(MathMatrix, append_row) {
   correct_type_matrix(append_row(rv3b, rv3));
   correct_type_vector(append_row(v3, v3b));
   correct_type_vector(append_row(v3b, v3));
+  correct_type_vector(append_row(v3, -4.31));
+  correct_type_vector(append_row(5.23, v3));
 }
