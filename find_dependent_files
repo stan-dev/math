@@ -1,0 +1,60 @@
+#!/bin/bash
+
+containsElement () {
+  local e
+  for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+  return 1
+}
+
+search() {
+  name=$1[@]
+  seed_files=("${!name}")
+
+  name=$2[@]
+  dependent_files=("${!name}")
+
+  new_files=()
+  new_seed_files=()
+
+  if [ ${#seed_files[@]} -eq 0 ]; then
+    return
+  fi
+
+  for file in ${seed_files[@]}
+  do
+    if [ -e "lib/cvode_2.8.2/include/${file}" ]; then
+      new=(`grep "#include" "lib/cvode_2.8.2/include/"$file | sed -e 's,<,,' -e 's,>,,' -e 's,#include ,,'`)
+      new_files=(${new_files[@]} ${new[@]})
+    fi
+
+    c_file=`echo $file | sed 's,h$,c,'`
+    if [ -e "lib/cvode_2.8.2/src/${c_file}" ]; then
+      new=(`grep "#include" "lib/cvode_2.8.2/src/"$c_file | sed -e 's,<,,' -e 's,>,,' -e 's,#include ,,'`)
+      new_files=(${new_files[@]} $c_file ${new[@]})
+    fi
+  done
+
+  new_files=(`echo "${new_files[@]}" | tr ' ' '\n' | sort -u `)
+
+  for file in ${new_files[@]}
+  do
+    if ! containsElement $file ${dependent_files[@]}; then
+      dependent_files=(${dependent_files[@]} $file)      
+      new_seed_files=(${new_seed_files[@]} $file)
+    fi
+  done
+
+  search new_seed_files dependent_files
+}
+
+seed_files=("cvode/cvode.h" "nvector/nvector_serial.h" "cvode/cvode_dense.h")
+dependent_files=()
+
+search seed_files dependent_files
+
+for dep in ${dependent_files[@]}
+do
+  if [ "${dep:$((${#dep}-1)):1}" == "c" ]; then
+    echo $dep
+  fi
+done

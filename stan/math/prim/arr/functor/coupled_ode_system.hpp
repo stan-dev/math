@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -26,7 +25,6 @@ namespace stan {
     struct coupled_ode_system {
     };
 
-
     /**
      * The coupled ode system for known initial values and known
      * parameters.
@@ -38,7 +36,8 @@ namespace stan {
      * @tparam F type of system function for the base ODE system.
      */
     template <typename F>
-    struct coupled_ode_system<F, double, double> {
+    class coupled_ode_system<F, double, double> {
+    public:
       const F& f_;
       const std::vector<double>& y0_dbl_;
       const std::vector<double>& theta_dbl_;
@@ -146,8 +145,7 @@ namespace stan {
       }
     };
 
-  }
-
-}
+  } // math
+} // stan
 
 #endif

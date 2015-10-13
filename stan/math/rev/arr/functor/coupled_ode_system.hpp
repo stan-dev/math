@@ -15,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // This code is in this directory because it includes var
@@ -670,10 +669,7 @@ namespace stan {
         return y_return;
       }
     };
-
-
-  }
-
-}
+  } // math
+} // stan
 
 #endif
