@@ -17,6 +17,11 @@ TEST(AgradRev,rising_factorial_var_double) {
   f.grad(x,g);
   EXPECT_FLOAT_EQ(0, g[0]);
   EXPECT_FLOAT_EQ((digamma(5.0) - digamma(4.0)) * 4.0,g[1]);
+
+  double eps = 1e-6;
+  EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 1.0)
+                  - stan::math::rising_factorial(4.0 - eps, 1.0))
+                  / (2 * eps), g[1]);
 } 
 
 TEST(AgradRev, rising_factorial_exceptions) {
@@ -38,6 +43,11 @@ TEST(AgradRev, rising_factorial_double_var) {
   f.grad(x,g);
   EXPECT_FLOAT_EQ(0, g[0]);
   EXPECT_FLOAT_EQ(digamma(9) * 5*6*7*8, g[1]);
+
+  double eps = 1e-6;
+  EXPECT_FLOAT_EQ((stan::math::rising_factorial(5.0, 4.0 + eps)
+                  - stan::math::rising_factorial(5.0, 4.0 - eps))
+                  / (2 * eps), g[1]);
 }
 
 TEST(AgradRev, rising_factorial_var_var) {
@@ -51,6 +61,14 @@ TEST(AgradRev, rising_factorial_var_var) {
   f.grad(x,g);
   EXPECT_FLOAT_EQ(4.0*5.0*6.0*7.0 * (digamma(8.0) - digamma(4.0)), g[0]);
   EXPECT_FLOAT_EQ(4.0*5.0*6.0*7.0 * digamma(8), g[1]);
+  
+  double eps = 1e-6;
+  EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 4.0)
+                  - stan::math::rising_factorial(4.0 - eps, 4.0))
+                  / (2 * eps), g[0]);
+  EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0, 4.0 + eps)
+                  - stan::math::rising_factorial(4.0, 4.0 - eps))
+                  / (2 * eps), g[1]);
 }
 
 struct rising_factorial_fun {
