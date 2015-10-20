@@ -94,8 +94,9 @@ namespace stan {
         return _ldltP->vectorD().array().log().sum();
       }
 
-      inline void inverse(Eigen::Matrix<T, R, C> &invA) const {
-        invA.setIdentity(N_);
+      template <typename MB>
+      inline void inverse(Eigen::MatrixBase<MB> &invA) const {
+        invA.setIdentity(N_, N_);
         _ldltP->solveInPlace(invA);
       }
 

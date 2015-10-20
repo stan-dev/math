@@ -30,7 +30,9 @@ TEST(AgradRevMatrix, LDLT_factor_constructor_matrix) {
   Eigen::Matrix<double,-1,-1> B(2,2);
   B << 2,1,1,2;
   
-  LDLT_factor<var,-1,-1> ldlt_A(A);
+  Eigen::Map<Eigen::Matrix<var,-1,-1> > mappedA(A.data(), A.rows(), A.cols());
+
+  LDLT_factor<var,-1,-1> ldlt_A(mappedA);
   
   ASSERT_TRUE(ldlt_A.success());
   EXPECT_NO_THROW(ldlt_A.vectorD());
@@ -47,7 +49,7 @@ TEST(AgradRevMatrix, success) {
   Eigen::Matrix<var,-1,-1> A(2,2);
   A << 0,0,0,0;
 
-  LDLT_factor<var,-1,-1> ldlt_A(A);
+  LDLT_factor<var,-1,-1> ldlt_A(A.block(0,0,2,2));
   EXPECT_FALSE(ldlt_A.success());
 
   A << 2,1,1,2;
