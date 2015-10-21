@@ -186,7 +186,7 @@ namespace stan {
       typedef typename return_type<T1, T2>::type return_type;
 
       Matrix<return_type, Dynamic, 1>
-        result (B.size() + 1);
+        result(B.size() + 1);
       result << A, B.template cast<return_type>();
       return result;
     }
@@ -215,7 +215,7 @@ namespace stan {
       typedef typename return_type<T1, T2>::type return_type;
 
       Matrix<return_type, Dynamic, 1>
-        result (A.size() + 1);
+        result(A.size() + 1);
       result << A.template cast<return_type>(), B;
       return result;
     }
