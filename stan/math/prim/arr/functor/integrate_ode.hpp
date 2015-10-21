@@ -95,17 +95,21 @@ namespace stan {
       std::vector<double> coupled_state
         = coupled_system.initial_state();
 
-      typedef runge_kutta_dopri5<std::vector<double>, double, std::vector<double>, double> stepper_type;
+      typedef runge_kutta_dopri5<std::vector<double>, double,
+                                 std::vector<double>, double> stepper_type;
       typedef controlled_runge_kutta< stepper_type > controlled_stepper_type;
 
-      controlled_stepper_type rk45 = make_controlled<stepper_type>(absolute_tolerance, relative_tolerance);
+      controlled_stepper_type rk45
+        = make_controlled<stepper_type>(absolute_tolerance, relative_tolerance);
 
-      integrate_adaptive(rk45, coupled_system, coupled_state, t0, ts[0], step_size);
+      integrate_adaptive(rk45, coupled_system, coupled_state,
+                         t0, ts[0], step_size);
       y_coupled[0] = coupled_state;
-      
+
       for (size_t t = 0; t < ts.size() - 1; t++) {
-	integrate_adaptive(rk45, coupled_system, coupled_state, ts[t], ts[t+1], step_size);
-	y_coupled[t+1] = coupled_state;
+        integrate_adaptive(rk45, coupled_system, coupled_state,
+                           ts[t], ts[t+1], step_size);
+        y_coupled[t+1] = coupled_state;
       }
 
       // the coupled system also encapsulates the decoupling operation
