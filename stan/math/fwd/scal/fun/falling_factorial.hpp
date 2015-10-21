@@ -17,7 +17,7 @@ namespace stan {
       using boost::math::digamma;
 
       T falling_fact(falling_factorial(x.val_, n.val_));
-      return fvar<T>(falling_fact, 
+      return fvar<T>(falling_fact,
                      falling_fact
                      * (digamma(x.val_ + 1)
                      - digamma(x.val_ - n.val_ + 1)) * x.d_
