@@ -46,6 +46,7 @@ namespace stan {
     class coupled_ode_system_cvode<F, double, double>:
       public coupled_ode_system<F, double, double> {
     private:
+      double t0_;
       void* cvode_mem_;
       std::vector<double> state_;
       N_Vector cvode_state_;
@@ -69,16 +70,18 @@ namespace stan {
        *
        * @param[in] f base ode system functor.
        * @param[in] y0 initial state of the base ode.
+       * @param[in] t0 initial time of the base ode.
        * @param[in] theta parameters of the base ode.
        * @param[in] x real data.
        * @param[in] x_int integer data.
-       * @param[in] max_num_steps Maximum number of solver steps.
        * @param[in] rel_tol Relative tolerance of solver.
        * @param[in] abs_tol Absolute tolerance of solver.
+       * @param[in] max_num_steps Maximum number of solver steps.
        * @param[in, out] msgs print stream.
        */
       coupled_ode_system_cvode(const F& f,
                                const std::vector<double>& y0,
+                               double t0,
                                const std::vector<double>& theta,
                                const std::vector<double>& x,
                                const std::vector<int>& x_int,
@@ -87,6 +90,7 @@ namespace stan {
                                long int max_num_steps,
                                std::ostream* msgs)
         : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
+          t0_(t0),
           cvode_mem_(NULL),
           state_(this->N_),
           cvode_state_(N_VMake_Serial(this->N_, &state_[0])) {
@@ -95,12 +99,18 @@ namespace stan {
         if (cvode_mem_ == 0)
           throw std::runtime_error("CVodeCreate failed to allocate memory");
 
+        for (int n = 0; n < this->N_; ++n)
+          state_[n] = y0[n];
+
         // Forward CVode errors to noop error handler
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler, 0);
 
         // Assign pointer to this as user data
         check_flag_(CVodeSetUserData(cvode_mem_, (void*)(this)),
                     "CVodeSetUserData");
+
+        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
+                    "CVodeInit");
 
         // Initialize solver parameters
         check_flag_(CVodeSStolerances(cvode_mem_, rel_tol, abs_tol),
@@ -136,25 +146,22 @@ namespace stan {
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
         static_cast<ode*>(f_data)->operator()(NV_DATA_S(y), NV_DATA_S(ydot), t);
+        return 0;
       }
-      /*
-      static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
-        coupled_ode_system_cvode<F, T1, T2>* explicit_ode
-          = static_cast<coupled_ode_system_cvode<F, T1, T2>*>(f_data);
-        return explicit_ode->operator()(NV_DATA_S(y), NV_DATA_S(ydot), t);
-      }*/
 
       void integrate_times(const std::vector<double>& ts,
-                           std::vector<std::vector<double> > y_coupled) {
-        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, ts[0], cvode_state_),
-                    "CVodeInit");
-        y_coupled[0] = state_; // <|--- what is the optimal way to copy vectors?
-        for (int n = 1; n < ts.size(); ++n) {
-          if (ts[n] != ts[n - 1])
-            check_flag_(CVode(cvode_mem_, ts[n], cvode_state_,
-                              &(ts[n - 1]), CV_NORMAL),
+                           std::vector<std::vector<double> >& y_coupled) {
+        double t_init = t0_;
+        for (int n = 0; n < ts.size(); ++n) {
+          double t_final = ts[n];
+          if (t_final != t_init)
+            check_flag_(CVode(cvode_mem_, t_final, cvode_state_,
+                              &t_init, CV_NORMAL),
                         "CVode");
-          y_coupled[n] = state_; // <|--- what is the optimal way to copy vectors?
+          //y_coupled[n] = state_; // <|--- what is the optimal way to copy vectors?
+          for (int m = 0; m < this->N_; ++m)
+            y_coupled[n][m] = state_[m];
+          t_init = t_final;
         }
       }
 
@@ -162,12 +169,16 @@ namespace stan {
       // the ODE RHS to the Stan vector-based call
       void operator()(const double y[], double dy_dt[], double t) {
         std::vector<double> y_vec(this->N_);
-        std::copy(y, y + this->N_, y_vec);
+        //std::copy(y, y + this->N_, y_vec);
+        for (int n = 0; n < this->N_; ++n)
+          y_vec[n] = y[n];
 
         std::vector<double> dy_dt_vec(this->N_);
         (*this)(y_vec, dy_dt_vec, t);
 
-        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+        //std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+        for (int n = 0; n < this->N_; ++n)
+          dy_dt[n] = dy_dt_vec[n];
       }
 
       // Static wrapper for CVode callback

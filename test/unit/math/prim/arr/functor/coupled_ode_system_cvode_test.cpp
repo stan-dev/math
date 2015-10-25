@@ -5,26 +5,27 @@
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
 
-struct StanMathOde : public ::testing::Test {
+struct StanMathOdeCVode : public ::testing::Test {
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
+  double t0;
 };
 
-TEST_F(StanMathOde, decouple_states_dd) {
+TEST_F(StanMathOdeCVode, decouple_states_dd) {
   using stan::math::coupled_ode_system_cvode;
 
   harm_osc_ode_fun harm_osc;
 
   std::vector<double> y0(2);
-  std::vector<double> theta(1);
-
   y0[0] = 1.0;
   y0[1] = 0.5;
+
+  std::vector<double> theta(1);
   theta[0] = 0.15;
 
   coupled_ode_system_cvode<harm_osc_ode_fun, double, double>
-    coupled_system(harm_osc, y0, theta, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
+    coupled_system(harm_osc, y0, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
 
   int T = 10;
   int k = 0;
@@ -50,7 +51,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
         << "for (double, double) the coupled system is the base system";
 }
 
-TEST_F(StanMathOde, initial_state_dd) {
+TEST_F(StanMathOdeCVode, initial_state_dd) {
   using stan::math::coupled_ode_system_cvode;
   mock_ode_functor base_ode;
 
@@ -66,7 +67,7 @@ TEST_F(StanMathOde, initial_state_dd) {
     theta_d[m] = 10 * (m+1);
 
   coupled_ode_system_cvode<mock_ode_functor, double, double>
-    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
+    coupled_system_dd(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
 
   std::vector<double> state  = coupled_system_dd.initial_state();
   for (int n = 0; n < N; n++)
@@ -76,7 +77,7 @@ TEST_F(StanMathOde, initial_state_dd) {
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
 
-TEST_F(StanMathOde, size) {
+TEST_F(StanMathOdeCVode, size) {
   using stan::math::coupled_ode_system_cvode;
   mock_ode_functor base_ode;
 
@@ -87,13 +88,13 @@ TEST_F(StanMathOde, size) {
   std::vector<double> theta_d(M, 0.0);
 
   coupled_ode_system_cvode<mock_ode_functor, double, double>
-    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
+    coupled_system_dd(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
 
   EXPECT_EQ(N, coupled_system_dd.size());
 }
 
 
-TEST_F(StanMathOde, recover_exception) {
+TEST_F(StanMathOdeCVode, recover_exception) {
   using stan::math::coupled_ode_system_cvode;
   std::string message = "ode throws";
 
@@ -106,7 +107,7 @@ TEST_F(StanMathOde, recover_exception) {
   std::vector<double> theta_v(M, 0.0);
 
   coupled_ode_system_cvode<mock_throwing_ode_functor<std::logic_error>, double, double>
-    coupled_system_dd(throwing_ode, y0_d, theta_v, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
+    coupled_system_dd(throwing_ode, y0_d, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, &msgs);
 
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);

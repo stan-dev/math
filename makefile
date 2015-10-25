@@ -13,7 +13,7 @@ SUFIXES:
 # - O: Optimization level. Valid values are {0, 1, 2, 3}.
 # - AR: archiver (must specify for cross-compiling)
 # - OS_TYPE: {mac, win, linux}
-# - C++11: Compile with C++11 extensions, Valid values: {true, false}. 
+# - C++11: Compile with C++11 extensions, Valid values: {true, false}.
 ##
 CC = g++
 O = 3
@@ -23,11 +23,12 @@ C++11 = false
 
 ##
 # Set default compiler options.
-## 
-CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe
+##
+CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe -I$(MATH)lib/cvode_2.8.2/include
 CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
-LDLIBS = 
-EXE = 
+LDFLAGS = -L/usr/local/lib/
+LDLIBS = -lsundials_cvode -lsundials_nvecserial
+EXE =
 WINE =
 
 -include $(HOME)/.config/stan/make.local  # define local variables
@@ -36,7 +37,7 @@ WINE =
 ##
 # Library locations
 ##
-MATH ?= 
+MATH ?=
 include make/libraries
 
 ##
@@ -129,7 +130,7 @@ endif
 
 ## doxygen
 .PHONY: doxygen
-doxygen: 
+doxygen:
 	mkdir -p doc/api
 	doxygen doxygen/doxygen.cfg
 
@@ -138,7 +139,7 @@ doxygen:
 ##
 .PHONY: clean clean-doxygen clean-deps clean-all
 clean:
-	@echo '  removing test executables'	
+	@echo '  removing test executables'
 	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)

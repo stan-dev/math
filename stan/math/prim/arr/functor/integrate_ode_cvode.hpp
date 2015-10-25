@@ -12,9 +12,7 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-
     /**
      * Return the solutions for the specified system of ordinary
      * differential equations given the specified initial state,
@@ -57,10 +55,10 @@ namespace stan {
                         const std::vector<T2>& theta,
                         const std::vector<double>& x,
                         const std::vector<int>& x_int,
-                        double rel_tol,
-                        double abs_tol,
-                        long int max_num_steps,
-                        std::ostream* msgs) {
+                        double rel_tol = 1e-8,
+                        double abs_tol = 1e-10,
+                        long int max_num_steps = 1e6,
+                        std::ostream* msgs = 0) {
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
       stan::math::check_finite("integrate_ode", "initial time", t0);
@@ -73,35 +71,20 @@ namespace stan {
       stan::math::check_ordered("integrate_ode", "times", ts);
       stan::math::check_less("integrate_ode", "initial time", t0, ts[0]);
 
-      // creates basic or coupled system by template specializations
       coupled_ode_system_cvode<F, T1, T2>
-        coupled_system(f, y0, theta, x, x_int,
+        coupled_system(f, y0, t0, theta, x, x_int,
                        rel_tol, abs_tol, max_num_steps,
                        msgs);
 
-      // first time in the vector must be time of initial state
-      std::vector<double> ts_vec(ts.size() + 1);
-      ts_vec[0] = t0;
-      for (size_t n = 0; n < ts.size(); n++)
-        ts_vec[n + 1] = ts[n];
-
-      std::vector<std::vector<double> > y_coupled(ts_vec.size());
-
-      // the coupled system creates the coupled initial state
-      std::vector<double> initial_coupled_state
-        = coupled_system.initial_state();
+      std::vector<std::vector<double> > y_coupled(ts.size());
+      for (int n = 0; n < ts.size(); ++n)
+        y_coupled[n].resize(y0.size());
 
       coupled_system.integrate_times(ts, y_coupled);
 
-      // remove the first state corresponding to the initial value
-      y_coupled.erase(y_coupled.begin());
-
-      // the coupled system also encapsulates the decoupling operation
       return coupled_system.decouple_states(y_coupled);
     }
-
-  }
-
-}
+  } // math
+} // stan
 
 #endif
