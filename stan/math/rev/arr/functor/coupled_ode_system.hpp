@@ -213,29 +213,23 @@ namespace stan {
       std::vector<std::vector<stan::math::var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
         using stan::math::precomputed_gradients;
-        std::vector<stan::math::var> temp_vars;
-        std::vector<double> temp_gradients;
+        std::vector<stan::math::var> temp_vars(N_);
+        std::vector<double> temp_gradients(M_);
         std::vector<std::vector<stan::math::var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < M_; k++)
-              temp_gradients.push_back(y[i][y0_dbl_.size()
-                                            + y0_dbl_.size() * k + j]);
+              temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      theta_,
-                                                      temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 theta_,
+                                                 temp_gradients);
           }
           y_return[i] = temp_vars;
         }
-
         return y_return;
       }
     };
@@ -420,25 +414,20 @@ namespace stan {
         using stan::math::var;
         using std::vector;
 
-        vector<var> temp_vars;
-        vector<double> temp_gradients;
+        vector<var> temp_vars(N_);
+        vector<double> temp_gradients(N_);
         vector<vector<var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < N_; k++)
-              temp_gradients.push_back(y[i][y0_.size() + y0_.size() * k + j]);
+              temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      y0_, temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 y0_, temp_gradients);
           }
-
           y_return[i] = temp_vars;
         }
 
@@ -645,23 +634,19 @@ namespace stan {
         vector<var> vars = y0_;
         vars.insert(vars.end(), theta_.begin(), theta_.end());
 
-        vector<var> temp_vars;
-        vector<double> temp_gradients;
+        vector<var> temp_vars(N_);
+        vector<double> temp_gradients(N_ + M_);
         vector<vector<var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < N_ + M_; k++)
-              temp_gradients.push_back(y[i][N_ + N_ * k + j]);
+              temp_gradients[k] = y[i][N_ + N_ * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      vars, temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 vars, temp_gradients);
           }
           y_return[i] = temp_vars;
         }
