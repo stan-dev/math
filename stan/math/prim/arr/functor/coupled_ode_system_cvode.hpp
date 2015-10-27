@@ -174,6 +174,14 @@ namespace stan {
       }
 
       // Static wrapper for CVode callback
+      static int banded_jacobian(long int N, long int m_upper, long int m_lower,
+                                 realtype t, N_Vector y, N_Vector fy,
+                                 DlsMat J, void *J_data,
+                                 N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
+        ode* explicit_ode = static_cast<ode*>(J_data);
+        explicit_ode->banded_jacobian(NV_DATA_S(y), J->cols, J->s_mu, t);
+        return 0;
+      }
 
       // J[j][i] = d(ydot[i])/d(y[j])
       void banded_jacobian(const double y[], double* J[],
