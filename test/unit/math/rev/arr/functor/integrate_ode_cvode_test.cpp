@@ -15,11 +15,12 @@
 
 #include <boost/numeric/odeint.hpp>
 
-#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/functor/coupled_ode_system_cvode.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 
-#include <test/unit/math/rev/arr/functor/util.hpp>
+#include <test/unit/math/rev/arr/functor/util_cvode.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 
@@ -71,7 +72,7 @@ void sho_finite_diff_test(double t0) {
   std::vector<double> x;
   std::vector<int> x_int;
 
-  //test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
+  test_ode_cvode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
   sho_value_test<harm_osc_ode_fun, double, var>
     (harm_osc, y0, t0, ts, theta, x, x_int);
@@ -100,12 +101,11 @@ void sho_data_finite_diff_test(double t0) {
   std::vector<double> x(3,1);
   std::vector<int> x_int(2,0);
 
-  //test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
+  test_ode_cvode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
   sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts, theta, x, x_int);
   sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts, theta, x, x_int);
   sho_value_test<harm_osc_ode_data_fun,var,var>(harm_osc, y0, t0, ts, theta, x, x_int);
-
 }
 
 
@@ -142,5 +142,5 @@ TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
   for (int i = 0; i < 100; i++)
     ts.push_back(0.1*(i+1));
 
-  //test_ode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
+  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
 }
