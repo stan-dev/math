@@ -211,11 +211,23 @@ TEST(AgradMixMatrixMdivideLeft,fv_exceptions) {
   using stan::math::mdivide_left;
 
   matrix_fv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_fv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_fv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left(fd1, fv2), std::invalid_argument);
@@ -570,11 +582,23 @@ TEST(AgradMixMatrixMdivideLeft,ffv_exceptions) {
   using stan::math::mdivide_left;
 
   matrix_ffv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_ffv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_ffv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left(fd1, fv2), std::invalid_argument);
