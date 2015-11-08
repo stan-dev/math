@@ -48,6 +48,7 @@ namespace stan {
       const int N_;
       const int M_;
       const int size_;
+      const size_t max_evals_;
       size_t evals_;
       std::ostream* msgs_;
 
@@ -61,6 +62,7 @@ namespace stan {
        * @param[in] theta parameters of the base ode.
        * @param[in] x  real data.
        * @param[in] x_int integer data.
+       * @param[in] max_evals Maximal number of functor calls
        * @param[in, out] msgs print stream.
        */
       coupled_ode_system(const F& f,
@@ -68,6 +70,7 @@ namespace stan {
                          const std::vector<double>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
+			 const size_t max_evals,
                          std::ostream* msgs)
         : f_(f),
           y0_dbl_(y0),
@@ -77,6 +80,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_),
+	  max_evals_(max_evals),
 	  evals_(0),
           msgs_(msgs) {
       }
@@ -100,7 +104,7 @@ namespace stan {
                       std::vector<double>& dy_dt,
                       double t) {
 
-	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, max_evals_);
 	
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_matching_sizes("coupled_ode_system",

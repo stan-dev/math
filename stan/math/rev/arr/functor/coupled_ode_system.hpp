@@ -74,6 +74,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      const size_t max_evals_;
       size_t evals_;
       std::ostream* msgs_;
 
@@ -87,6 +88,7 @@ namespace stan {
        * @param[in] theta parameters of the base ode.
        * @param[in] x real data.
        * @param[in] x_int integer data.
+       * @param[in] max_evals Maximal number of functor calls
        * @param[in, out] msgs stream to which messages are printed.
        */
       coupled_ode_system(const F& f,
@@ -94,6 +96,7 @@ namespace stan {
                          const std::vector<stan::math::var>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
+			 const size_t max_evals,
                          std::ostream* msgs)
         : f_(f),
           y0_dbl_(y0),
@@ -104,8 +107,9 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * M_),
+	  max_evals_(max_evals),
 	  evals_(0),
-                msgs_(msgs) {
+	  msgs_(msgs) {
         for (size_t m = 0; m < M_; m++)
           theta_dbl_[m] = stan::math::value_of(theta[m]);
       }
@@ -133,7 +137,7 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
-	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, max_evals_);
 	
         vector<double> y(z.begin(), z.begin() + N_);
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
@@ -284,6 +288,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      const size_t max_evals_;
       size_t evals_;
 
       /**
@@ -297,6 +302,7 @@ namespace stan {
        * @param[in] theta system parameters.
        * @param[in] x real data.
        * @param[in] x_int integer data.
+       * @param[in] max_evals Maximal number of functor calls
        * @param[in, out] msgs output stream for messages.
        */
       coupled_ode_system(const F& f,
@@ -304,6 +310,7 @@ namespace stan {
                          const std::vector<double>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
+			 const size_t max_evals,
                          std::ostream* msgs)
         : f_(f),
           y0_(y0),
@@ -315,6 +322,7 @@ namespace stan {
           N_(y0.size()),
 	  M_(theta.size()),
 	  size_(N_ + N_ * N_),
+	  max_evals_(max_evals),
 	  evals_(0)
       {
         for (size_t n = 0; n < N_; n++)
@@ -343,7 +351,7 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
-	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, max_evals_);
 	
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
@@ -506,6 +514,7 @@ namespace stan {
       const size_t N_;
       const size_t M_;
       const size_t size_;
+      const size_t max_evals_;
       size_t evals_;
       std::ostream* msgs_;
 
@@ -520,6 +529,7 @@ namespace stan {
        * @param[in] theta parameters of the base ode.
        * @param[in] x real data.
        * @param[in] x_int integer data.
+       * @param[in] max_evals Maximal number of functor calls
        * @param[in, out] msgs output stream to which to print messages.
        */
       coupled_ode_system(const F& f,
@@ -527,6 +537,7 @@ namespace stan {
                          const std::vector<stan::math::var>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
+			 const size_t max_evals,
                          std::ostream* msgs)
         : f_(f),
           y0_(y0),
@@ -538,6 +549,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * (N_ + M_)),
+	  max_evals_(max_evals),
 	  evals_(0),
           msgs_(msgs) {
         for (size_t n = 0; n < N_; n++)
@@ -569,7 +581,7 @@ namespace stan {
         using std::vector;
         using stan::math::var;
 
-	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, 1E5);
+	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, max_evals_);
 	
         vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)

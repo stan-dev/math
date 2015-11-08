@@ -83,10 +83,13 @@ namespace stan {
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
       const double step_size = 0.1;
+      // maximal number of system functor evaluations set to 1E3 *
+      // number of time-points
+      const size_t max_evals = 1E3 * (ts.size()+1);
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
-        coupled_system(f, y0, theta, x, x_int, msgs);
+        coupled_system(f, y0, theta, x, x_int, max_evals, msgs);
 
       // first time in the vector must be time of initial state
       std::vector<double> ts_vec(ts.size() + 1);
