@@ -105,7 +105,7 @@ namespace stan {
                       double t) {
 
 	stan::math::check_less("coupled_ode_system", "too much work: ODE system functor evaluations", ++evals_, max_evals_);
-	
+
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_matching_sizes("coupled_ode_system",
                                                    "y", y,

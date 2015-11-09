@@ -41,7 +41,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   coupled_y0.push_back(2.0);
 
   coupled_ode_system<harm_osc_ode_fun, double, stan::math::var> 
-    system(harm_osc, y0, theta, x, x_int, &msgs);
+    system(harm_osc, y0, theta, x, x_int, 1E5, &msgs);
 
   system(coupled_y0, dy_dt, t0);
 
@@ -67,7 +67,7 @@ TEST_F(StanAgradRevOde, decouple_states_dv) {
   theta[0] = 0.15;
   
   coupled_ode_system<mock_ode_functor, double, var> 
-    coupled_system(mock_ode, y0, theta, x, x_int, &msgs);
+    coupled_system(mock_ode, y0, theta, x, x_int, 1E5, &msgs);
 
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
@@ -106,7 +106,7 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
     theta_v[m] = 10 * (m+1);
      
   coupled_ode_system<mock_ode_functor, double, var>
-    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, &msgs);
+    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, 1E5, &msgs);
 
   std::vector<double> state = coupled_system_dv.initial_state();
   for (size_t n = 0; n < N; n++) 
@@ -127,7 +127,7 @@ TEST_F(StanAgradRevOde, size_dv) {
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, double, var>
-    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, &msgs);
+    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, 1E5, &msgs);
 
   EXPECT_EQ(N + N*M, coupled_system_dv.size());
 }
@@ -144,7 +144,7 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, double, var>
-    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, &msgs);
+    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, 1E5, &msgs);
 
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
@@ -172,7 +172,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     std::vector<var> theta_v(M, 0.0);
     
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double, var>
-      coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
+      coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, 1E5, &msgs);
     
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);
@@ -216,7 +216,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   y0_var.push_back(0.5);
   
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, double> 
-    system(harm_osc, y0_var, theta, x, x_int, &msgs);
+    system(harm_osc, y0_var, theta, x, x_int, 1E5, &msgs);
 
   system(coupled_y0, dy_dt, t0);
 
@@ -242,7 +242,7 @@ TEST_F(StanAgradRevOde, decouple_states_vd) {
   theta[0] = 0.15;
       
   coupled_ode_system<mock_ode_functor, var, double>
-    coupled_system(mock_ode, y0, theta, x, x_int, &msgs);
+    coupled_system(mock_ode, y0, theta, x, x_int, 1E5, &msgs);
       
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
@@ -282,7 +282,7 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
     theta_d[m] = 10 * (m+1);
      
   coupled_ode_system<mock_ode_functor, var, double>
-    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, &msgs);
+    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, 1E5, &msgs);
 
   std::vector<double> state;
 
@@ -305,7 +305,7 @@ TEST_F(StanAgradRevOde, size_vd) {
   std::vector<double> theta_d(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, var, double>
-    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, &msgs);
+    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, 1E5, &msgs);
 
   EXPECT_EQ(N + N*N, coupled_system_vd.size());
 }
@@ -322,7 +322,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
   std::vector<double> theta_d(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, var, double>
-    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, &msgs);
+    coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, 1E5, &msgs);
 
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
@@ -350,7 +350,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     std::vector<double> theta_d(M, 0.0);
     
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, double>
-      coupled_system_vd(throwing_ode, y0_v, theta_d, x, x_int, &msgs);
+      coupled_system_vd(throwing_ode, y0_v, theta_d, x, x_int, 1E5, &msgs);
     
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);
@@ -379,7 +379,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
 
   harm_osc_ode_fun harm_osc;
   coupled_ode_system<harm_osc_ode_fun, stan::math::var, stan::math::var> 
-    system(harm_osc, y0_var, theta_var, x, x_int, &msgs);
+    system(harm_osc, y0_var, theta_var, x, x_int, 1E5, &msgs);
   
   std::vector<double> coupled_y0(8, 0);
   
@@ -422,7 +422,7 @@ TEST_F(StanAgradRevOde, decouple_states_vv) {
   theta[0] = 0.15;
   
   coupled_ode_system<harm_osc_ode_fun, var, var>
-    coupled_system(harm_osc, y0, theta, x, x_int, &msgs);
+    coupled_system(harm_osc, y0, theta, x, x_int, 1E5, &msgs);
 
   size_t T = 10;
   size_t k = 0;
@@ -463,7 +463,7 @@ TEST_F(StanAgradRevOde, initial_state_vv) {
     theta_v[m] = 10 * (m+1);
      
   coupled_ode_system<mock_ode_functor, var, var>
-    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, &msgs);
+    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, 1E5, &msgs);
 
   std::vector<double>  state = coupled_system_vv.initial_state();
   for (size_t n = 0; n < N; n++) 
@@ -484,7 +484,7 @@ TEST_F(StanAgradRevOde, size_vv) {
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, var, var>
-    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, &msgs);
+    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, 1E5, &msgs);
 
   EXPECT_EQ(N + N*N + N*M, coupled_system_vv.size());
 }
@@ -501,7 +501,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, var, var>
-    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, &msgs);
+    coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, 1E5, &msgs);
 
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
@@ -529,7 +529,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     std::vector<var> theta_v(M, 0.0);
     
     coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, var, var>
-      coupled_system_vv(throwing_ode, y0_v, theta_v, x, x_int, &msgs);
+      coupled_system_vv(throwing_ode, y0_v, theta_v, x, x_int, 1E5, &msgs);
     
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);
