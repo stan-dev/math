@@ -186,6 +186,7 @@ namespace stan {
       // J[j][i] = d(ydot[i])/d(y[j])
       void banded_jacobian(const double y[], double* J[],
                            long int s_mu, double t) {
+        std::cout << "Starting banded Jacobian!" << std::endl;
         std::vector<double> y_vec(this->N_);
 
         for (int n = 0; n < this->N_; ++n)
@@ -226,6 +227,7 @@ namespace stan {
                       &(base_J[j % this->N_][0]),
                       this->N_ * sizeof(double));
         }
+        std::cout << "Finishing banded Jacobian!" << std::endl;
       }
     };
 
