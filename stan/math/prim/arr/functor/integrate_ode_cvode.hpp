@@ -55,9 +55,9 @@ namespace stan {
                         const std::vector<T2>& theta,
                         const std::vector<double>& x,
                         const std::vector<int>& x_int,
-                        double rel_tol = 1e-8,
+                        double rel_tol = 1e-10,
                         double abs_tol = 1e-10,
-                        long int max_num_steps = 1e6,
+                        long int max_num_steps = 1e8,
                         std::ostream* msgs = 0) {
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
@@ -78,7 +78,7 @@ namespace stan {
 
       std::vector<std::vector<double> > y_coupled(ts.size());
       for (int n = 0; n < ts.size(); ++n)
-        y_coupled[n].resize(y0.size());
+        y_coupled[n].resize(coupled_system.size());
 
       coupled_system.integrate_times(ts, y_coupled);
 

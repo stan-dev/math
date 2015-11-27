@@ -40,12 +40,10 @@ void sho_value_test(F harm_osc,
   using stan::math::var;
   using stan::math::promote_scalar;
 
-  std::cout << "Before int" << std::endl;
   std::vector<std::vector<var> > ode_res_vd
     = stan::math::integrate_ode_cvode(harm_osc, promote_scalar<T_y0>(y0), t0,
                                       ts, promote_scalar<T_theta>(theta), x,
                                       x_int);
-  std::cout << "After int" << std::endl;
 
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1].val(), 1e-5);

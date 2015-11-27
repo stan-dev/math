@@ -30,7 +30,7 @@ namespace stan {
      */
     template <typename F, typename T1, typename T2>
     class coupled_ode_system_cvode:
-    public coupled_ode_system<F, T1, T2> {
+      public coupled_ode_system<F, T1, T2> {
     private:
       double t0_;
       void* cvode_mem_;
@@ -76,20 +76,15 @@ namespace stan {
                                long int max_num_steps,
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
-      t0_(t0),
-      cvode_mem_(NULL),
-      state_(this->size_),
-      cvode_state_(N_VMake_Serial(this->size_, &state_[0])) {
-        // Set initial state
-        for (int n = 0; n < this->N_; ++n)
-          state_[n] = stan::math::value_of(y0[n]);
-        for (int n = this->N_; n < this->size_; ++n)
-          state_[n] = 0;
-
+        t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
+        cvode_state_(N_VMake_Serial(this->size_, &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
           throw std::runtime_error("CVodeCreate failed to allocate memory");
+
+        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
+                    "CVodeInit");
 
         // Forward CVode errors to noop error handler
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler, 0);
@@ -97,9 +92,6 @@ namespace stan {
         // Assign pointer to this as user data
         check_flag_(CVodeSetUserData(cvode_mem_, (void*)(this)),
                     "CVodeSetUserData");
-
-        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
-                    "CVodeInit");
 
         // Initialize solver parameters
         check_flag_(CVodeSStolerances(cvode_mem_, rel_tol, abs_tol),
@@ -128,6 +120,8 @@ namespace stan {
       }
 
       ~coupled_ode_system_cvode() {
+        // N_VDestroy_Serial should noop because
+        // N_VMake_Serial sets own_data to false
         N_VDestroy_Serial(cvode_state_);
         CVodeFree(&cvode_mem_);
       }
@@ -138,16 +132,12 @@ namespace stan {
       // the ODE RHS to the Stan vector-based call
       void operator()(const double y[], double dy_dt[], double t) {
         std::vector<double> y_vec(this->size_);
-        //std::copy(y, y + N_, y_vec);
-        for (int n = 0; n < this->size_; ++n)
-          y_vec[n] = y[n];
+        std::copy(y, y + this->size_, y_vec.begin());
 
         std::vector<double> dy_dt_vec(this->size_);
         (*this)(y_vec, dy_dt_vec, t);
 
-        //std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
-        for (int n = 0; n < this->size_; ++n)
-          dy_dt[n] = dy_dt_vec[n];
+        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
       }
 
       // Static wrapper for CVode callback
@@ -166,9 +156,7 @@ namespace stan {
             check_flag_(CVode(cvode_mem_, t_final, cvode_state_,
                               &t_init, CV_NORMAL),
                         "CVode");
-          //y_coupled[n] = state_; // <|--- what is the optimal way to copy vectors?
-          for (int m = 0; m < this->size_; ++m)
-            y_coupled[n][m] = state_[m];
+          std::copy(state_.begin(), state_.end(), y_coupled[n].begin());
           t_init = t_final;
         }
       }
@@ -186,36 +174,27 @@ namespace stan {
       // J[j][i] = d(ydot[i])/d(y[j])
       void banded_jacobian(const double y[], double* J[],
                            long int s_mu, double t) {
-        std::cout << "Starting banded Jacobian!" << std::endl;
         std::vector<double> y_vec(this->N_);
-
-        for (int n = 0; n < this->N_; ++n)
-          std::cout << n << "\t" << &(y_vec[n]) << std::endl;
-        //std::copy(y, y + N_, y_vec);
-
-        for (int n = 0; n < this->N_; ++n)
-          y_vec[n] = y[n];
+        std::copy(y, y + this->N_, y_vec.begin());
 
         std::vector<double> grad(this->N_);
 
         // Column major storage assumed for base Jacobian
-        std::vector<std::vector<double> > base_J(this->N_);
-        for (int n = 0; n < this->N_; ++n)
-          base_J[n].resize(this->N_);
+        double base_J[this->N_ * this->N_];
 
         try {
           stan::math::start_nested();
 
           std::vector<stan::math::var> y_vars(y_vec.begin(), y_vec.end());
           std::vector<stan::math::var> dy_dt_vars
-          = this->f_(t, y_vars, this->theta_dbl_,
-                     this->x_, this->x_int_, this->msgs_);
+            = this->f_(t, y_vars, this->theta_dbl_,
+                       this->x_, this->x_int_, this->msgs_);
 
           for (size_t i = 0; i < this->N_; i++) {
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(y_vars, grad);
             for (size_t j = 0; j < this->N_; ++j)
-              base_J[j][i] = grad[j];
+              base_J[j * this->N_ + i] = grad[j];
           }
         } catch (const std::exception& e) {
           stan::math::recover_memory_nested();
@@ -224,10 +203,9 @@ namespace stan {
         stan::math::recover_memory_nested();
         for (int j = 0; j < this->size_; ++j) {
           std::memcpy(J[j] + s_mu - j % this->N_,
-                      &(base_J[j % this->N_][0]),
+                      &(base_J[j % this->N_]),
                       this->N_ * sizeof(double));
         }
-        std::cout << "Finishing banded Jacobian!" << std::endl;
       }
     };
 
@@ -285,27 +263,22 @@ namespace stan {
                                long int max_num_steps,
                                std::ostream* msgs)
         : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
-          t0_(t0),
-          cvode_mem_(NULL),
-          state_(this->N_),
+          t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
           cvode_state_(N_VMake_Serial(this->N_, &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
           throw std::runtime_error("CVodeCreate failed to allocate memory");
 
-        for (int n = 0; n < this->N_; ++n)
-          state_[n] = y0[n];
-
         // Forward CVode errors to noop error handler
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler, 0);
+
+        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
+                    "CVodeInit");
 
         // Assign pointer to this as user data
         check_flag_(CVodeSetUserData(cvode_mem_, (void*)(this)),
                     "CVodeSetUserData");
-
-        check_flag_(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
-                    "CVodeInit");
 
         // Initialize solver parameters
         check_flag_(CVodeSStolerances(cvode_mem_, rel_tol, abs_tol),
@@ -332,6 +305,8 @@ namespace stan {
       }
 
       ~coupled_ode_system_cvode() {
+        // N_VDestroy_Serial should noop because
+        // N_VMake_Serial sets own_data to false
         N_VDestroy_Serial(cvode_state_);
         CVodeFree(&cvode_mem_);
       }
@@ -342,16 +317,12 @@ namespace stan {
       // the ODE RHS to the Stan vector-based call
       void operator()(const double* y, double* dy_dt, double t) {
         std::vector<double> y_vec(this->N_);
-        //std::copy(y, y + this->N_, y_vec);
-        for (int n = 0; n < this->N_; ++n)
-          y_vec[n] = y[n];
+        std::copy(y, y + this->N_, y_vec.begin());
 
         std::vector<double> dy_dt_vec(this->N_);
         (*this)(y_vec, dy_dt_vec, t);
 
-        //std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
-        for (int n = 0; n < this->N_; ++n)
-          dy_dt[n] = dy_dt_vec[n];
+        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
       }
 
       // Static wrapper for CVode callback
@@ -369,9 +340,7 @@ namespace stan {
             check_flag_(CVode(cvode_mem_, t_final, cvode_state_,
                               &t_init, CV_NORMAL),
                         "CVode");
-          //y_coupled[n] = state_; // <|--- what is the optimal way to copy vectors?
-          for (int m = 0; m < this->N_; ++m)
-            y_coupled[n][m] = state_[m];
+          std::copy(state_.begin(), state_.end(), y_coupled[n].begin());
           t_init = t_final;
         }
       }
@@ -390,9 +359,7 @@ namespace stan {
         using stan::math::var;
 
         std::vector<double> y_vec(this->N_);
-        for (int n = 0; n < this->N_; ++n)
-          y_vec[n] = y[n];
-        //std::copy(y, y + this->N_, y_vec);
+        std::copy(y, y + this->N_, y_vec.begin());
 
         std::vector<double> grad(this->N_);
 

@@ -117,33 +117,26 @@ public:
 
 TEST(StanMathOdeIntegrateODEGrad, double_var) {
   double omega = 0.5;
-  //double chi = 1.25;
-  //double t = 5;
+  double chi = 1.25;
+  double t = 5;
 
-  //Eigen::VectorXd x(1);
-  //x(0) = omega;
+  Eigen::VectorXd x(1);
+  x(0) = omega;
 
-  //double f;
-  //Eigen::VectorXd grad(1);
+  double f;
+  Eigen::VectorXd grad(1);
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x_var(1);
-  x_var(0) = omega;
-  test_functor_double_var_1 func1;
-  func1(x_var);
-
-  /*
   test_functor_double_var_1 func1;
   stan::math::gradient(func1, x, f, grad);
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-5);
+  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
 
   test_functor_double_var_2 func2;
   stan::math::gradient(func2, x, f, grad);
 
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-5);
-  */
+  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
 }
 
 class test_functor_var_double_1 {
@@ -203,7 +196,6 @@ public:
 };
 
 TEST(StanMathOdeIntegrateODEGrad, var_double) {
-  /*
   double omega = 0.5;
   double chi = 1.25;
   double t = 5;
@@ -217,15 +209,14 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
   test_functor_var_double_1 func1;
   stan::math::gradient(func1, x, f, grad);
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(0), 1e-5);
+  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(0), 1e-7);
 
   test_functor_var_double_2 func2;
   stan::math::gradient(func2, x, f, grad);
 
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-5);
-  */
+  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
 }
 
 class test_functor_var_var_1 {
@@ -285,7 +276,6 @@ public:
 };
 
 TEST(StanMathOdeIntegrateODEGrad, var_var) {
-  /*
   double omega = 0.5;
   double chi = 1.25;
   double t = 5;
@@ -300,15 +290,14 @@ TEST(StanMathOdeIntegrateODEGrad, var_var) {
   test_functor_var_var_1 func1;
   stan::math::gradient(func1, x, f, grad);
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-5);
-  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(1), 1e-5);
+  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(1), 1e-7);
 
   test_functor_var_var_2 func2;
   stan::math::gradient(func2, x, f, grad);
 
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-5);
-  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-5);
-  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-5);
-  */
+  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
 }
