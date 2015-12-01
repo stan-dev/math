@@ -27,7 +27,7 @@ namespace stan {
       check_vector("unit_vector_constrain", "y", y);
       check_nonzero_size("unit_vector_constrain", "y", y);
       const T SN = dot_self(y);
-      check_positive("unit_vector_constrain", "norm", SN);
+      check_positive_finite("unit_vector_constrain", "norm", SN);
       return y / sqrt(SN);
     }
 
