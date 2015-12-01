@@ -10,8 +10,6 @@
 namespace stan {
 
   namespace math {
-    using boost::math::tools::promote_args;
-    using boost::is_same;
 
     /* Returns an array of size N with partials of log_mix wrt to its
      * parameters instantiated as fvar<T>
@@ -32,11 +30,13 @@ namespace stan {
                            const T_lambda1& lambda1,
                            const T_lambda2& lambda2,
                            typename
-                           promote_args<T_theta, T_lambda1, T_lambda2>::type
+                           boost::math::tools::promote_args<T_theta, T_lambda1, T_lambda2>::type
                            (&partials_array)[N]) {
+      using std::exp;
+      using boost::is_same;
+      using boost::math::tools::promote_args;
       typedef typename promote_args<T_theta, T_lambda1, T_lambda2>::type
         partial_return_type;
-      using std::exp;
 
       typename promote_args<T_lambda1, T_lambda2>::type lam2_m_lam1
         = lambda2 - lambda1;
