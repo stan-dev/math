@@ -287,7 +287,6 @@ TEST(probTransform,unit_vector_jacobian) {
   }
   
   double det_J = J.determinant();
-  double log_det_J = log(fabs(det_J));
 
   EXPECT_FLOAT_EQ(1.0 / det_J, lp.val()) << "J = " << std::endl << J << std::endl << "det_J = " << det_J << std::endl << "x = " << x.transpose();
   
