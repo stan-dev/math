@@ -18,7 +18,6 @@ namespace stan {
      *
      * @param y vector of K unrestricted variables
      * @return Unit length vector of dimension K
-     * @param lp Log probability reference to increment.
      * @tparam T Scalar type.
      **/
     template <typename T, int R, int C>
@@ -32,6 +31,15 @@ namespace stan {
       return y / sqrt(SN);
     }
 
+    /**
+     * Return the unit length vector corresponding to the free vector y.
+     * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
+     *
+     * @param y vector of K unrestricted variables
+     * @return Unit length vector of dimension K
+     * @param lp Log probability reference to increment.
+     * @tparam T Scalar type.
+     **/
     template <typename T, int R, int C>
     Eigen::Matrix<T, R, C>
     unit_vector_constrain(const Eigen::Matrix<T, R, C>& y, T& lp) {

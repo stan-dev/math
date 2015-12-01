@@ -2,14 +2,12 @@
 #define STAN_MATH_FWD_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/mat/fun/dot_self.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/fwd/scal/fun/sqrt.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
-#include <stan/math/rev/mat/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 
 namespace stan {
   namespace math {
