@@ -20,11 +20,11 @@ namespace stan {
       using stan::math::dot_self;
       using stan::math::unit_vector_constrain;
 
-      Matrix<T,R,C> y_t(y.size());
+      Matrix<T, R, C> y_t(y.size());
       for (int k = 0; k < y.size(); ++k)
         y_t.coeffRef(k) = y.coeff(k).val_;
 
-      Matrix<T,R,C> unit_vector_y_t
+      Matrix<T, R, C> unit_vector_y_t
         = unit_vector_constrain(y_t);
       Matrix<fvar<T>, R, C> unit_vector_y(y.size());
       for (int k = 0; k < y.size(); ++k)
@@ -33,16 +33,16 @@ namespace stan {
       const T squared_norm = dot_self(y_t);
       const T norm = sqrt(squared_norm);
       const T inv_norm = inv(norm);
-      Matrix<T,Eigen::Dynamic,Eigen::Dynamic> J
+      Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
         = tcrossprod(y_t) / (-norm * squared_norm);
 
       // for each input position
       for (int m = 0; m < y.size(); ++m) {
-        J.coeffRef(m,m) += inv_norm;
+        J.coeffRef(m, m) += inv_norm;
         // for each output position
         for (int k = 0; k < y.size(); ++k) {
           // chain from input to output
-          unit_vector_y.coeffRef(k).d_ = J.coeff(k,m);
+          unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
         }
       }
       return unit_vector_y;

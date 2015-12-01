@@ -88,12 +88,13 @@ namespace stan {
 
       Eigen::Matrix<var, R, C> unit_vector_y(y.size());
       for (int k = 0; k < y.size(); ++k)
-        unit_vector_y.coeffRef(k) = var(new unit_vector_elt_vari(unit_vector_d[k],
-                                                                 y_vi_array,
-                                                                 unit_vector_y_d_array,
-                                                                 y.size(),
-                                                                 k,
-                                                                 norm));
+        unit_vector_y.coeffRef(k)
+          = var(new unit_vector_elt_vari(unit_vector_d[k],
+                                         y_vi_array,
+                                         unit_vector_y_d_array,
+                                         y.size(),
+                                         k,
+                                         norm));
       return unit_vector_y;
     }
 
