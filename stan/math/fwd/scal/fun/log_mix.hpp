@@ -30,7 +30,8 @@ namespace stan {
                            const T_lambda1& lambda1,
                            const T_lambda2& lambda2,
                            typename
-                           boost::math::tools::promote_args<T_theta, T_lambda1, T_lambda2>::type
+                           boost::math::tools::promote_args<
+                             T_theta, T_lambda1, T_lambda2>::type
                            (&partials_array)[N]) {
       using std::exp;
       using boost::is_same;
