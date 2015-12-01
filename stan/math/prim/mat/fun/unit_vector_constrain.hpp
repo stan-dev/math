@@ -22,12 +22,12 @@ namespace stan {
      **/
     template <typename T, int R, int C>
     Eigen::Matrix<T, R, C>
-    unit_vector_constrain(Eigen::Matrix<T, R, C>& y) {
-      stan::math::check_vector("unit_vector_constrain", "y", y);
-      stan::math::check_nonzero_size("unit_vector_constrain", "y", y);
-      using stan::math::dot_self;
+    unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
+      using std::sqrt;
+      check_vector("unit_vector_constrain", "y", y);
+      check_nonzero_size("unit_vector_constrain", "y", y);
       const T SN = dot_self(y);
-      stan::math::check_positive("unit_vector_constrain", "norm", SN);
+      check_positive("unit_vector_constrain", "norm", SN);
       return y / sqrt(SN);
     }
 
@@ -43,11 +43,11 @@ namespace stan {
     template <typename T, int R, int C>
     Eigen::Matrix<T, R, C>
     unit_vector_constrain(const Eigen::Matrix<T, R, C>& y, T& lp) {
-      stan::math::check_vector("unit_vector_constrain", "y", y);
-      stan::math::check_nonzero_size("unit_vector_constrain", "y", y);
-      using stan::math::dot_self;
+      using std::sqrt;
+      check_vector("unit_vector_constrain", "y", y);
+      check_nonzero_size("unit_vector_constrain", "y", y);
       const T SN = dot_self(y);
-      stan::math::check_positive_finite("unit_vector_constrain", "norm", SN);
+      check_positive_finite("unit_vector_constrain", "norm", SN);
       lp -= 0.5 * SN;
       return y / sqrt(SN);
     }

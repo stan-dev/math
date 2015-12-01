@@ -9,6 +9,7 @@ TEST(AgradFwdMatrixUnitVectorConstrain,fd) {
   using Eigen::Dynamic;
   using stan::math::vector_fd;
   using stan::math::fvar;
+  using std::sqrt;
 
 //  EXPECT_THROW(unit_vector_constrain(vector_fd()),std::invalid_argument);
 

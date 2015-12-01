@@ -15,15 +15,13 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
     unit_vector_constrain(const Eigen::Matrix<fvar<T>, R, C>& y) {
+      using std::sqrt;
       using Eigen::Matrix;
-      using stan::math::tcrossprod;
-      using stan::math::dot_self;
-      using stan::math::unit_vector_constrain;
 
       Matrix<T, R, C> y_t(y.size());
       for (int k = 0; k < y.size(); ++k)
         y_t.coeffRef(k) = y.coeff(k).val_;
-
+      
       Matrix<T, R, C> unit_vector_y_t
         = unit_vector_constrain(y_t);
       Matrix<fvar<T>, R, C> unit_vector_y(y.size());
@@ -51,7 +49,6 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
     unit_vector_constrain(const Eigen::Matrix<fvar<T>, R, C>& y, fvar<T>& lp) {
-      using stan::math::dot_self;
       const fvar<T> squared_norm = dot_self(y);
       lp -= 0.5 * squared_norm;
       return unit_vector_constrain(y);
