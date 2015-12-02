@@ -45,7 +45,8 @@ namespace stan {
                  const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
                  double& fx,
                  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H,
-                 std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >&
+                 std::vector<Eigen::Matrix<double,
+                   Eigen::Dynamic, Eigen::Dynamic> >&
                  grad_H) {
       using Eigen::Matrix;
       using Eigen::Dynamic;

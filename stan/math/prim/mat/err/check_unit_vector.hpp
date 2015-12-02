@@ -35,7 +35,8 @@ namespace stan {
     template <typename T_prob>
     bool check_unit_vector(const char* function,
                            const char* name,
-                           const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+                           const Eigen::Matrix<T_prob,
+                             Eigen::Dynamic, 1>& theta) {
       check_nonzero_size(function, name, theta);
       T_prob ssq = theta.squaredNorm();
       if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {

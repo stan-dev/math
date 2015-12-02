@@ -23,7 +23,7 @@
 namespace stan {
 
   namespace math {
-    
+
     template <class RNG>
     inline Eigen::VectorXd
     multi_student_t_rng(
