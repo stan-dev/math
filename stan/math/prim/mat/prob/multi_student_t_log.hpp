@@ -24,7 +24,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return the log of the multivariate Student t distribution
      * at the specified arguments.
@@ -125,7 +124,7 @@ namespace stan {
       check_symmetric(function, "Scale parameter", Sigma);
 
 
-      LDLT_factor<T_scale_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma);
+      LDLT_factor<T_scale_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
       if (size_y == 0)  // y_vec[0].size() == 0
@@ -153,7 +152,7 @@ namespace stan {
       if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
-          Eigen::Matrix<typename return_type<T_y, T_loc>::type, Dynamic, 1>
+          Eigen::Matrix<typename return_type<T_y, T_loc>::type, Eigen::Dynamic, 1>
             y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j)-mu_vec[i](j);

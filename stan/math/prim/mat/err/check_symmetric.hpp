@@ -14,7 +14,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     /**
      * Return <code>true</code> if the specified matrix is symmetric.
@@ -35,14 +34,17 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_symmetric(const char* function,
-                    const char* name,
-                    const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_symmetric(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       check_square(function, name, y);
 
       using Eigen::Matrix;
       using stan::math::index_type;
       using std::fabs;
+      using Eigen::Dynamic;
 
       typedef typename index_type<Matrix<T_y, Dynamic, Dynamic> >::type
         size_type;

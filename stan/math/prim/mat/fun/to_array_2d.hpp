@@ -7,14 +7,11 @@
 namespace stan {
   namespace math {
 
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using std::vector;
-
     // real[, ] to_array_2d(matrix)
     template <typename T>
-    inline vector< vector<T> >
-    to_array_2d(const Matrix<T, Dynamic, Dynamic> & matrix) {
+    inline std::vector< std::vector<T> >
+    to_array_2d(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & matrix) {
+      using std::vector;
       const T* datap = matrix.data();
       int C = matrix.cols();
       int R = matrix.rows();
