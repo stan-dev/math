@@ -9,8 +9,8 @@ namespace stan {
   namespace math {
 
     // real[] to_array_1d(matrix)
-    // real[] to_array_1d(row_std::vector)
-    // real[] to_array_1d(std::vector)
+    // real[] to_array_1d(row_vector)
+    // real[] to_array_1d(vector)
     template <typename T, int R, int C>
     inline std::vector<T> to_array_1d(
       const Eigen::Matrix<T, R, C> & matrix
