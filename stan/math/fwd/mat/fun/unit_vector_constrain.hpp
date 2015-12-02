@@ -2,8 +2,11 @@
 #define STAN_MATH_FWD_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/mat/fun/divide.hpp>
 #include <stan/math/fwd/mat/fun/dot_self.hpp>
+#include <stan/math/fwd/mat/fun/tcrossprod.hpp>
 #include <stan/math/fwd/scal/fun/sqrt.hpp>
+#include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
@@ -32,7 +35,7 @@ namespace stan {
       const T norm = sqrt(squared_norm);
       const T inv_norm = inv(norm);
       Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
-        = tcrossprod(y_t) / (-norm * squared_norm);
+        = divide(tcrossprod(y_t),  -norm * squared_norm);
 
       // for each input position
       for (int m = 0; m < y.size(); ++m) {
