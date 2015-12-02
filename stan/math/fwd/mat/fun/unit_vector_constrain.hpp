@@ -21,7 +21,7 @@ namespace stan {
       Matrix<T, R, C> y_t(y.size());
       for (int k = 0; k < y.size(); ++k)
         y_t.coeffRef(k) = y.coeff(k).val_;
-      
+
       Matrix<T, R, C> unit_vector_y_t
         = unit_vector_constrain(y_t);
       Matrix<fvar<T>, R, C> unit_vector_y(y.size());

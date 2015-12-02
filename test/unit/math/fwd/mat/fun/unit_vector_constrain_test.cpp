@@ -11,7 +11,7 @@ TEST(AgradFwdMatrixUnitVectorConstrain,fd) {
   using stan::math::fvar;
   using std::sqrt;
 
-//  EXPECT_THROW(unit_vector_constrain(vector_fd()),std::invalid_argument);
+  EXPECT_THROW(unit_vector_constrain(vector_fd()),std::invalid_argument);
 
   Matrix<fvar<double>,Dynamic,1> x(1);
   x << 0.7;
@@ -41,7 +41,7 @@ TEST(AgradFwdMatrixUnitVectorConstrain,fd) {
     EXPECT_FLOAT_EQ(d.coeff(i), theta3[i].d_);
   }
 }
-/*
+
 TEST(AgradFwdMatrixSoftmax,ffd) {
   using stan::math::unit_vector_constrain;
   using Eigen::Matrix;
@@ -49,7 +49,7 @@ TEST(AgradFwdMatrixSoftmax,ffd) {
   using stan::math::vector_ffd;
   using stan::math::fvar;
 
-//  EXPECT_THROW(unit_vector_constrain(vector_ffd()),std::invalid_argument);
+  EXPECT_THROW(unit_vector_constrain(vector_ffd()),std::invalid_argument);
 
   Matrix<fvar<fvar<double> >,Dynamic,1> x(1);
   x << 0.7;
@@ -79,5 +79,5 @@ TEST(AgradFwdMatrixSoftmax,ffd) {
     EXPECT_FLOAT_EQ(d.coeff(i), theta3[i].d_.val());
   }
 }
-*/
+
 
