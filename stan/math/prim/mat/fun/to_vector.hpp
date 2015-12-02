@@ -7,7 +7,7 @@
 
 namespace stan {
   namespace math {
-    
+
     // vector to_vector(matrix)
     // vector to_vector(row_vector)
     // vector to_vector(vector)

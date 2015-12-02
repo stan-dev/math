@@ -11,8 +11,9 @@ namespace stan {
   namespace math {
 
     template <typename T1, typename T2, int R, int C>
-    inline Eigen::Matrix
-    <typename boost::math::tools::promote_args<T1, T2>::type, Eigen::Dynamic, Eigen::Dynamic>
+    inline Eigen::Matrix <
+    typename boost::math::tools::promote_args<T1, T2>::type, 
+      Eigen::Dynamic, Eigen::Dynamic>
     quad_form_diag(const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& mat,
                    const Eigen::Matrix<T2, R, C>& vec) {
       using boost::math::tools::promote_args;
@@ -21,8 +22,8 @@ namespace stan {
       int size = vec.size();
       stan::math::check_equal("quad_form_diag", "matrix size", mat.rows(),
                               size);
-      Eigen::Matrix<typename promote_args<T1, T2>::type, Eigen::Dynamic, Eigen::Dynamic>
-        result(size, size);
+      Eigen::Matrix<typename promote_args<T1, T2>::type, 
+        Eigen::Dynamic, Eigen::Dynamic> result(size, size);
       for (int i = 0; i < size; i++) {
         result(i, i) = vec(i)*vec(i)*mat(i, i);
         for (int j = i+1; j < size; ++j) {

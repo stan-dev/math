@@ -2,12 +2,12 @@
 #define STAN_MATH_PRIM_MAT_FUN_TO_ROW_VECTOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
- // stan::scalar_type
+// stan::scalar_type
 #include <vector>
 
 namespace stan {
   namespace math {
-   
+
     // row_vector to_row_vector(matrix)
     // row_vector to_row_vector(vector)
     // row_vector to_row_vector(row_vector)
