@@ -10,8 +10,6 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     /**
      * Return the derivative of the specified univariate function at
      * the specified argument.
