@@ -59,4 +59,5 @@ TEST(AgradRevUnitVectorConstrain, exceptions) {
   x(0) = std::numeric_limits<var>::quiet_NaN();
   EXPECT_THROW(unit_vector_constrain(x),std::domain_error);
   x(0) = std::numeric_limits<var>::infinity();
+  EXPECT_THROW(unit_vector_constrain(x),std::domain_error);
 }
