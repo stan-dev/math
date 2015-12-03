@@ -58,7 +58,7 @@ TEST(AgradFwdMatrixSoftmax,ffd) {
   Matrix<fvar<fvar<double> >,Dynamic,1> theta = unit_vector_constrain(x);
   EXPECT_EQ(1,theta.size());
   EXPECT_FLOAT_EQ(1.0,theta[0].val_.val());
-  EXPECT_FLOAT_EQ(0.0,theta[0].d_.val());
+  EXPECT_NEAR(0.0,theta[0].d_.val(), 3e-16);
 
   Matrix<fvar<fvar<double> >,Dynamic,1> x3(3);
   x3.setRandom();
@@ -78,6 +78,7 @@ TEST(AgradFwdMatrixSoftmax,ffd) {
     Matrix<double,Dynamic,1> d = ((cx3 / sqrt(SN)) / eps).imag();
     EXPECT_FLOAT_EQ(d.coeff(i), theta3[i].d_.val());
   }
+
 }
 
 
