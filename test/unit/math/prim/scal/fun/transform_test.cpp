@@ -662,10 +662,12 @@ TEST(prob_transform,unit_vector_f_exception) {
   EXPECT_THROW(stan::math::unit_vector_free(y), std::domain_error);
   y << 0.0, 0.0;
   EXPECT_THROW(stan::math::unit_vector_free(y), std::domain_error);
-  y << 1.0, 1.0 / 0.0;
+  y(0) = std::numeric_limits<double>::quiet_NaN();
+  y(1) = 1.0;
+  EXPECT_THROW(stan::math::unit_vector_free(y), std::domain_error);
+  y(0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(stan::math::unit_vector_free(y), std::domain_error);
 }
-
 
 TEST(ProbTransform,choleskyFactor) {
   using Eigen::Matrix;

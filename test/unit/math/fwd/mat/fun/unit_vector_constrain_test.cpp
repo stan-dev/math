@@ -81,4 +81,3 @@ TEST(AgradFwdMatrixSoftmax,ffd) {
 
 }
 
-
