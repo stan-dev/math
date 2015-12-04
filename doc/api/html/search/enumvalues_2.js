@@ -1,6 +1,0 @@
-var searchData=
-[
-  ['iscomplex',['IsComplex',['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1fvar_3_01_t_01_4_01_4.html#a768855037a4305f4d90091d81bb92258a927bbae55331d3b6f7cb4c78a5fad146',1,'Eigen::NumTraits&lt; stan::math::fvar&lt; T &gt; &gt;::IsComplex()'],['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1var_01_4.html#afbb9dcc15eb3b86fd1ed8a3ef5158634a9138c6bf5ace7c298c0c3a65d2c4e505',1,'Eigen::NumTraits&lt; stan::math::var &gt;::IsComplex()']]],
-  ['isinteger',['IsInteger',['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1fvar_3_01_t_01_4_01_4.html#a768855037a4305f4d90091d81bb92258a274287a3cdae5ae4d48890ae91d32b4b',1,'Eigen::NumTraits&lt; stan::math::fvar&lt; T &gt; &gt;::IsInteger()'],['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1var_01_4.html#afbb9dcc15eb3b86fd1ed8a3ef5158634adc43be51c2a6f27df544131c7c87ea00',1,'Eigen::NumTraits&lt; stan::math::var &gt;::IsInteger()']]],
-  ['issigned',['IsSigned',['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1fvar_3_01_t_01_4_01_4.html#a768855037a4305f4d90091d81bb92258a0bc04ee5f79e5accb84c3ae8b03f2fbc',1,'Eigen::NumTraits&lt; stan::math::fvar&lt; T &gt; &gt;::IsSigned()'],['../struct_eigen_1_1_num_traits_3_01stan_1_1math_1_1var_01_4.html#afbb9dcc15eb3b86fd1ed8a3ef5158634a7aa15fd85e5ac1c996ce5ddefa802df0',1,'Eigen::NumTraits&lt; stan::math::var &gt;::IsSigned()']]]
-];
