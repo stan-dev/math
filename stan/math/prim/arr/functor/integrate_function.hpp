@@ -37,7 +37,7 @@ namespace stan {
         int S = x.size();
         Eigen::Matrix<var, R, C> result(R_, C_);
         var* datap = result.data();
-        const double* datax = value_of(x.data());
+        const double* datax = x.data();
         for (int i=0; i < S; i++)
           datap[i] = var(datax[i]);
         return result;
