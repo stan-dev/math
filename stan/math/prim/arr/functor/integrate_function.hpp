@@ -18,11 +18,10 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/bind.hpp>
 #include <cmath>
-
+#include <boost/lambda/lambda.hpp>
 #include <ostream>
 #include <vector>
 #include <stan/math/prim/arr/functor/DEIntegrator.hpp>
-#include <iostream>
 
 namespace stan {
 
@@ -89,9 +88,10 @@ namespace stan {
                                  std::vector<double>& results) {
 
         VectorView<const T_param> param_vec(param);
+
         for (size_t n = 0; n < N; n++)
           results[n] =
-          get_integrate_val(boost::bind<double>(get_integrate_gradient<F, T_param>, f, _1, param, param_vec[n]), a, b, 1e-6);
+          get_integrate_val(boost::bind<double>(get_integrate_gradient<F, T_param>, f, boost::lambda::_1, param, param_vec[n]), a, b, 1e-6);
 
       }
 
@@ -111,7 +111,7 @@ namespace stan {
       //FIXME: convert vector of var to vector of double
       double val_ =
         get_integrate_val(
-          boost::bind<double>(f, _1, value_of(param)),
+          boost::bind<double>(f, boost::lambda::_1, value_of(param)),
                               a, b, 1e-6);
 
       if (!is_constant_struct<T_param>::value) {
