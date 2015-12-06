@@ -71,10 +71,11 @@ namespace stan {
       double get_integrate_gradient(const F& f,
                                     const double x,
                                     const T_param& param,
-                                    const var& param_n) {
+                                    const var& param_n,
+                                    std::ostream* msgs) {
 
         set_zero_all_adjoints_nested();
-        f(x, param).grad();
+        f(x, param, msgs).grad();
         return param_n.adj();
       }
 
@@ -85,13 +86,14 @@ namespace stan {
                                  const double b,
                                  const T_param& param,
                                  const size_t N,
-                                 std::vector<double>& results) {
+                                 std::vector<double>& results,
+                                 std::ostream* msgs) {
 
         VectorView<const T_param> param_vec(param);
 
         for (size_t n = 0; n < N; n++)
           results[n] =
-          get_integrate_val(boost::bind<double>(get_integrate_gradient<F, T_param>, f, boost::lambda::_1, param, param_vec[n]), a, b, 1e-6);
+          get_integrate_val(boost::bind<double>(get_integrate_gradient<F, T_param>, f, boost::lambda::_1, param, param_vec[n], msgs), a, b, 1e-6);
 
       }
 
@@ -102,7 +104,8 @@ namespace stan {
     typename scalar_type<T_param>::type integrate_function(const F& f,
                                const double a,
                                const double b,
-                               const T_param& param) {
+                               const T_param& param,
+                               std::ostream* msgs) {
 
       stan::math::check_finite("integrate_function", "lower limit", a);
       stan::math::check_finite("integrate_function", "upper limit", b);
@@ -111,7 +114,8 @@ namespace stan {
       //FIXME: convert vector of var to vector of double
       double val_ =
         get_integrate_val(
-          boost::bind<double>(f, boost::lambda::_1, value_of(param)),
+          boost::bind<double>(f,
+                              boost::lambda::_1, value_of(param), msgs),
                               a, b, 1e-6);
 
       if (!is_constant_struct<T_param>::value) {
@@ -121,7 +125,8 @@ namespace stan {
 
         try {
           start_nested();
-          do_nested_grad_call(f, a, b, to_var(value_of(param)), N, results);
+          do_nested_grad_call(f, a, b, to_var(value_of(param)),
+          N, results, msgs);
         } catch (const std::exception& e) {
           recover_memory_nested();
           throw;
