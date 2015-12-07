@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_FUNCTION_HPP
 
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
