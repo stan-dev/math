@@ -34,7 +34,7 @@
 #include <stan/math/prim/scal/fun/prob_free.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
-#include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
+#include <stan/math/rev/mat/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_free.hpp>
 #include <stan/math/prim/mat/fun/simplex_constrain.hpp>
 #include <stan/math/prim/mat/fun/simplex_free.hpp>
@@ -264,7 +264,8 @@ TEST(probTransform,unit_vector_jacobian) {
   var lp(0);
   Matrix<var,Dynamic,1> x 
     = stan::math::unit_vector_constrain(y,lp);
-  
+  const var r2 = stan::math::dot_self(y);
+
   vector<var> indeps;
   indeps.push_back(a);
   indeps.push_back(b);
@@ -273,24 +274,21 @@ TEST(probTransform,unit_vector_jacobian) {
   vector<var> deps;
   deps.push_back(x(0));
   deps.push_back(x(1));
-  deps.push_back(x(2));
-  deps.push_back(x(3));
+  deps.push_back(r2);
   
   vector<vector<double> > jacobian;
   stan::math::jacobian(deps,indeps,jacobian);
 
-  Matrix<double,Dynamic,Dynamic> J(4,4);
-  for (int m = 0; m < 4; ++m) {
+  Matrix<double,Dynamic,Dynamic> J(3,3);
+  for (int m = 0; m < 3; ++m) {
     for (int n = 0; n < 3; ++n) {
       J(m,n) = jacobian[m][n];
     }
-    J(m,3) = x(m).val(); 
   }
   
   double det_J = J.determinant();
-  double log_det_J = log(fabs(det_J));
 
-  EXPECT_FLOAT_EQ(log_det_J, lp.val()) << "J = " << J << std::endl << "det_J = " << det_J;
+  EXPECT_FLOAT_EQ(1.0 / det_J, lp.val()) << "J = " << std::endl << J << std::endl << "det_J = " << det_J << std::endl << "x = " << x.transpose();
   
 }
 

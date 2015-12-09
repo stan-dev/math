@@ -9,15 +9,14 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     template <typename T, typename F>
     void
     jacobian(const F& f,
-             const Eigen::Matrix<T, Dynamic, 1>& x,
-             Eigen::Matrix<T, Dynamic, 1>& fx,
-             Eigen::Matrix<T, Dynamic, Dynamic>& J) {
+             const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+             Eigen::Matrix<T, Eigen::Dynamic, 1>& fx,
+             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& J) {
       using Eigen::Matrix;
+      using Eigen::Dynamic;
       using stan::math::fvar;
       Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
       for (int i = 0; i < x.size(); ++i) {
