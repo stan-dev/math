@@ -19,7 +19,7 @@ SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(CVODE)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
 
 
-$(SUNDIALS_CVODE) : %.o : %.c
+$(sort $(SUNDIALS_CVODE) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.c) -x c -I $(CVODE)/include $< -o $@
 
