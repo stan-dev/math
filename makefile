@@ -22,23 +22,22 @@ AR = ar
 C++11 = false
 
 ##
+# Library locations
+##
+MATH ?=
+include make/libraries
+
+##
 # Set default compiler options.
 ##
-CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe -I$(MATH)lib/cvode_2.8.2/include
+CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe -I$(CVODE)/include
 CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
-LDFLAGS = -L/usr/local/lib/
-LDLIBS = -lsundials_cvode -lsundials_nvecserial
+LDLIBS = $(LIBCVODE)
 EXE =
 WINE =
 
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
-
-##
-# Library locations
-##
-MATH ?=
-include make/libraries
 
 ##
 # Get information about the compiler used.
@@ -156,3 +155,4 @@ clean-all: clean clean-doxygen clean-deps
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/gtest.o test/libgtest* test/prob/generate_tests$(EXE))
+	$(RM) $(wildcard $(CVODE)/lib/*)
