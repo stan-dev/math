@@ -13,8 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
-#include <stan/math/prim/scal/fun/F32.hpp>
-#include <stan/math/prim/scal/fun/grad_F32.hpp>
 
 namespace stan {
   namespace math {
