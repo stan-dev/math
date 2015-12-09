@@ -20,7 +20,7 @@ test/gtest.o: $(GTEST)/src/gtest-all.cc
 ##
 # Rule for building a test
 ##
-test/%_test.o : test/%_test.cpp $(LIBGTEST)
+test/%_test.o : test/%_test.cpp $(LIBGTEST) $(LIBCVODE)
 	@mkdir -p $(dir $@)
 	$(COMPILE.c) -O$O $(CFLAGS_GTEST) $< $(OUTPUT_OPTION)
 
