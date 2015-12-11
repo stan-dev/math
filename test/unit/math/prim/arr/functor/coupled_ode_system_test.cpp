@@ -24,7 +24,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
   theta[0] = 0.15;
   
   coupled_ode_system<harm_osc_ode_fun, double, double> 
-    coupled_system(harm_osc, y0, theta, x, x_int, &msgs);
+    coupled_system(harm_osc, y0, theta, x, x_int, 1E5, &msgs);
 
   int T = 10;
   int k = 0;
@@ -66,7 +66,7 @@ TEST_F(StanMathOde, initial_state_dd) {
     theta_d[m] = 10 * (m+1);
      
   coupled_ode_system<mock_ode_functor, double, double>
-    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, &msgs);
+    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, 1E5, &msgs);
 
   std::vector<double> state  = coupled_system_dd.initial_state();
   for (int n = 0; n < N; n++) 
@@ -87,7 +87,7 @@ TEST_F(StanMathOde, size) {
   std::vector<double> theta_d(M, 0.0);
 
   coupled_ode_system<mock_ode_functor, double, double>
-    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, &msgs);
+    coupled_system_dd(base_ode, y0_d, theta_d, x, x_int, 1E5, &msgs);
 
   EXPECT_EQ(N, coupled_system_dd.size());
 }
@@ -106,7 +106,7 @@ TEST_F(StanMathOde, recover_exception) {
   std::vector<double> theta_v(M, 0.0);
   
   coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double, double>
-    coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
+    coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, 1E5, &msgs);
     
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
@@ -116,4 +116,31 @@ TEST_F(StanMathOde, recover_exception) {
   EXPECT_THROW_MSG(coupled_system_dv(y, dy_dt, t),
                    std::logic_error,
                    message);
+}
+
+TEST_F(StanMathOde, max_steps_exception) {
+  using stan::math::coupled_ode_system;
+
+  const int N = 3;
+  const int M = 4;
+  
+  mock_ode_functor base_ode;
+  
+  std::vector<double> y0_d(N, 0.0);
+  std::vector<double> theta_v(M, 0.0);
+  
+  coupled_ode_system<mock_ode_functor, double, double>
+    coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, 2, &msgs);
+
+  std::vector<double> y(3,0);
+  std::vector<double> dy_dt(3,0);
+  
+  double t = 10;
+
+  // first call is ok
+  EXPECT_NO_THROW(coupled_system_dv(y, dy_dt, t));
+
+  // second call must throw
+  EXPECT_THROW(coupled_system_dv(y, dy_dt, t),
+	       std::domain_error);
 }
