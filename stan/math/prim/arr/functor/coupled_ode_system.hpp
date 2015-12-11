@@ -144,8 +144,7 @@ namespace stan {
         return y;
       }
     };
-
-  } // math
-} // stan
+  }  // math
+}  // stan
 
 #endif

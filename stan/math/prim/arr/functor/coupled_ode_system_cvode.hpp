@@ -11,6 +11,10 @@
 #include <cvode/cvode_band.h>
 #include <cvode/cvode_dense.h>
 
+#include <vector>
+#include <algorithm>
+#include <string>
+
 namespace stan {
   namespace math {
 
@@ -73,7 +77,7 @@ namespace stan {
                                const std::vector<int>& x_int,
                                double rel_tol,
                                double abs_tol,
-                               long int max_num_steps,
+                               int_least32_t max_num_steps,
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
         t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
@@ -90,7 +94,7 @@ namespace stan {
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler, 0);
 
         // Assign pointer to this as user data
-        check_flag_(CVodeSetUserData(cvode_mem_, (void*)(this)),
+        check_flag_(CVodeSetUserData(cvode_mem_, reinterpret_cast<void*>(this)),
                     "CVodeSetUserData");
 
         // Initialize solver parameters
@@ -142,7 +146,7 @@ namespace stan {
 
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* user_data) {
-        ode* explicit_ode = static_cast<ode*>(user_data);
+        ode* explicit_ode = reinterpret_cast<ode*>(user_data);
         explicit_ode->operator()(NV_DATA_S(y), NV_DATA_S(ydot), t);
         return 0;
       }
@@ -166,7 +170,7 @@ namespace stan {
                                  realtype t, N_Vector y, N_Vector fy,
                                  DlsMat J, void *J_data,
                                  N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-        ode* explicit_ode = static_cast<ode*>(J_data);
+        ode* explicit_ode = reinterpret_cast<ode*>(J_data);
         explicit_ode->banded_jacobian(NV_DATA_S(y), J->cols, J->s_mu, t);
         return 0;
       }
@@ -180,7 +184,8 @@ namespace stan {
         std::vector<double> grad(this->N_);
 
         // Column major storage assumed for base Jacobian
-        double base_J[this->N_ * this->N_];
+        const int N = this->N_;
+        double base_J[N * N];
 
         try {
           stan::math::start_nested();
@@ -277,7 +282,8 @@ namespace stan {
                     "CVodeInit");
 
         // Assign pointer to this as user data
-        check_flag_(CVodeSetUserData(cvode_mem_, (void*)(this)),
+        check_flag_(CVodeSetUserData(cvode_mem_,
+                                     reinterpret_cast<void*>(this)),
                     "CVodeSetUserData");
 
         // Initialize solver parameters
@@ -327,7 +333,8 @@ namespace stan {
 
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
-        static_cast<ode*>(f_data)->operator()(NV_DATA_S(y), NV_DATA_S(ydot), t);
+        ode* explicit_ode = reinterpret_cast<ode*>(f_data);
+        explicit_ode->operator()(NV_DATA_S(y), NV_DATA_S(ydot), t);
         return 0;
       }
 
@@ -350,7 +357,7 @@ namespace stan {
                                 realtype t, N_Vector y, N_Vector fy,
                                 DlsMat J, void *J_data,
                                 N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-        ode* explicit_ode = static_cast<ode*>(J_data);
+        ode* explicit_ode = reinterpret_cast<ode*>(J_data);
         return explicit_ode->dense_jacobian(NV_DATA_S(y), J->cols, t);
       }
 

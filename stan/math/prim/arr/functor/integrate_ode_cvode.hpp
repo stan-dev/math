@@ -59,17 +59,25 @@ namespace stan {
                         double abs_tol = 1e-10,
                         long int max_num_steps = 1e8,
                         std::ostream* msgs = 0) {
+      stan::math::check_finite("integrate_ode_cvode",
+                               "initial state", y0);
+      stan::math::check_finite("integrate_ode_cvode",
+                               "initial time", t0);
+      stan::math::check_finite("integrate_ode_cvode",
+                               "times", ts);
+      stan::math::check_finite("integrate_ode_cvode",
+                               "parameter vector", theta);
+      stan::math::check_finite("integrate_ode_cvode",
+                               "continuous data", x);
 
-      stan::math::check_finite("integrate_ode_cvode", "initial state", y0);
-      stan::math::check_finite("integrate_ode_cvode", "initial time", t0);
-      stan::math::check_finite("integrate_ode_cvode", "times", ts);
-      stan::math::check_finite("integrate_ode_cvode", "parameter vector", theta);
-      stan::math::check_finite("integrate_ode_cvode", "continuous data", x);
-
-      stan::math::check_nonzero_size("integrate_ode_cvode", "times", ts);
-      stan::math::check_nonzero_size("integrate_ode_cvode", "initial state", y0);
-      stan::math::check_ordered("integrate_ode_cvode", "times", ts);
-      stan::math::check_less("integrate_ode_cvode", "initial time", t0, ts[0]);
+      stan::math::check_nonzero_size("integrate_ode_cvode",
+                                     "times", ts);
+      stan::math::check_nonzero_size("integrate_ode_cvode",
+                                     "initial state", y0);
+      stan::math::check_ordered("integrate_ode_cvode",
+                                "times", ts);
+      stan::math::check_less("integrate_ode_cvode",
+                             "initial time", t0, ts[0]);
 
       coupled_ode_system_cvode<F, T1, T2>
         coupled_system(f, y0, t0, theta, x, x_int,
@@ -84,7 +92,7 @@ namespace stan {
 
       return coupled_system.decouple_states(y_coupled);
     }
-  } // math
-} // stan
+  }  // math
+}  // stan
 
 #endif

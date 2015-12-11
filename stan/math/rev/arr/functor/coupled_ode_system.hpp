@@ -654,7 +654,7 @@ namespace stan {
         return y_return;
       }
     };
-  } // math
-} // stan
+  }  // math
+}  // stan
 
 #endif
