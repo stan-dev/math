@@ -57,7 +57,7 @@ namespace stan {
                         const std::vector<int>& x_int,
                         double rel_tol = 1e-10,
                         double abs_tol = 1e-10,
-                        long int max_num_steps = 1e8,
+                        long int max_num_steps = 1e8,  // NOLINT(runtime/int)
                         std::ostream* msgs = 0) {
       stan::math::check_finite("integrate_ode_cvode",
                                "initial state", y0);

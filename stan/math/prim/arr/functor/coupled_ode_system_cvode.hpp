@@ -77,7 +77,7 @@ namespace stan {
                                const std::vector<int>& x_int,
                                double rel_tol,
                                double abs_tol,
-                               int_least32_t max_num_steps,
+                               long int,  // NOLINT(runtime/int)
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
         t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
@@ -108,11 +108,11 @@ namespace stan {
         check_flag_(CVodeSetInitStep(cvode_mem_, init_step),
                     "CVodeSetInitStep");
 
-        long int max_err_test_fails = 20;
+        long int max_err_test_fails = 20;  // NOLINT(runtime/int)
         check_flag_(CVodeSetMaxErrTestFails(cvode_mem_, max_err_test_fails),
                     "CVodeSetMaxErrTestFails");
 
-        long int max_conv_fails = 50;
+        long int max_conv_fails = 50;  // NOLINT(runtime/int)
         check_flag_(CVodeSetMaxConvFails(cvode_mem_, max_conv_fails),
                     "CVodeSetMaxConvFails");
 
@@ -166,7 +166,9 @@ namespace stan {
       }
 
       // Static wrapper for CVode callback
-      static int banded_jacobian(long int N, long int m_upper, long int m_lower,
+      static int banded_jacobian(long int N,        // NOLINT(runtime/int)
+                                 long int m_upper,  // NOLINT(runtime/int)
+                                 long int m_lower,  // NOLINT(runtime/int)
                                  realtype t, N_Vector y, N_Vector fy,
                                  DlsMat J, void *J_data,
                                  N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
@@ -177,7 +179,8 @@ namespace stan {
 
       // J[j][i] = d(ydot[i])/d(y[j])
       void banded_jacobian(const double y[], double* J[],
-                           long int s_mu, double t) {
+                           long int s_mu,  // NOLINT(runtime/int)
+                           double t) {
         std::vector<double> y_vec(this->N_);
         std::copy(y, y + this->N_, y_vec.begin());
 
@@ -265,7 +268,7 @@ namespace stan {
                                const std::vector<int>& x_int,
                                double rel_tol,
                                double abs_tol,
-                               long int max_num_steps,
+                               long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
         : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
           t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
@@ -297,11 +300,11 @@ namespace stan {
         check_flag_(CVodeSetInitStep(cvode_mem_, init_step),
                     "CVodeSetInitStep");
 
-        long int max_err_test_fails = 20;
+        long int max_err_test_fails = 20;  // NOLINT(runtime/int)
         check_flag_(CVodeSetMaxErrTestFails(cvode_mem_, max_err_test_fails),
                     "CVodeSetMaxErrTestFails");
 
-        long int max_conv_fails = 50;
+        long int max_conv_fails = 50;  // NOLINT(runtime/int)
         check_flag_(CVodeSetMaxConvFails(cvode_mem_, max_conv_fails),
                     "CVodeSetMaxConvFails");
 
@@ -353,7 +356,7 @@ namespace stan {
       }
 
       // Static wrapper for CVode callback
-      static int dense_jacobian(long int N,
+      static int dense_jacobian(long int N,  // NOLINT(runtime/int)
                                 realtype t, N_Vector y, N_Vector fy,
                                 DlsMat J, void *J_data,
                                 N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
