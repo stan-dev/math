@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_CVODE_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_CVODE_HPP
 
-#include <stan/math/rev/scal/fun/value_of.hpp>
-
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+
 #include <stan/math/rev/core.hpp>
 
 #include <cvode/cvode.h>
@@ -77,7 +76,7 @@ namespace stan {
                                const std::vector<int>& x_int,
                                double rel_tol,
                                double abs_tol,
-                               long int,  // NOLINT(runtime/int)
+                               long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
         t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
