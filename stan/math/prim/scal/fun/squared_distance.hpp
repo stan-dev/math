@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,10 +21,9 @@ namespace stan {
     inline typename boost::math::tools::promote_args<T1, T2>::type
     squared_distance(const T1& x1,
                      const T2& x2) {
-      using std::fabs;
       check_finite("squared_distance", "x1", x1);
       check_finite("squared_distance", "x2", x2);
-      return fabs(x1 - x2);
+      return square(x1 - x2);
     }
   }
 }
