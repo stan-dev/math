@@ -23,7 +23,7 @@ TEST(MathRev, squared_distance) {
   ASSERT_EQ(2, grad_f.size());
   EXPECT_FLOAT_EQ(-6, grad_f[0]);
   EXPECT_FLOAT_EQ(6, grad_f[1]);
-  stan::math::set_zero_all_adjoints();
+  stan::math::recover_memory();
   vars.clear();
 
 
@@ -35,7 +35,7 @@ TEST(MathRev, squared_distance) {
   EXPECT_FLOAT_EQ(9, f.val());
   ASSERT_EQ(1, grad_f.size());
   EXPECT_FLOAT_EQ(-6, grad_f[0]);
-  stan::math::set_zero_all_adjoints();
+  stan::math::recover_memory();
   vars.clear();
 
 
@@ -48,7 +48,7 @@ TEST(MathRev, squared_distance) {
   EXPECT_FLOAT_EQ(9, f.val());
   ASSERT_EQ(1, grad_f.size());
   EXPECT_FLOAT_EQ(6, grad_f[0]);
-  stan::math::set_zero_all_adjoints();
+  stan::math::recover_memory();
   vars.clear();
 }
 
