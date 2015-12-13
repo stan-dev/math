@@ -5,8 +5,8 @@ TEST(MathFunctions, squared_distance) {
   double x1 = 1;
   double x2 = 4;
   
-  EXPECT_FLOAT_EQ(3, stan::math::squared_distance(x1, x2));
-  EXPECT_FLOAT_EQ(3, stan::math::squared_distance(x2, x1));
+  EXPECT_FLOAT_EQ(9, stan::math::squared_distance(x1, x2));
+  EXPECT_FLOAT_EQ(9, stan::math::squared_distance(x2, x1));
   EXPECT_FLOAT_EQ(0, stan::math::squared_distance(x1, x1));
   EXPECT_FLOAT_EQ(0, stan::math::squared_distance(x2, x2));
 }
