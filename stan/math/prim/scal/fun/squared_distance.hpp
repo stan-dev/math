@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
