@@ -16,12 +16,11 @@
 #include <boost/numeric/odeint.hpp>
 
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 
 #include <test/unit/math/rev/arr/functor/util_cvode.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>

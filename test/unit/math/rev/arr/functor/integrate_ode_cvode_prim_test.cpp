@@ -14,8 +14,8 @@
 
 #include <boost/numeric/odeint.hpp>
 
-#include <stan/math/prim/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>

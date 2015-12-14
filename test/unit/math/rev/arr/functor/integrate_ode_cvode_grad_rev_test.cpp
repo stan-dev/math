@@ -6,8 +6,8 @@
 #include <stdexcept>
 
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 
 using std::cos;

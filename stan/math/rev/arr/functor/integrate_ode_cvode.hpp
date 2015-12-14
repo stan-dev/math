@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
+#ifndef STAN_MATH_REV_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
+#define STAN_MATH_REV_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
 
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
@@ -7,7 +7,7 @@
 #include <stan/math/prim/scal/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
 #include <ostream>
 #include <vector>
 
