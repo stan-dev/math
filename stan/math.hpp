@@ -63,7 +63,6 @@
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
@@ -539,6 +538,8 @@
 
 #include <stan/math/rev/arr/fun/log_sum_exp.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 
 #include <stan/math/rev/core.hpp>
 
