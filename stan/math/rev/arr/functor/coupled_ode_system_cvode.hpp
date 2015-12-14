@@ -153,7 +153,7 @@ namespace stan {
       void integrate_times(const std::vector<double>& ts,
                            std::vector<std::vector<double> >& y_coupled) {
         double t_init = t0_;
-        for (int n = 0; n < ts.size(); ++n) {
+        for (size_t n = 0; n < ts.size(); ++n) {
           double t_final = ts[n];
           if (t_final != t_init)
             check_flag_(CVode(cvode_mem_, t_final, cvode_state_,
@@ -208,7 +208,7 @@ namespace stan {
           throw;
         }
         stan::math::recover_memory_nested();
-        for (int j = 0; j < this->size_; ++j) {
+        for (size_t j = 0; j < this->size_; ++j) {
           std::memcpy(J[j] + s_mu - j % this->N_,
                       &(base_J[j % this->N_]),
                       this->N_ * sizeof(double));
@@ -343,7 +343,7 @@ namespace stan {
       void integrate_times(const std::vector<double>& ts,
                            std::vector<std::vector<double> >& y_coupled) {
         double t_init = t0_;
-        for (int n = 0; n < ts.size(); ++n) {
+        for (size_t n = 0; n < ts.size(); ++n) {
           double t_final = ts[n];
           if (t_final != t_init)
             check_flag_(CVode(cvode_mem_, t_final, cvode_state_,

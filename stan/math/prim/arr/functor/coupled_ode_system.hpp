@@ -43,9 +43,9 @@ namespace stan {
       const std::vector<double>& theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
-      const int N_;
-      const int M_;
-      const int size_;
+      const size_t N_;
+      const size_t M_;
+      const size_t size_;
       std::ostream* msgs_;
 
       /**

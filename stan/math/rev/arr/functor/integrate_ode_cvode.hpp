@@ -85,7 +85,7 @@ namespace stan {
                        msgs);
 
       std::vector<std::vector<double> > y_coupled(ts.size());
-      for (int n = 0; n < ts.size(); ++n)
+      for (size_t n = 0; n < ts.size(); ++n)
         y_coupled[n].resize(coupled_system.size());
 
       coupled_system.integrate_times(ts, y_coupled);
