@@ -1,0 +1,513 @@
+                              CVODE
+                    Release 2.8.2, August 3, 2015
+                 Alan C. Hindmarsh and Radu Serban
+              Center for Applied Scientific Computing, LLNL
+
+CVODE is a solver for stiff and nonstiff ODE systems (initial value problem) 
+given in explicit form dy/dt = f(t,y). It is written in ANSI standard C.
+
+CVODE can be used both on serial and parallel computers.  The main
+difference is in the NVECTOR module of vector kernels.  The desired
+version is obtained when compiling the example files by linking the
+appropriate library of NVECTOR kernels.  In the parallel versions,
+communication between processors is done with MPI, with OpenMP, or with Pthreads.
+
+When used with the serial NVECTOR module, CVODE provides both direct (dense 
+and band) and preconditioned Krylov (iterative) linear solvers. Three different
+iterative solvers are available: scaled preconditioned GMRES (SPGMR), scaled 
+preconditioned BiCGStab (SPBCG), and scaled preconditioned TFQMR (SPTFQMR). 
+When CVODE is used with the parallel NVECTOR module, only the Krylov linear solvers 
+are available. (An approximate diagonal Jacobian option is available with both 
+versions.)  For the serial version, there is a banded preconditioner module 
+called CVBANDPRE available for use with the Krylov solvers, while for the parallel 
+version there is a preconditioner module called CVBBDPRE which provides a
+band-block-diagonal preconditioner.
+
+CVODE is part of a software family called SUNDIALS: SUite of Nonlinear
+and DIfferential/ALgebraic equation Solvers.  This suite consists of
+CVODE, CVODES, ARKode, KINSOL, IDAS, and IDA, and variants of these.  
+The directory structure of the package supplied reflects this family 
+relationship.
+
+For use with Fortran applications, a set of Fortran/C interface routines,
+called FCVODE, is also supplied.  These are written in C, but assume that
+the user calling program and all user-supplied routines are in Fortran.
+
+The notes below provide the location of documentation, directions for the 
+installation of the CVODE package, and relevant references. Following that 
+is a brief history of revisions to the package.
+
+
+A. Documentation
+----------------
+
+/sundials/doc/cvode/ contains PDF files for the CVODE User Guide [1] (cv_guide.pdf)
+and the CVODE Examples [2] (cv_examples.pdf) documents.
+
+
+B. Installation
+---------------
+
+For basic installation instructions see the file /sundials/INSTALL_GUIDE.pdf. 
+For complete installation instructions see the "Installation Procedure"
+chapter in the CVODE User Guide.
+
+
+C. References
+-------------
+
+[1] A. C. Hindmarsh and R. Serban, "User Documentation for CVODE v2.8.0," 
+    LLNL technical report UCRL-SM-208108, ??? 2014.
+
+[2] A. C. Hindmarsh and R. Serban, "Example Programs for CVODE v2.8.0," 
+    LLNL technical report UCRL-SM-208110, ??? 2014.
+
+[3] S.D. Cohen and A.C. Hindmarsh, "CVODE, a Stiff/nonstiff ODE Solver in C,"
+    Computers in Physics, 10(2), pp. 138-143, 1996.
+
+[4] A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, 
+    D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and 
+    Differential/Algebraic Equation Solvers," ACM Trans. Math. Softw., 
+    31(3), pp. 363-396, 2005.
+
+
+D. Releases
+-----------
+
+v. 2.8.2       - Aug. 2015
+v. 2.8.1       - Mar. 2015
+v. 2.8.0       - Mar. 2015
+v. 2.7.0       - Mar. 2012
+v. 2.6.0       - May  2009
+v. 2.5.0       - Nov. 2006
+v. 2.4.0       - Mar. 2006
+v. 2.3.0       - Apr. 2005
+v. 2.2.2       - Mar. 2005
+v. 2.2.1       - Jan. 2005
+v. 2.2.0       - Dec. 2004
+v. 2.0         - Jul. 2002 (first SUNDIALS release)
+v. 1.0         - Mar. 2002 (CVODE and PVODE combined)
+v. 1.0 (PVODE) - Jul. 1997 (date written)
+v. 1.0 (CVODE) - Sep. 1994 (date written)
+
+
+E. Revision History
+-------------------
+
+v. 2.8.1 (Mar. 2015) ---> v. 2.8.2 (Aug. 2015)
+- Bug Fixes
+  - Fixed Fortran interfaces to enable calls to *GetErrWeights, *GetEstLocalErrors,
+    and *GetDky within a time step.
+
+v. 2.8.0 (Mar. 2015) ---> v. 2.8.1 (Mar. 2015)
+- Bug fixes
+  - Fixed loop limit bug in SlsAddMat function.
+  - In interfaces to KLU and SuperLUMT, added #include lines, 
+    and removed redundant KLU structure allocations.
+  - Minor documentation updates
+
+v. 2.7.0 (Mar. 2012) ---> v. 2.8.0 (Mar. 2015)
+
+- New features
+   - Two major additions were made to the linear system solvers that are
+     availble for use with the CVODE solver.  If using the supplied serial
+     NVECTOR module, interfaces to the KLU sparse direct solver and to the
+     SuperLU_MT solver (the multi-threaded version of SuperLU) were added.
+     As part of these additions, a sparse matrix (CSC format) structure 
+     was added to CVODE.
+   - Two new NVECTOR modules have been added for parallel computing
+     environments --- one for openMP, denoted NVECTOR_OPENMP,
+     and one for Pthreads, denoted NVECTOR_PTHREADS.
+
+- Bug fixes
+   - In cvRootfind, a minor bug was corrected, where the input
+     array rootdir was ignored, and a line was added to break out of
+     root-search loop if the initial interval size is below the tolerance
+     ttol.
+   - In CVLapackBand, the line smu = MIN(N-1,mu+ml) was changed to
+     smu = mu + ml to correct an illegal input error for DGBTRF/DGBTRS.
+   - Two minor bugs were fixed regarding the testing of input on the first
+     call to CVode -- one involving tstop and one involving the
+     initialization of *tret.
+
+- Changes to user interface
+   - In the FCVODE optional input routines FCVSETIIN and FCVSETRIN,
+     the optional fourth argument key_length was removed, with
+     hardcoded key string lengths passed to all strncmp tests.
+
+- Other
+   - In order to avoid possible name conflicts, the mathematical macro and
+     function names MIN, MAX, SQR, RAbs, RSqrt, RExp, RPowerI, and RPowerR
+     were changed to SUNMIN, SUNMAX, SUNSQR, SUNRabs, SUNRsqrt, SUNRexp,
+     SRpowerI, and SUNRpowerR, respectively.  These names occur in both the
+     solver and in various example programs.
+
+v. 2.6.0 (May 2009) ---> v. 2.7.0 (Mar. 2012)
+---------------------------------------------
+
+- Bug fixes
+   - in CVSetTqBDF, the logic was changed to avoid a divide by zero.
+   - after the solver memory is created, it is set to zero before being filled.
+   - in each linear solver interface function, the linear solver memory is
+     freed on an error return, and the **Free function now includes a line
+     setting to NULL the main memory pointer to the linear solver memory.
+   - in rootfinding functions CVRcheck1/CVRcheck2, when an exact zero is found,
+     the array glo at the left endpoint is adjusted instead of shifting tlo.
+
+- Changes to user interface
+   - One significant design change was made with this release: The problem
+     size and its relatives, bandwidth parameters, related internal indices,
+     pivot arrays, and the optional output lsflag, have all been
+     changed from type int to type long int, except for the
+     problem size and bandwidths in user calls to routines specifying
+     BLAS/LAPACK routines for the dense/band linear solvers.  The function
+     NewIntArray is replaced by a pair NewIntArray/NewLintArray,
+     for int and long int arrays, respectively.
+   - in the installation files, we modified the treatment of the macro
+     SUNDIALS_USE_GENERIC_MATH, so that the parameter GENERIC_MATH_LIB
+     is either defined (with no value) or not defined.
+
+v. 2.5.0 (Nov. 2006) ---> v. 2.6.0 (May 2009)
+---------------------------------------------
+
+- New features
+   - added a new linear solver module based on Blas + Lapack for
+     both dense and banded matrices.
+   - added optional input to specify which direction of zero-crossing
+     is to be monitored while performing root-finding. The root information
+     array iroots (returned by CVodeGetRootInfo) also encodes the 
+     direction of zero-crossing.
+
+- Bug fixes
+   - in the rootfinding algorithm, fixed a bug resulting in unnecessary
+     evaluations of the root functions after reinitialization of the
+     solver right after a return at a root.
+   - in the initial step size calculation, restrict h based on tstop.
+   - modified the setting and use of the tq[] array.  Now tq[i] (i = 1,2,3)
+     are defined to be the reciprocals of what they were before.  This
+     eliminates a rare crash that can occur with xistar_inv = 0.
+
+- Changes to user interface
+   - renamed all **Malloc functions to **Init
+   - tolerances are now specified through separate functions instead of
+     the initialization functions CVodeInit (former CVodeMalloc) and 
+     CVodeReInit. Depending on the tolerance type, one of 3 functions
+     must be called before the first call to CVode.
+   - removed function inputs from argument lists of all re-initialization
+     functions.
+   - all user-supplied functions now receive the same pointer to user data
+     (instead of having different ones for the system evaluation, Jacobian
+     information functions, etc.).
+   - removed CV_NORMAL_TSTOP and CV_ONE_STEP_TSTOP named constants for the
+     itask argument to CVode. A tstop value is now both set and activated
+     through CVodeSetStopTime. Once tstop is reached it is also deactivated.
+     A new value can be then specified by calling again CVodeSetStopTime.
+   - common functionality for all direct linear solvers (dense, band, and
+     the new Lapack solver) has been collected into the DLS (Direct Linear
+     Solver) module, similar to the SPILS module for the iterative linear 
+     solvers. All optional input and output functions for these linear 
+     solver now have the prefix 'CVDls'. In addition, in order to include
+     the new Lapack-based linear solver, all dimensions for these linear
+     solvers (problem sizes, bandwidths, etc) are now of type 'int' 
+     (instead of 'long int').
+   - the initialization functions for the two preconditioner modules,
+     CVBANDPRE and CVBBDPRE were renamed ***Init (from ***Alloc) and they
+     do not return a pointer to preconditioner memory anymore. Instead,
+     all preconditioner module-related functions are now called with
+     the main solver memory pointer as their first argument. When using
+     one of these two modules, there is no need to use special functions
+     to attach one of the SPILS linear solvers (instead use one of
+     CVSpgmr, CVSpbcg, or CVSptfqmr). Moreover, there is no need to call
+     a memory deallocation function for the preconditioner module.
+   - changed names CVSpilsSetDelt and delt to CVSpilsSetEpsLin and eplifac.
+   - added the error return CV_RTFUNC_FAIL.
+   - changes corresponding to the above were made to the FCMIX interface.
+
+
+v. 2.4.0 (Mar. 2006) ---> v. 2.5.0 (Nov. 2006)
+----------------------------------------------
+
+- Bug fixes
+   - added a roundoff factor when testing whether tn was just returned
+     (in root finding) to prevent an unnecessary return.
+   - fixed wrong logic in final stopping tests: now we check if
+     tout was reached before checking if tstop was reached.
+
+- Changes related to the build system
+   - reorganized source tree: header files in ${srcdir}/include/cvode,
+     source files in ${srcdir}/src/cvode, fcmix source files in
+     ${srcdir}/src/cvode/fcmix, examples in ${srcdir}/examples/cvode
+   - exported header files are installed unde ${includedir}/cvode
+
+- Changes to user interface
+   - all included header files use relative paths from ${includedir}
+
+v. 2.3.0 (Apr. 2005) ---> v. 2.4.0 (Mar. 2006)
+----------------------------------------------
+
+- New features
+   - added CVSPBCG interface module to allow CVODE to interface with the
+     shared SPBCG (scaled preconditioned Bi-CGSTAB) linear solver module.
+   - added CVSPTFQMR interface module to allow CVODE to interface with
+     the shared SPTFQMR (scaled preconditioned TFQMR) linear solver module.
+   - added support for SPBCG and SPTFQMR to the CVBBDPRE and CVBANDPRE 
+     preconditioner modules.
+   - added support for interpreting failures in user-supplied functions.
+
+- Changes to user interface
+   - changed argument of CVodeFree, CVBandPrecFree, and CVBBDPrecFree to
+     be the address of the respective memory block pointer, so that its
+     NULL value is propagated back to the calling function.
+   - added CVSPBCG module which defines appropriate CVSpbcg* functions to
+     allow CVODE to interface with the shared SPBCG linear solver module.
+   - added CVBBDSpbcg function to CVBBDPRE module and CVBPSpbcg function to
+     CVBANDPRE module to support SPBCG linear solver module.
+   - added CVBBDSptfqmr function to CVBBDPRE module and CVBPSptfqmr function to
+     CVBANDPRE module to support SPTFQMR linear solver module.
+   - changed function type names (not the actual definition) to accomodate
+     all the Scaled Preconditioned Iterative Linear Solvers now available:
+       CVSpgmrJactimesVecFn -> CVSpilsJacTimesVecFn
+       CVSpgmrPrecSetupFn   -> CVSpilsPrecSetupFn
+       CVSpgmrPrecSolveFn   -> CVSpilsPrecSolveFn 
+   - changed function types so that all user-supplied functions return
+     an integer flag (not all of them currently used).
+   - changed some names for CVBBDPRE and CVBANDPRE function outputs
+   - added option for user-supplied error handler function.
+   - renamed all exported header files (except for cvode.h, all header files
+     have the prefix 'cvode_')
+   - changed naming scheme for CVODE examples
+
+- Changes to the FCVODE module
+   - added support for CVSPBCG/SPBCG (added FCV*SPBCG* functions).
+   - added support for CVSPTFQMR/SPTFQMR (added FCV*SPTFQMR* functions).
+   - optional inputs are now set using routines FCVSETIIN (integer inputs)
+     and FCVSETRIN (real inputs) through pairs key-value. Optional outputs
+     are still obtained from two arrays (IOUT and ROUT), owned by the user
+     and passed as arguments to FCVMALLOC. Note that the argument OPTIN
+     was removed from FCVMALLOC.
+   - changed the prototypes of user-supplied functions so that they all
+     return an error flag as their last argument (not all of them currently used).
+   - the arguments OPTIN, IOPT, and ROPT were removed from FCVREINIT
+
+- Changes related to the build system
+   - updated configure script and Makefiles for Fortran examples to avoid C++
+     compiler errors (now use CC and MPICC to link only if necessary)
+   - the main CVODE header file (cvode.h) is still exported to the install include
+     directory. However, all other CVODE header files are exported into a 'cvode'
+     subdirectory of the install include directory.
+   - the CVODE library now contains all shared object files (there is no separate
+     libsundials_shared library anymore)
+
+v. 2.2.2 (Mar. 2005) ---> v. 2.3.0 (Apr. 2005)
+----------------------------------------------
+
+- New features
+   - added option for user-provided error weight computation function
+     (of type CVEwtFn specified through CVodeSetEwtFn).
+
+- Changes to user interface
+   - CVODE now stores tolerances through values rather than references 
+     (to resolve potential scoping issues). 
+   - CVODE now passes information back to the user through values rather
+     than references (error weights, estimated local errors, root info)
+   - CVodeMalloc, CVodeReInit, CVodeSetTolerances: added option itol=CV_WF 
+     to indicate user-supplied function for computing the error weights; 
+     reltol is now declared as realtype. Note that it is now illegal to call
+     CVodeSetTolerances before CVodeMalloc. It is now legal to deallocate
+     the absolute tolerance N_Vector right after its use.
+   - CVodeGetErrorWeights: the user is now responsible for allocating space
+     for the N_Vector in which error weights will be copied.
+   - CVodeGetEstLocalErrors: the user is now responsible for allocating space
+     for the N_Vector in which estimated local errors will be copied.
+   - CVodeGetRootInfo: the user is now responsible for allocating space
+     for the int array in which root information will be copied.
+   - Passing a value of 0 for the maximum step size, the minimum step
+     size, or for maxsteps results in the solver using the corresponding
+     default value (infinity, 0, 500, respectively)
+   - Several optional input functions were combined into a single one
+     (CVodeRootInit and CvodeSetGdata, CVDenseSetJacFn and CVDenseSetJacData,
+     CVBandSetJacFn and CVBandSetJacData, CVSpgmrSetPrecSolveFn and 
+     CVSpgmrSetPrecSetFn and CVSpgmrSetPrecData, CVSpgmrSetJacTimesVecFn and
+     CVSpgmrSetJacData).
+
+- Changes to the FCVODE module:
+   - Added option for user-supplied error weight computation subroutine
+     (FCVEWT). Use FCVEWTSET to indicate that FCVEWT is provided.
+   - Due to the changes to the main solver, if FCVPSOL is provided then
+     FCVPSET must also be defined, even if it is empty.
+
+v. 2.2.1 (Jan. 2005) ---> v. 2.2.2 (Mar. 2005)
+----------------------------------------------
+
+- Bug fixes
+   - fixed bug in CVode function:  Initial setting of tretlast = *tret = tn removed
+     (correcting erroneous behavior at first call to CVRcheck3).
+   - removed redundant setting of tretlast = *tret = tn at CLOSE_ROOTS return from CVode.
+   - modified FCMIX files to avoid C++ compiler errors
+   - changed implicit type conversion to explicit in check_flag() routine in
+     examples to avoid C++ compiler errors
+
+- Changes to documentation
+   - added section with numerical values of all input and output solver constants
+   - added more detailed notes on the type of absolute tolerances
+   - added more details on ownership of memory for the array returned by CVodeGetRootInfo 
+   - corrected/added descriptions of error returns.
+   - added description of --with-mpi-flags option
+
+- Changes related to the build system
+   - fixed autoconf-related bug to allow configuration with the PGI Fortran compiler
+   - modified to use customized detection of the Fortran name mangling scheme 
+     (autoconf's AC_F77_WRAPPERS routine is problematic on some platforms)
+   - added --with-mpi-flags as a configure option to allow user to specify
+     MPI-specific flags
+   - updated Makefiles for Fortran examples to avoid C++ compiler errors (now use
+     CC and MPICC to link)
+
+v. 2.2.0 (Dec. 2004) ---> v. 2.2.1 (Jan. 2005)
+----------------------------------------------
+
+- Changes related to the build system
+   - changed order of compiler directives in header files to avoid compilation
+     errors when using a C++ compiler.
+
+v. 2.0 (Jul. 2002) ---> v. 2.2.0 (Dec. 2004)
+--------------------------------------------
+
+- New features
+   - added option to specify a value of the independent variable (time)
+     past which the integration is never to proceed.
+   - added rootfinding capabilities.
+   - added option to disable all error messages.
+
+- Changes related to the NVECTOR module (see also file sundials/shared/README)
+   - removed machEnv, redefined table of vector operations (now contained
+     in the N_Vector structure itself).
+   - all CVODE functions create new N_Vector variables through cloning, using
+     an N_Vector passed by the user as a template.
+
+- Changes to type names and CVODE constants
+   - removed type 'integertype'; instead use int or long int, as appropriate.
+   - restructured the list of return values from the various CVODE functions.
+   - changed all CVODE constants (inputs and return values) to have the
+     prefix 'CV_' (e.g. CV_SUCCESS).
+   - renamed various function types to have the prefix 'CV' (e.g. CVRhsFn).
+
+- Changes to optional input/ouput
+   - added CVodeSet* and CVodeGet* functions for optional inputs/outputs, 
+     replacing the arrays iopt and ropt.
+   - added new optional inputs (e.g. maximum number of Newton iterations,
+     maximum number of convergence failures, etc).
+   - the value of the last return flag from any function within a linear
+     solver module can be obtained as an optional output (e.g. CVDenseGetLastFlag).
+  
+- Changes to user-callable functions
+   - added new function CVodeCreate which initializes the CVODE solver
+     object and returns a pointer to the CVODE memory block.
+   - removed N (problem size) from all functions except the initialization
+     functions for the direct linear solvers (CVDense and CVBand).
+   - shortened argument lists of most CVODE functions (the arguments that
+     were dropped can now be specified through CVodeSet* functions).
+   - removed reinitialization functions for band/dense/SPGMR linear
+     solvers (same functionality can be obtained using CV*Set* functions).
+   - in CVBBDPRE, added a new function, CVBBDSpgmr to initialize the
+     SPGMR linear solver with the BBD preconditioner.
+   - function names changed in CVBANDPRE and CVBBDPRE for uniformity.
+
+- Changes to user-supplied functions
+   - removed N (probem dimension) from argument lists.
+   - shortened argument lists for user dense/band/SPGMR Jacobian routines.
+     (Data needed to do difference quotients is accessible in other ways.) 
+   - in CVSPGMR, shortened argument lists for user preconditioner functions.
+
+- Changes to the FCVODE module
+   - revised to use underscore and precision flags at compile time (from
+     configure); example sources are preprocessed accordingly.
+   - reorganized FCVODE into fewer files.
+   - added tstop options, and interfaces to CVBANDPRE and rootfinding features.
+   - use CV*Set* and CV*Get* functions from CVODE (although the optional I/O 
+     is still communicated to the user of FCVODE through arrays IOPT and ROPT).
+   - added new optional inputs and outputs (e.g.tstop, nlscoef, maxnef, maxcor, 
+     maxncf, etc.) and rearranged locations in IOPT and ROPT for uniformity.
+
+
+Summary of previous revisions (YYYYMMDD) (significant revisions only)
+---------------------------------------------------------------------
+
+Combined CVODE package (Mar. 2002 - Jul. 2002)
+-----------------------------------------------
+
+20020313  Modified to work with new NVECTOR abstraction.
+          Changed name PVBBDPRE to CVBBDPRE, etc.
+20020321  Revisions throughout to reflect usage changes for NVECTOR modules.
+          Changed dense/band backsolve argument b type from N_Vector to real*.
+20020328  In FCVODE, added interfaces to dense/band linear solvers.
+20020626  Changed type names real/integer to realtype/integertype.
+
+PVODE (Jul. 1995 - Mar. 2002)
+-----------------------------
+
+19950726  DATE WRITTEN; MPI version of VECTOR module written, creating 
+          MPI_PVODE; makefiles written with defs. specific to IBM-SP.
+19950929  Formed package directory structure; added Cray-T3D defs. to Makefiles.
+19970219  FPVODE package of Fortran/C interfaces written, with examples.
+19970724  Wrote preconditioner module BBDPRE and Fortran/C interface.
+19970811  Type names changed to LLNL_FLOAT etc.
+19970813  Changed first FFUN arg. in FPVODE to local length NLOC.
+19971103  Added argc,argv to PVInitMPI call list; removed ICOMM
+          argument to FPVINITMPI (pass MPI_COMM_WORLD).
+19971201  Name changes: PVInitMPI/PVFreeMPI to PVecInitMPI/PVecFreeMPI.
+19971208  Added optional argument dqrely to BBDPRE.
+19971217  Revised FPVODE to use name mappings via parameters in fcmixpar.h.
+19980120  Name changes: VECTOR to NVECTOR etc.
+19980206  Name changes: BBDPRE to PVBBDPRE, FFUN to PVFUN, etc.
+19980508  Wrappers on header files for C++ use; type bool changed to boole.
+19980923  In PVBBDPRE and Fortran interface, added two half-bandwidth arguments.
+20000316  SPGMR module modified for correct treatment of scalings.
+          added new routine CVReInit for re-initialization of CVODE.
+20000320  In NVECTOR module: removed comm = NULL option in PVecInitMPI.
+20000321  Added interface FPVREINIT, and expanded diagkf example.
+20000719  Fixed memory leak bugs in CVReInit and FPVREINIT.
+20000808  Fixed bug in N_VMin routine.
+20011114  Added option for stability limit detection algorithm STALD.
+20011220  Default type 'integer' changed to 'long int' in llnltyps.h.
+20011220  Optional input ropt[HMAX] examined on every call to CVode.
+20011221  Optional input iopt[MXHNIL] = -1 means no t+h=t messages.
+20011228  Added arguments to CVSpgmr: jtimes (user J*v routine), jac_data.
+          Added optional jtimes to FPVODE.  Revised examples accordingly.
+20020114  Linear solver modules reorganized: specification routines
+          CVDiag and CVSpgmr perform malloc operations and return a
+          completion flag.  Re-use of linear solver memory is allowed if
+          linear solver choice and parameters are unchanged.  Fortran
+          interface routines modified analogously.  All examples
+          modified to receive and test new return flag.
+20020301  Added CVReInitSpgmr routine to CVSPGMR module, and added Fortran
+          interfaces to it.  Revised cvdemk and pvdiagkf accordingly.
+20020306  Added PVReInitBBD routine to PVBBDPRE, and added Fortran interface
+          to it.  Revised pvkxb and pvidagkbf examples accordingly.
+
+CVODE (1993 - Mar. 2002)
+------------------------
+
+1993-94   DATE WRITTEN.  First released 2 September 1994.
+19970811  Type names changed to LLNL_FLOAT etc.
+19980120  Name changes: VECTOR to NVECTOR etc.
+19980508  Wrappers on header files for C++ use; type bool changed to boole.
+20000316  SPGMR module modified for correct treatment of scalings.
+          Added CVODE re-initialization routine CVReInit.
+20000323  Added band preconditioner module CVBANDPRE.
+20000719  Fixed memory leak bugs in CVReInit.
+20000808  Fixed bug in N_VMin routine.
+20011114  Added option for stability limit detection algorithm STALD.
+20011115  Reorganized DENSE module, with smalldense.* files separate.
+20011220  Default type 'integer' changed to 'long int' in llnltyps.h.
+20011220  Optional input ropt[HMAX] examined on every call to CVode.
+20011221  Optional input iopt[MXHNIL] = -1 means no t+h=t messages.
+20011228  Added arguments to CVSpgmr: jtimes (user J*v routine), jac_data.
+20020114  Linear solver modules reorganized: linear solver specification
+          routines perform malloc operations and return a completion flag.
+          Re-use of linear solver memory is allowed if linear solver choice
+          and parameters are unchanged.   All examples modified accordingly.
+20020301  Added ReInit routine to CVDENSE, CVBAND, CVSPGMR modules.
+20020305  Added CVReInitBandPre routine to CVBANDPRE module.
+
+
