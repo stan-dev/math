@@ -29,7 +29,7 @@ test/%_test.o : test/%_test.cpp $(LIBGTEST) $(LIBCVODE)
 ##
 test/%$(EXE) : test/%.o
 	@mkdir -p $(dir $@)
-	$(LINK.c) -O$O $(GTEST_MAIN) $< $(CFLAGS_GTEST) $(OUTPUT_OPTION) $(LIBGTEST) $(LDLIBS)
+	$(LINK.c) -O$O $(GTEST_MAIN) $< $(CFLAGS_GTEST) $(OUTPUT_OPTION) $(LIBGTEST) $(LDLIBS) $(LIBCVODE)
 
 
 ##

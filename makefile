@@ -32,7 +32,7 @@ include make/libraries
 ##
 CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe -I$(CVODE)/include
 CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
-LDLIBS = $(LIBCVODE)
+LDLIBS =
 EXE =
 WINE =
 
