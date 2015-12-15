@@ -2,14 +2,11 @@
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_CVODE_HPP
 
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-
 #include <stan/math/rev/core.hpp>
-
 #include <cvode/cvode.h>
-#include <nvector/nvector_serial.h>
 #include <cvode/cvode_band.h>
 #include <cvode/cvode_dense.h>
-
+#include <nvector/nvector_serial.h>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -32,8 +29,7 @@ namespace stan {
      * @tparam T2 type of the parameters
      */
     template <typename F, typename T1, typename T2>
-    class coupled_ode_system_cvode:
-      public coupled_ode_system<F, T1, T2> {
+    class coupled_ode_system_cvode : public coupled_ode_system<F, T1, T2> {
     private:
       double t0_;
       void* cvode_mem_;
@@ -79,8 +75,8 @@ namespace stan {
                                long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
-        t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
-        cvode_state_(N_VMake_Serial(this->size_, &state_[0])) {
+                             t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
+                             cvode_state_(N_VMake_Serial(this->size_, &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
@@ -223,8 +219,8 @@ namespace stan {
      * @tparam F type of system function for the base ODE system.
      */
     template <typename F>
-    class coupled_ode_system_cvode<F, double, double>:
-      public coupled_ode_system<F, double, double> {
+    class coupled_ode_system_cvode<F, double, double>
+      : public coupled_ode_system<F, double, double> {
     private:
       double t0_;
       void* cvode_mem_;
@@ -269,9 +265,9 @@ namespace stan {
                                double abs_tol,
                                long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
-        : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
-          t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
-          cvode_state_(N_VMake_Serial(this->N_, &state_[0])) {
+      : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
+                             t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
+                             cvode_state_(N_VMake_Serial(this->N_, &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
@@ -309,7 +305,7 @@ namespace stan {
 
         check_flag_(CVDense(cvode_mem_, this->N_), "CVDense");
         check_flag_(CVDlsSetDenseJacFn(cvode_mem_, &ode::dense_jacobian),
-               "CVDlsSetDenseJacFn");
+                    "CVDlsSetDenseJacFn");
       }
 
       ~coupled_ode_system_cvode() {
@@ -396,5 +392,4 @@ namespace stan {
     };
   }  // math
 }  // stan
-
 #endif
