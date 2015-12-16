@@ -24,13 +24,13 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
-
     template <class RNG>
     inline Eigen::VectorXd
-    multi_normal_cholesky_rng(const Eigen::Matrix<double, Dynamic, 1>& mu,
-                              const Eigen::Matrix<double, Dynamic, Dynamic>& S,
-                              RNG& rng) {
+    multi_normal_cholesky_rng(
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
+      RNG& rng
+    ) {
       using boost::variate_generator;
       using boost::normal_distribution;
 
