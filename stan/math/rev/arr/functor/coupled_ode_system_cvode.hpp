@@ -75,8 +75,10 @@ namespace stan {
                                long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
       : coupled_ode_system<F, T1, T2>(f, y0, theta, x, x_int, msgs),
-                             t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
-                             cvode_state_(N_VMake_Serial(this->size_, &state_[0])) {
+                             t0_(t0), cvode_mem_(NULL),
+                             state_(this->initial_state()),
+                             cvode_state_(N_VMake_Serial(this->size_,
+                                                         &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
@@ -266,8 +268,10 @@ namespace stan {
                                long int max_num_steps,  // NOLINT(runtime/int)
                                std::ostream* msgs)
       : coupled_ode_system<F, double, double>(f, y0, theta, x, x_int, msgs),
-                             t0_(t0), cvode_mem_(NULL), state_(this->initial_state()),
-                             cvode_state_(N_VMake_Serial(this->N_, &state_[0])) {
+                             t0_(t0), cvode_mem_(NULL),
+                             state_(this->initial_state()),
+                             cvode_state_(N_VMake_Serial(this->N_,
+                                                         &state_[0])) {
         // Instantiate CVode memory
         cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
         if (cvode_mem_ == 0)
