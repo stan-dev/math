@@ -26,8 +26,6 @@
 #include <stan/math/prim/scal/fun/prob_free.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
-#include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
-#include <stan/math/prim/mat/fun/unit_vector_free.hpp>
 #include <stan/math/prim/mat/fun/simplex_constrain.hpp>
 #include <stan/math/prim/mat/fun/simplex_free.hpp>
 #include <stan/math/prim/mat/fun/ordered_constrain.hpp>

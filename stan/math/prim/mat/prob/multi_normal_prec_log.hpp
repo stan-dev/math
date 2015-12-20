@@ -28,7 +28,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <bool propto,
               typename T_y, typename T_loc, typename T_covar>
@@ -55,7 +54,8 @@ namespace stan {
       check_positive(function, "Precision matrix rows", Sigma.rows());
       check_symmetric(function, "Precision matrix", Sigma);
 
-      LDLT_factor<T_covar_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma);
+      LDLT_factor<T_covar_elem,
+        Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of precision parameter",
                         ldlt_Sigma);
 
@@ -126,8 +126,8 @@ namespace stan {
       if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
-          Eigen::Matrix<typename return_type<T_y, T_loc>::type, Dynamic, 1>
-            y_minus_mu(size_y);
+          Eigen::Matrix<typename return_type<T_y, T_loc>::type,
+            Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
           sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);

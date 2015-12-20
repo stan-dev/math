@@ -20,7 +20,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <bool propto,
               typename T_y, typename T_loc, typename T_covar>
@@ -39,6 +38,7 @@ namespace stan {
       using stan::math::check_positive;
       using stan::math::check_symmetric;
       using stan::math::check_ldlt_factor;
+      using Eigen::Dynamic;
 
       check_positive(function, "Covariance matrix rows", Sigma.rows());
       check_symmetric(function, "Covariance matrix", Sigma);

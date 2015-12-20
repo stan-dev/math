@@ -23,14 +23,15 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <class RNG>
     inline Eigen::VectorXd
-    multi_student_t_rng(const double nu,
-                        const Eigen::Matrix<double, Dynamic, 1>& mu,
-                        const Eigen::Matrix<double, Dynamic, Dynamic>& s,
-                        RNG& rng) {
+    multi_student_t_rng(
+      const double nu,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
+      RNG& rng
+    ) {
       static const char* function("stan::math::multi_student_t_rng");
 
       using stan::math::check_finite;

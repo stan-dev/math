@@ -10,24 +10,21 @@ namespace stan {
 
   namespace math {
 
-
+    /**
+     * Transformation of a unit length vector to a "free" vector
+     * However, we are just fixing the unidentified radius to 1.
+     * Thus, the transformation is just the identity
+     *
+     * @param x unit vector of dimension K
+     * @return Unit vector of dimension K considered "free"
+     * @tparam T Scalar type.
+     **/
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     unit_vector_free(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
-      using Eigen::Matrix;
-      using Eigen::Dynamic;
-
       stan::math::check_unit_vector("stan::math::unit_vector_free",
-                                              "Unit vector variable", x);
-      int Km1 = x.size() - 1;
-      Matrix<T, Dynamic, 1> y(Km1);
-      T sumSq = x(Km1)*x(Km1);
-      const T half_pi = T(M_PI/2.0);
-      for (int k = Km1; --k >= 0; ) {
-        y(k) = atan2(sqrt(sumSq), x(k)) - half_pi;
-        sumSq += x(k)*x(k);
-      }
-      return y;
+                                    "Unit vector variable", x);
+      return x;
     }
 
   }

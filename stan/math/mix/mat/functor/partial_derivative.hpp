@@ -10,8 +10,6 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     /**
      * Return the partial derivative of the specified multiivariate
      * function at the specified argument.
@@ -27,11 +25,11 @@ namespace stan {
     template <typename T, typename F>
     void
     partial_derivative(const F& f,
-                       const Eigen::Matrix<T, Dynamic, 1>& x,
+                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
                        int n,
                        T& fx,
                        T& dfx_dxn) {
-      Eigen::Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
+      Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
       for (int i = 0; i < x.size(); ++i)
         x_fvar(i) = fvar<T>(x(i), i == n);
       fvar<T> fx_fvar = f(x_fvar);

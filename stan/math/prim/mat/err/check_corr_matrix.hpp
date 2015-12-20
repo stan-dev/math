@@ -16,7 +16,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return <code>true</code> if the specified matrix is a valid
      * correlation matrix.
@@ -43,13 +42,16 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_corr_matrix(const char* function,
-                      const char* name,
-                      const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_corr_matrix(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       using Eigen::Matrix;
       using stan::math::index_type;
 
-      typedef typename index_type<Matrix<T_y, Dynamic, Dynamic> >::type size_t;
+      typedef typename index_type<Matrix<
+        T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
 
       check_size_match(function,
                        "Rows of correlation matrix", y.rows(),
