@@ -112,7 +112,6 @@ namespace stan {
       stan::math::check_finite("integrate_function", "upper limit", b);
 
 
-      //FIXME: convert vector of var to vector of double
       double val_ =
         get_integrate_val(
           boost::bind<double>(f,
@@ -141,6 +140,68 @@ namespace stan {
         return operands_and_partials.to_var(val_, param);
       } else
         return val_;
+    }
+
+
+    template <typename F, typename G, typename T_param>
+    inline
+    double integrate_function_grad_helper(const F& f,
+                                          const G& g,
+                                          const double a,
+                                          const double b,
+                                          const T_param& param,
+                                          const size_t N,
+                                          std::vector<double>& results,
+                                          std::ostream* msgs) {
+
+      VectorView<const T_param> param_vec(param);
+
+      for (size_t n = 0; n < N; n++)
+        results[n] =
+        get_integrate_val(
+          boost::bind<double>(g,
+                              boost::lambda::_1, param,
+                              static_cast<int>(n+1), msgs),
+                              a, b, 1e-6);
+
+      return get_integrate_val(
+               boost::bind<double>(f,
+                                   boost::lambda::_1, param, msgs),
+                                   a, b, 1e-6);
+    }
+
+    template <typename F, typename G, typename T_param>
+    inline
+    typename scalar_type<T_param>::type
+    integrate_function_grad(const F& f,
+                            const G& g,
+                            const double a,
+                            const double b,
+                            const T_param& param,
+                            std::ostream* msgs) {
+
+      stan::math::check_finite("integrate_function", "lower limit", a);
+      stan::math::check_finite("integrate_function", "upper limit", b);
+
+      if (!is_constant_struct<T_param>::value) {
+        size_t N = stan::length(param);
+        std::vector<double> results(N);
+
+        double val_ =
+          integrate_function_grad_helper(f, g, a, b, value_of(param),
+                                         N, results, msgs);
+
+
+        OperandsAndPartials<T_param> operands_and_partials(param);
+        for (size_t n = 0; n < N; n++)
+          operands_and_partials.d_x1[n] += results[n];
+
+        return operands_and_partials.to_var(val_, param);
+      } else
+        return get_integrate_val(
+          boost::bind<double>(f,
+                              boost::lambda::_1, value_of(param), msgs),
+                              a, b, 1e-6);
     }
 
   }

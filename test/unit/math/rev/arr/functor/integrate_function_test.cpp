@@ -49,6 +49,21 @@ struct f3 {
   }
 };
 
+struct g3 {
+  template <typename T1, typename T2>
+  inline
+  typename stan::return_type<T1, T2>::type
+  operator()(const T1& x, const std::vector<T2>& y, const int ii,
+             std::ostream* msgs) const {
+    if (ii == 1)
+      return 2.5 * pow(y[0], 1.5);
+    else if (ii == 2)
+      return 6 * pow(y[1], 2.);
+    else
+      return 2.;
+  }
+};
+
 
 TEST(StanMath_integrate_function, test1) {
   using stan::math::integrate_function;
@@ -114,5 +129,11 @@ TEST(StanMath_integrate_function, finite_diff) {
   p2 = integrate_function(if3, 0., 1.1, vecd, 0);
 
   EXPECT_FLOAT_EQ((p1 - p2)/2e-6, g[0]);
+
+
+  g3 ig3;
+  stan::math::set_zero_all_adjoints();
+  integrate_function_grad(if3, ig3, 0., 1.1, vec, 0).grad();
+  EXPECT_FLOAT_EQ((p1 - p2)/2e-6, a.adj());
   }
 }
