@@ -11,20 +11,7 @@
 //                  including testing out of support values
 // ?? wrap this all up in a general transform framework
 
-template <typename F>
-void expect_scalar_unary_return_type() {
-  using stan::test::expect_match_return_t;
-  expect_match_return_t<double, int>();
 
-  typedef typename stan::math::apply_scalar_unary<typename F::fun_t,
-                                                  std::vector<int> >::return_t
-    vec_double_return_t;
-  vec_double_return_t f;
-  f.push_back(3.7);
-  EXPECT_FLOAT_EQ(3.7, f[0]);
-
-  expect_match_return_t<std::vector<double>, std::vector<int> >();
-}
 
 template <typename F>
 void expect_scalar_value() {
@@ -138,18 +125,103 @@ void expect_std_vector_row_vector_value() {
   }
 }
 
+template <typename F>
+void expect_std_vector_vector_value() {
+  using std::vector;
+  using Eigen::VectorXd;
+
+  VectorXd d1(3);
+  d1 << 1, 2, 3;
+  VectorXd d2(3);
+  d2 << 10, 20, 30;
+  vector<VectorXd> d;
+  d.push_back(d1);
+  d.push_back(d2);
+  vector<VectorXd> fd = F::template apply<vector<VectorXd> >(d);
+  EXPECT_EQ(d.size(), fd.size());
+  for (size_t i = 0; i < fd.size(); ++i) {
+    EXPECT_EQ(d[i].size(), fd[i].size());
+    for (int j = 0; j < fd[i].size(); ++j)
+      EXPECT_FLOAT_EQ(F::apply_base(d[i](j)), fd[i](j));
+  }
+}
+
+template <typename F>
+void expect_std_vector_matrix_value() {
+  using std::vector;
+  using Eigen::MatrixXd;
+
+  MatrixXd d1(3, 2);
+  d1 << 1, 2, 3, 4, 5, 6;
+  MatrixXd d2(3, 2);
+  d2 << 10, 20, 30, 40, 50, 60;
+  vector<MatrixXd> d;
+  d.push_back(d1);
+  d.push_back(d2);
+  vector<MatrixXd> fd = F::template apply<vector<MatrixXd> >(d);
+  EXPECT_EQ(d.size(), fd.size());
+  for (size_t i = 0; i < fd.size(); ++i) {
+    EXPECT_EQ(d[i].rows(), fd[i].rows());
+    EXPECT_EQ(d[i].cols(), fd[i].cols());
+    EXPECT_EQ(d[i].size(), fd[i].size());
+    for (int j = 0; j < fd[i].size(); ++j)
+      EXPECT_FLOAT_EQ(F::apply_base(d[i](j)), fd[i](j));
+  }
+}
+
+
+template <typename F>
+void expect_std_vector_std_vector_matrix_value() {
+  using std::vector;
+  using Eigen::MatrixXd;
+
+  MatrixXd d1(3, 2);
+  d1 << 1, 2, 3, 4, 5, 6;
+  MatrixXd d2(3, 2);
+  d2 << 10, 20, 30, 40, 50, 60;
+  vector<MatrixXd> d;
+  d.push_back(d1);
+  d.push_back(d2);
+
+  MatrixXd e1(3, 2);
+  e1 << -10, -100, -1000, -10000, -100000, -1000000;
+  MatrixXd e2(3, 2);
+  e2 << 2, 4, 8, 16, 32, 64;
+  vector<MatrixXd> e;
+  e.push_back(e1);
+  e.push_back(e2);
+
+  vector<vector<MatrixXd> > x;
+  x.push_back(d);
+  x.push_back(e);
+
+  vector<vector<MatrixXd> > fx = F::template apply<vector<vector<MatrixXd> > >(x);
+  EXPECT_EQ(x.size(), fx.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    EXPECT_EQ(x[i].size(), fx[i].size());
+    for (size_t j = 0; j < x[i].size(); ++j) {
+      EXPECT_EQ(x[i][j].rows(), fx[i][j].rows());
+      EXPECT_EQ(x[i][j].cols(), fx[i][j].cols());
+      for (int k = 0; k < x[i][j].size(); ++k)
+        EXPECT_FLOAT_EQ(F::apply_base(x[i][j](k)), fx[i][j](k));
+    }
+  }
+}
+
 
 // CALL THIS TO TEST EVERYTHING
 // see: apply_scalar_unary_test.cpp for an example
 template <typename F>
 void expect_values() {
-  expect_scalar_unary_return_type<F>();
   expect_scalar_value<F>();
   expect_std_vectors_value<F>();
   expect_matrix_value<F>();
   expect_vector_value<F>();
   expect_row_vector_value<F>();
   expect_std_vector_row_vector_value<F>();
+  expect_std_vector_vector_value<F>();
+  expect_std_vector_matrix_value<F>();
+  expect_std_vector_std_vector_matrix_value<F>();
 }
 
 #endif
