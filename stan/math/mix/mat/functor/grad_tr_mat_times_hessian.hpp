@@ -11,17 +11,19 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
 
     // FIXME: add other results that are easy to extract
     // // N * (fwd(2) + bk)
     template <typename F>
     void
-    grad_tr_mat_times_hessian(const F& f,
-                              const Eigen::Matrix<double, Dynamic, 1>& x,
-                              const Eigen::Matrix<double, Dynamic, Dynamic>& M,
-                              Eigen::Matrix<double, Dynamic, 1>& grad_tr_MH) {
+    grad_tr_mat_times_hessian(
+      const F& f,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
+      Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH
+    ) {
       using Eigen::Matrix;
+      using Eigen::Dynamic;
       start_nested();
       try {
         grad_tr_MH.resize(x.size());

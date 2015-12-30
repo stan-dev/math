@@ -10,21 +10,19 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     // aka directional derivative (not length normalized)
     // T2 must be assignable to T1
     template <typename T1, typename T2, typename F>
     void
     gradient_dot_vector(const F& f,
-                        const Eigen::Matrix<T1, Dynamic, 1>& x,
-                        const Eigen::Matrix<T2, Dynamic, 1>& v,
+                        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                        const Eigen::Matrix<T2, Eigen::Dynamic, 1>& v,
                         T1& fx,
                         T1& grad_fx_dot_v) {
       using stan::math::fvar;
       using stan::math::var;
       using Eigen::Matrix;
-      Matrix<fvar<T1>, Dynamic, 1> x_fvar(x.size());
+      Matrix<fvar<T1>, Eigen::Dynamic, 1> x_fvar(x.size());
       for (int i = 0; i < x.size(); ++i)
         x_fvar(i) = fvar<T1>(x(i), v(i));
       fvar<T1> fx_fvar = f(x_fvar);
