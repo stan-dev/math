@@ -6,7 +6,6 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include <gtest/gtest.h>
 
-
 namespace stan {
   namespace test {
     template <typename T1, typename T2>
