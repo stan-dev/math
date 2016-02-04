@@ -3,7 +3,8 @@
 
 #include <cmath>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math.hpp>
+#include <stan/math/fwd/scal/fun/exp.hpp>
+#include <stan/math/rev/scal/fun/exp.hpp>
 
 namespace stan {
 
