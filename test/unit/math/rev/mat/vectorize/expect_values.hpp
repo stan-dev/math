@@ -1,5 +1,5 @@
-#ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_VALUES_HPP
-#define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_VALUES_HPP
+#ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VALUES_HPP
+#define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VALUES_HPP
 
 #include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_match_return_t.hpp>

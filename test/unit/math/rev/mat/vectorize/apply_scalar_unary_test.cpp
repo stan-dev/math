@@ -25,6 +25,8 @@ struct foo_base_test {
     vector<double> valid_inputs;
     valid_inputs.push_back(1.3);
     valid_inputs.push_back(-2.6);
+    valid_inputs.push_back(0);
+    valid_inputs.push_back(-0.7);
 
     return valid_inputs;
   }
@@ -32,9 +34,9 @@ struct foo_base_test {
   static std::vector<double> illegal_inputs() {
     using std::vector;
 
-    vector<double> illegal_inputs;
-    illegal_inputs.push_back(10.6);
+    vector<double> illegal_inputs(2, 10.6);
     illegal_inputs.push_back(25.7);
+    illegal_inputs.push_back(100.25);
 
     return illegal_inputs;
   }
