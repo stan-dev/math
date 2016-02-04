@@ -1,5 +1,7 @@
+#ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_VALUES_HPP
+#define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_VALUES_HPP
+
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_match_return_t.hpp>
@@ -9,18 +11,10 @@
 #include <iostream>
 
 template <typename F>
-static inline std::vector<stan::math::fvar<double> >
-build_valid_fvar_vector(std::vector<stan::math::fvar<double> > fvar_vector,
+static inline std::vector<double>
+build_valid_fvar_vector(std::vector<double> double_vector,
                           int seed_index = -1) { 
-  std::vector<double> inputs = F::valid_inputs();
-
-  for (int i = 0; i < inputs.size(); ++i) {
-    if (seed_index == i) 
-      fvar_vector.push_back(stan::math::fvar<double>(inputs[i], 1));
-    else
-      fvar_vector.push_back(stan::math::fvar<double>(inputs[i]));
-  }
-  return fvar_vector;
+  return F::valid_inputs();
 }
 
 template <typename F, typename V>
@@ -168,8 +162,11 @@ void expect_matrix_values() {
     }
   }
 
-  MatrixXvar a = build_valid_fvar_matrix<F>(template_matrix, 3);
-  MatrixXvar fab = foo(a.block(1, 1, 1, 1));
+  int block_i = 1;
+  int block_j = 1;
+  int seed_i = block_j * num_inputs + block_i;
+  MatrixXvar a = build_valid_fvar_matrix<F>(template_matrix, seed_i);
+  MatrixXvar fab = foo(a.block(block_i, block_j, 1, 1));
   test_fvar(F::apply_base(a(1,1)), fab(0,0));
 }
 
@@ -258,3 +255,5 @@ void expect_values() {
   expect_row_vector_values<F, fvar<double> >();
   expect_row_vector_values<F, fvar<fvar<double> > >();
 }
+
+#endif

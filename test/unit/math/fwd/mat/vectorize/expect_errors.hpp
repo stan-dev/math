@@ -9,35 +9,35 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_match_return_t.hpp>
 #include <stan/math/fwd/core.hpp>
 
-template <typename F>
+template <typename F, typename V>
 void expect_std_vectors_error() {
   using std::vector;
   using stan::math::fvar;
 
   vector<double> illegal_inputs = F::illegal_inputs();
-  vector<fvar<double> > y;
+  vector<V> y;
 
   for (size_t i = 0; i < illegal_inputs.size(); ++i) {
-    EXPECT_THROW(F::template apply<fvar<double> >(illegal_inputs[i]), 
+    EXPECT_THROW(F::template apply<V>(illegal_inputs[i]), 
                    std::domain_error);
     y.push_back(illegal_inputs[i]);
   }
 
-  EXPECT_THROW(F::template apply<vector<fvar<double> > >(y), std::domain_error);
+  EXPECT_THROW(F::template apply<vector<V> >(y), std::domain_error);
 
-  vector<vector<fvar<double> > > z;
+  vector<vector<V> > z;
   z.push_back(y);
   z.push_back(y);
-  EXPECT_THROW(F::template apply<vector<vector<fvar<double> > > >(z),
+  EXPECT_THROW(F::template apply<vector<vector<V> > >(z),
                                                      std::domain_error);
 }
 
-template <typename F>
+template <typename F, typename V>
 void expect_matrix_error() {
   using std::vector;
   using stan::math::fvar;
   typedef 
-    Eigen::Matrix<fvar<double> , Eigen::Dynamic, Eigen::Dynamic> MatrixXvar;
+    Eigen::Matrix<V , Eigen::Dynamic, Eigen::Dynamic> MatrixXvar;
 
   vector<double> illegal_inputs = F::illegal_inputs();
   size_t num_rows = 3;
@@ -60,11 +60,11 @@ void expect_matrix_error() {
                                                std::domain_error);
 }
 
-template <typename F>
+template <typename F, typename V>
 void expect_vector_error() {
   using std::vector;
   using stan::math::fvar;
-  typedef Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> VectorXvar;
+  typedef Eigen::Matrix<V, Eigen::Dynamic, 1> VectorXvar;
 
   std::vector<double> illegal_inputs = F::illegal_inputs();
 
@@ -80,11 +80,11 @@ void expect_vector_error() {
                                                  std::domain_error);
 }
 
-template <typename F>
+template <typename F, typename V>
 void expect_row_vector_error() {
   using std::vector;
   using stan::math::fvar;
-  typedef Eigen::Matrix<fvar<double> , 1, Eigen::Dynamic> RowVectorXvar;
+  typedef Eigen::Matrix<V, 1, Eigen::Dynamic> RowVectorXvar;
 
   std::vector<double> illegal_inputs = F::illegal_inputs();
 
@@ -105,10 +105,16 @@ void expect_row_vector_error() {
 // see: apply_scalar_unary_test.cpp for an example
 template <typename F>
 void expect_errors() {
-  expect_std_vectors_error<F>();
-  expect_matrix_error<F>();
-  expect_vector_error<F>();
-  expect_row_vector_error<F>();
+  using stan::math::fvar;
+
+  expect_std_vectors_error<F, fvar<double> >();
+  expect_std_vectors_error<F, fvar<fvar<double> > >();
+  expect_matrix_error<F, fvar<double> >();
+  expect_matrix_error<F, fvar<fvar<double> > >();
+  expect_vector_error<F, fvar<double> >();
+  expect_vector_error<F, fvar<fvar<double> > >();
+  expect_row_vector_error<F, fvar<double> >();
+  expect_row_vector_error<F, fvar<fvar<double> > >();
 }
 
 #endif
