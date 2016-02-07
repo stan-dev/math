@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_CONTAINER_VIEW_HPP
 #define STAN_MATH_PRIM_SCAL_META_CONTAINER_VIEW_HPP
 
+#include <stdexcept>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 
 namespace stan {
