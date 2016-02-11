@@ -1,7 +1,0 @@
-apply_scalar_unary_test.o: \
-  test/unit/math/prim/mat/vectorize/apply_scalar_unary_test.cpp \
-  stan/math/prim/mat/vectorize/apply_scalar_unary.hpp \
-  test/unit/math/prim/mat/vectorize/foo_fun.hpp \
-  test/unit/math/prim/mat/vectorize/expect_values.hpp \
-  test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp \
-  test/unit/math/prim/mat/vectorize/expect_errors.hpp
