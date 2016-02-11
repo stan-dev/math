@@ -1,10 +1,11 @@
-#ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
-#define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
+#ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
+#define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_MATCH_RETURN_T_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <gtest/gtest.h>
+
 
 namespace stan {
   namespace test {

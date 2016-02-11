@@ -1,6 +1,7 @@
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_values.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_errors.hpp>
+#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_values.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_errors.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
@@ -37,7 +38,7 @@ struct foo_base_test {
 
     vector<double> illegal_inputs(2, 10.6);
     illegal_inputs.push_back(25.7);
-    illegal_inputs.push_back(100.7);
+    illegal_inputs.push_back(100.25);
 
     return illegal_inputs;
   }
