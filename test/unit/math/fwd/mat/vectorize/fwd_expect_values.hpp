@@ -2,11 +2,8 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_FWD_EXPECT_VALUES_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_match_return_t.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <Eigen/Dense>
-#include <cmath>
-#include <iostream>
 
 template <typename F>
 static inline std::vector<double>

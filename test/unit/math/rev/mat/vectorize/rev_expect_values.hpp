@@ -1,12 +1,9 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_VALUES_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_VALUES_HPP
 
-#include <test/unit/math/rev/mat/vectorize/expect_match_return_t.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
 #include <Eigen/Dense>
-#include <cmath>
-#include <iostream>
 
 template <typename F, typename T>
 static inline Eigen::Matrix<stan::math::var, T::RowsAtCompileTime,

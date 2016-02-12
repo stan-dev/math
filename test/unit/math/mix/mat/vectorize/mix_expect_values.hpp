@@ -5,11 +5,8 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_match_return_t.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <Eigen/Dense>
-#include <cmath>
-#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 template <typename F>
