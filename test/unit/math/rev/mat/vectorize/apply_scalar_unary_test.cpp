@@ -1,6 +1,6 @@
 #include <test/unit/math/prim/mat/vectorize/foo_base_test.hpp>
 #include <test/unit/math/rev/mat/vectorize/rev_expect_values.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_errors.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_expect_errors.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <iostream>
