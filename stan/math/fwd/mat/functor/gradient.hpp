@@ -8,8 +8,6 @@ namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     /**
      * Calculate the value and the gradient of the specified function
      * at the specified argument.
@@ -42,10 +40,10 @@ namespace stan {
     template <typename T, typename F>
     void
     gradient(const F& f,
-             const Eigen::Matrix<T, Dynamic, 1>& x,
+             const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
              T& fx,
-             Eigen::Matrix<T, Dynamic, 1>& grad_fx) {
-      Eigen::Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
+             Eigen::Matrix<T, Eigen::Dynamic, 1>& grad_fx) {
+      Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
       grad_fx.resize(x.size());
       for (int i = 0; i < x.size(); ++i) {
         for (int k = 0; k < x.size(); ++k)

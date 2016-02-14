@@ -1,6 +1,32 @@
 Stan Math Library Release Notes
 ======================================================================
 
+
+v2.9.0 (3 December 2015)
+======================================================================
+New Features
+--------------------------------------------------
+* Added container_view (#103)
+* Improved derivative calculation for beta_cdf (#124)
+* Gradients computed for cholesky_decompose (#125)
+* Added functions for sparse matrix multiplication (#159)
+* Changed the unit_vector transformation (#204)
+
+Bug Fixes
+--------------------------------------------------
+* Check inputs for cholesky_decompose (#48)
+* Fixed documentation for wiener.hpp (#140)
+
+Other
+--------------------------------------------------
+* Cleaned up couple_ode_system for clarity (#180)
+* Additional forward mode specializations (#16, #17)
+* Removed unused chaintable base class (#183)
+* Updated clang++ compiler options to supress warnings (#197)
+* Fixed some unit tests (#199)
+* Replaced top-level using statements (#207)
+
+
 v2.8.0 (8 September 2015)
 ======================================================================
 New Features

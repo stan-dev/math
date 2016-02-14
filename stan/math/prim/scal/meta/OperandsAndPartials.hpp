@@ -275,11 +275,12 @@ namespace stan {
                  !is_constant_struct<T4>::value * length(x4) +
                  !is_constant_struct<T5>::value * length(x5) +
                  !is_constant_struct<T6>::value * length(x6)),
+          // TODO(carpenter): replace with array allocation fun
           all_varis(static_cast<vari**>
-                    (chainable::operator new
+                    (vari::operator new
                      (sizeof(vari*) * nvaris))),
           all_partials(static_cast<T_partials_return*>
-                       (chainable::operator new
+                       (vari::operator new
                         (sizeof(T_partials_return) * nvaris))),
           d_x1(all_partials),
           d_x2(all_partials

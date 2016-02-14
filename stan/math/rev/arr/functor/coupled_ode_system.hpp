@@ -1,6 +1,12 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
+#include <stan/math/prim/mat/meta/get.hpp>
+#include <stan/math/prim/arr/meta/get.hpp>
+#include <stan/math/prim/mat/meta/length.hpp>
+#include <stan/math/prim/arr/meta/length.hpp>
+
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/err/check_equal.hpp>
@@ -9,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // This code is in this directory because it includes var
@@ -108,69 +113,66 @@ namespace stan {
        * <p>The input state must be of size <code>size()</code>, and
        * the output produced will be of the same size.
        *
-       * @param[in] y state of the coupled ode system.
-       * @param[out] dy_dt populated with the derivatives of
+       * @param[in] z state of the coupled ode system.
+       * @param[out] dz_dt populated with the derivatives of
        * the coupled system at the specified state and time.
        * @param[in]  t time.
        * @throw exception if the system function does not return the
        * same number of derivatives as the state vector size.
+       *
+       * y is the base ODE system state
+       *
        */
-      void operator()(const std::vector<double>& y,
-                      std::vector<double>& dy_dt,
+      void operator()(const std::vector<double>& z,
+                      std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
         using stan::math::var;
 
-        vector<double> y_base(y.begin(), y.begin()+N_);
-        dy_dt = f_(t, y_base, theta_dbl_, x_, x_int_, msgs_);
+        vector<double> y(z.begin(), z.begin() + N_);
+        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_equal("coupled_ode_system",
-                                          "dy_dt", dy_dt.size(), N_);
+                                "dz_dt", dz_dt.size(), N_);
 
         vector<double> coupled_sys(N_ * M_);
-        vector<var> theta_temp;
-        vector<var> y_temp;
-        vector<var> dy_dt_temp;
-        vector<double> grad;
-        vector<var> vars;
+        vector<double> grad(N_ + M_);
 
-        for (size_t i = 0; i < N_; i++) {
-          theta_temp.clear();
-          y_temp.clear();
-          dy_dt_temp.clear();
-          grad.clear();
-          vars.clear();
-          try {
-            stan::math::start_nested();
-            for (size_t j = 0; j < N_; j++) {
-              y_temp.push_back(y[j]);
-              vars.push_back(y_temp[j]);
-            }
+        try {
+          stan::math::start_nested();
 
-            for (size_t j = 0; j < M_; j++) {
-              theta_temp.push_back(theta_dbl_[j]);
-              vars.push_back(theta_temp[j]);
-            }
-            dy_dt_temp = f_(t, y_temp, theta_temp, x_, x_int_, msgs_);
-            dy_dt_temp[i].grad(vars, grad);
+          vector<var> z_vars;
+          z_vars.reserve(N_ + M_);
+
+          vector<var> y_vars(y.begin(), y.end());
+          z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
+
+          vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
+          z_vars.insert(z_vars.end(), theta_vars.begin(), theta_vars.end());
+
+          vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+
+          for (size_t i = 0; i < N_; i++) {
+            set_zero_all_adjoints_nested();
+            dy_dt_vars[i].grad(z_vars, grad);
 
             for (size_t j = 0; j < M_; j++) {
               // orders derivatives by equation (i.e. if there are 2 eqns
               // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
               // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-              double temp_deriv = grad[y_temp.size() + j];
+              double temp_deriv = grad[N_ + j];
               for (size_t k = 0; k < N_; k++)
-                temp_deriv += y[N_ + N_ * j + k] * grad[k];
+                temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
               coupled_sys[i + j * N_] = temp_deriv;
             }
-          } catch (const std::exception& e) {
-            stan::math::recover_memory_nested();
-            throw;
           }
+        } catch (const std::exception& e) {
           stan::math::recover_memory_nested();
+          throw;
         }
+        stan::math::recover_memory_nested();
 
-        dy_dt.insert(dy_dt.end(), coupled_sys.begin(), coupled_sys.end());
+        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -202,7 +204,6 @@ namespace stan {
         return state;
       }
 
-
       /**
        * Returns the base ODE system state corresponding to the
        * specified coupled system state.
@@ -212,37 +213,26 @@ namespace stan {
       std::vector<std::vector<stan::math::var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
         using stan::math::precomputed_gradients;
-        std::vector<stan::math::var> temp_vars;
-        std::vector<double> temp_gradients;
+        std::vector<stan::math::var> temp_vars(N_);
+        std::vector<double> temp_gradients(M_);
         std::vector<std::vector<stan::math::var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < M_; k++)
-              temp_gradients.push_back(y[i][y0_dbl_.size()
-                                            + y0_dbl_.size() * k + j]);
+              temp_gradients[k] = y[i][y0_dbl_.size() + y0_dbl_.size() * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      theta_,
-                                                      temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 theta_,
+                                                 temp_gradients);
           }
           y_return[i] = temp_vars;
         }
-
         return y_return;
       }
     };
-
-
-
-
-
 
     /**
      * The coupled ODE system for unknown initial values and known
@@ -320,47 +310,49 @@ namespace stan {
        * Calculates the derivative of the coupled ode system
        * with respect to the state y at time t.
        *
-       * @param[in] y the current state of the coupled ode
+       * @param[in] z the current state of the coupled, shifted ode
        * system. This is a a vector of double of length size().
-       * @param[out] dy_dt a vector of length size() with the
+       * @param[out] dz_dt a vector of length size() with the
        * derivatives of the coupled system evaluated with state y and
        * time t.
        * @param[in] t time.
        * @throw exception if the system functor does not return a
        * derivative vector of the same size as the state vector.
+       *
+       * y is the base ODE system state
+       *
        */
-      void operator()(const std::vector<double>& y,
-                      std::vector<double>& dy_dt,
+      void operator()(const std::vector<double>& z,
+                      std::vector<double>& dz_dt,
                       double t) {
-        std::vector<double> y_base(y.begin(), y.begin() + N_);
-        for (size_t n = 0; n < N_; n++)
-          y_base[n] += y0_dbl_[n];
+        using std::vector;
+        using stan::math::var;
 
-        dy_dt = f_(t, y_base, theta_dbl_, x_, x_int_, msgs_);
+        std::vector<double> y(z.begin(), z.begin() + N_);
+        for (size_t n = 0; n < N_; n++)
+          y[n] += y0_dbl_[n];
+
+        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_equal("coupled_ode_system",
-                                          "dy_dt", dy_dt.size(), N_);
+                                "dz_dt", dz_dt.size(), N_);
 
         std::vector<double> coupled_sys(N_ * N_);
+        std::vector<double> grad(N_);
 
-        std::vector<stan::math::var> y_temp;
-        std::vector<stan::math::var> dy_dt_temp;
-        std::vector<double> grad;
-        std::vector<stan::math::var> vars;
+        try {
+          stan::math::start_nested();
 
-        for (size_t i = 0; i < N_; i++) {
-          y_temp.clear();
-          dy_dt_temp.clear();
-          grad.clear();
-          vars.clear();
-          try {
-            stan::math::start_nested();
-            for (size_t j = 0; j < N_; j++) {
-              y_temp.push_back(y[j] + y0_dbl_[j]);
-              vars.push_back(y_temp[j]);
-            }
+          vector<var> z_vars;
+          z_vars.reserve(N_);
 
-            dy_dt_temp = f_(t, y_temp, theta_dbl_, x_, x_int_, msgs_);
-            dy_dt_temp[i].grad(vars, grad);
+          vector<var> y_vars(y.begin(), y.end());
+          z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
+
+          vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
+
+          for (size_t i = 0; i < N_; i++) {
+            set_zero_all_adjoints_nested();
+            dy_dt_vars[i].grad(z_vars, grad);
 
             for (size_t j = 0; j < N_; j++) {
               // orders derivatives by equation (i.e. if there are 2 eqns
@@ -368,18 +360,18 @@ namespace stan {
               // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
               double temp_deriv = grad[j];
               for (size_t k = 0; k < N_; k++)
-                temp_deriv += y[N_ + N_ * j + k] * grad[k];
+                temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
-              coupled_sys[i+j*N_] = temp_deriv;
+              coupled_sys[i + j * N_] = temp_deriv;
             }
-          } catch (const std::exception& e) {
-            stan::math::recover_memory_nested();
-            throw;
           }
+        } catch (const std::exception& e) {
           stan::math::recover_memory_nested();
+          throw;
         }
+        stan::math::recover_memory_nested();
 
-        dy_dt.insert(dy_dt.end(), coupled_sys.begin(), coupled_sys.end());
+        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -422,25 +414,20 @@ namespace stan {
         using stan::math::var;
         using std::vector;
 
-        vector<var> temp_vars;
-        vector<double> temp_gradients;
+        vector<var> temp_vars(N_);
+        vector<double> temp_gradients(N_);
         vector<vector<var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < N_; k++)
-              temp_gradients.push_back(y[i][y0_.size() + y0_.size() * k + j]);
+              temp_gradients[k] = y[i][y0_.size() + y0_.size() * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      y0_, temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 y0_, temp_gradients);
           }
-
           y_return[i] = temp_vars;
         }
 
@@ -449,12 +436,6 @@ namespace stan {
         return y_return;
       }
     };
-
-
-
-
-
-
 
     /**
      * The coupled ode system for unknown intial values and unknown
@@ -547,74 +528,70 @@ namespace stan {
        * coupled ODE system state with respect to time evaluated at the
        * specified state and specified time.
        *
-       * @param[in]  y the current state of the coupled ode system,
+       * @param[in]  z the current state of the coupled, shifted ode system,
        * of size <code>size()</code>.
-       * @param[in, out] dy_dt populate with the derivatives of the
+       * @param[in, out] dz_dt populate with the derivatives of the
        * coupled system evaluated at the specified state and time.
        * @param[in] t time.
        * @throw exception if the base system does not return a
        * derivative vector of the same size as the state vector.
+       *
+       * y is the base ODE system state
+       *
        */
-      void operator()(const std::vector<double>& y,
-                      std::vector<double>& dy_dt,
+      void operator()(const std::vector<double>& z,
+                      std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
         using stan::math::var;
 
-        vector<double> y_base(y.begin(), y.begin()+N_);
+        vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
-          y_base[n] += y0_dbl_[n];
+          y[n] += y0_dbl_[n];
 
-        dy_dt = f_(t, y_base, theta_dbl_, x_, x_int_, msgs_);
+        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         stan::math::check_equal("coupled_ode_system",
-                                          "dy_dt", dy_dt.size(), N_);
+                                "dz_dt", dz_dt.size(), N_);
 
         vector<double> coupled_sys(N_ * (N_ + M_));
-        vector<var> theta_temp;
-        vector<var> y_temp;
-        vector<var> dy_dt_temp;
-        vector<double> grad;
-        vector<var> vars;
+        vector<double> grad(N_ + M_);
 
-        for (size_t i = 0; i < N_; i++) {
-          theta_temp.clear();
-          y_temp.clear();
-          dy_dt_temp.clear();
-          grad.clear();
-          vars.clear();
-          try {
-            stan::math::start_nested();
+        try {
+          stan::math::start_nested();
 
-            for (size_t j = 0; j < N_; j++) {
-              y_temp.push_back(y[j] + y0_dbl_[j]);
-              vars.push_back(y_temp[j]);
-            }
+          vector<var> z_vars;
+          z_vars.reserve(N_ + M_);
 
-            for (size_t j = 0; j < M_; j++) {
-              theta_temp.push_back(theta_dbl_[j]);
-              vars.push_back(theta_temp[j]);
-            }
+          vector<var> y_vars(y.begin(), y.end());
+          z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
 
-            dy_dt_temp = f_(t, y_temp, theta_temp, x_, x_int_, msgs_);
-            dy_dt_temp[i].grad(vars, grad);
+          vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
+          z_vars.insert(z_vars.end(), theta_vars.begin(), theta_vars.end());
 
-            for (size_t j = 0; j < N_+M_; j++) {
+          vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
+
+          for (size_t i = 0; i < N_; i++) {
+            set_zero_all_adjoints_nested();
+            dy_dt_vars[i].grad(z_vars, grad);
+
+            for (size_t j = 0; j < N_ + M_; j++) {
               // orders derivatives by equation (i.e. if there are 2 eqns
               // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
               // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
               double temp_deriv = grad[j];
               for (size_t k = 0; k < N_; k++)
-                temp_deriv += y[N_ + N_ * j + k] * grad[k];
+                temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
               coupled_sys[i + j * N_] = temp_deriv;
             }
-          } catch (const std::exception& e) {
-            stan::math::recover_memory_nested();
-            throw;
           }
+        } catch (const std::exception& e) {
           stan::math::recover_memory_nested();
+          throw;
         }
-        dy_dt.insert(dy_dt.end(), coupled_sys.begin(), coupled_sys.end());
+        stan::math::recover_memory_nested();
+
+        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -657,23 +634,19 @@ namespace stan {
         vector<var> vars = y0_;
         vars.insert(vars.end(), theta_.begin(), theta_.end());
 
-        vector<var> temp_vars;
-        vector<double> temp_gradients;
+        vector<var> temp_vars(N_);
+        vector<double> temp_gradients(N_ + M_);
         vector<vector<var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
-          temp_vars.clear();
-
           // iterate over number of equations
           for (size_t j = 0; j < N_; j++) {
-            temp_gradients.clear();
-
             // iterate over parameters for each equation
             for (size_t k = 0; k < N_ + M_; k++)
-              temp_gradients.push_back(y[i][N_ + N_ * k + j]);
+              temp_gradients[k] = y[i][N_ + N_ * k + j];
 
-            temp_vars.push_back(precomputed_gradients(y[i][j],
-                                                      vars, temp_gradients));
+            temp_vars[j] = precomputed_gradients(y[i][j],
+                                                 vars, temp_gradients);
           }
           y_return[i] = temp_vars;
         }
@@ -681,10 +654,7 @@ namespace stan {
         return y_return;
       }
     };
-
-
-  }
-
-}
+  }  // math
+}  // stan
 
 #endif

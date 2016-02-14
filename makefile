@@ -13,7 +13,7 @@ SUFIXES:
 # - O: Optimization level. Valid values are {0, 1, 2, 3}.
 # - AR: archiver (must specify for cross-compiling)
 # - OS_TYPE: {mac, win, linux}
-# - C++11: Compile with C++11 extensions, Valid values: {true, false}. 
+# - C++11: Compile with C++11 extensions, Valid values: {true, false}.
 ##
 CC = g++
 O = 3
@@ -22,22 +22,22 @@ AR = ar
 C++11 = false
 
 ##
+# Library locations
+##
+MATH ?=
+include make/libraries
+
+##
 # Set default compiler options.
-## 
-CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe
+##
+CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -pipe -I$(CVODE)/include
 CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
-LDLIBS = 
-EXE = 
+LDLIBS =
+EXE =
 WINE =
 
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
-
-##
-# Library locations
-##
-MATH ?= 
-include make/libraries
 
 ##
 # Get information about the compiler used.
@@ -129,7 +129,7 @@ endif
 
 ## doxygen
 .PHONY: doxygen
-doxygen: 
+doxygen:
 	mkdir -p doc/api
 	doxygen doxygen/doxygen.cfg
 
@@ -138,7 +138,7 @@ doxygen:
 ##
 .PHONY: clean clean-doxygen clean-deps clean-all
 clean:
-	@echo '  removing test executables'	
+	@echo '  removing test executables'
 	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
@@ -155,3 +155,4 @@ clean-all: clean clean-doxygen clean-deps
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
 	$(RM) $(wildcard test/gtest.o test/libgtest* test/prob/generate_tests$(EXE))
+	$(RM) $(wildcard $(CVODE)/lib/*)

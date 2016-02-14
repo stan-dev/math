@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_HPP
 
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
-#include <stan/math/rev/core/chainable.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
@@ -41,6 +40,7 @@
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
+#include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
