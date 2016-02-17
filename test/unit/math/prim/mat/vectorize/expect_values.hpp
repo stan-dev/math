@@ -7,28 +7,19 @@
 #include <cmath>
 #include <iostream>
 
-// TODO(carpenter): figure out some way to deal with constraints (transforms)
-//                  including testing out of support values
-// ?? wrap this all up in a general transform framework
-
-
-
 template <typename F>
 void expect_scalar_value() {
   using std::vector;  
-
   vector<double> valid_inputs = F::valid_inputs();
   vector<int> int_valid_inputs = F::int_valid_inputs();
-
   for (size_t i = 0; i < int_valid_inputs.size(); ++i) {
     int input = int_valid_inputs[i];
     double v = F::template apply<double>(input);
     EXPECT_FLOAT_EQ(F::apply_base(double(input)), v);
   }
-
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
     EXPECT_FLOAT_EQ(F::apply_base(valid_inputs[i]), 
-		      F::template apply<double>(valid_inputs[i]));
+                    F::template apply<double>(valid_inputs[i]));
   }
 }
 
@@ -47,8 +38,8 @@ void expect_std_vectors_value() {
   vector<vector<double> > z;
   z.push_back(valid_inputs);
   z.push_back(valid_inputs);
-  vector<vector<double> > fz =
-                       F::template apply<vector<vector<double> > >(z);
+  vector<vector<double> > fz 
+    = F::template apply<vector<vector<double> > >(z);
   EXPECT_EQ(z.size(), fz.size());
   for (size_t i = 0; i < fz.size(); ++i) {
     EXPECT_EQ(z[i].size(), fz[i].size());

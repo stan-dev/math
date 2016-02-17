@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_VALUES_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_VALUES_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <Eigen/Dense>
 
 template <typename F, typename T>
@@ -25,7 +25,7 @@ build_valid_var_vector() {
   std::vector<double> inputs = F::valid_inputs();
   std::vector<stan::math::var> var_vector;
 
-  for (int i = 0; i < inputs.size(); ++i) {
+  for (size_t i = 0; i < inputs.size(); ++i) {
     var_vector.push_back(inputs[i]);
   }
   
@@ -111,7 +111,7 @@ void expect_matrix_value() {
   size_t num_inputs = F::valid_inputs().size();
   MatrixXvar template_matrix(num_inputs, num_cols);
 
-  for (size_t i = 0; i < template_matrix.size(); ++i) {
+  for (int i = 0; i < template_matrix.size(); ++i) {
     MatrixXvar a = build_valid_var_matrix<F>(template_matrix);
     MatrixXvar fa = F::template apply<MatrixXvar>(a);
     EXPECT_EQ(a.size(), fa.size());
@@ -123,7 +123,7 @@ void expect_matrix_value() {
 
   size_t vector_matrix_size = 2;
   for (size_t i = 0; i < vector_matrix_size; ++i) {
-    for (size_t j = 0; j < template_matrix.size(); ++j) {
+    for (int j = 0; j < template_matrix.size(); ++j) {
 
       vector<MatrixXvar> b;
       for (size_t k = 0; k < vector_matrix_size; ++k)

@@ -1,21 +1,22 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_FUN_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_FUN_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
+#include <cmath>
 
 namespace stan {
 
   namespace math {
-    
-    // mock class static function definition for exp()
+
+    /**
+     * Example of how to define a functor for a vectorized function.
+     * The example includes a constrained version of exp().
+     */
     struct foo_fun {
       template <typename T>
       static inline T fun(const T& x) {
         using std::exp;
-        stan::math::check_less_or_equal("vectorize", "x", x, 5);
+        stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 5);
         return exp(x);
       }
     };

@@ -14,7 +14,7 @@ static inline std::vector<stan::math::var>
 build_valid_fvar_vector(std::vector<stan::math::var> var_vector,
                             int seed_index = -1) { 
   std::vector<double> inputs = F::valid_inputs();
-  for (int i = 0; i < inputs.size(); ++i) {
+  for (size_t i = 0; i < inputs.size(); ++i) {
       var_vector.push_back(inputs[i]);
   }
   return var_vector;
@@ -33,10 +33,9 @@ build_valid_fvar_vector(std::vector<stan::math::fvar<V> > fvar_vector,
   if (seed_index != -1)
     d_vector = build_valid_fvar_vector<F>(vector<V>(), seed_index);
 
-  for (int i = 0; i < val_vector.size(); ++i) {
-    if (seed_index == i)
-      fvar_vector.push_back(
-        fvar<V>(val_vector[i], d_vector[i]));
+  for (size_t i = 0; i < val_vector.size(); ++i) {
+    if (seed_index == static_cast<int>(i))
+      fvar_vector.push_back(fvar<V>(val_vector[i], d_vector[i]));
     else
       fvar_vector.push_back(fvar<V>(val_vector[i]));
   }
@@ -93,18 +92,14 @@ void expect_scalar_value() {
   using stan::math::fvar;
   using stan::test::expect_match_return_t;
   using std::vector;
-
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
-    vector<V> y = 
-      build_valid_fvar_vector<F>(vector<V>(), i);
-    vector<V> z = 
-      build_valid_fvar_vector<F>(vector<V>(), i);
+    vector<V> y = build_valid_fvar_vector<F>(vector<V>(), i);
+    vector<V> z = build_valid_fvar_vector<F>(vector<V>(), i);
     V fz = F::template apply<V>(z[i]);
     test_fvar(F::apply_base(y[i]), y[i], fz, z[i]);
   }
-  expect_match_return_t<V, V>();
-  expect_match_return_t<std::vector<V>, 
-                          std::vector<V> >();
+  expect_match_return_t<F, V, V>();
+  expect_match_return_t<F, std::vector<V>, std::vector<V> >();
 }
 
 template <typename F, typename V>
@@ -115,20 +110,16 @@ void expect_std_vector_values() {
   size_t num_inputs = F::valid_inputs().size();
 
   for (size_t i = 0; i < num_inputs; ++i) {
-    vector<V> y = 
-      build_valid_fvar_vector<F>(vector<V>(), i);
-    vector<V> z = 
-      build_valid_fvar_vector<F>(vector<V>(), i);
+    vector<V> y = build_valid_fvar_vector<F>(vector<V>(), i);
+    vector<V> z = build_valid_fvar_vector<F>(vector<V>(), i);
     vector<V> fz = F::template apply<vector<V> >(z);
     EXPECT_EQ(z.size(), fz.size());
     test_fvar(F::apply_base(y[i]), y[i], fz[i], z[i]);
   }
 
   size_t vector_vector_size = 2;
-
   for (size_t i = 0; i < vector_vector_size; ++i) {
     for (size_t j = 0; j < num_inputs; ++j) {
-
       vector<vector<V> > a;
       vector<vector<V> > b;
       for (size_t k = 0; k < num_inputs; ++k) {
@@ -171,19 +162,19 @@ void expect_matrix_values() {
   }
 
   size_t vector_matrix_size = 2;
-  for (int i = 0; i < vector_matrix_size; ++i) {
+  for (size_t i = 0; i < vector_matrix_size; ++i) {
     for (int j = 0; j < template_matrix.size(); ++j) {
       vector<MatrixXvar> a;
       vector<MatrixXvar> b;
-      for (int k = 0; k < vector_matrix_size; ++k)
+      for (size_t k = 0; k < vector_matrix_size; ++k) {
         if (k == i) {
           a.push_back(build_valid_fvar_matrix<F>(template_matrix, j));
           b.push_back(build_valid_fvar_matrix<F>(template_matrix, j));
-        }
-        else {
+        } else {
           a.push_back(build_valid_fvar_matrix<F>(template_matrix));
           b.push_back(build_valid_fvar_matrix<F>(template_matrix));
         }
+      }
       vector<MatrixXvar> fb = F::template apply<vector<MatrixXvar> >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
