@@ -1,5 +1,5 @@
-#ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_ERRORS_HPP
-#define TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_EXPECT_ERRORS_HPP
+#ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_ERRORS_HPP
+#define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_ERRORS_HPP
 
 #include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_scalar_error.hpp>

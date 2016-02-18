@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_FUN_HPP
 
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {

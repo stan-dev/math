@@ -1,8 +1,7 @@
-#include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/scal/fun/exp.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
-#include <test/unit/math/fwd/mat/vectorize/fwd_expect_values.hpp>
-#include <test/unit/math/fwd/mat/vectorize/fwd_expect_errors.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_values.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_errors.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_base_test.hpp>
 #include <gtest/gtest.h>
 
