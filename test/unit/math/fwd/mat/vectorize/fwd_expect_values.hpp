@@ -15,17 +15,16 @@ build_valid_fvar_vector(std::vector<double> double_vector,
 template <typename F, typename V>
 static inline std::vector<stan::math::fvar<V> >
 build_valid_fvar_vector(std::vector<stan::math::fvar<V> > fvar_vector,
-                          int seed_index = -1) { 
+                        int seed_index = -1) { 
   using std::vector;
   using stan::math::fvar;
 
-  vector<V> template_vector =
-    build_valid_fvar_vector<F>(vector<V>(), seed_index);
+  vector<V> template_vector
+    = build_valid_fvar_vector<F>(vector<V>(), seed_index);
 
-  for (int i = 0; i < template_vector.size(); ++i) {
-    if (seed_index == i)
-      fvar_vector.push_back(
-        fvar<V>(template_vector[i], template_vector[i]));
+  for (size_t i = 0; i < template_vector.size(); ++i) {
+    if (seed_index == static_cast<int>(i))
+      fvar_vector.push_back(fvar<V>(template_vector[i], template_vector[i]));
     else
       fvar_vector.push_back(fvar<V>(template_vector[i]));
   }
@@ -66,10 +65,8 @@ static inline void test_fvar(V exp_var, V test_var) {
 
 template <typename F, typename V>
 void expect_scalar_value() {
-  using stan::math::fvar;
   using stan::test::expect_match_return_t;
   using std::vector;
-
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
     vector<V> y = 
       build_valid_fvar_vector<F>(vector<V>(), i);
@@ -77,25 +74,17 @@ void expect_scalar_value() {
     V exp_y = F::apply_base(y[i]);
     test_fvar(exp_y, fy);
   }
-
-  expect_match_return_t<V, V>();
-  expect_match_return_t<std::vector<V>, 
-                          std::vector<V> >();
+  expect_match_return_t<F, V, V>();
+  expect_match_return_t<F, std::vector<V>, std::vector<V> >();
 
 }
 
 template <typename F, typename V>
 void expect_std_vector_values() {
-  using stan::math::foo;
   using std::vector;
-  using stan::math::fvar;
-  using stan::math::foo;
-
   size_t num_inputs = F::valid_inputs().size();
-
   for (size_t i = 0; i < num_inputs; ++i) {
-    vector<V> y =
-      build_valid_fvar_vector<F>(vector<V>(), i);
+    vector<V> y = build_valid_fvar_vector<F>(vector<V>(), i);
     vector<V> fy = F::template apply<vector<V> >(y);
     EXPECT_EQ(y.size(), fy.size());
     test_fvar(F::apply_base(y[i]), fy[i]);
@@ -127,30 +116,29 @@ template <typename F, typename V>
 void expect_matrix_values() {
   using stan::math::fvar;
   using std::vector;
-  typedef 
-    Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic> MatrixXvar;
+  typedef Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
 
-  size_t num_inputs = F::valid_inputs().size();
-  size_t num_cols = 3;
-  MatrixXvar template_matrix(num_inputs, num_cols);
+  int num_inputs = F::valid_inputs().size();
+  int num_cols = 3;
+  matrix_t template_matrix(num_inputs, num_cols);
 
   for (int i = 0; i < template_matrix.size(); ++i) {
-    MatrixXvar a = build_valid_fvar_matrix<F>(template_matrix, i);
-    MatrixXvar fa = F::template apply<MatrixXvar>(a);
+    matrix_t a = build_valid_fvar_matrix<F>(template_matrix, i);
+    matrix_t fa = F::template apply<matrix_t>(a);
     EXPECT_EQ(a.size(), fa.size());
     test_fvar(F::apply_base(a(i)), fa(i));
   }
 
   size_t vector_matrix_size = 2;
-  for (int i = 0; i < vector_matrix_size; ++i) {
+  for (size_t i = 0; i < vector_matrix_size; ++i) {
     for (int j = 0; j < template_matrix.size(); ++j) {
-      vector<MatrixXvar> b;
-      for (int k = 0; k < vector_matrix_size; ++k)
+      vector<matrix_t> b;
+      for (size_t k = 0; k < vector_matrix_size; ++k)
         if (k == i)
           b.push_back(build_valid_fvar_matrix<F>(template_matrix, j));
         else
           b.push_back(build_valid_fvar_matrix<F>(template_matrix));
-      vector<MatrixXvar> fb = F::template apply<vector<MatrixXvar> >(b);
+      vector<matrix_t> fb = F::template apply<vector<matrix_t> >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
       test_fvar(F::apply_base(b[i](j)), fb[i](j));
@@ -160,8 +148,8 @@ void expect_matrix_values() {
   int block_i = 1;
   int block_j = 1;
   int seed_i = block_j * num_inputs + block_i;
-  MatrixXvar a = build_valid_fvar_matrix<F>(template_matrix, seed_i);
-  MatrixXvar fab = foo(a.block(block_i, block_j, 1, 1));
+  matrix_t a = build_valid_fvar_matrix<F>(template_matrix, seed_i);
+  matrix_t fab = foo(a.block(block_i, block_j, 1, 1));
   test_fvar(F::apply_base(a(1,1)), fab(0,0));
 }
 
@@ -237,7 +225,6 @@ void expect_row_vector_values() {
 template <typename F>
 void expect_values() {
   using stan::math::fvar;
-  using std::vector;
 
   expect_scalar_value<F, fvar<double> >();
   expect_scalar_value<F, fvar<fvar<double> > >();
