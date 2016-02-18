@@ -141,6 +141,7 @@ clean:
 	@echo '  removing test executables'
 	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d" -exec rm {} +)
+	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
 
 clean-doxygen:
@@ -149,6 +150,7 @@ clean-doxygen:
 clean-deps:
 	@echo '  removing dependency files'
 	$(shell find . -type f -name '*.d' -exec rm {} +)
+	$(shell find . -type f -name '*.d.*' -exec rm {} +)
 	$(RM) $(shell find stan -type f -name '*.dSYM') $(shell find stan -type f -name '*.d.*')
 
 clean-all: clean clean-doxygen clean-deps
