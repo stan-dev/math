@@ -8,9 +8,9 @@
 template <typename F, typename T>
 void expect_scalar_error() {
   using std::vector;  
-  vector<double> illegal_inputs = F::illegal_inputs();
-  for (size_t i = 0; i < illegal_inputs.size(); ++i) {
-    T input = illegal_inputs[i];
+  vector<double> invalid_inputs = F::invalid_inputs();
+  for (size_t i = 0; i < invalid_inputs.size(); ++i) {
+    T input = invalid_inputs[i];
     EXPECT_THROW(F::template apply<T>(input), std::domain_error);
   }
 }

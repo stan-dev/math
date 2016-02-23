@@ -8,8 +8,8 @@
 template <typename F, typename T>
 void expect_std_vector_error() {
   using std::vector;
-  vector<double> illegal_inputs = F::illegal_inputs();
-  vector<T> y(illegal_inputs.begin(), illegal_inputs.end());
+  vector<double> invalid_inputs = F::invalid_inputs();
+  vector<T> y(invalid_inputs.begin(), invalid_inputs.end());
   EXPECT_THROW(F::template apply<vector<T> >(y), std::domain_error);
 
   vector<vector<T> > z;

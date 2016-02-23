@@ -68,7 +68,7 @@ struct foo_base_test {
   /**
    * Return sequence of invalid double-valued inputs.
    */
-  static std::vector<double> illegal_inputs() {
+  static std::vector<double> invalid_inputs() {
     return stan::math::vector_builder<double>()
       .add(10.6).add(10.6).add(25.7).add(100.25).build();
   }
@@ -84,7 +84,7 @@ struct foo_base_test {
   /**
    * Return sequence of invalid integer inputs.
    */
-  static std::vector<int> int_illegal_inputs() {
+  static std::vector<int> int_invalid_inputs() {
     return stan::math::vector_builder<int>()
       .add(10).add(25).add(100).add(50).build();
   }

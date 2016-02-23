@@ -10,11 +10,11 @@ template <typename F, typename T>
 void expect_matrix_error() {
   using std::vector;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
-  vector<double> illegal_inputs = F::illegal_inputs();
-  matrix_t a(3, illegal_inputs.size());
+  vector<double> invalid_inputs = F::invalid_inputs();
+  matrix_t a(3, invalid_inputs.size());
   for (int i = 0; i < a.rows(); ++i)
     for (int j = 0; j < a.cols(); ++j)
-      a(i, j) = illegal_inputs[j];
+      a(i, j) = invalid_inputs[j];
   EXPECT_THROW(F::template apply<matrix_t>(a), std::domain_error);
   EXPECT_THROW(F::template apply<matrix_t>(a.block(1, 1, 1, 1)), 
                std::domain_error);
