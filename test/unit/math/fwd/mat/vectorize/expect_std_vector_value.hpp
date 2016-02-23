@@ -4,7 +4,7 @@
 #include <stan/math/fwd/core/fvar.hpp>
 #include <vector>
 #include <test/unit/math/fwd/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_fvar_eq.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_eq.hpp>
 
 template <typename F, typename T>
 void expect_std_vector_value() {
@@ -14,7 +14,7 @@ void expect_std_vector_value() {
     vector<T> y = build_vector<F>(vector<T>(), i);
     vector<T> fy = F::template apply<vector<T> >(y);
     EXPECT_EQ(y.size(), fy.size());
-    expect_fvar_eq(F::apply_base(y[i]), fy[i]);
+    expect_eq(F::apply_base(y[i]), fy[i]);
   }
 
   size_t vector_vector_size = 2;
@@ -34,7 +34,7 @@ void expect_std_vector_value() {
 
       EXPECT_EQ(z.size(), fz.size());
       EXPECT_EQ(z[i].size(), fz[i].size());
-      expect_fvar_eq(F::apply_base(z[i][j]), fz[i][j]);
+      expect_eq(F::apply_base(z[i][j]), fz[i][j]);
     }
   }
 }    

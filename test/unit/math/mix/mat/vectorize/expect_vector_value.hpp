@@ -4,7 +4,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <test/unit/math/mix/mat/vectorize/build_matrix.hpp>
-#include <test/unit/math/mix/mat/vectorize/expect_fvar_var_eq.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_eq.hpp>
 
 template <typename F, typename T>
 void expect_vector_value() {
@@ -19,7 +19,7 @@ void expect_vector_value() {
     vector_t b = build_matrix<F>(template_vector, i);
     vector_t fb = F::template apply<vector_t>(b);
     EXPECT_EQ(b.size(), fb.size());
-    expect_fvar_var_eq(F::apply_base(a(i)), a(i), fb(i), b(i));
+    expect_eq(F::apply_base(a(i)), a(i), fb(i), b(i));
   }
 
   size_t vector_vector_size = 2;
@@ -40,7 +40,7 @@ void expect_vector_value() {
 
       EXPECT_EQ(d.size(), fd.size());
       EXPECT_EQ(d[i].size(), fd[i].size());
-      expect_fvar_var_eq(
+      expect_eq(
         F::apply_base(c[i](j)), c[i](j), fd[i](j), d[i](j));
     }
   }

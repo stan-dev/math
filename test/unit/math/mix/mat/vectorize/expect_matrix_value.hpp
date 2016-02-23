@@ -4,7 +4,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <test/unit/math/mix/mat/vectorize/build_matrix.hpp>
-#include <test/unit/math/mix/mat/vectorize/expect_fvar_var_eq.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_eq.hpp>
 
 template <typename F, typename T>
 void expect_matrix_value() {
@@ -21,7 +21,7 @@ void expect_matrix_value() {
     matrix_t z = build_matrix<F>(template_matrix, i);
     matrix_t fz = F::template apply<matrix_t>(z);
     EXPECT_EQ(z.size(), fz.size());
-    expect_fvar_var_eq(F::apply_base(y(i)), y(i), fz(i), z(i));
+    expect_eq(F::apply_base(y(i)), y(i), fz(i), z(i));
   }
 
   size_t vector_matrix_size = 2;
@@ -41,7 +41,7 @@ void expect_matrix_value() {
       vector<matrix_t> fb = F::template apply<vector<matrix_t> >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_fvar_var_eq(
+      expect_eq(
         F::apply_base(a[i](j)), a[i](j), fb[i](j), b[i](j));
     }
   }
@@ -52,7 +52,7 @@ void expect_matrix_value() {
   matrix_t c = build_matrix<F>(template_matrix, seed_i);
   matrix_t d = build_matrix<F>(template_matrix, seed_i);
   matrix_t fab = foo(d.block(block_i, block_j, 1, 1));
-  expect_fvar_var_eq(
+  expect_eq(
     F::apply_base(c(block_i, block_j)), c(block_i, block_j),
               fab(0,0), d(block_i, block_j));
 }

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <test/unit/math/mix/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/mix/mat/vectorize/expect_fvar_var_eq.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_eq.hpp>
 
 template <typename F, typename T>
 void expect_std_vector_value() {
@@ -16,7 +16,7 @@ void expect_std_vector_value() {
     vector<T> z = build_vector<F>(vector<T>(), i);
     vector<T> fz = F::template apply<vector<T> >(z);
     EXPECT_EQ(z.size(), fz.size());
-    expect_fvar_var_eq(F::apply_base(y[i]), y[i], fz[i], z[i]);
+    expect_eq(F::apply_base(y[i]), y[i], fz[i], z[i]);
   }
 
   size_t vector_vector_size = 2;
@@ -39,7 +39,7 @@ void expect_std_vector_value() {
 
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_fvar_var_eq(
+      expect_eq(
         F::apply_base(a[i][j]), a[i][j], fb[i][j], b[i][j]);
     }
   }
