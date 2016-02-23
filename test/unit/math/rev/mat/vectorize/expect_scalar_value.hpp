@@ -5,21 +5,21 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_autodiff.hpp>
+#include <test/unit/math/rev/mat/vectorize/expect_eq.hpp>
 
 template <typename F>
 void expect_scalar_value() {
   using stan::math::var;
   using std::vector;
 
-  vector<var> y = build_vector<F>();
-  for (size_t i = 0; i < y.size(); ++i) {
+  for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
+    vector<var> y = build_vector<F>();
     var fy = F::template apply<var>(y[i]);
 
-    EXPECT_FLOAT_EQ(F::apply_base(y[i]).val(), fy.val());
+    vector<var> z = build_vector<F>();
+    var fz = F::apply_base(z[i]);
 
-    fy.grad();
-    expect_autodiff<F>(y[i].val(), y[i].adj());
+    expect_eq(fz, z[i], fy, y[i]);
   }
 }
 

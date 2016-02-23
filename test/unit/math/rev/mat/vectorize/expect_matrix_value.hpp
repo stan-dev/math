@@ -6,7 +6,7 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/vectorize/build_matrix.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_autodiff.hpp>
+#include <test/unit/math/rev/mat/vectorize/expect_eq.hpp>
 
 template <typename F>
 void expect_matrix_value() {
@@ -24,34 +24,34 @@ void expect_matrix_value() {
     EXPECT_EQ(a.size(), fa.size());
     EXPECT_FLOAT_EQ(F::apply_base(a(i)).val(), fa(i).val());
 
-    fa(i).grad();
-    expect_autodiff<F>(a(i).val(), a(i).adj());
+    MatrixXvar b = build_matrix<F>(template_matrix);
+    expect_eq(F::apply_base(b(i)), b(i), fa(i), a(i));
   }
 
   size_t vector_matrix_size = 2;
   for (size_t i = 0; i < vector_matrix_size; ++i) {
     for (int j = 0; j < template_matrix.size(); ++j) {
 
-      vector<MatrixXvar> b;
+      vector<MatrixXvar> c;
       for (size_t k = 0; k < vector_matrix_size; ++k)
-        b.push_back(build_matrix<F>(template_matrix));
-      vector<MatrixXvar> fb = F::template apply<vector<MatrixXvar> >(b);
+        c.push_back(build_matrix<F>(template_matrix));
+      vector<MatrixXvar> fc = F::template apply<vector<MatrixXvar> >(c);
 
-      EXPECT_EQ(b[i].size(), fb[i].size());
-      EXPECT_EQ(b[i].rows(), fb[i].rows());
-      EXPECT_EQ(b[i].cols(), fb[i].cols());
-      EXPECT_FLOAT_EQ(F::apply_base(b[i](j)).val(), fb[i](j).val()); 
+      EXPECT_EQ(c[i].size(), fc[i].size());
+      EXPECT_EQ(c[i].rows(), fc[i].rows());
+      EXPECT_EQ(c[i].cols(), fc[i].cols());
 
-      fb[i](j).grad();
-      expect_autodiff<F>(b[i](j).val(), b[i](j).adj());
+      vector<MatrixXvar> d;
+      for (size_t k = 0; k < vector_matrix_size; ++k)
+        d.push_back(build_matrix<F>(template_matrix));
+      expect_eq(F::apply_base(d[i](j)), d[i](j), fc[i](j), c[i](j));
     }
   }
 
-  MatrixXvar a = build_matrix<F>(template_matrix);
-  MatrixXvar fab = F::template apply<MatrixXvar>(a.block(1, 1, 1, 1));
-  EXPECT_FLOAT_EQ(F::apply_base(a(1,1)).val(), fab(0,0).val());
-  fab(0,0).grad();
-  expect_autodiff<F>(a(1,1).val(), a(1,1).adj());
+  MatrixXvar e = build_matrix<F>(template_matrix);
+  MatrixXvar feb = F::template apply<MatrixXvar>(e.block(1, 1, 1, 1));
+  MatrixXvar f = build_matrix<F>(template_matrix).block(1, 1, 1, 1);
+  expect_eq(F::apply_base(f(0,0)), f(0,0), feb(0,0), e(1,1));
 }
 
 #endif

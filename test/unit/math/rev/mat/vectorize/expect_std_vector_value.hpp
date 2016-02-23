@@ -4,7 +4,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <vector>
 #include <test/unit/math/rev/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_autodiff.hpp>
+#include <test/unit/math/rev/mat/vectorize/expect_eq.hpp>
 
 template <typename F>
 void expect_std_vector_value() {
@@ -15,12 +15,10 @@ void expect_std_vector_value() {
     
     vector<var> y = build_vector<F>();
     vector<var> fy = F::template apply<vector<var> >(y);
+    vector<var> z = build_vector<F>();
 
     EXPECT_EQ(y.size(), fy.size());
-    EXPECT_FLOAT_EQ(F::apply_base(y[i]).val(), fy[i].val());
-
-    fy[i].grad();
-    expect_autodiff<F>(y[i].val(), y[i].adj());
+    expect_eq(F::apply_base(z[i]), z[i], fy[i], y[i]);
   }
 
   size_t vector_vector_size = 2;
@@ -28,19 +26,20 @@ void expect_std_vector_value() {
 
     for (size_t j = 0; j < F::valid_inputs().size(); ++j) {
 
-      vector<vector<var> > z;
+      vector<vector<var> > a;
       for (size_t i = 0; i < vector_vector_size; ++i) {
-        z.push_back(build_vector<F>());
+        a.push_back(build_vector<F>());
       } 
-      vector<vector<var> > fz = 
-                        F::template apply<vector<vector<var> > >(z);
+      vector<vector<var> > fa = 
+                        F::template apply<vector<vector<var> > >(a);
+      EXPECT_EQ(a.size(), fa.size());
+      EXPECT_EQ(a[i].size(), fa[i].size());
 
-      EXPECT_EQ(z.size(), fz.size());
-      EXPECT_EQ(z[i].size(), fz[i].size());
-      EXPECT_FLOAT_EQ(F::apply_base(z[i][j]).val(), fz[i][j].val());
+      vector<vector<var> > b;
+      for (size_t i = 0; i < vector_vector_size; ++i)
+        b.push_back(build_vector<F>());
 
-      fz[i][j].grad();
-      expect_autodiff<F>(z[i][j].val(), z[i][j].adj());
+      expect_eq(F::apply_base(b[i][j]), b[i][j], fa[i][j], a[i][j]);
     }
   }
 }    
