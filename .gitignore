@@ -43,7 +43,7 @@
 
 # depedencies files
 *.d
-*.hpp.d.*
+*.d.*
 .Rproj.user
 .kdev4/
 .Rapp.history
