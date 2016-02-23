@@ -1,5 +1,4 @@
-#include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 

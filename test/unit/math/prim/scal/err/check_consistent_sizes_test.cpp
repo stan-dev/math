@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(ErrorHandlingScalar, checkConsistentSizes_zero) {

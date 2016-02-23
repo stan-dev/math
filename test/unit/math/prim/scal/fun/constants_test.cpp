@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathsConstants, e) {

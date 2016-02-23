@@ -1,5 +1,4 @@
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,sumVector) {

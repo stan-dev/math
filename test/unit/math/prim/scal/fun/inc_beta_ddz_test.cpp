@@ -1,5 +1,4 @@
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, inc_beta_ddz) {

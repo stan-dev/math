@@ -1,10 +1,9 @@
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
-#include <stan/math/prim/mat/fun/assign.hpp>
-#include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
-#include <test/unit/util.hpp>
-#include <gtest/gtest.h>
 
 void test_print_mat_size(int n, const std::string& expected) {
   using stan::math::print_mat_size;

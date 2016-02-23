@@ -1,5 +1,4 @@
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/initialize.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,initialize) {

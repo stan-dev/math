@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/get_base1.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,failing_pre_20) {

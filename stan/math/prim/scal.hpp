@@ -4,6 +4,7 @@
 #include <stan/math/version.hpp>
 
 #include <stan/math/prim/scal/meta/child_type.hpp>
+#include <stan/math/prim/scal/meta/container_view.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
@@ -299,5 +300,7 @@
 #include <stan/math/prim/scal/prob/weibull_log.hpp>
 #include <stan/math/prim/scal/prob/weibull_rng.hpp>
 #include <stan/math/prim/scal/prob/wiener_log.hpp>
+
+#include <cmath>
 
 #endif
