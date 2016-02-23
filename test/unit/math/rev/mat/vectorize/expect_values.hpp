@@ -1,7 +1,6 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VALUES_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VALUES_HPP
 
-#include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_scalar_value.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_std_vector_value.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_matrix_value.hpp>
