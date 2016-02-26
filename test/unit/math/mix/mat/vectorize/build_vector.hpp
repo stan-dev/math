@@ -30,6 +30,8 @@ build_vector(std::vector<stan::math::fvar<T> > fvar_vector,
     d_vector = build_vector<F>(vector<T>(), seed_index);
 
   for (size_t i = 0; i < val_vector.size(); ++i) {
+    // For fvar<fvar<var> >, this ensures that when 
+    // we test the var, we don't autodiff the same var twice 
     if (seed_index == static_cast<int>(i))
       fvar_vector.push_back(fvar<T>(val_vector[i], d_vector[i]));
     else
