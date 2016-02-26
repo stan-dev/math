@@ -4,7 +4,7 @@
 #include <stan/math/fwd/core/fvar.hpp>
 #include <vector>
 #include <test/unit/math/fwd/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_eq.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
 
 template <typename F, typename T>
 void expect_scalar_value() {
@@ -14,7 +14,7 @@ void expect_scalar_value() {
       build_vector<F>(vector<T>(), i);
     T fy = F::template apply<T>(y[i]);
     T exp_y = F::apply_base(y[i]);
-    expect_eq(exp_y, fy);
+    expect_val_deriv_eq(exp_y, fy);
   }
 }
 

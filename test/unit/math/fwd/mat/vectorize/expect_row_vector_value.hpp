@@ -5,7 +5,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <test/unit/math/fwd/mat/vectorize/build_matrix.hpp>
-#include <test/unit/math/fwd/mat/vectorize/expect_eq.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
 
 template <typename F, typename T>
 void expect_row_vector_value() {
@@ -14,13 +14,13 @@ void expect_row_vector_value() {
   typedef Eigen::Matrix<T, 1, Eigen::Dynamic> row_vector_t;
 
   size_t num_inputs = F::valid_inputs().size();
-  row_vector_t template_vector(num_inputs);
+  row_vector_t template_rv(num_inputs);
 
   for (size_t i = 0; i < num_inputs; ++i) {
-    row_vector_t b = build_matrix<F>(template_vector, i);
+    row_vector_t b = build_matrix<F>(template_rv, i);
     row_vector_t fb = F::template apply<row_vector_t>(b);
     EXPECT_EQ(b.size(), fb.size());
-    expect_eq(F::apply_base(b(i)), fb(i));
+    expect_val_deriv_eq(F::apply_base(b(i)), fb(i));
   }
 
   size_t vector_vector_size = 2;
@@ -29,15 +29,13 @@ void expect_row_vector_value() {
       vector<row_vector_t> c;
       for (size_t k = 0; k < vector_vector_size; ++k)
         if (k == i) 
-          c.push_back(build_matrix<F>(template_vector, j));
+          c.push_back(build_matrix<F>(template_rv, j));
         else
-          c.push_back(build_matrix<F>(template_vector));
-      vector<row_vector_t> fc = 
-          F::template apply<vector<row_vector_t> >(c);
-
+          c.push_back(build_matrix<F>(template_rv));
+      vector<row_vector_t> fc = F::template apply<vector<row_vector_t> >(c);
       EXPECT_EQ(c.size(), fc.size());
       EXPECT_EQ(c[i].size(), fc[i].size());
-      expect_eq(F::apply_base(c[i](j)), fc[i](j));
+      expect_val_deriv_eq(F::apply_base(c[i](j)), fc[i](j));
     }
   }
 }

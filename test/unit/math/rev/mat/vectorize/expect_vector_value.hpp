@@ -6,7 +6,7 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/vectorize/build_matrix.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_eq.hpp>
+#include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
 
 template <typename F>
 void expect_vector_value() {
@@ -19,28 +19,26 @@ void expect_vector_value() {
 
   for (size_t i = 0; i < num_inputs; ++i) {
     VectorXvar b = build_matrix<F>(template_vector);
-    VectorXvar fb = F::template apply<VectorXvar>(b);
-    EXPECT_EQ(b.size(), fb.size());
-    
     VectorXvar c = build_matrix<F>(template_vector);
-    expect_eq(F::apply_base(c(i)), c(i), fb(i), b(i));
+    VectorXvar fc = F::template apply<VectorXvar>(c);
+    EXPECT_EQ(c.size(), fc.size());
+    expect_val_deriv_eq(F::apply_base(b(i)), b(i), fc(i), c(i));
   }
 
   size_t vector_vector_size = 2;
-
   for (size_t i = 0; i < vector_vector_size; ++i) {
     for (size_t j = 0; j < num_inputs; ++j) {
       vector<VectorXvar> d;
-      for (size_t k = 0; k < num_inputs; ++k)
-        d.push_back(build_matrix<F>(template_vector));
-      vector<VectorXvar> fd = F::template apply<vector<VectorXvar> >(d);
-      EXPECT_EQ(d[i].size(), fd[i].size());
-      EXPECT_EQ(d.size(), fd.size());
-
       vector<VectorXvar> e;
-      for (size_t k = 0; k < num_inputs; ++k)
+      for (size_t k = 0; k < num_inputs; ++k) {
+        d.push_back(build_matrix<F>(template_vector));
         e.push_back(build_matrix<F>(template_vector));
-      expect_eq(F::apply_base(e[i](j)), e[i](j), fd[i](j), d[i](j)); 
+      }
+      vector<VectorXvar> fe = F::template apply<vector<VectorXvar> >(e);
+      EXPECT_EQ(e[i].size(), fe[i].size());
+      EXPECT_EQ(e.size(), fe.size());
+      expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j), 
+                          fe[i](j), e[i](j)); 
     }
   }
 }

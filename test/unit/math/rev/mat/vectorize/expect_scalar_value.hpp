@@ -5,7 +5,7 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/rev/mat/vectorize/expect_eq.hpp>
+#include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
 
 template <typename F>
 void expect_scalar_value() {
@@ -14,12 +14,9 @@ void expect_scalar_value() {
 
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
     vector<var> y = build_vector<F>();
-    var fy = F::template apply<var>(y[i]);
-
     vector<var> z = build_vector<F>();
-    var fz = F::apply_base(z[i]);
-
-    expect_eq(fz, z[i], fy, y[i]);
+    var fz = F::template apply<var>(z[i]);
+    expect_val_deriv_eq(F::apply_base(y[i]), y[i], fz, z[i]);
   }
 }
 

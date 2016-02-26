@@ -8,9 +8,6 @@
 #include <test/unit/math/prim/mat/vectorize/expect_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_row_vector_error.hpp>
 
-
-// CALL THIS TO TEST EVERYTHING
-// see: apply_scalar_unary_test.cpp for an example
 template <typename F>
 void expect_errors() {
   using stan::math::var;

@@ -1,22 +1,21 @@
-#ifndef TEST_UNIT_MATH_MIX_MAT_TECTORIZE_STD_TECTOR_TALUE_HPP
-#define TEST_UNIT_MATH_MIX_MAT_TECTORIZE_STD_TECTOR_TALUE_HPP
+#ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_STD_VECTOR_VALUE_HPP
+#define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_STD_VECTOR_VALUE_HPP
 
 #include <vector>
 #include <test/unit/math/mix/mat/vectorize/build_vector.hpp>
-#include <test/unit/math/mix/mat/vectorize/expect_eq.hpp>
+#include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
 
 template <typename F, typename T>
 void expect_std_vector_value() {
   using std::vector;
 
   size_t num_inputs = F::valid_inputs().size();
-
   for (size_t i = 0; i < num_inputs; ++i) {
     vector<T> y = build_vector<F>(vector<T>(), i);
     vector<T> z = build_vector<F>(vector<T>(), i);
     vector<T> fz = F::template apply<vector<T> >(z);
     EXPECT_EQ(z.size(), fz.size());
-    expect_eq(F::apply_base(y[i]), y[i], fz[i], z[i]);
+    expect_val_deriv_eq(F::apply_base(y[i]), y[i], fz[i], z[i]);
   }
 
   size_t vector_vector_size = 2;
@@ -34,13 +33,11 @@ void expect_std_vector_value() {
           b.push_back(build_vector<F>(vector<T>()));
         }
       }
-      vector<vector<T> > fb 
-        = F::template apply<vector<vector<T> > >(b);
-
+      vector<vector<T> > fb = F::template apply<vector<vector<T> > >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_eq(
-        F::apply_base(a[i][j]), a[i][j], fb[i][j], b[i][j]);
+      expect_val_deriv_eq(F::apply_base(a[i][j]), a[i][j],
+                          fb[i][j], b[i][j]);
     }
   }
 }    

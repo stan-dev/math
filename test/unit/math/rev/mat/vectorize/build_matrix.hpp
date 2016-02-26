@@ -5,15 +5,17 @@
 #include <vector>
 #include <Eigen/Dense>
 
-template <typename F, typename T>
-static inline Eigen::Matrix<stan::math::var, T::RowsAtCompileTime,
-                              T::ColsAtCompileTime>
-build_matrix(const T& x) {
-  Eigen::Matrix<stan::math::var, T::RowsAtCompileTime, 
-    T::ColsAtCompileTime> var_matrix(x.rows(), x.cols());
-  std::vector<double> inputs = F::valid_inputs();
+template <typename F, int R, int C>
+static inline Eigen::Matrix<stan::math::var, R, C>
+build_matrix(const Eigen::Matrix<stan::math::var, R, C>& x) {
+  using Eigen::Matrix;
+  using std::vector;
+  using stan::math::var;
+
+  Matrix<var, R, C> var_matrix(x.rows(), x.cols());
+  vector<double> inputs = F::valid_inputs();
   for (int i = 0; i < x.size(); ++i) {
-      var_matrix(i) = inputs[(i % inputs.size())];
+      var_matrix(i) = inputs[i % inputs.size()];
   }
   return var_matrix;
 }

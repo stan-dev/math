@@ -18,18 +18,16 @@ build_vector(std::vector<stan::math::fvar<T> > fvar_vector,
   using std::vector;
   using stan::math::fvar;
 
-  vector<T> template_vector
-    = build_vector<F>(vector<T>(), seed_index);
+  vector<T> template_v = build_vector<F>(vector<T>(), seed_index);
 
-  for (size_t i = 0; i < template_vector.size(); ++i) {
+  for (size_t i = 0; i < template_v.size(); ++i) {
   
     // For fvar<fvar<double> >, this will fill in 
     // all four components
     if (seed_index == static_cast<int>(i))
-      fvar_vector
-        .push_back(fvar<T>(template_vector[i], template_vector[i]));
+      fvar_vector.push_back(fvar<T>(template_v[i], template_v[i]));
     else
-      fvar_vector.push_back(fvar<T>(template_vector[i]));
+      fvar_vector.push_back(fvar<T>(template_v[i]));
   }
   return fvar_vector;
 }

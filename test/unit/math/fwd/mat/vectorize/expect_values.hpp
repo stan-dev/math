@@ -8,6 +8,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_vector_value.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_row_vector_value.hpp>
 
+//Also tests derivatives
 template <typename F>
 void expect_values() {
   using stan::math::fvar;
