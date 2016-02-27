@@ -14,13 +14,14 @@ build_matrix(const Eigen::Matrix<T, R, C>& x, int seed_index = -1) {
 
   Eigen::Matrix<T, R, C> fvar_matrix(x.rows(), x.cols());
   size_t num_inputs = F::valid_inputs().size();
+  //Fills matrix with copies of valid_input values
   for (int i = 0; i < x.size(); ++i) {
     std::vector<T> inputs;
     if (seed_index == i)
-      inputs = build_vector<F>(std::vector<T>(), (seed_index % num_inputs));
+      inputs = build_vector<F>(std::vector<T>(), seed_index % num_inputs);
     else
       inputs = build_vector<F>(std::vector<T>()); 
-    fvar_matrix(i) = inputs[(i % num_inputs)];
+    fvar_matrix(i) = inputs[i % num_inputs];
   }
   return fvar_matrix;
 }

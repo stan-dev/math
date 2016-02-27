@@ -14,6 +14,7 @@ build_matrix(const Eigen::Matrix<T, R, C>& x, int seed_index = -1) {
 
   Matrix<T, R, C> fvar_matrix(x.rows(), x.cols());
   size_t num_inputs = F::valid_inputs().size();
+  //Fills matrix with copies of valid_input values
   for (int i = 0; i < x.size(); ++i) {
     vector<T> inputs;
     if (seed_index == i)
