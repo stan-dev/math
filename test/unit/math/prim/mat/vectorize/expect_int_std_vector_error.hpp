@@ -9,14 +9,16 @@ template <typename F>
 void expect_int_std_vector_error() {
   using std::vector;
   vector<int> invalid_inputs = F::int_invalid_inputs();
-  EXPECT_THROW(F::template apply<vector<double> >(invalid_inputs), 
-               std::domain_error);
-
-  vector<vector<int> > z;
-  z.push_back(invalid_inputs);
-  z.push_back(invalid_inputs);
-  EXPECT_THROW(F::template apply<vector<vector<double> > >(z),
-               std::domain_error);
+  if (invalid_inputs.size() > 0) {
+    EXPECT_THROW(F::template apply<vector<double> >(invalid_inputs), 
+                 std::domain_error);
+  
+    vector<vector<int> > z;
+    z.push_back(invalid_inputs);
+    z.push_back(invalid_inputs);
+    EXPECT_THROW(F::template apply<vector<vector<double> > >(z),
+                 std::domain_error);
+  }
 }
 
 #endif
