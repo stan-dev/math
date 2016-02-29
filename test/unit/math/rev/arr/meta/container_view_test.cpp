@@ -1,9 +1,6 @@
+#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/meta/container_view.hpp>
-#include <stan/math/prim/arr/meta/container_view.hpp>
 #include <boost/type_traits/conditional.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(MathMeta, container_view_vector) {
   using stan::math::container_view;
@@ -23,8 +20,6 @@ TEST(MathMeta, container_view_vector) {
 
 
 TEST(MathMeta, container_view_no_throw) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using stan::math::container_view;
   using boost::conditional;
   using stan::math::dummy;

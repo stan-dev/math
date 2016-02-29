@@ -1,8 +1,7 @@
-#include <stan/math/rev/scal/fun/is_nan.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradRev,is_nan) {
   using stan::math::is_nan;

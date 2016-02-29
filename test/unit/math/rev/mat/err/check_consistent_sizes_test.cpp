@@ -1,13 +1,4 @@
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/meta/value_type.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
@@ -59,30 +50,5 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
                std::invalid_argument);
   EXPECT_THROW(check_consistent_sizes(function, name, v, name2, v2, name3, v3, name, v),
                std::invalid_argument);
-  stan::math::recover_memory();
-}
-
-TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
-  using stan::math::var;
-  using std::vector;
-  using stan::math::check_consistent_sizes;
-
-  int N = 5;
-  const char* function = "check_consistent_size";
-  vector<var> a;
-  vector<var> b;
-
-  for (int i = 0; i < N; ++i){
-   b.push_back(var(i+1));
-   a.push_back(var(i));
-  }
-
-  size_t stack_size = stan::math::ChainableStack::var_stack_.size();
-
-  EXPECT_EQ(10U,stack_size);
-  EXPECT_TRUE(check_consistent_sizes(function,"a",a,"b",b));
-
-  size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(10U,stack_size_after_call);
   stan::math::recover_memory();
 }

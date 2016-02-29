@@ -1,8 +1,5 @@
-#include <stan/math/prim/scal/prob/normal_log.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(ProbDistributionsNormal, intVsDouble) {
   using stan::math::var;
