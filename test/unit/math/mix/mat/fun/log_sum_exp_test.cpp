@@ -1,12 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/log_sum_exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 using stan::math::fvar;
 using stan::math::var;

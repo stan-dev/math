@@ -1,10 +1,8 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/atanh.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/atanh.hpp>
-#include <stan/math/rev/scal/fun/atanh.hpp>
-#include <stan/math/fwd/core.hpp>
 
 
 

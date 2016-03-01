@@ -1,7 +1,4 @@
-#include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 
 using stan::math::fvar;

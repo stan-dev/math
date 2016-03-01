@@ -1,23 +1,5 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/fwd/mat/fun/trace_quad_form.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

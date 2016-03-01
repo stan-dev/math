@@ -1,8 +1,6 @@
-#include <stdexcept>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/sub_row.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 TEST(AgradMixMatrixSubRow,SubRow1_matrix_fv) {
   using stan::math::sub_row;

@@ -1,7 +1,5 @@
-#include <stan/math/prim/mat/fun/cols.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
 
 TEST(AgradMixMatrixCols,vector_fv) {
   using stan::math::vector_fv;

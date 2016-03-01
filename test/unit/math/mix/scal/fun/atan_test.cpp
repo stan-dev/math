@@ -1,10 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/atan.hpp>
-#include <stan/math/rev/scal/fun/atan.hpp>
-#include <stan/math/fwd/core.hpp>
 
 class AgradFwdAtan : public testing::Test {
   void SetUp() {
