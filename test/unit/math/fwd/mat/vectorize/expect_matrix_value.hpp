@@ -42,7 +42,7 @@ void expect_matrix_value() {
 
   int seed_i = num_inputs + 1;
   matrix_t a = build_matrix<F>(template_m, seed_i);
-  matrix_t fab = foo(a.block(1, 1, 1, 1));
+  matrix_t fab = F::template apply<matrix_t>(a.block(1, 1, 1, 1));
   expect_val_deriv_eq(F::apply_base(a(1,1)), fab(0,0));
 }
 
