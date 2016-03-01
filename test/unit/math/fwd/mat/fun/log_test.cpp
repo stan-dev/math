@@ -1,9 +1,5 @@
-#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
 
 TEST(AgradFwdMatrixLog, fd_matrix) {
   using stan::math::log;

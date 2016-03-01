@@ -1,9 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/log_softmax.hpp>
-#include <stan/math/fwd/mat/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 
 TEST(AgradFwdMatrixLogSoftmax,fd) {
   using stan::math::log_softmax;

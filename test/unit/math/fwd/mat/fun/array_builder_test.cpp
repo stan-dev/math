@@ -1,6 +1,5 @@
-#include <stan/math/prim/mat/fun/array_builder.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
 
 using stan::math::fvar;
 

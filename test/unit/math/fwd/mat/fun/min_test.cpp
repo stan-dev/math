@@ -1,8 +1,5 @@
-#include <stan/math/prim/mat/fun/min.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMin, fd_vector) {

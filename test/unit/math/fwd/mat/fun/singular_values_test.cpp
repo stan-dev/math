@@ -1,10 +1,5 @@
-#include <stan/math/prim/mat/fun/singular_values.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
 
 TEST(AgradFwdMatrixSingularValues, mat_fd) {
   stan::math::matrix_fd m0(2,2);

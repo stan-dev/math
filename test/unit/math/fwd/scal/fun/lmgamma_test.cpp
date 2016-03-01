@@ -1,21 +1,7 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/fwd/scal/fun/lmgamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/scal/fun/ceil.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/lgamma.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
 
 TEST(AgradFwdLmgamma,Fvar) {
   using stan::math::fvar;
