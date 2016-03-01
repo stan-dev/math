@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
 
-#include <vector>
-#include <cstddef>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
+#include <vector>
+#include <cstddef>
 
 namespace stan {
   namespace math {

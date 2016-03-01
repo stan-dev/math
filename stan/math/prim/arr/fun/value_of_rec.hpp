@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <vector>
 #include <cstddef>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 
 namespace stan {
   namespace math {
