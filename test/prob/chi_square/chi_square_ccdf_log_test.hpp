@@ -1,7 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim/scal/prob/chi_square_ccdf_log.hpp>
-
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;
