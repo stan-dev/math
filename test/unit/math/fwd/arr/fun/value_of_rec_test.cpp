@@ -1,6 +1,5 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <gtest/gtest.h>
 
@@ -58,22 +57,6 @@ TEST(MathMatrix,value_of_rec) {
 
     for (int i = 0; i < 10; ++i)
       EXPECT_FLOAT_EQ(a[i].val_.val_, d_a[i]);
-  }
-
-  {
-    vector<fvar<fvar<var> > > a;
-    fill(a_vals, a);
-    vector<fvar<fvar<var> > > b;
-    fill(b_vals, b);
-
-    vector<double> d_a = value_of_rec(a);
-    vector<double> d_b = value_of_rec(b);
-
-    for (int i = 0; i < 5; ++i)
-      EXPECT_FLOAT_EQ(b[i].val_.val_.val(), d_b[i]);
-
-    for (int i = 0; i < 10; ++i)
-      EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i]);
   }
 
 }
