@@ -7,9 +7,8 @@
 template <typename T>
 void fill(const std::vector<double>& contents,
           std::vector<T>& x){
-  size_t ij = 0;
   x.assign(contents.size(), T());
-  for (int i = 0; i < contents.size(); ++i)
+  for (size_t i = 0; i < contents.size(); ++i)
     x[i] = T(contents[i]);
 }
 
