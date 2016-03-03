@@ -109,6 +109,7 @@ endif
 	@echo ''
 	@echo '  To run a single header test, add "-test" to the end of the file name.'
 	@echo '  Example: make stan/math/constants.hpp-test'
+	@echo ''
 	@echo '  - test-math-dependencies : walks through all the header files and indicates'
 	@echo '      when the math dependencies are violated. Dependencies should follow:'
 	@echo '      * rev -> prim'
