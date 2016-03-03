@@ -1,24 +1,6 @@
-#include <stdexcept>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/mix/mat/functor/derivative.hpp>
-#include <stan/math/mix/mat/functor/grad_hessian.hpp>
-#include <stan/math/mix/mat/functor/grad_tr_mat_times_hessian.hpp>
-#include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
-#include <stan/math/mix/mat/functor/hessian.hpp>
-#include <stan/math/mix/mat/functor/hessian_times_vector.hpp>
-#include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/fwd/mat/functor/jacobian.hpp>
-#include <stan/math/mix/mat/functor/partial_derivative.hpp>
-#include <stan/math/prim/scal/prob/normal_log.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stdexcept>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using Eigen::Matrix;

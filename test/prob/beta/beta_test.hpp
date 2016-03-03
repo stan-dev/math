@@ -1,9 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal/prob/beta_log.hpp>
-
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/utility/enable_if.hpp>
 
 using std::vector;

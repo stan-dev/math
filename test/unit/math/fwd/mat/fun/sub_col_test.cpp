@@ -1,7 +1,6 @@
-#include <stdexcept>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/sub_col.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 
 TEST(AgradFwdMatrixSubCol,SubCol1_matrix_fd) {

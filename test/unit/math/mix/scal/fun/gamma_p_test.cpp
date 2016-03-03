@@ -1,37 +1,9 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <stan/math/rev/scal/fun/gamma_p.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/gamma_p.hpp>
-#include <stan/math/rev/scal/fun/gamma_p.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/rev/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/ceil.hpp>
-#include <stan/math/rev/scal/fun/ceil.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/rev/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/rev/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/tan.hpp>
-#include <stan/math/rev/scal/fun/tan.hpp>
-#include <stan/math/fwd/scal/fun/tgamma.hpp>
-#include <stan/math/rev/scal/fun/tgamma.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 
 
 TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {

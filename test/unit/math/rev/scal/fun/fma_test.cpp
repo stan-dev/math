@@ -1,9 +1,8 @@
-#include <cmath>
-#include <stan/math/rev/scal/fun/fma.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 TEST(AgradRev,fma_vvv) {
   AVAR a = 3.0;

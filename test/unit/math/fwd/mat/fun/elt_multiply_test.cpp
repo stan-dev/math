@@ -1,8 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/elt_multiply.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdMatrixEltMultiply,fd_vec_vv) {
   using stan::math::elt_multiply;

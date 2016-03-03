@@ -1,5 +1,4 @@
-#include <stan/math/prim/mat/fun/accumulator.hpp>
-#include <stan/math/prim/mat/fun/get_lp.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(mathMatrix,getLp) {

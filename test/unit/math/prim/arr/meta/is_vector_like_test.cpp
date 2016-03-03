@@ -1,5 +1,4 @@
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

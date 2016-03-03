@@ -1,6 +1,5 @@
-#include <stan/math/fwd/scal/fun/value_of.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 TEST(AgradFwd,value_of) {

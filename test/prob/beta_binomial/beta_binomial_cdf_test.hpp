@@ -1,8 +1,6 @@
 // Arguments: Ints, Ints, Doubles, Doubles
-#include <stan/math/prim/scal/prob/beta_binomial_cdf.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
-
-#include <stan/math/prim/scal/fun/lbeta.hpp>
 
 using std::vector;
 using std::numeric_limits;

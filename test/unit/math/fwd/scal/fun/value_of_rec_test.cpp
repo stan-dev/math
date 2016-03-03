@@ -1,5 +1,6 @@
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradFwd,value_of_rec) {

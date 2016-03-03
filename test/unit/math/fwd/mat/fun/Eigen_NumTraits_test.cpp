@@ -1,4 +1,4 @@
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixEigenNumTraits, insertion_operator) {

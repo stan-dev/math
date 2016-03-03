@@ -1,8 +1,5 @@
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
 TEST(AgradRev,sqrt_a) {

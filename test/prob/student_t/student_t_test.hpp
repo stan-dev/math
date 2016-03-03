@@ -1,8 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal/prob/student_t_log.hpp>
-
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;

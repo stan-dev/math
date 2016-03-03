@@ -1,6 +1,4 @@
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 using stan::math::check_bounded;

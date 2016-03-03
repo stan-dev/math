@@ -1,5 +1,4 @@
-#include <stdexcept>
-#include <stan/math/prim/mat/fun/sub_row.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 

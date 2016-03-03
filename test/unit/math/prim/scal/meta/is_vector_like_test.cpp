@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(is_vector_like, double) {

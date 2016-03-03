@@ -1,6 +1,6 @@
-#include <cmath>
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/scal/fun/fma.hpp>
+#include <cmath>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFma,Fvar) { 

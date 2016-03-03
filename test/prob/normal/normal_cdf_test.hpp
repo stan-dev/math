@@ -1,8 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal/prob/normal_cdf.hpp>
-
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/utility/enable_if.hpp>
 
 using std::vector;

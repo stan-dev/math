@@ -1,10 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
 
 TEST(AgradFwdPow, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;

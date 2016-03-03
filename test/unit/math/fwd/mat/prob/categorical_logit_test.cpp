@@ -1,19 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/mat/fun/log_softmax.hpp>
-#include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
-#include <stan/math/fwd/mat/fun/log_softmax.hpp>
-#include <stan/math/fwd/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/fwd/mat/fun/sum.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

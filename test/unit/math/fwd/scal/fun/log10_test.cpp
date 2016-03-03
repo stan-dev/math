@@ -1,6 +1,5 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/scal/fun/log10.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog10,Fvar) {

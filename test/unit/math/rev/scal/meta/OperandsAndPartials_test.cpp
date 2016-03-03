@@ -1,6 +1,5 @@
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradPartialsVari, OperandsAndPartials) {
   using stan::math::OperandsAndPartials;
@@ -11,33 +10,6 @@ TEST(AgradPartialsVari, OperandsAndPartials) {
   
   OperandsAndPartials<double,double,double,double> o2;
   EXPECT_EQ(0U, o2.nvaris);
-  
-  std::vector<double> d_vec(4);
-  OperandsAndPartials<std::vector<double> > o3(d_vec);
-  EXPECT_EQ(0U, o3.nvaris);
-
-  std::vector<var> v_vec;
-  v_vec.push_back(var(0.0));
-  v_vec.push_back(var(1.0));
-  v_vec.push_back(var(2.0));
-  v_vec.push_back(var(3.0));
-  
-  std::vector<double> grad;
-
-  OperandsAndPartials<std::vector<var> > o4(v_vec);
-  o4.d_x1[0] = 10.0;
-  o4.d_x1[1] = 20.0;
-  o4.d_x1[2] = 30.0;
-  o4.d_x1[3] = 40.0;
-  
-  var v = o4.to_var(10.0,v_vec);
-  v.grad(v_vec, grad);
-  EXPECT_EQ(4U, o4.nvaris);
-  EXPECT_FLOAT_EQ(10.0, v.val());
-  EXPECT_FLOAT_EQ(10.0, grad[0]);
-  EXPECT_FLOAT_EQ(20.0, grad[1]);
-  EXPECT_FLOAT_EQ(30.0, grad[2]);
-  EXPECT_FLOAT_EQ(40.0, grad[3]);
 }
 TEST(AgradPartialsVari,OperandsAndPartials1) {
   using stan::math::vari;
@@ -98,12 +70,9 @@ TEST(AgradPartialsVari, OperandsAndPartials3) {
 TEST(AgradPartialsVari, OperandsAndPartials_check_throw) {
   using stan::math::OperandsAndPartials;
   using stan::math::var;
-  using std::vector;
   
   double d;
-  vector<double> D;
   var v;
-  vector<var> V;
   
   OperandsAndPartials<> o1(d,d,d,d,d,d);
   EXPECT_THROW(o1.d_x1[0], std::out_of_range);
@@ -120,22 +89,4 @@ TEST(AgradPartialsVari, OperandsAndPartials_check_throw) {
   EXPECT_NO_THROW(o2.d_x4[0]);
   EXPECT_NO_THROW(o2.d_x5[0]);
   EXPECT_NO_THROW(o2.d_x6[0]);
-
-  OperandsAndPartials<vector<double>,vector<double>,vector<double>,
-                      vector<double>,vector<double>,vector<double> > o3(D,D,D,D,D,D);
-  EXPECT_THROW(o3.d_x1[0], std::out_of_range);
-  EXPECT_THROW(o3.d_x2[0], std::out_of_range);
-  EXPECT_THROW(o3.d_x3[0], std::out_of_range);
-  EXPECT_THROW(o3.d_x4[0], std::out_of_range);
-  EXPECT_THROW(o3.d_x5[0], std::out_of_range);
-  EXPECT_THROW(o3.d_x6[0], std::out_of_range);
-
-  OperandsAndPartials<vector<var>,vector<var>,vector<var>,
-                      vector<var>,vector<var>,vector<var> > o4(V,V,V,V,V,V);
-  EXPECT_NO_THROW(o4.d_x1[0]);
-  EXPECT_NO_THROW(o4.d_x2[0]);
-  EXPECT_NO_THROW(o4.d_x3[0]);
-  EXPECT_NO_THROW(o4.d_x4[0]);
-  EXPECT_NO_THROW(o4.d_x5[0]);
-  EXPECT_NO_THROW(o4.d_x6[0]);
 }

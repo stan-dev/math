@@ -1,15 +1,7 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <cmath>
-#include <stan/math/rev/mat/fun/log_sum_exp.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
+#include <cmath>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;

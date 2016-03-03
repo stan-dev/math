@@ -1,11 +1,8 @@
-#include <vector>
-#include <stan/math/rev/scal/fun/log_mix.hpp>
+#include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
+#include <vector>
 
 void test_log_mix_vvv(double theta, double lambda1, double lambda2) {
   using stan::math::var;
