@@ -1,7 +1,6 @@
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/meta/container_view.hpp>
 #include <boost/type_traits/conditional.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 
 TEST(MathMeta, container_view) {
   using stan::math::container_view;

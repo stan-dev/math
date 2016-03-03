@@ -1,9 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/log_diff_exp.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/log_diff_exp.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
 
 TEST(AgradFwdLogDiffExp,Fvar) {
   using stan::math::fvar;

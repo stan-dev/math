@@ -1,5 +1,4 @@
-#include <stan/math/rev/scal/fun/square.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 

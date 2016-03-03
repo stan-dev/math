@@ -1,7 +1,6 @@
-#include <stan/math/rev/scal/fun/exp2.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
 TEST(AgradRev,exp2) {

@@ -1,21 +1,5 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/mdivide_right_ldlt.hpp>
-#include <stan/math/prim/mat/fun/mdivide_right_spd.hpp>
-#include <stan/math/rev/mat/fun/LDLT_factor.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/mat/fun/multiply.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left_spd.hpp>
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
   using stan::math::var;

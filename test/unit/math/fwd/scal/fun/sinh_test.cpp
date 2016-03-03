@@ -1,7 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/sinh.hpp>
-#include <stan/math/fwd/scal/fun/cosh.hpp>
 
 class AgradFwdSinh : public testing::Test {
   void SetUp() {

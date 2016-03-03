@@ -1,10 +1,8 @@
-#include <stan/math/rev/scal/fun/ibeta.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/ibeta.hpp>
-#include <boost/math/special_functions/beta.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <boost/math/special_functions/beta.hpp>
 
 TEST(AgradRev,ibeta_vvv) {
   using stan::math::var;

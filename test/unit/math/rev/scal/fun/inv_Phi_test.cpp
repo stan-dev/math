@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal/fun/inv_Phi.hpp>
-#include <stan/math/rev/scal/fun/Phi.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <vector>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::var;

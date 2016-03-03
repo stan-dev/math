@@ -1,10 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
 
 using stan::math::fvar;  
 using stan::math::multiply;

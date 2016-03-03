@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(ProbWelfordVarEstimator, restart) {

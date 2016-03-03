@@ -1,7 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/ceil.hpp>
 
 TEST(AgradFwdCeil,Fvar) {
   using stan::math::fvar;

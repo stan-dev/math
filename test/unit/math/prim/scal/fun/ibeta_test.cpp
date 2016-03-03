@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/ibeta.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 const double inf = std::numeric_limits<double>::infinity();

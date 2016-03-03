@@ -1,6 +1,4 @@
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
 template<typename T, int R, int C>
@@ -28,19 +26,19 @@ TEST(AgradMatrix,value_of_rec) {
     b_vals.push_back(i + 1);
   
   Eigen::Matrix<double,2,5> a; 
-  fill(a_vals, a);
+  ::fill(a_vals, a);
   Eigen::Matrix<double,5,1> b;
-  fill(b_vals, b);
+  ::fill(b_vals, b);
 
   Eigen::Matrix<fvar<double>,2,5> fd_a;
-  fill(a_vals, fd_a);
+  ::fill(a_vals, fd_a);
   Eigen::Matrix<fvar<double>,5,1> fd_b;
-  fill(b_vals, fd_b);
+  ::fill(b_vals, fd_b);
 
   Eigen::Matrix<fvar<fvar<double> >,2,5> ffd_a;
-  fill(a_vals, ffd_a);
+  ::fill(a_vals, ffd_a);
   Eigen::Matrix<fvar<fvar<double> >,5,1> ffd_b;
-  fill(b_vals, ffd_b);
+  ::fill(b_vals, ffd_b);
 
   Eigen::MatrixXd d_fd_a = value_of_rec(fd_a);
   Eigen::MatrixXd d_fd_b = value_of_rec(fd_b);

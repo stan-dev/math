@@ -1,10 +1,6 @@
-#include <vector>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/accumulator.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
+#include <vector>
 
 using stan::math::fvar;
 

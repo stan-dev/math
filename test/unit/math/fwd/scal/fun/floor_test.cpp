@@ -1,6 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
 
 TEST(AgradFwdFloor,Fvar) {
   using stan::math::fvar;

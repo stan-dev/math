@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/squared_distance.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 

@@ -1,28 +1,6 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/rev/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/rev/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/gamma_p.hpp>
-#include <stan/math/rev/scal/fun/gamma_p.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/rev/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/tgamma.hpp>
-#include <stan/math/rev/scal/fun/tgamma.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 
 TEST(ProbInternalMath, gradRegIncGamma_typical) {
   double a = 0.5;

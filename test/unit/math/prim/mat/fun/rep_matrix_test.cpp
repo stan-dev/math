@@ -1,5 +1,5 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/rep_matrix.hpp>
 
 TEST(MathMatrix,rep_matrix) {
   using stan::math::rep_matrix;

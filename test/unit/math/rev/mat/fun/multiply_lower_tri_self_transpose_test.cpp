@@ -1,13 +1,7 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/rev/mat/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
-#include <stan/math/rev/core.hpp>
 
 stan::math::matrix_v generate_large_L_tri_mat(){
   using stan::math::matrix_v;

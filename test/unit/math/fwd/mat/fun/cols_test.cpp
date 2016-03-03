@@ -1,6 +1,5 @@
-#include <stan/math/prim/mat/fun/cols.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
 
 TEST(AgradFwdMatrixCols,vector_fd) {
   using stan::math::vector_fd;

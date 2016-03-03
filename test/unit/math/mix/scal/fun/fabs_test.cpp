@@ -1,11 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 
 
 TEST(AgradFwdFabs,FvarVar_1stDeriv) {

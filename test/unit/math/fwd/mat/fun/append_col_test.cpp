@@ -1,7 +1,5 @@
-#include <stan/math/prim/mat/fun/append_col.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdMatrixAppendCol,fd) {
   using stan::math::append_col;

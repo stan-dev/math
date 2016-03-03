@@ -1,12 +1,6 @@
-#include <stan/math/fwd/mat/fun/tcrossprod.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradMixMatrixTCrossProd, fv_3x3_matrix_1stDeriv) {
   using stan::math::matrix_fv;

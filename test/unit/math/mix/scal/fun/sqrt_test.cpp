@@ -1,10 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/sinh.hpp>
-#include <stan/math/rev/scal/fun/sinh.hpp>
 
 TEST(AgradFwdSqrt, FvarVar_1stDeriv) {
   using stan::math::fvar;

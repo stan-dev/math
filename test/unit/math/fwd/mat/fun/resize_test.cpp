@@ -1,5 +1,4 @@
-#include <stan/math/prim/mat/fun/resize.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
 using Eigen::Matrix;

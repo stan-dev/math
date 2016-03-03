@@ -1,5 +1,4 @@
-#include <stan/math/prim/scal/fun/divide.hpp>
-#include <stan/math/prim/scal/fun/modulus.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, divide) {

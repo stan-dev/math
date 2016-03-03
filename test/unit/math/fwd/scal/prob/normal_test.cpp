@@ -1,10 +1,6 @@
-#include <stan/math/prim/scal/prob/normal_log.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
 
 
 TEST(ProbAgradDistributionsNormal, fwd) {
