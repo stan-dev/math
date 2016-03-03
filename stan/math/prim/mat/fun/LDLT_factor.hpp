@@ -94,8 +94,9 @@ namespace stan {
         return _ldltP->vectorD().array().log().sum();
       }
 
-      inline void inverse(Eigen::Matrix<T, R, C> &invA) const {
-        invA.setIdentity(N_);
+      template <typename MB>
+      inline void inverse(Eigen::MatrixBase<MB> &invA) const {
+        invA.setIdentity(N_, N_);
         _ldltP->solveInPlace(invA);
       }
 
@@ -119,13 +120,13 @@ namespace stan {
         return _ldltP->matrixLDLT();
       }
 
-      inline size_t rows() const { return N_; }
-      inline size_t cols() const { return N_; }
+      inline Eigen::DenseIndex rows() const { return N_; }
+      inline Eigen::DenseIndex cols() const { return N_; }
 
-      typedef size_t size_type;
+      typedef Eigen::DenseIndex size_type;
       typedef double value_type;
 
-      size_t N_;
+      size_type N_;
       boost::shared_ptr< Eigen::LDLT< Eigen::Matrix<T, R, C> > > _ldltP;
     };
   }
