@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_BASE_TEST_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_BASE_TEST_HPP
 
+#include <test/unit/math/prim/mat/vectorize/apply_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
@@ -89,4 +90,10 @@ struct foo_base_test {
       .add(10).add(25).add(100).add(50).build();
   }
 };
+
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, foo_base_test);
+// INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, foo_base_test);
+// INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, foo_base_test);
+// INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, foo_base_test);
+
 #endif
