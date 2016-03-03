@@ -1,7 +1,4 @@
-#include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>

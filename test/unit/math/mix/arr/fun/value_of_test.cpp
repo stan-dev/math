@@ -1,7 +1,4 @@
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/mix/arr.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>

@@ -1,4 +1,4 @@
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>
