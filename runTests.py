@@ -122,12 +122,8 @@ def main():
                 stopErr("bad value for -j flag",-1)
 
     # pass 0: generate all auto-generated tests
-    generate = 0
-    for i in range(argsIdx,len(sys.argv)):
-        if (generate == 0 and re.match("test/prob", sys.argv[i])):
-            generate = 1
-
-    if (generate == 1):
+    prob_args = ['test/prob' in arg for arg in sys.argv[argsIdx:]]
+    if any(prob_args):
         generateTests(j)
 
     # pass 1:  call make to compile test targets
