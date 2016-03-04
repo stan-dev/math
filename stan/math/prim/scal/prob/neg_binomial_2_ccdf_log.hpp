@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/prob/neg_binomial_ccdf_log.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <vector>
 
 namespace stan {
 
@@ -57,17 +56,12 @@ namespace stan {
 
       size_t size_beta = max_size(mu, phi);
 
-      std::vector<typename return_type<T_location, T_precision>::type>
-        beta_vec(size_beta);
+      VectorBuilder<true, typename return_type<T_location, T_precision>::type,
+                    T_location, T_precision> beta_vec(size_beta);
       for (size_t i = 0; i < size_beta; ++i)
         beta_vec[i] = phi_vec[i] / mu_vec[i];
 
-      // Cast a vector of size 1 down to a
-      // scalar to avoid dimension mismatch
-      if (size_beta == 1)
-        return neg_binomial_ccdf_log(n, phi, beta_vec[0]);
-      else
-        return neg_binomial_ccdf_log(n, phi, beta_vec);
+      return neg_binomial_ccdf_log(n, phi, beta_vec.get());      
     }
   }
 }
