@@ -1,32 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/prob/beta_cdf.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
-
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
-#include <vector>
 
 namespace stan {
   namespace math {
@@ -43,13 +29,8 @@ namespace stan {
         T_partials_return;
 
       using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
       using stan::math::check_not_nan;
       using stan::math::check_consistent_sizes;
-
-      // Ensure non-zero arugment lengths
-      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
-        return 1.0;
 
       T_partials_return P(1.0);
 
@@ -150,6 +131,6 @@ namespace stan {
       return operands_and_partials.to_var(P, mu, phi);
     }
 
-  }  // math
-}  // stan
+  }
+}
 #endif
