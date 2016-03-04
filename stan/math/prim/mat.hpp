@@ -9,6 +9,7 @@
 #include <stan/math/prim/mat/meta/container_view.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/mat/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
