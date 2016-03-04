@@ -19,7 +19,11 @@ TEST(MetaTraits, VectorBuilderHelper_true_true) {
   using stan::math::var;
   using stan::length;
 
+  var a_var(1);
   std::vector<var> a_std_vector(3);
+  VectorBuilderHelper<double,true,true> dvv1(length(a_var));
+  dvv1[0] = 0.0;
+  EXPECT_FLOAT_EQ(0.0, dvv1[0]);
 
   VectorBuilderHelper<double,true,true> dvv2(length(a_std_vector));
   dvv2[0] = 0.0;

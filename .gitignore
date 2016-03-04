@@ -19,6 +19,7 @@
 !/test/*.*
 /test/**/*_generated_*_test.cpp
 /test/**/*.xml
+/test/dummy.cpp
 
 # other binary
 *.o

@@ -7,6 +7,8 @@
 #include <stan/math/prim/arr/meta/is_constant_struct.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/prim/arr/meta/value_type.hpp>
+#include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>
 
 #include <stan/math/prim/arr/fun/dist.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>
