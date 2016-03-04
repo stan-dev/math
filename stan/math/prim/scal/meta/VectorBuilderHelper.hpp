@@ -23,9 +23,16 @@ namespace stan {
    */
   template<typename T1, bool used, bool is_vec>
   class VectorBuilderHelper {
-  public:
+  public:    
     explicit VectorBuilderHelper(size_t /* n */) { }
+
     T1& operator[](size_t /* i */) {
+      throw std::logic_error("used is false. this should never be called");
+    }
+
+    typedef T1 type;
+
+    inline type& data() {
       throw std::logic_error("used is false. this should never be called");
     }
   };
@@ -37,6 +44,12 @@ namespace stan {
   public:
     explicit VectorBuilderHelper(size_t /* n */) : x_(0.0) { }
     T1& operator[](size_t /* i */) {
+      return x_;
+    }
+
+    typedef T1 type;
+    
+    inline type& data() {
       return x_;
     }
   };
