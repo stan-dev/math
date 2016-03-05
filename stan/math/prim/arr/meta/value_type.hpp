@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_META_VALUE_TYPE_HPP
 #define STAN_MATH_PRIM_ARR_META_VALUE_TYPE_HPP
 
+#include <stan/math/prim/scal/meta/value_type.hpp>
 #include <vector>
 
 namespace stan {
