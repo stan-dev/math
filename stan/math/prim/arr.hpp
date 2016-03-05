@@ -10,6 +10,8 @@
 #include <stan/math/prim/arr/meta/value_type.hpp>
 #include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>
 
+#include <stan/math/prim/arr/err/check_ordered.hpp>
+
 #include <stan/math/prim/arr/fun/dist.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>

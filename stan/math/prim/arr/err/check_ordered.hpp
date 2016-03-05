@@ -1,8 +1,7 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_ORDERED_HPP
-#define STAN_MATH_PRIM_MAT_ERR_CHECK_ORDERED_HPP
+#ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
+#define STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
@@ -20,7 +19,7 @@ namespace stan {
      *
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
-     * @param y Vector to test
+     * @param y <code>std::vector</code> to test
      *
      * @return <code>true</code> if the vector is ordered
      * @throw <code>std::domain_error</code> if the vector elements are
@@ -30,13 +29,7 @@ namespace stan {
     template <typename T_y>
     bool check_ordered(const char* function,
                        const char* name,
-                       const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-      using Eigen::Dynamic;
-      using Eigen::Matrix;
-      using stan::math::index_type;
-
-      typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
-
+                       const std::vector<T_y>& y) {
       if (y.size() == 0)
         return true;
 
@@ -58,7 +51,6 @@ namespace stan {
       }
       return true;
     }
-
   }
 }
 #endif
