@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
 
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_values.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_errors.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_prim_values.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_prim_errors.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>
@@ -21,11 +21,11 @@ TYPED_TEST_P(prim_scalar_unary_test, expect_scalar_types) {
 }
 
 TYPED_TEST_P(prim_scalar_unary_test, expect_values) {
-  expect_values<TypeParam>();
+  expect_prim_values<TypeParam>();
 }
 
 TYPED_TEST_P(prim_scalar_unary_test, expect_errors) {
-  expect_errors<TypeParam>();
+  expect_prim_errors<TypeParam>();
 }
 
 REGISTER_TYPED_TEST_CASE_P(prim_scalar_unary_test,
