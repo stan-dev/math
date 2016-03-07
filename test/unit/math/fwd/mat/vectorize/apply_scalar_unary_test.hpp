@@ -1,8 +1,7 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_values.hpp>

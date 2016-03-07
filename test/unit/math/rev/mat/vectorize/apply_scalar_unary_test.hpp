@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_rev_values.hpp>
