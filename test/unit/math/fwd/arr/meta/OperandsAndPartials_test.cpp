@@ -44,12 +44,12 @@ TEST(AgradPartialsVari, incr_deriv_vec_fvar) {
   d_deriv.push_back(3);
   d_deriv.push_back(4);
 
-  VectorView<const double,
+  VectorView<std::vector<double>,
              stan::is_vector<std::vector<fvar<double> > >::value,
              stan::is_constant_struct<std::vector<fvar<double> > >::value>
     d_d(d_deriv);
 
-  double result3 = incr_deriv<VectorView<const double,
+  double result3 = incr_deriv<VectorView<std::vector<double>,
                                          is_vector<std::vector<fvar<double> > >::value,
                                          is_constant_struct<std::vector<fvar<double> > >::value>,
                               std::vector<fvar<double> >,double>().incr(d_d,d);

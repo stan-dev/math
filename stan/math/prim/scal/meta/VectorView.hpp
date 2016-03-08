@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_VECTORVIEW_HPP
 #define STAN_MATH_PRIM_SCAL_META_VECTORVIEW_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stdexcept>
-#include <vector>
+#include <boost/type_traits.hpp>
 
 namespace stan {
 
@@ -40,74 +37,93 @@ namespace stan {
             bool throw_if_accessed = false>
   class VectorView {
   public:
-    typedef typename scalar_type<T>::type scalar_t;
+    typedef typename
+    boost::conditional<boost::is_const<T>::value,
+                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename scalar_type<T>::type>::type scalar_t;
 
-    explicit VectorView(scalar_t& c) : x_(&c) { }
+    template <typename X>
+    explicit VectorView(X x) {
+      throw std::logic_error("VectorView: the default template specialization not implemented");
+    }
 
-    explicit VectorView(std::vector<scalar_t>& v) : x_(&v[0]) { }
+    scalar_t& operator[](int i) {
+      throw std::logic_error("VectorView: the default template specialization not implemented");
+    }
 
-    template <int R, int C>
-    explicit VectorView(Eigen::Matrix<scalar_t, R, C>& m) : x_(&m(0)) { }
+    scalar_t& operator[](int i) const {
+      throw std::logic_error("VectorView: the default template specialization not implemented");
+    }
+  };
+
+  
+  template <typename T, bool is_array>
+  class VectorView<T, is_array, true> {
+  public: 
+    typedef typename
+    boost::conditional<boost::is_const<T>::value,
+                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename scalar_type<T>::type>::type scalar_t;
+    VectorView() { }
+    
+    template <typename X>
+    explicit VectorView(X x) { }
+
+    scalar_t& operator[](int i) {
+      throw std::logic_error("VectorView: this cannot be accessed");
+    }
+
+    scalar_t& operator[](int i) const {
+      throw std::logic_error("VectorView: this cannot be accessed");
+    }
+  };
+
+  // this covers non-vectors: double
+  template <typename T>
+  class VectorView<T, false, false> {
+  public:
+    typedef typename
+    boost::conditional<boost::is_const<T>::value,
+                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename scalar_type<T>::type>::type scalar_t;
+
+    explicit VectorView(scalar_t& x) : x_(&x) { }
 
     explicit VectorView(scalar_t* x) : x_(x) { }
 
     scalar_t& operator[](int i) {
-      if (throw_if_accessed)
-        throw std::out_of_range("VectorView: this cannot be accessed");
-      if (is_array)
-        return x_[i];
-      else
-        return x_[0];
+      return *x_;
+    }
+
+    scalar_t& operator[](int i) const {
+      return *x_;
     }
   private:
     scalar_t* x_;
   };
 
 
-  /**
-   *
-   *  VectorView that has const correctness.
-   */
-  template <typename T, bool is_array, bool throw_if_accessed>
-  class VectorView<const T, is_array, throw_if_accessed> {
+  // this covers raw memory: double*
+  template <typename T>
+  class VectorView<T, true, false> {
   public:
-    typedef typename scalar_type<T>::type scalar_t;
+    typedef typename
+    boost::conditional<boost::is_const<T>::value,
+                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename scalar_type<T>::type>::type scalar_t;
 
-    explicit VectorView(const scalar_t& c) : x_(&c) { }
+    explicit VectorView(scalar_t* x) : x_(x) { }
 
-    explicit VectorView(const scalar_t* x) : x_(x) { }
-
-    explicit VectorView(const std::vector<scalar_t>& v) : x_(&v[0]) { }
-
-    template <int R, int C>
-    explicit VectorView(const Eigen::Matrix<scalar_t, R, C>& m) : x_(&m(0)) { }
-
-    const scalar_t& operator[](int i) const {
-      if (throw_if_accessed)
-        throw std::out_of_range("VectorView: this cannot be accessed");
-      if (is_array)
-        return x_[i];
-      else
-        return x_[0];
+    scalar_t& operator[](int i) {
+      return x_[i];
     }
-  private:
-    const scalar_t* x_;
-  };
 
-  // simplify to hold value in common case where it's more efficient
-  template <>
-  class VectorView<const double, false, false> {
-  public:
-    explicit VectorView(double x) : x_(x) { }
-    double operator[](int /* i */)  const {
-      return x_;
+    scalar_t& operator[](int i) const {
+      return x_[i];
     }
+
   private:
-    const double x_;
+    scalar_t* x_;
   };
-
-
-
 }
 #endif
-

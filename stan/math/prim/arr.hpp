@@ -9,6 +9,7 @@
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
 #include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>
+#include <stan/math/prim/arr/meta/VectorView.hpp>
 
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 
