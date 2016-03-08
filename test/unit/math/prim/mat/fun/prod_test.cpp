@@ -1,5 +1,4 @@
-#include <stan/math/prim/mat/fun/prod.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,prod_vector_int) {

@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/num_elements.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, num_elements) {

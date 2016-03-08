@@ -1,6 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/cumulative_sum.hpp>
-#include <stan/math/fwd/core.hpp>
 
 template <typename T>
 void test_cumulative_sum() {

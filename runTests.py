@@ -11,6 +11,7 @@ import platform
 import sys
 import subprocess
 import time
+import re
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
@@ -34,7 +35,7 @@ def isWin():
         return True
     return False
 
-# set up good makefile target name    
+# set up good makefile target name
 def mungeName(name):
     if (name.endswith(testsfx)):
         name = name.replace(testsfx,"_test")
@@ -65,7 +66,7 @@ def makeTest(name, j):
     else:
         command = 'make -j%d %s' % (j,target)
     doCommand(command)
-    
+
 def makeTests(dirname, filenames, j):
     targets = list()
     for name in filenames:
@@ -92,7 +93,7 @@ def makeTests(dirname, filenames, j):
             endIdx = startIdx + batchSize
             if (endIdx > len(targets)):
                 endIdx = len(targets)
-         
+
 
 def runTest(name):
     executable = mungeName(name).replace("/",os.sep)
@@ -115,17 +116,19 @@ def main():
             try:
                 jprime = int(j)
                 if (jprime < 1 or jprime > 16):
-                    stopErr("bad value for -j flag",-1)                    
+                    stopErr("bad value for -j flag",-1)
                 j = jprime
             except ValueError:
                 stopErr("bad value for -j flag",-1)
-            
+
     # pass 0: generate all auto-generated tests
-    generateTests(j)
+    tests = sys.argv[argsIdx:]
+    prob_args = ['test/prob' in arg for arg in tests]
+    if any(prob_args):
+        generateTests(j)
 
     # pass 1:  call make to compile test targets
-    for i in range(argsIdx,len(sys.argv)):
-        testname = sys.argv[i]
+    for testname in tests:
         if (not(os.path.exists(testname))):
             stopErr('%s: no such file or directory' % testname,-1)
         if (not(os.path.isdir(testname))):
@@ -141,8 +144,7 @@ def main():
                 makeTests(root,files,j)
 
     # pass 2:  run test targets
-    for i in range(argsIdx,len(sys.argv)):
-        testname = sys.argv[i]
+    for testname in tests:
         if (not(os.path.isdir(testname))):
             if (debug):
                 print("run single test: %s" % testname)
@@ -155,6 +157,6 @@ def main():
                             print("run dir,test: %s,%s" % (root,name))
                         runTest(os.sep.join([root,name]))
 
-    
+
 if __name__ == "__main__":
     main()

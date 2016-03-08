@@ -1,17 +1,5 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideLeftSPD,matrix_fd_matrix_fd) {

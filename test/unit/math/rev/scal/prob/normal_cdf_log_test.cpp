@@ -1,9 +1,6 @@
-#include <stan/math/prim/scal/prob/normal_cdf_log.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <vector>
 
 TEST(normal_cdf_log, tails) {
   using stan::math::var;

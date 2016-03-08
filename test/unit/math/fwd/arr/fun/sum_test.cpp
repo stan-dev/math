@@ -1,7 +1,5 @@
+#include <stan/math/fwd/arr.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/arr/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
 
 TEST(AgradFwdMatrixSum, vectorFvar) {
   using stan::math::fvar;

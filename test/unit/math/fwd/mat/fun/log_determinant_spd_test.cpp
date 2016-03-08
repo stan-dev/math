@@ -1,9 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_spd.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
 
 TEST(AgradFwdMatrixLogDeterminantSPD,fd) {
   using stan::math::matrix_fd;

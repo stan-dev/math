@@ -1,12 +1,6 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/grad_2F1.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 
 TEST(ProbInternalMath, grad2F1_fd1) {
   using stan::math::fvar;

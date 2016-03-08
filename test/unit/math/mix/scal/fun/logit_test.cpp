@@ -1,13 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/logit.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/logit.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
 
 class AgradFwdLogit : public testing::Test {
   void SetUp() {

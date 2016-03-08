@@ -1,7 +1,6 @@
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/int_step.hpp>
-#include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRev,int_step) {
   using stan::math::int_step;

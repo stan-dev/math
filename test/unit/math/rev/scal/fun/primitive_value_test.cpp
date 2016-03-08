@@ -1,9 +1,6 @@
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/primitive_value.hpp>
-#include <stan/math/rev/scal/fun/primitive_value.hpp>
-
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRev,primitiveValue) {
   using stan::math::var;

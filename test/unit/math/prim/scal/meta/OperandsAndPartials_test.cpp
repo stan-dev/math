@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradPartialsVari, incr_deriv_double) {

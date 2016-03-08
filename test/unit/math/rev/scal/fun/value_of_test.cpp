@@ -1,7 +1,5 @@
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 
 TEST(AgradRev,value_of) {
   using stan::math::var;

@@ -1,11 +1,5 @@
-#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/scal/fun/is_nan.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
 
 using stan::math::fvar;
 

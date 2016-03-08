@@ -1,7 +1,4 @@
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/log_softmax.hpp>
-#include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 

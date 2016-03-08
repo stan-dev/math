@@ -1,19 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/eigenvalues_sym.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/sum.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRevMatrix,eigenval_sum) {
   using stan::math::sum;

@@ -1,6 +1,4 @@
-#include <stan/math/prim/scal/fun/sign.hpp>
-#include <stan/math/rev/core.hpp>
-
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, sign) {

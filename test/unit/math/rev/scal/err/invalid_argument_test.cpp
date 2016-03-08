@@ -1,6 +1,5 @@
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 
 const char* function_ = "function";
 const char* y_name_ = "y";

@@ -1,7 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/expm1.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 #include <cmath>
 
 TEST(AgradFwdExpm1,Fvar) {

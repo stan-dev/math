@@ -1,6 +1,6 @@
-#include <stan/math/rev/scal/fun/step.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/arr/fun/util.hpp>
 
 TEST(AgradRev,step) {
   AVAR a = 3.5;

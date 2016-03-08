@@ -1,7 +1,7 @@
-#include <stan/math/rev/scal/fun/atan.hpp>
+#include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
 TEST(AgradRev,atan_1) {
