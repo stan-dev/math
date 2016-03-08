@@ -22,16 +22,12 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<double, R, C>
     value_of_rec(const Eigen::Matrix<T, R, C>& M) {
-      Eigen::Matrix<double, R, C>
-        result(M.rows(), M.cols());
-
-      double * data_r = result.data();
-      const T * data_m = M.data();
-
-      int S = M.size();
-      for (int i=0; i < S; i++)
-        data_r[i] = value_of_rec(data_m[i]);
-      return result;
+      using stan::math::value_of_rec;
+      Eigen::Matrix<double, R, C> Md(M.rows(), M.cols());
+      for (int j = 0; j < M.cols(); j++)
+        for (int i = 0; i < M.rows(); i++)
+          Md(i, j) = value_of_rec(M(i, j));
+      return Md;
     }
 
     /**

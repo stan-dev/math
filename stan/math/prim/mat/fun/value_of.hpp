@@ -21,18 +21,14 @@ namespace stan {
      * @return Matrix of values
      **/
     template <typename T, int R, int C>
-    inline typename Eigen::Matrix<typename child_type<T>::type, R, C>
+    inline Eigen::Matrix<typename child_type<T>::type, R, C>
     value_of(const Eigen::Matrix<T, R, C>& M) {
-      Eigen::Matrix<typename child_type<T>::type, R, C>
-        result(M.rows(), M.cols());
-
-      typename child_type<T>::type * data_r = result.data();
-      const T * data_m = M.data();
-
-      int S = M.size();
-      for (int i=0; i < S; i++)
-        data_r[i] = value_of(data_m[i]);
-      return result;
+      using stan::math::value_of;
+      Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
+      for (int j = 0; j < M.cols(); j++)
+        for (int i = 0; i < M.rows(); i++)
+          Md(i, j) = value_of(M(i, j));
+      return Md;
     }
 
     /**
@@ -51,7 +47,6 @@ namespace stan {
     value_of(const Eigen::Matrix<double, R, C>& x) {
       return x;
     }
-
   }
 }
 
