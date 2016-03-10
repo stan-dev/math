@@ -18,7 +18,7 @@ namespace stan {
     explicit VectorBuilderHelper(size_t n) : x_(n) { }
 
     typedef std::vector<T1> type;
-    
+
     T1& operator[](size_t i) {
       return x_[i];
     }
@@ -26,7 +26,6 @@ namespace stan {
     inline type& data() {
       return x_;
     }
-    
   };
 }
 #endif

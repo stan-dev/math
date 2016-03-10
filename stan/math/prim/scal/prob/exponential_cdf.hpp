@@ -88,7 +88,7 @@ namespace stan {
           operands_and_partials.d_x2[n] += rep_deriv * y_dbl * cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, beta);
+      return operands_and_partials.value(cdf);
     }
   }
 }

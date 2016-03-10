@@ -3,7 +3,6 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -102,7 +101,7 @@ namespace stan {
         if (!is_constant_struct<T_inv_scale>::value)
           operands_and_partials.d_x2[n] += 1 / beta_dbl - y_dbl;
       }
-      return operands_and_partials.to_var(logp, y, beta);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_inv_scale>

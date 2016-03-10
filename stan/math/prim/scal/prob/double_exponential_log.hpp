@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_LOG_HPP
 
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -15,6 +14,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -119,7 +120,7 @@ namespace stan {
           operands_and_partials.d_x3[n] += -inv_sigma[n] + fabs_y_m_mu
             * inv_sigma_squared[n];
       }
-      return operands_and_partials.to_var(logp, y, mu, sigma);
+      return operands_and_partials.value(logp);
     }
 
 

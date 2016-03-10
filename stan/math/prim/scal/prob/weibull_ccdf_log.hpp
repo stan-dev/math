@@ -3,6 +3,7 @@
 
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -72,7 +73,7 @@ namespace stan {
           operands_and_partials.d_x3[n] += alpha_dbl / sigma_dbl * pow_;
       }
 
-      return operands_and_partials.to_var(ccdf_log, y, alpha, sigma);
+      return operands_and_partials.value(ccdf_log);
     }
   }
 }

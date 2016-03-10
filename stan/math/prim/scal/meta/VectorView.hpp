@@ -10,10 +10,12 @@ namespace stan {
   /**
    *  VectorView is a template metaprogram that takes its argument and
    *  allows it to be used like a vector. There are three template parameters
-   *  - T: Type of the thing to be wrapped. For example, double, var, vector<double>, etc.
-   *  - is_array: Boolean variable indicating whether the underlying type is an array.
-   *  - throw_if_accessed: Boolean variable indicating whether this instance should
-   *       not be used and should throw if operator[] is used.
+   *  - T: Type of the thing to be wrapped. For example,
+   *       double, var, vector<double>, etc.
+   *  - is_array: Boolean variable indicating whether the underlying type is
+   *      an array.
+   *  - throw_if_accessed: Boolean variable indicating whether this instance
+   *      should not be used and should throw if operator[] is used.
    *
    *  For a scalar value, it broadcasts the single value when using
    *  operator[].
@@ -39,33 +41,38 @@ namespace stan {
   public:
     typedef typename
     boost::conditional<boost::is_const<T>::value,
-                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename boost::add_const<
+                         typename scalar_type<T>::type>::type,
                        typename scalar_type<T>::type>::type scalar_t;
 
     template <typename X>
     explicit VectorView(X x) {
-      throw std::logic_error("VectorView: the default template specialization not implemented");
+      throw std::logic_error("VectorView: the default template "
+                             "specialization not implemented");
     }
 
     scalar_t& operator[](int i) {
-      throw std::logic_error("VectorView: the default template specialization not implemented");
+      throw std::logic_error("VectorView: the default template "
+                             "specialization not implemented");
     }
 
     scalar_t& operator[](int i) const {
-      throw std::logic_error("VectorView: the default template specialization not implemented");
+      throw std::logic_error("VectorView: the default template "
+                             "specialization not implemented");
     }
   };
 
-  
+
   template <typename T, bool is_array>
   class VectorView<T, is_array, true> {
-  public: 
+  public:
     typedef typename
     boost::conditional<boost::is_const<T>::value,
-                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename boost::add_const<
+                         typename scalar_type<T>::type>::type,
                        typename scalar_type<T>::type>::type scalar_t;
     VectorView() { }
-    
+
     template <typename X>
     explicit VectorView(X x) { }
 
@@ -84,7 +91,8 @@ namespace stan {
   public:
     typedef typename
     boost::conditional<boost::is_const<T>::value,
-                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename boost::add_const<
+                         typename scalar_type<T>::type>::type,
                        typename scalar_type<T>::type>::type scalar_t;
 
     explicit VectorView(scalar_t& x) : x_(&x) { }
@@ -109,7 +117,8 @@ namespace stan {
   public:
     typedef typename
     boost::conditional<boost::is_const<T>::value,
-                       typename boost::add_const<typename scalar_type<T>::type>::type,
+                       typename boost::add_const<
+                         typename scalar_type<T>::type>::type,
                        typename scalar_type<T>::type>::type scalar_t;
 
     explicit VectorView(scalar_t* x) : x_(x) { }

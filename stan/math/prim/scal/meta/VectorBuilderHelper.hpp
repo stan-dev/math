@@ -23,7 +23,7 @@ namespace stan {
    */
   template<typename T1, bool used, bool is_vec>
   class VectorBuilderHelper {
-  public:    
+  public:
     explicit VectorBuilderHelper(size_t /* n */) { }
 
     T1& operator[](size_t /* i */) {
@@ -48,7 +48,7 @@ namespace stan {
     }
 
     typedef T1 type;
-    
+
     inline type& data() {
       return x_;
     }

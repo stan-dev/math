@@ -40,7 +40,7 @@ namespace stan {
       for (size_t i = 0; i < size_beta; ++i)
         beta_vec[i] = phi_vec[i] / mu_vec[i];
 
-      return neg_binomial_ccdf_log(n, phi, beta_vec.get());      
+      return neg_binomial_ccdf_log(n, phi, beta_vec.get());
     }
   }
 }

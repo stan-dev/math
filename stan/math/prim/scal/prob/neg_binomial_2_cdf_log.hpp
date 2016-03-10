@@ -53,7 +53,7 @@ namespace stan {
 
       return beta_cdf_log(phi_mu.data(), phi, np1.data());
     }
-    
+
   }
 }
 #endif

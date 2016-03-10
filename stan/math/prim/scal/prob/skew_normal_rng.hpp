@@ -3,14 +3,12 @@
 
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>

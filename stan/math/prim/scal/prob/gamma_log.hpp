@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GAMMA_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GAMMA_LOG_HPP
 
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -18,6 +17,8 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <boost/random/gamma_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -155,7 +156,7 @@ namespace stan {
         if (!is_constant_struct<T_inv_scale>::value)
           operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - y_dbl;
       }
-      return operands_and_partials.to_var(logp, y, alpha, beta);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_inv_scale>

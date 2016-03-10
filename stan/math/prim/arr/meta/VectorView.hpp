@@ -10,10 +10,10 @@ namespace stan {
   class VectorView<std::vector<T>, true, false> {
   public:
     typedef typename scalar_type<T>::type scalar_t;
-    
+
     template <typename X>
     explicit VectorView(X& x) : x_(&x[0]) { }
-    
+
     scalar_t& operator[](int i) {
       return x_[i];
     }
@@ -27,10 +27,10 @@ namespace stan {
   public:
     typedef typename boost::add_const<typename scalar_type<T>::type>::type
     scalar_t;
-    
+
     template <typename X>
     explicit VectorView(X& x) : x_(&x[0]) { }
-    
+
     scalar_t& operator[](int i) const {
       return x_[i];
     }

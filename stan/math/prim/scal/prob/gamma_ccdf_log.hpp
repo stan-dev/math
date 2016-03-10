@@ -80,7 +80,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.to_var(0.0, y, alpha, beta);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute ccdf_log and its gradients
@@ -111,8 +111,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, alpha, beta);
+          return operands_and_partials.value(stan::math::negative_infinity());
 
         // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -137,7 +136,7 @@ namespace stan {
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
       }
 
-      return operands_and_partials.to_var(P, y, alpha, beta);
+      return operands_and_partials.value(P);
     }
   }
 }

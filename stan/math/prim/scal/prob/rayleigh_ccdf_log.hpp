@@ -80,7 +80,7 @@ namespace stan {
             * inv_sigma[n];
       }
 
-      return operands_and_partials.to_var(ccdf_log, y, sigma);
+      return operands_and_partials.value(ccdf_log);
     }
   }
 }

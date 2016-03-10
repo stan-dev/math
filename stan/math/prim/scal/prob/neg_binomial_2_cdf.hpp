@@ -10,6 +10,8 @@
 #include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
@@ -63,7 +65,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.to_var(0.0, mu, phi);
+          return operands_and_partials.value(0.0);
       }
 
       // Cache a few expensive function calls if  phi is a parameter
@@ -89,7 +91,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.to_var(1.0, mu, phi);
+          return operands_and_partials.value(1.0);
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return mu_dbl = value_of(mu_vec[i]);
@@ -128,7 +130,7 @@ namespace stan {
           operands_and_partials.d_x2[i] *= P;
       }
 
-      return operands_and_partials.to_var(P, mu, phi);
+      return operands_and_partials.value(P);
     }
 
   }

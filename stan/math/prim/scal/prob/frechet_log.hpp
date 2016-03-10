@@ -131,7 +131,7 @@ namespace stan {
             += alpha_dbl / value_of(sigma_vec[n])
             * (1 - sigma_div_y_pow_alpha[n]);
       }
-      return operands_and_partials.to_var(logp, y, alpha, sigma);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

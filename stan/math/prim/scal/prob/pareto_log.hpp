@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_LOG_HPP
 
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -15,6 +14,8 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -121,7 +122,7 @@ namespace stan {
           operands_and_partials.d_x3[n]
             += 1 / alpha_dbl + log_y_min[n] - log_y[n];
       }
-      return operands_and_partials.to_var(logp, y, y_min, alpha);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_scale, typename T_shape>

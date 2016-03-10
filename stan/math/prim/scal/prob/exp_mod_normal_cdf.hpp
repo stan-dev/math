@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_CDF_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -12,6 +11,9 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -69,7 +71,7 @@ namespace stan {
       for (size_t n = 0; n < N; n++) {
         if (boost::math::isinf(y_vec[n])) {
           if (y_vec[n] < 0.0)
-            return operands_and_partials.to_var(0.0, y, mu, sigma, lambda);
+            return operands_and_partials.value(0.0);
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -135,7 +137,7 @@ namespace stan {
           operands_and_partials.d_x4[n] *= cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, mu, sigma, lambda);
+      return operands_and_partials.value(cdf);
     }
   }
 }

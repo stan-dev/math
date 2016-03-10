@@ -15,11 +15,11 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <cmath>
-#include <cstdlib>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
+#include <cstdlib>
 
 namespace stan {
   namespace math {

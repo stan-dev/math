@@ -3,6 +3,7 @@
 
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -97,7 +98,7 @@ namespace stan {
               * scaled_diff * stan::math::SQRT_2;
         }
       }
-      return operands_and_partials.to_var(cdf_log, y, mu, sigma);
+      return operands_and_partials.value(cdf_log);
     }
   }
 }

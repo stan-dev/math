@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_LOG_HPP
 
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -75,7 +76,7 @@ namespace stan {
 
       for (size_t i = 0; i < size; i++) {
         if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
-          return operands_and_partials.to_var(LOG_ZERO, alpha, beta);
+          return operands_and_partials.value(LOG_ZERO);
       }
 
       using stan::math::lbeta;
@@ -164,7 +165,7 @@ namespace stan {
             + digamma_alpha_plus_beta[i]
             - digamma_beta[i];
       }
-      return operands_and_partials.to_var(logp, alpha, beta);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_n,

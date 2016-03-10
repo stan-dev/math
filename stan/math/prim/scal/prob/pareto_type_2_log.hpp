@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LOG_HPP
 
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -15,6 +15,7 @@
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 
@@ -138,7 +139,7 @@ namespace stan {
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x4[n] += inv_alpha[n] - log1p_scaled_diff[n];
       }
-      return operands_and_partials.to_var(logp, y, mu, lambda, alpha);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_CDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_CDF_LOG_HPP
 
-#include <boost/random/lognormal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -13,6 +12,8 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/lognormal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -59,8 +60,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0.0)
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, mu, sigma);
+          return operands_and_partials.value(stan::math::negative_infinity());
       }
 
       const double log_half = std::log(0.5);
@@ -88,7 +88,7 @@ namespace stan {
             / erfc_calc;
       }
 
-      return operands_and_partials.to_var(cdf_log, y, mu, sigma);
+      return operands_and_partials.value(cdf_log);
     }
   }
 }

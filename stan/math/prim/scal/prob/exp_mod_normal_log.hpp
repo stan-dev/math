@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LOG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -12,6 +10,9 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -129,7 +130,7 @@ namespace stan {
             += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl
             + mu_dbl - y_dbl + deriv_logerfc * sigma_dbl / std::sqrt(2.0);
       }
-      return operands_and_partials.to_var(logp, y, mu, sigma, lambda);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale,

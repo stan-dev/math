@@ -29,22 +29,20 @@ namespace stan {
   public:
     VectorBuilderHelper<T1, used,
                         contains_vector<T2, T3, T4, T5, T6, T7>::value> a;
-    
+
     explicit VectorBuilder(size_t n) : a(n) { }
 
     T1& operator[](size_t i) {
       return a[i];
     }
-    
+
     inline typename
     VectorBuilderHelper<T1, used,
                         contains_vector<T2, T3, T4, T5, T6, T7>::value>::type
     data() {
       return a.data();
     }
-    
   };
 
 }
 #endif
-
