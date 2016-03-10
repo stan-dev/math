@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LOGIT_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LOGIT_LOG_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>

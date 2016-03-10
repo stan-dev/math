@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_CCDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_CCDF_LOG_HPP
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -17,6 +15,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 
