@@ -24,7 +24,7 @@ TEST(MetaTraits, VectorBuilderHelper_true_false) {
   EXPECT_FLOAT_EQ(0.0, dvv2[0]);
   EXPECT_FLOAT_EQ(0.0, dvv2[1]);
   EXPECT_FLOAT_EQ(0.0, dvv2[2]);  
-  double data2;
+  double data2(10);
   EXPECT_NO_THROW(data2 = dvv2.data());
   EXPECT_FLOAT_EQ(0.0, data2);
 }
