@@ -4,6 +4,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <Eigen/Dense>
 
 template <typename F>
 void test_nan_fd(const F& f,
