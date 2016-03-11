@@ -46,12 +46,12 @@ namespace stan {
       /**
        * Constructor.
        *
-       * @x1 first set of operands
-       * @x2 second set of operands
-       * @x3 third set of operands
-       * @x4 fourth set of operands
-       * @x5 fifth set of operands
-       * @x6 sixth set of operands
+       * @param x1 first set of operands
+       * @param x2 second set of operands
+       * @param x3 third set of operands
+       * @param x4 fourth set of operands
+       * @param x5 fifth set of operands
+       * @param x6 sixth set of operands
        */
       OperandsAndPartials(const T1& x1 = 0, const T2& x2 = 0,
                           const T3& x3 = 0, const T4& x4 = 0,

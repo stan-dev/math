@@ -115,12 +115,12 @@ namespace stan {
       /**
        * Constructor.
        *
-       * @x1 first set of operands
-       * @x2 second set of operands
-       * @x3 third set of operands
-       * @x4 fourth set of operands
-       * @x5 fifth set of operands
-       * @x6 sixth set of operands
+       * @param x1 first set of operands
+       * @param x2 second set of operands
+       * @param x3 third set of operands
+       * @param x4 fourth set of operands
+       * @param x5 fifth set of operands
+       * @param x6 sixth set of operands
        */
       OperandsAndPartials(const T1& x1 = 0, const T2& x2 = 0, const T3& x3 = 0,
                           const T4& x4 = 0, const T5& x5 = 0, const T6& x6 = 0)
@@ -182,8 +182,8 @@ namespace stan {
        * @returns a variable with the appropriate value and
        *   the adjoints set for reverse mode autodiff
        */
-      stan::math::var value(double logp) {
-        return partials_to_var(logp, nvaris, all_varis,
+      stan::math::var value(double value) {
+        return partials_to_var(value, nvaris, all_varis,
                                all_partials);
       }
     };

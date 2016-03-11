@@ -44,6 +44,7 @@ namespace stan {
      * @param[in] x_int integer data vector for the ODE.
      * @param[in] rel_tol relative tolerance passed to CVODE.
      * @param[in] abs_tol absolute tolerance passed to CVODE.
+     * @param[in] max_num_steps maximum number of steps to pass to CVODE.
      * @param[in, out] msgs the print stream for warning messages.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
