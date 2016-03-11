@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <boost/type_traits.hpp>
+#include <stdexcept>
 
 namespace stan {
 

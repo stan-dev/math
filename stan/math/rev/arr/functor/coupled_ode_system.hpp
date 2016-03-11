@@ -9,6 +9,7 @@
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <ostream>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {
