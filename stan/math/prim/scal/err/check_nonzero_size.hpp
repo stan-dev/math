@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NONZERO_SIZE_HPP
 
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <string>
 
 namespace stan {
@@ -31,7 +31,7 @@ namespace stan {
     inline bool check_nonzero_size(const char* function,
                                    const char* name,
                                    const T_y& y) {
-      if (y.size() > 0)
+      if (length(y) > 0)
         return true;
 
       invalid_argument(function, name, 0,
