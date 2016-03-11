@@ -89,7 +89,7 @@ namespace stan {
             / erfc_calc;
       }
 
-      return operands_and_partials.value(ccdf_log, y, mu, sigma);
+      return operands_and_partials.value(ccdf_log);
     }
   }
 }
