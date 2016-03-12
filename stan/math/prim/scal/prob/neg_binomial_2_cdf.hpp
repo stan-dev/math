@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
@@ -35,6 +36,11 @@ namespace stan {
       using stan::math::check_consistent_sizes;
 
       T_partials_return P(1.0);
+      // check if any vectors are zero length
+      if (!(stan::length(n)
+            && stan::length(mu)
+            && stan::length(phi)))
+        return P;
 
       // Validate arguments
       check_positive_finite(function, "Location parameter", mu);

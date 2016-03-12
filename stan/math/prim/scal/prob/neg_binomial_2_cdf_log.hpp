@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/prob/beta_cdf_log.hpp>
@@ -23,6 +24,12 @@ namespace stan {
       using stan::math::check_not_nan;
       using std::log;
 
+      // check if any vectors are zero length
+      if (!(stan::length(n)
+            && stan::length(mu)
+            && stan::length(phi)))
+        return 0.0;
+      
       static const char* function("stan::math::neg_binomial_2_cdf");
       check_positive_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Precision parameter", phi);

@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_ccdf_log.hpp>
 
 namespace stan {
@@ -20,6 +21,12 @@ namespace stan {
       using stan::math::check_positive_finite;
       using stan::math::check_not_nan;
       using stan::math::check_consistent_sizes;
+
+      // check if any vectors are zero length
+      if (!(stan::length(n)
+            && stan::length(mu)
+            && stan::length(phi)))
+        return 0.0;
 
       static const char* function("stan::math::neg_binomial_2_cdf");
       check_positive_finite(function, "Location parameter", mu);
