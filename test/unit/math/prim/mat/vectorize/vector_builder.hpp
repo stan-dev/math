@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace stan {
+namespace test {
   namespace math {
 
     /**

@@ -1,10 +1,7 @@
-#ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
-#define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
+#ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_MIX_SCALAR_UNARY_TEST_HPP
+#define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_MIX_SCALAR_UNARY_TEST_HPP
 
-#include <stan/math/fwd/mat.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_values.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_errors.hpp>

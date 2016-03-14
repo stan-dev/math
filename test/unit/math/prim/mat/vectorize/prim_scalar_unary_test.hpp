@@ -1,5 +1,5 @@
-#ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
-#define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_TEST_HPP
+#ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_PRIM_SCALAR_UNARY_TEST_HPP
+#define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_PRIM_SCALAR_UNARY_TEST_HPP
 
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_prim_values.hpp>

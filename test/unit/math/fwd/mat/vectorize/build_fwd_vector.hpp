@@ -1,7 +1,7 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_BUILD_FWD_VECTOR_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_BUILD_FWD_VECTOR_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 template <typename F>

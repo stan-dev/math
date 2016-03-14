@@ -1,8 +1,7 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_VALUES_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_VALUES_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/rev/core/var.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_scalar_value.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_std_vector_value.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_matrix_value.hpp>

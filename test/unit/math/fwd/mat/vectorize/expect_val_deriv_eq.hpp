@@ -1,7 +1,7 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_EQ_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_EQ_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
 static inline void expect_val_deriv_eq(double exp_var, double test_var) {

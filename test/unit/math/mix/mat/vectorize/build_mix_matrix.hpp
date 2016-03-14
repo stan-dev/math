@@ -1,7 +1,7 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_BUILD_MIX_MATRIX_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_BUILD_MIX_MATRIX_HPP
 
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <Eigen/Dense>
 #include <vector>
 #include <test/unit/math/mix/mat/vectorize/build_mix_vector.hpp>
