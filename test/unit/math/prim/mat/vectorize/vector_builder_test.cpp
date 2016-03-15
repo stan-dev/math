@@ -1,10 +1,11 @@
-#include <vector>
-#include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <gtest/gtest.h>
+#include <vector>
 
 
 TEST(mathVectorBuilder, test1) {
-  using stan::math::vector_builder;
+  using test::math::vector_builder;
   vector_builder<double> x;
 
   std::vector<double> z = x.build();

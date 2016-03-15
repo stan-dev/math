@@ -1,10 +1,9 @@
-#ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_BASE_TEST_CPP
-#define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_FOO_BASE_TEST_CPP
-
-#include <test/unit/math/prim/mat/vectorize/apply_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/apply_scalar_unary_test.hpp>
-#include <test/unit/math/fwd/mat/vectorize/apply_scalar_unary_test.hpp>
-#include <test/unit/math/mix/mat/vectorize/apply_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
+#include <gtest/gtest.h>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
+#include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
@@ -12,7 +11,7 @@
  * This is the structure for testing mock function foo (defined in the
  * testing framework).  See README.txt for more instructions.
  */
-struct foo_base_test {
+struct foo_test {
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -65,7 +64,7 @@ struct foo_base_test {
    * Return sequence of valid double-valued inputs.
    */
   static std::vector<double> valid_inputs() {
-    return stan::math::vector_builder<double>()
+    return test::math::vector_builder<double>()
       .add(1.3).add(-2.6).add(0).add(-0.2).build();
   }
 
@@ -73,7 +72,7 @@ struct foo_base_test {
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs() {
-    return stan::math::vector_builder<double>()
+    return test::math::vector_builder<double>()
       .add(10.6).add(10.6).add(25.7).add(100.25).build();
   }
 
@@ -81,7 +80,7 @@ struct foo_base_test {
    * Return sequence of valid integer inputs.
    */
   static std::vector<int> int_valid_inputs() {
-    return stan::math::vector_builder<int>()
+    return test::math::vector_builder<int>()
       .add(1).add(-2).add(0).add(3).build();
   }
 
@@ -89,14 +88,12 @@ struct foo_base_test {
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs() {
-    return stan::math::vector_builder<int>()
+    return test::math::vector_builder<int>()
       .add(10).add(25).add(100).add(50).build();
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, foo_base_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, foo_base_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, foo_base_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, foo_base_test);
-
-#endif
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, foo_test);
