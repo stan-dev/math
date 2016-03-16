@@ -9,31 +9,38 @@
 namespace stan {
 
   /**
-   *  VectorView is a template metaprogram that takes its argument and
-   *  allows it to be used like a vector. There are three template parameters
-   *  - T: Type of the thing to be wrapped. For example,
-   *       double, var, vector<double>, etc.
-   *  - is_array: Boolean variable indicating whether the underlying type is
-   *      an array.
-   *  - throw_if_accessed: Boolean variable indicating whether this instance
-   *      should not be used and should throw if operator[] is used.
+   * VectorView is a template expression that is constructed with a
+   * container or scalar, which it then allows to be used as an array
+   * using <code>operator[]</code>.
    *
-   *  For a scalar value, it broadcasts the single value when using
-   *  operator[].
+   * For a scalar value, any index returns the reference or pointer
+   * used to construct the view.
    *
-   *  For a vector, operator[] looks into the value passed in.
-   *  Note: this is not safe. It is possible to read past the size of
-   *  an array.
+   * For a container, the index returns a reference to the position in
+   * the underlying container used to construct the view.  WARNING: 
+   * There is no bounds checking for container indices and they will
+   * segfault if accessed beyond their boundaries.
    *
-   *  Uses:
-   *    Read arguments to prob functions as vectors, even if scalars, so
-   *    they can be read by common code (and scalars automatically
-   *    broadcast up to behave like vectors) : VectorView of immutable
-   *    const array of double* (no allocation)
+   * The first use is to read arguments to prob functions as vectors,
+   * even if scalars, so they can be read by common code (and scalars
+   * automatically broadcast up to behave like vectors) : VectorView
+   * of immutable const array of double* (no allocation).
    *
-   *    Build up derivatives into common storage : VectorView of
-   *    mutable shared array (no allocation because allocated on
-   *    auto-diff arena memory)
+   * The second use is to build up derivatives into common storage :
+   * VectorView of mutable shared array (no allocation because
+   * allocated on auto-diff arena memory).
+   *
+   * Because it deals with references to its inputs, it is up to the
+   * client of VectorView to ensure that the container being wrapped
+   * is not modified while the VectorView is in use in such a way as
+   * to disrupt the indexing.  Similarly, because it deals with
+   * references, it cannot be constructed with a literal or expression.
+   *
+   * @tparam T  Type of scalar or container being wrapped.
+   * @tparam is_array True if underlying type T can be indexed with
+   * operator[].
+   * @tparam throw_if_accessed True if the behaviro is to throw an
+   * exception whenever <code>operator[]</code> is called.
    */
   template <typename T,
             bool is_array = stan::is_vector_like<T>::value,
