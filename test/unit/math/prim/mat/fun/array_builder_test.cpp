@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/array_builder.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,arrayBuilder) {

@@ -1,16 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/rev/mat/fun/trace_gen_quad_form.hpp>
-#include <stan/math/rev/mat/fun/sum.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/fun/trace_gen_quad_form.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat) {
   using stan::math::trace_gen_quad_form;

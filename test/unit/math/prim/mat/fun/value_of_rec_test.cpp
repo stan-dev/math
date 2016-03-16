@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 template<typename T, int R, int C>

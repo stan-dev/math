@@ -1,8 +1,6 @@
-#include <stan/math/prim/scal/meta/child_type.hpp>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 
 TEST(MathMeta, value_type) {
   using stan::math::child_type;

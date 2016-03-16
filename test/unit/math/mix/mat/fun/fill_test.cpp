@@ -1,8 +1,5 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/mat/fun/fill.hpp>
 
 using stan::math::fvar;
 using stan::math::var;

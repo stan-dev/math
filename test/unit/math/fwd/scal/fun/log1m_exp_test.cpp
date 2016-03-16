@@ -1,10 +1,5 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/log1m_exp.hpp>
-#include <stan/math/fwd/scal/fun/log1m_exp.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <cmath>
 

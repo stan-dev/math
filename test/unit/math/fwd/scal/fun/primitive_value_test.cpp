@@ -1,7 +1,6 @@
-#include <stan/math/prim/scal/fun/primitive_value.hpp>
-#include <stan/math/fwd/scal/fun/primitive_value.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 TEST(AgradFwd,primitiveValue) {
   using stan::math::fvar;

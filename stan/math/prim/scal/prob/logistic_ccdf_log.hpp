@@ -72,7 +72,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.to_var(0.0, y, mu, sigma);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute vectorized cdf_log and its gradients
@@ -80,8 +80,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, mu, sigma);
+          return operands_and_partials.value(stan::math::negative_infinity());
         }
 
         // Pull out values
@@ -106,7 +105,7 @@ namespace stan {
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
 
-      return operands_and_partials.to_var(P, y, mu, sigma);
+      return operands_and_partials.value(P);
     }
   }
 }

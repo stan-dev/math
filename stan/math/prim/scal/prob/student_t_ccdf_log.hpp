@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_CCDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_CCDF_LOG_HPP
 
-#include <boost/random/student_t_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -19,6 +19,8 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/student_t_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <limits>
 #include <cmath>
 
@@ -69,7 +71,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.to_var(0.0, y, nu, mu, sigma);
+          return operands_and_partials.value(0.0);
       }
 
       using stan::math::digamma;
@@ -108,8 +110,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, nu, mu, sigma);
+          return operands_and_partials.value(stan::math::negative_infinity());
         }
 
         const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
@@ -195,7 +196,7 @@ namespace stan {
         }
       }
 
-      return operands_and_partials.to_var(P, y, nu, mu, sigma);
+      return operands_and_partials.value(P);
     }
   }
 }

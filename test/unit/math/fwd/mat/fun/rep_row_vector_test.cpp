@@ -1,7 +1,5 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/rep_row_vector.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdMatrixRepRowVector,fd_rowvector) {
   using stan::math::rep_row_vector;

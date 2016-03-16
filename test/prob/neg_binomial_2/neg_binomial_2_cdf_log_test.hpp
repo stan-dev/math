@@ -1,9 +1,6 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal/prob/neg_binomial_2_cdf_log.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
-
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
 
 using std::vector;
 using std::numeric_limits;

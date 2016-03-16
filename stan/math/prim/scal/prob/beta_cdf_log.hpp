@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_LOG_HPP
 
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -22,6 +21,9 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <boost/random/gamma_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -140,7 +142,7 @@ namespace stan {
           operands_and_partials.d_x3[n]  += g2 / Pn;
       }
 
-      return operands_and_partials.to_var(cdf_log, y, alpha, beta);
+      return operands_and_partials.value(cdf_log);
     }
 
   }

@@ -1,7 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/multiply_log.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
 
 TEST(AgradFwdMultiplyLog,Fvar) {
   using stan::math::fvar;

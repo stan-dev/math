@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
+#include <stdexcept>
 
 namespace stan {
   namespace math {

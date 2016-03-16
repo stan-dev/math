@@ -1,7 +1,5 @@
-#include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
 
 TEST(AgradFwdMatrixTranspose,fd_matrix) {
   using stan::math::matrix_d;

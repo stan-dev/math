@@ -1,9 +1,5 @@
-#include <stan/math/prim/mat/fun/sd.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
 
 TEST(AgradFwdMatrixSD, fd_vector) {
   using stan::math::sd;

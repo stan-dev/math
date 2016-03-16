@@ -12,22 +12,6 @@ namespace stan {
   namespace math {
 
     /**
-     * Return the division of the first scalar by
-     * the second scalar.
-     * @param[in] x Specified vector.
-     * @param[in] y Specified scalar.
-     * @return Vector divided by the scalar.
-     */
-    inline double
-    divide(double x, double y) {
-      return x / y;
-    }
-    template <typename T1, typename T2>
-    inline var
-    divide(const T1& v, const T2& c) {
-      return to_var(v) / to_var(c);
-    }
-    /**
      * Return the division of the specified column vector by
      * the specified scalar.
      * @param[in] v Specified vector.

@@ -1,13 +1,9 @@
+#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <stdexcept>
-
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 
 using std::cos;

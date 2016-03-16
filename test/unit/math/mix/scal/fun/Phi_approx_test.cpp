@@ -1,17 +1,8 @@
-// Phi_approx needs inv_logit in order for this to work
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/Phi_approx.hpp>
-#include <stan/math/rev/scal/fun/Phi_approx.hpp>
+// Phi_approx needs inv_logit in order for this to work
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/inv_logit.hpp>
-#include <stan/math/rev/scal/fun/inv_logit.hpp>
 
 TEST(AgradFwdPhi_approx, FvarVar_1stDeriv) {
   using stan::math::fvar;

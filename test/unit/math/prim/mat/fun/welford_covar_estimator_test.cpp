@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(ProbWelfordCovarEstimator, restart) {

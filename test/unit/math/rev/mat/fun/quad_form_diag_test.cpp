@@ -1,15 +1,7 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <vector>
-#include <stan/math/rev/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/quad_form_diag.hpp>
-#include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
+#include <vector>
+#include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;

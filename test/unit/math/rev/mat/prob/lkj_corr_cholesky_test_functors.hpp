@@ -1,10 +1,4 @@
-#include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/prim/mat/prob/lkj_corr_cholesky_log.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
-#include <stan/math/prim/mat/fun/cholesky_corr_constrain.hpp>
-#include <stan/math/prim/scal/fun/positive_constrain.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 
 namespace stan {

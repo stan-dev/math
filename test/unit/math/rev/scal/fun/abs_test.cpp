@@ -1,8 +1,8 @@
+#include <stan/math/rev/scal.hpp>
+#include <gtest/gtest.h>
 #include <limits>
-#include <stan/math/rev/scal/fun/abs.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <gtest/gtest.h>
 
 TEST(AgradRev,abs_var) {
   AVAR a = 0.68;

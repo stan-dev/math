@@ -1,15 +1,8 @@
-#ifndef TEST__UNIT_AGRAD_MIX__NAN_UTIL_HPP
-#define TEST__UNIT_AGRAD_MIX__NAN_UTIL_HPP
+#ifndef TEST_UNIT_MATH_MIX_SCAL_FUN_NAN_UTIL_HPP
+#define TEST_UNIT_MATH_MIX_SCAL_FUN_NAN_UTIL_HPP
 
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <gtest/gtest.h>
 
 template <typename F>
 void test_nan_fv1(const F& f,

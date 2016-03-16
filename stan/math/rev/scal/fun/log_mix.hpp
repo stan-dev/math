@@ -139,7 +139,7 @@ namespace stan {
           = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
-      return operands_and_partials.to_var(log_mix_function_value);
+      return operands_and_partials.value(log_mix_function_value);
     }
 
   }  // namespace math

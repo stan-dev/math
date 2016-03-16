@@ -1,2 +1,2 @@
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>

@@ -1,9 +1,6 @@
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/mat/fun/unit_vector_constrain.hpp>
-#include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
 
 std::vector<double>
 unit_vector_grad(Eigen::Matrix<double,Eigen::Dynamic,1>& y_dbl,

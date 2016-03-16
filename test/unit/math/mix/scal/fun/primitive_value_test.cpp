@@ -1,9 +1,7 @@
-#include <stan/math/prim/scal/fun/primitive_value.hpp>
-#include <stan/math/fwd/scal/fun/primitive_value.hpp>
-#include <stan/math/rev/scal/fun/primitive_value.hpp>
+#include <stan/math/mix/scal.hpp>
+#include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(AgradFwd,primitiveValueRevNested) {
   using stan::math::var;

@@ -1,8 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/owens_t.hpp>
-#include <stan/math/fwd/scal/fun/erf.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 
 TEST(AgradFwdOwensT,Fvar) {
   using stan::math::fvar;

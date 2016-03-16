@@ -1,15 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/scal/fun/bessel_first_kind.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/ceil.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdBesselFirstKind,Fvar) {
   using stan::math::fvar;

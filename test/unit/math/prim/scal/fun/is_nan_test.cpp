@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, is_nan) {

@@ -1,10 +1,6 @@
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrix,value_of) {
   using stan::math::var;
@@ -23,24 +19,24 @@ TEST(AgradMixMatrix,value_of) {
     b_vals.push_back(i + 1);
   
   Eigen::Matrix<double,2,5> a; 
-  fill(a_vals, a);
+  ::fill(a_vals, a);
   Eigen::Matrix<double,5,1> b;
-  fill(b_vals, b);
+  ::fill(b_vals, b);
 
   Eigen::Matrix<var,2,5> v_a;
-  fill(a_vals, v_a);
+  ::fill(a_vals, v_a);
   Eigen::Matrix<var,5,1> v_b;
-  fill(b_vals, v_b);
+  ::fill(b_vals, v_b);
 
   Eigen::Matrix<fvar<var>,2,5> fv_a;
-  fill(a_vals, fv_a);
+  ::fill(a_vals, fv_a);
   Eigen::Matrix<fvar<var>,5,1> fv_b;
-  fill(b_vals, fv_b);
+  ::fill(b_vals, fv_b);
 
   Eigen::Matrix<fvar<fvar<var> >,2,5> ffv_a;
-  fill(a_vals, ffv_a);
+  ::fill(a_vals, ffv_a);
   Eigen::Matrix<fvar<fvar<var> >,5,1> ffv_b;
-  fill(b_vals, ffv_b);
+  ::fill(b_vals, ffv_b);
 
   Eigen::MatrixXd d_a = value_of(a);
   Eigen::VectorXd d_b = value_of(b);

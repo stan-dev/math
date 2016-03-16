@@ -1,5 +1,5 @@
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, Phi) {

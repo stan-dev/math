@@ -1,12 +1,8 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/acosh.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/acosh.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/acosh.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/core.hpp>
 
 
 

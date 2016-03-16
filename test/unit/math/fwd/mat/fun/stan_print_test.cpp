@@ -1,8 +1,7 @@
-#include <stan/math/prim/mat/fun/stan_print.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdMatrixStanPrint,fvar_double) {
   using std::vector;

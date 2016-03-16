@@ -1,20 +1,6 @@
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
-#include <stan/math/prim/mat/prob/multi_normal_prec_log.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/is_nan.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <stan/math/rev/mat/fun/trace_quad_form.hpp>
 
 #include <vector>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>

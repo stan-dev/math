@@ -1,10 +1,7 @@
-#include <stan/math/rev/scal/fun/log_falling_factorial.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/digamma.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-
 
 TEST(AgradRev,log_falling_factorial_var_double) {
   double a(1);
