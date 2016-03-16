@@ -9,6 +9,7 @@
 #include <nvector/nvector_serial.h>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 
 namespace stan {

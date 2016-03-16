@@ -1,16 +1,6 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradPartialsVari, OperandsAndPartials) {
-  using stan::math::OperandsAndPartials;
-  using stan::math::var;
-
-  OperandsAndPartials<double> o1;
-  EXPECT_EQ(0U, o1.nvaris);
-  
-  OperandsAndPartials<double,double,double,double> o2;
-  EXPECT_EQ(0U, o2.nvaris);
-}
 TEST(AgradPartialsVari,OperandsAndPartials1) {
   using stan::math::vari;
   using stan::math::OperandsAndPartials;
@@ -21,7 +11,7 @@ TEST(AgradPartialsVari,OperandsAndPartials1) {
   OperandsAndPartials<var> o(z);
   o.d_x1[0] += 5.0;  // dy/dz = 5
 
-  var y = o.to_var(-1.0);
+  var y = o.value(-1.0);
 
   stan::math::grad(y.vi_);
   EXPECT_FLOAT_EQ(-15.0, x.adj());  // dy/dx = -15
@@ -38,7 +28,7 @@ TEST(AgradPartialsVari,OperandsAndPartials2) {
   OperandsAndPartials<var,var> o(z1,z2);
   o.d_x1[0] += 11.0;  // dy/dz1 = 11.0
   o.d_x2[0] += 13.0;  // dy/dz2 = 13.0
-  var y = o.to_var(-1.0);
+  var y = o.value(-1.0);
 
   stan::math::grad(y.vi_);
   EXPECT_FLOAT_EQ(-55.0, x1.adj());  // dy/dx1 = -55
@@ -60,7 +50,7 @@ TEST(AgradPartialsVari, OperandsAndPartials3) {
   o.d_x1[0] += 17.0;  // dy/dz1 = 17.0
   o.d_x2[0] += 19.0;  // dy/dz2 = 19.0
   o.d_x3[0] += 23.0;  // dy/dz3 = 23.0
-  var y = o.to_var(-1.0);
+  var y = o.value(-1.0);
 
   stan::math::grad(y.vi_);
   EXPECT_FLOAT_EQ(-119.0, x1.adj());  // dy/dx1 = -119
@@ -71,16 +61,7 @@ TEST(AgradPartialsVari, OperandsAndPartials_check_throw) {
   using stan::math::OperandsAndPartials;
   using stan::math::var;
   
-  double d;
   var v;
-  
-  OperandsAndPartials<> o1(d,d,d,d,d,d);
-  EXPECT_THROW(o1.d_x1[0], std::out_of_range);
-  EXPECT_THROW(o1.d_x2[0], std::out_of_range);
-  EXPECT_THROW(o1.d_x3[0], std::out_of_range);
-  EXPECT_THROW(o1.d_x4[0], std::out_of_range);
-  EXPECT_THROW(o1.d_x5[0], std::out_of_range);
-  EXPECT_THROW(o1.d_x6[0], std::out_of_range);
 
   OperandsAndPartials<var,var,var,var,var,var> o2(v,v,v,v,v,v);
   EXPECT_NO_THROW(o2.d_x1[0]);

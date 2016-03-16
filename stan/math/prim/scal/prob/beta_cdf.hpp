@@ -1,18 +1,17 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -24,11 +23,9 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-
 #include <cmath>
 
 namespace stan {
@@ -89,7 +86,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) <= 0)
-          return operands_and_partials.to_var(0.0, y, alpha, beta);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute CDF and its gradients
@@ -164,7 +161,7 @@ namespace stan {
           operands_and_partials.d_x3[n] *= P;
       }
 
-      return operands_and_partials.to_var(P, y, alpha, beta);
+      return operands_and_partials.value(P);
     }
 
   }

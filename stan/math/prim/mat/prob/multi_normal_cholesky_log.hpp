@@ -1,11 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
@@ -17,13 +12,17 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
     /**
      * The log of the multivariate normal density for the given y, mu, and
@@ -157,5 +156,4 @@ namespace stan {
 
   }
 }
-
 #endif

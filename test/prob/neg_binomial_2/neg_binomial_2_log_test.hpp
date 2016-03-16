@@ -72,6 +72,8 @@ public:
     if (n != 0)
       return binomial_coefficient_log<typename stan::scalar_type<T_inv_scale>::type>(n + phi - 1.0, n)
         +n*eta + multiply_log(phi,phi) - (n+phi)*log_sum_exp(eta,log(phi));
+    else
+      return 0;
   }
 };
 

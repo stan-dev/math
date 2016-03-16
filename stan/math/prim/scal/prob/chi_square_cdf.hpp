@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_CDF_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -70,7 +72,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.to_var(0.0, y, nu);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute CDF and its gradients
@@ -131,7 +133,7 @@ namespace stan {
           operands_and_partials.d_x2[n] *= cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, nu);
+      return operands_and_partials.value(cdf);
     }
   }
 }

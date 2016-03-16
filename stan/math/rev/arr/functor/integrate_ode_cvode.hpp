@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
 #include <ostream>
@@ -44,6 +44,7 @@ namespace stan {
      * @param[in] x_int integer data vector for the ODE.
      * @param[in] rel_tol relative tolerance passed to CVODE.
      * @param[in] abs_tol absolute tolerance passed to CVODE.
+     * @param[in] max_num_steps maximum number of steps to pass to CVODE.
      * @param[in, out] msgs the print stream for warning messages.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.

@@ -133,7 +133,7 @@ namespace stan {
             ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma)
              *y_minus_mu*inv_sigma[n] - 1) * inv_sigma[n];
       }
-      return operands_and_partials.to_var(logp, y, mu, sigma);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>
