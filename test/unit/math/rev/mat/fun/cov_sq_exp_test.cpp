@@ -1,8 +1,5 @@
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/cov_sq_exp.hpp>
-#include <vector>
 
 TEST(RevMath, cov_sq_exp_vvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;

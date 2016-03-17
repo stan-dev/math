@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <cmath>
 
 namespace stan {
   namespace math {

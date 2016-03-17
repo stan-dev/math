@@ -140,6 +140,7 @@
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 #include <stan/math/prim/scal/fun/ub_constrain.hpp>

@@ -1,8 +1,5 @@
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 
 TEST(MathRev, squared_distance) {
   double x1 = 1;

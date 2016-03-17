@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, squared_distance) {

@@ -1,5 +1,4 @@
-#include <stan/math.hpp>
-#include <stan/math/prim/mat/fun/cov_sq_exp.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathPrimMat, cov_sq_exp) {
