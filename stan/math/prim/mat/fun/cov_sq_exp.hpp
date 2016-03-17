@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -33,7 +31,8 @@ namespace stan {
       using std::exp;
       stan::math::check_positive("cov_sq_exp", "sigma", sigma);
       stan::math::check_positive("cov_sq_exp", "l", l);
-      stan::math::check_not_nan("cov_sq_exp", "x", x);
+      for (size_t n = 0; n < x.size(); n++)
+        stan::math::check_not_nan("cov_sq_exp", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>

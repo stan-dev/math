@@ -540,7 +540,6 @@ TEST(RevMath, cov_sq_exp_vector_vdd) {
     }
   }
 }
-/*
 
 TEST(RevMath, cov_sq_exp_vector_dvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
@@ -613,6 +612,7 @@ TEST(RevMath, cov_sq_exp_vector_dvv) {
     }
   }
 }
+
 TEST(RevMath, cov_sq_exp_vector_dvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
@@ -656,7 +656,7 @@ TEST(RevMath, cov_sq_exp_vector_dvd) {
     }
   }
 }
-/*
+
 TEST(RevMath, cov_sq_exp_vector_ddv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
@@ -701,4 +701,4 @@ TEST(RevMath, cov_sq_exp_vector_ddv) {
     }
   }
 }
-*/
+
