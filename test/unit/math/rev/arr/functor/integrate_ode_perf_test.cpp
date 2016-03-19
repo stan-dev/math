@@ -9,10 +9,6 @@
 #include <boost/random/mersenne_twister.hpp>
 
 #include <stan/math.hpp>
-#include <stan/math/prim/scal/prob/lognormal_rng.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
-
 
 // translation of Hornberg model to Stan, model from
 // http://jjj.biochem.sun.ac.za/database/hornberg/index.html and
