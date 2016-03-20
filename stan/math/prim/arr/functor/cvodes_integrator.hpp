@@ -70,6 +70,7 @@ namespace stan {
        * @param[in] rel_tol Relative tolerance of solver.
        * @param[in] abs_tol Absolute tolerance of solver.
        * @param[in] max_num_steps Maximum number of solver steps.
+       * @param[in] solver used solver (0=non-stiff, 1=stiff)
        * @param[in, out] msgs print stream.
        */
       cvodes_integrator(const F& f,
