@@ -72,8 +72,10 @@ TEST(StanOde_stiff_stress_test, cvode_hornberg) {
 
   std::vector<int> data_int;
 
+  size_t integration = 0;
+
   rng.seed(45656);
-  for(size_t i = 0; i < nIntegrations; i++) {
+  for( ; integration < nIntegrations; integration++) {
 
     std::vector<double> theta_run(theta);
 
@@ -91,11 +93,14 @@ TEST(StanOde_stiff_stress_test, cvode_hornberg) {
     std::vector<std::vector<stan::math::var> > res_cvode
       = stan::math::integrate_ode_cvode(f_, y0_var, t0, ts, theta_var, data, data_int, rel_tol, abs_tol);
     stan::math::recover_memory();
+
+    std::clock_t clock_end = std::clock();
+    double run_duration_sec = (clock_end - clock_start) / CLOCKS_PER_SEC ;
+
+    if(run_duration_sec > 60)
+      break;
+
   }
 
-  std::clock_t clock_end = std::clock();
-
-  double duration_sec = (clock_end - clock_start) / CLOCKS_PER_SEC ;
-
-  ASSERT_TRUE(duration_sec <= 120);
+  EXPECT_EQ(integration, nIntegrations);
  }
