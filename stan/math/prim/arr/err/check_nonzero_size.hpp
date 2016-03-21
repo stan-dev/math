@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NONZERO_SIZE_HPP
 
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-
 #include <string>
 
 namespace stan {

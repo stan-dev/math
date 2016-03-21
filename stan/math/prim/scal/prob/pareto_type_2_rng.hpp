@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_RNG_HPP
 
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>

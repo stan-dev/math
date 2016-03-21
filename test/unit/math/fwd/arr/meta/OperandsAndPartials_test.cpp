@@ -21,38 +21,38 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   o.d_x2[0] += 19.0;  
   o.d_x3[0] += 23.0;
   o.d_x3[0] += 23.0;
-  fvar<double> y = o.to_var(-1.0,x1,x2,x3);
+  fvar<double> y = o.value(-1.0);
 
   EXPECT_FLOAT_EQ(2*17 + 3*13 - 2*19 + 2*4*23,y.d_);
   EXPECT_FLOAT_EQ(-1,y.val_);
 }
 
-TEST(AgradPartialsVari, incr_deriv_vec_fvar) {
-  using stan::VectorView;
-  using stan::math::incr_deriv;
-  using stan::is_vector;
-  using stan::is_constant_struct;
-  using stan::math::fvar;
+// TEST(AgradPartialsVari, incr_deriv_vec_fvar) {
+//   using stan::VectorView;
+//   using stan::math::incr_deriv;
+//   using stan::is_vector;
+//   using stan::is_constant_struct;
+//   using stan::math::fvar;
 
-  fvar<double> c(1,1);
+//   fvar<double> c(1,1);
 
-  std::vector<fvar<double> > d;
-  d.push_back(c);
-  d.push_back(c);
+//   std::vector<fvar<double> > d;
+//   d.push_back(c);
+//   d.push_back(c);
   
-  std::vector<double> d_deriv;
-  d_deriv.push_back(3);
-  d_deriv.push_back(4);
+//   std::vector<double> d_deriv;
+//   d_deriv.push_back(3);
+//   d_deriv.push_back(4);
 
-  VectorView<const double,
-             stan::is_vector<std::vector<fvar<double> > >::value,
-             stan::is_constant_struct<std::vector<fvar<double> > >::value>
-    d_d(d_deriv);
+//   VectorView<std::vector<double>,
+//              stan::is_vector<std::vector<fvar<double> > >::value,
+//              stan::is_constant_struct<std::vector<fvar<double> > >::value>
+//     d_d(d_deriv);
 
-  double result3 = incr_deriv<VectorView<const double,
-                                         is_vector<std::vector<fvar<double> > >::value,
-                                         is_constant_struct<std::vector<fvar<double> > >::value>,
-                              std::vector<fvar<double> >,double>().incr(d_d,d);
+//   double result3 = incr_deriv<VectorView<std::vector<double>,
+//                                          is_vector<std::vector<fvar<double> > >::value,
+//                                          is_constant_struct<std::vector<fvar<double> > >::value>,
+//                               std::vector<fvar<double> >,double>().incr(d_d,d);
 
-  EXPECT_FLOAT_EQ(7, result3);
-}
+//   EXPECT_FLOAT_EQ(7, result3);
+// }

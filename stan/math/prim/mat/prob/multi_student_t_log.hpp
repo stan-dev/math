@@ -1,28 +1,27 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LOG_HPP
 
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/mat/prob/multi_normal_log.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <cstdlib>
 
 namespace stan {
-
   namespace math {
     /**
      * Return the log of the multivariate Student t distribution

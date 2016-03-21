@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_UNIFORM_CCDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_CCDF_LOG_HPP
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -12,6 +12,8 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -86,7 +88,7 @@ namespace stan {
             / b_min_a / ccdf_log_;
       }
 
-      return operands_and_partials.to_var(ccdf_log, y, alpha, beta);
+      return operands_and_partials.value(ccdf_log);
     }
   }
 }

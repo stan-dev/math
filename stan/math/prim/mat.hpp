@@ -9,11 +9,16 @@
 #include <stan/math/prim/mat/meta/container_view.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/mat/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
+#include <stan/math/prim/mat/meta/length_mvt.hpp>
 #include <stan/math/prim/mat/meta/seq_view.hpp>
+#include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
+#include <stan/math/prim/mat/meta/VectorView.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>

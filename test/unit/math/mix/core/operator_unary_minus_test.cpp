@@ -1,7 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradMixOperatorUnaryMinus, FvarVar_1stDeriv) {
   using stan::math::fvar;

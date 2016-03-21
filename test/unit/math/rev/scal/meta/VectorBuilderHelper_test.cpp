@@ -10,6 +10,7 @@ TEST(MetaTraits, VectorBuilderHelper_false_true) {
 
   VectorBuilderHelper<double,false,true> dvv1(length(a_var));
   EXPECT_THROW(dvv1[0], std::logic_error);
+  EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
 TEST(MetaTraits, VectorBuilderHelper_true_true) {
@@ -20,6 +21,8 @@ TEST(MetaTraits, VectorBuilderHelper_true_true) {
   var a_var(1);
 
   VectorBuilderHelper<double,true,true> dvv1(length(a_var));
-  dvv1[0] = 0.0;
-  EXPECT_FLOAT_EQ(0.0, dvv1[0]);
+  EXPECT_THROW(dvv1[0],
+               std::logic_error)
+    << "This uses the default template; if the arr version is included, "
+    << "it will use the template specialization.";
 }

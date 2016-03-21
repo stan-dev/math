@@ -149,7 +149,7 @@ namespace stan {
           operands_and_partials.d_x3[n]
             += (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
       }
-      return operands_and_partials.to_var(logp, y, mu, sigma);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

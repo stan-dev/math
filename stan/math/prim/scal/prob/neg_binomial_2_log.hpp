@@ -131,7 +131,7 @@ namespace stan {
             + log_phi[i] - log_mu_plus_phi[i] - digamma(phi__[i])
             + digamma(n_plus_phi[i]);
       }
-      return operands_and_partials.to_var(logp, mu, phi);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_n,

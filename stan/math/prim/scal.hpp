@@ -34,7 +34,6 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
 
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
@@ -46,7 +45,6 @@
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
