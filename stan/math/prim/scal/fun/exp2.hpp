@@ -15,12 +15,9 @@ namespace stan {
      * <code>exp2(y) = pow(2.0, y)</code>.
      *
      * @param y Value.
-     * @tparam T Type of scalar.
      * @return Exponent base 2 of value.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    exp2(const T y) {
+    double exp2(const double y) {
       using std::pow;
       return pow(2.0, y);
     }
