@@ -10,13 +10,11 @@
 
 #include <stan/math.hpp>
 
-// translation of Hornberg model to Stan, model from
-// http://jjj.biochem.sun.ac.za/database/hornberg/index.html and
-// described in paper DOI 10.1111/j.1432-1033.2004.04404.x
-#include <test/unit/math/rev/arr/functor/hornberg.hpp>
+// very small michaelis menten example
+#include <test/unit/math/rev/arr/functor/coupled_mm.hpp>
 
 
-TEST(StanOde_stiff_stress_test, cvode_hornberg) {
+TEST(StanOde_stiff_small_stress_test, cvode_coupled_mm) {
 
   const std::clock_t clock_start = std::clock();
 
@@ -24,18 +22,12 @@ TEST(StanOde_stiff_stress_test, cvode_hornberg) {
   const double rel_tol = 1E-10;
   const double abs_tol = 1E-10;
   
-  hornberg_ode_fun f_;
+  coupled_mm_ode_fun f_;
 
   // initial value and parameters from model definition
-  std::vector<double> y0(8);
-  y0[0] = 0.5;
-  y0[1] = 0.0;
-  y0[2] = 1.0;
-  y0[3] = 0.0;
-  y0[4] = 1.0;
-  y0[5] = 0.0;
-  y0[6] = 1.0;
-  y0[7] = 0.0;
+  std::vector<double> y0(2);
+  y0[0] = 1.0;
+  y0[1] = 1E-3;
 
   double t0 = 0;
 
@@ -45,26 +37,12 @@ TEST(StanOde_stiff_stress_test, cvode_hornberg) {
   for (int i = 0; i < 101; i++)
     ts.push_back((i+1)*tmax/101.);
 
-  std::vector<double> theta(18);
+  std::vector<double> theta(4);
 
   theta[0] = 1.0;
-  theta[1] = 0.1;
-  theta[2] = 0.01;
+  theta[1] = 0.5;
+  theta[2] = 0.5;
   theta[3] = 0.1;
-  theta[4] = 1.0;
-  theta[5] = 0.1;
-  theta[6] = 0.3;
-  theta[7] = 1.0;
-  theta[8] = 1.0;
-  theta[9] = 0.1;
-  theta[10] = 0.3;
-  theta[11] = 1.0;
-  theta[12] = 1.0;
-  theta[13] = 0.1;
-  theta[14] = 0.3;
-  theta[15] = 1.0;
-  theta[16] = 0.0;
-  theta[17] = 1.0;
 
   boost::random::mt19937 rng;
 
