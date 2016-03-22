@@ -1,11 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LOG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
@@ -17,16 +12,18 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
-    using Eigen::Dynamic;
-
     /**
      * The log of the multivariate normal density for the given y, mu, and
      * a Cholesky factor L of the variance matrix.
@@ -129,19 +126,19 @@ namespace stan {
       if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
-          Eigen::Matrix<typename return_type<T_y, T_loc>::type, Dynamic, 1>
-            y_minus_mu(size_y);
+          Eigen::Matrix<typename return_type<T_y, T_loc>::type,
+            Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j)-mu_vec[i](j);
           Eigen::Matrix<typename return_type<T_y, T_loc, T_covar>::type,
-                        Dynamic, 1>
+                        Eigen::Dynamic, 1>
             half(mdivide_left_tri_low(L, y_minus_mu));
           // FIXME: this code does not compile. revert after fixing subtract()
           // Eigen::Matrix<typename
           //               boost::math::tools::promote_args<T_covar,
           //                 typename value_type<T_loc>::type,
           //                 typename value_type<T_y>::type>::type>::type,
-          //               Dynamic, 1>
+          //               Eigen::Dynamic, 1>
           //   half(mdivide_left_tri_low(L, subtract(y, mu)));
           sum_lp_vec += dot_self(half);
         }
@@ -159,5 +156,4 @@ namespace stan {
 
   }
 }
-
 #endif

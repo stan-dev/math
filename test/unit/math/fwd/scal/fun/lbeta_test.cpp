@@ -1,17 +1,7 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/fwd/scal/fun/lbeta.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/lgamma.hpp>
-#include <stan/math/fwd/scal/fun/lmgamma.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
 
 TEST(AgradFwdLbeta,Fvar) {
   using stan::math::fvar;

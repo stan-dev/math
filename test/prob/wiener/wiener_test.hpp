@@ -1,8 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal/prob/wiener_log.hpp>
-
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <limits>
 #include <vector>
 

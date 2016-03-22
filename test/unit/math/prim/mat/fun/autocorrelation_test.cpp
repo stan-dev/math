@@ -1,10 +1,8 @@
+#include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
 #include <fstream>
 #include <vector>
 #include <stdexcept>
-
-#include <gtest/gtest.h>
-
-#include <stan/math/prim/mat/fun/autocorrelation.hpp>
 
 TEST(ProbAutocorrelation,test1) {
   // ar1.csv generated in R with

@@ -1,6 +1,4 @@
-#include <stdexcept>
-#include <stan/math/prim/mat/fun/head.hpp>
-
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixHead,HeadVector1) {

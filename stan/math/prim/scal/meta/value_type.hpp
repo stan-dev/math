@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
 
-#include <vector>
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -21,7 +18,6 @@ namespace stan {
     struct value_type {
     };
 
-
     /**
      * Template class for metaprogram to compute the type of values
      * stored in a constant container.
@@ -33,25 +29,6 @@ namespace stan {
       typedef typename value_type<T>::type type;
     };
 
-
-    /**
-     * Template metaprogram class to compute the type of values stored
-     * in a standard vector.
-     *
-     * @tparam T type of elements in standard vector.
-     */
-    template <typename T>
-    struct value_type<std::vector<T> > {
-      /**
-       * Type of value stored in a standard vector with type
-       * <code>T</code> entries.
-       */
-      typedef typename std::vector<T>::value_type type;
-    };
-
-
   }
 }
-
-
 #endif

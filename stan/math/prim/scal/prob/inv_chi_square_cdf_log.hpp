@@ -69,8 +69,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++)
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, nu);
+          return operands_and_partials.value(stan::math::negative_infinity());
 
       // Compute cdf_log and its gradients
       using stan::math::gamma_q;
@@ -124,7 +123,7 @@ namespace stan {
                                                     digamma_vec[n]) / Pn;
       }
 
-      return operands_and_partials.to_var(P, y, nu);
+      return operands_and_partials.value(P);
     }
   }
 }

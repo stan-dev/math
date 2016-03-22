@@ -1,16 +1,5 @@
-#include <stan/math/prim/mat/fun/mdivide_right_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/scal/fun/is_nan.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 
 using stan::math::fvar;
 
@@ -199,12 +188,20 @@ TEST(AgradFwdMatrixMdivideRightLDLT,fd_exceptions) {
   fv1_ << 1,2,3,4,5,6,7,8,9;
   fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   vector_fd rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   row_vector_fd vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1_(3,3), fd2_(4,4);
   fd1_ << 1,2,3,4,5,6,7,8,9;
   fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   row_vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   stan::math::LDLT_factor<fvar<double>,-1,-1> fv1;
   stan::math::LDLT_factor<fvar<double>,-1,-1> fv2;
@@ -425,12 +422,20 @@ TEST(AgradFwdMatrixMdivideRightLDLT,ffd_exceptions) {
   fv1_ << 1,2,3,4,5,6,7,8,9;
   fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   vector_ffd rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   row_vector_ffd vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1_(3,3), fd2_(4,4);
   fd1_ << 1,2,3,4,5,6,7,8,9;
   fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   row_vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> fv1;
   stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> fv2;

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LOG_HPP
 
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -87,7 +88,8 @@ namespace stan {
             = log(modified_bessel_first_kind(0, value_of(kappa_vec[i])));
       }
 
-      OperandsAndPartials<T_y, T_loc, T_scale> oap(y, mu, kappa);
+      OperandsAndPartials<T_y, T_loc, T_scale>
+        operands_and_partials(y, mu, kappa);
 
       size_t N = max_size(y, mu, kappa);
 
@@ -117,14 +119,15 @@ namespace stan {
 
         // Gradient.
         if (!y_const)
-          oap.d_x1[n] += kappa_sin;
+          operands_and_partials.d_x1[n] += kappa_sin;
         if (!mu_const)
-          oap.d_x2[n] -= kappa_sin;
+          operands_and_partials.d_x2[n] -= kappa_sin;
         if (!kappa_const)
-          oap.d_x3[n] += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
+          operands_and_partials.d_x3[n] += kappa_cos / kappa_dbl[n]
+            - bessel1 / bessel0;
       }
 
-      return oap.to_var(logp, y, mu, kappa);
+      return operands_and_partials.value(logp);
     }
 
     template<typename T_y, typename T_loc, typename T_scale>

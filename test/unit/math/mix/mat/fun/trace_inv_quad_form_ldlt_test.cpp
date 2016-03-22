@@ -1,19 +1,5 @@
-#include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
-#include <stan/math/rev/mat/fun/trace_inv_quad_form_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/rev/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/rev/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/is_nan.hpp>
-#include <stan/math/rev/scal/fun/is_nan.hpp>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -468,12 +454,20 @@ TEST(AgradMixMatrixTraceInvQuadFormLDLT,fv_exceptions) {
   fv1_ << 1,2,3,4,5,6,7,8,9;
   fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   row_vector_fv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_fv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1_(3,3), fd2_(4,4);
   fd1_ << 1,2,3,4,5,6,7,8,9;
   fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   stan::math::LDLT_factor<fvar<var>,-1,-1> fv1;
   stan::math::LDLT_factor<fvar<var>,-1,-1> fv2;
@@ -1427,12 +1421,20 @@ TEST(AgradMixMatrixTraceInvQuadFormLDLT,ffv_exceptions) {
   fv1_ << 1,2,3,4,5,6,7,8,9;
   fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   row_vector_ffv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_ffv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1_(3,3), fd2_(4,4);
   fd1_ << 1,2,3,4,5,6,7,8,9;
   fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   stan::math::LDLT_factor<fvar<fvar<var> >,-1,-1> fv1;
   stan::math::LDLT_factor<fvar<fvar<var> >,-1,-1> fv2;

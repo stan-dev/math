@@ -1,12 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 
-#include <stan/math/prim/mat/fun/sort_indices.hpp>
-#include <stan/math/prim/mat/fun/sort_indices_asc.hpp>
-#include <stan/math/prim/mat/fun/sort_indices_desc.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 typedef std::vector<double> VEC;
 using stan::math::fvar;

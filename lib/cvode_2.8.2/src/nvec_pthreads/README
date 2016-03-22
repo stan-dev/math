@@ -1,0 +1,65 @@
+                     NVECTOR_PTHREADS
+                 released as part of SUNDIALS
+    SUite of Nonlinear and DIfferential/ALgebraic equation Solvers
+                   Release 2.6.2, August 2015
+
+
+Pthreads implementation of the NVECTOR module for SUNDIALS. 
+
+NVECTOR_PTHREADS defines the content field of N_Vector to be a structure 
+containing the length of the vector, a pointer to the beginning of a 
+contiguous data array, and a boolean flag indicating ownership of the 
+data array.
+
+NVECTOR_PTHREADS defines five macros to provide access to the content of 
+a Pthreads N_Vector, several constructors for variables of type N_Vector,
+a constructor for an array of variables of type N_Vector, and destructors
+for N_Vector and N_Vector array.
+
+NVECTOR_PTHREADS provides implementations for all vector operations defined
+by the generic NVECTOR module in the table of operations.
+
+
+A. Documentation
+----------------
+
+The Pthreads NVECTOR implementation follows the serial implemenation
+fully described in the user documentation for any of the SUNDIALS
+solvers [1-5]. A PDF file for the user guide for a particular solver
+is available in the solver's subdirectory under doc/.
+
+
+B. Installation
+---------------
+
+For basic installation instructions see /sundials/INSTALL_GUIDE.pdf. 
+For complete installation instructions see any of the user guides.
+
+
+C. Releases
+-----------
+
+v. 2.6.2 - Aug. 2015
+v. 2.6.1 - Mar. 2015
+v. 2.6.0 - Mar. 2015
+
+
+
+D. Revision History
+-------------------
+
+v. 2.6.1 (Mar. 2015) ---> v. 2.6.2 (Aug. 2015)
+---------------------------------------------
+
+- none
+
+v. 2.6.0 (Mar. 2015) ---> v. 2.6.0 (Mar. 2015)
+---------------------------------------------
+
+- none
+
+v. 2.5.0 (Mar. 2012) ---> v. 2.6.0 (Mar.2015)
+---------------------------------------------
+
+- This package added with SUNDIALS v.2.6.0.
+

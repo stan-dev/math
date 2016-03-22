@@ -1,9 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/asin.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdAsin,Fvar) {
   using stan::math::fvar;

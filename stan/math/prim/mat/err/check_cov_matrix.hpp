@@ -6,7 +6,6 @@
 
 namespace stan {
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return <code>true</code> if the specified matrix is a valid
      * covariance matrix.
@@ -29,9 +28,11 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_cov_matrix(const char* function,
-                     const char* name,
-                     const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_cov_matrix(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       check_pos_definite(function, name, y);
       return true;
     }

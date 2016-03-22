@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>

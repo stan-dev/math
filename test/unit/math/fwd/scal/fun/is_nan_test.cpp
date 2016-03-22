@@ -1,6 +1,5 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdIsNan,Fvar) {

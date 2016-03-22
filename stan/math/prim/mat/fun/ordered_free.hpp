@@ -7,9 +7,7 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
-
     /**
      * Return the vector of unconstrained scalars that transform to
      * the specified positive ordered vector.
@@ -31,6 +29,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
       using stan::math::index_type;
+      using std::log;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k = y.size();
@@ -42,9 +41,6 @@ namespace stan {
         x[i] = log(y[i] - y[i-1]);
       return x;
     }
-
   }
-
 }
-
 #endif

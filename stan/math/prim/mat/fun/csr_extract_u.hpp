@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_U_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_U_HPP
 
-#include <stan/math.hpp>
+#include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Sparse>
 #include <vector>
 #include <numeric>

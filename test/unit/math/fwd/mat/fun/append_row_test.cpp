@@ -1,7 +1,5 @@
-#include <stan/math/prim/mat/fun/append_row.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdMatrixAppendRow,fd) {
   using stan::math::append_row;

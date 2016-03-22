@@ -100,7 +100,7 @@ namespace stan {
           operands_and_partials.d_x2[n]
             += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
       }
-      return operands_and_partials.to_var(logp, y, sigma);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_scale>

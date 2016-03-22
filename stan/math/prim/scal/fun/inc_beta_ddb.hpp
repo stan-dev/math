@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <cmath>
+#include <stdexcept>
 
 namespace stan {
   namespace math {

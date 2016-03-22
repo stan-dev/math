@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QR_R_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QR_R_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <Eigen/QR>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
+#include <Eigen/QR>
 
 namespace stan {
   namespace math {

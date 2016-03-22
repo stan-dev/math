@@ -15,7 +15,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     /**
      * Return <code>true</code> if the specified square, symmetric
@@ -35,9 +34,11 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_pos_definite(const char* function,
-                       const char* name,
-                       const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_pos_definite(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       check_symmetric(function, name, y);
       check_positive_size(function, name, "rows", y.rows());
 

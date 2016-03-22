@@ -1,24 +1,6 @@
-#include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/multiply.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -496,11 +478,23 @@ TEST(AgradMixMatrixMdivideLeftTri,fv_exceptions_lower) {
   using stan::math::mdivide_left_tri;
 
   matrix_fv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_fv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_fv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
@@ -1463,11 +1457,23 @@ TEST(AgradMixMatrixMdivideLeftTri,ffv_exceptions_lower) {
   using stan::math::mdivide_left_tri;
 
   matrix_ffv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_ffv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_ffv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
@@ -1969,11 +1975,23 @@ TEST(AgradMixMatrixMdivideLeftTri,fv_exceptions_upper) {
   using stan::math::mdivide_left_tri;
 
   matrix_fv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_fv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_fv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);
@@ -2936,11 +2954,23 @@ TEST(AgradMixMatrixMdivideLeftTri,ffv_exceptions_upper) {
   using stan::math::mdivide_left_tri;
 
   matrix_ffv fv1(3,3), fv2(4,4);
+  fv1.setZero();
+  fv2.setZero();
   row_vector_ffv rvf1(3), rvf2(4);
+  rvf1.setZero();
+  rvf2.setZero();
   vector_ffv vf1(3), vf2(4);
+  vf1.setZero();
+  vf2.setZero();
   matrix_d fd1(3,3), fd2(4,4);
+  fd1.setZero();
+  fd2.setZero();
   row_vector_d rvd1(3), rvd2(4);
+  rvd1.setZero();
+  rvd2.setZero();
   vector_d vd1(3), vd2(4);
+  vd1.setZero();
+  vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);

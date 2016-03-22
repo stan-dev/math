@@ -1,7 +1,6 @@
-#include <stdexcept>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/functor/gradient.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stdexcept>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;

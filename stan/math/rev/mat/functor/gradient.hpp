@@ -3,12 +3,11 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stdexcept>
 
 namespace stan {
 
   namespace math {
-
-    using Eigen::Dynamic;
 
     /**
      * Calculate the value and the gradient of the specified function
@@ -42,13 +41,13 @@ namespace stan {
     template <typename F>
     void
     gradient(const F& f,
-             const Eigen::Matrix<double, Dynamic, 1>& x,
+             const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
              double& fx,
-             Eigen::Matrix<double, Dynamic, 1>& grad_fx) {
+             Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
       using stan::math::var;
       start_nested();
       try {
-        Eigen::Matrix<var, Dynamic, 1> x_var(x.size());
+        Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
         for (int i = 0; i < x.size(); ++i)
           x_var(i) = x(i);
         var fx_var = f(x_var);

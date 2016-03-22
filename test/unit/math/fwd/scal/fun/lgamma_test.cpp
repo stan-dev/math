@@ -1,14 +1,8 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/lgamma.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/tan.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
 
 TEST(AgradFwdLgamma,Fvar) {
   using stan::math::fvar;

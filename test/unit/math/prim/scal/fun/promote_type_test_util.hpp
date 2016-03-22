@@ -1,13 +1,11 @@
-#ifndef TEST__MATH__UNIT__FUNCTIONS__PROMOTE_TYPE_TEST_UTIL_HPP
-#define TEST__MATH__UNIT__FUNCTIONS__PROMOTE_TYPE_TEST_UTIL_HPP
+#ifndef TEST_MATH_UNIT_FUNCTIONS_PROMOTE_TYPE_TEST_UTIL_HPP
+#define TEST_MATH_UNIT_FUNCTIONS_PROMOTE_TYPE_TEST_UTIL_HPP
 
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/is_same.hpp>
 
-#include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
-#include <stan/math/prim/scal/fun/promote_scalar.hpp>
 
 template <typename T, typename S>
 void expect_type(S s) {
@@ -29,8 +27,6 @@ void expect_promote_type() {
   using stan::math::promote_scalar_type;
   return expect_same_type<E,typename promote_scalar_type<T,S>::type>();
 }
-
-
 
 #endif
 

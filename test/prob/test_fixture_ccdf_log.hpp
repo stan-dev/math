@@ -1,9 +1,7 @@
-#ifndef TEST__UNIT_DISTRIBUTION__TEST_FIXTURE_CCDF_LOG_HPP
-#define TEST__UNIT_DISTRIBUTION__TEST_FIXTURE_CCDF_LOG_HPP
+#ifndef TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
+#define TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
 
-#include <stan/math/rev/core.hpp>
-#include <stdexcept>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <test/prob/utility.hpp>
 #include <boost/type_traits/is_same.hpp>
 

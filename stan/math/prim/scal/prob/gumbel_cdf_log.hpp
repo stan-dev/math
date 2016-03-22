@@ -77,7 +77,7 @@ namespace stan {
           operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff;
       }
 
-      return operands_and_partials.to_var(cdf_log, y, mu, beta);
+      return operands_and_partials.value(cdf_log);
     }
   }
 }

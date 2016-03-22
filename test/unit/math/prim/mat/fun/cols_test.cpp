@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/cols.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(primMatFunCols, matrix) {

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_EIGENVECTORS_SYM_HPP
 #define STAN_MATH_PRIM_MAT_FUN_EIGENVECTORS_SYM_HPP
 
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 

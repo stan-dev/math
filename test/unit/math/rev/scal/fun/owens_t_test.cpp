@@ -1,8 +1,7 @@
-#include <stan/math/rev/scal/fun/owens_t.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 TEST(AgradRev,owens_t_vv) {
   using stan::math::var;

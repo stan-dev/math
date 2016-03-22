@@ -1,7 +1,5 @@
 // Arguments: Ints, Ints, Ints, Ints
-#include <stan/math/prim/scal/prob/hypergeometric_log.hpp>
-
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;
