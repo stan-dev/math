@@ -65,7 +65,7 @@ struct sin_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(-0.2).build();
+      .add(5.3).add(-2.6).add(0).add(-0.2).build();
   }
 
   /**
@@ -80,7 +80,7 @@ struct sin_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(-2).add(0).add(3).build();
+      .add(5).add(-2).add(0).add(3).build();
   }
 
   /**

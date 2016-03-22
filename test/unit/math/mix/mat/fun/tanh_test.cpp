@@ -4,14 +4,14 @@
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/cos.hpp>
+#include <stan/math/prim/mat/fun/tanh.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
 /**
- * This is the structure for testing mock function cos (defined in the
+ * This is the structure for testing mock function tanh (defined in the
  * testing framework).  See README.txt for more instructions.
  */
-struct cos_test {
+struct tanh_test {
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -27,8 +27,8 @@ struct cos_test {
    */
   template <typename R, typename T>
   static R apply(const T& x) {
-    using stan::math::cos;
-    return cos(x);
+    using stan::math::tanh;
+    return tanh(x);
   }
 
   /**
@@ -65,7 +65,7 @@ struct cos_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(5.3).add(-2.6).add(0).add(-0.2).build();
+      .add(1.3).add(-2.6).add(0).add(-0.2).build();
   }
 
   /**
@@ -80,7 +80,7 @@ struct cos_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(5).add(-2).add(0).add(3).build();
+      .add(1).add(-2).add(0).add(3).build();
   }
 
   /**
@@ -91,7 +91,7 @@ struct cos_test {
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, cos_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, cos_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, cos_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, cos_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, tanh_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, tanh_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, tanh_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, tanh_test);
