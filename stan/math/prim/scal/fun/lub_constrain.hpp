@@ -7,6 +7,7 @@
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
+#include <stdexcept>
 
 namespace stan {
 

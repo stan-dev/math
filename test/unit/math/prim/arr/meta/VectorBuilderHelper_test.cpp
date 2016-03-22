@@ -10,6 +10,7 @@ TEST(MetaTraits, VectorBuilderHelper_false_false) {
 
   VectorBuilderHelper<double,false,false> dvv2(length(a_std_vector));
   EXPECT_THROW(dvv2[0], std::logic_error);
+  EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
 TEST(MetaTraits, VectorBuilderHelper_true_false) {
@@ -23,4 +24,7 @@ TEST(MetaTraits, VectorBuilderHelper_true_false) {
   EXPECT_FLOAT_EQ(0.0, dvv2[0]);
   EXPECT_FLOAT_EQ(0.0, dvv2[1]);
   EXPECT_FLOAT_EQ(0.0, dvv2[2]);  
+  double data2(10);
+  EXPECT_NO_THROW(data2 = dvv2.data());
+  EXPECT_FLOAT_EQ(0.0, data2);
 }

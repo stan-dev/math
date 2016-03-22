@@ -52,3 +52,10 @@ TEST(MetaTraits, VectorView_double_star) {
   EXPECT_FLOAT_EQ(10, bv[0]);
   EXPECT_FLOAT_EQ(10, b);
 }
+
+TEST(MetaTraits, VectorView_throw_if_accessed) {
+  using stan::VectorView;
+  double d(10);
+  VectorView<double, false, true> dv(d);
+  EXPECT_THROW(dv[0], std::logic_error);
+}

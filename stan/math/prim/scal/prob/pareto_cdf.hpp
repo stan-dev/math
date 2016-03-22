@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_CDF_HPP
 
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -12,6 +12,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <boost/random/exponential_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
 
@@ -67,7 +69,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
-          return operands_and_partials.to_var(0.0, y, y_min, alpha);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute vectorized CDF and its gradients
@@ -115,7 +117,7 @@ namespace stan {
           operands_and_partials.d_x3[n] *= P;
       }
 
-      return operands_and_partials.to_var(P, y, y_min, alpha);
+      return operands_and_partials.value(P);
     }
   }
 }

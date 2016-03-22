@@ -154,7 +154,7 @@ namespace stan {
         if (!is_constant<typename is_vector<T_scale>::type>::value)
           operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - inv_y[n];
       }
-      return operands_and_partials.to_var(logp, y, alpha, beta);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_CDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_CDF_LOG_HPP
 
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -13,6 +13,8 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/bernoulli_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -58,8 +60,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              theta);
+          return operands_and_partials.value(stan::math::negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -76,7 +77,7 @@ namespace stan {
           operands_and_partials.d_x1[i] -= 1 / Pi;
       }
 
-      return operands_and_partials.to_var(P, theta);
+      return operands_and_partials.value(P);
     }
 
   }

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LOG_HPP
 
-#include <boost/math/distributions.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -9,13 +8,12 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <boost/math/distributions.hpp>
 
 namespace stan {
 

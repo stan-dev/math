@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CDF_HPP
 
-#include <boost/random/variate_generator.hpp>
-#include <boost/math/distributions.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -15,6 +14,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <boost/math/distributions.hpp>
 #include <cmath>
 
 namespace stan {
@@ -126,7 +127,7 @@ namespace stan {
           operands_and_partials.d_x4[n] *= cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, mu, sigma, alpha);
+      return operands_and_partials.value(cdf);
     }
   }
 }

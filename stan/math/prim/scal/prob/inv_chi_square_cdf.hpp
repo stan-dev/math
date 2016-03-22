@@ -69,7 +69,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++)
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.to_var(0.0, y, nu);
+          return operands_and_partials.value(0.0);
 
       // Compute CDF and its gradients
       using stan::math::gamma_q;
@@ -131,7 +131,7 @@ namespace stan {
           operands_and_partials.d_x2[n] *= P;
       }
 
-      return operands_and_partials.to_var(P, y, nu);
+      return operands_and_partials.value(P);
     }
   }
 }

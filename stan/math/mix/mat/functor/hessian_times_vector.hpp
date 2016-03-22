@@ -4,6 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {
