@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
 #include <cmath>
 #include <sstream>
 #include <stdexcept>

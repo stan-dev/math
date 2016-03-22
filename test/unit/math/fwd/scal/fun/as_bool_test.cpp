@@ -1,6 +1,5 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/as_bool.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwd,asBool) {
   using stan::math::as_bool;

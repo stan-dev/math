@@ -1,15 +1,7 @@
-#include <stan/math/prim/scal/prob/normal_log.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
 
 std::vector<double> test_fun(double y, double mu, double sigma) {
   using stan::math::var;

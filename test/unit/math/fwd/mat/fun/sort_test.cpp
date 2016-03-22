@@ -1,12 +1,7 @@
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
-#include <stan/math/fwd/mat/fun/sort_asc.hpp>
-#include <stan/math/fwd/mat/fun/sort_desc.hpp>
-#include <stan/math/prim/mat/fun/sort.hpp>
 
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/core.hpp>
 
 typedef stan::math::fvar<double> AVAR;
 typedef std::vector<AVAR> AVEC;

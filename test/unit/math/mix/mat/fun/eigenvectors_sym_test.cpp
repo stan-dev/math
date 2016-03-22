@@ -1,18 +1,6 @@
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/fun/eigenvectors_sym.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/rev/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixEigenvectorsSym, excepts_fv) {
   stan::math::matrix_fv m0;

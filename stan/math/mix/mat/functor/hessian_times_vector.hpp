@@ -4,27 +4,26 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {
 
   namespace math {
 
-    using Eigen::Dynamic;
-
     template <typename F>
     void
     hessian_times_vector(const F& f,
-                         const Eigen::Matrix<double, Dynamic, 1>& x,
-                         const Eigen::Matrix<double, Dynamic, 1>& v,
+                         const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+                         const Eigen::Matrix<double, Eigen::Dynamic, 1>& v,
                          double& fx,
-                         Eigen::Matrix<double, Dynamic, 1>& Hv) {
+                         Eigen::Matrix<double, Eigen::Dynamic, 1>& Hv) {
       using stan::math::fvar;
       using stan::math::var;
       using Eigen::Matrix;
       start_nested();
       try {
-        Matrix<var, Dynamic, 1> x_var(x.size());
+        Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
         for (int i = 0; i < x_var.size(); ++i)
           x_var(i) = x(i);
         var fx_var;
@@ -44,13 +43,13 @@ namespace stan {
     template <typename T, typename F>
     void
     hessian_times_vector(const F& f,
-                         const Eigen::Matrix<T, Dynamic, 1>& x,
-                         const Eigen::Matrix<T, Dynamic, 1>& v,
+                         const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+                         const Eigen::Matrix<T, Eigen::Dynamic, 1>& v,
                          T& fx,
-                         Eigen::Matrix<T, Dynamic, 1>& Hv) {
+                         Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
       using Eigen::Matrix;
-      Matrix<T, Dynamic, 1> grad;
-      Matrix<T, Dynamic, Dynamic> H;
+      Matrix<T, Eigen::Dynamic, 1> grad;
+      Matrix<T, Eigen::Dynamic, Eigen::Dynamic> H;
       hessian(f, x, fx, grad, H);
       Hv = H * v;
     }

@@ -1,8 +1,8 @@
-#include <vector>
-#include <stan/math/prim/scal/prob/hypergeometric_rng.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <vector>
 
 TEST(ProbDistributionsHypergeometric, error_check) {
   boost::random::mt19937 rng;

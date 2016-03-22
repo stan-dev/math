@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, is_inf) {

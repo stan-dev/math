@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <cmath>
+#include <stdexcept>
 
 namespace stan {
   namespace math {

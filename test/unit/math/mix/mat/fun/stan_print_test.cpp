@@ -1,9 +1,7 @@
-#include <stan/math/prim/mat/fun/stan_print.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradMixMatrixStanPrint,fvar_var) {
   using std::vector;

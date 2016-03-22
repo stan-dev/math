@@ -1,7 +1,5 @@
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/quad_form.hpp>
-#include <stan/math/prim/mat/fun/quad_form_sym.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 
 TEST(MathMatrix, quad_form_mat) {
   using stan::math::quad_form;

@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, value_of_rec) {

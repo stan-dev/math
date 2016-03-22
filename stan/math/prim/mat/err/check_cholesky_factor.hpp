@@ -9,7 +9,6 @@
 
 namespace stan {
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return <code>true</code> if the specified matrix is a valid
      * Cholesky factor.
@@ -33,9 +32,11 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_cholesky_factor(const char* function,
-                          const char* name,
-                          const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_cholesky_factor(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       check_less_or_equal(function, "columns and rows of Cholesky factor",
                           y.cols(), y.rows());
       check_positive(function, "columns of Cholesky factor", y.cols());

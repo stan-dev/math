@@ -1,6 +1,5 @@
+#include <stan/math/mix/arr.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 #include <sstream>
 
 TEST(AgradFwdFvar, insertion_operator) {

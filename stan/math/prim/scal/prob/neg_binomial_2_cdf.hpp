@@ -1,32 +1,21 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/prob/beta_cdf.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
-
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
-#include <vector>
 
 namespace stan {
   namespace math {
@@ -43,15 +32,15 @@ namespace stan {
         T_partials_return;
 
       using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
       using stan::math::check_not_nan;
       using stan::math::check_consistent_sizes;
 
-      // Ensure non-zero arugment lengths
-      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
-        return 1.0;
-
       T_partials_return P(1.0);
+      // check if any vectors are zero length
+      if (!(stan::length(n)
+            && stan::length(mu)
+            && stan::length(phi)))
+        return P;
 
       // Validate arguments
       check_positive_finite(function, "Location parameter", mu);
@@ -82,7 +71,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.to_var(0.0, mu, phi);
+          return operands_and_partials.value(0.0);
       }
 
       // Cache a few expensive function calls if  phi is a parameter
@@ -108,7 +97,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.to_var(1.0, mu, phi);
+          return operands_and_partials.value(1.0);
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return mu_dbl = value_of(mu_vec[i]);
@@ -147,9 +136,9 @@ namespace stan {
           operands_and_partials.d_x2[i] *= P;
       }
 
-      return operands_and_partials.to_var(P, mu, phi);
+      return operands_and_partials.value(P);
     }
 
-  }  // math
-}  // stan
+  }
+}
 #endif

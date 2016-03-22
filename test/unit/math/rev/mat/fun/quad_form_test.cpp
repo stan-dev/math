@@ -1,21 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/rev/mat/fun/quad_form.hpp>
-#include <stan/math/rev/mat/fun/quad_form_sym.hpp>
-#include <stan/math/prim/mat/fun/quad_form_sym.hpp>
-#include <stan/math/rev/mat/fun/sum.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/fun/quad_form.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/multiply.hpp>
-#include <stan/math/rev/mat/fun/dot_product.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradRevMatrix, quad_form_mat) {
   using stan::math::quad_form;

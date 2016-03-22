@@ -1,6 +1,4 @@
-#include <stan/math/prim/mat/fun/assign.hpp>
-#include <stan/math/prim/mat/fun/csr_extract_w.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

@@ -1,10 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/fdim.hpp>
-#include <stan/math/rev/scal/fun/fdim.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/rev/scal/fun/floor.hpp>
 
 
 

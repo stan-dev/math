@@ -4,13 +4,12 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {
 
   namespace math {
-
-    using Eigen::Dynamic;
 
     /**
      * Calculate the value, the Hessian, and the gradient of the Hessian
@@ -44,12 +43,14 @@ namespace stan {
     template <typename F>
     void
     grad_hessian(const F& f,
-                 const Eigen::Matrix<double, Dynamic, 1>& x,
+                 const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
                  double& fx,
-                 Eigen::Matrix<double, Dynamic, Dynamic>& H,
-                 std::vector<Eigen::Matrix<double, Dynamic, Dynamic> >&
+                 Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H,
+                 std::vector<Eigen::Matrix<double,
+                   Eigen::Dynamic, Eigen::Dynamic> >&
                  grad_H) {
       using Eigen::Matrix;
+      using Eigen::Dynamic;
       fx = f(x);
       int d = x.size();
       H.resize(d, d);

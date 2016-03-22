@@ -77,7 +77,7 @@ namespace stan {
           operands_and_partials.d_x3[n] -= pow_ * alpha_dbl / sigma_dbl;
       }
 
-      return operands_and_partials.to_var(cdf_log, y, alpha, sigma);
+      return operands_and_partials.value(cdf_log);
     }
   }
 }

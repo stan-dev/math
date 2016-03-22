@@ -1,36 +1,21 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
-
 #include <iostream>
 #include <sstream>
 #include <vector>
-
 #include <boost/numeric/odeint.hpp>
-
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode.hpp>
-
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
-
 #include <test/unit/util.hpp>
-
 
 template <typename F>
 void sho_death_test(F harm_osc,
-                        std::vector<double>& y0,
-                        double t0,
-                        std::vector<double>& ts,
-                        std::vector<double>& theta,
-                        std::vector<double>& x,
-                        std::vector<int>& x_int) {
+                    std::vector<double>& y0,
+                    double t0,
+                    std::vector<double>& ts,
+                    std::vector<double>& theta,
+                    std::vector<double>& x,
+                    std::vector<int>& x_int) {
   EXPECT_DEATH(stan::math::integrate_ode(harm_osc, y0, t0,
                                          ts, theta, x, x_int,0),
                "");

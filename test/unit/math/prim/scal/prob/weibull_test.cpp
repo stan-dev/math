@@ -1,8 +1,7 @@
-#include <stan/math/prim/scal/prob/weibull_rng.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 
 TEST(ProbDistributionsWeibull, error_check) {
   boost::random::mt19937 rng;

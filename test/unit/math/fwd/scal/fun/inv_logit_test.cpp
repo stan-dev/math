@@ -1,8 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/inv_logit.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 
 TEST(AgradFwdInvLogit,Fvar) {
   using stan::math::fvar;

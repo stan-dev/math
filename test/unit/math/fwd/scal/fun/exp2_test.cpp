@@ -1,7 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/exp2.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/exp2.hpp>
 
 class AgradFwdExp2 : public testing::Test {
   void SetUp() {

@@ -1,25 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/mix/mat/functor/grad_hessian.hpp>
-#include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/mix/mat/functor/hessian.hpp>
-#include <stan/math/prim/scal/prob/normal_log.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
-#include <stan/math/mix/mat/functor/finite_diff_grad_hessian.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/rev/mat/fun/sum.hpp>
-#include <stan/math/fwd/mat/fun/sum.hpp>
 
 struct norm_functor {
   template <typename T>
