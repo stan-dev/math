@@ -114,7 +114,7 @@ namespace stan {
                       boost::begin(ts_vec), boost::end(ts_vec),
                       step_size,
                       observer,
-		      max_step_checker(max_num_steps));
+                      max_step_checker(max_num_steps));
 
       // remove the first state corresponding to the initial value
       y_coupled.erase(y_coupled.begin());
