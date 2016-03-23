@@ -229,6 +229,8 @@
 #include <stan/math/prim/mat/prob/wishart_log.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
 
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+
 #include <stan/math/prim/arr.hpp>
 
 #endif
