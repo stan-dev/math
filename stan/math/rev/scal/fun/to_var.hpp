@@ -29,7 +29,7 @@ namespace stan {
     inline var to_var(const var& x) {
       return x;
     }
-    
+
   }
 }
 #endif

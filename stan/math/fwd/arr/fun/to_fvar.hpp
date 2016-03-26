@@ -27,7 +27,7 @@ namespace stan {
         x[i] = fvar<T>(v[i], d[i]);
       return x;
     }
-    
+
     template<typename T>
     inline
     std::vector<fvar<T> >
