@@ -1,33 +1,23 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 
-template <typename T>
-void fill(const std::vector<double>& contents,
-          std::vector<T>& x){
-  x.assign(contents.size(), T());
-  for (size_t i = 0; i < contents.size(); ++i)
-    x[i] = T(contents[i]);
-}
-
 TEST(MathMatrix,value_of_rec) {
   using stan::math::value_of_rec;
   using std::vector;
   using stan::math::var;
 
   vector<double> a_vals;
-
   for (size_t i = 0; i < 10; ++i)
     a_vals.push_back(i + 1);
 
   vector<double> b_vals;
-
   for (size_t i = 10; i < 15; ++i)
     b_vals.push_back(i + 1);
 
   vector<var> a;
-  fill(a_vals, a);
+  a = stan::math::to_var(a_vals);
   vector<var> b;
-  fill(b_vals, b);
+  b = stan::math::to_var(b_vals);
 
   vector<double> d_a = value_of_rec(a);
   vector<double> d_b = value_of_rec(b);

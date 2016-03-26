@@ -1,19 +1,10 @@
 #include <stan/math/fwd/arr.hpp>
 #include <gtest/gtest.h>
 
-template <typename T>
-void fill(const std::vector<double>& contents,
-          std::vector<T>& x){
-  x.assign(contents.size(), T());
-  for (size_t i = 0; i < contents.size(); ++i)
-    x[i] = T(contents[i]);
-}
-
 TEST(MathMatrix,value_of_rec) {
   using stan::math::value_of_rec;
   using std::vector;
   using stan::math::fvar;
-  using stan::math::var;
 
   vector<double> a_vals;
 
@@ -27,9 +18,9 @@ TEST(MathMatrix,value_of_rec) {
 
   {
     vector<fvar<double> > a;
-    fill(a_vals, a);
+    a = stan::math::to_fvar(a_vals);
     vector<fvar<double> > b;
-    fill(b_vals, b);
+    b = stan::math::to_fvar(b_vals);
 
     vector<double> d_a = value_of_rec(a);
     vector<double> d_b = value_of_rec(b);
@@ -42,10 +33,15 @@ TEST(MathMatrix,value_of_rec) {
   }
 
   {
+    vector<fvar<double> > a_vals_fd = stan::math::to_fvar(a_vals);
+    vector<fvar<double> > b_vals_fd = stan::math::to_fvar(b_vals);
+    vector<fvar<double> > zeros_fd(10);
+    std::fill(zeros_fd.begin(), zeros_fd.end(), 0);
+
     vector<fvar<fvar<double> > > a;
-    fill(a_vals, a);
+    a = stan::math::to_fvar(a_vals_fd, zeros_fd);
     vector<fvar<fvar<double> > > b;
-    fill(b_vals, b);
+    b = stan::math::to_fvar(b_vals_fd, zeros_fd);
 
     vector<double> d_a = value_of_rec(a);
     vector<double> d_b = value_of_rec(b);
