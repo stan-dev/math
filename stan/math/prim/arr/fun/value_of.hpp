@@ -10,10 +10,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Convert a std::vector of type T to a std::vector of doubles.
-     *
-     * T must implement value_of. See
-     * test/math/fwd/mat/fun/value_of.cpp for fvar and var usage.
+     * Convert a std::vector of type T to a std::vector of
+     * child_type<T>::type.
      *
      * @tparam T Scalar type in std::vector
      * @param[in] x std::vector to be converted
