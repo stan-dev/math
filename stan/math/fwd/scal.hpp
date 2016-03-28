@@ -85,6 +85,7 @@
 #include <stan/math/fwd/scal/fun/tan.hpp>
 #include <stan/math/fwd/scal/fun/tanh.hpp>
 #include <stan/math/fwd/scal/fun/tgamma.hpp>
+#include <stan/math/fwd/scal/fun/to_fvar.hpp>
 #include <stan/math/fwd/scal/fun/trunc.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>

@@ -16,6 +16,7 @@
 
 #include <stan/math/prim/arr/fun/dot.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
+#include <stan/math/prim/arr/fun/fill.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar_type.hpp>
@@ -23,6 +24,8 @@
 #include <stan/math/prim/arr/fun/scaled_add.hpp>
 #include <stan/math/prim/arr/fun/sub.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/arr/fun/value_of_rec.hpp>
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
