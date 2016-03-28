@@ -25,8 +25,8 @@ namespace stan {
       stan::math::check_vector("squared_distance", "v1", v1);
       stan::math::check_vector("squared_distance", "v2", v2);
       stan::math::check_matching_sizes("squared_distance",
-                                                 "v1", v1,
-                                                 "v2", v2);
+                                       "v1", v1,
+                                       "v2", v2);
       if (v1.rows() != v2.rows())
         return (v1.transpose()-v2).squaredNorm();
       else
