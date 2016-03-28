@@ -30,6 +30,23 @@ namespace stan {
           Md(i, j) = value_of(M(i, j));
       return Md;
     }
+
+    /**
+     * Return the specified argument.
+     *
+     * <p>See <code>value_of(T)</code> for a polymorphic
+     * implementation using static casts.
+     *
+     * <p>This inline pass-through no-op should be compiled away.
+     *
+     * @param x Specified matrix.
+     * @return Specified matrix.
+     */
+    template <int R, int C>
+    inline typename Eigen::Matrix<double, R, C>
+    value_of(const Eigen::Matrix<double, R, C>& x) {
+      return x;
+    }
   }
 }
 
