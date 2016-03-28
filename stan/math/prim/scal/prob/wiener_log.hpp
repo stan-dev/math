@@ -42,6 +42,7 @@
 #include <boost/math/distributions.hpp>
 #include <cmath>
 #include <algorithm>  // for max
+#include <string>
 
 namespace stan {
 
