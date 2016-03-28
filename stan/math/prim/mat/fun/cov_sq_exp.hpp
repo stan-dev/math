@@ -61,7 +61,8 @@ namespace stan {
     /**
      * Returns a squared exponential kernel.
      *
-     * @param x std::vector of a type that can be square distance
+     * @param x1 std::vector of a type that can be square distance
+     * @param x2 std::vector of a type that can be square distance
      * @param sigma standard deviation
      * @param l length scale
      * @return squared distance
