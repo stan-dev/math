@@ -42,13 +42,12 @@ namespace stan {
       T_l neg_half_inv_l_sq = - 0.5 / square(l);
       
       for (size_t i = 0; i < x.size(); i++) {
+        cov(i, i) = sigma_sq;
         for (size_t j = i + 1; j < x.size(); j++) {
           cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
           cov(j, i) = cov(i, j);
         }
       }
-      for (size_t i = 0; i < x.size(); i++)
-        cov(i, i) = sigma_sq;
       return cov;
     }
   }
