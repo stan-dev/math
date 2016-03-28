@@ -1,9 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal/prob/neg_binomial_2_log_log.hpp>
-
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;
@@ -76,6 +72,8 @@ public:
     if (n != 0)
       return binomial_coefficient_log<typename stan::scalar_type<T_inv_scale>::type>(n + phi - 1.0, n)
         +n*eta + multiply_log(phi,phi) - (n+phi)*log_sum_exp(eta,log(phi));
+    else
+      return 0;
   }
 };
 

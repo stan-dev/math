@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/cumulative_sum.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>

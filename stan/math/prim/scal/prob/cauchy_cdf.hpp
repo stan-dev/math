@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CAUCHY_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CAUCHY_CDF_HPP
 
-#include <boost/random/cauchy_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -13,6 +13,8 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/cauchy_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <limits>
 
 namespace stan {
@@ -74,7 +76,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.to_var(0.0, y, mu, sigma);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute CDF and its gradients
@@ -125,7 +127,7 @@ namespace stan {
           operands_and_partials.d_x3[n] *= P;
       }
 
-      return operands_and_partials.to_var(P, y, mu, sigma);
+      return operands_and_partials.value(P);
     }
   }
 }

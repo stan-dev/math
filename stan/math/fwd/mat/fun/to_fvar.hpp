@@ -3,27 +3,12 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/fun/to_fvar.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
-#include <stan/math/prim/scal/meta/is_constant.hpp>
-#include <boost/utility/enable_if.hpp>
+
 
 namespace stan {
   namespace math {
-
-    template<typename T>
-    inline
-    fvar<T>
-    to_fvar(const T& x) {
-      return fvar<T>(x);
-    }
-
-    template<typename T>
-    inline
-    fvar<T>
-    to_fvar(const fvar<T>& x) {
-      return x;
-    }
-
 
     template<int R, int C, typename T>
     inline

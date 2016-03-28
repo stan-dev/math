@@ -1,10 +1,6 @@
-#include <stan/math/fwd/mat/fun/columns_dot_product.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradMixMatrixColumnsDotProduct, vector_vector_fv_1stDeriv) {
   using stan::math::vector_d;
@@ -82,9 +78,13 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_vector_fv_exception) {
   using stan::math::var;
 
   vector_d d1(3);
+  d1.setZero();
   vector_fv v1(3);
+  v1.setZero();
   vector_d d2(2);
+  d2.setZero();
   vector_fv v2(4);
+  v2.setZero();
 
   EXPECT_THROW(columns_dot_product(v1, d2), std::invalid_argument);
   EXPECT_THROW(columns_dot_product(d1, v2), std::invalid_argument);
@@ -99,9 +99,13 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_vector_fv_exceptions) {
   using stan::math::var;
 
   row_vector_d d1(3);
+  d1.setZero();
   row_vector_fv v1(3);
+  v1.setZero();
   vector_d d2(3);
+  d2.setZero();
   vector_fv v2(3);
+  v2.setZero();
 
   EXPECT_THROW(columns_dot_product(v1,d2), std::invalid_argument);
   EXPECT_THROW(columns_dot_product(d1,v2), std::invalid_argument);
@@ -116,9 +120,13 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_rowvector_fv_exceptions) {
   using stan::math::var;
 
   vector_d d1(3);
+  d1.setZero();
   vector_fv v1(3);
+  v1.setZero();
   row_vector_d d2(3);
+  d2.setZero();
   row_vector_fv v2(3);
+  v2.setZero();
 
   EXPECT_THROW(columns_dot_product(v1,d2), std::invalid_argument);
   EXPECT_THROW(columns_dot_product(d1,v2), std::invalid_argument);
@@ -509,9 +517,13 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_vector_ffv_exceptions) {
   using stan::math::var;
 
   row_vector_d d1(3);
+  d1.setZero();
   row_vector_ffv v1(3);
+  v1.setZero();
   vector_d d2(3);
+  d2.setZero();
   vector_ffv v2(3);
+  v2.setZero();
 
   EXPECT_THROW(columns_dot_product(v1,d2), std::invalid_argument);
   EXPECT_THROW(columns_dot_product(d1,v2), std::invalid_argument);
@@ -526,9 +538,13 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_rowvector_ffv_exceptions) {
   using stan::math::var;
 
   vector_d d1(3);
+  d1.setZero();
   vector_ffv v1(3);
+  v1.setZero();
   row_vector_d d2(3);
+  d2.setZero();
   row_vector_ffv v2(3);
+  v2.setZero();
 
   EXPECT_THROW(columns_dot_product(v1,d2), std::invalid_argument);
   EXPECT_THROW(columns_dot_product(d1,v2), std::invalid_argument);

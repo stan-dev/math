@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_LOG_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
@@ -100,7 +102,7 @@ namespace stan {
         if (!is_constant_struct<T_log_rate>::value)
           operands_and_partials.d_x1[i] += n_vec[i] - exp_alpha[i];
       }
-      return operands_and_partials.to_var(logp, alpha);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_n,

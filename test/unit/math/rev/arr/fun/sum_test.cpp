@@ -1,8 +1,7 @@
+#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/fun/sum.hpp>
-#include <stan/math/prim/arr/fun/sum.hpp>
 
-TEST(AgradRevMatrix, sum_std_vector) {
+TEST(AgradRev, sum_std_vector) {
   using stan::math::sum;
   using std::vector;
   using stan::math::var;

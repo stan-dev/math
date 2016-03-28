@@ -1,4 +1,4 @@
-#include <stan/math/rev/scal/fun/is_uninitialized.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRev,undefined) {

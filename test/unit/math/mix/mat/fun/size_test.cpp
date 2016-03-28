@@ -1,8 +1,5 @@
-#include <stan/math/prim/mat/fun/size.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradMixMatrixSize,fvar_var) {
   using std::vector;

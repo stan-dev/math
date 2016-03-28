@@ -3,11 +3,7 @@
 
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
-#if defined(_MSC_VER)
-    #include <msinttypes.h>  // Microsoft Visual Studio lacks full stdint.h
-#else
-    #include <stdint.h>
-#endif
+#include <stdint.h>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <cstdlib>
 #include <cstddef>

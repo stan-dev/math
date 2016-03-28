@@ -17,9 +17,15 @@ matrix:
 
 env:
   - TESTFOLDER=test/unit/math/memory
-  - TESTFOLDER=test/unit/math/prim
-  - TESTFOLDER=test/unit/math/rev
-  - TESTFOLDER=test/unit/math/fwd
+  - TESTFOLDER=test/unit/math/prim/scal
+  - TESTFOLDER=test/unit/math/prim/arr
+  - TESTFOLDER=test/unit/math/prim/mat
+  - TESTFOLDER=test/unit/math/rev/scal
+  - TESTFOLDER=test/unit/math/rev/arr
+  - TESTFOLDER=test/unit/math/rev/mat
+  - TESTFOLDER=test/unit/math/fwd/scal
+  - TESTFOLDER=test/unit/math/fwd/arr
+  - TESTFOLDER=test/unit/math/fwd/mat
  # - TESTFOLDER=test/unit/math/mix  ## commenting this out due to segfault on travis
 
 script: ./runTests.py $TESTFOLDER

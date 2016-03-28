@@ -1,9 +1,7 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/acosh.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/acosh.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/core.hpp>
 
 TEST(AgradFwdAcosh,Fvar) {
   using stan::math::fvar;

@@ -1,33 +1,7 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/scal/fun/inc_beta.hpp>
-#include <stan/math/rev/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/rev/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/rev/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/rev/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/acos.hpp>
-#include <stan/math/rev/scal/fun/acos.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/ceil.hpp>
-#include <stan/math/rev/scal/fun/ceil.hpp>
-#include <stan/math/fwd/scal/fun/lbeta.hpp>
-#include <stan/math/fwd/scal/fun/grad_inc_beta.hpp>
-#include <stan/math/rev/scal/fun/grad_inc_beta.hpp>
 
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
 
 TEST(ProbInternalMath, grad_reg_inc_beta_fd) {

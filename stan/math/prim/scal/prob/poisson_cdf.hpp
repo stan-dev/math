@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_CDF_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
@@ -65,7 +67,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.to_var(0.0, lambda);
+          return operands_and_partials.value(0.0);
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -90,7 +92,7 @@ namespace stan {
           operands_and_partials.d_x1[i] *= P;
       }
 
-      return operands_and_partials.to_var(P, lambda);
+      return operands_and_partials.value(P);
     }
   }
 }

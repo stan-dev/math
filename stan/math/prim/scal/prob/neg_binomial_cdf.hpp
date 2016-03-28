@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_CDF_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
@@ -70,7 +70,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.to_var(0.0, alpha, beta);
+          return operands_and_partials.value(0.0);
       }
 
       // Cache a few expensive function calls if alpha is a parameter
@@ -96,7 +96,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.to_var(1.0, alpha, beta);
+          return operands_and_partials.value(1.0);
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -133,7 +133,7 @@ namespace stan {
           operands_and_partials.d_x2[i] *= P;
       }
 
-      return operands_and_partials.to_var(P, alpha, beta);
+      return operands_and_partials.value(P);
     }
 
   }  // prob

@@ -1,26 +1,25 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LOG_HPP
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
+#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <bool propto,
               typename T_y, typename T_loc, typename T_covar>
@@ -39,6 +38,7 @@ namespace stan {
       using stan::math::check_positive;
       using stan::math::check_symmetric;
       using stan::math::check_ldlt_factor;
+      using Eigen::Dynamic;
 
       check_positive(function, "Covariance matrix rows", Sigma.rows());
       check_symmetric(function, "Covariance matrix", Sigma);

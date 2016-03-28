@@ -1,10 +1,7 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
 
 TEST(AgradFwdDigamma,Fvar) {
   using stan::math::fvar;

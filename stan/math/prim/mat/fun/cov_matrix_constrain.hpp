@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <cmath>
+#include <stdexcept>
 
 namespace stan {
 

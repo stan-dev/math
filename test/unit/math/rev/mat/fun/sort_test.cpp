@@ -1,14 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/rev/mat/fun/sort_asc.hpp>
-#include <stan/math/rev/mat/fun/sort_desc.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/sort.hpp>
-#include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 void test_sort_asc(VEC val) {
   using stan::math::sort_asc;

@@ -3,20 +3,21 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <typename F>
     void
     jacobian(const F& f,
-             const Eigen::Matrix<double, Dynamic, 1>& x,
-             Eigen::Matrix<double, Dynamic, 1>& fx,
-             Eigen::Matrix<double, Dynamic, Dynamic>& J) {
+             const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+             Eigen::Matrix<double, Eigen::Dynamic, 1>& fx,
+             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
       using Eigen::Matrix;
+      using Eigen::Dynamic;
       using stan::math::var;
       start_nested();
       try {

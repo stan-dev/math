@@ -1,11 +1,5 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

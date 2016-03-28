@@ -1,8 +1,5 @@
-#include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <stdlib.h>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 
 using stan::math::matrix_d;
 

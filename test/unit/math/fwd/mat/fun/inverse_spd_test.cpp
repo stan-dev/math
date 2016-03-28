@@ -1,10 +1,5 @@
-#include <stan/math/prim/mat/fun/inverse_spd.hpp>
-#include <stan/math/fwd/mat/fun/inverse.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/scal/fun/abs.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
 
 
 class AgradFwdMatrixInverseSPD : public testing::Test {

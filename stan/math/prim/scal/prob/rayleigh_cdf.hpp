@@ -93,7 +93,7 @@ namespace stan {
             * inv_sigma[n] * exp_div_1m_exp * cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, sigma);
+      return operands_and_partials.value(cdf);
     }
   }
 }

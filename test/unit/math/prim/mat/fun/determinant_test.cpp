@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/determinant.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 

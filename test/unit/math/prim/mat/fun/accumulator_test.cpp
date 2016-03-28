@@ -1,8 +1,6 @@
-#include <vector>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/accumulator.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 // test sum of first n numbers for sum of a
 template <typename T>

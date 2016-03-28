@@ -1,13 +1,8 @@
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log1p.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/rev/scal/fun/inv_logit.hpp>
+#include <vector>
 
 void test_log1m_inv_logit(const double x) {
   using stan::math::var;

@@ -92,7 +92,7 @@ namespace stan {
           operands_and_partials.d_x3[n] *= cdf;
       }
 
-      return operands_and_partials.to_var(cdf, y, alpha, sigma);
+      return operands_and_partials.value(cdf);
     }
   }
 }

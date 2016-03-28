@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/columns_dot_self.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix,columns_dot_self) {

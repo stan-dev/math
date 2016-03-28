@@ -10,7 +10,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return <code>true</code> if the specified matrix is lower
      * triangular.
@@ -32,9 +31,11 @@ namespace stan {
      */
     template <typename T_y>
     inline bool
-    check_lower_triangular(const char* function,
-                           const char* name,
-                           const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_lower_triangular(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
       for (int n = 1; n < y.cols(); ++n) {
         for (int m = 0; m < n && m < y.rows(); ++m) {
           if (y(m, n) != 0) {

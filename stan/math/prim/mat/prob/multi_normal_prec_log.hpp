@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_LOG_HPP
 
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
@@ -20,15 +16,18 @@
 #include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
-#include <stan/math/prim/scal/meta/VectorViewMvt.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
 
     template <bool propto,
               typename T_y, typename T_loc, typename T_covar>
@@ -55,7 +54,8 @@ namespace stan {
       check_positive(function, "Precision matrix rows", Sigma.rows());
       check_symmetric(function, "Precision matrix", Sigma);
 
-      LDLT_factor<T_covar_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma);
+      LDLT_factor<T_covar_elem,
+        Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of precision parameter",
                         ldlt_Sigma);
 
@@ -126,8 +126,8 @@ namespace stan {
       if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
-          Eigen::Matrix<typename return_type<T_y, T_loc>::type, Dynamic, 1>
-            y_minus_mu(size_y);
+          Eigen::Matrix<typename return_type<T_y, T_loc>::type,
+            Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
           sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);

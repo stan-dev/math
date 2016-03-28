@@ -1,9 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/dot_self.hpp>
-#include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/core.hpp>
 
 using stan::math::fvar;
 TEST(AgradMixMatrixDotSelf, vec_fv_1stDeriv) {

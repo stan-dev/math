@@ -1,8 +1,6 @@
-#include <stdexcept>
-#include <stan/math/prim/mat/fun/rank.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stdexcept>
 
 template <typename T>
 void test_rank() {

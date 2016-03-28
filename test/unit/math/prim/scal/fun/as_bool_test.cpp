@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/fun/as_bool.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, as_bool) {

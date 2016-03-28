@@ -9,6 +9,7 @@
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace stan {

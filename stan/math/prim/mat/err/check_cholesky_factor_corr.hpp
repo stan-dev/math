@@ -11,7 +11,6 @@
 namespace stan {
 
   namespace math {
-    using Eigen::Dynamic;
     /**
      * Return <code>true</code> if the specified matrix is a valid
      * Cholesky factor of a correlation matrix.
@@ -37,9 +36,12 @@ namespace stan {
      */
     template <typename T_y>
     bool
-    check_cholesky_factor_corr(const char* function,
-                               const char* name,
-                               const Eigen::Matrix<T_y, Dynamic, Dynamic>& y) {
+    check_cholesky_factor_corr(
+      const char* function,
+      const char* name,
+      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
+    ) {
+      using Eigen::Dynamic;
       check_square(function, name, y);
       check_lower_triangular(function, name, y);
       for (int i = 0; i < y.rows(); ++i)

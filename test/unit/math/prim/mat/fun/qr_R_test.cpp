@@ -1,7 +1,4 @@
-#include <stan/math/prim/mat/fun/qr_Q.hpp>
-#include <stan/math/prim/mat/fun/qr_R.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, qr_R) {

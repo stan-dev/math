@@ -1,11 +1,5 @@
 // Arguments: Ints, Ints, Doubles
-#include <stan/math/prim/scal/prob/binomial_logit_log.hpp>
-
-#include <stan/math/prim/scal/fun/logit.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;
