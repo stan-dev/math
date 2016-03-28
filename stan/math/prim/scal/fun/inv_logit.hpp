@@ -47,9 +47,7 @@ namespace stan {
      * @param a Argument.
      * @return Inverse logit of argument.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    inv_logit(const T a) {
+    inline double inv_logit(const double a) {
       using std::exp;
       return 1.0 / (1.0 + exp(-a));
     }

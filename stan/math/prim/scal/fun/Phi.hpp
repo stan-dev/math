@@ -26,9 +26,7 @@ namespace stan {
      * @param x Argument.
      * @return Probability random sample is less than or equal to argument.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    Phi(const T x) {
+    inline double Phi(const double x) {
       // overridden in fvar and var, so can hard-code boost versions
       // here for scalars only
       using stan::math::check_not_nan;

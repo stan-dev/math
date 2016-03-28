@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <boost/math/special_functions/expm1.hpp>
-#include <cmath>
 
 namespace stan {
   namespace math {

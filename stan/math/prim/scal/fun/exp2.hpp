@@ -17,7 +17,7 @@ namespace stan {
      * @param y Value.
      * @return Exponent base 2 of value.
      */
-    double exp2(const double y) {
+    inline double exp2(const double y) {
       using std::pow;
       return pow(2.0, y);
     }

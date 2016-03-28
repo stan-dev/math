@@ -39,9 +39,7 @@ namespace stan {
        \f]
      *
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log1p_exp(const T a) {
+    inline double log1p_exp(const double a) {
       using std::exp;
       // like log_sum_exp below with b=0.0; prevents underflow
       if (a > 0.0)
