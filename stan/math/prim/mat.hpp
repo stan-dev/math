@@ -46,6 +46,8 @@
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>

@@ -5,6 +5,7 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 
+#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
