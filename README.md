@@ -48,10 +48,10 @@ The `-I` includes provide paths pointing to the three necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.4/ -I ~/stan-dev/math/lib/boost_1.60.0/ foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.8/ -I ~/stan-dev/math/lib/boost_1.60.0/ foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.4/Eigen` and `~stan-dev/math/lib/boost_1.60.0/boost`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.8/Eigen` and `~stan-dev/math/lib/boost_1.60.0/boost`.
 
 Other Compilers
 ---------------
