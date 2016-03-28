@@ -15,7 +15,12 @@ namespace stan {
     /**
      * Returns a squared exponential kernel.
      *
-     * @param x std::vector of a type that can be square distance
+     * @tparam T_x type of std::vector of elements
+     * @tparam T_sigma type of sigma
+     * @tparam T_l type of length scale
+     *
+     * @param x std::vector of elements that can be used in square distance.
+     *    This function assumes each element of x is the same size.
      * @param sigma standard deviation
      * @param l length scale
      * @return squared distance
@@ -48,9 +53,6 @@ namespace stan {
       for (size_t i = 0; i < x.size(); i++) {
         cov(i, i) = sigma_sq;
         for (size_t j = i + 1; j < x.size(); j++) {
-          stan::math::check_size_match("cov_sq_exp",
-                                       "x", stan::length(x[i]),
-                                       "x", stan::length(x[j]));
           cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
           cov(j, i) = cov(i, j);
         }
@@ -61,7 +63,13 @@ namespace stan {
     /**
      * Returns a squared exponential kernel.
      *
-     * @param x std::vector of a type that can be square distance
+     * @tparam T_x1 type of first std::vector of elements
+     * @tparam T_x2 type of second std::vector of elements
+     * @tparam T_sigma type of sigma
+     * @tparam T_l type of length scale
+     *
+     * @param x1 std::vector of elements that can be used in square distance
+     * @param x2 std::vector of elements that can be used in square distance
      * @param sigma standard deviation
      * @param l length scale
      * @return squared distance
@@ -84,7 +92,6 @@ namespace stan {
       for (size_t n = 0; n < x2.size(); n++)
         stan::math::check_not_nan("cov_sq_exp", "x2", x2[n]);
 
-
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
         cov(x1.size(), x2.size());
@@ -96,9 +103,6 @@ namespace stan {
 
       for (size_t i = 0; i < x1.size(); i++) {
         for (size_t j = 0; j < x2.size(); j++) {
-          stan::math::check_size_match("cov_sq_exp",
-                                       "x1", stan::length(x1[i]),
-                                       "x2", stan::length(x2[j]));
           cov(i, j) = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
         }
       }
