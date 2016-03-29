@@ -6,6 +6,7 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <stan/math/prim/mat/fun/cbrt.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <vector>
 
 /**
  * This is the structure for testing mock function cbrt (defined in the
@@ -65,7 +66,7 @@ struct cbrt_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(10.0).add(-0.2).build();
+      .add(1.3).add(-2.6).add(0).add(-0.2).build();
   }
 
   /**
