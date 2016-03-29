@@ -17,6 +17,7 @@ namespace stan {
       static inline T fun(const T& x) {
         using std::exp;
         stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 5);
+        if (x == 0) return std::numeric_limits<double>::quiet_NaN();
         return exp(x);
       }
     };

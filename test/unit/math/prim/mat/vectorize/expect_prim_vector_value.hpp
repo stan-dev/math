@@ -4,19 +4,23 @@
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include <vector>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 template <typename F>
 void expect_prim_vector_value() {
   using Eigen::VectorXd;
   using std::vector;
+  using stan::math::is_nan;
 
   std::vector<double> valid_inputs = F::valid_inputs();
 
   VectorXd b = VectorXd::Map(valid_inputs.data(), valid_inputs.size());
   VectorXd fb = F::template apply<VectorXd>(b);
   EXPECT_EQ(b.size(), fb.size());
-  for (int i = 0; i < fb.size(); ++i)
+  for (int i = 0; i < fb.size(); ++i) {
+    if (is_nan(F::apply_base(b(i))) && is_nan(fb(i))) continue;
     EXPECT_FLOAT_EQ(F::apply_base(b(i)), fb(i));
+  }
 
   vector<VectorXd> d;
   d.push_back(b);
@@ -25,8 +29,10 @@ void expect_prim_vector_value() {
   EXPECT_EQ(d.size(), fd.size());
   for (size_t i = 0; i < fd.size(); ++i) {
     EXPECT_EQ(d[i].size(), fd[i].size());
-    for (int j = 0; j < fd[i].size(); ++j)
+    for (int j = 0; j < fd[i].size(); ++j) {
+      if (is_nan(F::apply_base(d[i](j))) && is_nan(fd[i](j))) continue;
       EXPECT_FLOAT_EQ(F::apply_base(d[i](j)), fd[i](j));
+    }
   }
 }
 #endif

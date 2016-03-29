@@ -3,8 +3,11 @@
 
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 static inline void expect_val_deriv_eq(double exp_var, double test_var) {
+  using stan::math::is_nan;
+  if (is_nan(exp_var) && is_nan(test_var)) return;
   EXPECT_FLOAT_EQ(exp_var, test_var);
 }
 
