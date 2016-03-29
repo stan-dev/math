@@ -4,15 +4,15 @@
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/exp.hpp>
+#include <stan/math/prim/mat/fun/atan.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 #include <vector>
 
 /**
- * This is the structure for testing mock function exp (defined in the
+ * This is the structure for testing mock function atan (defined in the
  * testing framework).  See README.txt for more instructions.
  */
-struct exp_test {
+struct atan_test {
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -28,8 +28,8 @@ struct exp_test {
    */
   template <typename R, typename T>
   static R apply(const T& x) {
-    using stan::math::exp;
-    return exp(x);
+    using stan::math::atan;
+    return atan(x);
   }
 
   /**
@@ -92,7 +92,7 @@ struct exp_test {
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, exp_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, exp_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, exp_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, exp_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, atan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, atan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, atan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, atan_test);
