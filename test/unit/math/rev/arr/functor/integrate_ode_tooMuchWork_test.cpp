@@ -18,8 +18,8 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
 
   // initial value and parameters from model definition
   std::vector<stan::math::var> y0_v(2);
-  y0_v[0] = 1.0;
-  y0_v[1] = 1E-3;
+  y0_v[0] = 1E5;
+  y0_v[1] = 1E-1;
 
   double t0 = 0;
 
@@ -27,7 +27,7 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
   ts_long.push_back(1E10);
 
   std::vector<double> ts_short;
-  ts_short.push_back(10);
+  ts_short.push_back(1);
   
   std::vector<stan::math::var> theta_v(4);
 
