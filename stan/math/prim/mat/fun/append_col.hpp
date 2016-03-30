@@ -167,6 +167,65 @@ namespace stan {
       return result;
     }
 
+
+    /**
+     * Return the result of stacking an scalar on top of the
+     * a row vector, with the result being a row vector.
+     *
+     * This function applies to (scalar, row vector) and returns a
+     * row vector.
+     *
+     * @tparam T1 Scalar type of the scalar
+     * @tparam T2 Scalar type of the row vector.
+     * @tparam R Row specification of the row vector.
+     * @param A scalar.
+     * @param B row vector.
+     * @return Result of stacking the scalar on top of the row vector.
+     */
+    template <typename T1, typename T2, int R, int C>
+    inline Eigen::Matrix<typename return_type<T1, T2>::type,
+                         1, Eigen::Dynamic>
+    append_col(const T1& A,
+               const Eigen::Matrix<T2, R, C>& B) {
+      using Eigen::Dynamic;
+      using Eigen::Matrix;
+      typedef typename return_type<T1, T2>::type return_type;
+
+      Matrix<return_type, 1, Dynamic>
+        result(B.size() + 1);
+      result << A, B.template cast<return_type>();
+      return result;
+    }
+
+
+    /**
+     * Return the result of stacking a row vector on top of the
+     * an scalar, with the result being a row vector.
+     *
+     * This function applies to (row vector, scalar) and returns a
+     * row vector.
+     *
+     * @tparam T1 Scalar type of the row vector.
+     * @tparam T2 Scalar type of the scalar
+     * @tparam R Row specification of the row vector.
+     * @param A row vector.
+     * @param B scalar.
+     * @return Result of stacking the row vector on top of the scalar.
+     */
+    template <typename T1, typename T2, int R, int C>
+    inline Eigen::Matrix<typename return_type<T1, T2>::type,
+                         1, Eigen::Dynamic>
+    append_col(const Eigen::Matrix<T1, R, C>& A,
+               const T2& B) {
+      using Eigen::Dynamic;
+      using Eigen::Matrix;
+      typedef typename return_type<T1, T2>::type return_type;
+
+      Matrix<return_type, 1, Dynamic>
+        result(A.size() + 1);
+      result << A.template cast<return_type>(), B;
+      return result;
+    }
   }
 
 }
