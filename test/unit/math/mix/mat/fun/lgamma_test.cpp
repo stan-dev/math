@@ -4,15 +4,14 @@
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <vector>
 
 /**
- * This is the structure for testing mock function log (defined in the
+ * This is the structure for testing mock function lgamma (defined in the
  * testing framework).  See README.txt for more instructions.
  */
-struct log_test {
+struct lgamma_test {
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -28,8 +27,8 @@ struct log_test {
    */
   template <typename R, typename T>
   static R apply(const T& x) {
-    using stan::math::log;
-    return log(x);
+    using stan::math::lgamma;
+    return lgamma(x);
   }
 
   /**
@@ -66,14 +65,15 @@ struct log_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(10.2).build();
+      .add(1.3).add(-2.6).add(3.7).add(-0.2).build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs() {
-    return std::vector<double>();
+    return test::math::vector_builder<double>()
+      .add(-10.0).add(0.0).add(-2.0).add(-4.0).build();
   }
 
   /**
@@ -81,18 +81,19 @@ struct log_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(12).add(-2).add(0).add(1).build();
+      .add(1).add(22).add(10).add(5).build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs() {
-    return std::vector<int>();
+    return test::math::vector_builder<int>()
+      .add(0).add(-25).add(-3).add(-15).build();
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, log_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, lgamma_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, lgamma_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, lgamma_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, lgamma_test);

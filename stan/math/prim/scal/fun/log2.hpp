@@ -16,13 +16,10 @@ namespace stan {
      *
      * <code>log2(a) = log(a) / std::log(2.0)</code>.
      *
-     * @tparam T type of scalar
      * @param a Value.
      * @return Base 2 logarithm of the value.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log2(const T a) {
+    inline double log2(const double a) {
       using std::log;
       return log(a) / LOG_2;
     }

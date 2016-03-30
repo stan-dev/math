@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 
 namespace stan {
@@ -35,9 +34,7 @@ namespace stan {
      * @param x Specified value.
      * @return Natural log of one minus <code>x</code>.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log1m(T x) {
+    inline double log1m(const double x) {
       return log1p(-x);
     }
 

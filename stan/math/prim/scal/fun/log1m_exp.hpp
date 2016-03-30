@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_EXP_HPP
 
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <boost/throw_exception.hpp>
 #include <cmath>
 #include <limits>
@@ -36,9 +35,7 @@ namespace stan {
        \end{cases}
        \f]
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log1m_exp(const T a) {
+    inline double log1m_exp(const double a) {
       using std::log;
       using std::exp;
       using ::expm1;

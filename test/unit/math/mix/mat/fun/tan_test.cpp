@@ -4,15 +4,16 @@
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/tan.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 #include <vector>
+#include <stan/math/prim/scal/fun/constants.hpp>
 
 /**
- * This is the structure for testing mock function log (defined in the
+ * This is the structure for testing mock function tan (defined in the
  * testing framework).  See README.txt for more instructions.
  */
-struct log_test {
+struct tan_test {
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -28,8 +29,8 @@ struct log_test {
    */
   template <typename R, typename T>
   static R apply(const T& x) {
-    using stan::math::log;
-    return log(x);
+    using stan::math::tan;
+    return tan(x);
   }
 
   /**
@@ -65,8 +66,9 @@ struct log_test {
    * Return sequence of valid double-valued inputs.
    */
   static std::vector<double> valid_inputs() {
+    using stan::math::pi;
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(10.2).build();
+      .add(4.4).add(pi()/2).add(0).add(-3 * pi()/2).add(-0.7).build();
   }
 
   /**
@@ -81,7 +83,7 @@ struct log_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(12).add(-2).add(0).add(1).build();
+      .add(1).add(-2).add(0).add(3).build();
   }
 
   /**
@@ -92,7 +94,7 @@ struct log_test {
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, log_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, log_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, tan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, tan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, tan_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, tan_test);
