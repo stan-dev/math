@@ -68,8 +68,8 @@ namespace stan {
       if ((N < cutoff) || (N - n < cutoff)) {
         return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
       } else {
-        return n * log(N - n) + (N + 0.5) * log(N/(N-n))
-          + 1/(12*N) - n - 1/(12*(N-n)) - lgamma(n + 1.0);
+        return n * log(N - n) + (N + 0.5) * log(N/(N - n + 0.0))
+          + 1.0 / (12 * N) - n - 1.0 / (12 * (N - n)) - lgamma(n + 1.0);
       }
     }
 
