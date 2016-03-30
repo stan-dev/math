@@ -13,9 +13,6 @@ TEST(AgradFwdLogFallingFactorial,Fvar) {
   EXPECT_FLOAT_EQ(std::log(12.0), x.val_);
   EXPECT_FLOAT_EQ((boost::math::digamma(5) - boost::math::digamma(3)),
                   x.d_);
-                  
-  EXPECT_FLOAT_EQ((boost::math::digamma(5) - boost::math::digamma(3)),
-                  x.d_);
   
   //finite diff
   double eps = 1e-6;

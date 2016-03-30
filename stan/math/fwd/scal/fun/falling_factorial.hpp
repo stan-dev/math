@@ -19,8 +19,8 @@ namespace stan {
       T falling_fact(falling_factorial(x.val_, n.val_));
       return fvar<T>(falling_fact,
                      falling_fact
-                     * (digamma(x.val_ + 1)
-                     - digamma(x.val_ - n.val_ + 1)) * x.d_
+                     * (digamma(x.val_ + 1) - digamma(x.val_ - n.val_ + 1))
+                     * x.d_
                      + falling_fact
                      * digamma(x.val_ - n.val_ + 1) * n.d_);
     }
@@ -34,8 +34,8 @@ namespace stan {
       T falling_fact(falling_factorial(x.val_, n));
       return fvar<T>(falling_fact,
                      falling_fact
-                     * (digamma(x.val_ + 1)
-                     - digamma(x.val_ - n + 1)) * x.d_);
+                     * (digamma(x.val_ + 1) - digamma(x.val_ - n + 1))
+                     * x.d_);
     }
 
     template<typename T>
