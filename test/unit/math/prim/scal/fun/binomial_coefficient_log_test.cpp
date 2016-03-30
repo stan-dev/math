@@ -8,6 +8,8 @@ TEST(MathFunctions, binomial_coefficient_log) {
   EXPECT_FLOAT_EQ(2.0, exp(binomial_coefficient_log(2.0,1.0)));
   EXPECT_FLOAT_EQ(3.0, exp(binomial_coefficient_log(3.0,1.0)));
   EXPECT_NEAR(3.0, exp(binomial_coefficient_log(3.0,2.0)),0.0001);
+
+  EXPECT_FLOAT_EQ(29979.16, binomial_coefficient_log(100000, 91116));
 }
 
 TEST(MathFunctions, binomial_coefficient_log_nan) {
