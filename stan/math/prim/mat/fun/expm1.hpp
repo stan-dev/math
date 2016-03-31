@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of expm1().
+     * Structure to wrap expm1() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Natural exponential of x minus one. 
      */
     struct expm1_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of expm1().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Natural exponential of each value in x minus one. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<expm1_fun, T>::return_t
     expm1(const T& x) {

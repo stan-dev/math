@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of acosh().
+     * Structure to wrap acosh() so it can be vectorized.
+     * @param x Argument variable >= 1.
+     * @tparam T Argument type.
+     * @return Inverse hyperbolic cosine of variable in radians. 
      */
     struct acosh_fun {
       template <typename T>
@@ -19,6 +21,13 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of acosh().
+     * @param x Container of variables >= 1.
+     * @tparam T Container type.
+     * @return Inverse hyperbolic cosine of each variable 
+     *         in the container, in radians. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<acosh_fun, T>::return_t
     acosh(const T& x) {

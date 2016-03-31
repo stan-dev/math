@@ -9,8 +9,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of cbrt().
+     * Structure to wrap cbrt() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Cube root of x. 
      */
     struct cbrt_fun {
       template <typename T>
@@ -20,6 +22,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of cbrt().
+     * @param x Container of variables.
+     * @tparam T Container type.
+     * @return Cube root of each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<cbrt_fun, T>::return_t
     cbrt(const T& x) {

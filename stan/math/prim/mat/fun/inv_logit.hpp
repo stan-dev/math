@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of inv_logit().
+     * Structure to wrap inv_logit() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Inverse logit of x. 
      */
     struct inv_logit_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of inv_logit().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Inverse logit applied to each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<inv_logit_fun, T>::return_t
     inv_logit(const T& x) {

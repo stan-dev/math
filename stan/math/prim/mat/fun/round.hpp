@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of round().
+     * Structure to wrap round() so it can be vectorized.
+     * @param x Argument variable.
+     * @tparam T Argument type.
+     * @return Rounded value of x.
      */
     struct round_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of round.
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Rounded value of each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<round_fun, T>::return_t
     round(const T& x) {

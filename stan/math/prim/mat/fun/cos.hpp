@@ -7,6 +7,12 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Structure to wrap cos() so it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Cosine of x. 
+     */
     struct cos_fun {
       template <typename T>
       static inline T fun(const T& x) {
@@ -15,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of cos().
+     * @param x Container of angles in radians.
+     * @tparam T Container type.
+     * @return Cosine of each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<cos_fun, T>::return_t
     cos(const T& x) {

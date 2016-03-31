@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of log10().
+     * Structure to wrap log10() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Log base-10 of x.
      */
     struct log10_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of log10().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Log base-10 applied to each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<log10_fun, T>::return_t
     log10(const T& x) {

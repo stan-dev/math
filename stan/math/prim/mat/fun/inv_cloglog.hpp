@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of inv_cloglog().
+     * Structure to wrap inv_cloglog() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return 1 - exp(-exp(x)). 
      */
     struct inv_cloglog_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of inv_cloglog().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return 1 - exp(-exp()) applied to each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<inv_cloglog_fun, T>::return_t
     inv_cloglog(const T& x) {

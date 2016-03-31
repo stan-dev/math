@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of floor().
+     * Structure to wrap floor() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Greatest integer <= x. 
      */
     struct floor_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of floor().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Greatest integer <= each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<floor_fun, T>::return_t
     floor(const T& x) {

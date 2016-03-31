@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of asinh().
+     * Structure to wrap asinh() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Inverse hyperbolic sine of x in radians. 
      */
     struct asinh_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of acos().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Inverse hyperbolic sine of each value in x, in radians. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<asinh_fun, T>::return_t
     asinh(const T& x) {

@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of erf().
+     * Structure to wrap erf() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Error function of x. 
      */
     struct erf_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of erf().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Error function applied to each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<erf_fun, T>::return_t
     erf(const T& x) {

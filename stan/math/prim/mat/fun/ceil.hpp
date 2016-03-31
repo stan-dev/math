@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of ceil().
+     * Structure to wrap ceil() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Least integer >= x. 
      */
     struct ceil_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of ceil().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Least integer >= each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<ceil_fun, T>::return_t
     ceil(const T& x) {

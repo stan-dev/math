@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of inv_square().
+     * Structure to wrap inv_square() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return 1 / x squared. 
      */
     struct inv_square_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of inv_square().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return 1 / the square of each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<inv_square_fun, T>::return_t
     inv_square(const T& x) {

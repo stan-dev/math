@@ -7,6 +7,12 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Structure to wrap sin() so it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Argument type.
+     * @return Sine of x.
+     */
     struct sin_fun {
       template <typename T>
       static inline T fun(const T& x) {
@@ -15,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of sin().
+     * @param x Container of angles in radians.
+     * @tparam T Container type.
+     * @return Sine of each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<sin_fun, T>::return_t
     sin(const T& x) {

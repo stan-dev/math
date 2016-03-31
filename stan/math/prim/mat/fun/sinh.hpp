@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of sinh().
+     * Structure to wrap sinh() so that it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyperbolic sine of x.
      */
     struct sinh_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of sinh().
+     * @param x Container of variables.
+     * @tparam T Container type.
+     * @return Hyperbolic sine of each variable in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<sinh_fun, T>::return_t
     sinh(const T& x) {

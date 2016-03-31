@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of atanh().
+     * Structure to wrap atan() so it can be vectorized.
+     * @param x Variable in range [-1, 1].
+     * @tparam T Variable type.
+     * @return Inverse hyperbolic tangent of x in radians. 
      */
     struct atanh_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of atan().
+     * @param x Container of variables in range [-1, 1].
+     * @tparam T Container type.
+     * @return Inverse hyberbolic tangent of each value in x, in radians. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<atanh_fun, T>::return_t
     atanh(const T& x) {

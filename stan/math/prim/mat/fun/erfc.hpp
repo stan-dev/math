@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of erfc().
+     * Structure to wrap erfc() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Complementary error function applied to x. 
      */
     struct erfc_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of erfc().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Complementary error function applied to each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<erfc_fun, T>::return_t
     erfc(const T& x) {

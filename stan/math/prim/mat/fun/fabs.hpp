@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of fabs().
+     * Structure to wrap fabs() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Absolute value of x. 
      */
     struct fabs_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of fabs().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Absolute value of each value in x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<fabs_fun, T>::return_t
     fabs(const T& x) {

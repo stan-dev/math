@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of cosh().
+     * Structure to wrap cosh() so it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyperbolic cosine of x. 
      */
     struct cosh_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of cosh().
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyberbolic cosine of x. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<cosh_fun, T>::return_t
     cosh(const T& x) {

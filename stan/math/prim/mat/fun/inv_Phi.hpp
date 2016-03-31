@@ -9,8 +9,11 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of inv_Phi().
+     * Structure to wrap inv_Phi() so it can be vectorized.
+     * @param x Variable in range [0, 1].
+     * @tparam T Variable type.
+     * @return Inverse unit normal CDF of x. 
+     * @throw std::domain_error if x is not between 0 and 1.
      */
     struct inv_Phi_fun {
       template <typename T>
@@ -22,6 +25,13 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of inv_Phi().
+     * @param x Container of variables in range [0, 1].
+     * @tparam T Container type.
+     * @return Inverse unit normal CDF of each value in x. 
+     * @throw std::domain_error if any value is not between 0 and 1.
+    */
     template <typename T>
     inline typename apply_scalar_unary<inv_Phi_fun, T>::return_t
     inv_Phi(const T& x) {

@@ -7,6 +7,12 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Structure to wrap abs() so it can be vectorized.
+     * @param x Argument variable.
+     * @tparam T Argument type.
+     * @return Absolute value of x.
+     */
     struct abs_fun {
       template <typename T>
       static inline T fun(const T& x) {
@@ -15,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of abs().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Absolute value of each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<abs_fun, T>::return_t
     abs(const T& x) {

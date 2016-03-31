@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of acos().
+     * Structure to wrap acos() so it can be vectorized.
+     * @param x Variable in range [-1, 1].
+     * @tparam T Variable type.
+     * @return Arc cosine of variable in radians. 
      */
     struct acos_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of acos().
+     * @param x Container of variables in range [-1, 1].
+     * @tparam T Container type.
+     * @return Arc cosine of each variable in the container, in radians. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<acos_fun, T>::return_t
     acos(const T& x) {

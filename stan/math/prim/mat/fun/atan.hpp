@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of atan().
+     * Structure to wrap atan() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Arctan of x in radians. 
      */
     struct atan_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of asinh().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Arctan of each value in x, in radians. 
+     */
     template <typename T>
     inline typename apply_scalar_unary<atan_fun, T>::return_t
     atan(const T& x) {

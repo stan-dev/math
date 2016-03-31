@@ -8,8 +8,11 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of tgamma().
+     * Structure to wrap tgamma() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Gamma function applied to x.
+     * @throw std::domain_error if x is 0 or a negative integer
      */
     struct tgamma_fun {
       template <typename T>
@@ -19,6 +22,13 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of tgamma().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Gamma function applied to each value in x.
+     * @throw std::domain_error if any value is 0 or a negative integer
+     */
     template <typename T>
     inline typename apply_scalar_unary<tgamma_fun, T>::return_t
     tgamma(const T& x) {

@@ -8,8 +8,11 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of digamma().
+     * Structure to wrap digamma() so it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Digamma function applied to x. 
+     * @throw std::domain_error if x is a negative integer or 0
      */
     struct digamma_fun {
       template <typename T>
@@ -19,6 +22,13 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of digamma().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Digamma function applied to each value in x. 
+     * @throw std::domain_error if any value is a negative integer or 0
+     */
     template <typename T>
     inline typename apply_scalar_unary<digamma_fun, T>::return_t
     digamma(const T& x) {

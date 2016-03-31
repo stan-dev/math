@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of asin().
+     * Structure to wrap asin() so it can be vectorized.
+     * @param x Argument variable in range [-1, 1].
+     * @tparam T Argument type.
+     * @return Arcsine of x in radians.
      */
     struct asin_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of asin().
+     * @param x Container of variables in range [-1, 1].
+     * @tparam T Container type.
+     * @return Arcsine of each variable in the container, in radians.
+     */
     template <typename T>
     inline typename apply_scalar_unary<asin_fun, T>::return_t
     asin(const T& x) {

@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of tan().
+     * Structure to wrap tan() so that it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Tangent of x.
      */
     struct tan_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of tan().
+     * @param x Container of angles in radians.
+     * @tparam T Container type.
+     * @return Tangent of each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<tan_fun, T>::return_t
     tan(const T& x) {

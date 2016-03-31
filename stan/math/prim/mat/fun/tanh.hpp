@@ -8,8 +8,10 @@ namespace stan {
   namespace math {
 
     /**
-     * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of tanh().
+     * Structure to wrap tanh() so that it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyperbolic tangent of x.
      */
     struct tanh_fun {
       template <typename T>
@@ -19,6 +21,12 @@ namespace stan {
       }
     };
 
+    /**
+     * Vectorized version of tanh().
+     * @param x Container of angles in radians.
+     * @tparam T Container type.
+     * @return Hyperbolic tangent of each value in x.
+     */
     template <typename T>
     inline typename apply_scalar_unary<tanh_fun, T>::return_t
     tanh(const T& x) {
