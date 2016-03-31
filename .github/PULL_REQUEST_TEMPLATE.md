@@ -1,6 +1,6 @@
 #### Submisison Checklist
 
-- [ ] Run unit tests: `./runTests.py src/test/unit`
+- [ ] Run unit tests: `./runTests.py test/unit`
 - [ ] Run cpplint: `make cpplint`
 - [ ] Declare copyright holder and open-source license: see below
 
