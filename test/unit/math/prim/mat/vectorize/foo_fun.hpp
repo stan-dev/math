@@ -10,7 +10,7 @@ namespace stan {
 
     /**
      * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of exp().
+     * The example includes a constrained, punctured version of exp().
      */
     struct foo_fun {
       template <typename T>
