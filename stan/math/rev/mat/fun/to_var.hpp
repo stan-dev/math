@@ -5,33 +5,11 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <vector>
+#include <stan/math/rev/scal/fun/to_var.hpp>
 
 namespace stan {
   namespace math {
 
-    /**
-     * Converts argument to an automatic differentiation variable.
-     *
-     * Returns a stan::math::var variable with the input value.
-     *
-     * @param[in] x A scalar value
-     * @return An automatic differentiation variable with the input value.
-     */
-    inline var to_var(const double& x) {
-      return var(x);
-    }
-    /**
-     * Converts argument to an automatic differentiation variable.
-     *
-     * Returns a stan::math::var variable with the input value.
-     *
-     * @param[in] x An automatic differentiation variable.
-     * @return An automatic differentiation variable with the input value.
-     */
-    inline var to_var(const var& x) {
-      return x;
-    }
     /**
      * Converts argument to an automatic differentiation variable.
      *

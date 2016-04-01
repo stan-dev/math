@@ -10,5 +10,6 @@
 
 #include <stan/math/fwd/arr/fun/log_sum_exp.hpp>
 #include <stan/math/fwd/arr/fun/sum.hpp>
+#include <stan/math/fwd/arr/fun/to_fvar.hpp>
 
 #endif
