@@ -53,6 +53,5 @@
 #include <stan/math/rev/mat/fun/variance.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 
 #endif

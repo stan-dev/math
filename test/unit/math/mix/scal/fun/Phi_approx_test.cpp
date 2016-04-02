@@ -1,4 +1,5 @@
 #include <stan/math/mix/scal.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 // Phi_approx needs inv_logit in order for this to work
 #include <test/unit/math/rev/mat/fun/util.hpp>

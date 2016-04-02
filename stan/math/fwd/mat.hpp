@@ -47,6 +47,4 @@
 #include <stan/math/fwd/mat/functor/gradient.hpp>
 #include <stan/math/fwd/mat/functor/jacobian.hpp>
 
-#include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
-
 #endif

@@ -1,4 +1,5 @@
 #include <stan/math/mix/scal.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/asinh.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
