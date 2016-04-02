@@ -119,6 +119,11 @@ TEST(AgradAutoDiff,jacobian) {
     
   using stan::math::jacobian;
 
+  // nested AD calls within jacobian functions only give correct
+  // results when the AD stack was initialized before with something
+  stan::math::var dummy;
+  dummy = 1;
+
   fun2 f;
   Matrix<double,Dynamic,1> x(2);
   x << 2, -3;
@@ -132,8 +137,8 @@ TEST(AgradAutoDiff,jacobian) {
   EXPECT_FLOAT_EQ(3 * 2 * -3, fx(1));
   
   EXPECT_FLOAT_EQ(2, J(0,0));
-  EXPECT_FLOAT_EQ(-9, J(0,1));
-  EXPECT_FLOAT_EQ(0, J(1,0));
+  EXPECT_FLOAT_EQ(-9, J(1,0));
+  EXPECT_FLOAT_EQ(0, J(0,1));
   EXPECT_FLOAT_EQ(6, J(1,1));
   
 
