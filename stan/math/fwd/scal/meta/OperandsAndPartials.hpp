@@ -178,7 +178,7 @@ namespace stan {
       }
 
       ~OperandsAndPartials() {
-        delete all_partials;
+        delete[] all_partials;
       }
     };
 

@@ -681,6 +681,7 @@ Prints the nonzero entries of a sparse matrix to screen.
 */
 void PrintSparseMat(SlsMat A)
 {
+#ifndef NO_FPRINTF_OUTPUT
   int i,j, M, N, NNZ;
   int *colptrs;
 
@@ -707,6 +708,6 @@ void PrintSparseMat(SlsMat A)
     printf("\n");
   }
   printf("\n");
-    
+#endif
 }
 
