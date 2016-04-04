@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 
 namespace stan {

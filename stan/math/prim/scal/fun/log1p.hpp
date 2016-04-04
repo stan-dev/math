@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 
 #include <limits>
+#include <cmath>
 
 namespace stan {
   namespace math {

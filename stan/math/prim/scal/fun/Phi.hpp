@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <boost/math/special_functions/erf.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>

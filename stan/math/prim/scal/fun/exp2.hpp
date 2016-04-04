@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_EXP2_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_EXP2_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 
 namespace stan {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
 
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 #include <stdexcept>
 
 namespace stan {
