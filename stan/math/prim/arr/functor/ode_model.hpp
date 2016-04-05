@@ -1,4 +1,6 @@
-#pragma once
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_ODE_MODEL_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_ODE_MODEL_HPP
+
 #include <iostream>
 #include <vector>
 #include <stan/math/rev/core.hpp>
@@ -9,8 +11,8 @@ namespace stan {
     /**
      * Internal representation of ODE model object which provides
      * convenient jacobian functions to obtain gradients wrt to states
-     * and parameters. Can be used to provide analytic Jacobians via
-     * partial template specialisation.
+     * (S) and parameters (P). Can be used to provide analytic
+     * Jacobians via partial template specialisation.
      */
 
     template<typename F>
@@ -41,7 +43,7 @@ namespace stan {
 
       template <typename Derived1, typename Derived2>
       void
-      jacobian_y(const double t,
+      jacobian_S(const double t,
 		 const std::vector<double>& y,
 		 Eigen::MatrixBase<Derived1>& fy,
 		 Eigen::MatrixBase<Derived2>& Jy
@@ -74,12 +76,12 @@ namespace stan {
 
       template <typename Derived1, typename Derived2, typename Derived3>
       void
-      jacobian_y_theta(const double t,
-		       const std::vector<double>& y,
-		       Eigen::MatrixBase<Derived1>& fy,
-		       Eigen::MatrixBase<Derived2>& Jy,
-		       Eigen::MatrixBase<Derived3>& Jtheta
-		       ) const {
+      jacobian_SP(const double t,
+		  const std::vector<double>& y,
+		  Eigen::MatrixBase<Derived1>& fy,
+		  Eigen::MatrixBase<Derived2>& Jy,
+		  Eigen::MatrixBase<Derived3>& Jtheta
+		  ) const {
 	using Eigen::Matrix;
 	using Eigen::Dynamic;
 	using stan::math::var;
@@ -120,3 +122,5 @@ namespace stan {
   }
 
 }
+
+#endif

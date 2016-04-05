@@ -44,7 +44,7 @@ namespace stan {
 
       template <typename Derived1, typename Derived2>
       void
-      jacobian_y(const double t,
+      jacobian_S(const double t,
 		 const std::vector<double>& y,
 		 Eigen::MatrixBase<Derived1>& fy,
 		 Eigen::MatrixBase<Derived2>& Jy
@@ -96,17 +96,17 @@ namespace stan {
 
       template <typename Derived1, typename Derived2, typename Derived3>
       void
-      jacobian_y_theta(const double t,
-		       const std::vector<double>& y,
-		       Eigen::MatrixBase<Derived1>& fy,
-		       Eigen::MatrixBase<Derived2>& Jy,
-		       Eigen::MatrixBase<Derived3>& Jtheta
-		       ) const {
+      jacobian_SP(const double t,
+		  const std::vector<double>& y,
+		  Eigen::MatrixBase<Derived1>& fy,
+		  Eigen::MatrixBase<Derived2>& Jy,
+		  Eigen::MatrixBase<Derived3>& Jtheta
+		  ) const {
 	using Eigen::VectorXd;
 	using std::vector;
 	using std::pow;
 
-	jacobian_y(t, y, fy, Jy);
+	jacobian_S(t, y, fy, Jy);
 
 	const double R = y[0];
 	const double Rin = y[1];

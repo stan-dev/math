@@ -1,13 +1,14 @@
-#ifndef STAN_MATH_REV_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
-#define STAN_MATH_REV_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
-
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/arr/functor/ode_model.hpp>
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_band.h>
 #include <cvodes/cvodes_dense.h>
 #include <nvector/nvector_serial.h>
+
+#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/arr/functor/ode_model.hpp>
+
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -70,7 +71,8 @@ namespace stan {
        * @param[in] rel_tol Relative tolerance of solver.
        * @param[in] abs_tol Absolute tolerance of solver.
        * @param[in] max_num_steps Maximum number of solver steps.
-       * @param[in] solver used solver (0=non-stiff, 1=stiff)
+       * @param[in] solver used solver (0=non-stiff, 1=stiff, 2=stiff
+       * with STALD)
        * @param[in, out] msgs print stream.
        */
       cvodes_integrator(const F& f,
@@ -101,7 +103,7 @@ namespace stan {
         // Instantiate CVode memory
 	if(solver_ == 0)
 	  cvode_mem_ = CVodeCreate(CV_ADAMS, CV_FUNCTIONAL);
-	if(solver_ == 1)
+	if(solver_ == 1 || solver_ == 2)
 	  cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
 
         if (cvode_mem_ == 0)
@@ -137,11 +139,11 @@ namespace stan {
         check_flag_(CVodeSetMaxConvFails(cvode_mem_, max_conv_fails),
                     "CVodeSetMaxConvFails");
 
-	// enable stability limit detection as another solver?
-	//i.e. solver = 2
-	//check_flag_(CVodeSetStabLimDet(cvode_mem_, 1), "CVodeSetstabLimDet");
+	// enable stability limit detection for solver_==2
+	if(solver_ == 2)
+          check_flag_(CVodeSetStabLimDet(cvode_mem_, 1), "CVodeSetstabLimDet");
 
-	if(solver_ == 1) {
+	if(solver_ == 1 || solver_ == 2) {
 	  // for the stiff solver we need to reserve memory and
 	  // provide a Jacobian
 	  check_flag_(CVDense(cvode_mem_, this->N_), "CVDense");
@@ -209,9 +211,9 @@ namespace stan {
 
 	// do AD
 	if(theta_var::value)
-	  ode_model_.jacobian_y_theta(t, y_vec, fy, Jy, Jtheta);
+	  ode_model_.jacobian_SP(t, y_vec, fy, Jy, Jtheta);
 	else
-	  ode_model_.jacobian_y(t, y_vec, fy, Jy);
+	  ode_model_.jacobian_S(t, y_vec, fy, Jy);
 
 	if(initial_var::value) {
 	  for(size_t m = 0; m < N_; m++) {
@@ -293,7 +295,7 @@ namespace stan {
 	// stored (Eigen and CVODES use column major addressing)
 	Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, this->N_, this->N_);
 
-	ode_model_.jacobian_y(t, y_vec, fy, Jy_map);
+	ode_model_.jacobian_S(t, y_vec, fy, Jy_map);
 
         return 0;
       }
