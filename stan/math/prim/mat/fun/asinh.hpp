@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ASINH_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <cmath>
+#include <boost/math/special_functions/asinh.hpp>
 
 namespace stan {
   namespace math {
@@ -16,7 +16,7 @@ namespace stan {
     struct asinh_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using std::asinh;
+        using boost::math::asinh;
         return asinh(x);
       }
     };
