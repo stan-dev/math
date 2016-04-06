@@ -99,21 +99,20 @@ namespace stan {
       std::vector<double>    y0_dbl(N);
       std::vector<double> theta_dbl(M);
 
-      for(size_t i = 0; i < N; i++)
-        y0_dbl[i] = stan::math::value_of(   y0[i]);
+      for (size_t i = 0; i < N; i++)
+        y0_dbl[i] = stan::math::value_of(y0[i]);
 
-      for(size_t i = 0; i < M; i++)
+      for (size_t i = 0; i < M; i++)
         theta_dbl[i] = stan::math::value_of(theta[i]);
 
       typedef cvodes_integrator<F, T1, T2> integrator_t;
 
       integrator_t integrator(f, y0_dbl, t0, theta_dbl, x, x_int,
-			      rel_tol, abs_tol, max_num_steps, solver,
-			      msgs);
+                              rel_tol, abs_tol, max_num_steps, solver,
+                              msgs);
 
-      typedef typename integrator_t::state_t state_t;
-
-      std::vector<std::vector<double> > y_res(ts.size(), std::vector<double>(integrator.size(),0));
+      std::vector<std::vector<double> > y_res(ts.size(),
+                                              std::vector<double>(integrator.size(), 0));
 
       integrator.integrate_times(ts, y_res);
 

@@ -16,8 +16,8 @@ namespace stan {
     inline
     std::vector<std::vector<double> >
     decouple_states(const std::vector<std::vector<double> >& y,
-		    const std::vector<double>& y0,
-		    const std::vector<double>& theta) {
+                    const std::vector<double>& y0,
+                    const std::vector<double>& theta) {
       return y;
     }
 

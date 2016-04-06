@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_CVODE_HPP
 
 #include <stan/math/prim/arr/functor/integrate_ode_cvodes.hpp>
+#include <vector>
 
 namespace stan {
   namespace math {
@@ -41,16 +42,16 @@ namespace stan {
     template <typename F, typename T1, typename T2>
     std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
     integrate_ode_cvode(const F& f,
-			const std::vector<T1>& y0,
-			const double t0,
-			const std::vector<double>& ts,
-			const std::vector<T2> theta,
-			const std::vector<double>& x,
-			const std::vector<int>& x_int,
-			double rel_tol = 1e-10,
-			double abs_tol = 1e-10,
-			long int max_num_steps = 1e8,  // NOLINT(runtime/int)
-			std::ostream* msgs = 0) {
+                        const std::vector<T1>& y0,
+                        const double t0,
+                        const std::vector<double>& ts,
+                        const std::vector<T2> theta,
+                        const std::vector<double>& x,
+                        const std::vector<int>& x_int,
+                        double rel_tol = 1e-10,
+                        double abs_tol = 1e-10,
+                        long int max_num_steps = 1e8,  // NOLINT(runtime/int)
+                        std::ostream* msgs = 0) {
       stan::math::check_finite("integrate_ode_cvode",
                                "initial state", y0);
       stan::math::check_finite("integrate_ode_cvode",
@@ -77,21 +78,20 @@ namespace stan {
       std::vector<double>    y0_dbl(N);
       std::vector<double> theta_dbl(M);
 
-      for(size_t i = 0; i < N; i++)
-        y0_dbl[i] = stan::math::value_of(   y0[i]);
+      for (size_t i = 0; i < N; i++)
+        y0_dbl[i] = stan::math::value_of(y0[i]);
 
-      for(size_t i = 0; i < M; i++)
+      for (size_t i = 0; i < M; i++)
         theta_dbl[i] = stan::math::value_of(theta[i]);
 
       typedef cvodes_integrator<F, T1, T2> integrator_t;
 
       integrator_t integrator(f, y0_dbl, t0, theta_dbl, x, x_int,
-			      rel_tol, abs_tol, max_num_steps, 1,
-			      msgs);
+                              rel_tol, abs_tol, max_num_steps, 1,
+                              msgs);
 
-      typedef typename integrator_t::state_t state_t;
-
-      std::vector<std::vector<double> > y_res(ts.size(), std::vector<double>(integrator.size(),0));
+      std::vector<std::vector<double> > y_res(ts.size(),
+                                              std::vector<double>(integrator.size(), 0));
 
       integrator.integrate_times(ts, y_res);
 
