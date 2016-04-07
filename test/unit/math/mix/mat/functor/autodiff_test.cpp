@@ -119,11 +119,6 @@ TEST(AgradAutoDiff,jacobian) {
 
   using stan::math::jacobian;
 
-  // nested AD calls within jacobian functions only give correct
-  // results when the AD stack was initialized before with something
-  stan::math::var dummy;
-  dummy = 1;
-
   fun2 f;
   Matrix<double,Dynamic,1> x(2);
   x << 2, -3;
