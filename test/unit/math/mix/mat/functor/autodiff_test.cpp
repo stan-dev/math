@@ -20,11 +20,11 @@ struct fun1 {
   inline
   T operator()(const Matrix<T,Dynamic,1>& x) const {
     return x(0) * x(0) * x(1)
-      + 3.0 * x(1) * x(1); 
+      + 3.0 * x(1) * x(1);
   }
 };
 
-// fun2: R^2 --> R^2 | (x,y) --> [(x + x), (3 * x * y)] 
+// fun2: R^2 --> R^2 | (x,y) --> [(x + x), (3 * x * y)]
 struct fun2 {
   template <typename T>
   inline
@@ -40,7 +40,7 @@ struct norm_functor {
   template <typename T>
   inline
   T operator()(const Eigen::Matrix<T,Eigen::Dynamic,1>& inp_vec) const {
-    return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2)); 
+    return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };
 
@@ -55,12 +55,12 @@ TEST(AgradAutoDiff,derivative) {
 }
 
 TEST(AgradAutoDiff,partialDerivative) {
-  
-  
+
+
   fun1 f;
   Matrix<double,Dynamic,1> x(2);
   x << 5, 7;
-  
+
   double fx;
   double d;
   stan::math::partial_derivative(f,x,0,fx,d);
@@ -75,7 +75,7 @@ TEST(AgradAutoDiff,partialDerivative) {
 }
 
 TEST(AgradAutoDiff,gradientDotVector) {
-    
+
   using stan::math::var;
   fun1 f;
   Matrix<double,Dynamic,1> x(2);
@@ -85,23 +85,23 @@ TEST(AgradAutoDiff,gradientDotVector) {
   double fx;
   double grad_fx_dot_v;
   stan::math::gradient_dot_vector(f,x,v,fx,grad_fx_dot_v);
-  
+
   double fx_expected;
   Matrix<double,Dynamic,1> grad_fx;
   stan::math::gradient(f,x,fx_expected,grad_fx);
   double grad_fx_dot_v_expected = grad_fx.dot(v);
-  
+
   EXPECT_FLOAT_EQ(grad_fx_dot_v_expected, grad_fx_dot_v);
 }
 TEST(AgradAutoDiff,hessianTimesVector) {
   using stan::math::hessian_times_vector;
-    
+
 
   fun1 f;
-  
+
   Matrix<double,Dynamic,1> x(2);
   x << 2, -3;
-  
+
   Matrix<double,Dynamic,1> v(2);
   v << 8, 5;
 
@@ -116,26 +116,31 @@ TEST(AgradAutoDiff,hessianTimesVector) {
   EXPECT_FLOAT_EQ(2 * x(0) * v(0) + 6 * v(1), Hv(1));
 }
 TEST(AgradAutoDiff,jacobian) {
-    
+
   using stan::math::jacobian;
+
+  // nested AD calls within jacobian functions only give correct
+  // results when the AD stack was initialized before with something
+  stan::math::var dummy;
+  dummy = 1;
 
   fun2 f;
   Matrix<double,Dynamic,1> x(2);
   x << 2, -3;
-  
+
   Matrix<double,Dynamic,1> fx;
   Matrix<double,Dynamic,Dynamic> J;
   jacobian(f,x,fx,J);
-  
+
   EXPECT_EQ(2,fx.size());
   EXPECT_FLOAT_EQ(2 * 2, fx(0));
   EXPECT_FLOAT_EQ(3 * 2 * -3, fx(1));
-  
+
   EXPECT_FLOAT_EQ(2, J(0,0));
-  EXPECT_FLOAT_EQ(-9, J(0,1));
-  EXPECT_FLOAT_EQ(0, J(1,0));
+  EXPECT_FLOAT_EQ(-9, J(1,0));
+  EXPECT_FLOAT_EQ(0, J(0,1));
   EXPECT_FLOAT_EQ(6, J(1,1));
-  
+
 
   Matrix<double,Dynamic,1> fx_rev;
   Matrix<double,Dynamic,Dynamic> J_rev;
@@ -144,15 +149,15 @@ TEST(AgradAutoDiff,jacobian) {
   EXPECT_EQ(2,fx_rev.size());
   EXPECT_FLOAT_EQ(2 * 2, fx_rev(0));
   EXPECT_FLOAT_EQ(3 * 2 * -3, fx_rev(1));
-  
+
   EXPECT_FLOAT_EQ(2, J_rev(0,0));
-  EXPECT_FLOAT_EQ(-9, J_rev(0,1));
-  EXPECT_FLOAT_EQ(0, J_rev(1,0));
+  EXPECT_FLOAT_EQ(-9, J_rev(1,0));
+  EXPECT_FLOAT_EQ(0, J_rev(0,1));
   EXPECT_FLOAT_EQ(6, J_rev(1,1));
 }
 
 TEST(AgradAutoDiff,hessian) {
-    
+
   fun1 f;
   Matrix<double,Dynamic,1> x(2);
   x << 5, 7;
@@ -194,7 +199,7 @@ TEST(AgradAutoDiff,hessian) {
   EXPECT_FLOAT_EQ(2 * 3, H2(1,1));
 
 }
-  
+
 TEST(AgradAutoDiff,GradientTraceMatrixTimesHessian) {
   Matrix<double,Dynamic,Dynamic> M(2,2);
   M << 11, 13, 17, 23;
@@ -213,11 +218,11 @@ TEST(AgradAutoDiff,GradientHessian){
   norm_functor log_normal_density;
   third_order_mixed mixed_third_poly;
 
-  Matrix<double,Dynamic,1> normal_eval_vec(3); 
-  Matrix<double,Dynamic,1> poly_eval_vec(3); 
+  Matrix<double,Dynamic,1> normal_eval_vec(3);
+  Matrix<double,Dynamic,1> poly_eval_vec(3);
 
-  normal_eval_vec << 0.7, 0.5, 0.9; 
-  poly_eval_vec << 1.5, 7.1, 3.1; 
+  normal_eval_vec << 0.7, 0.5, 0.9;
+  poly_eval_vec << 1.5, 7.1, 3.1;
 
   double normal_eval_agrad;
   double poly_eval_agrad;

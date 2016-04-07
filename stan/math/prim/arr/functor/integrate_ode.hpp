@@ -68,6 +68,7 @@ namespace stan {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
+      using boost::numeric::odeint::max_step_checker;
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
       stan::math::check_finite("integrate_ode", "initial time", t0);
@@ -83,6 +84,7 @@ namespace stan {
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
       const double step_size = 0.1;
+      const int max_num_steps = 1E6;
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
@@ -111,7 +113,8 @@ namespace stan {
                       initial_coupled_state,
                       boost::begin(ts_vec), boost::end(ts_vec),
                       step_size,
-                      observer);
+                      observer,
+                      max_step_checker(max_num_steps));
 
       // remove the first state corresponding to the initial value
       y_coupled.erase(y_coupled.begin());

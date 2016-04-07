@@ -24,8 +24,11 @@ namespace stan {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
-            avi_->adj_ += adj_ * boost::math::digamma(avi_->val_ + 1);
-            bvi_->adj_ += adj_ * -boost::math::digamma(bvi_->val_ + 1);
+            avi_->adj_ += adj_
+              * (boost::math::digamma(avi_->val_ + 1)
+                 - boost::math::digamma(avi_->val_ - bvi_->val_ + 1));
+            bvi_->adj_ += adj_
+              * boost::math::digamma(avi_->val_ - bvi_->val_ + 1);
           }
         }
       };
@@ -40,7 +43,9 @@ namespace stan {
                        || boost::math::isnan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
-            avi_->adj_ += adj_ * boost::math::digamma(avi_->val_ + 1);
+            avi_->adj_ += adj_
+              * (boost::math::digamma(avi_->val_ + 1)
+                 - boost::math::digamma(avi_->val_ - bd_ + 1));
         }
       };
 
@@ -54,7 +59,8 @@ namespace stan {
                        || boost::math::isnan(bvi_->val_)))
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
-            bvi_->adj_ += adj_ * -boost::math::digamma(bvi_->val_ + 1);
+            bvi_->adj_ += adj_
+              * boost::math::digamma(ad_ - bvi_->val_ + 1);
         }
       };
     }

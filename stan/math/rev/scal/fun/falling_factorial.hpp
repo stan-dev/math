@@ -18,11 +18,12 @@ namespace stan {
         }
         void chain() {
           avi_->adj_ += adj_
-            * stan::math::falling_factorial(avi_->val_, bvi_->val_)
-            * boost::math::digamma(avi_->val_ + 1);
-          bvi_->adj_ -= adj_
-            * stan::math::falling_factorial(avi_->val_, bvi_->val_)
-            * boost::math::digamma(bvi_->val_ + 1);
+            * val_
+            * (boost::math::digamma(avi_->val_ + 1)
+               - boost::math::digamma(avi_->val_ - bvi_->val_ + 1));
+          bvi_->adj_ += adj_
+            * val_
+            * boost::math::digamma(avi_->val_ - bvi_->val_ + 1);
         }
       };
 
@@ -32,8 +33,10 @@ namespace stan {
           op_vd_vari(stan::math::falling_factorial(avi->val_, b), avi, b) {
         }
         void chain() {
-          avi_->adj_ += adj_ * stan::math::falling_factorial(avi_->val_, bd_)
-            * boost::math::digamma(avi_->val_ + 1);
+          avi_->adj_ += adj_
+            * val_
+            * (boost::math::digamma(avi_->val_ + 1)
+               - boost::math::digamma(avi_->val_ - bd_ + 1));
         }
       };
 
@@ -43,8 +46,9 @@ namespace stan {
           op_dv_vari(stan::math::falling_factorial(a, bvi->val_), a, bvi) {
         }
         void chain() {
-          bvi_->adj_ += adj_ * -stan::math::falling_factorial(ad_, bvi_->val_)
-            * boost::math::digamma(bvi_->val_ + 1);
+          bvi_->adj_ += adj_
+            * val_
+            * boost::math::digamma(ad_ - bvi_->val_ + 1);
         }
       };
     }
