@@ -3,7 +3,7 @@
 #include <sstream>
 #include <vector>
 
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
 #include <test/unit/util.hpp>
 
 //calculates finite diffs for integrate_ode with varying parameters

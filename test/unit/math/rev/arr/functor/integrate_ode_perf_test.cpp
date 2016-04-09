@@ -91,7 +91,7 @@ TEST(StanOde_stiff_stress_test, cvode_hornberg) {
     std::vector<stan::math::var> y0_var(y0_run.begin(), y0_run.end());
 
     std::vector<std::vector<stan::math::var> > res_cvode
-      = stan::math::integrate_ode_cvode(f_, y0_var, t0, ts, theta_var, data, data_int, rel_tol, abs_tol);
+      = stan::math::integrate_ode_cvodes(f_, y0_var, t0, ts, theta_var, data, data_int, rel_tol, abs_tol, 1E8, 1);
     stan::math::recover_memory();
 
     std::clock_t clock_end = std::clock();

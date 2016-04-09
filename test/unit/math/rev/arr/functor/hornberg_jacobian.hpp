@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stan/math/prim/arr/functor/ode_model.hpp>
+#include <stan/math/rev/arr/functor/ode_model.hpp>
 
 #include "hornberg.hpp"
 

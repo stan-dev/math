@@ -11,6 +11,9 @@
 #include <stan/math/rev/arr/fun/log_sum_exp.hpp>
 #include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/arr/functor/cvodes_integrator.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_cvodes.hpp>
 #include <stan/math/rev/arr/functor/decouple_states.hpp>
 
 #endif

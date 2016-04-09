@@ -31,9 +31,6 @@
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/integrate_ode.hpp>
-#include <stan/math/prim/arr/functor/cvodes_integrator.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_cvode.hpp>
-#include <stan/math/prim/arr/functor/decouple_states.hpp>
 
 #include <stan/math/prim/scal.hpp>
 
