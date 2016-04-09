@@ -200,7 +200,7 @@ namespace stan {
 
       // Forward the CVode array-based call from
       // the ODE RHS to the Stan vector-based call
-      void rhs(const double* y, double* dy_dt, double t) {
+      void rhs(const double y[], double dy_dt[], double t) {
         const std::vector<double> y_vec(y, y + this->N_);
 
         std::vector<double> dy_dt_vec(this->N_);
