@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/arr/functor/ode_model.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_band.h>
@@ -12,7 +13,6 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <boost/type_traits/is_same.hpp>
 
 namespace stan {
   namespace math {
@@ -43,7 +43,7 @@ namespace stan {
 
       typedef cvodes_integrator<F, T1, T2> ode;
 
-      void check_flag(int flag, const std::string& func_name) {
+      void check_flag(int flag, const std::string& func_name) const {
         if (flag < 0) {
           std::ostringstream ss;
           ss << func_name << " failed with error flag " << flag;
@@ -53,7 +53,7 @@ namespace stan {
 
       void set_cvode_options(double rel_tol,
                              double abs_tol,
-                             long int max_num_steps // NOLINT(runtime/int)
+                             long int max_num_steps  // NOLINT(runtime/int)
                              ) {
         // Forward CVode errors to noop error handler
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler, 0);
@@ -128,7 +128,7 @@ namespace stan {
           theta_var_ind_(initial_var::value ? N_ : 0),
           cvode_mem_(NULL),
           state_(y0),
-          cvode_state_(N_VMake_Serial(this->N_,
+          cvode_state_(N_VMake_Serial(N_,
                                       &state_[0])),
           cvode_state_sens_(NULL),
           ode_model_(f, theta, x, x_int, msgs),
@@ -141,7 +141,7 @@ namespace stan {
             throw std::runtime_error("CVodeCreate failed to allocate memory");
 
           set_cvode_options(rel_tol, abs_tol, max_num_steps);
-          
+
         } else if (solver_ == 1 || solver_ == 2) {
           cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
 
@@ -149,24 +149,25 @@ namespace stan {
             throw std::runtime_error("CVodeCreate failed to allocate memory");
 
           set_cvode_options(rel_tol, abs_tol, max_num_steps);
-          
+
           // enable stability limit detection for solver_==2
           if (solver_ == 2)
             check_flag(CVodeSetStabLimDet(cvode_mem_, 1), "CVodeSetStabLimDet");
-        
+
           // for the stiff solvers we need to reserve additional
           // memory and provide a Jacobian function call
-          check_flag(CVDense(cvode_mem_, this->N_), "CVDense");
+          check_flag(CVDense(cvode_mem_, N_), "CVDense");
           check_flag(CVDlsSetDenseJacFn(cvode_mem_, &ode::dense_jacobian),
                       "CVDlsSetDenseJacFn");
         } else {
-          throw std::runtime_error("cvodes_integrator supports solvers 0,1,2 only");
+          throw
+            std::runtime_error("cvodes_integrator supports solvers 0,1,2 only");
         }
 
         // initialize forward sensitivity system of CVODES as needed
         if (S_ > 0) {
           cvode_state_sens_ = N_VCloneVectorArray_Serial(S_, cvode_state_);
-          
+
           for (size_t s = 0; s < S_ ; s++)
             N_VConst(RCONST(0.0), cvode_state_sens_[s]);
 
@@ -200,10 +201,10 @@ namespace stan {
 
       // Forward the CVode array-based call from
       // the ODE RHS to the Stan vector-based call
-      void rhs(const double y[], double dy_dt[], double t) {
-        const std::vector<double> y_vec(y, y + this->N_);
+      void rhs(const double y[], double dy_dt[], double t) const {
+        const std::vector<double> y_vec(y, y + N_);
 
-        std::vector<double> dy_dt_vec(this->N_);
+        std::vector<double> dy_dt_vec(N_);
         ode_model_(y_vec, dy_dt_vec, t);
 
         std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
@@ -211,14 +212,14 @@ namespace stan {
 
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
-        ode* explicit_ode = reinterpret_cast<ode*>(f_data);
+        ode const* explicit_ode = reinterpret_cast<ode const*>(f_data);
         explicit_ode->rhs(NV_DATA_S(y), NV_DATA_S(ydot), t);
         return 0;
       }
 
       void rhs_sens(int M, realtype t,
                     double y[], double ydot[],
-                    N_Vector *yS, N_Vector *ySdot) {
+                    N_Vector *yS, N_Vector *ySdot) const {
         const std::vector<double> y_vec(y, y + N_);
 
         Eigen::VectorXd fy(N_);
@@ -243,8 +244,10 @@ namespace stan {
         if (theta_var::value) {
           for (size_t m = 0; m < M_; m++) {
             // map NV_Vector to Eigen facilities
-            Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[theta_var_ind_ + m]), N_);
-            Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[theta_var_ind_ + m]), N_);
+            Eigen::Map<Eigen::VectorXd>
+              yS_eig(NV_DATA_S(yS[theta_var_ind_ + m]), N_);
+            Eigen::Map<Eigen::VectorXd>
+              ySdot_eig(NV_DATA_S(ySdot[theta_var_ind_ + m]), N_);
 
             ySdot_eig = Jy * yS_eig + Jtheta.col(m);
           }
@@ -255,16 +258,15 @@ namespace stan {
                               N_Vector y, N_Vector ydot,
                               N_Vector *yS, N_Vector *ySdot, void *user_data,
                               N_Vector tmp1, N_Vector tmp2) {
-        ode* explicit_ode = reinterpret_cast<ode*>(user_data);
+        ode const* explicit_ode = reinterpret_cast<ode const*>(user_data);
         explicit_ode->rhs_sens(Ns, t,
                                NV_DATA_S(y),  NV_DATA_S(ydot),
                                yS, ySdot);
         return 0;
       }
 
-      void report_stats(long int& n_rhs,      // NOLINT(runtime/int)
-                        long int& n_rhs_sens  // NOLINT(runtime/int)
-                        ) {
+      void report_stats(long int& n_rhs,               // NOLINT(runtime/int)
+                        long int& n_rhs_sens) const {  // NOLINT(runtime/int)
         check_flag(CVodeGetNumRhsEvals(cvode_mem_, &n_rhs),
                    "CVodeGetNumRhsEvals");
         n_rhs_sens = 0;
@@ -275,23 +277,22 @@ namespace stan {
       }
 
       void integrate_times(const std::vector<double>& ts,
-                           std::vector<std::vector<double> >& y_coupled) {
+                           std::vector<std::vector<double> >& y_coupled) const {
         double t_init = t0_;
         for (size_t n = 0; n < ts.size(); ++n) {
           double t_final = ts[n];
           if (t_final != t_init)
             check_flag(CVode(cvode_mem_, t_final, cvode_state_,
-                              &t_init, CV_NORMAL),
-                        "CVode");
+                             &t_init, CV_NORMAL),
+                       "CVode");
           std::copy(state_.begin(), state_.end(), y_coupled[n].begin());
           if (S_ > 0) {
             check_flag(CVodeGetSens(cvode_mem_, &t_init, cvode_state_sens_),
                        "CVodeGetSens");
             for (size_t s = 0; s < S_; s++) {
-              for (size_t i = 0; i < N_; i++) {
-                // this could be done with a faster copy call
-                y_coupled[n][N_ + s * N_ + i] = NV_Ith_S(cvode_state_sens_[s], i);
-              }
+              std::copy(NV_DATA_S(cvode_state_sens_[s]),
+                        NV_DATA_S(cvode_state_sens_[s]) + N_,
+                        y_coupled[n].begin() + N_ + s * N_);
             }
           }
           t_init = t_final;
@@ -303,16 +304,16 @@ namespace stan {
                                 realtype t, N_Vector y, N_Vector fy,
                                 DlsMat J, void *J_data,
                                 N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-        ode* explicit_ode = reinterpret_cast<ode*>(J_data);
+        ode const* explicit_ode = reinterpret_cast<ode const*>(J_data);
         return explicit_ode->dense_jacobian(NV_DATA_S(y), J, t);
       }
 
       int dense_jacobian(const double* y, DlsMat J, double t) const {
-        const std::vector<double> y_vec(y, y + this->N_);
+        const std::vector<double> y_vec(y, y + N_);
 
-        Eigen::VectorXd fy(this->N_);
+        Eigen::VectorXd fy(N_);
         // Eigen and CVODES use column major addressing
-        Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, this->N_, this->N_);
+        Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
 
         ode_model_.jacobian_S(t, y_vec, fy, Jy_map);
 
@@ -323,7 +324,7 @@ namespace stan {
         return size_;
       }
 
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         std::vector<double> state(size_, 0.0);
         std::copy(y0_dbl_.begin(), y0_dbl_.end(), state.begin());
         if (initial_var::value) {
@@ -332,7 +333,6 @@ namespace stan {
         }
         return state;
       }
-
     };
 
   }  // math

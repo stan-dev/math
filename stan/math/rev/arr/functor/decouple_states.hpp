@@ -2,8 +2,9 @@
 #define STAN_MATH_REV_ARR_FUNCTOR_DECOUPLE_STATES_HPP
 
 #include <stan/math/rev/core.hpp>
-
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/type_traits/is_same.hpp>
+
 #include <vector>
 
 namespace stan {
@@ -48,7 +49,6 @@ namespace stan {
       if (theta_var::value)
         vars.insert(vars.end(), theta.begin(), theta.end());
 
-
       vector<var> temp_vars(N);
       vector<double> temp_gradients(S);
       vector<vector<var> > y_return(y.size());
@@ -78,7 +78,6 @@ namespace stan {
                     const std::vector<double>& theta) {
       return y;
     }
-    
   }  // ns math
 }  // ns stan
 

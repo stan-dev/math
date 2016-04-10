@@ -112,8 +112,9 @@ namespace stan {
                               rel_tol, abs_tol, max_num_steps, solver,
                               msgs);
 
-      std::vector<std::vector<double> > y_res(ts.size(),
-                                              std::vector<double>(integrator.size(), 0));
+      std::vector<std::vector<double> >
+        y_res(ts.size(),
+              std::vector<double>(integrator.size(), 0));
 
       integrator.integrate_times(ts, y_res);
 

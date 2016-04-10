@@ -68,8 +68,8 @@ TEST(StanOde_stiff_small_stress_test, cvode_coupled_mm) {
     std::vector<stan::math::var> theta_var(theta_run.begin(), theta_run.end());
     std::vector<stan::math::var> y0_var(y0_run.begin(), y0_run.end());
 
-    std::vector<std::vector<stan::math::var> > res_cvode
-      = stan::math::integrate_ode_cvode(f_, y0_var, t0, ts, theta_var, data, data_int, rel_tol, abs_tol);
+    std::vector<std::vector<stan::math::var> > res_cvodes
+     = stan::math::integrate_ode_cvodes(f_, y0_var, t0, ts, theta_var, data, data_int, rel_tol, abs_tol, 1E10, 1);
     stan::math::recover_memory();
 
     std::clock_t clock_end = std::clock();

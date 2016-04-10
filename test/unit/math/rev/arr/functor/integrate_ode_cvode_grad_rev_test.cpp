@@ -56,7 +56,13 @@ public:
 };
 
 class test_functor_double_var_1 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_double_var_1(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+  
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -77,14 +83,21 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][0];
   }
 };
 
 class test_functor_double_var_2 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_double_var_2(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -105,7 +118,8 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][1];
   }
@@ -119,24 +133,49 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
   Eigen::VectorXd x(1);
   x(0) = omega;
 
-  double f;
-  Eigen::VectorXd grad(1);
+  { // non-stiff solver
+    double f;
+    Eigen::VectorXd grad(1);
 
-  test_functor_double_var_1 func1;
-  stan::math::gradient(func1, x, f, grad);
+    test_functor_double_var_1 func1(1E-10, 1E-10, 0);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+    
+    test_functor_double_var_2 func2(1E-10, 1E-10, 0);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+  }
+  
+  { // stiff solver
+    double f;
+    Eigen::VectorXd grad(1);
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
-
-  test_functor_double_var_2 func2;
-  stan::math::gradient(func2, x, f, grad);
-
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    test_functor_double_var_1 func1(1E-10, 1E-10, 1);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+    
+    test_functor_double_var_2 func2(1E-10, 1E-10, 1);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+  }
 }
 
 class test_functor_var_double_1 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_var_double_1(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -157,14 +196,21 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][0];
   }
 };
 
 class test_functor_var_double_2 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_var_double_2(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -185,7 +231,8 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][1];
   }
@@ -199,24 +246,49 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
   Eigen::VectorXd x(1);
   x(0) = chi;
 
-  double f;
-  Eigen::VectorXd grad(1);
+  { // non-stiff solver
+    double f;
+    Eigen::VectorXd grad(1);
 
-  test_functor_var_double_1 func1;
-  stan::math::gradient(func1, x, f, grad);
+    test_functor_var_double_1 func1(1E-10, 1E-10, 0);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(0), 1e-7);
+    
+    test_functor_var_double_2 func2(1E-10, 1E-10, 0);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
+  }
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(0), 1e-7);
+  { // stiff solver
+    double f;
+    Eigen::VectorXd grad(1);
 
-  test_functor_var_double_2 func2;
-  stan::math::gradient(func2, x, f, grad);
-
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
+    test_functor_var_double_1 func1(1E-10, 1E-10, 1);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(0), 1e-7);
+    
+    test_functor_var_double_2 func2(1E-10, 1E-10, 1);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
+  }
 }
 
 class test_functor_var_var_1 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_var_var_1(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -237,14 +309,21 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][0];
   }
 };
 
 class test_functor_var_var_2 {
+  const double rel_tol_;
+  const double abs_tol_;
+  const size_t solver_;
 public:
+  test_functor_var_var_2(double rel_tol, double abs_tol, size_t solver)
+    : rel_tol_(rel_tol), abs_tol_(abs_tol), solver_(solver) {}
+
   template <typename T>
   inline
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
@@ -265,7 +344,8 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int, 1E-10, 1E-10);
+      = stan::math::integrate_ode_cvodes(sho, y0, t0, ts, theta, data, data_int,
+                                         rel_tol_, abs_tol_, 1E10, solver_);
 
     return ys[0][1];
   }
@@ -280,20 +360,41 @@ TEST(StanMathOdeIntegrateODEGrad, var_var) {
   x(0) = omega;
   x(1) = chi;
 
-  double f;
-  Eigen::VectorXd grad(2);
+  { // non-stiff solver
+    double f;
+    Eigen::VectorXd grad(2);
 
-  test_functor_var_var_1 func1;
-  stan::math::gradient(func1, x, f, grad);
+    test_functor_var_var_1 func1(1E-10, 1E-10, 0);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(1), 1e-7);
+    
+    test_functor_var_var_2 func2(1E-10, 1E-10, 0);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
+  }
 
-  EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
-  EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(1), 1e-7);
+  { // stiff solver
+    double f;
+    Eigen::VectorXd grad(2);
 
-  test_functor_var_var_2 func2;
-  stan::math::gradient(func2, x, f, grad);
-
-  EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-  EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
-  EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
+    test_functor_var_var_1 func1(1E-10, 1E-10, 1);
+    stan::math::gradient(func1, x, f, grad);
+    
+    EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy1_dchi(t, omega, chi), grad(1), 1e-7);
+    
+    test_functor_var_var_2 func2(1E-10, 1E-10, 1);
+    stan::math::gradient(func2, x, f, grad);
+    
+    EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
+  }
 }
