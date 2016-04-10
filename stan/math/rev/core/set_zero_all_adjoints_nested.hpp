@@ -20,12 +20,12 @@ namespace stan {
                                " set_zero_all_adjoints_nested()");
       size_t start1 = ChainableStack::nested_var_stack_sizes_.back();
       // avoid wrap with unsigned when start1 == 0
-      for (size_t i = (start1 == 0) ? 0 : (start1 - 1);
+      for (size_t i = (start1 == 0U) ? 0U : (start1 - 1);
            i < ChainableStack::var_stack_.size(); ++i)
         ChainableStack::var_stack_[i]->set_zero_adjoint();
 
       size_t start2 = ChainableStack::nested_var_nochain_stack_sizes_.back();
-      for (size_t i = (start2 == 0) ? 0U : start2 - 1;
+      for (size_t i = (start2 == 0U) ? 0U : (start2 - 1);
            i < ChainableStack::var_nochain_stack_.size(); ++i) {
         ChainableStack::var_nochain_stack_[i]->set_zero_adjoint();
       }
