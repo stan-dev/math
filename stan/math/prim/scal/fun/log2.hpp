@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
 
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <cmath>
+#include <boost/math/tools/promotion.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -16,10 +16,13 @@ namespace stan {
      *
      * <code>log2(a) = log(a) / std::log(2.0)</code>.
      *
+     * @tparam T type of scalar
      * @param a Value.
      * @return Base 2 logarithm of the value.
      */
-    inline double log2(const double a) {
+    template <typename T>
+    inline typename boost::math::tools::promote_args<T>::type
+    log2(const T a) {
       using std::log;
       return log(a) / LOG_2;
     }
