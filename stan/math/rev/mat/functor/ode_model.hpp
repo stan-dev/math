@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_ARR_FUNCTOR_ODE_MODEL_HPP
-#define STAN_MATH_REV_ARR_FUNCTOR_ODE_MODEL_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_ODE_MODEL_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_ODE_MODEL_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <iostream>

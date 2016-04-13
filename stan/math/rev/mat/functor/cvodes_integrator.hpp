@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_REV_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
-#define STAN_MATH_REV_ARR_FUNCTOR_CVODES_INTEGRATOR_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_CVODES_INTEGRATOR_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_CVODES_INTEGRATOR_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/arr/functor/ode_model.hpp>
+#include <stan/math/rev/mat/functor/ode_model.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 #include <cvodes/cvodes.h>
