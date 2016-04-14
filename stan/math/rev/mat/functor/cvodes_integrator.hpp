@@ -92,18 +92,16 @@ namespace stan {
        * function, initial state, parameters, data and a stream for
        * messages.
        *
-       * @param[in] f base ode system functor.
+       * @param[in] ode_model functor.
        * @param[in] y0 initial state of the base ode.
        * @param[in] t0 initial time of the base ode.
-       * @param[in] theta parameters of the base ode.
-       * @param[in] x real data.
-       * @param[in] x_int integer data.
+       * @param[in] initial_var flag if sensitivities of initals are needed
+       * @param[in] param_var flag if sensitivities of initals are needed
        * @param[in] rel_tol Relative tolerance of solver.
        * @param[in] abs_tol Absolute tolerance of solver.
        * @param[in] max_num_steps Maximum number of solver steps.
        * @param[in] solver used solver (0=non-stiff, 1=stiff, 2=stiff
        * with STALD)
-       * @param[in, out] msgs print stream.
        */
       cvodes_integrator(const ode_model<F>& ode_model,
                         const std::vector<double>& y0,
