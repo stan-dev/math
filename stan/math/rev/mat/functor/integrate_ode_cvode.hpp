@@ -75,6 +75,9 @@ namespace stan {
       const size_t N = y0.size();
       const size_t M = theta.size();
 
+      typedef boost::is_same<T1, stan::math::var> initial_var;
+      typedef boost::is_same<T2, stan::math::var> param_var;
+
       std::vector<double>    y0_dbl(N);
       std::vector<double> theta_dbl(M);
 
@@ -84,11 +87,15 @@ namespace stan {
       for (size_t i = 0; i < M; i++)
         theta_dbl[i] = stan::math::value_of(theta[i]);
 
-      typedef cvodes_integrator<F, T1, T2> integrator_t;
+      const ode_model<F> ode(f, theta_dbl, x, x_int, msgs);
 
-      integrator_t integrator(f, y0_dbl, t0, theta_dbl, x, x_int,
-                              rel_tol, abs_tol, max_num_steps, 1,
-                              msgs);
+      cvodes_integrator<F> integrator(ode,
+                                      y0_dbl, t0,
+                                      initial_var::value,
+                                      param_var::value,
+                                      rel_tol, abs_tol,
+                                      max_num_steps,
+                                      1);
 
       std::vector<std::vector<double> >
         y_res(ts.size(),
@@ -96,7 +103,7 @@ namespace stan {
 
       integrator.integrate_times(ts, y_res);
 
-      return decouple_states(y_res, y0, theta);
+      return decouple_ode_states(y_res, y0, theta);
     }
   }  // math
 }  // stan

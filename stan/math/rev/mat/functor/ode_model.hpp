@@ -41,6 +41,10 @@ namespace stan {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
       }
 
+      size_t size_param() const {
+        return theta_.size();
+      }
+
       template <typename Derived1, typename Derived2>
       void
       jacobian_S(const double t,

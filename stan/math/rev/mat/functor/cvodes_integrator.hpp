@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_INTEGRATOR_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/rev/mat/functor/ode_model.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_band.h>
@@ -23,25 +23,25 @@ namespace stan {
                             const char *function, char *msg, void *eh_data) {
     }
 
-    template <typename F, typename T1, typename T2>
+    template <typename F>
     class cvodes_integrator {
     private:
-      double t0_;
+      const ode_model<F>& ode_model_;
       const std::vector<double>& y0_dbl_;
-      const size_t N_;
+      double t0_;
+      const bool initial_var_;
+      const bool param_var_;
       const size_t M_;
+      const size_t N_;
       const size_t S_;
       const size_t size_;
-      const size_t theta_var_ind_;
+      const size_t param_var_ind_;
       void* cvode_mem_;
       std::vector<double> state_;
       N_Vector  cvode_state_;
       N_Vector *cvode_state_sens_;
 
-      const ode_model<F> ode_model_;
-      const size_t solver_;
-
-      typedef cvodes_integrator<F, T1, T2> ode;
+      typedef cvodes_integrator<F> ode;
 
       void check_flag(int flag, const std::string& func_name) const {
         if (flag < 0) {
@@ -87,9 +87,6 @@ namespace stan {
       }
 
     public:
-      typedef boost::is_same<T1, stan::math::var> initial_var;
-      typedef boost::is_same<T2, stan::math::var> theta_var;
-
       /**
        * Construct the coupled ODE system from the base system
        * function, initial state, parameters, data and a stream for
@@ -108,33 +105,37 @@ namespace stan {
        * with STALD)
        * @param[in, out] msgs print stream.
        */
-      cvodes_integrator(const F& f,
+      cvodes_integrator(const ode_model<F>& ode_model,
                         const std::vector<double>& y0,
                         double t0,
-                        const std::vector<double>& theta,
-                        const std::vector<double>& x,
-                        const std::vector<int>& x_int,
+                        bool initial_var,
+                        bool param_var,
                         double rel_tol,
                         double abs_tol,
                         long int max_num_steps,  // NOLINT(runtime/int)
-                        size_t solver,
-                        std::ostream* msgs)
-        : t0_(t0),
+                        size_t solver)
+        : ode_model_(ode_model),
           y0_dbl_(y0),
+          t0_(t0),
+          initial_var_(initial_var),
+          param_var_(param_var),
+          M_(ode_model.size_param()),
           N_(y0.size()),
-          M_(theta.size()),
-          S_((initial_var::value ? N_ : 0) + (theta_var::value ? M_ : 0)),
+          S_((initial_var ? N_ : 0) + (param_var ? M_ : 0)),
           size_(N_ * (S_+1)),
-          theta_var_ind_(initial_var::value ? N_ : 0),
+          param_var_ind_(initial_var ? N_ : 0),
           cvode_mem_(NULL),
           state_(y0),
           cvode_state_(N_VMake_Serial(N_,
                                       &state_[0])),
-          cvode_state_sens_(NULL),
-          ode_model_(f, theta, x, x_int, msgs),
-          solver_(solver) {
+          cvode_state_sens_(NULL) {
+        stan::math::check_bounded("cvodes_integrator",
+                                  "solver", solver,
+                                  static_cast<size_t>(0),
+                                  static_cast<size_t>(2));
+
         // Instantiate CVode memory
-        if (solver_ == 0) {
+        if (solver == 0) {
           cvode_mem_ = CVodeCreate(CV_ADAMS, CV_FUNCTIONAL);
 
           if (cvode_mem_ == NULL)
@@ -142,7 +143,7 @@ namespace stan {
 
           set_cvode_options(rel_tol, abs_tol, max_num_steps);
 
-        } else if (solver_ == 1 || solver_ == 2) {
+        } else if (solver == 1 || solver == 2) {
           cvode_mem_ = CVodeCreate(CV_BDF, CV_NEWTON);
 
           if (cvode_mem_ == NULL)
@@ -150,8 +151,8 @@ namespace stan {
 
           set_cvode_options(rel_tol, abs_tol, max_num_steps);
 
-          // enable stability limit detection for solver_==2
-          if (solver_ == 2)
+          // enable stability limit detection for solver==2
+          if (solver == 2)
             check_flag(CVodeSetStabLimDet(cvode_mem_, 1), "CVodeSetStabLimDet");
 
           // for the stiff solvers we need to reserve additional
@@ -159,9 +160,6 @@ namespace stan {
           check_flag(CVDense(cvode_mem_, N_), "CVDense");
           check_flag(CVDlsSetDenseJacFn(cvode_mem_, &ode::dense_jacobian),
                       "CVDlsSetDenseJacFn");
-        } else {
-          throw
-            std::runtime_error("cvodes_integrator supports solvers 0,1,2 only");
         }
 
         // initialize forward sensitivity system of CVODES as needed
@@ -174,7 +172,7 @@ namespace stan {
           // for the case with varying initials, the first N_
           // sensitivity systems correspond to the initials which have
           // as initial the identity matrix
-          if (initial_var::value) {
+          if (initial_var_) {
             for (size_t n = 0; n < N_; n++) {
               NV_Ith_S(cvode_state_sens_[n], n) = 1.0;
             }
@@ -224,32 +222,31 @@ namespace stan {
 
         Eigen::VectorXd fy(N_);
         Eigen::MatrixXd Jy(N_, N_);
-        Eigen::MatrixXd Jtheta(N_, M_);
 
-        if (theta_var::value)
+        if (param_var_) {
+          Eigen::MatrixXd Jtheta(N_, M_);
           ode_model_.jacobian_SP(t, y_vec, fy, Jy, Jtheta);
-        else
-          ode_model_.jacobian_S(t, y_vec, fy, Jy);
 
-        if (initial_var::value) {
+          for (size_t m = 0; m < M_; m++) {
+            // map NV_Vector to Eigen facilities
+            Eigen::Map<Eigen::VectorXd>
+              yS_eig(NV_DATA_S(yS[param_var_ind_ + m]), N_);
+            Eigen::Map<Eigen::VectorXd>
+              ySdot_eig(NV_DATA_S(ySdot[param_var_ind_ + m]), N_);
+
+            ySdot_eig = Jy * yS_eig + Jtheta.col(m);
+          }
+        } else {
+          ode_model_.jacobian_S(t, y_vec, fy, Jy);
+        }
+
+        if (initial_var_) {
           for (size_t m = 0; m < N_; m++) {
             // map NV_Vector to Eigen facilities
             Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[m]), N_);
             Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[m]), N_);
 
             ySdot_eig = Jy * yS_eig;
-          }
-        }
-
-        if (theta_var::value) {
-          for (size_t m = 0; m < M_; m++) {
-            // map NV_Vector to Eigen facilities
-            Eigen::Map<Eigen::VectorXd>
-              yS_eig(NV_DATA_S(yS[theta_var_ind_ + m]), N_);
-            Eigen::Map<Eigen::VectorXd>
-              ySdot_eig(NV_DATA_S(ySdot[theta_var_ind_ + m]), N_);
-
-            ySdot_eig = Jy * yS_eig + Jtheta.col(m);
           }
         }
       }
@@ -327,7 +324,7 @@ namespace stan {
       std::vector<double> initial_state() const {
         std::vector<double> state(size_, 0.0);
         std::copy(y0_dbl_.begin(), y0_dbl_.end(), state.begin());
-        if (initial_var::value) {
+        if (initial_var_) {
           for (size_t n = 0; n < N_; n++)
             state[N_ + n * N_ + n] = 1.0;
         }

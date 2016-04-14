@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_ARR_FUNCTOR_DECOUPLE_STATES_HPP
-#define STAN_MATH_REV_ARR_FUNCTOR_DECOUPLE_STATES_HPP
+#ifndef STAN_MATH_REV_ARR_FUN_DECOUPLE_ODE_STATES_HPP
+#define STAN_MATH_REV_ARR_FUN_DECOUPLE_ODE_STATES_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -27,9 +27,9 @@ namespace stan {
     template <typename T1, typename T2>
     inline
     std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-    decouple_states(const std::vector<std::vector<double> >& y,
-                    const std::vector<T1>& y0,
-                    const std::vector<T2>& theta) {
+    decouple_ode_states(const std::vector<std::vector<double> >& y,
+                        const std::vector<T1>& y0,
+                        const std::vector<T2>& theta) {
       using std::vector;
       using stan::math::var;
       using stan::math::precomputed_gradients;
@@ -73,9 +73,9 @@ namespace stan {
     template <>
     inline
     std::vector<std::vector<double> >
-    decouple_states(const std::vector<std::vector<double> >& y,
-                    const std::vector<double>& y0,
-                    const std::vector<double>& theta) {
+    decouple_ode_states(const std::vector<std::vector<double> >& y,
+                        const std::vector<double>& y0,
+                        const std::vector<double>& theta) {
       return y;
     }
   }  // ns math
