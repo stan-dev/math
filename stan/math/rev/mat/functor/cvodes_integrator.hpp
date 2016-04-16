@@ -290,7 +290,7 @@ namespace stan {
           }
         }
       }
-      
+
       // Static wrapper for CVode callback
       static int ode_rhs_sens(int Ns, realtype t,
                               N_Vector y, N_Vector ydot,
