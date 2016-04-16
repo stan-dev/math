@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -95,20 +94,11 @@ namespace stan {
                                 static_cast<size_t>(0),
                                 static_cast<size_t>(2));
 
-      const size_t N = y0.size();
-      const size_t M = theta.size();
-
       typedef boost::is_same<T1, stan::math::var> initial_var;
       typedef boost::is_same<T2, stan::math::var> param_var;
 
-      std::vector<double>    y0_dbl(N);
-      std::vector<double> theta_dbl(M);
-
-      for (size_t i = 0; i < N; i++)
-        y0_dbl[i] = stan::math::value_of(y0[i]);
-
-      for (size_t i = 0; i < M; i++)
-        theta_dbl[i] = stan::math::value_of(theta[i]);
+      std::vector<double> y0_dbl = stan::math::value_of(y0);
+      std::vector<double> theta_dbl = stan::math::value_of(theta);
 
       const ode_model<F> ode(f, theta_dbl, x, x_int, msgs);
 

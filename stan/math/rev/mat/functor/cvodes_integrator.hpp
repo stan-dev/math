@@ -20,9 +20,17 @@ namespace stan {
     // Noop error handler to silence CVodes error output
     extern "C"
     void silent_err_handler_cvodes(int error_code, const char *module,
-                                   const char *function, char *msg, void *eh_data) {
+                                   const char *function, char *msg,
+                                   void *eh_data) {
     }
 
+    /**
+     * CVODES integrator which supports stiff and non-stiff
+     * integration with optional support for sensitivites for the
+     * initial values and/or the parameters.
+     * 
+     * @tparam F type of functor for the base ode system.
+    */
     template <typename F>
     class cvodes_integrator {
     private:
@@ -63,19 +71,19 @@ namespace stan {
 
         // Assign pointer to this as user data
         check_flag(CVodeSetUserData(cvode_mem_,
-                                     reinterpret_cast<void*>(this)),
-                    "CVodeSetUserData");
+                                    reinterpret_cast<void*>(this)),
+                   "CVodeSetUserData");
 
         // Initialize solver parameters
         check_flag(CVodeSStolerances(cvode_mem_, rel_tol, abs_tol),
-                    "CVodeSStolerances");
+                   "CVodeSStolerances");
 
         check_flag(CVodeSetMaxNumSteps(cvode_mem_, max_num_steps),
-                    "CVodeSetMaxNumSteps");
+                   "CVodeSetMaxNumSteps");
 
         double init_step = 0;
         check_flag(CVodeSetInitStep(cvode_mem_, init_step),
-                    "CVodeSetInitStep");
+                   "CVodeSetInitStep");
 
         long int max_err_test_fails = 20;  // NOLINT(runtime/int)
         check_flag(CVodeSetMaxErrTestFails(cvode_mem_, max_err_test_fails),
@@ -83,14 +91,29 @@ namespace stan {
 
         long int max_conv_fails = 50;  // NOLINT(runtime/int)
         check_flag(CVodeSetMaxConvFails(cvode_mem_, max_conv_fails),
-                    "CVodeSetMaxConvFails");
+                   "CVodeSetMaxConvFails");
       }
 
     public:
       /**
-       * Construct the coupled ODE system from the base system
-       * function, initial state, parameters, data and a stream for
-       * messages.
+       * Construct CVODES integrator for an ODE model with initial
+       * state, initial time, flag for sensitivity calculation of the
+       * initial values and for the parameters, integrator options
+       * such as rel+abs tolerance and maximum number of steps. The
+       * integrator supports non-stiff (Adams-Moulton) and stiff (BDF)
+       * integration with optional stability detection.
+       *
+       * The integrator creates as output a vector of vector
+       * format. The outer vector is over the time-points where the
+       * solution is requested and the inner the states. The order of
+       * the states with is always
+       *
+       * \f[
+       * (y, \frac{\partial y}{\partial y_0}, \frac{\partial y}{\partial \theta}).
+       * \f]
+       *
+       * While the first N states correspond to y, all the remaining
+       * are optional and depend on flags given to the constructor.
        *
        * @param[in] ode_model functor.
        * @param[in] y0 initial state of the base ode.
@@ -195,12 +218,18 @@ namespace stan {
         CVodeFree(&cvode_mem_);
       }
 
-      // Forward the CVode array-based call from
-      // the ODE RHS to the Stan vector-based call
+      /**
+       * Forward the CVode array-based call from
+       * the ODE RHS to the Stan vector-based call
+       *
+       * @param[in] y state of the base ODE system
+       * @param[out] dy_dt ODE RHS at time t
+       * @param[in] t time
+       */
       void rhs(const double y[], double dy_dt[], double t) const {
         const std::vector<double> y_vec(y, y + N_);
 
-        std::vector<double> dy_dt_vec(N_);
+        std::vector<double> dy_dt_vec;
         ode_model_(y_vec, dy_dt_vec, t);
 
         std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
@@ -213,6 +242,19 @@ namespace stan {
         return 0;
       }
 
+      /**
+       * Calculate the sensitivity RHS for the requested variables
+       * (initials and/or parameters). Function signature is
+       * pre-defined by CVODES library.
+       *
+       * @param[in] M number of parameters for which sensitivites are calculated
+       * @param[in] t time
+       * @param[in] y state of the base ODE system
+       * @param[in] ydot state of the RHS of the ODE system
+       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
+       * RHS
+       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
+       */
       void rhs_sens(int M, realtype t,
                     double y[], double ydot[],
                     N_Vector *yS, N_Vector *ySdot) const {
@@ -248,7 +290,8 @@ namespace stan {
           }
         }
       }
-
+      
+      // Static wrapper for CVode callback
       static int ode_rhs_sens(int Ns, realtype t,
                               N_Vector y, N_Vector ydot,
                               N_Vector *yS, N_Vector *ySdot, void *user_data,
@@ -260,17 +303,12 @@ namespace stan {
         return 0;
       }
 
-      void report_stats(long int& n_rhs,               // NOLINT(runtime/int)
-                        long int& n_rhs_sens) const {  // NOLINT(runtime/int)
-        check_flag(CVodeGetNumRhsEvals(cvode_mem_, &n_rhs),
-                   "CVodeGetNumRhsEvals");
-        n_rhs_sens = 0;
-        if (S_ > 0) {
-          check_flag(CVodeGetSensNumRhsEvals(cvode_mem_, &n_rhs_sens),
-                     "CVodeGetSensNumRhsEvals");
-        }
-      }
-
+      /**
+       * Integrate ODE and exract solution at time-points ts.
+       *
+       * @param[in] ts vector of time-points to evaluate
+       * @param[out] y_coupled integrated function
+       */
       void integrate_times(const std::vector<double>& ts,
                            std::vector<std::vector<double> >& y_coupled) const {
         double t_init = t0_;
@@ -303,6 +341,13 @@ namespace stan {
         return explicit_ode->dense_jacobian(NV_DATA_S(y), J, t);
       }
 
+      /**
+       * Calculate the Jacobian of the ODE RHS wrt to states
+       *
+       * @param[in] y state of the base ODE system
+       * @param[out] J Jacobian wrt to states y of ODE RHS
+       * @param[in] t time
+       */
       int dense_jacobian(const double* y, DlsMat J, double t) const {
         const std::vector<double> y_vec(y, y + N_);
 
@@ -315,10 +360,22 @@ namespace stan {
         return 0;
       }
 
+      /**
+       * Return the size of system (length of output vector at each
+       * time-point).
+       *
+       * @return size of the theta vector
+       */
       int size() const {
         return size_;
       }
 
+      /**
+       * Return the initial state of the coupled system. Note: Could
+       * be removed, only here because tests expect it.
+       *
+       * @return initial state of coupled system
+       */
       std::vector<double> initial_state() const {
         std::vector<double> state(size_, 0.0);
         std::copy(y0_dbl_.begin(), y0_dbl_.end(), state.begin());

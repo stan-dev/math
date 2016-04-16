@@ -16,13 +16,21 @@ namespace stan {
      * in precomputed_gradients format.
      *
      * Solution input vector size depends on requested sensitivities,
-     * which can be enabled for initials and parameters. Per
+     * which can be enabled for initials and parameters. For each
      * sensitivity N states are computed. The input vector is expected
      * to be ordered by states, i.e. first the N states, then
      * optionally the N sensitivities for the initials (first the N
      * states for the first initial and so on), finally the
      * sensitivities for the M parameters follow optionally.
      *
+     * @tparam T1 type of scalars for initial values.
+     * @tparam T2 type of scalars for parameters.
+     * @param[in] y output from integrator in column-major format
+     * as a coupled system output
+     * @param[in] y0 initial state.
+     * @param[in] theta parameters
+     * @return a vector of states for each entry in y in Stan var
+     * format
      */
     template <typename T1, typename T2>
     inline
@@ -44,6 +52,7 @@ namespace stan {
         (initial_var::value ? N : 0) +
         (theta_var::value ? M : 0);
 
+      vars.reserve(S);
       if (initial_var::value)
         vars.insert(vars.end(), y0.begin(), y0.end());
       if (theta_var::value)
@@ -68,8 +77,15 @@ namespace stan {
       return y_return;
     }
 
-    // special case if both (initials and parameters) are known, then
-    // this function just returns its input.
+    /**
+     * The decouple ODE states operation for the case of no
+     * sensitivities is equal to the indentity operation.
+     *
+     * @param[in] y output from integrator 
+     * @param[in] y0 initial state.
+     * @param[in] theta parameters
+     * @return y
+     */
     template <>
     inline
     std::vector<std::vector<double> >
