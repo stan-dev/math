@@ -53,6 +53,7 @@ namespace stan {
        * @param[out] dy_dt ODE RHS
        * @param[in]  t time.
        */
+      inline
       void operator()(const std::vector<double>& y,
                       std::vector<double>& dy_dt,
                       const double t) const {
@@ -69,19 +70,22 @@ namespace stan {
       }
 
       /**
-       * Calculate the Jacobian of the ODE RHS wrt to states y.
+       * Calculate the Jacobian of the ODE RHS wrt to states y. The
+       * function expects the output objects to have correct sizes,
+       * i.e. dy_dt must be length N and Jy a NxN matrix (N states, M
+       * parameters).
        *
+       * @param[in] t time.
        * @param[in] y state of the ode system at time t.
-       * @param[out] fy ODE RHS
+       * @param[out] dy_dt ODE RHS
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        */
       template <typename Derived1, typename Derived2>
       void
       jacobian_S(const double t,
                  const std::vector<double>& y,
-                 Eigen::MatrixBase<Derived1>& fy,
+                 Eigen::MatrixBase<Derived1>& dy_dt,
                  Eigen::MatrixBase<Derived2>& Jy) const {
-        // note: the function expects fy and Jy to have correct sizes!
         using Eigen::Matrix;
         using stan::math::var;
         using std::vector;
@@ -90,12 +94,12 @@ namespace stan {
         try {
           stan::math::start_nested();
           vector<var> y_var(y.begin(), y.end());
-          vector<var> fy_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
-          for (size_t i = 0; i < fy_var.size(); ++i) {
-            fy(i) = fy_var[i].val();
+          vector<var> dy_dt_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
+          for (size_t i = 0; i < dy_dt_var.size(); ++i) {
+            dy_dt(i) = dy_dt_var[i].val();
             stan::math::set_zero_all_adjoints_nested();
 
-            fy_var[i].grad(y_var, grad);
+            dy_dt_var[i].grad(y_var, grad);
             Jy.row(i) = grad_eig;
           }
         } catch (const std::exception& e) {
@@ -107,10 +111,13 @@ namespace stan {
 
       /**
        * Calculate the Jacobian of the ODE RHS wrt to states y and
-       * parameters theta.
+       * parameters theta. The function expects the output objects to
+       * have correct sizes, i.e. dy_dt must be length N, Jy a NxN
+       * matrix and Jtheta a NxM matrix (N states, M parameters).
        *
+       * @param[in] t time.
        * @param[in] y state of the ode system at time t.
-       * @param[out] fy ODE RHS
+       * @param[out] dy_dt ODE RHS
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        * @param[out] Jtheta Jacobian of ODE RHS wrt to theta.
        */
@@ -118,7 +125,7 @@ namespace stan {
       void
       jacobian_SP(const double t,
                   const std::vector<double>& y,
-                  Eigen::MatrixBase<Derived1>& fy,
+                  Eigen::MatrixBase<Derived1>& dy_dt,
                   Eigen::MatrixBase<Derived2>& Jy,
                   Eigen::MatrixBase<Derived3>& Jtheta) const {
         using Eigen::Matrix;
@@ -136,11 +143,11 @@ namespace stan {
           z_var.reserve(y.size() + theta_.size());
           z_var.insert(z_var.end(),     y_var.begin(),     y_var.end());
           z_var.insert(z_var.end(), theta_var.begin(), theta_var.end());
-          vector<var> fy_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
-          for (size_t i = 0; i < fy_var.size(); ++i) {
-            fy(i) = fy_var[i].val();
+          vector<var> dy_dt_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
+          for (size_t i = 0; i < dy_dt_var.size(); ++i) {
+            dy_dt(i) = dy_dt_var[i].val();
             stan::math::set_zero_all_adjoints_nested();
-            fy_var[i].grad(z_var, grad);
+            dy_dt_var[i].grad(z_var, grad);
 
             Jy.row(i) = grad_eig.leftCols(y.size());
             Jtheta.row(i) = grad_eig.rightCols(theta_.size());

@@ -371,8 +371,7 @@ namespace stan {
       }
 
       /**
-       * Return the initial state of the coupled system. Note: Could
-       * be removed, only here because tests expect it.
+       * Return the initial state of the coupled system.
        *
        * @return initial state of coupled system
        */
