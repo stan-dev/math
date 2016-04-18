@@ -369,21 +369,6 @@ namespace stan {
       int size() const {
         return size_;
       }
-
-      /**
-       * Return the initial state of the coupled system.
-       *
-       * @return initial state of coupled system
-       */
-      std::vector<double> initial_state() const {
-        std::vector<double> state(size_, 0.0);
-        std::copy(y0_dbl_.begin(), y0_dbl_.end(), state.begin());
-        if (initial_var_) {
-          for (size_t n = 0; n < N_; n++)
-            state[N_ + n * N_ + n] = 1.0;
-        }
-        return state;
-      }
     };
 
   }  // math

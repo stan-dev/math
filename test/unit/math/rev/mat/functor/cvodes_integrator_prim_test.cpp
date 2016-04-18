@@ -51,7 +51,7 @@ TEST_F(StanMathOdeCVode, decouple_ode_states_dd) {
         << "(" << n << "," << t << "): "
         << "for (double, double) the coupled system is the base system";
 }
-
+/* obsolete
 TEST_F(StanMathOdeCVode, initial_state_dd) {
   using stan::math::cvodes_integrator;
 
@@ -78,7 +78,7 @@ TEST_F(StanMathOdeCVode, initial_state_dd) {
   for (size_t n = N; n < state.size(); n++)
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
-
+*/
 TEST_F(StanMathOdeCVode, size) {
   using stan::math::cvodes_integrator;
 
