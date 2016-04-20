@@ -49,24 +49,15 @@ namespace stan {
       /**
        * Calculate the RHS of the ODE
        *
+       * @param[in] t time.
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
-       * @param[in]  t time.
        */
       inline
-      void operator()(const std::vector<double>& y,
-                      std::vector<double>& dy_dt,
-                      const double t) const {
+      void operator()(const double t,
+                      const std::vector<double>& y,
+                      std::vector<double>& dy_dt) const {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
-      }
-
-      /**
-       * Return the number of parameters
-       *
-       * @return size of the theta vector
-       */
-      size_t size_param() const {
-        return theta_.size();
       }
 
       /**
