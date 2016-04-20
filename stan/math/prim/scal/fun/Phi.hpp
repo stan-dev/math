@@ -26,8 +26,6 @@ namespace stan {
      * @return Probability random sample is less than or equal to argument.
      */
     inline double Phi(const double x) {
-      // overridden in fvar and var, so can hard-code boost versions
-      // here for scalars only
       using stan::math::check_not_nan;
 
       check_not_nan("Phi",  "x", x);

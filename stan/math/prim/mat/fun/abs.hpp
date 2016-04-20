@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ABS_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/abs.hpp>
 
 namespace stan {
   namespace math {
@@ -16,7 +16,7 @@ namespace stan {
     struct abs_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using std::fabs;
+        using stan::math::abs;
         return abs(x);
       }
     };
