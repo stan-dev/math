@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/tools/promotion.hpp>
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_binary_test.hpp>
 //#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 //#include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
@@ -38,9 +39,22 @@ struct binary_foo_test {
    *
    * WARNING:  this is *not an independent test of the underlying function*.
    */
-  template <typename R, typename T1, typename T2>
-  static R apply_base(const T1& x, const T2& y) {
-    return apply<R, T1, T2>(x, y);
+  static double apply_base(int x, int y) {
+    return apply<double, int, int>(x, y);
+  }
+
+  /**
+   * This is the generic version of the integer version defined
+   * above.  For every other type, the return type is the same as the
+   * reference type.
+   *
+   * WARNING:  this is *not an independent test of the underlying function*.
+   */
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply_base(const T1& x, const T2& y) {
+    return apply<typename boost::math::tools::promote_args<T1, T2>::type, 
+                 T1, T2>(x, y);
   }
 
   /**

@@ -106,8 +106,9 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime,
-                            T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<
+                            F, int, scalar_t>::return_t,
+                            T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -163,8 +164,9 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime,
-                            T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<
+                            F, double, scalar_t>::return_t,
+                            T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -220,8 +222,9 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime,
-                            T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<
+                            F, scalar_t, int>::return_t,
+                            T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -236,7 +239,7 @@ namespace stan {
         return_t result(x.rows(), x.cols());
         for (int j = 0; j < x.cols(); ++j)
           for (int i = 0; i < x.rows(); ++i)
-            result(i, j) = apply_scalar_binary<F, int, scalar_t>::
+            result(i, j) = apply_scalar_binary<F, scalar_t, int>::
                            apply(x(i, j), y);
         return result;
       }
@@ -277,8 +280,9 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime,
-                            T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<
+                            F, scalar_t, double>::return_t,
+                            T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -293,7 +297,7 @@ namespace stan {
         return_t result(x.rows(), x.cols());
         for (int j = 0; j < x.cols(); ++j)
           for (int i = 0; i < x.rows(); ++i)
-            result(i, j) = apply_scalar_binary<F, int, scalar_t>::
+            result(i, j) = apply_scalar_binary<F, scalar_t, double>::
                            apply(x(i, j), y);
         return result;
       }
@@ -480,7 +484,7 @@ namespace stan {
       static inline return_t apply(double x, const std::vector<T>& y) {
         return_t fx(y.size());
         for (size_t i = 0; i < y.size(); ++i)
-          fx[i] = apply_scalar_binary<F, int, T>::apply(x, y[i]);
+          fx[i] = apply_scalar_binary<F, double, T>::apply(x, y[i]);
         return fx;
       }
     };
@@ -591,7 +595,7 @@ namespace stan {
                                 x.size(), y.size());
         return_t fx(x.size());
         for (size_t i = 0; i < x.size(); ++i)
-          fx[i] = apply_scalar_binary<F, T1, T2>::apply(x[i]);
+          fx[i] = apply_scalar_binary<F, T1, T2>::apply(x[i], y[i]);
         return fx;
       }
     };
