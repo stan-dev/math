@@ -8,15 +8,11 @@
 struct StanMathRevOdeCVode : public ::testing::Test {
   void SetUp() {
     stan::math::recover_memory();
-    dummy = 1.0;
   }
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
   double t0;
-  // weird: for the nested AD stuff to work, there must be at least
-  // one stan::math::var instance around
-  stan::math::var dummy;
 };
 
 // helper object to initialize data structures which we can pass into
@@ -183,6 +179,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_dv) {
     for (size_t n = 0; n < 2; n++)
       EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n].val());
 }
+/* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_dv) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -213,7 +210,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_dv) {
   for (size_t n = N; n < state.size(); n++)
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
-
+*/
 TEST_F(StanMathRevOdeCVode, size_dv) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -419,7 +416,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_vd) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0_v[n].val(),
                       ys[t][n].val());
 }
-
+/* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_vd) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -450,7 +447,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_vd) {
     for (size_t n = 0; n < N; n++)
       EXPECT_FLOAT_EQ(n == s ? 1.0 : 0.0, state[N + s*N + n]);
 }
-
+*/
 TEST_F(StanMathRevOdeCVode, size_vd) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -653,7 +650,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_vv) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0[n].val(),
                       ys[t][n].val());
 }
-
+/* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_vv) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -685,7 +682,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_vv) {
     for (size_t n = 0; n < N; n++)
       EXPECT_FLOAT_EQ(0.0, state[N + s*N + n]);
 }
-
+*/
 TEST_F(StanMathRevOdeCVode, size_vv) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
