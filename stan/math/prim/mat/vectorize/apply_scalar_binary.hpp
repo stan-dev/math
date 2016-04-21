@@ -45,9 +45,8 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<typename apply_scalar_binary<
-                            F, scalar_t1, scalar_t2>::return_t, 
-                            T1::RowsAtCompileTime, T1::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<F, scalar_t1,
+      scalar_t2>::return_t, T1::RowsAtCompileTime, T1::ColsAtCompileTime>
       return_t;
 
       /**
@@ -106,9 +105,8 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<typename apply_scalar_binary<
-                            F, int, scalar_t>::return_t,
-                            T::RowsAtCompileTime, T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<F, int, scalar_t>::
+      return_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -164,9 +162,8 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<typename apply_scalar_binary<
-                            F, double, scalar_t>::return_t,
-                            T::RowsAtCompileTime, T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<F, double, 
+      scalar_t>::return_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
@@ -222,9 +219,8 @@ namespace stan {
        * Return type for applying the function elementwise to a matrix
        * expression template of type T.
        */
-      typedef Eigen::Matrix<typename apply_scalar_binary<
-                            F, scalar_t, int>::return_t,
-                            T::RowsAtCompileTime, T::ColsAtCompileTime>
+      typedef Eigen::Matrix<typename apply_scalar_binary<F, scalar_t, int>::
+      return_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
       return_t;
 
       /**
