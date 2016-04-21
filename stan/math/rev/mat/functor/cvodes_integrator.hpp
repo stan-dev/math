@@ -40,7 +40,7 @@ namespace stan {
       const std::vector<T1>& y0_;
       double t0_;
       const std::vector<T2>& theta_;
-      const std::vector<double>& times_;
+      const std::vector<double>& ts_;
       const size_t N_;
       const size_t M_;
       const size_t S_;
@@ -128,8 +128,11 @@ namespace stan {
        * @param[in] ode_model functor.
        * @param[in] y0 initial state of the base ode.
        * @param[in] t0 initial time of the base ode.
-       * @param[in] initial_var flag if sensitivities of initals are needed
-       * @param[in] param_var flag if sensitivities of initals are needed
+       * @param[in] theta parameters of the base ode.
+       * @param[in] x continuous data vector for the ODE.
+       * @param[in] x_int integer data vector for the ODE.
+       * @param[in] ts times of the desired solutions, in strictly
+       * increasing order, all greater than the initial time.
        * @param[in] rel_tol Relative tolerance of solver.
        * @param[in] abs_tol Absolute tolerance of solver.
        * @param[in] max_num_steps Maximum number of solver steps.
@@ -142,7 +145,7 @@ namespace stan {
                         const std::vector<T2>& theta,
                         const std::vector<double>& x,
                         const std::vector<int>& x_int,
-                        const std::vector<double>& times,
+                        const std::vector<double>& ts,
                         double rel_tol,
                         double abs_tol,
                         long int max_num_steps,  // NOLINT(runtime/int)
@@ -151,7 +154,7 @@ namespace stan {
         : y0_(y0),
           t0_(t0),
           theta_(theta),
-          times_(times),
+          ts_(ts),
           N_(y0.size()),
           M_(theta.size()),
           S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
@@ -322,10 +325,10 @@ namespace stan {
        */
       return_t integrate() const {
         std::vector<std::vector<double> >
-          y_coupled(times_.size(), std::vector<double>(size_, 0));
+          y_coupled(ts_.size(), std::vector<double>(size_, 0));
         double t_init = t0_;
-        for (size_t n = 0; n < times_.size(); ++n) {
-          double t_final = times_[n];
+        for (size_t n = 0; n < ts_.size(); ++n) {
+          double t_final = ts_[n];
           if (t_final != t_init)
             check_flag(CVode(cvode_mem_, t_final, cvode_state_,
                              &t_init, CV_NORMAL),
