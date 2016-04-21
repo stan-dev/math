@@ -25,7 +25,7 @@ void sho_value_test(F harm_osc,
   using stan::math::promote_scalar;
 
   std::vector<std::vector<var> > ode_res_vd
-    = stan::math::integrate_ode_cvodes(harm_osc, promote_scalar<T_y0>(y0), t0,
+    = stan::math::integrate_ode_bdf(harm_osc, promote_scalar<T_y0>(y0), t0,
                                        ts, promote_scalar<T_theta>(theta), x,
                                        x_int);
 
@@ -54,7 +54,7 @@ void sho_finite_diff_test(double t0) {
   std::vector<double> x;
   std::vector<int> x_int;
 
-  test_ode_cvodes(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
+  test_ode_bdf(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
   sho_value_test<harm_osc_ode_fun, double, var>
     (harm_osc, y0, t0, ts, theta, x, x_int);
@@ -83,7 +83,7 @@ void sho_data_finite_diff_test(double t0) {
   std::vector<double> x(3,1);
   std::vector<int> x_int(2,0);
 
-  test_ode_cvodes(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
+  test_ode_bdf(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
   sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts, theta, x, x_int);
   sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts, theta, x, x_int);
@@ -91,7 +91,7 @@ void sho_data_finite_diff_test(double t0) {
 }
 
 
-TEST(StanAgradRevOde_integrate_ode_cvodes, harmonic_oscillator_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_finite_diff) {
   sho_finite_diff_test(0);
   sho_finite_diff_test(1.0);
   sho_finite_diff_test(-1.0);
@@ -101,7 +101,7 @@ TEST(StanAgradRevOde_integrate_ode_cvodes, harmonic_oscillator_finite_diff) {
   sho_data_finite_diff_test(-1.0);
 }
 
-TEST(StanAgradRevOde_integrate_ode_cvodes, lorenz_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_bdf, lorenz_finite_diff) {
   lorenz_ode_fun lorenz;
 
   std::vector<double> y0;
@@ -124,5 +124,5 @@ TEST(StanAgradRevOde_integrate_ode_cvodes, lorenz_finite_diff) {
   for (int i = 0; i < 100; i++)
     ts.push_back(0.1*(i+1));
 
-  test_ode_cvodes(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
+  test_ode_bdf(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
 }

@@ -8,15 +8,14 @@
 struct StanMathRevOdeCVode : public ::testing::Test {
   void SetUp() {
     stan::math::recover_memory();
-    dummy = 1.0;
+    ts = std::vector<double>(1,10);
+    t0 = 0;
   }
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
   double t0;
-  // weird: for the nested AD stuff to work, there must be at least
-  // one stan::math::var instance around
-  stan::math::var dummy;
+  std::vector<double> ts;
 };
 
 // helper object to initialize data structures which we can pass into
@@ -119,7 +118,7 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_dv) {
   */
   
   cvodes_integrator<harm_osc_ode_fun, double, stan::math::var>
-    integrator(harm_osc, y0, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(harm_osc, y0, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   cvodes2coupled nvec(N, S);
 
@@ -162,7 +161,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_dv) {
   std::vector<var> theta(theta_dbl.begin(), theta_dbl.end());
 
   cvodes_integrator<mock_ode_functor, double, var>
-    integrator(mock_ode, y0, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(mock_ode, y0, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
@@ -206,7 +205,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_dv) {
   }
 
   cvodes_integrator<mock_ode_functor, double, var>
-    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   std::vector<double> state = integrator_dv.initial_state();
   for (size_t n = 0; n < N; n++)
@@ -229,7 +228,7 @@ TEST_F(StanMathRevOdeCVode, size_dv) {
   std::vector<var> theta(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, double, var>
-    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   EXPECT_EQ(N + N * M, integrator_dv.size());
 }
@@ -247,7 +246,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_dv) {
   std::vector<var> theta(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, double, var>
-    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_dv(base_ode, y0_d, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   //std::vector<double> y(3,0);
   //std::vector<double> dy_dt(3,0);
@@ -288,7 +287,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_dv) {
 
     cvodes_integrator<mock_throwing_ode_functor<std::logic_error>,
                       double, var>
-      integrator_dv(throwing_ode, y0_d, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+      integrator_dv(throwing_ode, y0_d, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);
@@ -345,7 +344,7 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vd) {
   y0_d.push_back(0.5);
 
   cvodes_integrator<harm_osc_ode_fun, stan::math::var, double>
-    integrator(harm_osc, y0_var, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(harm_osc, y0_var, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   cvodes2coupled nvec(N, S);
 
@@ -396,7 +395,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_vd) {
   std::vector<var> y0_v(y0_d.begin(), y0_d.end());
 
   cvodes_integrator<mock_ode_functor, var, double>
-    integrator(mock_ode, y0_v, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(mock_ode, y0_v, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
@@ -440,7 +439,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_vd) {
     theta_d[m] = 10 * (m + 1);
 
   cvodes_integrator<mock_ode_functor, var, double>
-    integrator_vd(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vd(base_ode, y0_d, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   std::vector<double> state;
 
@@ -466,7 +465,7 @@ TEST_F(StanMathRevOdeCVode, size_vd) {
   std::vector<double> theta_d(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, var, double>
-    integrator_vd(base_ode, y0_v, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vd(base_ode, y0_v, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   EXPECT_EQ(N + N * N, integrator_vd.size());
 }
@@ -484,7 +483,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vd) {
   std::vector<double> theta_d(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, var, double>
-    integrator_vd(base_ode, y0_v, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vd(base_ode, y0_v, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   //std::vector<double> y(3,0);
   //std::vector<double> dy_dt(3,0);
@@ -525,7 +524,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vd) {
 
     cvodes_integrator<mock_throwing_ode_functor<std::logic_error>,
                              var, double>
-      integrator_vd(throwing_ode, y0_v, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+      integrator_vd(throwing_ode, y0_v, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);
@@ -560,7 +559,7 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vv) {
   harm_osc_ode_fun harm_osc;
 
   cvodes_integrator<harm_osc_ode_fun, stan::math::var, stan::math::var>
-    integrator(harm_osc, y0_v, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(harm_osc, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   //std::vector<double> coupled_y0(8, 0);
 
@@ -626,7 +625,7 @@ TEST_F(StanMathRevOdeCVode, decouple_ode_states_vv) {
   std::vector<var> theta_v(theta_d.begin(), theta_d.end());
 
   cvodes_integrator<harm_osc_ode_fun, var, var>
-    integrator(harm_osc, y0_v, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator(harm_osc, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   size_t T = 10;
   size_t k = 0;
@@ -671,7 +670,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_vv) {
     theta_d[m] = 10 * (m+1);
 
   cvodes_integrator<mock_ode_functor, var, var>
-    integrator_vv(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vv(base_ode, y0_d, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   std::vector<double>  state = integrator_vv.initial_state();
   for (size_t n = 0; n < N; n++)
@@ -698,7 +697,7 @@ TEST_F(StanMathRevOdeCVode, size_vv) {
   std::vector<var> theta_v(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, var, var>
-    integrator_vv(base_ode, y0_v, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vv(base_ode, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   EXPECT_EQ(N + N * N + N * M, integrator_vv.size());
 }
@@ -716,7 +715,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vv) {
   std::vector<var> theta_v(M, 0.0);
 
   cvodes_integrator<mock_ode_functor, var, var>
-    integrator_vv(base_ode, y0_v, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+    integrator_vv(base_ode, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   //std::vector<double> y(3,0);
   //std::vector<double> dy_dt(3,0);
@@ -756,7 +755,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vv) {
     std::vector<var> theta_v(M, 0.0);
 
     cvodes_integrator<mock_throwing_ode_functor<std::logic_error>, var, var>
-      integrator_vv(throwing_ode, y0_v, t0, theta_v, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
+      integrator_vv(throwing_ode, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
     std::vector<double> y(3,0);
     std::vector<double> dy_dt(3,0);

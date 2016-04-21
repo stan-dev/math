@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_INTEGRATOR_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/rev/mat/functor/ode_model.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -41,7 +40,7 @@ namespace stan {
       const std::vector<T1>& y0_;
       double t0_;
       const std::vector<T2>& theta_;
-      const std::vector<double> theta_dbl_;
+      const std::vector<double>& times_;
       const size_t N_;
       const size_t M_;
       const size_t S_;
@@ -143,6 +142,7 @@ namespace stan {
                         const std::vector<T2>& theta,
                         const std::vector<double>& x,
                         const std::vector<int>& x_int,
+                        const std::vector<double>& times,
                         double rel_tol,
                         double abs_tol,
                         long int max_num_steps,  // NOLINT(runtime/int)
@@ -151,7 +151,7 @@ namespace stan {
         : y0_(y0),
           t0_(t0),
           theta_(theta),
-          theta_dbl_(stan::math::value_of(theta)),
+          times_(times),
           N_(y0.size()),
           M_(theta.size()),
           S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
@@ -161,7 +161,7 @@ namespace stan {
           state_(stan::math::value_of(y0)),
           cvode_state_(N_VMake_Serial(N_, &state_[0])),
           cvode_state_sens_(NULL),
-          ode_model_(f, theta_dbl_, x, x_int, msgs) {
+          ode_model_(f, theta_, x, x_int, msgs) {
         stan::math::check_bounded("cvodes_integrator",
                                   "solver", solver,
                                   static_cast<size_t>(0),
@@ -318,15 +318,14 @@ namespace stan {
       /**
        * Integrate ODE and exract solution at time-points ts.
        *
-       * @param[in] ts vector of time-points to evaluate
-       * @param[out] y integrated function
+       * @return y integrated function
        */
-      return_t integrate_times(const std::vector<double>& ts) const {
+      return_t integrate() const {
         std::vector<std::vector<double> >
-          y_coupled(ts.size(), std::vector<double>(size_, 0));
+          y_coupled(times_.size(), std::vector<double>(size_, 0));
         double t_init = t0_;
-        for (size_t n = 0; n < ts.size(); ++n) {
-          double t_final = ts[n];
+        for (size_t n = 0; n < times_.size(); ++n) {
+          double t_final = times_[n];
           if (t_final != t_init)
             check_flag(CVode(cvode_mem_, t_final, cvode_state_,
                              &t_init, CV_NORMAL),
