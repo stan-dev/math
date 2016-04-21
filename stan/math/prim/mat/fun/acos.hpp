@@ -9,7 +9,7 @@ namespace stan {
 
     /**
      * Structure to wrap acos() so it can be vectorized.
-     * @param x Variable in range [-1, 1].
+     * @param x Variable.
      * @tparam T Variable type.
      * @return Arc cosine of variable in radians. 
      */
@@ -23,7 +23,7 @@ namespace stan {
 
     /**
      * Vectorized version of acos().
-     * @param x Container of variables in range [-1, 1].
+     * @param x Container of variables.
      * @tparam T Container type.
      * @return Arc cosine of each variable in the container, in radians. 
      */
