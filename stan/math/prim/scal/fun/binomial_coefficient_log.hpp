@@ -68,8 +68,24 @@ namespace stan {
       if ((N < cutoff) || (N - n < cutoff)) {
         return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
       } else {
-        return n * log(N - n) + (N + 0.5) * log(N/(N - n + 0.0))
-          + 1.0 / (12 * N) - n - 1.0 / (12 * (N - n)) - lgamma(n + 1.0);
+        return n * log(N - n) + (N + 0.5) * log(N / (N - n))
+          + 1 / (12 * N) - n - 1 / (12 * (N - n)) - lgamma(n + 1.0);
+      }
+    }
+
+
+    template <>
+    inline double
+    binomial_coefficient_log<int, int>(const int N, const int n) {
+      using std::log;
+      using boost::math::lgamma;
+
+      const double cutoff = 1000;
+      if ((N < cutoff) || (N - n < cutoff)) {
+        return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
+      } else {
+        return n * log(N - n) + (N + 0.5) * log(N / static_cast<double>(N - n))
+          + 1 / (12 * N) - n - 1 / (12 * (N - n)) - lgamma(n + 1.0);
       }
     }
 
