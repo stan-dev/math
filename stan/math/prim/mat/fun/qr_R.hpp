@@ -22,7 +22,7 @@ namespace stan {
       qr.compute(m);
       matrix_t R = qr.matrixQR().topLeftCorner(m.rows(), m.cols());
       for (int i = 0; i < R.rows(); i++) {
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < std::min(static_cast<int>(R.cols()), i); j++)
           R(i, j) = 0.0;
         if (i < R.cols() && R(i, i) < 0)
           R.row(i) *= -1.0;
