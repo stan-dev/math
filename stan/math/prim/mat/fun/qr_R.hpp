@@ -26,7 +26,7 @@ namespace stan {
       for (int i = 0; i < R.cols(); i++) {
         for (int j = 0; j < i; j++)
           R.coeffRef(i, j) = 0.0;
-        if (i < R.cols() && R(i, i) < 0)
+        if (R(i, i) < 0)
           R.row(i) *= -1.0;
       }
       return R;
