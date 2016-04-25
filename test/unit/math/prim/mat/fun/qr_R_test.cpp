@@ -13,7 +13,11 @@ TEST(MathMatrix, qr_R) {
   EXPECT_NO_THROW(qr_R(m1));
 
   stan::math::matrix_d m2(4,2);
-  m2 = qr_Q(m1) * qr_R(m1);
+  stan::math::matrix_d Q(4,4);
+  stan::math::matrix_d R(4,2);
+  Q = qr_Q(m1);
+  R = qr_R(m1);
+  m2 = Q * R;
   for (unsigned int i=0; i<m1.rows(); i++) {
     for (unsigned int j=0; j<m1.cols(); j++) {
       EXPECT_NEAR(m1(i,j), m2(i,j), 1e-12);
