@@ -53,7 +53,7 @@ namespace stan {
 
       const ode_model<F> ode_model_;
 
-      typedef cvodes_integrator<F, T1, T2> ode;
+      typedef cvodes_integrator<F, T1, T2> solver;
 
       void check_flag(int flag, const std::string& func_name) const {
         if (flag < 0) {
@@ -70,7 +70,7 @@ namespace stan {
         // Forward CVode errors to noop error handler
         CVodeSetErrHandlerFn(cvode_mem_, silent_err_handler_cvodes, 0);
 
-        check_flag(CVodeInit(cvode_mem_, &ode::ode_rhs, t0_, cvode_state_),
+        check_flag(CVodeInit(cvode_mem_, &solver::ode_rhs, t0_, cvode_state_),
                     "CVodeInit");
 
         // Assign pointer to this as user data
@@ -125,7 +125,7 @@ namespace stan {
        * While the first N states correspond to y, all the remaining
        * are optional and depend on flags given to the constructor.
        *
-       * @param[in] ode_model functor.
+       * @param[in] f ode functor.
        * @param[in] y0 initial state of the base ode.
        * @param[in] t0 initial time of the base ode.
        * @param[in] theta parameters of the base ode.
@@ -138,6 +138,7 @@ namespace stan {
        * @param[in] max_num_steps Maximum number of solver steps.
        * @param[in] solver used solver (0=non-stiff, 1=stiff, 2=stiff
        * with STALD)
+       * @param[in] msgs stream to which messages are printed.
        */
       cvodes_integrator(const F& f,
                         const std::vector<T1>& y0,
@@ -151,20 +152,20 @@ namespace stan {
                         long int max_num_steps,  // NOLINT(runtime/int)
                         size_t solver,
                         std::ostream* msgs)
-        : y0_(y0),
-          t0_(t0),
-          theta_(theta),
-          ts_(ts),
-          N_(y0.size()),
-          M_(theta.size()),
-          S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
-          size_(N_ * (S_+1)),
-          param_var_ind_(initial_var::value ? N_ : 0),
-          cvode_mem_(NULL),
-          state_(stan::math::value_of(y0)),
-          cvode_state_(N_VMake_Serial(N_, &state_[0])),
-          cvode_state_sens_(NULL),
-          ode_model_(f, theta_, x, x_int, msgs) {
+      : y0_(y0),
+        t0_(t0),
+        theta_(theta),
+        ts_(ts),
+        N_(y0.size()),
+        M_(theta.size()),
+        S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
+        size_(N_ * (S_+1)),
+        param_var_ind_(initial_var::value ? N_ : 0),
+        cvode_mem_(NULL),
+        state_(stan::math::value_of(y0)),
+        cvode_state_(N_VMake_Serial(N_, &state_[0])),
+        cvode_state_sens_(NULL),
+        ode_model_(f, stan::math::value_of(theta_), x, x_int, msgs) {
         stan::math::check_bounded("cvodes_integrator",
                                   "solver", solver,
                                   static_cast<size_t>(0),
@@ -194,7 +195,7 @@ namespace stan {
           // for the stiff solvers we need to reserve additional
           // memory and provide a Jacobian function call
           check_flag(CVDense(cvode_mem_, N_), "CVDense");
-          check_flag(CVDlsSetDenseJacFn(cvode_mem_, &ode::dense_jacobian),
+          check_flag(CVDlsSetDenseJacFn(cvode_mem_, &solver::dense_jacobian),
                       "CVDlsSetDenseJacFn");
         }
 
@@ -216,7 +217,7 @@ namespace stan {
 
           check_flag(CVodeSensInit(cvode_mem_, static_cast<int>(S_),
                                    CV_STAGGERED,
-                                   &ode::ode_rhs_sens, cvode_state_sens_),
+                                   &solver::ode_rhs_sens, cvode_state_sens_),
                      "CVodeSensInit");
 
           check_flag(CVodeSensEEtolerances(cvode_mem_),
@@ -233,88 +234,25 @@ namespace stan {
         CVodeFree(&cvode_mem_);
       }
 
-      /**
-       * Forward the CVode array-based call from
-       * the ODE RHS to the Stan vector-based call
-       *
-       * @param[in] y state of the base ODE system
-       * @param[out] dy_dt ODE RHS at time t
-       * @param[in] t time
-       */
-      void rhs(const double y[], double dy_dt[], double t) const {
-        const std::vector<double> y_vec(y, y + N_);
-
-        std::vector<double> dy_dt_vec(N_);
-        ode_model_(t, y_vec, dy_dt_vec);
-
-        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
-      }
-
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
-        ode const* explicit_ode = reinterpret_cast<ode const*>(f_data);
+        solver const* explicit_ode = reinterpret_cast<solver const*>(f_data);
         explicit_ode->rhs(NV_DATA_S(y), NV_DATA_S(ydot), t);
         return 0;
       }
 
-      /**
-       * Calculate the sensitivity RHS for the requested variables
-       * (initials and/or parameters). Function signature is
-       * pre-defined by CVODES library.
-       *
-       * @param[in] M number of parameters for which sensitivites are calculated
-       * @param[in] t time
-       * @param[in] y state of the base ODE system
-       * @param[in] ydot state of the RHS of the ODE system
-       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
-       * RHS
-       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
-       */
-      void rhs_sens(int M, realtype t,
-                    double y[], double ydot[],
-                    N_Vector *yS, N_Vector *ySdot) const {
-        const std::vector<double> y_vec(y, y + N_);
-
-        Eigen::VectorXd dy_dt(N_);
-        Eigen::MatrixXd Jy(N_, N_);
-
-        if (param_var::value) {
-          Eigen::MatrixXd Jtheta(N_, M_);
-          ode_model_.jacobian_SP(t, y_vec, dy_dt, Jy, Jtheta);
-
-          for (size_t m = 0; m < M_; m++) {
-            // map NV_Vector to Eigen facilities
-            Eigen::Map<Eigen::VectorXd>
-              yS_eig(NV_DATA_S(yS[param_var_ind_ + m]), N_);
-            Eigen::Map<Eigen::VectorXd>
-              ySdot_eig(NV_DATA_S(ySdot[param_var_ind_ + m]), N_);
-
-            ySdot_eig = Jy * yS_eig + Jtheta.col(m);
-          }
-        } else {
-          ode_model_.jacobian_S(t, y_vec, dy_dt, Jy);
-        }
-
-        if (initial_var::value) {
-          for (size_t m = 0; m < N_; m++) {
-            // map NV_Vector to Eigen facilities
-            Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[m]), N_);
-            Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[m]), N_);
-
-            ySdot_eig = Jy * yS_eig;
-          }
-        }
-      }
 
       // Static wrapper for CVode callback
       static int ode_rhs_sens(int Ns, realtype t,
                               N_Vector y, N_Vector ydot,
                               N_Vector *yS, N_Vector *ySdot, void *user_data,
                               N_Vector tmp1, N_Vector tmp2) {
-        ode const* explicit_ode = reinterpret_cast<ode const*>(user_data);
-        explicit_ode->rhs_sens(Ns, t,
-                               NV_DATA_S(y),  NV_DATA_S(ydot),
-                               yS, ySdot);
+        solver const* explicit_ode = reinterpret_cast<solver const*>(user_data);
+
+        const std::vector<double> y_vec(NV_DATA_S(y),
+                                        NV_DATA_S(y) + explicit_ode->N_);
+
+        explicit_ode->rhs_sens(initial_var(), param_var(), t, y_vec, yS, ySdot);
         return 0;
       }
 
@@ -354,9 +292,28 @@ namespace stan {
                                 realtype t, N_Vector y, N_Vector fy,
                                 DlsMat J, void *J_data,
                                 N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-        ode const* explicit_ode = reinterpret_cast<ode const*>(J_data);
+        solver const* explicit_ode = reinterpret_cast<solver const*>(J_data);
         return explicit_ode->dense_jacobian(NV_DATA_S(y), J, t);
       }
+
+    private:
+      /**
+       * Forward the CVode array-based call from
+       * the ODE RHS to the Stan vector-based call
+       *
+       * @param[in] y state of the base ODE system
+       * @param[out] dy_dt ODE RHS at time t
+       * @param[in] t time
+       */
+      void rhs(const double y[], double dy_dt[], double t) const {
+        const std::vector<double> y_vec(y, y + N_);
+
+        std::vector<double> dy_dt_vec(N_);
+        ode_model_(t, y_vec, dy_dt_vec);
+
+        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+      }
+
 
       /**
        * Calculate the Jacobian of the ODE RHS wrt to states
@@ -375,6 +332,118 @@ namespace stan {
         ode_model_.jacobian_S(t, y_vec, fy, Jy_map);
 
         return 0;
+      }
+
+      inline
+      void
+      rhs_sens_initial(const Eigen::MatrixXd& Jy,
+                       N_Vector *yS, N_Vector *ySdot) const {
+          for (size_t m = 0; m < N_; m++) {
+            // map NV_Vector to Eigen facilities
+            Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[m]), N_);
+            Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[m]), N_);
+
+            ySdot_eig = Jy * yS_eig;
+          }
+      }
+
+      inline
+      void
+      rhs_sens_param(const Eigen::MatrixXd& Jy,
+                     const Eigen::MatrixXd& Jtheta,
+                     N_Vector *yS, N_Vector *ySdot) const {
+        for (size_t m = 0; m < M_; m++) {
+          // map NV_Vector to Eigen facilities
+          Eigen::Map<Eigen::VectorXd>
+            yS_eig(NV_DATA_S(yS[param_var_ind_ + m]), N_);
+          Eigen::Map<Eigen::VectorXd>
+            ySdot_eig(NV_DATA_S(ySdot[param_var_ind_ + m]), N_);
+
+          ySdot_eig = Jy * yS_eig + Jtheta.col(m);
+        }
+      }
+
+      /**
+       * Calculate the sensitivity RHS for varying initials and parameters.
+       *
+       * @param[in] initial true_type
+       * @param[in] param true_type
+       * @param[in] t time
+       * @param[in] y state of the base ODE system
+       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
+       * RHS
+       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
+       */
+      void rhs_sens(const boost::true_type initial,
+                    const boost::true_type param,
+                    const double t, const std::vector<double>& y,
+                    N_Vector *yS, N_Vector *ySdot) const {
+        Eigen::VectorXd dy_dt(N_);
+        Eigen::MatrixXd Jy(N_, N_);
+        Eigen::MatrixXd Jtheta(N_, M_);
+        ode_model_.jacobian_SP(t, y, dy_dt, Jy, Jtheta);
+        rhs_sens_initial(Jy, yS, ySdot);
+        rhs_sens_param(Jy, Jtheta, yS, ySdot);
+      }
+
+      /**
+       * Calculate the sensitivity RHS for fixed initials and varying parameters.
+       *
+       * @param[in] initial false_type
+       * @param[in] param true_type
+       * @param[in] t time
+       * @param[in] y state of the base ODE system
+       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
+       * RHS
+       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
+       */
+      void rhs_sens(const boost::false_type initial,
+                    const boost::true_type param,
+                    const double t, const std::vector<double>& y,
+                    N_Vector *yS, N_Vector *ySdot) const {
+        Eigen::VectorXd dy_dt(N_);
+        Eigen::MatrixXd Jy(N_, N_);
+        Eigen::MatrixXd Jtheta(N_, M_);
+        ode_model_.jacobian_SP(t, y, dy_dt, Jy, Jtheta);
+        rhs_sens_param(Jy, Jtheta, yS, ySdot);
+      }
+
+      /**
+       * Calculate the sensitivity RHS for varying initials and fixed parameters.
+       *
+       * @param[in] initial true_type
+       * @param[in] param false_type
+       * @param[in] t time
+       * @param[in] y state of the base ODE system
+       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
+       * RHS
+       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
+       */
+      void rhs_sens(const boost::true_type initial,
+                    const boost::false_type param,
+                    const double t, const std::vector<double>& y,
+                    N_Vector *yS, N_Vector *ySdot) const {
+        Eigen::VectorXd dy_dt(N_);
+        Eigen::MatrixXd Jy(N_, N_);
+        ode_model_.jacobian_S(t, y, dy_dt, Jy);
+        rhs_sens_initial(Jy, yS, ySdot);
+      }
+
+      /**
+       * Calculate the empty sensitivity RHS.
+       *
+       * @param[in] initial false_type
+       * @param[in] param false_type
+       * @param[in] t time
+       * @param[in] y state of the base ODE system
+       * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
+       * RHS
+       * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
+       */
+      void rhs_sens(const boost::false_type initial,
+                    const boost::false_type param,
+                    const double t, const std::vector<double>& y,
+                    N_Vector *yS, N_Vector *ySdot) const {
       }
     };
 

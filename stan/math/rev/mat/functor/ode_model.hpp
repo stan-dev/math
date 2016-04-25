@@ -33,16 +33,15 @@ namespace stan {
        * @param[in] theta parameters of the ode.
        * @param[in] x real data.
        * @param[in] x_int integer data.
-       * @param[in, out] msgs stream to which messages are printed.
+       * @param[in] msgs stream to which messages are printed.
        */
-      template<typename T>
       ode_model(const F& f,
-                const std::vector<T>& theta,
+                const std::vector<double>& theta,
                 const std::vector<double>& x,
                 const std::vector<int>& x_int,
                 std::ostream* msgs)
         : f_(f),
-          theta_(stan::math::value_of(theta)),
+          theta_(theta),
           x_(x),
           x_int_(x_int),
           msgs_(msgs)
