@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_ODE_MODEL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <iostream>
 #include <vector>
 
@@ -19,7 +20,7 @@ namespace stan {
     template<typename F>
     struct ode_model {
       const F& f_;
-      const std::vector<double>& theta_;
+      const std::vector<double> theta_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
       std::ostream* msgs_;
@@ -34,13 +35,14 @@ namespace stan {
        * @param[in] x_int integer data.
        * @param[in, out] msgs stream to which messages are printed.
        */
+      template<typename T>
       ode_model(const F& f,
-                const std::vector<double>& theta,
+                const std::vector<T>& theta,
                 const std::vector<double>& x,
                 const std::vector<int>& x_int,
                 std::ostream* msgs)
         : f_(f),
-          theta_(theta),
+          theta_(stan::math::value_of(theta)),
           x_(x),
           x_int_(x_int),
           msgs_(msgs)
@@ -49,24 +51,15 @@ namespace stan {
       /**
        * Calculate the RHS of the ODE
        *
+       * @param[in] t time.
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
-       * @param[in]  t time.
        */
       inline
-      void operator()(const std::vector<double>& y,
-                      std::vector<double>& dy_dt,
-                      const double t) const {
+      void operator()(const double t,
+                      const std::vector<double>& y,
+                      std::vector<double>& dy_dt) const {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
-      }
-
-      /**
-       * Return the number of parameters
-       *
-       * @return size of the theta vector
-       */
-      size_t size_param() const {
-        return theta_.size();
       }
 
       /**

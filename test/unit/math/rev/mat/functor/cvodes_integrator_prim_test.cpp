@@ -6,15 +6,23 @@
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
 
 struct StanMathOdeCVode : public ::testing::Test {
+  void SetUp() {
+    stan::math::recover_memory();
+    ts = std::vector<double>(1,10);
+    t0 = 0;
+  }
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
   double t0;
+  std::vector<double> ts;
 };
-
+/*
 TEST_F(StanMathOdeCVode, decouple_ode_states_dd) {
   using stan::math::cvodes_integrator;
   using stan::math::decouple_ode_states;
+
+  harm_osc_ode_fun harm_osc;
 
   std::vector<double> y0(2);
   y0[0] = 1.0;
@@ -23,10 +31,8 @@ TEST_F(StanMathOdeCVode, decouple_ode_states_dd) {
   std::vector<double> theta(1);
   theta[0] = 0.15;
 
-  stan::math::ode_model<harm_osc_ode_fun> harm_ode(harm_osc_ode_fun(), theta, x, x_int, &msgs);
-
-  cvodes_integrator<harm_osc_ode_fun>
-    integrator(harm_ode, y0, t0, false, false, 1e-8, 1e-10, 1e6, 1);
+  cvodes_integrator<harm_osc_ode_fun, double, double>
+    integrator(harm_osc, y0, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   int T = 10;
   int k = 0;
@@ -51,9 +57,11 @@ TEST_F(StanMathOdeCVode, decouple_ode_states_dd) {
         << "(" << n << "," << t << "): "
         << "for (double, double) the coupled system is the base system";
 }
+*/
 /* obsolete
 TEST_F(StanMathOdeCVode, initial_state_dd) {
   using stan::math::cvodes_integrator;
+  mock_ode_functor base_ode;
 
   const int N = 3;
   const int M = 4;
@@ -66,10 +74,8 @@ TEST_F(StanMathOdeCVode, initial_state_dd) {
   for (int m = 0; m < M; m++)
     theta_d[m] = 10 * (m+1);
 
-  stan::math::ode_model<mock_ode_functor> mock_ode(mock_ode_functor(), theta_d, x, x_int, &msgs);
-  
-  cvodes_integrator<mock_ode_functor>
-    integrator_dd(mock_ode, y0_d, t0, false, false, 1e-8, 1e-10, 1e6, 1);
+  cvodes_integrator<mock_ode_functor, double, double>
+    integrator_dd(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   std::vector<double> state  = integrator_dd.initial_state();
   for (int n = 0; n < N; n++)
@@ -79,8 +85,10 @@ TEST_F(StanMathOdeCVode, initial_state_dd) {
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
 */
+/* obsolete
 TEST_F(StanMathOdeCVode, size) {
   using stan::math::cvodes_integrator;
+  mock_ode_functor base_ode;
 
   const int N = 3;
   const int M = 4;
@@ -88,14 +96,12 @@ TEST_F(StanMathOdeCVode, size) {
   std::vector<double> y0_d(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
 
-  stan::math::ode_model<mock_ode_functor> mock_ode(mock_ode_functor(), theta_d, x, x_int, &msgs);
-  
-  cvodes_integrator<mock_ode_functor>
-    integrator_dd(mock_ode, y0_d, t0, false, false, 1e-8, 1e-10, 1e6, 1);
+  cvodes_integrator<mock_ode_functor, double, double>
+    coupled_system_dd(base_ode, y0_d, t0, theta_d, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
 
-  EXPECT_EQ(N, integrator_dd.size());
+  EXPECT_EQ(N, coupled_system_dd.size());
 }
-
+*/
 
 TEST_F(StanMathOdeCVode, recover_exception) {
   using stan::math::cvodes_integrator;
@@ -107,13 +113,10 @@ TEST_F(StanMathOdeCVode, recover_exception) {
   mock_throwing_ode_functor<std::logic_error> throwing_ode(message);
 
   std::vector<double> y0_d(N, 0.0);
-  std::vector<double> theta_d(M, 0.0);
+  std::vector<double> theta_v(M, 0.0);
 
-  typedef mock_throwing_ode_functor<std::logic_error> throw_mock_t;
-  stan::math::ode_model<throw_mock_t> mock_ode(throw_mock_t(message, 1), theta_d, x, x_int, &msgs);
-  
-  cvodes_integrator<throw_mock_t>
-    integrator_dd(mock_ode, y0_d, t0, false, false, 1e-8, 1e-10, 1e6, 1);
+  cvodes_integrator<mock_throwing_ode_functor<std::logic_error>, double, double>
+    integrator_dd(throwing_ode, y0_d, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
