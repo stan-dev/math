@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 
@@ -59,7 +59,7 @@ namespace stan {
      * @return log (N choose n).
      */
     template <typename T_N, typename T_n>
-    inline typename boost::math::tools::promote_args<T_N, T_n>::type
+    inline typename return_type<T_N, T_n>::type
     binomial_coefficient_log(const T_N N, const T_n n) {
       using std::log;
       using boost::math::lgamma;
@@ -68,28 +68,14 @@ namespace stan {
       if ((N < cutoff) || (N - n < cutoff)) {
         return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
       } else {
-        return n * log(N - n) + (N + 0.5) * log(N / (N - n))
-          + 1 / (12 * N) - n - 1 / (12 * (N - n)) - lgamma(n + 1.0);
-      }
-    }
+        typename return_type<T_N, T_n>::type N_m_n(N - n);
+        typename return_type<T_N, T_n>::type log_N_m_n(log(N_m_n));
 
-
-    template <>
-    inline double
-    binomial_coefficient_log<int, int>(const int N, const int n) {
-      using std::log;
-      using boost::math::lgamma;
-
-      const double cutoff = 1000;
-      if ((N < cutoff) || (N - n < cutoff)) {
-        return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
-      } else {
-        return n * log(N - n) + (N + 0.5) * log(N / static_cast<double>(N - n))
-          + 1 / (12 * N) - n - 1 / (12 * (N - n)) - lgamma(n + 1.0);
+        return n * log(N_m_n) + (N + 0.5) * (log(N) - log_N_m_n)
+          + 1 / (12 * N) - n - 1 / (12 * N_m_n) - lgamma(n + 1.0);
       }
     }
 
   }
 }
-
 #endif
