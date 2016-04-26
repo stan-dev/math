@@ -68,11 +68,8 @@ namespace stan {
       if ((N < cutoff) || (N - n < cutoff)) {
         return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
       } else {
-        typename return_type<T_N, T_n>::type N_m_n(N - n);
-        typename return_type<T_N, T_n>::type log_N_m_n(log(N_m_n));
-
-        return n * log(N_m_n) + (N + 0.5) * (log(N) - log_N_m_n)
-          + 1 / (12 * N) - n - 1 / (12 * N_m_n) - lgamma(n + 1.0);
+        return n * log(N - n) + (N + 0.5) * (log(N) - log(N - n))
+          + 1 / (12 * N) - n - 1 / (12 * (N - n)) - lgamma(n + 1.0);
       }
     }
 
