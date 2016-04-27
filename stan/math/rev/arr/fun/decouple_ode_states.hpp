@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
 
 #include <vector>
 
@@ -23,8 +23,8 @@ namespace stan {
      * states for the first initial and so on), finally the
      * sensitivities for the M parameters follow optionally.
      *
-     * @tparam T1 type of scalars for initial values.
-     * @tparam T2 type of scalars for parameters.
+     * @tparam T1_initial type of scalars for initial values.
+     * @tparam T2_param type of scalars for parameters.
      * @param[in] y output from integrator in column-major format
      * as a coupled system output
      * @param[in] y0 initial state.
@@ -32,30 +32,31 @@ namespace stan {
      * @return a vector of states for each entry in y in Stan var
      * format
      */
-    template <typename T1, typename T2>
+    template <typename T_initial, typename T_param>
     inline
-    std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
+    std::vector<std::vector<typename stan::return_type<T_initial,
+                                                       T_param>::type> >
     decouple_ode_states(const std::vector<std::vector<double> >& y,
-                        const std::vector<T1>& y0,
-                        const std::vector<T2>& theta) {
+                        const std::vector<T_initial>& y0,
+                        const std::vector<T_param>& theta) {
       using std::vector;
       using stan::math::var;
       using stan::math::precomputed_gradients;
 
-      vector<typename stan::return_type<T1, T2>::type> vars;
-      typedef boost::is_same<T1, stan::math::var> initial_var;
-      typedef boost::is_same<T2, stan::math::var> theta_var;
+      vector<typename stan::return_type<T_initial, T_param>::type> vars;
+      typedef stan::is_var<T_initial> initial_var;
+      typedef stan::is_var<T_param> param_var;
 
       const size_t N = y0.size();
       const size_t M = theta.size();
       const size_t S =
         (initial_var::value ? N : 0) +
-        (theta_var::value ? M : 0);
+        (param_var::value ? M : 0);
 
       vars.reserve(S);
       if (initial_var::value)
         vars.insert(vars.end(), y0.begin(), y0.end());
-      if (theta_var::value)
+      if (param_var::value)
         vars.insert(vars.end(), theta.begin(), theta.end());
 
       vector<var> temp_vars(N);

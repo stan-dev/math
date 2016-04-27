@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/rev/mat/functor/ode_model.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <stan/math/rev/mat/functor/ode_system.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_band.h>
@@ -31,15 +31,15 @@ namespace stan {
      * initial values and/or the parameters.
      * 
      * @tparam F type of functor for the base ode system.
-     * @tparam T1 type of initial values
-     * @tparam T2 type of parameters
+     * @tparam T_initial type of initial values
+     * @tparam T_param type of parameters
      */
-    template <typename F, typename T1, typename T2>
+    template <typename F, typename T_initial, typename T_param>
     class cvodes_integrator {
     private:
-      const std::vector<T1>& y0_;
+      const std::vector<T_initial>& y0_;
       double t0_;
-      const std::vector<T2>& theta_;
+      const std::vector<T_param>& theta_;
       const std::vector<double>& ts_;
       const size_t N_;
       const size_t M_;
@@ -51,9 +51,9 @@ namespace stan {
       N_Vector  cvode_state_;
       N_Vector *cvode_state_sens_;
 
-      const ode_model<F> ode_model_;
+      const ode_system<F> ode_system_;
 
-      typedef cvodes_integrator<F, T1, T2> solver;
+      typedef cvodes_integrator<F, T_initial, T_param> solver;
 
       void check_flag(int flag, const std::string& func_name) const {
         if (flag < 0) {
@@ -99,10 +99,11 @@ namespace stan {
       }
 
     public:
-      typedef boost::is_same<T1, stan::math::var> initial_var;
-      typedef boost::is_same<T2, stan::math::var> param_var;
+      typedef stan::is_var<T_initial> initial_var;
+      typedef stan::is_var<T_param> param_var;
       typedef std::vector<std::vector<
-                            typename stan::return_type<T1, T2>::type>
+                            typename stan::return_type<T_initial,
+                                                       T_param>::type>
                           > return_t;
 
       /**
@@ -141,9 +142,9 @@ namespace stan {
        * @param[in] msgs stream to which messages are printed.
        */
       cvodes_integrator(const F& f,
-                        const std::vector<T1>& y0,
+                        const std::vector<T_initial>& y0,
                         double t0,
-                        const std::vector<T2>& theta,
+                        const std::vector<T_param>& theta,
                         const std::vector<double>& x,
                         const std::vector<int>& x_int,
                         const std::vector<double>& ts,
@@ -165,7 +166,7 @@ namespace stan {
         state_(stan::math::value_of(y0)),
         cvode_state_(N_VMake_Serial(N_, &state_[0])),
         cvode_state_sens_(NULL),
-        ode_model_(f, stan::math::value_of(theta_), x, x_int, msgs) {
+        ode_system_(f, stan::math::value_of(theta_), x, x_int, msgs) {
         stan::math::check_bounded("cvodes_integrator",
                                   "solver", solver,
                                   static_cast<size_t>(0),
@@ -252,7 +253,9 @@ namespace stan {
         const std::vector<double> y_vec(NV_DATA_S(y),
                                         NV_DATA_S(y) + explicit_ode->N_);
 
-        explicit_ode->rhs_sens(initial_var(), param_var(), t, y_vec, yS, ySdot);
+        explicit_ode->rhs_sens(explicit_ode->y0_,
+                               explicit_ode->theta_,
+                               t, y_vec, yS, ySdot);
         return 0;
       }
 
@@ -309,7 +312,7 @@ namespace stan {
         const std::vector<double> y_vec(y, y + N_);
 
         std::vector<double> dy_dt_vec(N_);
-        ode_model_(t, y_vec, dy_dt_vec);
+        ode_system_(t, y_vec, dy_dt_vec);
 
         std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
       }
@@ -329,7 +332,7 @@ namespace stan {
         // Eigen and CVODES use column major addressing
         Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
 
-        ode_model_.jacobian_S(t, y_vec, fy, Jy_map);
+        ode_system_.jacobian(t, y_vec, fy, Jy_map);
 
         return 0;
       }
@@ -366,22 +369,22 @@ namespace stan {
       /**
        * Calculate the sensitivity RHS for varying initials and parameters.
        *
-       * @param[in] initial true_type
-       * @param[in] param true_type
+       * @param[in] initial var vector
+       * @param[in] param var vector
        * @param[in] t time
        * @param[in] y state of the base ODE system
        * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const boost::true_type initial,
-                    const boost::true_type param,
+      void rhs_sens(const std::vector<stan::math::var>& initial,
+                    const std::vector<stan::math::var>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
         Eigen::MatrixXd Jtheta(N_, M_);
-        ode_model_.jacobian_SP(t, y, dy_dt, Jy, Jtheta);
+        ode_system_.jacobian(t, y, dy_dt, Jy, Jtheta);
         rhs_sens_initial(Jy, yS, ySdot);
         rhs_sens_param(Jy, Jtheta, yS, ySdot);
       }
@@ -389,59 +392,59 @@ namespace stan {
       /**
        * Calculate the sensitivity RHS for fixed initials and varying parameters.
        *
-       * @param[in] initial false_type
-       * @param[in] param true_type
+       * @param[in] initial double vector
+       * @param[in] param var vector
        * @param[in] t time
        * @param[in] y state of the base ODE system
        * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const boost::false_type initial,
-                    const boost::true_type param,
+      void rhs_sens(const std::vector<double>& initial,
+                    const std::vector<stan::math::var>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
         Eigen::MatrixXd Jtheta(N_, M_);
-        ode_model_.jacobian_SP(t, y, dy_dt, Jy, Jtheta);
+        ode_system_.jacobian(t, y, dy_dt, Jy, Jtheta);
         rhs_sens_param(Jy, Jtheta, yS, ySdot);
       }
 
       /**
        * Calculate the sensitivity RHS for varying initials and fixed parameters.
        *
-       * @param[in] initial true_type
-       * @param[in] param false_type
+       * @param[in] initial var vector
+       * @param[in] param double vector
        * @param[in] t time
        * @param[in] y state of the base ODE system
        * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const boost::true_type initial,
-                    const boost::false_type param,
+      void rhs_sens(const std::vector<stan::math::var>& initial,
+                    const std::vector<double>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
-        ode_model_.jacobian_S(t, y, dy_dt, Jy);
+        ode_system_.jacobian(t, y, dy_dt, Jy);
         rhs_sens_initial(Jy, yS, ySdot);
       }
 
       /**
        * Calculate the empty sensitivity RHS.
        *
-       * @param[in] initial false_type
-       * @param[in] param false_type
+       * @param[in] initial double vector
+       * @param[in] param double vector
        * @param[in] t time
        * @param[in] y state of the base ODE system
        * @param[in] yS array of M N_Vectors of size N, i.e. state of sensitivity
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const boost::false_type initial,
-                    const boost::false_type param,
+      void rhs_sens(const std::vector<double>& initial,
+                    const std::vector<double>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
       }

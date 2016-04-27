@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_ODE_MODEL_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_ODE_MODEL_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_ODE_SYSTEM_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
@@ -18,7 +18,7 @@ namespace stan {
      * @tparam F type of functor for the base ode system.
      */
     template<typename F>
-    struct ode_model {
+    struct ode_system {
       const F& f_;
       const std::vector<double> theta_;
       const std::vector<double>& x_;
@@ -35,11 +35,11 @@ namespace stan {
        * @param[in] x_int integer data.
        * @param[in] msgs stream to which messages are printed.
        */
-      ode_model(const F& f,
-                const std::vector<double>& theta,
-                const std::vector<double>& x,
-                const std::vector<int>& x_int,
-                std::ostream* msgs)
+      ode_system(const F& f,
+                 const std::vector<double>& theta,
+                 const std::vector<double>& x,
+                 const std::vector<int>& x_int,
+                 std::ostream* msgs)
         : f_(f),
           theta_(theta),
           x_(x),
@@ -74,10 +74,10 @@ namespace stan {
        */
       template <typename Derived1, typename Derived2>
       void
-      jacobian_S(const double t,
-                 const std::vector<double>& y,
-                 Eigen::MatrixBase<Derived1>& dy_dt,
-                 Eigen::MatrixBase<Derived2>& Jy) const {
+      jacobian(const double t,
+               const std::vector<double>& y,
+               Eigen::MatrixBase<Derived1>& dy_dt,
+               Eigen::MatrixBase<Derived2>& Jy) const {
         using Eigen::Matrix;
         using stan::math::var;
         using std::vector;
@@ -115,11 +115,11 @@ namespace stan {
        */
       template <typename Derived1, typename Derived2, typename Derived3>
       void
-      jacobian_SP(const double t,
-                  const std::vector<double>& y,
-                  Eigen::MatrixBase<Derived1>& dy_dt,
-                  Eigen::MatrixBase<Derived2>& Jy,
-                  Eigen::MatrixBase<Derived3>& Jtheta) const {
+      jacobian(const double t,
+               const std::vector<double>& y,
+               Eigen::MatrixBase<Derived1>& dy_dt,
+               Eigen::MatrixBase<Derived2>& Jy,
+               Eigen::MatrixBase<Derived3>& Jtheta) const {
         using Eigen::Matrix;
         using Eigen::Dynamic;
         using stan::math::var;

@@ -8,9 +8,8 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
-#include <stan/math/rev/mat/functor/ode_model.hpp>
+#include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <ostream>
 #include <vector>
 
@@ -33,8 +32,8 @@ namespace stan {
      * The solver use is a stiff BDF.
      *
      * @tparam F type of ODE system function.
-     * @tparam T1 type of scalars for initial values.
-     * @tparam T2 type of scalars for parameters.
+     * @tparam T_initial type of scalars for initial values.
+     * @tparam T_param type of scalars for parameters.
      * @param[in] f functor for the base ordinary differential equation.
      * @param[in] y0 initial state.
      * @param[in] t0 initial time.
@@ -51,13 +50,14 @@ namespace stan {
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
-    template <typename F, typename T1, typename T2>
-    std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
+    template <typename F, typename T_initial, typename T_param>
+    std::vector<std::vector<typename stan::return_type<T_initial,
+                                                       T_param>::type> >
     integrate_ode_bdf(const F& f,
-                      const std::vector<T1>& y0,
+                      const std::vector<T_initial>& y0,
                       const double t0,
                       const std::vector<double>& ts,
-                      const std::vector<T2> theta,
+                      const std::vector<T_param> theta,
                       const std::vector<double>& x,
                       const std::vector<int>& x_int,
                       double rel_tol = 1e-10,
@@ -84,16 +84,16 @@ namespace stan {
       stan::math::check_less("integrate_ode_bdf",
                              "initial time", t0, ts[0]);
 
-      cvodes_integrator<F, T1, T2> integrator(f,
-                                              y0, t0,
-                                              theta,
-                                              x,
-                                              x_int,
-                                              ts,
-                                              rel_tol, abs_tol,
-                                              max_num_steps,
-                                              1,
-                                              msgs);
+      cvodes_integrator<F, T_initial, T_param> integrator(f,
+                                                          y0, t0,
+                                                          theta,
+                                                          x,
+                                                          x_int,
+                                                          ts,
+                                                          rel_tol, abs_tol,
+                                                          max_num_steps,
+                                                          1,
+                                                          msgs);
 
       return integrator.integrate();
     }
