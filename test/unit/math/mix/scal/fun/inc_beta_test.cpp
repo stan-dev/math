@@ -1,7 +1,6 @@
 #include <stan/math/mix/scal.hpp>
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/arr/fun/util.hpp>
 
 TEST(ProbInternalMath, inc_beta_fd) {
   using stan::math::fvar;

@@ -1,8 +1,7 @@
 #include <stan/math/mix/scal.hpp>
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/arr/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
