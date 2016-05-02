@@ -20,11 +20,13 @@ namespace stan {
                                          static_cast<size_t>(m.cols()));
       Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
       qr.compute(m);
-      matrix_t R = qr.matrixQR().topLeftCorner(m.rows(), m.cols());
-      for (int i = 0; i < R.rows(); i++) {
+      matrix_t R = qr.matrixQR();
+      if (m.rows() > m.cols())
+        R.bottomRows(m.rows() - m.cols()).setZero();
+      for (int i = 0; i < R.cols(); i++) {
         for (int j = 0; j < i; j++)
-          R(i, j) = 0.0;
-        if (i < R.cols() && R(i, i) < 0)
+          R.coeffRef(i, j) = 0.0;
+        if (R(i, i) < 0)
           R.row(i) *= -1.0;
       }
       return R;

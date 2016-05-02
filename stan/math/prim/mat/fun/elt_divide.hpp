@@ -3,6 +3,7 @@
 
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
@@ -48,7 +49,7 @@ namespace stan {
     template <typename T1, typename T2, int R, int C>
     Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
     elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
-      return m / s;
+      return divide(m, s);  // TODO(carp): stan::math::divide(m, s);
     }
 
      /**
