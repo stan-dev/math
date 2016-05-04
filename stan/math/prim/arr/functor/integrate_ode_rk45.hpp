@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
@@ -57,29 +57,29 @@ namespace stan {
      */
     template <typename F, typename T1, typename T2>
     std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-    integrate_ode(const F& f,
-                  const std::vector<T1> y0,
-                  const double t0,
-                  const std::vector<double>& ts,
-                  const std::vector<T2>& theta,
-                  const std::vector<double>& x,
-                  const std::vector<int>& x_int,
-                  std::ostream* msgs) {
+    integrate_ode_rk45(const F& f,
+                       const std::vector<T1> y0,
+                       const double t0,
+                       const std::vector<double>& ts,
+                       const std::vector<T2>& theta,
+                       const std::vector<double>& x,
+                       const std::vector<int>& x_int,
+                       std::ostream* msgs) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
       using boost::numeric::odeint::max_step_checker;
 
-      stan::math::check_finite("integrate_ode", "initial state", y0);
-      stan::math::check_finite("integrate_ode", "initial time", t0);
-      stan::math::check_finite("integrate_ode", "times", ts);
-      stan::math::check_finite("integrate_ode", "parameter vector", theta);
-      stan::math::check_finite("integrate_ode", "continuous data", x);
+      stan::math::check_finite("integrate_ode_rk45", "initial state", y0);
+      stan::math::check_finite("integrate_ode_rk45", "initial time", t0);
+      stan::math::check_finite("integrate_ode_rk45", "times", ts);
+      stan::math::check_finite("integrate_ode_rk45", "parameter vector", theta);
+      stan::math::check_finite("integrate_ode_rk45", "continuous data", x);
 
-      stan::math::check_nonzero_size("integrate_ode", "times", ts);
-      stan::math::check_nonzero_size("integrate_ode", "initial state", y0);
-      stan::math::check_ordered("integrate_ode", "times", ts);
-      stan::math::check_less("integrate_ode", "initial time", t0, ts[0]);
+      stan::math::check_nonzero_size("integrate_ode_rk45", "times", ts);
+      stan::math::check_nonzero_size("integrate_ode_rk45", "initial state", y0);
+      stan::math::check_ordered("integrate_ode_rk45", "times", ts);
+      stan::math::check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
 
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
