@@ -12,6 +12,6 @@
 #include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_bdf.hpp>
 
 #endif

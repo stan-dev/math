@@ -51,14 +51,13 @@ namespace stan {
      * @param[in] theta parameter vector for the ODE.
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
+     * @param[out] msgs the print stream for warning messages.
      * @param[in] absolute_tolerance absolute tolerance parameter 
      *   for Boost's ode solver. Defaults to 1e-6.
      * @param[in] relative_tolerance relative tolerance parameter 
      *   for Boost's ode solver. Defaults to 1e-6.
-     * @param[in] step_size step size for the Boost ode solver.
      * @param[in] max_num_steps maximum number of steps to take within
      *   the Boost ode solver.
-     * @param[out] msgs the print stream for warning messages.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
@@ -71,11 +70,10 @@ namespace stan {
                        const std::vector<T2>& theta,
                        const std::vector<double>& x,
                        const std::vector<int>& x_int,
+                       std::ostream* msgs = 0,
                        double absolute_tolerance = 1e-6,
                        double relative_tolerance = 1e-6,
-                       double step_size = 0.1,
-                       int max_num_steps = 1E6,
-                       std::ostream* msgs) {
+                       int max_num_steps = 1E6) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
@@ -91,11 +89,6 @@ namespace stan {
       stan::math::check_nonzero_size("integrate_ode_rk45", "initial state", y0);
       stan::math::check_ordered("integrate_ode_rk45", "times", ts);
       stan::math::check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
-
-      const double absolute_tolerance = 1e-6;
-      const double relative_tolerance = 1e-6;
-      const double step_size = 0.1;
-      const int max_num_steps = 1E6;
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
@@ -114,6 +107,7 @@ namespace stan {
       std::vector<double> initial_coupled_state
         = coupled_system.initial_state();
 
+      const double step_size = 0.1;
       integrate_times(make_dense_output(absolute_tolerance,
                                         relative_tolerance,
                                         runge_kutta_dopri5<std::vector<double>,

@@ -77,7 +77,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
@@ -105,7 +105,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-     = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }
@@ -157,7 +157,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
@@ -185,7 +185,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }
@@ -237,7 +237,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
@@ -265,7 +265,7 @@ public:
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_cvode(sho, y0, t0, ts, theta, data, data_int);
+      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }
