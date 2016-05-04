@@ -29,9 +29,9 @@ void sho_value_test(F harm_osc,
   using stan::math::promote_scalar;
 
   std::vector<std::vector<var> >  ode_res_vd
-    = stan::math::integrate_ode(harm_osc, promote_scalar<T_y0>(y0), t0,
-                                ts, promote_scalar<T_theta>(theta), x, x_int,
-                                0);
+    = stan::math::integrate_ode_rk45(harm_osc, promote_scalar<T_y0>(y0), t0,
+                                     ts, promote_scalar<T_theta>(theta), x, x_int,
+                                     0);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1].val(), 1e-5);
 
@@ -94,7 +94,7 @@ void sho_data_finite_diff_test(double t0) {
 }
 
 
-TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_rk45, harmonic_oscillator_finite_diff) {
   sho_finite_diff_test(0);
   sho_finite_diff_test(1.0);
   sho_finite_diff_test(-1.0);
@@ -106,7 +106,7 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
 
 
 
-TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_rk45, lorenz_finite_diff) {
   lorenz_ode_fun lorenz;
 
   std::vector<double> y0;
