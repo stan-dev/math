@@ -51,7 +51,14 @@ namespace stan {
      * @param[in] theta parameter vector for the ODE.
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
-     * @param[in, out] msgs the print stream for warning messages.
+     * @param[in] absolute_tolerance absolute tolerance parameter 
+     *   for Boost's ode solver. Defaults to 1e-6.
+     * @param[in] relative_tolerance relative tolerance parameter 
+     *   for Boost's ode solver. Defaults to 1e-6.
+     * @param[in] step_size step size for the Boost ode solver.
+     * @param[in] max_num_steps maximum number of steps to take within
+     *   the Boost ode solver.
+     * @param[out] msgs the print stream for warning messages.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
@@ -64,6 +71,10 @@ namespace stan {
                        const std::vector<T2>& theta,
                        const std::vector<double>& x,
                        const std::vector<int>& x_int,
+                       double absolute_tolerance = 1e-6,
+                       double relative_tolerance = 1e-6,
+                       double step_size = 0.1,
+                       int max_num_steps = 1E6,
                        std::ostream* msgs) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
