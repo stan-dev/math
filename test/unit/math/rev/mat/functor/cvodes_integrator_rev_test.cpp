@@ -10,12 +10,15 @@ struct StanMathRevOdeCVode : public ::testing::Test {
     stan::math::recover_memory();
     ts = std::vector<double>(1,10);
     t0 = 0;
+    
   }
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
   double t0;
   std::vector<double> ts;
+  N_Vector tmp1;
+  N_Vector tmp2;
 };
 
 // helper object to initialize data structures which we can pass into
@@ -28,6 +31,7 @@ struct cvodes2coupled {
   double* p_state_;
   double* p_state_dot_;
   N_Vector  cvode_state_;
+  N_Vector  cvode_state_dot_;
   N_Vector *cvode_state_sens_;
   N_Vector *cvode_state_sens_dot_;
   
@@ -38,7 +42,8 @@ struct cvodes2coupled {
       state_dot_(N, 0),
       p_state_(&state_[0]),
       p_state_dot_(&state_dot_[0]),
-      cvode_state_(N_VMake_Serial(N_, &state_[0]))
+      cvode_state_(N_VMake_Serial(N_, &state_[0])),
+      cvode_state_dot_(N_VMake_Serial(N_, &state_dot_[0]))
   {
     if(S_ > 0) {
       cvode_state_sens_     = N_VCloneVectorArray_Serial(S_, cvode_state_);
@@ -127,14 +132,16 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_dv) {
   NV_Ith_S(nvec.cvode_state_sens_[0], 0) = 1.0;
   NV_Ith_S(nvec.cvode_state_sens_[0], 1) = 2.0;
 
-  integrator.rhs(nvec.p_state_, nvec.p_state_dot_, t0);
+  integrator.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator);
   
-  integrator.rhs_sens(M, t0,
-		      nvec.p_state_,
-		      nvec.p_state_dot_,
-		      nvec.cvode_state_sens_,
-		      nvec.cvode_state_sens_dot_
-		      );
+  integrator.ode_rhs_sens(M, t0,
+                          nvec.cvode_state_,
+                          nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_,
+                          nvec.cvode_state_sens_dot_,
+                          &integrator,
+                          tmp1, tmp2
+                          );
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
@@ -143,47 +150,6 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_dv) {
   EXPECT_FLOAT_EQ(2, dy_dt_coupled[2]);
   EXPECT_FLOAT_EQ(-1.8, dy_dt_coupled[3]);
 }
-/* obsolete
-TEST_F(StanMathRevOdeCVode, decouple_ode_states_dv) {
-  using stan::math::cvodes_integrator;
-  using stan::math::var;
-
-  mock_ode_functor mock_ode;
-
-  size_t T = 10;
-
-  std::vector<double> y0(2);
-  y0[0] = 1.0;
-  y0[1] = 0.5;
-
-  std::vector<double> theta_dbl(1);
-  theta_dbl[0] = 0.15;
-  std::vector<var> theta(theta_dbl.begin(), theta_dbl.end());
-
-  cvodes_integrator<mock_ode_functor, double, var>
-    integrator(mock_ode, y0, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
-
-  size_t k = 0;
-  std::vector<std::vector<double> > ys_coupled(T);
-  for (size_t t = 0; t < T; t++) {
-    std::vector<double> coupled_state(integrator.size(), 0.0);
-    for (int n = 0; n < integrator.size(); n++)
-      coupled_state[n] = ++k;
-    ys_coupled[t] = coupled_state;
-  }
-
-  std::vector<std::vector<var> > ys;
-  ys = decouple_ode_states(ys_coupled, y0, theta);
-
-  ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
-
-  for (size_t t = 0; t < T; t++)
-    for (size_t n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n].val());
-}
-*/
 /* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_dv) {
   using stan::math::cvodes_integrator;
@@ -215,7 +181,7 @@ TEST_F(StanMathRevOdeCVode, initial_state_dv) {
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
 */
-/*
+/* obsolete
 TEST_F(StanMathRevOdeCVode, size_dv) {
   using stan::math::cvodes_integrator;
   using stan::math::var;
@@ -254,18 +220,17 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_dv) {
 
   cvodes2coupled nvec(N, S);
 
-  nvec.state_ = std::vector<double>(3,0);
-  nvec.state_dot_ = std::vector<double>(3,0);
-
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(integrator_dv.rhs(nvec.p_state_, nvec.p_state_dot_, t));
+  EXPECT_NO_THROW(integrator_dv.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_dv));
   
-  EXPECT_NO_THROW(integrator_dv.rhs_sens((int)M, t,
-					 nvec.p_state_,
-					 nvec.p_state_dot_,
-					 nvec.cvode_state_sens_,
-					 nvec.cvode_state_sens_dot_
-					 ));
+  EXPECT_NO_THROW(integrator_dv.ode_rhs_sens((int)M, t,
+                                             nvec.cvode_state_,
+                                             nvec.cvode_state_dot_,
+                                             nvec.cvode_state_sens_,
+                                             nvec.cvode_state_sens_dot_,
+                                             &integrator_dv,
+                                             tmp1, tmp2
+                                             ));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -276,6 +241,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_dv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t S = M;
+
   for (size_t n = 0; n < N+1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -293,8 +260,10 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_dv) {
     std::vector<double> dy_dt(3,0);
     double t = 10;
 
+    cvodes2coupled nvec(N, S);
+    
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(integrator_dv.rhs(&y[0], &dy_dt[0], t),
+    EXPECT_THROW_MSG(integrator_dv.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_dv),
                      std::logic_error,
                      message);
     EXPECT_TRUE(stan::math::empty_nested());
@@ -310,7 +279,7 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vd) {
 
   const size_t N = 2;
   const int M = 1;
-  const size_t S = 2;
+  const size_t S = N;
 
   std::vector<double> theta;
   //std::vector<double> coupled_y0;
@@ -357,14 +326,16 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vd) {
   NV_Ith_S(nvec.cvode_state_sens_[1], 0) = 2.0;
   NV_Ith_S(nvec.cvode_state_sens_[1], 1) = 5.0 + 1.0;
 
-  integrator.rhs(nvec.p_state_, nvec.p_state_dot_, t0);
+  integrator.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator);
   
-  integrator.rhs_sens(M, t0,
-		      nvec.p_state_,
-		      nvec.p_state_dot_,
-		      nvec.cvode_state_sens_,
-		      nvec.cvode_state_sens_dot_
-		      );
+  integrator.ode_rhs_sens(M, t0,
+                          nvec.cvode_state_,
+                          nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_,
+                          nvec.cvode_state_sens_dot_,
+                          &integrator,
+                          tmp1, tmp2
+                          );
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
@@ -377,50 +348,6 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vd) {
   EXPECT_FLOAT_EQ(1.0 + 2.0 * 0 + 5.0 * 1.0, dy_dt_coupled[4]);
   EXPECT_FLOAT_EQ(-0.15 - 1.0 * 2.0 - 0.15 * 5.0, dy_dt_coupled[5]);
 }
-/* obsolete
-TEST_F(StanMathRevOdeCVode, decouple_ode_states_vd) {
-  using stan::math::cvodes_integrator;
-  using stan::math::var;
-
-  mock_ode_functor mock_ode;
-  size_t T = 10;
-
-  std::vector<double> y0_d(2);
-  std::vector<double> theta(1);
-
-  y0_d[0] = 1.0;
-  y0_d[1] = 0.5;
-  theta[0] = 0.15;
-
-  std::vector<var> y0_v(y0_d.begin(), y0_d.end());
-
-  cvodes_integrator<mock_ode_functor, var, double>
-    integrator(mock_ode, y0_v, t0, theta, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
-
-  size_t k = 0;
-  std::vector<std::vector<double> > ys_coupled(T);
-  for (size_t t = 0; t < T; t++) {
-    std::vector<double> coupled_state(integrator.size(), 0.0);
-    for (int n = 0; n < integrator.size(); n++)
-      coupled_state[n] = ++k;
-    ys_coupled[t] = coupled_state;
-  }
-
-  std::vector<std::vector<var> > ys;
-  ys = decouple_ode_states(ys_coupled, y0_v, theta);
-
-  ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
-
-  // note: decouple states operation above does not do any
-  // shifting. Integrator gives plain solution.
-  for (size_t t = 0; t < T; t++)
-    for (size_t n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0_v[n].val(),
-                      ys[t][n].val());
-}
-*/
 /* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_vd) {
   using stan::math::cvodes_integrator;
@@ -491,18 +418,17 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vd) {
 
   cvodes2coupled nvec(N, S);
 
-  nvec.state_ = std::vector<double>(3,0);
-  nvec.state_dot_ = std::vector<double>(3,0);
-  
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(integrator_vd.rhs(nvec.p_state_, nvec.p_state_dot_, t));
+  EXPECT_NO_THROW(integrator_vd.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_vd));
   
-  EXPECT_NO_THROW(integrator_vd.rhs_sens((int)M, t,
-					 nvec.p_state_,
-					 nvec.p_state_dot_,
-					 nvec.cvode_state_sens_,
-					 nvec.cvode_state_sens_dot_
-					 ));
+  EXPECT_NO_THROW(integrator_vd.ode_rhs_sens((int)M, t,
+                                             nvec.cvode_state_,
+                                             nvec.cvode_state_dot_,
+                                             nvec.cvode_state_sens_,
+                                             nvec.cvode_state_sens_dot_,
+                                             &integrator_vd,
+                                             tmp1, tmp2
+                                             ));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -513,6 +439,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vd) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t S = N;
   for (size_t n = 0; n < N+1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -526,12 +453,12 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vd) {
                              var, double>
       integrator_vd(throwing_ode, y0_v, t0, theta_d, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
-    std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
     double t = 10;
 
+    cvodes2coupled nvec(N, S);
+
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(integrator_vd.rhs(&y[0], &dy_dt[0], t),
+    EXPECT_THROW_MSG(integrator_vd.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_vd),
                      std::logic_error,
                      message);
     EXPECT_TRUE(stan::math::empty_nested());
@@ -583,14 +510,16 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vv) {
   NV_Ith_S(nvec.cvode_state_sens_[1], 0) = 0.0;
   NV_Ith_S(nvec.cvode_state_sens_[1], 1) = 1.0;
 
-  integrator.rhs(nvec.p_state_, nvec.p_state_dot_, t0);
+  integrator.ode_rhs(t0, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator);
   
-  integrator.rhs_sens(M, t0,
-		      nvec.p_state_,
-		      nvec.p_state_dot_,
-		      nvec.cvode_state_sens_,
-		      nvec.cvode_state_sens_dot_
-		      );
+  integrator.ode_rhs_sens(M, t0,
+                          nvec.cvode_state_,
+                          nvec.cvode_state_dot_,
+                          nvec.cvode_state_sens_,
+                          nvec.cvode_state_sens_dot_,
+                          &integrator,
+                          tmp1, tmp2
+                          );
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
   
@@ -606,52 +535,6 @@ TEST_F(StanMathRevOdeCVode, cvodes_integrator_vv) {
   EXPECT_FLOAT_EQ(0, dy_dt_coupled[6]);
   EXPECT_FLOAT_EQ(-0.5, dy_dt_coupled[7]);
 }
-/* obsolete
-TEST_F(StanMathRevOdeCVode, decouple_ode_states_vv) {
-  using stan::math::cvodes_integrator;
-  using stan::math::decouple_ode_states;
-  using stan::math::var;
-
-  harm_osc_ode_fun harm_osc;
-
-  std::vector<double> y0_d(2);
-  std::vector<double> theta_d(1);
-
-  y0_d[0] = 1.0;
-  y0_d[1] = 0.5;
-  theta_d[0] = 0.15;
-
-  std::vector<var> y0_v(y0_d.begin(), y0_d.end());
-  std::vector<var> theta_v(theta_d.begin(), theta_d.end());
-
-  cvodes_integrator<harm_osc_ode_fun, var, var>
-    integrator(harm_osc, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
-
-  size_t T = 10;
-  size_t k = 0;
-  std::vector<std::vector<double> > ys_coupled(T);
-  for (size_t t = 0; t < T; t++) {
-    std::vector<double> coupled_state(integrator.size(), 0.0);
-    for (int n = 0; n < integrator.size(); n++)
-      coupled_state[n] = ++k;
-    ys_coupled[t] = coupled_state;
-  }
-
-  std::vector<std::vector<var> > ys;
-  ys = decouple_ode_states(ys_coupled, y0_v, theta_v);
-
-  ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
-
-  // note: decouple states operation above does not do any
-  // shifting. Integrator gives plain solution.
-  for (size_t t = 0; t < T; t++)
-    for (size_t n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0[n].val(),
-                      ys[t][n].val());
-}
-*/
 /* obsolete
 TEST_F(StanMathRevOdeCVode, initial_state_vv) {
   using stan::math::cvodes_integrator;
@@ -723,18 +606,17 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vv) {
 
   cvodes2coupled nvec(N, S);
 
-  nvec.state_ = std::vector<double>(3,0);
-  nvec.state_dot_ = std::vector<double>(3,0);
-  
   EXPECT_TRUE(stan::math::empty_nested());
-  EXPECT_NO_THROW(integrator_vv.rhs(nvec.p_state_, nvec.p_state_dot_, t));
+  EXPECT_NO_THROW(integrator_vv.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_vv));
   
-  EXPECT_NO_THROW(integrator_vv.rhs_sens((int)M, t,
-					 nvec.p_state_,
-					 nvec.p_state_dot_,
-					 nvec.cvode_state_sens_,
-					 nvec.cvode_state_sens_dot_
-					 ));
+  EXPECT_NO_THROW(integrator_vv.ode_rhs_sens((int)M, t,
+                                             nvec.cvode_state_,
+                                             nvec.cvode_state_dot_,
+                                             nvec.cvode_state_sens_,
+                                             nvec.cvode_state_sens_dot_,
+                                             &integrator_vv,
+                                             tmp1, tmp2
+                                             ));
   EXPECT_TRUE(stan::math::empty_nested());
 }
 
@@ -745,6 +627,7 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vv) {
 
   const size_t N = 3;
   const size_t M = 4;
+  const size_t S = N+M;
   for (size_t n = 0; n < N + 1; n++) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
@@ -757,12 +640,12 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_vv) {
     cvodes_integrator<mock_throwing_ode_functor<std::logic_error>, var, var>
       integrator_vv(throwing_ode, y0_v, t0, theta_v, x, x_int, ts, 1e-8, 1e-10, 1e6, 1, &msgs);
 
-    std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
     double t = 10;
 
+    cvodes2coupled nvec(N, S);
+
     EXPECT_TRUE(stan::math::empty_nested());
-    EXPECT_THROW_MSG(integrator_vv.rhs(&y[0], &dy_dt[0], t),
+    EXPECT_THROW_MSG(integrator_vv.ode_rhs(t, nvec.cvode_state_, nvec.cvode_state_dot_, &integrator_vv),
                      std::logic_error,
                      message);
     EXPECT_TRUE(stan::math::empty_nested());

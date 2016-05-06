@@ -17,47 +17,6 @@ struct StanMathOdeCVode : public ::testing::Test {
   double t0;
   std::vector<double> ts;
 };
-/*
-TEST_F(StanMathOdeCVode, decouple_ode_states_dd) {
-  using stan::math::cvodes_integrator;
-  using stan::math::decouple_ode_states;
-
-  harm_osc_ode_fun harm_osc;
-
-  std::vector<double> y0(2);
-  y0[0] = 1.0;
-  y0[1] = 0.5;
-
-  std::vector<double> theta(1);
-  theta[0] = 0.15;
-
-  cvodes_integrator<harm_osc_ode_fun, double, double>
-    integrator(harm_osc, y0, t0, theta, x, x_int, 1e-8, 1e-10, 1e6, 1, &msgs);
-
-  int T = 10;
-  int k = 0;
-  std::vector<std::vector<double> > ys_coupled(T);
-  for (int t = 0; t < T; t++) {
-    std::vector<double> coupled_state(integrator.size(), 0.0);
-    for (int n = 0; n < integrator.size(); n++)
-      coupled_state[n] = ++k;
-    ys_coupled[t] = coupled_state;
-  }
-
-  std::vector<std::vector<double> > ys;
-  ys = decouple_ode_states(ys_coupled, y0, theta);
-
-  ASSERT_EQ(T, ys.size());
-  for (int t = 0; t < T; t++)
-    ASSERT_EQ(2, ys[t].size());
-
-  for (int t = 0; t < T; t++)
-    for (int n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n])
-        << "(" << n << "," << t << "): "
-        << "for (double, double) the coupled system is the base system";
-}
-*/
 /* obsolete
 TEST_F(StanMathOdeCVode, initial_state_dd) {
   using stan::math::cvodes_integrator;
@@ -121,9 +80,13 @@ TEST_F(StanMathOdeCVode, recover_exception) {
   std::vector<double> y(3,0);
   std::vector<double> dy_dt(3,0);
 
+  N_Vector nv_y = N_VMake_Serial(N, &y[0]);
+  N_Vector nv_dy_dt = N_VMake_Serial(N, &dy_dt[0]);
+  
+  
   double t = 10;
 
-  EXPECT_THROW_MSG(integrator_dd.rhs(&y[0], &dy_dt[0], t),
+  EXPECT_THROW_MSG(integrator_dd.ode_rhs(t, nv_y, nv_dy_dt, &integrator_dd),
                    std::logic_error,
                    message);
 }

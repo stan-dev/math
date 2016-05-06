@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_band.h>
