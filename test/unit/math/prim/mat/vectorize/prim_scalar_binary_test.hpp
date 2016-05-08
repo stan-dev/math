@@ -3,7 +3,7 @@
 
 #include <test/unit/math/prim/mat/vectorize/expect_binary_types.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_prim_binary_values.hpp>
-//#include <test/unit/math/prim/mat/vectorize/expect_prim_errors.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_errors.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>
@@ -13,7 +13,7 @@ class prim_scalar_binary_test : public ::testing::Test {
 TYPED_TEST_CASE_P(prim_scalar_binary_test);
 
 TYPED_TEST_P(prim_scalar_binary_test, expect_int_types) {
-  expect_int_types<TypeParam>();
+  expect_int_binary_types<TypeParam>();
 }
 
 TYPED_TEST_P(prim_scalar_binary_test, expect_scalar_types) {
@@ -25,16 +25,14 @@ TYPED_TEST_P(prim_scalar_binary_test, expect_scalar_types) {
 TYPED_TEST_P(prim_scalar_binary_test, expect_values) {
   expect_prim_binary_values<TypeParam>();
 }
-/*
+
 TYPED_TEST_P(prim_scalar_binary_test, expect_errors) {
-  expect_prim_errors<TypeParam>();
+  expect_prim_binary_errors<TypeParam>();
 }
-*/
+
 REGISTER_TYPED_TEST_CASE_P(prim_scalar_binary_test,
                            expect_int_types,
                            expect_scalar_types,
-                           expect_values);
-/*
+                           expect_values,
                            expect_errors);
-*/
 #endif

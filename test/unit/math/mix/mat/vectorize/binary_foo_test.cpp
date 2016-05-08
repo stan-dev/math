@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/math/tools/promotion.hpp>
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_binary_test.hpp>
-//#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_binary_test.hpp>
 //#include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 //#include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/binary_foo_fun.hpp>
@@ -66,9 +66,34 @@ struct binary_foo_test {
   }
 
   /**
+   * Return sequence of valid double-valued inputs.
+   */
+  static std::vector<double> valid_inputs1() {
+    return test::math::vector_builder<double>()
+      .add(0.7).add(2.3).add(3.5).add(0).add(0).add(0)
+      .add(-0.3).add(-5.3).add(-3.7).build();
+  }
+
+  /**
+   * Return sequence of valid double-valued inputs.
+   */
+  static std::vector<double> valid_inputs2() {
+    return test::math::vector_builder<double>()
+      .add(1.3).add(-2.6).add(0).add(-1.2).add(2.3).add(0)
+      .add(-3.7).add(0).add(2.3).build();
+  }
+
+  /**
    * Return sequence of invalid double-valued inputs.
    */
-  static std::vector<double> invalid_inputs() {
+  static std::vector<double> invalid_inputs1() {
+    return std::vector<double>();
+  }
+
+  /**
+   * Return sequence of invalid double-valued inputs.
+   */
+  static std::vector<double> invalid_inputs2() {
     return std::vector<double>();
   }
 
@@ -81,14 +106,39 @@ struct binary_foo_test {
   }
 
   /**
+   * Return sequence of valid integer inputs.
+   */
+  static std::vector<int> int_valid_inputs1() {
+    return test::math::vector_builder<int>()
+      .add(6).add(3).add(7).add(0).add(0).add(0)
+      .add(-2).add(-5).add(-4).build();
+  }
+
+  /**
+   * Return sequence of valid integer inputs.
+   */
+  static std::vector<int> int_valid_inputs2() {
+    return test::math::vector_builder<int>()
+      .add(3).add(-2).add(0).add(5).add(0).add(-4)
+      .add(0).add(6).add(-3).build();
+  }
+
+  /**
    * Return sequence of invalid integer inputs.
    */
-  static std::vector<int> int_invalid_inputs() {
+  static std::vector<int> int_invalid_inputs1() {
+    return std::vector<int>();
+  }
+
+  /**
+   * Return sequence of invalid integer inputs.
+   */
+  static std::vector<int> int_invalid_inputs2() {
     return std::vector<int>();
   }
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
-//INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, binary_foo_test);
 //INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, foo_test);
 //INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, foo_test);

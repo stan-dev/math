@@ -9,17 +9,19 @@
 
 template <typename F, typename matrix_t>
 void expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(const
-std::vector<matrix_t>& input_mv, int m_size) {
+std::vector<matrix_t>& input_mv1, const std::vector<matrix_t>& input_mv2) {
   using stan::math::is_nan;
   using std::vector;
 
   std::vector<matrix_t> fa = F::template apply<vector<matrix_t> >(
-  input_mv, input_mv);
-  EXPECT_EQ(input_mv.size(), fa.size());
-  for (size_t i = 0; i < fa.size(); ++i) {
-    EXPECT_EQ(m_size, fa[i].size());
-    for (int j = 0; j < fa[i].size(); ++j) {
-      double exp_v = F::apply_base(input_mv[i](j), input_mv[i](j));
+  input_mv1, input_mv2);
+  EXPECT_EQ(input_mv1.size(), fa.size());
+  EXPECT_EQ(input_mv2.size(), fa.size());
+  for (size_t i = 0; i < input_mv1.size(); ++i) {
+    EXPECT_EQ(input_mv1[i].size(), fa[i].size());
+    EXPECT_EQ(input_mv2[i].size(), fa[i].size());
+    for (int j = 0; j < input_mv1[i].size(); ++j) {
+      double exp_v = F::apply_base(input_mv1[i](j), input_mv2[i](j));
       if (is_nan(exp_v) && is_nan(fa[i](j))) continue;
       EXPECT_FLOAT_EQ(exp_v, fa[i](j));
     }
