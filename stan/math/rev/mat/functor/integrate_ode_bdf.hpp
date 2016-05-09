@@ -29,7 +29,9 @@ namespace stan {
      * and may be invoked via argument-dependent lookup by including
      * their headers.
      *
-     * The solver use is a stiff BDF.
+     * The solver used is based on the backward differentiation
+     * formula which is an implicit numerical integration scheme
+     * appropiate for stiff ODE systems.
      *
      * @tparam F type of ODE system function.
      * @tparam T_initial type of scalars for initial values.
@@ -84,16 +86,14 @@ namespace stan {
       stan::math::check_less("integrate_ode_bdf",
                              "initial time", t0, ts[0]);
 
-      cvodes_integrator<F, T_initial, T_param> integrator(f,
-                                                          y0, t0,
-                                                          theta,
-                                                          x,
-                                                          x_int,
-                                                          ts,
-                                                          rel_tol, abs_tol,
-                                                          max_num_steps,
-                                                          1,
-                                                          msgs);
+      cvodes_integrator<F, T_initial, T_param>
+        integrator(f, y0, t0, theta,
+                   x, x_int,
+                   ts,
+                   rel_tol, abs_tol,
+                   max_num_steps,
+                   1,
+                   msgs);
 
       return integrator.integrate();
     }

@@ -30,7 +30,7 @@ namespace stan {
      * CVODES integrator which supports stiff and non-stiff
      * integration with optional support for sensitivites for the
      * initial values and/or the parameters.
-     * 
+     *
      * @tparam F type of functor for the base ode system.
      * @tparam T_initial type of initial values
      * @tparam T_param type of parameters
@@ -42,10 +42,16 @@ namespace stan {
       double t0_;
       const std::vector<T_param>& theta_;
       const std::vector<double>& ts_;
+      // number of states
       const size_t N_;
+      // number of parameters
       const size_t M_;
+      // number of sensitivities, can be 0+0, N+0, 0+M, N+M for
+      // varying/constants initials + varying/constant parameters
       const size_t S_;
+      // total size of the coupled system, N*(S+1)
       const size_t size_;
+      // starting index of parameter sensitivites, 0 or N
       const size_t param_var_ind_;
       void* cvode_mem_;
       std::vector<double> state_;
@@ -108,12 +114,12 @@ namespace stan {
                           > return_t;
 
       /**
-       * Construct CVODES integrator for an ODE model with initial
-       * state, initial time, flag for sensitivity calculation of the
-       * initial values and for the parameters, integrator options
-       * such as rel+abs tolerance and maximum number of steps. The
-       * integrator supports non-stiff (Adams-Moulton) and stiff (BDF)
-       * integration with optional stability detection.
+       * Construct CVODES integrator for an ODE model with functor f,
+       * initial state, initial time, parameters, optional real and
+       * integer data, time-points, integrator options such as rel+abs
+       * tolerance and maximum number of steps. The integrator
+       * supports with the solver option non-stiff (Adams-Moulton) and
+       * stiff (BDF) integration with optional stability detection.
        *
        * The integrator creates as output a vector of vector
        * format. The outer vector is over the time-points where the
@@ -124,8 +130,8 @@ namespace stan {
        * (y, \frac{\partial y}{\partial y_0}, \frac{\partial y}{\partial \theta}).
        * \f]
        *
-       * While the first N states correspond to y, all the remaining
-       * are optional and depend on flags given to the constructor.
+       * These are generated in the integtrate function and returned
+       * to the client code as appropiate stan::math::var instances.
        *
        * @param[in] f ode functor.
        * @param[in] y0 initial state of the base ode.
@@ -238,7 +244,7 @@ namespace stan {
 
       // Static wrapper for CVode callback
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* f_data) {
-        solver const* explicit_ode = reinterpret_cast<solver const*>(f_data);
+        const solver* explicit_ode = reinterpret_cast<const solver*>(f_data);
         explicit_ode->rhs(NV_DATA_S(y), NV_DATA_S(ydot), t);
         return 0;
       }
@@ -249,7 +255,7 @@ namespace stan {
                               N_Vector y, N_Vector ydot,
                               N_Vector *yS, N_Vector *ySdot, void *user_data,
                               N_Vector tmp1, N_Vector tmp2) {
-        solver const* explicit_ode = reinterpret_cast<solver const*>(user_data);
+        const solver* explicit_ode = reinterpret_cast<const solver*>(user_data);
 
         const std::vector<double> y_vec(NV_DATA_S(y),
                                         NV_DATA_S(y) + explicit_ode->N_);
@@ -338,8 +344,7 @@ namespace stan {
         return 0;
       }
 
-      inline
-      void
+      inline void
       rhs_sens_initial(const Eigen::MatrixXd& Jy,
                        N_Vector *yS, N_Vector *ySdot) const {
           for (size_t m = 0; m < N_; m++) {
@@ -351,8 +356,7 @@ namespace stan {
           }
       }
 
-      inline
-      void
+      inline void
       rhs_sens_param(const Eigen::MatrixXd& Jy,
                      const Eigen::MatrixXd& Jtheta,
                      N_Vector *yS, N_Vector *ySdot) const {

@@ -10,21 +10,22 @@ namespace stan {
   namespace math {
 
     /**
-     * Internal representation of ODE model object which provides
+     * Internal representation of an ODE model object which provides
      * convenient Jacobian functions to obtain gradients wrt to states
-     * (S) and parameters (P). Can be used to provide analytic
-     * Jacobians via partial template specialisation.
+     * and parameters. Can be used to provide analytic Jacobians via
+     * partial template specialisation.
      *
      * @tparam F type of functor for the base ode system.
      */
     template<typename F>
-    struct ode_system {
+    class ode_system {
       const F& f_;
       const std::vector<double> theta_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
       std::ostream* msgs_;
 
+    public:
       /**
        * Construct an ODE model with the specified base ODE system,
        * parameters, data, and a message stream.
@@ -36,7 +37,7 @@ namespace stan {
        * @param[in] msgs stream to which messages are printed.
        */
       ode_system(const F& f,
-                 const std::vector<double>& theta,
+                 const std::vector<double> theta,
                  const std::vector<double>& x,
                  const std::vector<int>& x_int,
                  std::ostream* msgs)
@@ -54,18 +55,17 @@ namespace stan {
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
        */
-      inline
-      void operator()(const double t,
-                      const std::vector<double>& y,
-                      std::vector<double>& dy_dt) const {
+      inline void
+      operator()(const double t,
+                 const std::vector<double>& y,
+                 std::vector<double>& dy_dt) const {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
       }
 
       /**
        * Calculate the Jacobian of the ODE RHS wrt to states y. The
        * function expects the output objects to have correct sizes,
-       * i.e. dy_dt must be length N and Jy a NxN matrix (N states, M
-       * parameters).
+       * i.e. dy_dt must be length N and Jy a NxN matrix (N states).
        *
        * @param[in] t time.
        * @param[in] y state of the ode system at time t.
