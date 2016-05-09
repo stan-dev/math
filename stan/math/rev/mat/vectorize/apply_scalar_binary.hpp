@@ -273,8 +273,7 @@ namespace stan {
         using stan::math::var;
         return_t fx(x.size());
         for (size_t i = 0; i < x.size(); ++i) {
-          var var_y = y;
-          fx[i] = apply_scalar_binary<F, T, var>::apply(x[i], var_y);
+          fx[i] = apply_scalar_binary<F, T, var>::apply(x[i], y);
         }
         return fx;
       }

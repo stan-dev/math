@@ -9,7 +9,7 @@
 
 //Also will test derivatives
 template <typename F>
-void expect_rev_values() {
+void expect_rev_binary_values() {
   expect_rev_binary_scalar_value<F>();
   expect_rev_binary_std_vector_value<F>();
   expect_rev_binary_matrix_value<F>();

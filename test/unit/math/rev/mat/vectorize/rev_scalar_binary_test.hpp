@@ -9,12 +9,12 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-class rev_scalar_unary_test : public ::testing::Test {
+class rev_scalar_binary_test : public ::testing::Test {
 };
 
-TYPED_TEST_CASE_P(rev_scalar_unary_test);
+TYPED_TEST_CASE_P(rev_scalar_binary_test);
 
-TYPED_TEST_P(rev_scalar_unary_test, expect_scalar_types) {
+TYPED_TEST_P(rev_scalar_binary_test, expect_scalar_types) {
   using stan::math::var;
   expect_binary_types<TypeParam, var, int>();
   expect_binary_types<TypeParam, int, var>();
@@ -23,16 +23,16 @@ TYPED_TEST_P(rev_scalar_unary_test, expect_scalar_types) {
   expect_binary_types<TypeParam, var, var>();
 }
 
-TYPED_TEST_P(rev_scalar_unary_test, expect_values) {
-  expect_rev_values<TypeParam>();
+TYPED_TEST_P(rev_scalar_binary_test, expect_values) {
+  expect_rev_binary_values<TypeParam>();
 }
 
 /*
-TYPED_TEST_P(rev_scalar_unary_test, expect_errors) {
+TYPED_TEST_P(rev_scalar_binary_test, expect_errors) {
   expect_rev_errors<TypeParam>();
 }
 */
-REGISTER_TYPED_TEST_CASE_P(rev_scalar_unary_test,
+REGISTER_TYPED_TEST_CASE_P(rev_scalar_binary_test,
                            expect_scalar_types,
                            expect_values);
 /*
