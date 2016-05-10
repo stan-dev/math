@@ -6,12 +6,20 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
+#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
+#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
+
+#include <cvodes/cvodes.h>
+#include <cvodes/cvodes_band.h>
+#include <cvodes/cvodes_dense.h>
+#include <nvector/nvector_serial.h>
+
 #include <ostream>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
   namespace math {
@@ -59,7 +67,7 @@ namespace stan {
                       const std::vector<T_initial>& y0,
                       const double t0,
                       const std::vector<double>& ts,
-                      const std::vector<T_param> theta,
+                      const std::vector<T_param>& theta,
                       const std::vector<double>& x,
                       const std::vector<int>& x_int,
                       double rel_tol = 1e-10,
@@ -86,16 +94,99 @@ namespace stan {
       stan::math::check_less("integrate_ode_bdf",
                              "initial time", t0, ts[0]);
 
-      cvodes_integrator<F, T_initial, T_param>
-        integrator(f, y0, t0, theta,
-                   x, x_int,
-                   ts,
-                   rel_tol, abs_tol,
-                   max_num_steps,
-                   1,
-                   msgs);
+      typedef stan::is_var<T_initial> initial_var;
+      typedef stan::is_var<T_param> param_var;
 
-      return integrator.integrate();
+      // number of states
+      const size_t N = y0.size();
+      // number of parameters
+      const size_t M = theta.size();
+      // number of sensitivities, can be 0+0, N+0, 0+M, N+M for
+      // varying/constants initials + varying/constant parameters
+      const size_t S = (initial_var::value ? N : 0)
+        + (param_var::value ? M : 0);
+      // total size of the coupled system, N*(S+1)
+      const size_t size = N * (S + 1);
+      std::vector<double> state(stan::math::value_of(y0));
+      N_Vector  cvodes_state(N_VMake_Serial(N, &state[0]));
+      N_Vector *cvodes_state_sens;
+
+      typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
+      ode_data cvodes_data(y0, f, theta, x, x_int, msgs);
+
+      void* cvodes_mem = CVodeCreate(CV_BDF, CV_NEWTON);
+
+      if (cvodes_mem == NULL)
+        throw std::runtime_error("CVodeCreate failed to allocate memory");
+
+      cvodes_check_flag(CVodeInit(cvodes_mem, &ode_data::ode_rhs,
+                                  t0, cvodes_state),
+                        "CVodeInit");
+
+      // Assign pointer to this as user data
+      cvodes_check_flag(CVodeSetUserData(cvodes_mem,
+                                         reinterpret_cast<void*>(&cvodes_data)),
+                        "CVodeSetUserData");
+
+      cvodes_set_options(cvodes_mem, rel_tol, abs_tol, max_num_steps);
+
+      // for the stiff solvers we need to reserve additional
+      // memory and provide a Jacobian function call
+      cvodes_check_flag(CVDense(cvodes_mem, N), "CVDense");
+      cvodes_check_flag(CVDlsSetDenseJacFn(cvodes_mem,
+                                           &ode_data::dense_jacobian),
+                        "CVDlsSetDenseJacFn");
+
+      // initialize forward sensitivity system of CVODES as needed
+      if (S > 0) {
+        cvodes_state_sens = N_VCloneVectorArray_Serial(S, cvodes_state);
+
+        for (size_t s = 0; s < S; s++)
+          N_VConst(RCONST(0.0), cvodes_state_sens[s]);
+
+        // for the case with varying initials, the first N
+        // sensitivity systems correspond to the initials which have
+        // as initial the identity matrix
+        if (initial_var::value) {
+          for (size_t n = 0; n < N; n++) {
+            NV_Ith_S(cvodes_state_sens[n], n) = 1.0;
+          }
+        }
+
+        cvodes_check_flag(CVodeSensInit(cvodes_mem, static_cast<int>(S),
+                                        CV_STAGGERED,
+                                        &ode_data::ode_rhs_sens,
+                                        cvodes_state_sens),
+                          "CVodeSensInit");
+
+        cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
+                          "CVodeSensEEtolerances");
+      }
+
+      std::vector<std::vector<double> >
+        y_coupled(ts.size(), std::vector<double>(size, 0));
+      double t_init = t0;
+      for (size_t n = 0; n < ts.size(); ++n) {
+        double t_final = ts[n];
+        if (t_final != t_init)
+          cvodes_check_flag(CVode(cvodes_mem, t_final, cvodes_state,
+                                  &t_init, CV_NORMAL),
+                            "CVode");
+        std::copy(state.begin(), state.end(), y_coupled[n].begin());
+        if (S > 0) {
+          cvodes_check_flag(CVodeGetSens(cvodes_mem, &t_init,
+                                         cvodes_state_sens),
+                            "CVodeGetSens");
+          for (size_t s = 0; s < S; s++) {
+            std::copy(NV_DATA_S(cvodes_state_sens[s]),
+                      NV_DATA_S(cvodes_state_sens[s]) + N,
+                      y_coupled[n].begin() + N + s * N);
+          }
+        }
+        t_init = t_final;
+      }
+
+      return decouple_ode_states(y_coupled, y0, theta);
     }
   }  // math
 }  // stan
