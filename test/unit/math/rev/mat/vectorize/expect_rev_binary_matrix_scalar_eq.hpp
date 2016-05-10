@@ -2,7 +2,7 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_BINARY_MATRIX_SCALAR_EQ
 
 #include <stan/math/rev/core/var.hpp>
-#include <test/unit/math/rev/mat/vectorize/build_binary_matrix.hpp>
+#include <test/unit/math/rev/mat/vectorize/build_rev_binary_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/build_binary_vector.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
 #include <vector>
@@ -27,9 +27,9 @@ template_m, const std::vector<input_t2>& template_scalar_v) {
       template_scalar_v);
       vector<input_t2> input_vb2 = build_binary_vector2<F>(
       template_scalar_v);
-      input_matrix_t input_m1 = build_binary_matrix(input_va1[i],
+      input_matrix_t input_m1 = build_rev_binary_matrix(input_va1[i],
       template_m);
-      input_matrix_t input_m2 = build_binary_matrix(input_va2[i],
+      input_matrix_t input_m2 = build_rev_binary_matrix(input_va2[i],
       template_m);
       result_matrix_t fa = F::template apply<result_matrix_t>(
       input_m2, input_vb2[i]);

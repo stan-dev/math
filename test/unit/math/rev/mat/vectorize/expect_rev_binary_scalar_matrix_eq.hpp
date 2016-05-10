@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/rev/mat/vectorize/build_binary_vector.hpp>
-#include <test/unit/math/rev/mat/vectorize/build_binary_matrix.hpp>
+#include <test/unit/math/rev/mat/vectorize/build_rev_binary_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
 #include <vector>
 #include <Eigen/Dense>
@@ -27,9 +27,9 @@ template_scalar_v, const Eigen::Matrix<input_t2, R, C>& template_m) {
       vector<input_t2>());
       vector<input_t2> input_vb2 = build_binary_vector2<F>(
       vector<input_t2>());
-      input_matrix_t input_m1 = build_binary_matrix(input_vb1[i], 
+      input_matrix_t input_m1 = build_rev_binary_matrix(input_vb1[i], 
       template_m);
-      input_matrix_t input_m2 = build_binary_matrix(input_vb2[i], 
+      input_matrix_t input_m2 = build_rev_binary_matrix(input_vb2[i], 
       template_m);
       result_matrix_t fa = F::template apply<result_matrix_t>(
       input_va2[i], input_m2);

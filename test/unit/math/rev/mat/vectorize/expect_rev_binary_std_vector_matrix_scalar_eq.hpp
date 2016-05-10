@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/rev/mat/vectorize/build_binary_vector.hpp>
-#include <test/unit/math/rev/mat/vectorize/build_binary_matrix.hpp>
+#include <test/unit/math/rev/mat/vectorize/build_rev_binary_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_binary_val_deriv_eq.hpp>
 #include <vector>
 #include <Eigen/Dense>
@@ -19,7 +19,7 @@ const std::vector<input_t2>& template_scalar_v) {
   typedef Eigen::Matrix<var, R, C> result_matrix_t;
 
   for (size_t i = 0; i < template_scalar_v.size(); ++i) {
-    for (int j = 0; j < 2; ++j) {
+    for (size_t j = 0; j < 2; ++j) {
       for (int k = 0; k < template_m.size(); ++k) {
         vector<input_t1> input_va1 = build_binary_vector1<F>(
         vector<input_t1>());
@@ -30,11 +30,15 @@ const std::vector<input_t2>& template_scalar_v) {
         vector<input_t2> input_vb2 = build_binary_vector2<F>(
         template_scalar_v);
         vector<input_matrix_t> input_mv1;
-        input_mv1.push_back(build_binary_matrix(input_va1[i], template_m));
-        input_mv1.push_back(build_binary_matrix(input_va1[i], template_m));
+        input_mv1.push_back(build_rev_binary_matrix(input_va1[i], 
+        template_m));
+        input_mv1.push_back(build_rev_binary_matrix(input_va1[i], 
+        template_m));
         vector<input_matrix_t> input_mv2;
-        input_mv2.push_back(build_binary_matrix(input_va2[i], template_m));
-        input_mv2.push_back(build_binary_matrix(input_va2[i], template_m));
+        input_mv2.push_back(build_rev_binary_matrix(input_va2[i], 
+        template_m));
+        input_mv2.push_back(build_rev_binary_matrix(input_va2[i], 
+        template_m));
         vector<result_matrix_t> fa = F::template 
         apply<vector<result_matrix_t> >(input_mv2, input_vb2[i]);
         EXPECT_EQ(input_mv2.size(), fa.size());
