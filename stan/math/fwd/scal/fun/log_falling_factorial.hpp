@@ -17,7 +17,9 @@ namespace stan {
       using boost::math::digamma;
 
       return fvar<T>(log_falling_factorial(x.val_, n.val_),
-                     digamma(x.val_ + 1) * x.d_ - digamma(n.val_ + 1) * n.d_);
+                     (digamma(x.val_ + 1)
+                     - digamma(x.val_ - n.val_ + 1)) * x.d_
+                     + digamma(x.val_ - n.val_ + 1) * n.d_);
     }
 
     template<typename T>
@@ -27,7 +29,7 @@ namespace stan {
       using boost::math::digamma;
 
       return fvar<T>(log_falling_factorial(x, n.val_),
-                     -digamma(n.val_ + 1) * n.d_);
+                     digamma(x - n.val_ + 1) * n.d_);
     }
 
     template<typename T>
@@ -37,7 +39,8 @@ namespace stan {
       using boost::math::digamma;
 
       return fvar<T>(log_falling_factorial(x.val_, n),
-                     digamma(x.val_ + 1) * x.d_);
+                     (digamma(x.val_ + 1)
+                     - digamma(x.val_ - n + 1)) * x.d_);
     }
   }
 }

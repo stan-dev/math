@@ -28,13 +28,13 @@ namespace stan {
         fx.resize(fx_var.size());
         for (int i = 0; i < fx_var.size(); ++i)
           fx(i) = fx_var(i).val();
-        J.resize(x.size(), fx_var.size());
+        J.resize(fx_var.size(), x.size());
         for (int i = 0; i < fx_var.size(); ++i) {
           if (i > 0)
-            set_zero_all_adjoints();
+            set_zero_all_adjoints_nested();
           grad(fx_var(i).vi_);
           for (int k = 0; k < x.size(); ++k)
-            J(k, i) = x_var(k).adj();
+            J(i, k) = x_var(k).adj();
         }
       } catch (const std::exception& e) {
         stan::math::recover_memory_nested();
