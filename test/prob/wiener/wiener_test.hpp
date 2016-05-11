@@ -65,6 +65,9 @@ public:
     index.push_back(2U);
     value.push_back(numeric_limits<double>::infinity());
 
+    index.push_back(2U);
+    value.push_back(50.2);
+
     // beta
     index.push_back(3U);
     value.push_back(numeric_limits<double>::infinity());
