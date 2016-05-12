@@ -1,14 +1,8 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/log_mix.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <cmath>
 #include <typeinfo>
-#include <stan/math/fwd/scal/fun/log_mix.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
 
 void test_log_mix_fff(double theta, double lambda1, double lambda2,
                       double theta_d, double lambda1_d, double lambda2_d){

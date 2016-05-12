@@ -133,7 +133,7 @@ namespace stan {
             - 0.5*log_y[n];
         }
       }
-      return operands_and_partials.to_var(logp, y, nu);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_dof>

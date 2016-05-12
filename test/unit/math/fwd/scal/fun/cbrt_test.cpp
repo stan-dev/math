@@ -1,9 +1,7 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/cbrt.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/cbrt.hpp>
 
 TEST(AgradFwdCbrt,Fvar) {
   using stan::math::fvar;

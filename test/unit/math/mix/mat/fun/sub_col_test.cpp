@@ -1,8 +1,6 @@
-#include <stdexcept>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/sub_col.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 
 TEST(AgradMixMatrixSubCol,SubCol1_matrix_fv) {

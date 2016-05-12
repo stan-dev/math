@@ -1,33 +1,25 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <iostream>
-#include <stan/math/prim/mat/fun/append_col.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/rev/mat/fun/sum.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 
 using stan::math::sum;
 using stan::math::append_col;
 using stan::math::matrix_v;
 using stan::math::row_vector_v;
+using stan::math::set_zero_all_adjoints;
+using stan::math::square;
 using Eigen::MatrixXd;
 using Eigen::RowVectorXd;
 
 TEST(AgradRevMatrix, append_col_matrix) {
   matrix_v a(2,2);
-  matrix_v a_exp(2,2);
+  matrix_v a_square(2,2);
   MatrixXd b(2,2);
-  
+
   a << 2.0, 3.0,
        9.0, -1.0;
-       
+
   b << 4.0, 3.0,
        0.0, 1.0;
 
@@ -35,43 +27,69 @@ TEST(AgradRevMatrix, append_col_matrix) {
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
       x.push_back(a(i,j));
-      a_exp(i, j) = stan::math::exp(a(i, j));
+      a_square(i, j) = square(a(i, j));
     }
   }
-  
-  AVAR append_col_ab = sum(append_col(a_exp, b));
+
+  AVAR append_col_ab = sum(append_col(a_square, b));
 
   VEC g = cgradvec(append_col_ab, x);
-  
+
   size_t idx = 0;
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_FLOAT_EQ(std::exp(a(i, j).val()), g[idx++]);
+      EXPECT_FLOAT_EQ(a(i, j).val()*2.0, g[idx++]);
   stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, append_col_row_vector) {
   row_vector_v a(3);
-  row_vector_v a_exp(3);
+  row_vector_v a_square(3);
   RowVectorXd b(3);
-  
+
   a << 2.0, 3.0, 9.0;
-       
+
   b << 4.0, 3.0, 0.0;
 
   AVEC x;
   for (int i = 0; i < 3; ++i) {
     x.push_back(a(i));
-    a_exp(i) = stan::math::exp(a(i));
+    a_square(i) = square(a(i));
   }
-  
-  AVAR append_col_ab = sum(append_col(a_exp, b));
+
+  AVAR append_col_ab = sum(append_col(a_square, b));
 
   VEC g = cgradvec(append_col_ab, x);
-  
+
   size_t idx = 0;
   for (int i = 0; i < 3; i++)
-    EXPECT_FLOAT_EQ(std::exp(a(i).val()), g[idx++]);
+    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_col_ab = sum(append_col(a_square, 2.1));
+  g = cgradvec(append_col_ab, x);
+
+  idx = 0;
+  for (int i = 0; i < 3; i++)
+    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_col_ab = sum(append_col(2.1, a_square));
+  g = cgradvec(append_col_ab, x);
+
+  idx = 0;
+  for (int i = 0; i < 3; i++)
+    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+
+  set_zero_all_adjoints();
+  append_col_ab = sum(append_col(a_square(2)*3.0, b));
+  append_col_ab.grad();
+  EXPECT_FLOAT_EQ(a(2).val()*6.0, x[2].adj());
+
+  set_zero_all_adjoints();
+  append_col_ab = sum(append_col(b, a_square(1)*3.0));
+  append_col_ab.grad();
+  EXPECT_FLOAT_EQ(a(1).val()*6.0, x[1].adj());
   stan::math::recover_memory();
 }
 
@@ -96,13 +114,13 @@ TEST(MathMatrix, append_col_different_types) {
   using stan::math::matrix_v;
   using stan::math::row_vector_v;
   using stan::math::vector_v;
-  using std::vector;  
-  
+  using std::vector;
+
   MatrixXd m33(3, 3);
   m33 << 1, 2, 3,
          4, 5, 6,
          7, 8, 9;
-        
+
   MatrixXd m32(3, 2);
   m32 << 11, 12,
          13, 14,
@@ -111,31 +129,31 @@ TEST(MathMatrix, append_col_different_types) {
   MatrixXd m23(2, 3);
   m23 << 21, 22, 23,
          24, 25, 26;
-         
-  MatrixXd m23b(2, 3);        
+
+  MatrixXd m23b(2, 3);
   m23b = m23*1.101; //ensure some different values
-         
+
   VectorXd v3(3);
-  v3 << 31, 
+  v3 << 31,
         32,
         33;
-        
+
   VectorXd v3b(3);
-  v3b << 34, 
+  v3b << 34,
          35,
          36;
 
   RowVectorXd rv3(3);
   rv3 << 41, 42, 43;
-  
+
   RowVectorXd rv3b(3);
   rv3b << 44, 45, 46;
-  
+
   MatrixXd vm33(3, 3);
   vm33 << 1, 2, 3,
          4, 5, 6,
          7, 8, 9;
-        
+
   MatrixXd vm32(3, 2);
   vm32 << 11, 12,
          13, 14,
@@ -144,23 +162,23 @@ TEST(MathMatrix, append_col_different_types) {
   MatrixXd vm23(2, 3);
   vm23 << 21, 22, 23,
          24, 25, 26;
-         
-  MatrixXd vm23b(2, 3);        
+
+  MatrixXd vm23b(2, 3);
   vm23b = m23*1.101; //ensure some different values
-         
+
   VectorXd vv3(3);
-  vv3 << 31, 
+  vv3 << 31,
         32,
         33;
-        
+
   VectorXd vv3b(3);
-  vv3b << 34, 
+  vv3b << 34,
          35,
          36;
 
   RowVectorXd vrv3(3);
   vrv3 << 41, 42, 43;
-  
+
   RowVectorXd vrv3b(3);
   vrv3b << 44, 45, 46;
 

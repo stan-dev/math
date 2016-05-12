@@ -1,6 +1,6 @@
-#include <stan/math/rev/scal/fun/digamma.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/zeta.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>

@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
 template <int R, int C>

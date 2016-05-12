@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_CCDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_CCDF_LOG_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -70,7 +72,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.to_var(0.0, y, nu, s);
+          return operands_and_partials.value(0.0);
       }
 
       // Compute cdf_log and its gradients
@@ -100,8 +102,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.to_var(stan::math::negative_infinity(),
-                                              y, nu, s);
+          return operands_and_partials.value(stan::math::negative_infinity());
         }
 
         // Pull out values
@@ -138,7 +139,7 @@ namespace stan {
             * gamma_p_deriv / Pn;
       }
 
-      return operands_and_partials.to_var(P, y, nu, s);
+      return operands_and_partials.value(P);
     }
   }
 }

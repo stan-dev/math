@@ -1,11 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/scal/fun/Phi.hpp>
-#include <stan/math/fwd/scal/fun/inv_Phi.hpp>
-#include <stan/math/prim/scal/fun/inv_Phi.hpp>
-#include <stan/math/prim/scal/prob/normal_log.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::fvar;

@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat/fun/append_col.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
@@ -140,6 +140,18 @@ TEST(MathMatrix, append_col) {
     EXPECT_EQ(rvec(i), rv3b(i));
   for (int i = 3; i < 6; i++)
     EXPECT_EQ(rvec(i), rv3(i-3));
+   
+  //matrix append_col(row_vector, scalar)
+  rvec = append_col(rv3, 3.11);
+  for (int i = 0; i < 3; i++)
+    EXPECT_EQ(rvec(i), rv3(i));
+  EXPECT_EQ(rvec(3), 3.11);
+   
+  //matrix append_col(row_vector, scalar)
+  rvec = append_col(-6.512, rv3);
+  EXPECT_EQ(rvec(0), -6.512);  
+  for (int i = 1; i < 4; i++)
+    EXPECT_EQ(rvec(i), rv3(i-1));
     
   EXPECT_THROW(append_col(m23, m33), std::invalid_argument);
   EXPECT_THROW(append_col(m23, m32), std::invalid_argument);
@@ -169,4 +181,6 @@ TEST(MathMatrix, append_col) {
   correct_type_matrix(append_col(v3b, v3));
   correct_type_row_vector(append_col(rv3, rv3b));
   correct_type_row_vector(append_col(rv3b, rv3));
+  correct_type_row_vector(append_col(rv3, -4.31));
+  correct_type_row_vector(append_col(5.23, rv3));
 }

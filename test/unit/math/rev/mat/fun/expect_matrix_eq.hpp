@@ -1,8 +1,7 @@
-#ifndef TEST_AGRAD_REV_MATRIX_EXPECT_MATRIX_EQ_HPP
-#define TEST_AGRAD_REV_MATRIX_EXPECT_MATRIX_EQ_HPP
+#ifndef TEST_UNIT_MATH_REV_MAT_EXPECT_MATRIX_EQ_HPP
+#define TEST_UNIT_MATH_REV_MAT_EXPECT_MATRIX_EQ_HPP
 
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
 

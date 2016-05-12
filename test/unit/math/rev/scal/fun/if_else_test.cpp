@@ -1,7 +1,6 @@
-#include <stan/math/rev/scal/fun/if_else.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/if_else.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 TEST(AgradRev,if_else) {

@@ -1,30 +1,25 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/scal/fun/log_rising_factorial.hpp>
-#include <stan/math/fwd/scal/fun/cos.hpp>
-#include <stan/math/fwd/scal/fun/digamma.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/fwd/scal/fun/fabs.hpp>
-#include <stan/math/fwd/scal/fun/floor.hpp>
-#include <stan/math/fwd/scal/fun/lgamma.hpp>
-#include <stan/math/fwd/scal/fun/log.hpp>
-#include <stan/math/fwd/scal/fun/pow.hpp>
-#include <stan/math/fwd/scal/fun/sin.hpp>
-#include <stan/math/fwd/scal/fun/tan.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
 
 TEST(AgradFwdLogRisingFactorial,Fvar) {
   using stan::math::fvar;
   using stan::math::log_rising_factorial;
   using boost::math::digamma;
 
-  fvar<double> a(4.0,1.0);
-  fvar<double> x = log_rising_factorial(a,1.0);
+  fvar<double> a(4.0, 1.0);
+  fvar<double> x = log_rising_factorial(a, 1.0);
   EXPECT_FLOAT_EQ(std::log(4.0), x.val_);
   EXPECT_FLOAT_EQ(0.25, x.d_);
+  
+  //finite diff
+  double eps = 1e-6;
+  EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(4.0 + eps, 1.0)
+                  - stan::math::log_rising_factorial(4.0 - eps, 1.0))
+                  / (2 * eps), x.d_);
 
-  fvar<double> c(-3.0,2.0);
+  fvar<double> c(-3.0, 2.0);
 
   EXPECT_THROW(log_rising_factorial(c, 2), std::domain_error);
   EXPECT_THROW(log_rising_factorial(2, c), std::domain_error);
@@ -37,6 +32,11 @@ TEST(AgradFwdLogRisingFactorial,Fvar) {
   x = log_rising_factorial(5, a);
   EXPECT_FLOAT_EQ(std::log(1680.0), x.val_);
   EXPECT_FLOAT_EQ(digamma(9), x.d_);
+  
+  //finite diff
+  EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(5.0, 4.0 + eps)
+                  - stan::math::log_rising_factorial(5.0, 4.0 - eps))
+                  / (2 * eps), x.d_);
 }
 
 TEST(AgradFwdLogRisingFactorial,FvarFvarDouble) {

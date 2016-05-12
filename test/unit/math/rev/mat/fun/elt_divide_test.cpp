@@ -1,14 +1,6 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/fun/elt_divide.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradRevMatrix,elt_divide_vec_vv) {
   using stan::math::elt_divide;
@@ -180,4 +172,49 @@ TEST(AgradRevMatrix,elt_divide_mat_dv) {
   VEC g = cgradvec(z(0),x_ind);
   EXPECT_FLOAT_EQ(2.0 / (- 10.0 * 10.0), g[0]);
   EXPECT_FLOAT_EQ(0.0,g[1]);
+}
+TEST(AgradRevMatrix,elt_divide_mat_scal_dv) {
+  using stan::math::elt_divide;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::var;
+
+  matrix_d x(2,3);
+  x << 2, 5, 7, 13, 29, 112;
+
+  var y = 10;
+
+  matrix_v z = elt_divide(x, y);
+  z.sum().grad();
+  EXPECT_FLOAT_EQ(x.sum() * (-1.0 / 100),  y.adj());
+}
+TEST(AgradRevMatrix,elt_divide_vec_scal_dv) {
+  using stan::math::elt_divide;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
+  using stan::math::var;
+
+  vector_d x(6);
+  x << 2, 5, 7, 13, 29, 112;
+
+  var y = 10;
+
+  vector_v z = elt_divide(x, y);
+  z.sum().grad();
+  EXPECT_FLOAT_EQ(x.sum() * (-1.0 / 100),  y.adj());
+}
+TEST(AgradRevMatrix,elt_divide_row_vec_scal_dv) {
+  using stan::math::elt_divide;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_v;
+  using stan::math::var;
+
+  row_vector_d x(6);
+  x << 2, 5, 7, 13, 29, 112;
+
+  var y = 10;
+
+  row_vector_v z = elt_divide(x, y);
+  z.sum().grad();
+  EXPECT_FLOAT_EQ(x.sum() * (-1.0 / 100),  y.adj());
 }

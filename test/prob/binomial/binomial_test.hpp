@@ -1,11 +1,5 @@
 // Arguments: Ints, Ints, Doubles
-#include <stan/math/prim/scal/prob/binomial_log.hpp>
-#include <stan/math/prim/scal/prob/binomial_cdf.hpp>
-#include <stan/math/prim/scal/prob/bernoulli_cdf.hpp>
-
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/scal.hpp>
 
 using std::vector;
 using std::numeric_limits;

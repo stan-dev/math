@@ -1,11 +1,6 @@
+#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stan/math/fwd/arr/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/scal/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/scal/fun/log1p_exp.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
 
 TEST(AgradFwdLogSumExp,Fvar) {
   using stan::math::fvar;

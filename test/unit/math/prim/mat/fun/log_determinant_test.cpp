@@ -1,2 +1,2 @@
-#include <stan/math/prim/mat/fun/log_determinant.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>

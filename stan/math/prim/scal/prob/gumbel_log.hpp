@@ -109,7 +109,7 @@ namespace stan {
             += -inv_beta[n] + y_minus_mu_over_beta * inv_beta[n]
             - scaled_diff * y_minus_mu_over_beta;
       }
-      return operands_and_partials.to_var(logp, y, mu, beta);
+      return operands_and_partials.value(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

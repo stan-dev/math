@@ -1,18 +1,6 @@
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
-#include <stan/math/prim/mat/prob/dirichlet_log.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/lgamma.hpp>
 
 template <typename T_prob, typename T_prior_sample_size>
 void expect_propto(T_prob theta, T_prior_sample_size alpha,

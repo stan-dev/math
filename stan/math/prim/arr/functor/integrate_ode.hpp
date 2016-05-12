@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/arr/err/check_ordered.hpp>
+#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
@@ -68,6 +68,7 @@ namespace stan {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
+      using boost::numeric::odeint::max_step_checker;
 
       stan::math::check_finite("integrate_ode", "initial state", y0);
       stan::math::check_finite("integrate_ode", "initial time", t0);
@@ -83,6 +84,7 @@ namespace stan {
       const double absolute_tolerance = 1e-6;
       const double relative_tolerance = 1e-6;
       const double step_size = 0.1;
+      const int max_num_steps = 1E6;
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
@@ -111,7 +113,8 @@ namespace stan {
                       initial_coupled_state,
                       boost::begin(ts_vec), boost::end(ts_vec),
                       step_size,
-                      observer);
+                      observer,
+                      max_step_checker(max_num_steps));
 
       // remove the first state corresponding to the initial value
       y_coupled.erase(y_coupled.begin());

@@ -1,8 +1,6 @@
-#include <stan/math/prim/scal/fun/sign.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradFwdSign, Fvar) {
   using stan::math::fvar;

@@ -1,7 +1,6 @@
+#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
 
 TEST(AgradMixOperatorGreaterThanOrEqual, FvarVar) {
   using stan::math::fvar;

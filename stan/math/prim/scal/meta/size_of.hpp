@@ -2,12 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_META_SIZE_OF_HPP
 
 #include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
+#include <cstddef>
 
 namespace stan {
-
-
 
   template<typename T, bool is_vec>
   struct size_of_helper {

@@ -1,6 +1,5 @@
+#include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <stan/math/prim/scal/fun/inv_Phi.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, inv_Phi) {

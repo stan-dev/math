@@ -1,13 +1,7 @@
-#include <stan/math/rev/scal/fun/log1p_exp.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/scal/fun/exp.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/rev/scal/fun/inv_logit.hpp>
 
 void test_log1p_exp(double val) {
   using stan::math::log1p_exp;

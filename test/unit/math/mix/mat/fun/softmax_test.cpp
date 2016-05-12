@@ -1,12 +1,6 @@
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/fwd/mat/fun/softmax.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
 
 TEST(AgradMixMatrixSoftmax,fv_1stDeriv) {
   using stan::math::softmax;

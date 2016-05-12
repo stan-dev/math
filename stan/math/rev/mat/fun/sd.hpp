@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SD_HPP
 #define STAN_MATH_REV_MAT_FUN_SD_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <vector>

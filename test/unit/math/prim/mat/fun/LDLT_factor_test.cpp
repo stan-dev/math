@@ -1,3 +1,3 @@
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 

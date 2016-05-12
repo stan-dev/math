@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <ostream>
 #include <vector>
 
@@ -96,9 +96,9 @@ namespace stan {
                       std::vector<double>& dy_dt,
                       double t) {
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        stan::math::check_matching_sizes("coupled_ode_system",
-                                                   "y", y,
-                                                   "dy_dt", dy_dt);
+        stan::math::check_size_match("coupled_ode_system",
+                                     "y", y.size(),
+                                     "dy_dt", dy_dt.size());
       }
 
       /**

@@ -25,13 +25,13 @@ namespace stan {
         Matrix<fvar<T>, Dynamic, 1> fx_fvar
           = f(x_fvar);
         if (i == 0) {
-          J.resize(x.size(), fx_fvar.size());
+          J.resize(fx_fvar.size(), x.size());
           fx.resize(fx_fvar.size());
           for (int k = 0; k < fx_fvar.size(); ++k)
             fx(k) = fx_fvar(k).val_;
         }
         for (int k = 0; k < fx_fvar.size(); ++k) {
-          J(i, k) = fx_fvar(k).d_;
+          J(k, i) = fx_fvar(k).d_;
         }
       }
     }

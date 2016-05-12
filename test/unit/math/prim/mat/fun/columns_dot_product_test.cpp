@@ -1,2 +1,2 @@
-#include <stan/math/prim/mat/fun/columns_dot_product.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>

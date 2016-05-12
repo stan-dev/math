@@ -11,13 +11,6 @@
 namespace stan {
   namespace math {
 
-    template <typename T1, typename T2>
-    inline
-    typename stan::return_type<T1, T2>::type
-    divide(const T1& v, const T2& c) {
-      return v / c;
-    }
-
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
     divide(const Eigen::Matrix<fvar<T>, R, C>& v, const fvar<T>& c) {

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QR_Q_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QR_Q_HPP
 
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <Eigen/QR>
 
 namespace stan {
@@ -22,7 +22,7 @@ namespace stan {
       qr.compute(m);
       matrix_t Q = qr.householderQ();
       for (int i = 0; i < m.cols(); i++)
-        if (qr.matrixQR()(i, i) < 0)
+        if (qr.matrixQR().coeff(i, i) < 0)
           Q.col(i) *= -1.0;
       return Q;
     }

@@ -1,8 +1,8 @@
+#include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <stan/math/prim/scal/fun/log_mix.hpp>
-#include <gtest/gtest.h>
 
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;

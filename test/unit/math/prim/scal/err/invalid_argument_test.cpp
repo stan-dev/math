@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
 const char* function_ = "function";
