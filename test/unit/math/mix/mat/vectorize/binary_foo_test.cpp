@@ -60,14 +60,6 @@ struct binary_foo_test {
   /**
    * Return sequence of valid double-valued inputs.
    */
-  static std::vector<double> valid_inputs() {
-    return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(-0.2).build();
-  }
-
-  /**
-   * Return sequence of valid double-valued inputs.
-   */
   static std::vector<double> valid_inputs1() {
     return test::math::vector_builder<double>()
       .add(0.7).add(2.3).add(3.5).add(0).add(0).add(0)
@@ -87,22 +79,16 @@ struct binary_foo_test {
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs1() {
-    return std::vector<double>();
+    return test::math::vector_builder<double>()
+      .add(2.7).add(12.3).add(0).add(-5.3).add(10.4).add(15.2).build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs2() {
-    return std::vector<double>();
-  }
-
-  /**
-   * Return sequence of valid integer inputs.
-   */
-  static std::vector<int> int_valid_inputs() {
-    return test::math::vector_builder<int>()
-      .add(1).add(-2).add(0).add(3).build();
+    return test::math::vector_builder<double>()
+      .add(10.7).add(2.3).add(15.2).add(26.3).add(0).add(-2.6).build();
   }
 
   /**
@@ -127,14 +113,16 @@ struct binary_foo_test {
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs1() {
-    return std::vector<int>();
+    return test::math::vector_builder<int>()
+      .add(3).add(12).add(0).add(-5).add(11).add(15).build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs2() {
-    return std::vector<int>();
+    return test::math::vector_builder<int>()
+      .add(11).add(2).add(15).add(26).add(0).add(-2).build();
   }
 };
 

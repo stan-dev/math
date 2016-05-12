@@ -18,7 +18,8 @@ namespace stan {
       static inline typename boost::math::tools::promote_args<T1, T2>::type
       fun(const T1& x, const T2& y) {
         using std::pow;
-        //stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 5);
+        stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 10);
+        stan::math::check_less_or_equal("foo_fun vectorize", "y", y, 10);
         return pow(x, y);
       }
     };

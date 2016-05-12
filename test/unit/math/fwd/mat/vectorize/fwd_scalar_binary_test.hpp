@@ -5,7 +5,7 @@
 #include <stan/math/fwd/mat/vectorize/apply_scalar_binary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_types.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_binary_values.hpp>
-//#include <test/unit/math/rev/mat/vectorize/expect_rev_errors.hpp>
+#include <test/unit/math/fwd/mat/vectorize/expect_fwd_binary_errors.hpp>
 #include <gtest/gtest.h>
 
 template <typename T>
@@ -33,15 +33,12 @@ TYPED_TEST_P(fwd_scalar_binary_test, expect_values) {
   expect_fwd_binary_values<TypeParam>();
 }
 
-/*
 TYPED_TEST_P(fwd_scalar_binary_test, expect_errors) {
-  expect_rev_errors<TypeParam>();
+  expect_fwd_binary_errors<TypeParam>();
 }
-*/
+
 REGISTER_TYPED_TEST_CASE_P(fwd_scalar_binary_test,
                            expect_scalar_types,
-                           expect_values);
-/*
+                           expect_values,
                            expect_errors);
-*/
 #endif
