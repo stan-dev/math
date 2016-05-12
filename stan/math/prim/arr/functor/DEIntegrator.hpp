@@ -20,6 +20,8 @@ namespace stan {
 
   namespace math {
 
+    using std::log;
+
     /*! Numerical integration in one dimension using the double expontial method of M. Mori. */
     template<class TFunctionObject>
     class DEIntegrator

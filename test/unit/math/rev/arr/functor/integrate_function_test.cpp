@@ -1,24 +1,10 @@
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/rev/scal/fun/pow.hpp>
-#include <stan/math/rev/scal/fun/cos.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <stan/math/prim/arr/functor/integrate_function.hpp>
 #include <test/unit/util.hpp>
-
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 struct f1 {
   template <typename T1, typename T2>

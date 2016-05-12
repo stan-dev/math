@@ -1,23 +1,11 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_FUNCTION_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_FUNCTION_HPP
 
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/fwd/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/bind.hpp>
 #include <cmath>
 #include <boost/lambda/lambda.hpp>
@@ -108,10 +96,10 @@ namespace stan {
                                                to_var(value_of_beta_),
                                                msgs_);
         } catch (const std::exception& /*e*/) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         return d_value_of_betan_f;
       }
 
@@ -151,8 +139,8 @@ namespace stan {
                        const T_beta& beta,
                        std::ostream* msgs) {
 
-      stan::math::check_finite("integrate_function", "lower limit", a);
-      stan::math::check_finite("integrate_function", "upper limit", b);
+      check_finite("integrate_function", "lower limit", a);
+      check_finite("integrate_function", "upper limit", b);
 
 
       double val_ =
@@ -163,7 +151,7 @@ namespace stan {
                               a, b, 1e-6);
 
       if (!is_constant_struct<T_beta>::value) {
-        size_t N = stan::length(beta);
+        size_t N = length(beta);
         std::vector<double> grad(N);
 
         //beta can be a std::vector, an Eigen Vector
@@ -177,7 +165,7 @@ namespace stan {
           operands_and_partials.d_x1[n] += grad[n];
         }
 
-        return operands_and_partials.to_var(val_, beta);
+        return operands_and_partials.value(val_);
       } else
         return val_;
     }
@@ -220,11 +208,11 @@ namespace stan {
                             const T_beta& beta,
                             std::ostream* msgs) {
 
-      stan::math::check_finite("integrate_function", "lower limit", a);
-      stan::math::check_finite("integrate_function", "upper limit", b);
+      check_finite("integrate_function", "lower limit", a);
+      check_finite("integrate_function", "upper limit", b);
 
       if (!is_constant_struct<T_beta>::value) {
-        size_t N = stan::length(beta);
+        size_t N = length(beta);
         std::vector<double> grad(N);
 
         double val_ =
@@ -236,7 +224,7 @@ namespace stan {
         for (size_t n = 0; n < N; n++)
           operands_and_partials.d_x1[n] += grad[n];
 
-        return operands_and_partials.to_var(val_, beta);
+        return operands_and_partials.value(val_);
       } else
         return integrate_definite_1d(
           boost::bind<double>(f,
