@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
 #include <ostream>
@@ -43,8 +44,8 @@ namespace stan {
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
      * @param[in, out] msgs the print stream for warning messages.
-     * @param[in] rel_tol relative tolerance passed to CVODE.
-     * @param[in] abs_tol absolute tolerance passed to CVODE.
+     * @param[in] relative_tolerance relative tolerance passed to CVODE.
+     * @param[in] absolute_tolerance absolute tolerance passed to CVODE.
      * @param[in] max_num_steps maximum number of steps to pass to CVODE.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
@@ -59,8 +60,8 @@ namespace stan {
                       const std::vector<double>& x,
                       const std::vector<int>& x_int,
                       std::ostream* msgs = 0,
-                      double rel_tol = 1e-10,
-                      double abs_tol = 1e-10,
+                      double relative_tolerance = 1e-10,
+                      double absolute_tolerance = 1e-10,
                       long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
       stan::math::check_finite("integrate_ode_bdf",
                                "initial state", y0);
@@ -82,9 +83,22 @@ namespace stan {
       stan::math::check_less("integrate_ode_bdf",
                              "initial time", t0, ts[0]);
 
+      if (relative_tolerance <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "relative_tolerance,", relative_tolerance,
+                         "", ", must be greater than 0");
+      if (absolute_tolerance <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "absolute_tolerance,", absolute_tolerance,
+                         "", ", must be greater than 0");
+      if (max_num_steps <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "max_num_steps,", max_num_steps,
+                         "", ", must be greater than 0");
+      
       coupled_ode_system_cvode<F, T1, T2>
         coupled_system(f, y0, t0, theta, x, x_int,
-                       rel_tol, abs_tol, max_num_steps,
+                       relative_tolerance, absolute_tolerance, max_num_steps,
                        msgs);
 
       std::vector<std::vector<double> > y_coupled(ts.size());
