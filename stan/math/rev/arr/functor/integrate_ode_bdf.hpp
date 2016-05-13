@@ -95,7 +95,7 @@ namespace stan {
         invalid_argument("integrate_ode_bdf",
                          "max_num_steps,", max_num_steps,
                          "", ", must be greater than 0");
-      
+
       coupled_ode_system_cvode<F, T1, T2>
         coupled_system(f, y0, t0, theta, x, x_int,
                        relative_tolerance, absolute_tolerance, max_num_steps,

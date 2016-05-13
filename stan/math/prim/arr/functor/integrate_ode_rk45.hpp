@@ -53,9 +53,9 @@ namespace stan {
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
      * @param[out] msgs the print stream for warning messages.
-     * @param[in] relative_tolerance relative tolerance parameter 
+     * @param[in] relative_tolerance relative tolerance parameter
      *   for Boost's ode solver. Defaults to 1e-6.
-     * @param[in] absolute_tolerance absolute tolerance parameter 
+     * @param[in] absolute_tolerance absolute tolerance parameter
      *   for Boost's ode solver. Defaults to 1e-6.
      * @param[in] max_num_steps maximum number of steps to take within
      *   the Boost ode solver.
