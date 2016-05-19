@@ -9,7 +9,7 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
-#include <stan/math/rev/mat/functor/ode_system.hpp>
+#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 
 #include <cvodes/cvodes.h>
@@ -112,7 +112,7 @@ namespace stan {
       N_Vector *cvodes_state_sens = NULL;
 
       typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
-      ode_data cvodes_data(y0, f, theta, x, x_int, msgs);
+      ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
       void* cvodes_mem = CVodeCreate(CV_BDF, CV_NEWTON);
 
