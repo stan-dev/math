@@ -40,10 +40,10 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
 
   std::vector<int> data_int;
 
-  EXPECT_THROW_MSG(stan::math::integrate_ode(f_, y0_v, t0, ts_long, theta_v, data, data_int, 0),
+  EXPECT_THROW_MSG(stan::math::integrate_ode_rk45(f_, y0_v, t0, ts_long, theta_v, data, data_int, 0),
                    boost::numeric::odeint::no_progress_error,
                    "Max number of iterations exceeded (1000000).");
 
-  EXPECT_NO_THROW(stan::math::integrate_ode(f_, y0_v, t0, ts_short, theta_v, data, data_int, 0));
+  EXPECT_NO_THROW(stan::math::integrate_ode_rk45(f_, y0_v, t0, ts_short, theta_v, data, data_int, 0));
   
 }
