@@ -13,6 +13,6 @@
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system_cvode.hpp>
-#include <stan/math/rev/arr/functor/integrate_ode_cvode.hpp>
+#include <stan/math/rev/arr/functor/integrate_ode_bdf.hpp>
 
 #endif
