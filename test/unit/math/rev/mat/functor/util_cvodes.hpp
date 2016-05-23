@@ -224,7 +224,7 @@ void test_ode_finite_diff_vv(const F& f,
   std::vector<std::vector<stan::math::var> > ode_res;
 
   ode_res = stan::math::integrate_ode_bdf(f, y_in_v, t_in,
-                                             ts, theta_v, x, x_int);
+                                          ts, theta_v, x, x_int);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
@@ -261,13 +261,13 @@ void test_ode_error_conditions(F& f,
   std::stringstream msgs;
 
   ASSERT_NO_THROW(integrate_ode_bdf(f, y0, t0, ts, theta, x, x_int,
-                                       1e-8, 1e-10, 1e6, &msgs));
+                                    &msgs, 1e-8, 1e-10, 1e6));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::invalid_argument,
                    "initial state has size 0");
   EXPECT_EQ("", msgs.str());
@@ -278,7 +278,7 @@ void test_ode_error_conditions(F& f,
   expected_msg << "initial time is " << t0_bad
                << ", but must be less than " << ts[0];
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_msg.str());
   EXPECT_EQ("", msgs.str());
@@ -286,7 +286,7 @@ void test_ode_error_conditions(F& f,
   msgs.clear();
   std::vector<double> ts_bad;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                       1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::invalid_argument,
                    "times has size 0");
   EXPECT_EQ("", msgs.str());
@@ -295,7 +295,7 @@ void test_ode_error_conditions(F& f,
   ts_bad.push_back(3);
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "times is not a valid ordered vector");
   EXPECT_EQ("", msgs.str());
@@ -303,7 +303,7 @@ void test_ode_error_conditions(F& f,
   msgs.clear();
   std::vector<T2> theta_bad;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::out_of_range,
                    "vector");
   EXPECT_EQ("", msgs.str());
@@ -312,7 +312,7 @@ void test_ode_error_conditions(F& f,
     msgs.clear();
     std::vector<double> x_bad;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int,
-                                          1e-8, 1e-10, 1e6, &msgs),
+                                       &msgs, 1e-8, 1e-10, 1e6),
                      std::out_of_range,
                      "vector");
     EXPECT_EQ("", msgs.str());
@@ -322,7 +322,7 @@ void test_ode_error_conditions(F& f,
     msgs.clear();
     std::vector<int> x_int_bad;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x, x_int_bad,
-                                          1e-8, 1e-10, 1e6, &msgs),
+                                       &msgs, 1e-8, 1e-10, 1e6),
                      std::out_of_range,
                      "vector");
     EXPECT_EQ("", msgs.str());
@@ -344,18 +344,18 @@ void test_ode_error_conditions_nan(F& f,
   expected_is_nan << "is " << nan;
 
   ASSERT_NO_THROW(integrate_ode_bdf(f, y0, t0, ts, theta, x, x_int,
-                                       1e-8, 1e-10, 1e6, &msgs));
+                                    &msgs, 1e-8, 1e-10, 1e6));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad = y0;
   y0_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial state");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
@@ -363,11 +363,11 @@ void test_ode_error_conditions_nan(F& f,
   msgs.clear();
   double t0_bad = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial time");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
@@ -376,11 +376,11 @@ void test_ode_error_conditions_nan(F& f,
   std::vector<double> ts_bad = ts;
   ts_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "times");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
@@ -389,11 +389,11 @@ void test_ode_error_conditions_nan(F& f,
   std::vector<T2> theta_bad = theta;
   theta_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "parameter vector");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
@@ -403,11 +403,11 @@ void test_ode_error_conditions_nan(F& f,
     std::vector<double> x_bad = x;
     x_bad[0] = nan;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int,
-                                          1e-8, 1e-10, 1e6, &msgs),
+                                       &msgs, 1e-8, 1e-10, 1e6),
                      std::domain_error,
                      "continuous data");
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int,
-                                          1e-8, 1e-10, 1e6, &msgs),
+                                       &msgs, 1e-8, 1e-10, 1e6),
                      std::domain_error,
                      expected_is_nan.str());
     EXPECT_EQ("", msgs.str());
@@ -431,27 +431,27 @@ void test_ode_error_conditions_inf(F& f,
   expected_is_neg_inf << "is " << -inf;
 
   ASSERT_NO_THROW(integrate_ode_bdf(f, y0, t0, ts, theta, x, x_int,
-                                       1e-8, 1e-10, 1e6, &msgs));
+                                    &msgs, 1e-8, 1e-10, 1e6));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad = y0;
   y0_bad[0] = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial state");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_inf.str());
   y0_bad[0] = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial state");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0_bad, t0, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
@@ -459,20 +459,20 @@ void test_ode_error_conditions_inf(F& f,
   msgs.clear();
   double t0_bad = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial time");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_inf.str());
   t0_bad = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "initial time");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0_bad, ts, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
@@ -481,20 +481,20 @@ void test_ode_error_conditions_inf(F& f,
   std::vector<double> ts_bad = ts;
   ts_bad[0] = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "times");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_inf.str());
   ts_bad[0] = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    "times");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int,
-                                        1e-8, 1e-10, 1e6, &msgs),
+                                     &msgs, 1e-8, 1e-10, 1e6),
                    std::domain_error,
                    expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
@@ -589,15 +589,15 @@ void test_ode_error_conditions_vv(const F& f,
 
 
 template <typename F>
-void test_ode_bdf(const F& f,
-                  const double& t_in,
-                  const std::vector<double>& ts,
-                  const std::vector<double>& y_in,
-                  const std::vector<double>& theta,
-                  const std::vector<double>& x,
-                  const std::vector<int>& x_int,
-                  const double& diff,
-                  const double& diff2) {
+void test_ode_cvode(const F& f,
+                    const double& t_in,
+                    const std::vector<double>& ts,
+                    const std::vector<double>& y_in,
+                    const std::vector<double>& theta,
+                    const std::vector<double>& x,
+                    const std::vector<int>& x_int,
+                    const double& diff,
+                    const double& diff2) {
   test_ode_finite_diff_vd(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);
   test_ode_finite_diff_dv(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);
   test_ode_finite_diff_vv(f, t_in, ts, y_in, theta, x, x_int, diff, diff2);

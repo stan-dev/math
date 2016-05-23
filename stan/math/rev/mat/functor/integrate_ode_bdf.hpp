@@ -52,11 +52,11 @@ namespace stan {
      * @param[in] theta parameter vector for the ODE.
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
-     * @param[in] rel_tol relative tolerance of solution
-     * @param[in] abs_tol absolute tolerance of solution
+     * @param[in, out] msgs the print stream for warning messages.
+     * @param[in] relative_tolerance relative tolerance passed to CVODE.
+     * @param[in] absolute_tolerance absolute tolerance passed to CVODE.
      * @param[in] max_num_steps maximal number of admissable steps
      * between time-points
-     * @param[in, out] msgs the print stream for warning messages.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
@@ -70,10 +70,10 @@ namespace stan {
                       const std::vector<T_param>& theta,
                       const std::vector<double>& x,
                       const std::vector<int>& x_int,
-                      double rel_tol = 1e-10,
-                      double abs_tol = 1e-10,
-                      long int max_num_steps = 1e8,  // NOLINT(runtime/int)
-                      std::ostream* msgs = 0) {
+                      std::ostream* msgs = 0,
+                      double relative_tolerance = 1e-10,
+                      double absolute_tolerance = 1e-10,
+                      long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
       stan::math::check_finite("integrate_ode_bdf",
                                "initial state", y0);
       stan::math::check_finite("integrate_ode_bdf",
@@ -93,6 +93,19 @@ namespace stan {
                                 "times", ts);
       stan::math::check_less("integrate_ode_bdf",
                              "initial time", t0, ts[0]);
+
+      if (relative_tolerance <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "relative_tolerance,", relative_tolerance,
+                         "", ", must be greater than 0");
+      if (absolute_tolerance <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "absolute_tolerance,", absolute_tolerance,
+                         "", ", must be greater than 0");
+      if (max_num_steps <= 0)
+        invalid_argument("integrate_ode_bdf",
+                         "max_num_steps,", max_num_steps,
+                         "", ", must be greater than 0");
 
       typedef stan::is_var<T_initial> initial_var;
       typedef stan::is_var<T_param> param_var;
@@ -132,7 +145,9 @@ namespace stan {
                                    reinterpret_cast<void*>(&cvodes_data)),
                           "CVodeSetUserData");
 
-        cvodes_set_options(cvodes_mem, rel_tol, abs_tol, max_num_steps);
+        cvodes_set_options(cvodes_mem,
+                           relative_tolerance, absolute_tolerance,
+                           max_num_steps);
 
         // for the stiff solvers we need to reserve additional
         // memory and provide a Jacobian function call
