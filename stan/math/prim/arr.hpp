@@ -29,7 +29,7 @@
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode.hpp>
+#include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
 
 #include <stan/math/prim/scal.hpp>
 

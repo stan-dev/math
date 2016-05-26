@@ -39,7 +39,7 @@ namespace stan {
     template<typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
     log_falling_factorial(const T1 x, const T2 n) {
-      return lgamma(x + 1) - lgamma(n + 1);
+      return lgamma(x + 1) - lgamma(x - n + 1);
     }
 
   }

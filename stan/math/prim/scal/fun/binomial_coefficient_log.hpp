@@ -7,7 +7,6 @@
 namespace stan {
 
   namespace math {
-
     /**
      * Return the log of the binomial coefficient for the specified
      * arguments.
@@ -20,8 +19,8 @@ namespace stan {
      * This function uses Gamma functions to define the log
      * and generalize the arguments to continuous N and n.
      *
-     * \f$ \log {N \choose n} = \log \ \Gamma(N+1) - \log \Gamma(n+1) - \log \Gamma(N-n+1)\f$.
-     *
+     * \f$ \log {N \choose n}
+     * = \log \ \Gamma(N+1) - \log \Gamma(n+1) - \log \Gamma(N-n+1)\f$.
      *
        \f[
        \mbox{binomial\_coefficient\_log}(x, y) =
@@ -63,17 +62,23 @@ namespace stan {
     binomial_coefficient_log(const T_N N, const T_n n) {
       using std::log;
       using boost::math::lgamma;
-
-      const double cutoff = 1000;
-      if ((N < cutoff) || (N - n < cutoff)) {
-        return lgamma(N + 1.0) - lgamma(n + 1.0) - lgamma(N - n + 1.0);
+      const double CUTOFF = 1000;
+      if (N - n < CUTOFF) {
+        T_N N_plus_1 = N + 1;
+        return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
       } else {
-        return n * log(N - n) + (N + 0.5) * log(N/(N-n))
-          + 1/(12*N) - n - 1/(12*(N-n)) - lgamma(n + 1.0);
+        typename boost::math::tools::promote_args<T_N, T_n>::type N_minus_n
+          = N - n;
+        double one_twelfth = 1.0 / 12;
+        return n * log(N_minus_n)
+          + (N + 0.5) * log(N / N_minus_n)
+          + one_twelfth / N
+          - n
+          - one_twelfth / N_minus_n
+          - lgamma(n + 1);
       }
     }
 
   }
 }
-
 #endif
