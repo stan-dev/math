@@ -17,7 +17,7 @@ namespace stan {
      *
      * @tparam F type of functor for the base ode system.
      */
-    template<typename F>
+    template <typename F>
     class ode_system {
       const F& f_;
       const std::vector<double> theta_;
@@ -36,17 +36,10 @@ namespace stan {
        * @param[in] x_int integer data.
        * @param[in] msgs stream to which messages are printed.
        */
-      ode_system(const F& f,
-                 const std::vector<double> theta,
-                 const std::vector<double>& x,
-                 const std::vector<int>& x_int,
+      ode_system(const F& f, const std::vector<double> theta,
+                 const std::vector<double>& x, const std::vector<int>& x_int,
                  std::ostream* msgs)
-        : f_(f),
-          theta_(theta),
-          x_(x),
-          x_int_(x_int),
-          msgs_(msgs)
-      {}
+        : f_(f), theta_(theta), x_(x), x_int_(x_int), msgs_(msgs) { }
 
       /**
        * Calculate the RHS of the ODE
@@ -55,10 +48,8 @@ namespace stan {
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
        */
-      inline void
-      operator()(const double t,
-                 const std::vector<double>& y,
-                 std::vector<double>& dy_dt) const {
+      inline void operator()(const double t, const std::vector<double>& y,
+                             std::vector<double>& dy_dt) const {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
       }
 
@@ -73,32 +64,31 @@ namespace stan {
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        */
       template <typename Derived1, typename Derived2>
-      void
-      jacobian(const double t,
-               const std::vector<double>& y,
-               Eigen::MatrixBase<Derived1>& dy_dt,
-               Eigen::MatrixBase<Derived2>& Jy) const {
+      void jacobian(const double t, const std::vector<double>& y,
+                    Eigen::MatrixBase<Derived1>& dy_dt,
+                    Eigen::MatrixBase<Derived2>& Jy) const {
         using Eigen::Matrix;
+        using Eigen::Map;
+        using Eigen::RowVectorXd;
         using stan::math::var;
         using std::vector;
         vector<double> grad(y.size());
-        Eigen::Map<Eigen::RowVectorXd> grad_eig(&grad[0], y.size());
+        Map<RowVectorXd> grad_eig(&grad[0], y.size());
         try {
-          stan::math::start_nested();
+          start_nested();
           vector<var> y_var(y.begin(), y.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
-            stan::math::set_zero_all_adjoints_nested();
-
+            set_zero_all_adjoints_nested();
             dy_dt_var[i].grad(y_var, grad);
             Jy.row(i) = grad_eig;
           }
         } catch (const std::exception& e) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
       }
 
       /**
@@ -114,44 +104,42 @@ namespace stan {
        * @param[out] Jtheta Jacobian of ODE RHS wrt to theta.
        */
       template <typename Derived1, typename Derived2>
-      void
-      jacobian(const double t,
-               const std::vector<double>& y,
-               Eigen::MatrixBase<Derived1>& dy_dt,
-               Eigen::MatrixBase<Derived2>& Jy,
-               Eigen::MatrixBase<Derived2>& Jtheta) const {
-        using Eigen::Matrix;
+      void jacobian(const double t, const std::vector<double>& y,
+                    Eigen::MatrixBase<Derived1>& dy_dt,
+                    Eigen::MatrixBase<Derived2>& Jy,
+                    Eigen::MatrixBase<Derived2>& Jtheta) const {
         using Eigen::Dynamic;
+        using Eigen::Map;
+        using Eigen::Matrix;
+        using Eigen::RowVectorXd;
         using stan::math::var;
         using std::vector;
         vector<double> grad(y.size() + theta_.size());
-        Eigen::Map<Eigen::RowVectorXd> grad_eig(&grad[0],
-                                                y.size() + theta_.size());
+        Map<RowVectorXd> grad_eig(&grad[0], y.size() + theta_.size());
         try {
-          stan::math::start_nested();
+          start_nested();
           vector<var> y_var(y.begin(), y.end());
           vector<var> theta_var(theta_.begin(), theta_.end());
           vector<var> z_var;
           z_var.reserve(y.size() + theta_.size());
-          z_var.insert(z_var.end(),     y_var.begin(),     y_var.end());
+          z_var.insert(z_var.end(), y_var.begin(), y_var.end());
           z_var.insert(z_var.end(), theta_var.begin(), theta_var.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
-            stan::math::set_zero_all_adjoints_nested();
+            set_zero_all_adjoints_nested();
             dy_dt_var[i].grad(z_var, grad);
-
             Jy.row(i) = grad_eig.leftCols(y.size());
             Jtheta.row(i) = grad_eig.rightCols(theta_.size());
           }
         } catch (const std::exception& e) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
         stan::math::recover_memory_nested();
       }
     };
+
   }
 }
-
 #endif

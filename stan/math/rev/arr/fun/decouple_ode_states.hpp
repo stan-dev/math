@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-
 #include <vector>
 
 namespace stan {
@@ -49,9 +48,8 @@ namespace stan {
 
       const size_t N = y0.size();
       const size_t M = theta.size();
-      const size_t S =
-        (initial_var::value ? N : 0) +
-        (param_var::value ? M : 0);
+      const size_t S = (initial_var::value ? N : 0)
+        + (param_var::value ? M : 0);
 
       vars.reserve(S);
       if (initial_var::value)
@@ -63,13 +61,11 @@ namespace stan {
       vector<double> temp_gradients(S);
       vector<vector<var> > y_return(y.size());
 
-      for (size_t i = 0; i < y.size(); i++) {
-        // iterate over number of equations
-        for (size_t j = 0; j < N; j++) {
-          // iterate over parameters for each equation
-          for (size_t k = 0; k < S; k++)
+      for (size_t i = 0; i < y.size(); ++i) {
+        for (size_t j = 0; j < N; ++j) {
+          for (size_t k = 0; k < S; ++k) {
             temp_gradients[k] = y[i][N + N * k + j];
-
+          }
           temp_vars[j] = precomputed_gradients(y[i][j],
                                                vars, temp_gradients);
         }
@@ -95,7 +91,7 @@ namespace stan {
                         const std::vector<double>& theta) {
       return y;
     }
-  }  // ns math
-}  // ns stan
 
+  }
+}
 #endif

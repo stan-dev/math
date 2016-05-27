@@ -5,14 +5,15 @@
 #include <cvodes/cvodes_band.h>
 #include <cvodes/cvodes_dense.h>
 #include <nvector/nvector_serial.h>
-
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace stan {
+
   namespace math {
 
-    // Noop error handler to silence CVodes error output
+    // no-op error handler to silence CVodes error output;  errors handled
+    // directly by Stan
     extern "C"
     void cvodes_silent_err_handler(int error_code, const char *module,
                                    const char *function, char *msg,
@@ -27,12 +28,9 @@ namespace stan {
       }
     }
 
-    void cvodes_set_options(void* cvodes_mem,
-                            double rel_tol,
-                            double abs_tol,
-                            long int max_num_steps  // NOLINT(runtime/int)
-                            ) {
-      // Forward CVode errors to noop error handler
+    void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,
+                            long int max_num_steps) {   // NOLINT(runtime/int)
+      // forward CVode errors to noop error handler
       CVodeSetErrHandlerFn(cvodes_mem, cvodes_silent_err_handler, 0);
 
       // Initialize solver parameters
@@ -55,7 +53,6 @@ namespace stan {
                         "CVodeSetMaxConvFails");
     }
 
-  }  // math
-}  // stan
-
+  }
+}
 #endif
