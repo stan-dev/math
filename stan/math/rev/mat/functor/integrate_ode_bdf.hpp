@@ -28,7 +28,7 @@ namespace stan {
      * general memory.  
      *
      * @param[in] cvodes_state State vector.
-     * @param[in] cvodes_state_sense Sensivity vector.
+     * @param[in] cvodes_state_sens Sensivity vector.
      * @param[in] cvodes_mem Memory held for CVODES.
      * @param[in] S Number of sensitivities being calculated.
      */
