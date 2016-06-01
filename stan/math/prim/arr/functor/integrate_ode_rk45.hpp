@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
@@ -51,40 +52,57 @@ namespace stan {
      * @param[in] theta parameter vector for the ODE.
      * @param[in] x continuous data vector for the ODE.
      * @param[in] x_int integer data vector for the ODE.
-     * @param[in, out] msgs the print stream for warning messages.
+     * @param[out] msgs the print stream for warning messages.
+     * @param[in] relative_tolerance relative tolerance parameter
+     *   for Boost's ode solver. Defaults to 1e-6.
+     * @param[in] absolute_tolerance absolute tolerance parameter
+     *   for Boost's ode solver. Defaults to 1e-6.
+     * @param[in] max_num_steps maximum number of steps to take within
+     *   the Boost ode solver.
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
     template <typename F, typename T1, typename T2>
     std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-    integrate_ode(const F& f,
-                  const std::vector<T1> y0,
-                  const double t0,
-                  const std::vector<double>& ts,
-                  const std::vector<T2>& theta,
-                  const std::vector<double>& x,
-                  const std::vector<int>& x_int,
-                  std::ostream* msgs) {
+    integrate_ode_rk45(const F& f,
+                       const std::vector<T1> y0,
+                       const double t0,
+                       const std::vector<double>& ts,
+                       const std::vector<T2>& theta,
+                       const std::vector<double>& x,
+                       const std::vector<int>& x_int,
+                       std::ostream* msgs = 0,
+                       double relative_tolerance = 1e-6,
+                       double absolute_tolerance = 1e-6,
+                       int max_num_steps = 1E6) {
       using boost::numeric::odeint::integrate_times;
       using boost::numeric::odeint::make_dense_output;
       using boost::numeric::odeint::runge_kutta_dopri5;
       using boost::numeric::odeint::max_step_checker;
 
-      stan::math::check_finite("integrate_ode", "initial state", y0);
-      stan::math::check_finite("integrate_ode", "initial time", t0);
-      stan::math::check_finite("integrate_ode", "times", ts);
-      stan::math::check_finite("integrate_ode", "parameter vector", theta);
-      stan::math::check_finite("integrate_ode", "continuous data", x);
+      check_finite("integrate_ode_rk45", "initial state", y0);
+      check_finite("integrate_ode_rk45", "initial time", t0);
+      check_finite("integrate_ode_rk45", "times", ts);
+      check_finite("integrate_ode_rk45", "parameter vector", theta);
+      check_finite("integrate_ode_rk45", "continuous data", x);
 
-      stan::math::check_nonzero_size("integrate_ode", "times", ts);
-      stan::math::check_nonzero_size("integrate_ode", "initial state", y0);
-      stan::math::check_ordered("integrate_ode", "times", ts);
-      stan::math::check_less("integrate_ode", "initial time", t0, ts[0]);
+      check_nonzero_size("integrate_ode_rk45", "times", ts);
+      check_nonzero_size("integrate_ode_rk45", "initial state", y0);
+      check_ordered("integrate_ode_rk45", "times", ts);
+      check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
 
-      const double absolute_tolerance = 1e-6;
-      const double relative_tolerance = 1e-6;
-      const double step_size = 0.1;
-      const int max_num_steps = 1E6;
+      if (relative_tolerance <= 0)
+        invalid_argument("integrate_ode_rk45",
+                         "relative_tolerance,", relative_tolerance,
+                         "", ", must be greater than 0");
+      if (absolute_tolerance <= 0)
+        invalid_argument("integrate_ode_rk45",
+                         "absolute_tolerance,", absolute_tolerance,
+                         "", ", must be greater than 0");
+      if (max_num_steps <= 0)
+        invalid_argument("integrate_ode_rk45",
+                         "max_num_steps,", max_num_steps,
+                         "", ", must be greater than 0");
 
       // creates basic or coupled system by template specializations
       coupled_ode_system<F, T1, T2>
@@ -103,6 +121,7 @@ namespace stan {
       std::vector<double> initial_coupled_state
         = coupled_system.initial_state();
 
+      const double step_size = 0.1;
       integrate_times(make_dense_output(absolute_tolerance,
                                         relative_tolerance,
                                         runge_kutta_dopri5<std::vector<double>,
