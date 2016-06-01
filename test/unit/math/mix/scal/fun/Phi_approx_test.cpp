@@ -1,7 +1,7 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 // Phi_approx needs inv_logit in order for this to work
-#include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdPhi_approx, FvarVar_1stDeriv) {

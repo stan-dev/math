@@ -1,7 +1,7 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 std::vector<double> test_fun(double y, double mu, double sigma) {
   using stan::math::var;

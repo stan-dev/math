@@ -1,6 +1,6 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogDiffExp,FvarVar_FvarVar_1stDeriv) {

@@ -1,7 +1,7 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/hypot.hpp>
-#include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 
