@@ -71,7 +71,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
-#include <stan/math/prim/mat/fun/cov_sq_exp.hpp>
+#include <stan/math/prim/mat/fun/cov_exp_quad.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/determinant.hpp>
