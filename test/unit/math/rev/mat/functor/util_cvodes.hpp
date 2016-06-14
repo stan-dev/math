@@ -3,7 +3,7 @@
 #include <sstream>
 #include <vector>
 
-#include <stan/math/rev/arr/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <test/unit/util.hpp>
 
 //calculates finite diffs for integrate_ode with varying parameters

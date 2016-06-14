@@ -1,4 +1,4 @@
-#include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
 
@@ -9,7 +9,7 @@
 #include <boost/numeric/odeint.hpp>
 
 
-#include <test/unit/math/rev/arr/functor/util_cvode.hpp>
+#include <test/unit/math/rev/mat/functor/util_cvodes.hpp>
 
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
