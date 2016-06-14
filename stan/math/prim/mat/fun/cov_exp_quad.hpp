@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <vector>
 
 namespace stan {
   namespace math {
@@ -53,7 +54,8 @@ namespace stan {
       for (size_t i = 0; i < x.size(); ++i) {
         cov(i, i) = sigma_sq;
         for (size_t j = i + 1; j < x.size(); ++j) {
-          cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+          cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j])
+                                     * neg_half_inv_l_sq);
           cov(j, i) = cov(i, j);
         }
       }
@@ -103,7 +105,8 @@ namespace stan {
 
       for (size_t i = 0; i < x1.size(); ++i) {
         for (size_t j = 0; j < x2.size(); ++j) {
-          cov(i, j) = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+          cov(i, j) = sigma_sq * exp(squared_distance(x1[i], x2[j])
+                                     * neg_half_inv_l_sq);
         }
       }
       return cov;
