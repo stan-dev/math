@@ -47,7 +47,7 @@ namespace stan {
      * @tparam C1 Columns at compile time of first vector input
      * @tparam R2 Rows at compile time of second vector input
      * @tparam C2 Columns at compile time of second vector input
-     * @tparam T1 Child scalar type of fvar vector input
+     * @tparam T Child scalar type of fvar vector input
      * @param v1 First vector.
      * @param v2 Second vector.
      * @return Dot product of the vectors.
@@ -104,7 +104,7 @@ namespace stan {
      * @tparam C1 Columns at compile time of first vector input
      * @tparam R2 Rows at compile time of second vector input
      * @tparam C2 Columns at compile time of second vector input
-     * @tparam T1 Child scalar type of fvar vector input
+     * @tparam T Child scalar type of fvar vector input
      * @param v1 First vector.
      * @param v2 Second vector.
      * @return Dot product of the vectors.
@@ -160,7 +160,7 @@ namespace stan {
      * @tparam C1 Columns at compile time of first vector input
      * @tparam R2 Rows at compile time of second vector input
      * @tparam C2 Columns at compile time of second vector input
-     * @tparam T1 Child scalar type of fvar vector input
+     * @tparam T Child scalar type of fvar vector input
      * @param v1 First vector.
      * @param v2 Second vector.
      * @return Dot product of the vectors.

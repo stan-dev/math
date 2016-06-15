@@ -10,8 +10,8 @@ namespace stan {
     /**
      * Returns the squared distance.
      *
-     * @param v1 First vector.
-     * @param v2 Second vector.
+     * @param x1 First vector.
+     * @param x2 Second vector.
      * @return Dot product of the vectors.
      * @throw std::domain_error If the vectors are not the same
      * size or if they are both not vector dimensioned.

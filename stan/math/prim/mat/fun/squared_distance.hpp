@@ -11,12 +11,10 @@ namespace stan {
 
     /**
      * Returns the squared distance between the specified vectors
-		 * of the same dimensions.
+     * of the same dimensions.
      *
-		 * @tparam R Rows at compile time of vector inputs
-		 * @tparam C columns at compile time of vector inputs
-		 * @tparam T1 Scalar type of first vector input
-		 * @tparam T2 Scalar type of second vector input
+     * @tparam R Rows at compile time of vector inputs
+     * @tparam C columns at compile time of vector inputs
      * @param v1 First vector.
      * @param v2 Second vector.
      * @return Dot product of the vectors.
@@ -37,14 +35,12 @@ namespace stan {
 
     /**
      * Returns the squared distance between the specified vectors
-		 * of the same dimensions.
+     * of the same dimensions.
      *
-		 * @tparam R1 Rows at compile time of first vector input
-		 * @tparam C1 Columns at compile time of first vector input
-		 * @tparam R2 Rows at compile time of second vector input
-		 * @tparam C2 Columns at compile time of second vector input
-		 * @tparam T1 Scalar type of first vector input
-		 * @tparam T2 Scalar type of second vector input
+     * @tparam R1 Rows at compile time of first vector input
+     * @tparam C1 Columns at compile time of first vector input
+     * @tparam R2 Rows at compile time of second vector input
+     * @tparam C2 Columns at compile time of second vector input
      * @param v1 First vector.
      * @param v2 Second vector.
      * @return Dot product of the vectors.
