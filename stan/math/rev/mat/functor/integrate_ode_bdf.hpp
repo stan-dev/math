@@ -20,20 +20,20 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
      * Free memory allocated for CVODES state, sensitivity, and
-     * general memory.  
+     * general memory.
      *
      * @param[in] cvodes_state State vector.
      * @param[in] cvodes_state_sens Sensivity vector.
      * @param[in] cvodes_mem Memory held for CVODES.
      * @param[in] S Number of sensitivities being calculated.
      */
-    void free_cvodes_memory(N_Vector& cvodes_state, N_Vector* cvodes_state_sens,
-                            void* cvodes_mem, size_t S) {
+    inline void free_cvodes_memory(N_Vector& cvodes_state,
+                                   N_Vector* cvodes_state_sens,
+                                   void* cvodes_mem, size_t S) {
       N_VDestroy_Serial(cvodes_state);
       if (cvodes_state_sens != NULL)
         N_VDestroyVectorArray_Serial(cvodes_state_sens, S);
