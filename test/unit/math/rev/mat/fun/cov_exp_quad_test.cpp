@@ -585,8 +585,6 @@ TEST(RevMath, cov_exp_quad_vector_dvv) {
       //           << "x[1]: " << x[1] << std::endl
       //           << "x[2]: " << x[2] << std::endl
       //           << std::endl;
-      double distance = stan::math::distance(stan::math::value_of(x[i]),
-                                             stan::math::value_of(x[j]));
       double sq_distance = stan::math::squared_distance(stan::math::value_of(x[i]),
                                                         stan::math::value_of(x[j]));
       
