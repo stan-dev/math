@@ -15,18 +15,27 @@
 namespace stan {
   namespace math {
 
-    // This code is in this directory because it includes var
-    // It is in namespace stan::math so that the partial template
-    // specializations are treated as such.
-
-
     /**
-     * The coupled ode system for unknown intial values and unknown
-     * parameters.
+     * The coupled ode system suitable for varying/fixed
+     * initials/parameters.
      *
-     * <p>The coupled system has N + N * (N + M) states, where N is
-     * size of the base ODE state vector and M is the number of
-     * parameters.
+     * <p> The base system has N states and M parameters.
+     *
+     * If any sensitivities are requested then the state vector gets
+     * enlarged accordingly by the number of sensitivities requested
+     * (for each sensitivity all N states are being calculated).
+     *
+     * If sensitivities for the initials are requested, then the state
+     * vector is enlarged by N * N. The initial state for the
+     * sensitivities of the initials is the identity matrix.
+     *
+     * In case the M parameter sensitivities are requested, the state
+     * vector is enhanced by N * M states which are initialized at t0
+     * to 0.
+     *
+     * <p>The largest possible coupled system has N + N * (N + M)
+     * states, where N is size of the base ODE state vector and M is
+     * the number of parameters.
      *
      * <p>The first N states correspond to the base system's N states:
      *   \f$ \frac{d x_n}{dt} \f$
@@ -50,8 +59,8 @@ namespace stan {
      *
      * <p>If the original ode has a state vector of size N states and
      * a parameter vector of size M, the coupled system has N + N * (N
-     * + M) states. (derivatives of each state with respect to each
-     * initial value and each theta)
+     * + M) states (derivatives of each state with respect to each
+     * initial value and each theta).
      *
      * @tparam F the functor for the base ode system
      */
@@ -71,8 +80,8 @@ namespace stan {
 
     public:
       /**
-       * Construct a coupled ODE system with unknown initial value and
-       * known parameters, given the base ODE system functor, the
+       * Construct a coupled ODE system with fixed/varying
+       * initials/parameters, given the base ODE system functor, the
        * initial state of the base ODE, the parameters, data, and an
        * output stream to which to write messages.
        *
@@ -102,7 +111,7 @@ namespace stan {
        * coupled ODE system state with respect to time evaluated at the
        * specified state and specified time.
        *
-       * @param[in]  z the current state of the coupled, shifted ode system,
+       * @param[in]  z the current state of the coupled ode system,
        * of size <code>size()</code>.
        * @param[in, out] dz_dt populate with the derivatives of the
        * coupled system evaluated at the specified state and time.
