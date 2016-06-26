@@ -3,7 +3,9 @@
 
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
+#include <stan/math/rev/mat/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_rk45.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 
 #endif
