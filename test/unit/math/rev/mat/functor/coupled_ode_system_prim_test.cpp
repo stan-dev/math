@@ -1,4 +1,4 @@
-#include <stan/math/prim/arr.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
@@ -31,7 +31,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
   std::vector<std::vector<double> > ys_coupled(T);
   for (int t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (int n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++)
       coupled_state[n] = ++k;
     ys_coupled[t] = coupled_state;
   }
