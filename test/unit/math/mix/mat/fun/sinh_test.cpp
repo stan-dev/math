@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function sinh (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized sinh (defined in the
+ * testing framework).
  */
 struct sinh_test {
 

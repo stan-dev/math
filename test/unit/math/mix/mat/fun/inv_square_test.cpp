@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function inv_square (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized inv_square (defined in the
+ * testing framework).
  */
 struct inv_square_test {
 

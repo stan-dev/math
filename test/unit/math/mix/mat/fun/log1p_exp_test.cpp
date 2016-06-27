@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function log1p_exp (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized log1p_exp (defined in the
+ * testing framework).
  */
 struct log1p_exp_test {
 

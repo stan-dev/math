@@ -8,8 +8,8 @@
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
 /**
- * This is the structure for testing mock function tgamma (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized tgamma (defined in the
+ * testing framework).
  */
 struct tgamma_test {
 

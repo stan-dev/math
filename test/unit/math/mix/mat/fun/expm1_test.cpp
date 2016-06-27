@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function expm1 (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized expm1 (defined in the
+ * testing framework).
  */
 struct expm1_test {
 

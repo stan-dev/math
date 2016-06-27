@@ -8,8 +8,8 @@
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
 /**
- * This is the structure for testing mock function Phi (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized Phi (defined in the
+ * testing framework).
  */
 struct Phi_test {
 

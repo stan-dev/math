@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function asinh (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized asinh (defined in the
+ * testing framework).
  */
 struct asinh_test {
 

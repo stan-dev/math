@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function atan (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized atan (defined in the
+ * testing framework).
  */
 struct atan_test {
 

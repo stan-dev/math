@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function cbrt (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized cbrt (defined in the
+ * testing framework).
  */
 struct cbrt_test {
 

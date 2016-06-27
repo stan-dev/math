@@ -10,8 +10,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 /**
- * This is the structure for testing mock function tan (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized tan (defined in the
+ * testing framework).
  */
 struct tan_test {
 

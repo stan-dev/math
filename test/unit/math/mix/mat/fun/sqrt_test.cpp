@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * This is the structure for testing mock function sqrt (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing vectorized sqrt (defined in the
+ * testing framework).
  */
 struct sqrt_test {
 
