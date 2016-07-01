@@ -28,7 +28,7 @@ namespace stan {
     \f]
      */
     // throws domain_error if x is at pole
-    double lgamma(double x) {
+    inline double lgamma(double x) {
       return boost::math::lgamma(x);
     }
 
