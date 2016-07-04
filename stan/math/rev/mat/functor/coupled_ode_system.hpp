@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/mat/functor/ode_system.hpp>
-#include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -124,7 +123,7 @@ namespace stan {
        */
       void operator()(const std::vector<double>& z,
                       std::vector<double>& dz_dt,
-                      double t) {
+                      double t) const {
         rhs_sens(y0_, theta_, z, dz_dt, t);
       }
 
@@ -146,7 +145,7 @@ namespace stan {
        * @return the initial condition of the coupled system.  This is
        * a vector of length size().
        */
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         std::vector<double> initial(size_, 0.0);
         for (size_t i = 0; i < N_; i++)
           initial[i] = stan::math::value_of(y0_[i]);
@@ -155,18 +154,6 @@ namespace stan {
             initial[N_ + i * N_ + i] = 1.0;
         }
         return initial;
-      }
-
-      /**
-       * Return the basic ODE solutions given the specified coupled
-       * system solutions, including the partials versus the
-       * parameters encoded in the autodiff results as needed.
-       *
-       * @param y the vector of the coupled states after solving the ode
-       */
-      std::vector<std::vector<return_t> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
-        return decouple_ode_states(y, y0_, theta_);
       }
 
     private:

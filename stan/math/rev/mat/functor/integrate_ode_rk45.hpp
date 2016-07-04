@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
@@ -139,8 +140,8 @@ namespace stan {
       // remove the first state corresponding to the initial value
       y_coupled.erase(y_coupled.begin());
 
-      // the coupled system also encapsulates the decoupling operation
-      return coupled_system.decouple_states(y_coupled);
+      // return the decoupled ODE states
+      return decouple_ode_states(y_coupled, y0, theta);
     }
 
   }
