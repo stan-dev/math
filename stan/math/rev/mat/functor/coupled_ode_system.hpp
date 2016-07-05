@@ -121,9 +121,10 @@ namespace stan {
        * y is the base ODE system state
        *
        */
-      void operator()(const std::vector<double>& z,
-                      std::vector<double>& dz_dt,
-                      double t) const {
+      inline void
+      operator()(const std::vector<double>& z,
+                 std::vector<double>& dz_dt,
+                 double t) const {
         rhs_sens(y0_, theta_, z, dz_dt, t);
       }
 
@@ -180,14 +181,14 @@ namespace stan {
         Map<VectorXd> dz_dt_eig(&dz_dt[0], N_);
         Map<MatrixXd> dZ_dt_sens(&dz_dt[0] + N_, N_, S_);
         Map<const MatrixXd> Z_sens(&z[0] + N_, N_, S_);
-
+        // write Jtheta directly into correct position of dZ_dt
+        Map<MatrixXd> dZ_dt_sens_param(&dz_dt[0] + N_ + N_ * N_, N_, M_);
         MatrixXd Jy(N_, N_);
-        MatrixXd Jtheta(N_, M_);
 
-        ode_system_.jacobian(t, y_base, dz_dt_eig, Jy, Jtheta);
+        ode_system_.jacobian(t, y_base, dz_dt_eig, Jy, dZ_dt_sens_param);
 
-        dZ_dt_sens = Jy * Z_sens;
-        dZ_dt_sens.rightCols(M_) += Jtheta;
+        dZ_dt_sens.leftCols(N_).setZero();
+        dZ_dt_sens += Jy * Z_sens;
       }
 
       inline void
@@ -228,11 +229,10 @@ namespace stan {
         Map<const MatrixXd> Z_sens(&z[0] + N_, N_, S_);
 
         MatrixXd Jy(N_, N_);
-        MatrixXd Jtheta(N_, M_);
 
-        ode_system_.jacobian(t, y_base, dz_dt_eig, Jy, Jtheta);
+        ode_system_.jacobian(t, y_base, dz_dt_eig, Jy, dZ_dt_sens);
 
-        dZ_dt_sens = Jy * Z_sens + Jtheta;
+        dZ_dt_sens += Jy * Z_sens;
       }
     };
   }  // math

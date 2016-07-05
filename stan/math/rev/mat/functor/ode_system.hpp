@@ -103,11 +103,11 @@ namespace stan {
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        * @param[out] Jtheta Jacobian of ODE RHS wrt to theta.
        */
-      template <typename Derived1, typename Derived2>
+      template <typename Derived1, typename Derived2, typename Derived3>
       void jacobian(const double t, const std::vector<double>& y,
                     Eigen::MatrixBase<Derived1>& dy_dt,
                     Eigen::MatrixBase<Derived2>& Jy,
-                    Eigen::MatrixBase<Derived2>& Jtheta) const {
+                    Eigen::MatrixBase<Derived3>& Jtheta) const {
         using Eigen::Dynamic;
         using Eigen::Map;
         using Eigen::Matrix;
