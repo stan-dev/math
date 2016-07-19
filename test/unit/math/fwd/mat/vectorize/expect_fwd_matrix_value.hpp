@@ -1,7 +1,7 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_MATRIX_VALUE_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_MATRIX_VALUE_HPP
 
-#include <stan/math/fwd/mat.hpP>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 #include <Eigen/Dense>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_matrix.hpp>
