@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
@@ -9,8 +9,8 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/mat/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
+#include <stan/math/prim/mat/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/fun/decouple_ode_states.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>

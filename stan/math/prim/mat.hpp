@@ -198,6 +198,8 @@
 
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
+#include <stan/math/prim/mat/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/mat/functor/integrate_ode_rk45.hpp>
 
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>

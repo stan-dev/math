@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_REV_ARR_FUN_DECOUPLE_ODE_STATES_HPP
 #define STAN_MATH_REV_ARR_FUN_DECOUPLE_ODE_STATES_HPP
 
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/arr/fun/decouple_ode_states.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <vector>
 
@@ -72,24 +73,6 @@ namespace stan {
         y_return[i] = temp_vars;
       }
       return y_return;
-    }
-
-    /**
-     * The decouple ODE states operation for the case of no
-     * sensitivities is equal to the indentity operation.
-     *
-     * @param[in] y output from integrator 
-     * @param[in] y0 initial state.
-     * @param[in] theta parameters
-     * @return y
-     */
-    template <>
-    inline
-    std::vector<std::vector<double> >
-    decouple_ode_states(const std::vector<std::vector<double> >& y,
-                        const std::vector<double>& y0,
-                        const std::vector<double>& theta) {
-      return y;
     }
 
   }

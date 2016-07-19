@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 

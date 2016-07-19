@@ -8,10 +8,7 @@
 
 #include <boost/numeric/odeint.hpp>
 
-
-
 #include <test/unit/math/rev/mat/functor/util.hpp>
-
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
 

@@ -5,8 +5,7 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/mat/functor/coupled_ode_system.hpp>
 #include <ostream>
 #include <stdexcept>
 #include <vector>
@@ -158,15 +157,6 @@ namespace stan {
       }
 
     private:
-      inline void
-      rhs_sens(const std::vector<double>& initial,
-               const std::vector<double>& param,
-               const std::vector<double>& z,
-               std::vector<double>& dz_dt,
-               double t) const {
-        ode_system_(t, z, dz_dt);
-      }
-
       inline void
       rhs_sens(const std::vector<stan::math::var>& initial,
                const std::vector<stan::math::var>& param,
