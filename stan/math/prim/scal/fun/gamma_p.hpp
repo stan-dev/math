@@ -50,7 +50,7 @@ namespace stan {
        \f]
      */
     // throws domain_error if x is at pole
-    double gamma_p(double x, double a) {
+    inline double gamma_p(double x, double a) {
       return boost::math::gamma_p(x, a);
     }
 

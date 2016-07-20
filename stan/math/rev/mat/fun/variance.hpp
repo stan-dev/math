@@ -14,7 +14,7 @@ namespace stan {
 
     namespace {  // anonymous
 
-      var calc_variance(size_t size,
+      inline var calc_variance(size_t size,
                         const var* dtrs) {
         vari** varis = reinterpret_cast<vari**>(ChainableStack::memalloc_
                                                 .alloc(size * sizeof(vari*)));
@@ -49,7 +49,7 @@ namespace stan {
      * @param[in] v a vector
      * @return sample variance of specified vector
      */
-    var variance(const std::vector<var>& v) {
+    inline var variance(const std::vector<var>& v) {
       stan::math::check_nonzero_size("variance", "v", v);
       if (v.size() == 1) return 0;
       return calc_variance(v.size(), &v[0]);

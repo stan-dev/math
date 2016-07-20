@@ -21,7 +21,7 @@ namespace stan {
     // with respect to the first two arguments, using the
     // equivalence to a hypergeometric function.
     // See http://dlmf.nist.gov/8.17#ii
-    void grad_inc_beta(var& g1, var& g2,
+    inline void grad_inc_beta(var& g1, var& g2,
                        const var& a, const var& b, const var& z) {
       var c1 = log(z);
       var c2 = log1m(z);

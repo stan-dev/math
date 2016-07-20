@@ -23,7 +23,7 @@ namespace stan {
      * @param[in] x Variables being differentiated with respect to
      * @param[out] g Gradient, d/dx v, evaluated at x.
      */
-    void grad(var& v,
+    inline void grad(var& v,
               Eigen::Matrix<var, Eigen::Dynamic, 1>& x,
               Eigen::VectorXd& g) {
       stan::math::grad(v.vi_);
