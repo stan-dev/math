@@ -16,7 +16,7 @@ namespace stan {
      * @param x scalar
      * @return absolute value of scalar
      */
-    double abs(double x) {
+    inline double abs(double x) {
       return std::fabs(x);
     }
 

@@ -95,7 +95,7 @@ namespace stan {
      * @return An auto-diff variable that uses the precomputed
      *   gradients provided.
      */
-    var precomputed_gradients(const double value,
+    inline var precomputed_gradients(const double value,
                               const std::vector<var>& operands,
                               const std::vector<double>& gradients) {
       return var(new precomputed_gradients_vari(value, operands, gradients));

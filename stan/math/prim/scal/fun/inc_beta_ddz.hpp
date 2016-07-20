@@ -32,7 +32,7 @@ namespace stan {
     }
 
     template <>
-    double inc_beta_ddz(double a, double b, double z) {
+    inline double inc_beta_ddz(double a, double b, double z) {
       using boost::math::ibeta_derivative;
       return ibeta_derivative(a, b, z);
     }

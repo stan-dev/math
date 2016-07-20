@@ -23,7 +23,7 @@ namespace stan {
      * @param o Output stream.
      * @return String representing size.
      */
-    void print_mat_size(int n, std::ostream& o) {
+    inline void print_mat_size(int n, std::ostream& o) {
       if (n == Eigen::Dynamic)
         o << "dynamically sized";
       else

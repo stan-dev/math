@@ -14,7 +14,6 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 
-#include <stan/math/prim/arr/fun/dist.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
 #include <stan/math/prim/arr/fun/fill.hpp>
