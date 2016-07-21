@@ -31,7 +31,7 @@ namespace stan {
      * @param[in, out] y state of the coupled system on input,
      * incremented with initial values on output.
      */
-    void add_initial_values(const std::vector<stan::math::var>& y0,
+    inline void add_initial_values(const std::vector<stan::math::var>& y0,
                             std::vector<std::vector<stan::math::var> >& y) {
       for (size_t n = 0; n < y.size(); n++)
         for (size_t m = 0; m < y0.size(); m++)

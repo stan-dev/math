@@ -15,12 +15,12 @@ namespace stan {
     // no-op error handler to silence CVodes error output;  errors handled
     // directly by Stan
     extern "C"
-    void cvodes_silent_err_handler(int error_code, const char *module,
+    inline void cvodes_silent_err_handler(int error_code, const char *module,
                                    const char *function, char *msg,
                                    void *eh_data) {
     }
 
-    void cvodes_check_flag(int flag, const std::string& func_name) {
+    inline void cvodes_check_flag(int flag, const std::string& func_name) {
       if (flag < 0) {
         std::ostringstream ss;
         ss << func_name << " failed with error flag " << flag;
@@ -28,8 +28,10 @@ namespace stan {
       }
     }
 
-    void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,
-                            long int max_num_steps) {   // NOLINT(runtime/int)
+    inline void cvodes_set_options(void* cvodes_mem,
+                                   double rel_tol, double abs_tol,
+                                   // NOLINTNEXTLINE(runtime/int)
+                                   long int max_num_steps) {
       // forward CVode errors to noop error handler
       CVodeSetErrHandlerFn(cvodes_mem, cvodes_silent_err_handler, 0);
 

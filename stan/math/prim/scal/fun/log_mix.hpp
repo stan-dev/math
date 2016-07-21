@@ -43,7 +43,7 @@ namespace stan {
      * @param lambda2 second log density.
      * @return log mixture of densities in specified proportion
      */
-    double log_mix(double theta,
+    inline double log_mix(double theta,
                    double lambda1,
                    double lambda2) {
       using std::log;

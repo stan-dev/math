@@ -62,7 +62,7 @@ namespace stan {
      * @param[in] v a vector
      * @return sample standard deviation of specified vector
      */
-    var sd(const std::vector<var>& v) {
+    inline var sd(const std::vector<var>& v) {
       stan::math::check_nonzero_size("sd", "v", v);
       if (v.size() == 1) return 0;
       return calc_sd(v.size(), &v[0]);

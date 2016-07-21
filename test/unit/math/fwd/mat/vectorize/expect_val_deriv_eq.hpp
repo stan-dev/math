@@ -1,11 +1,12 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_EQ_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_EQ_HPP
 
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <stan/math/fwd/mat.hpp>
-#include <gtest/gtest.h>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 static inline void expect_val_deriv_eq(double exp_var, double test_var) {
-  EXPECT_FLOAT_EQ(exp_var, test_var);
+  expect_val_eq(exp_var, test_var);
 }
 
 template <typename T>

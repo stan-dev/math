@@ -71,6 +71,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
+#include <stan/math/prim/mat/fun/cov_exp_quad.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/determinant.hpp>
@@ -228,6 +229,8 @@
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
 #include <stan/math/prim/mat/prob/wishart_log.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
+
+#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
 

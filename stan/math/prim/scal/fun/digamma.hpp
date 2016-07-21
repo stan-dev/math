@@ -36,7 +36,7 @@ namespace stan {
        \frac{\partial \, \Psi(x)}{\partial x} = \frac{\Gamma''(x)\Gamma(x)-(\Gamma'(x))^2}{\Gamma^2(x)}
        \f]
     */
-    double digamma(double x) {
+    inline double digamma(double x) {
       return boost::math::digamma(x);
     }
 
