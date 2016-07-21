@@ -35,7 +35,11 @@ namespace stan {
                                                        T_param>::type> >
     decouple_ode_states(const std::vector<std::vector<double> >& y,
                         const std::vector<T_initial>& y0,
-                        const std::vector<T_param>& theta);
+                        const std::vector<T_param>& theta) {
+      typedef typename stan::return_type<T_initial,
+                                         T_param>::type return_t;
+      return std::vector<std::vector<return_t> >();
+    }
 
     /**
      * The decouple ODE states operation for the case of no

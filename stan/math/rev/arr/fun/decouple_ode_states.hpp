@@ -2,9 +2,7 @@
 #define STAN_MATH_REV_ARR_FUN_DECOUPLE_ODE_STATES_HPP
 
 #include <stan/math/prim/arr/fun/decouple_ode_states.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <vector>
 
 namespace stan {
@@ -32,31 +30,85 @@ namespace stan {
      * @return a vector of states for each entry in y in Stan var
      * format
      */
-    template <typename T_initial, typename T_param>
+    template <>
     inline
-    std::vector<std::vector<typename stan::return_type<T_initial,
-                                                       T_param>::type> >
+    std::vector<std::vector<stan::math::var> >
     decouple_ode_states(const std::vector<std::vector<double> >& y,
-                        const std::vector<T_initial>& y0,
-                        const std::vector<T_param>& theta) {
+                        const std::vector<double>& y0,
+                        const std::vector<stan::math::var>& theta) {
       using std::vector;
       using stan::math::var;
       using stan::math::precomputed_gradients;
 
-      vector<typename stan::return_type<T_initial, T_param>::type> vars;
-      typedef stan::is_var<T_initial> initial_var;
-      typedef stan::is_var<T_param> param_var;
+      const size_t N = y0.size();
+      const size_t M = theta.size();
+      const size_t S = M;
+
+      vector<var> temp_vars(N);
+      vector<double> temp_gradients(S);
+      vector<vector<var> > y_return(y.size());
+
+      for (size_t i = 0; i < y.size(); ++i) {
+        for (size_t j = 0; j < N; ++j) {
+          for (size_t k = 0; k < S; ++k) {
+            temp_gradients[k] = y[i][N + N * k + j];
+          }
+          temp_vars[j] = precomputed_gradients(y[i][j],
+                                               theta, temp_gradients);
+        }
+        y_return[i] = temp_vars;
+      }
+      return y_return;
+    }
+
+    template <>
+    inline
+    std::vector<std::vector<stan::math::var> >
+    decouple_ode_states(const std::vector<std::vector<double> >& y,
+                        const std::vector<stan::math::var>& y0,
+                        const std::vector<double>& theta) {
+      using std::vector;
+      using stan::math::var;
+      using stan::math::precomputed_gradients;
+
+      const size_t N = y0.size();
+      const size_t S = N;
+
+      vector<var> temp_vars(N);
+      vector<double> temp_gradients(S);
+      vector<vector<var> > y_return(y.size());
+
+      for (size_t i = 0; i < y.size(); ++i) {
+        for (size_t j = 0; j < N; ++j) {
+          for (size_t k = 0; k < S; ++k) {
+            temp_gradients[k] = y[i][N + N * k + j];
+          }
+          temp_vars[j] = precomputed_gradients(y[i][j],
+                                               y0, temp_gradients);
+        }
+        y_return[i] = temp_vars;
+      }
+      return y_return;
+    }
+
+    template <>
+    inline
+    std::vector<std::vector<stan::math::var> >
+    decouple_ode_states(const std::vector<std::vector<double> >& y,
+                        const std::vector<stan::math::var>& y0,
+                        const std::vector<stan::math::var>& theta) {
+      using std::vector;
+      using stan::math::var;
+      using stan::math::precomputed_gradients;
 
       const size_t N = y0.size();
       const size_t M = theta.size();
-      const size_t S = (initial_var::value ? N : 0)
-        + (param_var::value ? M : 0);
+      const size_t S = N + M;
 
+      vector<var> vars;
       vars.reserve(S);
-      if (initial_var::value)
-        vars.insert(vars.end(), y0.begin(), y0.end());
-      if (param_var::value)
-        vars.insert(vars.end(), theta.begin(), theta.end());
+      vars.insert(vars.end(), y0.begin(), y0.end());
+      vars.insert(vars.end(), theta.begin(), theta.end());
 
       vector<var> temp_vars(N);
       vector<double> temp_gradients(S);
@@ -74,7 +126,6 @@ namespace stan {
       }
       return y_return;
     }
-
   }
 }
 #endif
