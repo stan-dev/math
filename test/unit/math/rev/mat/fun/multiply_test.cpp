@@ -55,29 +55,28 @@ struct mult_functor_dv {
   }
 };
 
-//struct mult_functor_vd {
-//  int i, j, N, M, K;
-//  mult_functor_simple(int i_, int j_, int N_, int M_, int K_) : 
-//    i(i_), j(j_), N(N_), M(M_), K(K_) { }
-//  template <typename T>
-//  T operator()(Eigen::Matrix<T, -1, 1> x) const {
-//    using stan::math::multiply;
-//    Eigen::Matrix<T, -1, -1> A_c(N, M);
-//    Eigen::Matrix<double, -1, -1> B_c(M, K);
-//    int pos = 0;
-//    // traverse col-major
-//
-//    std::srand(123);
-//    B_c = Eigen::MatrixXd::Random(M, K);
-//    for (int m = 0; m < M; ++m) 
-//      for (int n = 0; n < N; ++n) {
-//        A_c(n,m) = x(pos++);
-//      }
-//    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
-//    return AB_c(i, j);
-//  }
-//};
-//
+struct mult_functor_vd {
+  int i, j, N, M;
+  Eigen::Matrix<double, -1, -1> B_c;
+  mult_functor_vd(int i_, int j_, int N_, int M_,
+                      Eigen::Matrix<double, -1, -1> B_c_) : 
+    i(i_), j(j_), N(N_), M(M_), B_c(B_c_) { }
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+    using stan::math::multiply;
+    Eigen::Matrix<T, -1, -1> A_c(N, M);
+    int pos = 0;
+    // traverse col-major
+    for (int m = 0; m < M; ++m) 
+      for (int n = 0; n < N; ++n) {
+        A_c(n,m) = x(pos++);
+      }
+
+    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
+    return AB_c(i, j);
+  }
+};
+
 Eigen::Matrix<double, -1, 1> generate_inp(int N, int M, int K) {
   std::srand(123);
   int size_vec = N * M + M * K;
@@ -1279,3 +1278,324 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_dv) {
     }
   }
 }
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_vd) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_vd func(n, k, N, M, B);
+      VectorXd grad_ad(N * M);
+      VectorXd grad_fd(N * M);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test.head(N * M), val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test.head(N * M), val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_vd) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_vd func(n, k, N, M, B);
+      VectorXd grad_ad(N * M);
+      MatrixXd grad_B;
+      MatrixXd grad_A;
+      MatrixXd grad_A_ex;
+      grad_A_ex.resize(N, M);
+      grad_A_ex.setZero();
+      grad_A_ex.row(n) = B.col(k);
+      double val_ad;
+      stan::math::gradient(func, test.head(N * M), val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      pull_vals(N, M, 0, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_A - grad_A_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+//
+//TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::MatrixXd;
+//
+//  int N = 3;
+//  int M = 4;
+//  int K = 1;
+//  MatrixXd A;
+//  VectorXd B;
+//  VectorXd AB(N);
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_fd(M * K);
+//      double val_ad;
+//      double val_fd;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+//      EXPECT_FLOAT_EQ(AB(n), val_ad);
+//      EXPECT_FLOAT_EQ(AB(n), val_fd);
+//      for (int i = 0; i < grad_ad.size(); ++i)
+//        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::MatrixXd;
+//  using Eigen::Infinity;
+//
+//  int N = 3;
+//  int M = 4;
+//  int K = 1;
+//  MatrixXd A;
+//  VectorXd B;
+//  VectorXd AB(N);
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_B;
+//      MatrixXd grad_A;
+//      VectorXd grad_B_ex;
+//      grad_B_ex.resize(M);
+//      grad_B_ex.setZero();
+//      grad_B_ex = A.row(n);
+//      double val_ad;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      EXPECT_FLOAT_EQ(AB(n), val_ad);
+//      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+//      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::RowVectorXd;
+//  using Eigen::MatrixXd;
+//
+//  int N = 1;
+//  int M = 4;
+//  int K = 5;
+//  RowVectorXd A;
+//  MatrixXd B;
+//  RowVectorXd AB(K);
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_fd(M * K);
+//      double val_ad;
+//      double val_fd;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+//      EXPECT_FLOAT_EQ(AB(k), val_ad);
+//      EXPECT_FLOAT_EQ(AB(k), val_fd);
+//      for (int i = 0; i < grad_ad.size(); ++i)
+//        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::RowVectorXd;
+//  using Eigen::MatrixXd;
+//  using Eigen::Infinity;
+//
+//  int N = 1;
+//  int M = 4;
+//  int K = 5;
+//  RowVectorXd A;
+//  MatrixXd B;
+//  RowVectorXd AB(N, K);
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      MatrixXd grad_B;
+//      MatrixXd grad_A;
+//      MatrixXd grad_B_ex;
+//      grad_B_ex.resize(M, K);
+//      grad_B_ex.setZero();
+//      grad_B_ex.col(k) = A.row(n);
+//      double val_ad;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      EXPECT_FLOAT_EQ(AB(k), val_ad);
+//      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+//      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::RowVectorXd;
+//  using Eigen::MatrixXd;
+//
+//  int N = 1;
+//  int M = 4;
+//  int K = 1;
+//  RowVectorXd A;
+//  VectorXd B;
+//  double AB;
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_fd(M * K);
+//      double val_ad;
+//      double val_fd;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+//      EXPECT_FLOAT_EQ(AB, val_ad);
+//      EXPECT_FLOAT_EQ(AB, val_fd);
+//      for (int i = 0; i < grad_ad.size(); ++i)
+//        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::RowVectorXd;
+//  using Eigen::MatrixXd;
+//  using Eigen::Infinity;
+//
+//  int N = 1;
+//  int M = 4;
+//  int K = 1;
+//  RowVectorXd A;
+//  VectorXd B;
+//  double AB;
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_B;
+//      MatrixXd grad_A;
+//      VectorXd grad_B_ex;
+//      grad_B_ex.resize(M, K);
+//      grad_B_ex.setZero();
+//      grad_B_ex = A;
+//      double val_ad;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      EXPECT_FLOAT_EQ(AB, val_ad);
+//      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+//      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::RowVectorXd;
+//  using Eigen::MatrixXd;
+//
+//  int N = 3;
+//  int M = 1;
+//  int K = 5;
+//  VectorXd A;
+//  RowVectorXd B;
+//  MatrixXd AB;
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_fd(M * K);
+//      double val_ad;
+//      double val_fd;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+//      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+//      EXPECT_FLOAT_EQ(AB(n, k), val_fd);
+//      for (int i = 0; i < grad_ad.size(); ++i)
+//        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+//    }
+//  }
+//}
+//
+//TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_dv) {
+//  using Eigen::VectorXd;
+//  using Eigen::MatrixXd;
+//  using Eigen::Infinity;
+//  using Eigen::RowVectorXd;
+//
+//  int N = 3;
+//  int M = 1;
+//  int K = 5;
+//  VectorXd A;
+//  RowVectorXd B;
+//  MatrixXd AB;
+//  VectorXd test = generate_inp(N, M, K);
+//  pull_vals(N, M, K, test, A, B);
+//  AB = A * B;
+//  for (int n = 0; n < N; ++n) {
+//    for (int k = 0; k < K; ++k) {
+//      mult_functor_dv func(n, k, M, K, A);
+//      VectorXd grad_ad(M * K);
+//      VectorXd grad_A;
+//      RowVectorXd grad_B;
+//      RowVectorXd grad_B_ex;
+//      grad_B_ex.resize(K);
+//      grad_B_ex.setZero();
+//      grad_B_ex.col(k) = A.row(n);
+//      double val_ad;
+//      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+//      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+//      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+//      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+//    }
+//  }
+//}
