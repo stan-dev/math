@@ -2,6 +2,116 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
+// multiply operates on two matrices A X B 
+// A (n, m)
+// B (m, k)
+// If stacked col-wise like vec operator
+// first n*m elements are for A
+// second m*k elements starting with n*m + 1-th element (indexed by
+// n*m (remember !)
+struct mult_functor_simple {
+  int i, j, N, M, K;
+  mult_functor_simple(int i_, int j_, int N_, int M_, int K_) : 
+    i(i_), j(j_), N(N_), M(M_), K(K_) { }
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+    using stan::math::multiply;
+    Eigen::Matrix<T, -1, -1> A_c(N, M);
+    Eigen::Matrix<T, -1, -1> B_c(M, K);
+    int pos = 0;
+    // traverse col-major
+    for (int m = 0; m < M; ++m) 
+      for (int n = 0; n < N; ++n) {
+        A_c(n,m) = x(pos++);
+      }
+    for (int k = 0; k < K; ++k) 
+      for (int m = 0; m < M; ++m) {
+        B_c(m,k) = x(pos++);
+      }
+    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
+    return AB_c(i, j);
+  }
+};
+
+struct mult_functor_dv {
+  int i, j, M, K;
+  Eigen::Matrix<double, -1, -1> A_c;
+  mult_functor_dv(int i_, int j_, int M_, int K_,
+                      Eigen::Matrix<double, -1, -1> A_c_) : 
+    i(i_), j(j_), M(M_), K(K_), A_c(A_c_) { }
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+    using stan::math::multiply;
+    Eigen::Matrix<T, -1, -1> B_c(M, K);
+    int pos = 0;
+    // traverse col-major
+
+    for (int k = 0; k < K; ++k) 
+      for (int m = 0; m < M; ++m) {
+        B_c(m,k) = x(pos++);
+      }
+    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
+    return AB_c(i, j);
+  }
+};
+
+//struct mult_functor_vd {
+//  int i, j, N, M, K;
+//  mult_functor_simple(int i_, int j_, int N_, int M_, int K_) : 
+//    i(i_), j(j_), N(N_), M(M_), K(K_) { }
+//  template <typename T>
+//  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+//    using stan::math::multiply;
+//    Eigen::Matrix<T, -1, -1> A_c(N, M);
+//    Eigen::Matrix<double, -1, -1> B_c(M, K);
+//    int pos = 0;
+//    // traverse col-major
+//
+//    std::srand(123);
+//    B_c = Eigen::MatrixXd::Random(M, K);
+//    for (int m = 0; m < M; ++m) 
+//      for (int n = 0; n < N; ++n) {
+//        A_c(n,m) = x(pos++);
+//      }
+//    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
+//    return AB_c(i, j);
+//  }
+//};
+//
+Eigen::Matrix<double, -1, 1> generate_inp(int N, int M, int K) {
+  std::srand(123);
+  int size_vec = N * M + M * K;
+  Eigen::Matrix<double, -1, 1> vec 
+    = Eigen::Matrix<double, -1, 1>::Random(size_vec);
+  return vec;
+}
+
+Eigen::Matrix<double, -1, 1> generate_seq(int N, int M, int K) {
+  int size_vec = N * M + M * K;
+  Eigen::Matrix<double, -1, 1> vec(size_vec);
+  for (int i = 0; i < size_vec; ++i)
+    vec(i) = i + 1;
+  return vec;
+}
+
+template<int R_A, int C_A, int C_B> 
+void pull_vals(int N, int M, int K,
+               const Eigen::Matrix<double, -1, 1>& x,
+               Eigen::Matrix<double, R_A, C_A>& A,
+               Eigen::Matrix<double, C_A, C_B>& B) {
+  A.resize(N, M);
+  B.resize(M, K);
+  int pos = 0;
+  for (int m = 0; m < M; ++m) 
+    for (int n = 0; n < N; ++n) {
+      A(n,m) = x(pos++);
+    }
+  for (int k = 0; k < K; ++k) 
+    for (int m = 0; m < M; ++m) {
+      B(m,k) = x(pos++);
+    }
+}
+
 TEST(AgradRevMatrix, multiply_scalar_scalar) {
   using stan::math::multiply;
   double d1, d2;
@@ -21,7 +131,6 @@ TEST(AgradRevMatrix, multiply_scalar_scalar) {
   EXPECT_FLOAT_EQ(6.0, multiply(3.0,AVAR(2)).val());
   EXPECT_FLOAT_EQ(6.0, multiply(AVAR(3),2.0).val());
 
-  
 }
 TEST(AgradRevMatrix, multiply_vector_scalar) {
   using stan::math::vector_d;
@@ -504,3 +613,416 @@ TEST(AgradRevMatrix,multiply_vector_int) {
   EXPECT_EQ(6.0, prod_vec[2]);
 }
 
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      VectorXd grad_fd(N * M + M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      MatrixXd grad_A;
+      MatrixXd grad_B;
+      MatrixXd grad_A_ex;
+      MatrixXd grad_B_ex;
+      grad_A_ex.resize(N, M);
+      grad_A_ex.setZero();
+      grad_B_ex.resize(M, K);
+      grad_B_ex.setZero();
+      grad_A_ex.row(n) = B.col(k);
+      grad_B_ex.col(k) = A.row(n);
+      double val_ad;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      pull_vals(N, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_A - grad_A_ex).lpNorm<Infinity>(), 0,1e-10);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 3;
+  int M = 4;
+  int K = 1;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  VectorXd B;
+  VectorXd AB(N);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      VectorXd grad_fd(N * M + M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(n), val_ad);
+      EXPECT_FLOAT_EQ(AB(n), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+
+  int N = 3;
+  int M = 4;
+  int K = 1;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  VectorXd B;
+  VectorXd AB(N);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      MatrixXd grad_A;
+      MatrixXd grad_B;
+      MatrixXd grad_A_ex;
+      MatrixXd grad_B_ex;
+      grad_A_ex.resize(N, M);
+      grad_A_ex.setZero();
+      grad_B_ex.resize(M, K);
+      grad_B_ex.setZero();
+      grad_A_ex.row(n) = B.col(k);
+      grad_B_ex.col(k) = A.row(n);
+      double val_ad;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(n), val_ad);
+      pull_vals(N, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_A - grad_A_ex).lpNorm<Infinity>(), 0,1e-10);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd) {
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 1;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  RowVectorXd A;
+  MatrixXd B;
+  RowVectorXd AB(K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      VectorXd grad_fd(N * M + M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(k), val_ad);
+      EXPECT_FLOAT_EQ(AB(k), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+  using Eigen::RowVectorXd;
+
+  int N = 1;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  RowVectorXd A;
+  MatrixXd B;
+  RowVectorXd AB(K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      RowVectorXd grad_A;
+      MatrixXd grad_B;
+      RowVectorXd grad_A_ex;
+      MatrixXd grad_B_ex;
+      grad_A_ex.resize(M);
+      grad_A_ex.setZero();
+      grad_B_ex.resize(M, K);
+      grad_B_ex.setZero();
+      grad_A_ex.row(n) = B.col(k);
+      grad_B_ex.col(k) = A.row(n);
+      double val_ad;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(k), val_ad);
+      pull_vals(N, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_A - grad_A_ex).lpNorm<Infinity>(), 0,1e-10);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 1;
+  int M = 4;
+  int K = 1;
+  MatrixXd vals(N, K);
+  RowVectorXd A;
+  VectorXd B;
+  double AB;
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      VectorXd grad_fd(N * M + M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB, val_ad);
+      EXPECT_FLOAT_EQ(AB, val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+  using Eigen::RowVectorXd;
+
+  int N = 1;
+  int M = 4;
+  int K = 1;
+  MatrixXd vals(N, K);
+  RowVectorXd A;
+  VectorXd B;
+  double AB;
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_simple func(n, k, N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      RowVectorXd grad_A;
+      VectorXd grad_B;
+      RowVectorXd grad_A_ex;
+      VectorXd grad_B_ex;
+      grad_A_ex.resize(M);
+      grad_A_ex.setZero();
+      grad_B_ex.resize(M);
+      grad_B_ex.setZero();
+      grad_A_ex = B.transpose();
+      grad_B_ex = A.transpose();
+      double val_ad;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB, val_ad);
+      pull_vals(N, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_A - grad_A_ex).lpNorm<Infinity>(), 0,1e-10);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_dv) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_dv func(n, k, M, K, A);
+      VectorXd grad_ad(M * K);
+      VectorXd grad_fd(M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_dv) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_dv func(n, k, M, K, A);
+      VectorXd grad_ad(M * K);
+      MatrixXd grad_B;
+      MatrixXd grad_A;
+      MatrixXd grad_B_ex;
+      grad_B_ex.resize(M, K);
+      grad_B_ex.setZero();
+      grad_B_ex.col(k) = A.row(n);
+      double val_ad;
+      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_dv) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_dv func(n, k, M, K, A);
+      VectorXd grad_ad(M * K);
+      VectorXd grad_fd(M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test.tail(M * K), val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
+TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_dv) {
+  using Eigen::VectorXd;
+  using Eigen::MatrixXd;
+  using Eigen::Infinity;
+
+  int N = 3;
+  int M = 4;
+  int K = 5;
+  MatrixXd vals(N, K);
+  MatrixXd A;
+  MatrixXd B;
+  MatrixXd AB(N, K);
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_functor_dv func(n, k, M, K, A);
+      VectorXd grad_ad(M * K);
+      MatrixXd grad_B;
+      MatrixXd grad_A;
+      MatrixXd grad_B_ex;
+      grad_B_ex.resize(M, K);
+      grad_B_ex.setZero();
+      grad_B_ex.col(k) = A.row(n);
+      double val_ad;
+      stan::math::gradient(func, test.tail(M * K), val_ad, grad_ad);
+      EXPECT_FLOAT_EQ(AB(n, k), val_ad);
+      pull_vals(0, M, K, grad_ad, grad_A, grad_B);
+      EXPECT_NEAR((grad_B - grad_B_ex).lpNorm<Infinity>(), 0,1e-10);
+    }
+  }
+}
