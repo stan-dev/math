@@ -9,28 +9,56 @@
 // first n*m elements are for A
 // second m*k elements starting with n*m + 1-th element (indexed by
 // n*m (remember !)
-struct mult_functor_simple {
+template<int R_A, int C_A, int C_B>
+class mult_functor_vv {
   int i, j, N, M, K;
-  mult_functor_simple(int i_, int j_, int N_, int M_, int K_) : 
-    i(i_), j(j_), N(N_), M(M_), K(K_) { }
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::multiply;
-    Eigen::Matrix<T, -1, -1> A_c(N, M);
-    Eigen::Matrix<T, -1, -1> B_c(M, K);
-    int pos = 0;
-    // traverse col-major
-    for (int m = 0; m < M; ++m) 
-      for (int n = 0; n < N; ++n) {
-        A_c(n,m) = x(pos++);
-      }
-    for (int k = 0; k < K; ++k) 
-      for (int m = 0; m < M; ++m) {
-        B_c(m,k) = x(pos++);
-      }
-    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
-    return AB_c(i, j);
-  }
+  public:
+    mult_functor_vv(int i_, int j_, int N_, int M_, int K_) : 
+      i(i_), j(j_), N(N_), M(M_), K(K_) { }
+    template <typename T>
+    T operator()(Eigen::Matrix<T, -1, 1> x) const {
+      using stan::math::multiply;
+      Eigen::Matrix<T, R_A, C_A> A_c(N, M);
+      Eigen::Matrix<T, C_A, C_B> B_c(M, K);
+      int pos = 0;
+      // traverse col-major
+      for (int m = 0; m < M; ++m) 
+        for (int n = 0; n < N; ++n) {
+          A_c(n,m) = x(pos++);
+        }
+      for (int k = 0; k < K; ++k) 
+        for (int m = 0; m < M; ++m) {
+          B_c(m,k) = x(pos++);
+        }
+      Eigen::Matrix<T, R_A, C_B> AB_c = multiply(A_c, B_c);
+      return AB_c(i, j);
+    }
+};
+
+template<>
+class mult_functor_vv<1, -1, 1> {
+  int N, M, K;
+  public:
+    mult_functor_vv(int N_, int M_, int K_) : 
+      N(N_), M(M_), K(K_) { }
+    template <typename T>
+    T operator()(Eigen::Matrix<T, -1, 1> x) const {
+      using stan::math::multiply;
+      Eigen::Matrix<T, 1, -1> A_c(N, M);
+      Eigen::Matrix<T, -1, 1> B_c(M, K);
+      int pos = 0;
+      // traverse col-major
+      for (int m = 0; m < M; ++m) 
+        for (int n = 0; n < N; ++n) {
+          A_c(n,m) = x(pos++);
+        }
+      for (int k = 0; k < K; ++k) 
+        for (int m = 0; m < M; ++m) {
+          B_c(m,k) = x(pos++);
+        }
+      T AB_c = multiply(A_c, B_c);
+      return AB_c;
+    }
 };
 
 struct mult_functor_dv {
@@ -627,7 +655,7 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, -1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_fd(N * M + M * K);
       double val_ad;
@@ -658,7 +686,7 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, -1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       MatrixXd grad_A;
       MatrixXd grad_B;
@@ -695,7 +723,7 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, -1, 1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_fd(N * M + M * K);
       double val_ad;
@@ -726,7 +754,7 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, -1, 1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       MatrixXd grad_A;
       MatrixXd grad_B;
@@ -764,7 +792,7 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<1, -1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_fd(N * M + M * K);
       double val_ad;
@@ -796,7 +824,7 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<1, -1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       RowVectorXd grad_A;
       MatrixXd grad_B;
@@ -834,7 +862,7 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<1, -1, 1> func(N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_fd(N * M + M * K);
       double val_ad;
@@ -866,7 +894,7 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<1, -1, 1> func(N, M, K);
       VectorXd grad_ad(N * M + M * K);
       RowVectorXd grad_A;
       VectorXd grad_B;
@@ -904,7 +932,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, 1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_fd(N * M + M * K);
       double val_ad;
@@ -936,7 +964,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_simple func(n, k, N, M, K);
+      mult_functor_vv<-1, 1, -1> func(n, k, N, M, K);
       VectorXd grad_ad(N * M + M * K);
       VectorXd grad_A;
       VectorXd grad_A_ex;
