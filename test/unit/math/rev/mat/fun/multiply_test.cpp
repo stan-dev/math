@@ -61,26 +61,52 @@ class mult_functor_vv<1, -1, 1> {
     }
 };
 
-struct mult_functor_dv {
+template<int R_A, int C_A, int C_B>
+class mult_functor_dv {
   int i, j, M, K;
-  Eigen::Matrix<double, -1, -1> A_c;
-  mult_functor_dv(int i_, int j_, int M_, int K_,
-                      Eigen::Matrix<double, -1, -1> A_c_) : 
-    i(i_), j(j_), M(M_), K(K_), A_c(A_c_) { }
-  template <typename T>
-  T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::multiply;
-    Eigen::Matrix<T, -1, -1> B_c(M, K);
-    int pos = 0;
-    // traverse col-major
+  Eigen::Matrix<double, R_A, C_A> A_c;
+  public:
+    mult_functor_dv(int i_, int j_, int M_, int K_,
+                        Eigen::Matrix<double, R_A, C_A> A_c_) : 
+      i(i_), j(j_), M(M_), K(K_), A_c(A_c_) { }
+    template <typename T>
+    T operator()(Eigen::Matrix<T, -1, 1> x) const {
+      using stan::math::multiply;
+      Eigen::Matrix<T, C_A, C_B> B_c(M, K);
+      int pos = 0;
+      // traverse col-major
 
-    for (int k = 0; k < K; ++k) 
-      for (int m = 0; m < M; ++m) {
-        B_c(m,k) = x(pos++);
-      }
-    Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
-    return AB_c(i, j);
-  }
+      for (int k = 0; k < K; ++k) 
+        for (int m = 0; m < M; ++m) {
+          B_c(m,k) = x(pos++);
+        }
+      Eigen::Matrix<T, R_A, C_B> AB_c = multiply(A_c, B_c);
+      return AB_c(i, j);
+    }
+};
+
+template<>
+class mult_functor_dv<1, -1, 1> {
+  int M, K;
+  Eigen::Matrix<double, 1, -1> A_c;
+  public:
+    mult_functor_dv(int M_, int K_,
+                    Eigen::Matrix<double, 1, -1> A_c_) : 
+      M(M_), K(K_), A_c(A_c_) { }
+    template <typename T>
+    T operator()(Eigen::Matrix<T, -1, 1> x) const {
+      using stan::math::multiply;
+      Eigen::Matrix<T, -1, 1> B_c(M, K);
+      int pos = 0;
+      // traverse col-major
+
+      for (int k = 0; k < K; ++k) 
+        for (int m = 0; m < M; ++m) {
+          B_c(m,k) = x(pos++);
+        }
+      T AB_c = multiply(A_c, B_c);
+      return AB_c;
+    }
 };
 
 struct mult_functor_vd {
@@ -1001,7 +1027,7 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, -1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_fd(M * K);
       double val_ad;
@@ -1032,7 +1058,7 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, -1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       MatrixXd grad_B;
       MatrixXd grad_A;
@@ -1064,7 +1090,7 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, -1, 1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_fd(M * K);
       double val_ad;
@@ -1095,7 +1121,7 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, -1, 1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_B;
       MatrixXd grad_A;
@@ -1128,7 +1154,7 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<1, -1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_fd(M * K);
       double val_ad;
@@ -1160,7 +1186,7 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<1, -1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       MatrixXd grad_B;
       MatrixXd grad_A;
@@ -1193,7 +1219,7 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<1, -1, 1> func(M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_fd(M * K);
       double val_ad;
@@ -1225,7 +1251,7 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<1, -1, 1> func(M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_B;
       MatrixXd grad_A;
@@ -1258,7 +1284,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, 1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_fd(M * K);
       double val_ad;
@@ -1290,7 +1316,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_dv) {
   AB = A * B;
   for (int n = 0; n < N; ++n) {
     for (int k = 0; k < K; ++k) {
-      mult_functor_dv func(n, k, M, K, A);
+      mult_functor_dv<-1, 1, -1> func(n, k, M, K, A);
       VectorXd grad_ad(M * K);
       VectorXd grad_A;
       RowVectorXd grad_B;
