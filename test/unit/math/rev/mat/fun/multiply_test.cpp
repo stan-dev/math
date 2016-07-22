@@ -23,13 +23,13 @@ class mult_vv {
       int pos = 0;
       // traverse col-major
       for (int m = 0; m < M; ++m) 
-        for (int n = 0; n < N; ++n) {
+        for (int n = 0; n < N; ++n) 
           A_c(n,m) = x(pos++);
-        }
+        
       for (int k = 0; k < K; ++k) 
-        for (int m = 0; m < M; ++m) {
+        for (int m = 0; m < M; ++m) 
           B_c(m,k) = x(pos++);
-        }
+        
       Eigen::Matrix<T, R_A, C_B> AB_c = multiply(A_c, B_c);
       return AB_c(i, j);
     }
@@ -49,13 +49,13 @@ class mult_vv<1, -1, 1> {
       int pos = 0;
       // traverse col-major
       for (int m = 0; m < M; ++m) 
-        for (int n = 0; n < N; ++n) {
+        for (int n = 0; n < N; ++n) 
           A_c(n,m) = x(pos++);
-        }
+        
       for (int k = 0; k < K; ++k) 
-        for (int m = 0; m < M; ++m) {
+        for (int m = 0; m < M; ++m) 
           B_c(m,k) = x(pos++);
-        }
+        
       T AB_c = multiply(A_c, B_c);
       return AB_c;
     }
@@ -77,9 +77,9 @@ class mult_dv {
       // traverse col-major
 
       for (int k = 0; k < K; ++k) 
-        for (int m = 0; m < M; ++m) {
+        for (int m = 0; m < M; ++m) 
           B_c(m,k) = x(pos++);
-        }
+        
       Eigen::Matrix<T, R_A, C_B> AB_c = multiply(A_c, B_c);
       return AB_c(i, j);
     }
@@ -101,9 +101,9 @@ class mult_dv<1, -1, 1> {
       // traverse col-major
 
       for (int k = 0; k < K; ++k) 
-        for (int m = 0; m < M; ++m) {
+        for (int m = 0; m < M; ++m) 
           B_c(m,k) = x(pos++);
-        }
+        
       T AB_c = multiply(A_c, B_c);
       return AB_c;
     }
@@ -124,9 +124,8 @@ class mult_vd {
       int pos = 0;
       // traverse col-major
       for (int m = 0; m < M; ++m) 
-        for (int n = 0; n < N; ++n) {
+        for (int n = 0; n < N; ++n) 
           A_c(n,m) = x(pos++);
-        }
 
       Eigen::Matrix<T, -1, -1> AB_c = multiply(A_c, B_c);
       return AB_c(i, j);
@@ -148,10 +147,9 @@ class mult_vd<1, -1, 1> {
       int pos = 0;
       // traverse col-major
       for (int m = 0; m < M; ++m) 
-        for (int n = 0; n < N; ++n) {
+        for (int n = 0; n < N; ++n) 
           A_c(n,m) = x(pos++);
-        }
-
+        
       T AB_c = multiply(A_c, B_c);
       return AB_c;
     }
@@ -165,14 +163,6 @@ Eigen::Matrix<double, -1, 1> generate_inp(int N, int M, int K) {
   return vec;
 }
 
-Eigen::Matrix<double, -1, 1> generate_seq(int N, int M, int K) {
-  int size_vec = N * M + M * K;
-  Eigen::Matrix<double, -1, 1> vec(size_vec);
-  for (int i = 0; i < size_vec; ++i)
-    vec(i) = i + 1;
-  return vec;
-}
-
 template<int R_A, int C_A, int C_B> 
 void pull_vals(int N, int M, int K,
                const Eigen::Matrix<double, -1, 1>& x,
@@ -182,13 +172,13 @@ void pull_vals(int N, int M, int K,
   B.resize(M, K);
   int pos = 0;
   for (int m = 0; m < M; ++m) 
-    for (int n = 0; n < N; ++n) {
+    for (int n = 0; n < N; ++n) 
       A(n,m) = x(pos++);
-    }
+    
   for (int k = 0; k < K; ++k) 
-    for (int m = 0; m < M; ++m) {
+    for (int m = 0; m < M; ++m) 
       B(m,k) = x(pos++);
-    }
+    
 }
 
 TEST(AgradRevMatrix, multiply_scalar_scalar) {
