@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_DIVIDE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_DIVIDE_HPP
 
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <cstddef>
 #include <cstdlib>
@@ -22,6 +24,8 @@ namespace stan {
     }
 
     inline int divide(const int x, const int y) {
+      if (unlikely(y == 0))
+        domain_error("divide", "denominator is", y, "");
       return std::div(x, y).quot;
     }
 
