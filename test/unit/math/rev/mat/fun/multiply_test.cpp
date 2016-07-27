@@ -888,37 +888,37 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex) {
   }
 }
 
-//TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
-//  using Eigen::VectorXd;
-//  using Eigen::RowVectorXd;
-//  using Eigen::MatrixXd;
-//
-//  int N = 1;
-//  int M = 4;
-//  int K = 1;
-//  RowVectorXd A;
-//  VectorXd B;
-//  double AB;
-//  VectorXd test = generate_inp(N, M, K);
-//  pull_vals(N, M, K, test, A, B);
-//  AB = A * B;
-//  for (int n = 0; n < N; ++n) {
-//    for (int k = 0; k < K; ++k) {
-//      mult_vv<1, -1, 1> func(N, M, K);
-//      VectorXd grad_ad(N * M + M * K);
-//      VectorXd grad_fd(N * M + M * K);
-//      double val_ad;
-//      double val_fd;
-//      stan::math::gradient(func, test, val_ad, grad_ad);
-//      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
-//      EXPECT_FLOAT_EQ(AB, val_ad);
-//      EXPECT_FLOAT_EQ(AB, val_fd);
-//      for (int i = 0; i < grad_ad.size(); ++i)
-//        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
-//    }
-//  }
-//}
-//
+TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using Eigen::MatrixXd;
+
+  int N = 1;
+  int M = 4;
+  int K = 1;
+  RowVectorXd A;
+  VectorXd B;
+  double AB;
+  VectorXd test = generate_inp(N, M, K);
+  pull_vals(N, M, K, test, A, B);
+  AB = A * B;
+  for (int n = 0; n < N; ++n) {
+    for (int k = 0; k < K; ++k) {
+      mult_vv<1, -1, 1> func(N, M, K);
+      VectorXd grad_ad(N * M + M * K);
+      VectorXd grad_fd(N * M + M * K);
+      double val_ad;
+      double val_fd;
+      stan::math::gradient(func, test, val_ad, grad_ad);
+      stan::math::finite_diff_gradient(func, test, val_fd, grad_fd);
+      EXPECT_FLOAT_EQ(AB, val_ad);
+      EXPECT_FLOAT_EQ(AB, val_fd);
+      for (int i = 0; i < grad_ad.size(); ++i)
+        EXPECT_NEAR(grad_ad(i), grad_fd(i),1e-10);
+    }
+  }
+}
+
 //TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex) {
 //  using Eigen::VectorXd;
 //  using Eigen::MatrixXd;
@@ -1378,7 +1378,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex) {
 //    }
 //  }
 //}
-//
+
 //TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_vd) {
 //  using Eigen::VectorXd;
 //  using Eigen::MatrixXd;
