@@ -6,8 +6,8 @@
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -38,10 +38,11 @@ namespace stan {
       } else if (TriView == Eigen::Upper) {
         return transpose(mdivide_left_tri<Eigen::Lower>(transpose(A),
                                                         transpose(b)));
-      } else {
-        throw std::domain_error("triangular view must be Eigen::Lower or "
-                                "Eigen::Upper");
       }
+
+      domain_error("mdivide_left_tri",
+                   "triangular view must be Eigen::Lower or Eigen::Upper",
+                   "", "");
     }
 
   }

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <vector>
@@ -29,12 +31,13 @@ namespace stan {
                               int M,
                               int N) {
       using std::exp;
-      if (M < N)
-        throw std::domain_error("cholesky_factor_constrain: "
-                                "num rows must be >= num cols");
-      if (x.size() != ((N * (N + 1)) / 2 + (M - N) * N))
-        throw std::domain_error("cholesky_factor_constrain: x.size() must"
-                                " be (N * (N + 1)) / 2 + (M - N) * N");
+      check_greater("cholesky_factor_constrain",
+                    "num rows (must be greater than num cols)",
+                    M, N);
+      check_size_match("cholesky_factor_constrain",
+                       "x.size()", x.size(),
+                       "((N * (N + 1)) / 2 + (M - N) * N)",
+                       ((N * (N + 1)) / 2 + (M - N) * N));
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
       T zero(0);
       int pos = 0;
@@ -56,8 +59,8 @@ namespace stan {
     /**
      * Return the Cholesky factor of the specified size read from the
      * specified vector and increment the specified log probability
-     * reference with the log Jacobian adjustment of the transform.  A
-     * total of (N choose 2) + N + N * (M - N) free parameters are required to read
+     * reference with the log Jacobian adjustment of the transform.  A total
+     * of (N choose 2) + N + N * (M - N) free parameters are required to read
      * an M by N Cholesky factor.
      *
      * @tparam T Type of scalars in matrix
@@ -74,10 +77,10 @@ namespace stan {
                               int N,
                               T& lp) {
       // cut-and-paste from above, so checks twice
-
-      if (x.size() != ((N * (N + 1)) / 2 + (M - N) * N))
-        throw std::domain_error("cholesky_factor_constrain: x.size() "
-                                "must be (k choose 2) + k");
+      check_size_match("cholesky_factor_constrain",
+                       "x.size()", x.size(),
+                       "((N * (N + 1)) / 2 + (M - N) * N)",
+                       ((N * (N + 1)) / 2 + (M - N) * N));
       int pos = 0;
       std::vector<T> log_jacobians(N);
       for (int n = 0; n < N; ++n) {
@@ -89,7 +92,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

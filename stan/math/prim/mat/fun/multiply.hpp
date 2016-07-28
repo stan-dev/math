@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -83,8 +82,6 @@ namespace stan {
       check_matching_sizes("multiply",
                            "rv", rv,
                            "v", v);
-      if (rv.size() != v.size())
-        throw std::domain_error("rv.size() != v.size()");
       return rv.dot(v);
     }
 

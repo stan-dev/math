@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stdexcept>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
   namespace math {
@@ -27,16 +27,13 @@ namespace stan {
       // mmt = T(0.5) * mmt;
       LDLT<Matrix<T, Dynamic, Dynamic> > ldlt(mmt);  // 0.5*(m+m.transpose()));
       if (ldlt.info() != Eigen::Success)
-        throw std::domain_error("Error in inverse_spd, LDLT "
-                                "factorization failed");
+        domain_error("invese_spd", "LDLT factor failed", "", "");
       if (!ldlt.isPositive())
-        throw std::domain_error("Error in inverse_spd, matrix "
-                                "not positive definite");
+        domain_error("invese_spd", "matrix not positive definite", "", "");
       Matrix<T, Dynamic, 1> diag_ldlt = ldlt.vectorD();
       for (int i = 0; i < diag_ldlt.size(); ++i)
         if (diag_ldlt(i) <= 0)
-          throw std::domain_error("Error in inverse_spd, matrix "
-                                  "not positive definite");
+          domain_error("invese_spd", "matrix not positive definite", "", "");
       return ldlt.solve(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
                         ::Identity(m.rows(), m.cols()));
     }
