@@ -381,52 +381,6 @@ namespace stan {
       return AB_v;
     }
 
-//    template <typename TA, int RA, int CA, typename TB>
-//    inline typename
-//    boost::enable_if_c<boost::is_same<TA, var>::value ||
-//                        boost::is_same<TB, var>::value,
-//                        Eigen::Matrix<var, RA, CA> >::type
-//    multiply(const Eigen::Matrix<TA, RA, CA>& A,
-//             const TB& B) {
-//      stan::math::check_not_nan("multiply","A", A);
-//      stan::math::check_not_nan("multiply","B", B);
-//
-//      // NOTE: this is not a memory leak, this vari is used in the
-//      // expression graph to evaluate the adjoint, but is not needed
-//      // for the returned matrix.  Memory will be cleaned up with the
-//      // arena allocator.
-//      multiply_mat_scal_vari<TA,RA,CA,TB> *baseVari
-//        = new multiply_mat_scal_vari<TA,RA,CA,TB>(A, B);
-//      Eigen::Matrix<var, RA, CA> AB_v(A.rows(), A.cols());
-//      for (size_type i = 0; i < AB_v.size(); ++i) {
-//          AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
-//        }
-//      return AB_v;
-//    }
-
-//    template <typename TA, int RA, int CA, typename TB>
-//    inline typename
-//    boost::enable_if_c<boost::is_same<TA, var>::value ||
-//                        boost::is_same<TB, var>::value,
-//                        Eigen::Matrix<var, RA, CA> >::type
-//    multiply(const TB& B,
-//             const Eigen::Matrix<TA, RA, CA>& A) {
-//      stan::math::check_not_nan("multiply","A", A);
-//      stan::math::check_not_nan("multiply","B", B);
-//
-//      // NOTE: this is not a memory leak, this vari is used in the
-//      // expression graph to evaluate the adjoint, but is not needed
-//      // for the returned matrix.  Memory will be cleaned up with the
-//      // arena allocator.
-//      multiply_mat_scal_vari<TA,RA,CA,TB> *baseVari
-//        = new multiply_mat_scal_vari<TA,RA,CA,TB>(A, B);
-//      Eigen::Matrix<var, RA, CA> AB_v(A.rows(), A.cols());
-//      for (size_type i = 0; i < AB_v.size(); ++i) {
-//          AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
-//        }
-//      return AB_v;
-//    }
-
     template <typename TA, int CA, typename TB>
     inline typename
     boost::enable_if_c<boost::is_same<TA, var>::value ||
