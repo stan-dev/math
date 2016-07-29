@@ -66,7 +66,6 @@ namespace stan {
       return s;
     }
 
-
   }
 }
 

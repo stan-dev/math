@@ -24,9 +24,7 @@
 #include <limits>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -140,7 +138,6 @@ namespace stan {
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += half_nu_s2_overx_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
-
 
 
         if (!is_constant_struct<T_dof>::value)

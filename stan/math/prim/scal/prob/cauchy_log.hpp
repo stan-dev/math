@@ -19,7 +19,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -147,7 +146,6 @@ namespace stan {
     cauchy_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
       return cauchy_log<false>(y, mu, sigma);
     }
-
 
   }
 }

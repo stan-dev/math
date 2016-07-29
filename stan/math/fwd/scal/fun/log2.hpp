@@ -6,9 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log2.hpp>
 
-
 namespace stan {
-
   namespace math {
 
     template <typename T>

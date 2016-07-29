@@ -6,7 +6,6 @@
 // #include <numeric>
 
 namespace stan {
-
   namespace math {
 
     /** \addtogroup csr_format 

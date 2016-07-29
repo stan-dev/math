@@ -6,9 +6,7 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Write autocovariance estimates for every lag for the specified
@@ -64,7 +62,6 @@ namespace stan {
       Eigen::FFT<T> fft;
       autocovariance(y, acov, fft);
     }
-
 
   }
 }

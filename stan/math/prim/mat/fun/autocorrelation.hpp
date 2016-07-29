@@ -6,9 +6,7 @@
 #include <complex>
 #include <vector>
 
-
 namespace stan {
-
   namespace math {
 
     namespace {
@@ -60,7 +58,6 @@ namespace stan {
       size_t N = y.size();
       size_t M = fft_next_good_size(N);
       size_t Mt2 = 2 * M;
-
 
       vector<complex<T> > freqvec;
 
@@ -125,7 +122,6 @@ namespace stan {
       Eigen::FFT<T> fft;
       return autocorrelation(y, ac, fft);
     }
-
 
   }
 }

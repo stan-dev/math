@@ -190,7 +190,6 @@ namespace stan {
       return get_base1(x[i1 - 1], i2, i3, i4, i5, i6, error_msg, idx+1);
     }
 
-
     /**
      * Return a reference to the value of the specified vector at the
      * specified base-one indexes.  If an index is out of range, throw
@@ -228,7 +227,6 @@ namespace stan {
       check_range("[]", "x", x.size(), i1, idx, error_msg);
       return get_base1(x[i1 - 1], i2, i3, i4, i5, i6, i7, error_msg, idx+1);
     }
-
 
     /**
      * Return a reference to the value of the specified vector at the
@@ -270,7 +268,6 @@ namespace stan {
       check_range("[]", "x", x.size(), i1, idx, error_msg);
       return get_base1(x[i1 - 1], i2, i3, i4, i5, i6, i7, i8, error_msg, idx+1);
     }
-
 
 
     /**

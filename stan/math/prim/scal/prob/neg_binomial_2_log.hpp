@@ -26,7 +26,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]

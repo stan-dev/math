@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
-
 namespace stan {
   namespace math {
 

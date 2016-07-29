@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     // Wishart(Sigma|n, Omega)  [Sigma, Omega symmetric, non-neg, definite;
@@ -73,7 +72,6 @@ namespace stan {
       using stan::math::LDLT_factor;
       using stan::math::log_determinant_ldlt;
       using stan::math::mdivide_left_ldlt;
-
 
       typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
         = W.rows();

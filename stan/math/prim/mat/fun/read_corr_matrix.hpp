@@ -6,9 +6,7 @@
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Return the correlation matrix of the specified dimensionality

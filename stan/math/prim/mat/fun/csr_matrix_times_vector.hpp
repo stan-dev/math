@@ -11,7 +11,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
     /** 
      * @defgroup csr_format Compressed Sparse Row matrix format.

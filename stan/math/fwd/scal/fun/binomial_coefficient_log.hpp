@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

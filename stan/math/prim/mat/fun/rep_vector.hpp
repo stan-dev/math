@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -19,7 +18,6 @@ namespace stan {
       return Eigen::Matrix<typename boost::math::tools::promote_args<T>::type,
                            Eigen::Dynamic, 1>::Constant(n, x);
     }
-
 
   }
 }

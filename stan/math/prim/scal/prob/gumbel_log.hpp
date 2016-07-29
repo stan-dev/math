@@ -20,7 +20,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto, typename T_y, typename T_loc, typename T_scale>

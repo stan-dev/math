@@ -19,7 +19,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     // Poisson CDF

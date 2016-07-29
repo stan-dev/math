@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

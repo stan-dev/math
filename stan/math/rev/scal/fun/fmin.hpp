@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

@@ -13,7 +13,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // The algorithm used in von_mises_rng is a modified version of the

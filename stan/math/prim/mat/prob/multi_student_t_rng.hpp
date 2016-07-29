@@ -21,7 +21,6 @@
 #include <cstdlib>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

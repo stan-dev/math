@@ -42,7 +42,6 @@ namespace stan {
                  (_impl));
     }
 
-
   }
 }
 

@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

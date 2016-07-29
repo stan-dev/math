@@ -72,7 +72,6 @@ namespace stan {
           chainB(B, Ad, Bd, adjC);
         }
 
-
       public:
         explicit
         trace_quad_form_vari

@@ -44,7 +44,6 @@
 #include <algorithm>  // for max
 
 namespace stan {
-
   namespace math {
 
      /**
@@ -152,7 +151,6 @@ namespace stan {
         T_return_type x = y_vec[i];
         T_return_type kl, ks, tmp = 0;
         T_return_type k, K;
-
 
         x = x - tau_vec[i];  // remove non-decision time from x
         x = x / alpha2;  // convert t to normalized time tt

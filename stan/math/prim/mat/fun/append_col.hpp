@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -98,7 +97,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of appending the second argument matrix after the
      * first argument matrix, that is, putting them side by side, with
@@ -167,7 +165,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of stacking an scalar on top of the
      * a row vector, with the result being a row vector.
@@ -196,7 +193,6 @@ namespace stan {
       result << A, B.template cast<return_type>();
       return result;
     }
-
 
     /**
      * Return the result of stacking a row vector on top of the

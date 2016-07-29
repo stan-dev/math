@@ -16,9 +16,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -66,7 +64,6 @@ namespace stan {
                              "Random variable", y,
                              "Location parameter", mu,
                              "Scale parameter", sigma);
-
 
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);

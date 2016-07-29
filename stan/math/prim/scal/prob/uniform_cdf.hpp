@@ -16,7 +16,6 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_low, typename T_high>

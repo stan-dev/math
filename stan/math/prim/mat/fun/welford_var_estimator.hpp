@@ -5,7 +5,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     class welford_var_estimator {
@@ -49,6 +48,5 @@ namespace stan {
   }  // prob
 
 }  // stan
-
 
 #endif

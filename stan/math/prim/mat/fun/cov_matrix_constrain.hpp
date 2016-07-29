@@ -9,7 +9,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     // COVARIANCE MATRIX
@@ -52,7 +51,6 @@ namespace stan {
       }
       return multiply_lower_tri_self_transpose(L);
     }
-
 
     /**
      * Return the symmetric, positive-definite matrix of dimensions K

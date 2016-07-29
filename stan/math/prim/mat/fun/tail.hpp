@@ -10,7 +10,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -26,7 +25,6 @@ namespace stan {
         stan::math::check_row_index("tail", "n", v, n);
       return v.tail(n);
     }
-
 
     /**
      * Return the specified number of elements as a row vector
@@ -53,7 +51,6 @@ namespace stan {
         s.push_back(sv[i]);
       return s;
     }
-
 
   }
 }

@@ -6,7 +6,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     /**

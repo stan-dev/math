@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>

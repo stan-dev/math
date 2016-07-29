@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

@@ -5,7 +5,6 @@
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
-
   namespace math {
     /**
      * Return the log of the binomial coefficient for the specified

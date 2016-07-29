@@ -19,7 +19,6 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_scale>
@@ -51,7 +50,6 @@ namespace stan {
       check_consistent_sizes(function,
                              "Random variable", y,
                              "Scale parameter", sigma);
-
 
       // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);

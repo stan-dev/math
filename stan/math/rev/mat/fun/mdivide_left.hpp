@@ -91,7 +91,6 @@ namespace stan {
             for (size_type i = 0; i < adjC.rows(); i++)
               adjC(i, j) = _variRefC[pos++]->adj_;
 
-
           adjB = Map<Matrix<double, R1, C1> >(A_, M_, M_)
             .transpose().colPivHouseholderQr().solve(adjC);
           adjA.noalias() = -adjB

@@ -25,7 +25,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_shape,
@@ -73,7 +72,6 @@ namespace stan {
       using std::log;
       using std::exp;
 
-
       OperandsAndPartials<T_shape, T_inv_scale>
         operands_and_partials(alpha, beta);
 
@@ -120,7 +118,6 @@ namespace stan {
                                                 * (1.0 + beta_dbl) );
         const T_partials_return Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
         const T_partials_return beta_func = exp(lbeta(n_dbl + 1, alpha_dbl));
-
 
         P += log(Pi);
 

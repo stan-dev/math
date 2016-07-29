@@ -24,9 +24,7 @@
 #include <limits>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_dof, typename T_scale>

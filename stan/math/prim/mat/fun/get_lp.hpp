@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_lp, typename T_lp_accum>

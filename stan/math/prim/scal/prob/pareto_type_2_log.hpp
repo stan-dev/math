@@ -19,7 +19,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
   namespace math {
 
@@ -63,7 +62,6 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
-
 
       // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)

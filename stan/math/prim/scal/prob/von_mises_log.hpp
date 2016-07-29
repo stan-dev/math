@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template<bool propto,
@@ -57,7 +56,6 @@ namespace stan {
                              "Random variable", y,
                              "Location parameter", mu,
                              "Scale parameter", kappa);
-
 
       // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)

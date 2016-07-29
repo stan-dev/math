@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

@@ -8,7 +8,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // CHOLESKY FACTOR
@@ -89,7 +88,6 @@ namespace stan {
       lp += sum(log_jacobians);  // optimized for autodiff vs. direct lp +=
       return cholesky_factor_constrain(x, M, N);
     }
-
 
   }
 

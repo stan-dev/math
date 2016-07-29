@@ -12,7 +12,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
@@ -91,7 +90,6 @@ namespace stan {
                           beta) {
       return categorical_logit_log<false>(ns, beta);
     }
-
 
   }
 }

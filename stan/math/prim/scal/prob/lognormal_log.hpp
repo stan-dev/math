@@ -44,7 +44,6 @@ namespace stan {
       using stan::math::value_of;
       using stan::math::include_summand;
 
-
       // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
@@ -80,7 +79,6 @@ namespace stan {
       using std::log;
       using stan::math::NEG_LOG_SQRT_TWO_PI;
       using std::log;
-
 
       VectorBuilder<include_summand<propto, T_scale>::value,
                     T_partials_return, T_scale> log_sigma(length(sigma));
@@ -130,7 +128,6 @@ namespace stan {
         T_partials_return logy_m_mu_div_sigma(0);
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value)
           logy_m_mu_div_sigma = logy_m_mu * inv_sigma_sq[n];
-
 
         // log probability
         if (include_summand<propto, T_scale>::value)

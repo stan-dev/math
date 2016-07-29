@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -44,7 +43,6 @@ namespace stan {
           x(pos++) = y(m, n);
       return x;
     }
-
 
   }
 

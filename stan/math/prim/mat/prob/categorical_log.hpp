@@ -15,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
@@ -59,7 +58,6 @@ namespace stan {
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       return categorical_log<false>(n, theta);
     }
-
 
     // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
     template <bool propto,
@@ -108,7 +106,6 @@ namespace stan {
 
       return sum(log_theta_ns);
     }
-
 
     template <typename T_prob>
     inline

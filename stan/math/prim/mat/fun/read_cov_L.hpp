@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -28,7 +27,6 @@ namespace stan {
       log_prob += (sds.log().sum() + stan::math::LOG_2) * K;
       return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
     }
-
 
   }
 

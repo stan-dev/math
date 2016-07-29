@@ -19,7 +19,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
@@ -58,7 +57,6 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma,
                              "Shape paramter", alpha);
-
 
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
         operands_and_partials(y, mu, sigma, alpha);

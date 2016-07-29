@@ -9,7 +9,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // FIXME: cut-and-paste from fwd/log_sum_exp.hpp; should

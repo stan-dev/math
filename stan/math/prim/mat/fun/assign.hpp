@@ -13,7 +13,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -151,7 +150,6 @@ namespace stan {
         for (int m = 0; m < y.rows(); ++m)
           assign(x(m, n), y(m, n));
     }
-
 
     /**
      * Copy the right-hand side's value to the left-hand side

@@ -29,7 +29,6 @@ namespace stan {
       return std::div(x, y).quot;
     }
 
-
   }
 }
 

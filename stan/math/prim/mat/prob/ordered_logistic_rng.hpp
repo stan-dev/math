@@ -16,7 +16,6 @@
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // aka directional derivative (not length normalized)

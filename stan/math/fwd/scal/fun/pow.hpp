@@ -9,7 +9,6 @@
 #include <stan/math/fwd/scal/fun/inv_square.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

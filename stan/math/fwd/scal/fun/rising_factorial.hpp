@@ -7,7 +7,6 @@
 #include <iostream>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>

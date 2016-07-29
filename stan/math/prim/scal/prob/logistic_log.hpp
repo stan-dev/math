@@ -64,7 +64,6 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-
       // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);

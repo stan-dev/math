@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

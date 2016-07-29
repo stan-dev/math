@@ -15,7 +15,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

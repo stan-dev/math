@@ -5,7 +5,6 @@
 #include <stan/math/rev/core/var.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

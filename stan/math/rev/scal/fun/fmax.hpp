@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

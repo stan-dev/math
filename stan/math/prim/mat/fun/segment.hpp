@@ -46,7 +46,6 @@ namespace stan {
       return v.segment(i-1, n);
     }
 
-
     template <typename T>
     std::vector<T>
     segment(const std::vector<T>& sv,

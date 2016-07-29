@@ -7,7 +7,6 @@
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>

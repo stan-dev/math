@@ -79,7 +79,6 @@ namespace stan {
           }
         }
 
-
       public:
         explicit
         trace_gen_quad_form_vari(trace_gen_quad_form_vari_alloc

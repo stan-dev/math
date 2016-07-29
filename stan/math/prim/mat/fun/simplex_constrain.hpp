@@ -10,7 +10,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -37,7 +36,6 @@ namespace stan {
       using stan::math::log1m;
       using std::log;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
-
 
       int Km1 = y.size();
       Matrix<T, Dynamic, 1> x(Km1 + 1);

@@ -6,7 +6,6 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <int R, int C>

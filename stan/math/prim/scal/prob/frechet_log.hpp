@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]

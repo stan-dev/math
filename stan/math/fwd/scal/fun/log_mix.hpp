@@ -8,7 +8,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /* Returns an array of size N with partials of log_mix wrt to its

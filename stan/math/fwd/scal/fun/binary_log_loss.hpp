@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

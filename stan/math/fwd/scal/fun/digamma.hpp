@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

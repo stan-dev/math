@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_inv_scale>

@@ -5,7 +5,6 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-
   namespace math {
 
     typedef

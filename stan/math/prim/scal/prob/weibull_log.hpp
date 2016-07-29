@@ -21,7 +21,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]

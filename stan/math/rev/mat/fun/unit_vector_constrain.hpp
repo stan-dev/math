@@ -48,7 +48,6 @@ namespace stan {
       };
     }
 
-
     // Unit vector
 
     /**
@@ -74,7 +73,6 @@ namespace stan {
       Eigen::VectorXd y_d(y.size());
       for (int i = 0; i < y.size(); ++i)
         y_d.coeffRef(i) = y.coeff(i).val();
-
 
       const double norm = y_d.norm();
       stan::math::check_positive_finite("unit_vector", "norm", norm);

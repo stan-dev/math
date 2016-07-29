@@ -44,7 +44,6 @@ namespace stan {
       };
     }
 
-
     /**
      * Return the softmax of the specified Eigen vector.  Softmax is
      * guaranteed to return a simplex.
@@ -90,7 +89,6 @@ namespace stan {
                                                     k));
       return softmax_alpha;
     }
-
 
   }
 }

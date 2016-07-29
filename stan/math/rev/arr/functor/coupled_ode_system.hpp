@@ -19,7 +19,6 @@ namespace stan {
     // It is in namespace stan::math so that the partial template
     // specializations are treated as such.
 
-
     /**
      * Increment the state derived from the coupled system in the with
      * the original initial state.  This is necessary because the

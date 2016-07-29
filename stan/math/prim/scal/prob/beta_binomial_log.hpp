@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 
 namespace stan {
-
   namespace math {
 
     // BetaBinomial(n|alpha, beta) [alpha > 0;  beta > 0;  n >= 0]

@@ -17,7 +17,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto,
@@ -145,6 +144,5 @@ namespace stan {
   }
 }
 #endif
-
 
 

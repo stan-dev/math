@@ -46,7 +46,6 @@ namespace stan {
 
     }
 
-
     /**
      * Return the softmax of the specified Eigen vector.  Softmax is
      * guaranteed to return a simplex.
@@ -80,7 +79,6 @@ namespace stan {
         (vari::operator new(sizeof(vari*) * alpha.size()));
       for (int i = 0; i < alpha.size(); ++i)
         alpha_vi_array[i] = alpha(i).vi_;
-
 
       Matrix<double, Dynamic, 1> alpha_d(alpha.size());
       for (int i = 0; i < alpha_d.size(); ++i)
@@ -126,7 +124,6 @@ namespace stan {
                                          k));
       return log_softmax_alpha;
     }
-
 
   }
 }

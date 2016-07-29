@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -127,7 +126,6 @@ namespace stan {
           operands_and_partials.d_x3[n]
             += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
-
 
       return operands_and_partials.value(logp);
     }

@@ -9,9 +9,7 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-
 
     // FIXME: add other results that are easy to extract
     // // N * (fwd(2) + bk)
@@ -58,7 +56,6 @@ namespace stan {
       }
       stan::math::recover_memory_nested();
     }
-
 
   }  // namespace math
 }  // namespace stan

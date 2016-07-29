@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

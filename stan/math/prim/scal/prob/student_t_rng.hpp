@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

@@ -23,7 +23,6 @@ namespace stan {
       return value_of_rec(v.val_);
     }
 
-
   }
 }
 #endif

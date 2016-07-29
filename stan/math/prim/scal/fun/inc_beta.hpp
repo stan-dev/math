@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/beta.hpp>
 
 namespace stan {
-
   namespace math {
 
     inline double inc_beta(const double& a,

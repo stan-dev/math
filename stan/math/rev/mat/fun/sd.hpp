@@ -10,7 +10,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     namespace {  // anonymous

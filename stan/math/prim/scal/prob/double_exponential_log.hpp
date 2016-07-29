@@ -20,7 +20,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // DoubleExponential(y|mu, sigma)  [sigma > 0]
@@ -90,7 +89,6 @@ namespace stan {
           inv_sigma_squared[i] = inv_sigma[i] * inv_sigma[i];
       }
 
-
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -123,7 +121,6 @@ namespace stan {
       }
       return operands_and_partials.value(logp);
     }
-
 
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

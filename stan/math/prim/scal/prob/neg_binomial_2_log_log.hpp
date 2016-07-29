@@ -24,7 +24,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
@@ -93,7 +92,6 @@ namespace stan {
       VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
       for (size_t i = 0, size = length(phi); i < size; ++i)
         phi__[i] = value_of(phi_vec[i]);
-
 
       VectorBuilder<true, T_partials_return, T_precision>
         log_phi(length(phi));

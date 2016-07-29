@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -58,7 +57,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of stacking the first vector on top of the
      * second vector, with the result being a vector.
@@ -92,7 +90,6 @@ namespace stan {
         result(j) = B(i);
       return result;
     }
-
 
     /**
      * Return the result of stacking the rows of the first argument
@@ -133,7 +130,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of stacking the first vector on top of the
      * second vector, with the result being a vector.  This is an
@@ -162,7 +158,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of stacking an scalar on top of the
      * a vector, with the result being a vector.
@@ -190,7 +185,6 @@ namespace stan {
       result << A, B.template cast<return_type>();
       return result;
     }
-
 
     /**
      * Return the result of stacking a vector on top of the

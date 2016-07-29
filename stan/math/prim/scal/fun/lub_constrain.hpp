@@ -10,7 +10,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
     /**
      * Return the lower- and upper-bounded scalar derived by

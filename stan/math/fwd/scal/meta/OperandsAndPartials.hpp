@@ -75,7 +75,6 @@ namespace stan {
       }
     }
 
-
     /**
      * This class builds partial derivatives with respect to a set of
      * operands. There are two reason for the generality of this
@@ -114,7 +113,6 @@ namespace stan {
 
       size_t n_partials;
       T_partials_return* all_partials;
-
 
       VectorView<T_partials_return,
                  is_vector<T1>::value,
@@ -181,7 +179,6 @@ namespace stan {
         delete[] all_partials;
       }
     };
-
 
   }
 }

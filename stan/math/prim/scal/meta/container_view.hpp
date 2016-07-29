@@ -5,9 +5,7 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Primary template class for container view of

@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Bernoulli(n|theta)   [0 <= n <= 1;   0 <= theta <= 1]

@@ -1,13 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUN_GRAD_HPP
 #define STAN_MATH_REV_MAT_FUN_GRAD_HPP
 
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

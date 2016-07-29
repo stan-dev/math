@@ -8,7 +8,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -44,7 +43,6 @@ namespace stan {
                                       "Upper bounded variable", y, ub);
       return log(ub - y);
     }
-
 
   }
 

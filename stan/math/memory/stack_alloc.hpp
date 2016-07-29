@@ -12,7 +12,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -31,10 +30,8 @@ namespace stan {
       return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
     }
 
-
     namespace {
       const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
-
 
       // FIXME: enforce alignment
       // big fun to inline, but only called twice
@@ -84,7 +81,6 @@ namespace stan {
       std::vector<size_t> nested_cur_blocks_;
       std::vector<char*> nested_next_locs_;
       std::vector<char*> nested_cur_block_ends_;
-
 
       /**
        * Moves us to the next block of memory, allocating that block
@@ -186,7 +182,6 @@ namespace stan {
       T* alloc_array(size_t n) {
         return static_cast<T*>(alloc(n * sizeof(T)));
       }
-
 
       /**
        * Recover all the memory used by the stack allocator.  The stack

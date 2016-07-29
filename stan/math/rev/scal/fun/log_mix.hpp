@@ -12,7 +12,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /* Computes shared terms in log_mix partial derivative calculations

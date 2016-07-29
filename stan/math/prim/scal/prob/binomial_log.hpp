@@ -24,9 +24,7 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-
 namespace stan {
-
   namespace math {
 
     // Binomial(n|N, theta)  [N >= 0;  0 <= n <= N;  0 <= theta <= 1]
@@ -65,7 +63,6 @@ namespace stan {
                              "Successes variable", n,
                              "Population size parameter", N,
                              "Probability parameter", theta);
-
 
       // check if no variables are involved and prop-to
       if (!include_summand<propto, T_prob>::value)

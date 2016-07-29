@@ -51,7 +51,6 @@ namespace stan {
       return softmax_alpha;
     }
 
-
   }
 }
 

@@ -25,7 +25,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_N, typename T_prob>

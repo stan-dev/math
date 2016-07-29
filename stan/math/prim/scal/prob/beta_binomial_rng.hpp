@@ -17,7 +17,6 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

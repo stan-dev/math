@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/err/check_column_index.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

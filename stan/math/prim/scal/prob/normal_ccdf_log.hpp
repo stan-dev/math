@@ -18,7 +18,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>

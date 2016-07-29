@@ -20,7 +20,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     // Poisson(n|lambda)  [lambda > 0;  n >= 0]
@@ -89,7 +88,6 @@ namespace stan {
           operands_and_partials.d_x1[i]
             += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
       }
-
 
       return operands_and_partials.value(logp);
     }

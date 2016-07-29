@@ -9,9 +9,7 @@
 #include <iostream>
 
 namespace stan {
-
   namespace math {
-
 
     // MATRIX TRANSFORMS +/- JACOBIANS
 
@@ -64,7 +62,6 @@ namespace stan {
       L(K-1, K-1) = sqrt(acc(K-2));
       return L.matrix();
     }
-
 
     /**
      * Return the Cholesky factor of the correlation matrix of the

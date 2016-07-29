@@ -8,7 +8,6 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <int R, int C>
@@ -63,7 +62,6 @@ namespace stan {
       return var(new precomputed_gradients_vari(val, m.size(),
                                                 operands, gradients));
     }
-
 
   }
 

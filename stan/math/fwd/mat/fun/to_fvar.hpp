@@ -6,7 +6,6 @@
 #include <stan/math/fwd/scal/fun/to_fvar.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
-
 namespace stan {
   namespace math {
 

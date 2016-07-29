@@ -22,7 +22,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     // PoissonLog(n|alpha)  [n >= 0]   = Poisson(n|exp(alpha))

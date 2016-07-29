@@ -5,9 +5,7 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-
 
     template <typename T>
     struct store_type {
@@ -22,7 +20,6 @@ namespace stan {
       typedef const int type;
     };
 
-
     template <typename T>
     struct pass_type {
       typedef const T& type;
@@ -35,7 +32,6 @@ namespace stan {
     struct pass_type<int> {
       typedef int type;
     };
-
 
     // S assignable to T
     template <typename T, typename S>
@@ -73,7 +69,6 @@ namespace stan {
       }
     };
 
-
     template <typename T, typename S>
     class seq_view<T, Eigen::Matrix<S, 1, Eigen::Dynamic> > {
     private:
@@ -91,7 +86,6 @@ namespace stan {
         return x_.size();
       }
     };
-
 
 
     // row-major order of returns to match std::vector
@@ -190,7 +184,6 @@ namespace stan {
         return x_.size();
       }
     };
-
 
 
 

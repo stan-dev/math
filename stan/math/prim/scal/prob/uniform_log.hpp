@@ -17,7 +17,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // CONTINUOUS, UNIVARIATE DENSITIES

@@ -25,7 +25,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Binomial CDF
@@ -57,7 +56,6 @@ namespace stan {
                              "Successes variable", n,
                              "Population size parameter", N,
                              "Probability parameter", theta);
-
 
       // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);

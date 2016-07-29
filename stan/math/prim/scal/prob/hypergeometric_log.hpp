@@ -16,7 +16,6 @@
 #include <boost/math/distributions.hpp>
 
 namespace stan {
-
   namespace math {
 
     // Hypergeometric(n|N, a, b)  [0 <= n <= a;  0 <= N-n <= b;  0 <= N <= a+b]
@@ -43,7 +42,6 @@ namespace stan {
             && stan::length(b)))
         return 0.0;
 
-
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_a> a_vec(a);
@@ -68,7 +66,6 @@ namespace stan {
       // check if no variables are involved and prop-to
       if (!include_summand<propto>::value)
         return 0.0;
-
 
       for (size_t i = 0; i < size; i++)
         logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])

@@ -36,7 +36,6 @@ namespace stan {
       return result;
     }
 
-
   }
 }
 #endif

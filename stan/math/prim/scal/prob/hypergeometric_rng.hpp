@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>

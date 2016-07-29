@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/logit.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

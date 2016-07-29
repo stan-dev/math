@@ -28,7 +28,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>

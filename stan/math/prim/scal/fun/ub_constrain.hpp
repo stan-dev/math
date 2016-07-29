@@ -7,7 +7,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     // UPPER BOUND

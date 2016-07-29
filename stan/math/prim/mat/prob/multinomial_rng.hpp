@@ -15,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -42,7 +41,6 @@ namespace stan {
       }
       return result;
     }
-
 
   }
 }

@@ -5,7 +5,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>

@@ -70,7 +70,6 @@ namespace stan {
       // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
 
-
       // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
       int size_mu = mu_vec[0].size();
@@ -105,7 +104,6 @@ namespace stan {
         (void) size_mu_new;
       }
 
-
       check_size_match(function,
                        "Size of random variable", size_y,
                        "size of location parameter", size_mu);
@@ -121,7 +119,6 @@ namespace stan {
         check_not_nan(function, "Random variable", y_vec[i]);
       }
       check_symmetric(function, "Scale parameter", Sigma);
-
 
       LDLT_factor<T_scale_elem,
         Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
@@ -143,7 +140,6 @@ namespace stan {
       using stan::math::dot_product;
       using stan::math::subtract;
       using Eigen::Array;
-
 
       if (include_summand<propto, T_scale_elem>::value) {
         lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;

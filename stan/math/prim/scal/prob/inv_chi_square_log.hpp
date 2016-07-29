@@ -24,7 +24,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -70,7 +69,6 @@ namespace stan {
       check_consistent_sizes(function,
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
-
 
       // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);

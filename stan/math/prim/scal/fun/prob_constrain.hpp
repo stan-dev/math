@@ -6,7 +6,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -60,7 +59,6 @@ namespace stan {
       lp += log(inv_logit_x) + log1m(inv_logit_x);
       return inv_logit_x;
     }
-
 
   }
 

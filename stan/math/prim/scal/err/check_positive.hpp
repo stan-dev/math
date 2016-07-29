@@ -10,7 +10,6 @@
 #include <boost/type_traits/is_unsigned.hpp>
 
 namespace stan {
-
   namespace math {
 
     namespace {

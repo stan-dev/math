@@ -40,7 +40,6 @@ namespace stan {
             delta = s / ((k + avi_->val_) * (k + avi_->val_));
           }
 
-
           avi_->adj_ -= adj_ * ((u) * (dig - l)
                                 + std::exp(avi_->val_ * l) * S / g);
           bvi_->adj_ += adj_ * (std::exp(-bvi_->val_)

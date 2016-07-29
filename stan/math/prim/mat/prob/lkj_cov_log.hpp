@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     // LKJ_cov(y|mu, sigma, eta) [ y covariance matrix (not correlation matrix)
@@ -127,7 +126,6 @@ namespace stan {
                 const T_shape& eta) {
       return lkj_cov_log<false>(y, mu, sigma, eta);
     }
-
 
   }
 }

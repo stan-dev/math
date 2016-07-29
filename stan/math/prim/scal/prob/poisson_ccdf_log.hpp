@@ -19,7 +19,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_rate>

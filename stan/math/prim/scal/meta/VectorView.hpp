@@ -70,7 +70,6 @@ namespace stan {
     }
   };
 
-
   template <typename T, bool is_array>
   class VectorView<T, is_array, true> {
   public:
@@ -117,7 +116,6 @@ namespace stan {
   private:
     scalar_t* x_;
   };
-
 
   // this covers raw memory: double*
   template <typename T>

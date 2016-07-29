@@ -14,7 +14,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
     // Multinomial(ns|N, theta)   [0 <= n <= N;  SUM ns = N;
     //                            0 <= theta[n] <= 1;  SUM theta = 1]

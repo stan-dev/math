@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

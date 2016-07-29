@@ -26,7 +26,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto,
@@ -65,7 +64,6 @@ namespace stan {
       VectorViewMvt<const T_loc> mu_vec(mu);
       // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
-
 
       // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();

@@ -28,7 +28,6 @@ namespace stan {
       return m.block(i - 1, j - 1, nrows, 1);
     }
 
-
   }
 }
 

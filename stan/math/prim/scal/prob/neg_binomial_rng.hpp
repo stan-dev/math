@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
