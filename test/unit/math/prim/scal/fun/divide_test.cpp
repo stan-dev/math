@@ -46,3 +46,10 @@ TEST(MathFunctions, divide_modulus) {
     for(int j = 1; j < 50; j++)
       test_divide_modulus(i, j);
 }
+
+TEST(MathFunctions, int_divide_by_0) {
+  int x = 1;
+  int y = 0;
+  int z;
+  EXPECT_THROW(z = stan::math::divide(x, y), std::domain_error);
+}

@@ -1,6 +1,22 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.11.0 (27 July 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* vectorization of a many unary math functions (#202)
+
+Bug Fixes
+--------------------------------------------------
+* throw exception on integer divide by 0 (#321)
+* allow inclusing of Stan headers in multiple translation units (#311)
+
+
+
+
+
 v2.10.0 (15 June 2016)
 ======================================================================
 
