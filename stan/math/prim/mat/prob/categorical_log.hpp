@@ -25,10 +25,7 @@ namespace stan {
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       static const char* function("stan::math::categorical_log");
 
-      using stan::math::check_bounded;
-      using stan::math::check_simplex;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
 
       int lb = 1;
@@ -68,10 +65,6 @@ namespace stan {
       static const char* function("stan::math::categorical_log");
 
       using boost::math::tools::promote_args;
-      using stan::math::check_bounded;
-      using stan::math::check_simplex;
-      using stan::math::sum;
-      using stan::math::value_of;
       using std::log;
 
       int lb = 1;

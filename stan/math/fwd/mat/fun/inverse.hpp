@@ -18,9 +18,6 @@ namespace stan {
     inline
     Eigen::Matrix<fvar<T>, R, C>
     inverse(const Eigen::Matrix<fvar<T>, R, C>& m) {
-      using stan::math::multiply;
-      using stan::math::multiply;
-      using stan::math::inverse;
       stan::math::check_square("inverse", "m", m);
       Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
       Eigen::Matrix<T, R, C> m_inv(m.rows(), m.cols());

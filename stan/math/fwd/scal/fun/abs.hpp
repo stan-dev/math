@@ -13,8 +13,6 @@ namespace stan {
 
     template<typename T>
     inline  fvar<T> abs(const fvar<T>& x) {
-      using stan::math::abs;
-      using stan::math::value_of;
       if (x.val_ > 0.0)
         return x;
       else if (x.val_ < 0.0)

@@ -20,7 +20,6 @@ namespace stan {
                     RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;
-      using stan::math::check_simplex;
 
       static const char* function("stan::math::categorical_rng");
 

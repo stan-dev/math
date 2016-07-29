@@ -31,12 +31,6 @@ namespace stan {
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive;
-      using stan::math::check_symmetric;
-      using stan::math::check_ldlt_factor;
       using Eigen::Dynamic;
 
       check_positive(function, "Covariance matrix rows", Sigma.rows());

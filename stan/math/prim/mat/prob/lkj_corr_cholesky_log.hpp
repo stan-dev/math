@@ -59,9 +59,6 @@ namespace stan {
       static const char* function("stan::math::lkj_corr_cholesky_log");
 
       using boost::math::tools::promote_args;
-      using stan::math::check_positive;
-      using stan::math::check_lower_triangular;
-      using stan::math::sum;
 
       typedef typename promote_args<T_covar, T_shape>::type lp_ret;
       lp_ret lp(0.0);

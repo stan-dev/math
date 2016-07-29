@@ -30,10 +30,6 @@ namespace stan {
       // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::index_type;
-      using stan::math::inv_logit;
-      using stan::math::logit;
-      using stan::math::log1m;
       using std::log;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
@@ -68,11 +64,6 @@ namespace stan {
                       T& lp) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      using stan::math::inv_logit;
-      using stan::math::logit;
-      using stan::math::log1m;
-      using stan::math::log1p_exp;
       using std::log;
 
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;

@@ -34,13 +34,6 @@ namespace stan {
         T_partials_return;
 
       using std::log;
-      using stan::math::value_of;
-      using stan::math::check_finite;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
       // check if any vectors are zero length

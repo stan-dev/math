@@ -53,10 +53,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -87,9 +83,6 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      using stan::math::lgamma;
-      using stan::math::digamma;
-      using stan::math::square;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,

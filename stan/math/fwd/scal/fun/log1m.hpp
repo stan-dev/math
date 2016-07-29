@@ -13,8 +13,6 @@ namespace stan {
     inline
     fvar<T>
     log1m(const fvar<T>& x) {
-      using stan::math::log1m;
-      using stan::math::NOT_A_NUMBER;
       if (x.val_ > 1.0)
         return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
       else

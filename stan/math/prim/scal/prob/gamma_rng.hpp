@@ -34,7 +34,6 @@ namespace stan {
 
       static const char* function("stan::math::gamma_rng");
 
-      using stan::math::check_positive_finite;
 
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);

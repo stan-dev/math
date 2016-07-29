@@ -35,11 +35,6 @@ namespace stan {
       static const char* function("stan::math::poisson_log_log");
 
       using boost::math::lgamma;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
       using std::exp;
       using std::exp;
 
@@ -87,7 +82,6 @@ namespace stan {
         if (include_summand<propto, T_log_rate>::value)
           exp_alpha[i] = exp(value_of(alpha_vec[i]));
 
-      using stan::math::multiply_log;
       for (size_t i = 0; i < size; i++) {
         if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
               && n_vec[i] == 0)) {

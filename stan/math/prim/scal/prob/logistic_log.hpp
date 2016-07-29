@@ -34,11 +34,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::include_summand;
       using std::log;
       using std::exp;
 
@@ -97,7 +92,6 @@ namespace stan {
                                    / value_of(sigma_vec[n]));
       }
 
-      using stan::math::log1p;
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);

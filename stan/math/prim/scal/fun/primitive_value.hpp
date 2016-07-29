@@ -44,7 +44,6 @@ namespace stan {
     inline
     typename boost::disable_if<boost::is_arithmetic<T>, double>::type
     primitive_value(const T& x) {
-      using stan::math::value_of;
       return value_of(x);
     }
 

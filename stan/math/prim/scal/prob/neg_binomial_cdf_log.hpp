@@ -37,10 +37,6 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // Ensure non-zero arugment lengths
       if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
@@ -63,10 +59,6 @@ namespace stan {
       size_t size = max_size(n, alpha, beta);
 
       // Compute vectorized cdf_log and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::exp;
       using std::pow;
       using std::log;

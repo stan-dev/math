@@ -36,11 +36,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -79,9 +74,6 @@ namespace stan {
           return operands_and_partials.value(LOG_ZERO);
       }
 
-      using stan::math::lbeta;
-      using stan::math::binomial_coefficient_log;
-      using stan::math::digamma;
 
       VectorBuilder<include_summand<propto>::value,
                     T_partials_return, T_n, T_N>

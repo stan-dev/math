@@ -13,8 +13,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T, int>::type>
     lmgamma(int x1, const fvar<T>& x2) {
-      using stan::math::lmgamma;
-      using stan::math::digamma;
       using std::log;
       T deriv = 0;
       for (int count = 1; count < x1 + 1; count++)

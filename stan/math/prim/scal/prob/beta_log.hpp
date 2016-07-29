@@ -59,20 +59,9 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      using stan::math::digamma;
-      using stan::math::lgamma;
 
       using stan::is_constant_struct;
       using stan::is_vector;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1m;
-      using stan::math::multiply_log;
-      using stan::math::value_of;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using std::log;
 
       // check if any vectors are zero length

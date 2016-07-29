@@ -17,7 +17,6 @@ namespace stan {
              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::var;
       start_nested();
       try {
         Matrix<var, Dynamic, 1> x_var(x.size());

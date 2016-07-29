@@ -88,8 +88,6 @@ namespace stan {
             const T_lambda1& lambda1,
             const T_lambda2& lambda2) {
       using std::log;
-      using stan::math::log_mix;
-      using stan::math::log1m;
       using stan::is_constant_struct;
 
       OperandsAndPartials<T_theta, T_lambda1, T_lambda2>

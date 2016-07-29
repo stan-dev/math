@@ -31,11 +31,7 @@ namespace stan {
 
       static const char* function("stan::math::exponential_cdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 

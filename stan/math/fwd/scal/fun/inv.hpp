@@ -12,7 +12,6 @@ namespace stan {
     inline
     fvar<T>
     inv(const fvar<T>& x) {
-      using stan::math::square;
       return fvar<T>(1 / x.val_, -x.d_ / square(x.val_));
     }
   }

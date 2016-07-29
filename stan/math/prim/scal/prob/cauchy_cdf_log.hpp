@@ -33,12 +33,7 @@ namespace stan {
 
       static const char* function("stan::math::cauchy_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       T_partials_return cdf_log(0.0);
 
@@ -61,7 +56,6 @@ namespace stan {
 
       // Compute CDFLog and its gradients
       using std::atan;
-      using stan::math::pi;
       using std::log;
 
       // Compute vectorized CDF and gradient

@@ -30,12 +30,6 @@ namespace stan {
                                                   T_shape>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::owens_t;
-      using stan::math::value_of;
 
       T_partials_return cdf(1.0);
 
@@ -61,8 +55,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
         operands_and_partials(y, mu, sigma, alpha);
 
-      using stan::math::SQRT_2;
-      using stan::math::pi;
       using std::exp;
 
       VectorView<const T_y> y_vec(y);

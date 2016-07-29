@@ -23,9 +23,6 @@ namespace stan {
                           beta) {
       static const char* function("stan::math::categorical_logit_log");
 
-      using stan::math::check_bounded;
-      using stan::math::check_finite;
-      using stan::math::log_sum_exp;
 
       check_bounded(function, "categorical outcome out of support", n,
                     1, beta.size());
@@ -55,10 +52,6 @@ namespace stan {
                           beta) {
       static const char* function("stan::math::categorical_logit_log");
 
-      using stan::math::check_bounded;
-      using stan::math::check_finite;
-      using stan::math::log_softmax;
-      using stan::math::sum;
 
       for (size_t k = 0; k < ns.size(); ++k)
         check_bounded(function, "categorical outcome out of support",

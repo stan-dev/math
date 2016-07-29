@@ -34,8 +34,6 @@ namespace stan {
 
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      using stan::math::multiply_lower_tri_self_transpose;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
       Matrix<T, Dynamic, Dynamic> L(K, K);
@@ -76,7 +74,6 @@ namespace stan {
 
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
       if (x.size() != (K * (K + 1)) / 2)

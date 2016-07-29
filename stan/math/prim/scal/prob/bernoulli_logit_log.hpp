@@ -30,13 +30,6 @@ namespace stan {
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_bounded;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1p;
-      using stan::math::inv_logit;
       using std::exp;
 
       // check if any vectors are zero length

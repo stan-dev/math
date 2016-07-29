@@ -30,9 +30,6 @@ namespace stan {
 
       static const char* function("stan::math::multi_normal_rng");
 
-      using stan::math::check_finite;
-      using stan::math::check_positive;
-      using stan::math::check_symmetric;
 
       check_positive(function, "Covariance matrix rows", S.rows());
       check_symmetric(function, "Covariance matrix", S);

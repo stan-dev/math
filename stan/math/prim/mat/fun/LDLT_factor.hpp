@@ -71,7 +71,6 @@ namespace stan {
       }
 
       inline bool success() const {
-        using stan::math::is_nan;
         // bool ret;
         // ret = _ldltP->info() == Eigen::Success;
         // ret = ret && _ldltP->isPositive();

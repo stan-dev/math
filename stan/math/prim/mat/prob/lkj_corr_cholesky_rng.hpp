@@ -54,7 +54,6 @@ namespace stan {
                           RNG& rng) {
       static const char* function("stan::math::lkj_corr_cholesky_rng");
 
-      using stan::math::check_positive;
 
       check_positive(function, "Shape parameter", eta);
 

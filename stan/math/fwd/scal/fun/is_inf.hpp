@@ -19,7 +19,6 @@ namespace stan {
     inline
     int
     is_inf(const fvar<T>& x) {
-      using stan::math::is_inf;
       return is_inf(x.val());
     }
 

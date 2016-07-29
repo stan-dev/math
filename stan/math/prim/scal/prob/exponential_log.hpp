@@ -60,10 +60,6 @@ namespace stan {
             && stan::length(beta)))
         return 0.0;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using std::log;
 
       T_partials_return logp(0.0);

@@ -29,11 +29,6 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return cdf(1.0);
       // check if any vectors are zero length
@@ -58,7 +53,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale, T_inv_scale>
         operands_and_partials(y, mu, sigma, lambda);
 
-      using stan::math::SQRT_2;
       using std::exp;
 
       VectorView<const T_y> y_vec(y);

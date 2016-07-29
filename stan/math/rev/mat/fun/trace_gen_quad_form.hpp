@@ -28,7 +28,6 @@ namespace stan {
         { }
 
         double compute() {
-          using stan::math::value_of;
           return stan::math::trace_gen_quad_form(value_of(D_),
                                                  value_of(A_),
                                                  value_of(B_));
@@ -86,7 +85,6 @@ namespace stan {
           : vari(impl->compute()), _impl(impl) { }
 
         virtual void chain() {
-          using stan::math::value_of;
           computeAdjoints(adj_,
                           value_of(_impl->D_),
                           value_of(_impl->A_),

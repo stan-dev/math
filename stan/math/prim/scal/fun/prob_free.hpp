@@ -24,7 +24,6 @@ namespace stan {
     template <typename T>
     inline
     T prob_free(const T y) {
-      using stan::math::logit;
       stan::math::check_bounded<T, double, double>
         ("stan::math::prob_free", "Probability variable",
          y, 0, 1);

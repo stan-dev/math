@@ -26,8 +26,6 @@ namespace stan {
 
       static const char* function("stan::math::lognormal_rng");
 
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

@@ -124,7 +124,6 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         vector<double> y(z.begin(), z.begin() + N_);
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
@@ -209,7 +208,6 @@ namespace stan {
        */
       std::vector<std::vector<stan::math::var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
-        using stan::math::precomputed_gradients;
         std::vector<stan::math::var> temp_vars(N_);
         std::vector<double> temp_gradients(M_);
         std::vector<std::vector<stan::math::var> > y_return(y.size());
@@ -323,7 +321,6 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
@@ -407,8 +404,6 @@ namespace stan {
        */
       std::vector<std::vector<stan::math::var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
-        using stan::math::precomputed_gradients;
-        using stan::math::var;
         using std::vector;
 
         vector<var> temp_vars(N_);
@@ -540,7 +535,6 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
@@ -625,8 +619,6 @@ namespace stan {
       std::vector<std::vector<stan::math::var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
         using std::vector;
-        using stan::math::var;
-        using stan::math::precomputed_gradients;
 
         vector<var> vars = y0_;
         vars.insert(vars.end(), theta_.begin(), theta_.end());

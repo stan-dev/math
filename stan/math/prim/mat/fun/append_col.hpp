@@ -39,7 +39,6 @@ namespace stan {
                const Eigen::Matrix<T2, R2, C2>& B) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::check_size_match;
 
       int Arows = A.rows();
       int Brows = B.rows();

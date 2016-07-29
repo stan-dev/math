@@ -57,11 +57,6 @@ namespace stan {
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -101,7 +96,6 @@ namespace stan {
         operands_and_partials(y, alpha, beta);
 
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using boost::math::digamma;
       using std::log;
 

@@ -24,9 +24,6 @@ namespace stan {
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       static const char* function("stan::math::multinomial_log");
 
-      using stan::math::check_nonnegative;
-      using stan::math::check_simplex;
-      using stan::math::check_size_match;
       using boost::math::tools::promote_args;
       using boost::math::lgamma;
 
@@ -36,7 +33,6 @@ namespace stan {
       check_size_match(function,
                        "Size of number of trials variable", ns.size(),
                        "rows of probabilities parameter", theta.rows());
-      using stan::math::multiply_log;
 
       if (include_summand<propto>::value) {
         double sum = 1.0;

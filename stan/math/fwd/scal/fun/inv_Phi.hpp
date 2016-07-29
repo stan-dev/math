@@ -12,7 +12,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> inv_Phi(const fvar<T>& p) {
-      using stan::math::inv_Phi;
       using std::exp;
       T xv = inv_Phi(p.val_);
       return fvar<T>(xv,

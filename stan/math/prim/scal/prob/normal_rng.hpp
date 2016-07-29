@@ -20,9 +20,6 @@ namespace stan {
                RNG& rng) {
       using boost::variate_generator;
       using boost::normal_distribution;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
 
       static const char* function("stan::math::normal_rng");
 

@@ -15,7 +15,6 @@ namespace stan {
     template<typename T>
     T grad_reg_inc_gamma(T a, T z, T g, T dig, T precision = 1e-6) {
       using boost::math::isinf;
-      using stan::math::gamma_p;
       using std::domain_error;
       using std::exp;
       using std::fabs;

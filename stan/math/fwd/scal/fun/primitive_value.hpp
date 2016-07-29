@@ -18,7 +18,6 @@ namespace stan {
      */
     template <typename T>
     inline double primitive_value(const fvar<T>& v) {
-      using stan::math::primitive_value;
       return primitive_value(v.val_);
     }
 

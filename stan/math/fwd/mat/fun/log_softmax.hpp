@@ -14,8 +14,6 @@ namespace stan {
     inline
     Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>
     log_softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
-      using stan::math::softmax;
-      using stan::math::log_softmax;
       using Eigen::Matrix;
       using Eigen::Dynamic;
 

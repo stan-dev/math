@@ -33,7 +33,6 @@ namespace stan {
       // Error checks
       static const char* function("stan::math::beta_rng");
 
-      using stan::math::check_positive_finite;
 
       check_positive_finite(function, "First shape parameter", alpha);
       check_positive_finite(function, "Second shape parameter", beta);

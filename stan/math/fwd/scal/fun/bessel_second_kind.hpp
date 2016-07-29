@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_BESSEL_SECOND_KIND_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 
 namespace stan {
@@ -12,8 +11,6 @@ namespace stan {
     inline
     fvar<T>
     bessel_second_kind(int v, const fvar<T>& z) {
-      using stan::math::bessel_second_kind;
-
       T bessel_second_kind_z(bessel_second_kind(v, z.val_));
       return fvar<T>(bessel_second_kind_z,
                      v * z.d_ * bessel_second_kind_z / z.val_

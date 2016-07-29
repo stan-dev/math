@@ -64,14 +64,6 @@ namespace stan {
       using Eigen::Dynamic;
       using Eigen::Lower;
       using Eigen::Matrix;
-      using stan::math::check_greater;
-      using stan::math::check_ldlt_factor;
-      using stan::math::check_size_match;
-      using stan::math::check_square;
-      using stan::math::index_type;
-      using stan::math::LDLT_factor;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::mdivide_left_ldlt;
 
       typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
         = W.rows();
@@ -94,8 +86,6 @@ namespace stan {
                              ldlt_S))
         return lp;
 
-      using stan::math::trace;
-      using stan::math::lmgamma;
       if (include_summand<propto, T_dof>::value)
         lp += nu * k * NEG_LOG_TWO_OVER_TWO;
 

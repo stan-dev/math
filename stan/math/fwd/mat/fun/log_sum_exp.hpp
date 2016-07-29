@@ -16,11 +16,7 @@ namespace stan {
     template <typename T, int R, int C>
     fvar<T>
     log_sum_exp(const Eigen::Matrix<fvar<T>, R, C>& v) {
-      using stan::math::log_sum_exp;
-      using stan::math::log_sum_exp;
-      using stan::math::exp;
       using std::exp;
-      using stan::math::log;
       using std::log;
 
       Eigen::Matrix<T, 1, Eigen::Dynamic> vals(v.size());

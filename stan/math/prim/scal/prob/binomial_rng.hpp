@@ -33,10 +33,6 @@ namespace stan {
 
       static const char* function("stan::math::binomial_rng");
 
-      using stan::math::check_finite;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_nonnegative;
 
       check_nonnegative(function, "Population size parameter", N);
       check_finite(function, "Probability parameter", theta);

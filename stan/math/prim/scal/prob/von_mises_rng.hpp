@@ -31,7 +31,6 @@ namespace stan {
                   const double kappa,
                   RNG& rng) {
       using boost::variate_generator;
-      using stan::math::uniform_rng;
       using std::fmod;
       using std::log;
       using std::pow;

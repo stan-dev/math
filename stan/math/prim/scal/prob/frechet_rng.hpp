@@ -31,9 +31,6 @@ namespace stan {
 
       static const char* function("stan::math::frechet_rng");
 
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive;
 
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Shape parameter", alpha);

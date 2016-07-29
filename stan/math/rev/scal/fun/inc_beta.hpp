@@ -21,9 +21,6 @@ namespace stan {
                       avi, bvi, cvi) {
         }
         void chain() {
-          using stan::math::digamma;
-          using stan::math::lbeta;
-
           double d_a; double d_b;
           stan::math::grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_,
                                         cvi_->val_, digamma(avi_->val_),

@@ -28,9 +28,6 @@ namespace stan {
       using boost::random::uniform_01;
       using std::log;
       using std::abs;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::log1m;
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

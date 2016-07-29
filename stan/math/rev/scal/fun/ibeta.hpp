@@ -52,7 +52,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -84,7 +83,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_ -
             tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -114,7 +112,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -141,7 +138,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -166,7 +162,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           bvi_->adj_ += adj_ *
             (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
              * ibeta_hypergeometric_helper(b, 1-a, 1-c)
@@ -193,7 +188,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           bvi_->adj_ += adj_ *
             (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
              * ibeta_hypergeometric_helper(b, 1-a, 1-c)

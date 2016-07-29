@@ -17,7 +17,6 @@ namespace stan {
     struct lgamma_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::lgamma;
         return lgamma(x);
       }
     };

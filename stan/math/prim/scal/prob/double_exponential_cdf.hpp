@@ -47,10 +47,6 @@ namespace stan {
               && stan::length(sigma) ) )
         return 1.0;
 
-      using stan::math::value_of;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
       using std::exp;
 

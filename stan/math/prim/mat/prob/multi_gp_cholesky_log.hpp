@@ -50,14 +50,7 @@ namespace stan {
         typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
       T_lp lp(0.0);
 
-      using stan::math::mdivide_left_tri_low;
-      using stan::math::dot_self;
-      using stan::math::sum;
-      using stan::math::log;
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_positive;
 
       check_size_match(function,
                        "Size of random variable (rows y)", y.rows(),

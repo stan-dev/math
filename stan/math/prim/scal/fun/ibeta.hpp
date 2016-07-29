@@ -23,8 +23,6 @@ namespace stan {
     inline double ibeta(const double a,
                         const double b,
                         const double x) {
-      using stan::math::check_not_nan;
-
       check_not_nan("ibeta", "a", a);
       check_not_nan("ibeta", "b", b);
       check_not_nan("ibeta", "x", x);
@@ -33,5 +31,4 @@ namespace stan {
 
   }
 }
-
 #endif

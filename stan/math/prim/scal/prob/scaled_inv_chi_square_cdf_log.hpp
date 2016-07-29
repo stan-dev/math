@@ -40,11 +40,6 @@ namespace stan {
 
       static const char* function("stan::math::scaled_inv_chi_square_cdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return P(0.0);
@@ -75,8 +70,6 @@ namespace stan {
       }
 
       // Compute cdf_log and its gradients
-      using stan::math::gamma_q;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;

@@ -29,14 +29,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
       using stan::is_constant_struct;
-      using stan::math::square;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return cdf(1.0);

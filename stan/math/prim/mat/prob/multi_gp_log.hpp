@@ -51,19 +51,7 @@ namespace stan {
         T_lp;
       T_lp lp(0.0);
 
-      using stan::math::sum;
-      using stan::math::log;
-      using stan::math::LDLT_factor;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::trace_gen_inv_quad_form_ldlt;
 
-      using stan::math::check_size_match;
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_symmetric;
-      using stan::math::check_ldlt_factor;
-      using stan::math::check_not_nan;
 
       check_positive(function, "Kernel rows", Sigma.rows());
       check_finite(function, "Kernel", Sigma);

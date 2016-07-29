@@ -27,9 +27,6 @@ namespace stan {
       static const char* function("stan::math::poisson_log_rng");
       static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
 
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less;
       using std::exp;
 
       check_not_nan(function, "Log rate parameter", alpha);

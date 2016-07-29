@@ -33,7 +33,6 @@ namespace stan {
                        const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
 
       typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
 

@@ -32,11 +32,6 @@ namespace stan {
       static const char* function("stan::math::poisson_log");
 
       using boost::math::lgamma;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::include_summand;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -73,7 +68,6 @@ namespace stan {
       // return accumulator with gradients
       OperandsAndPartials<T_rate> operands_and_partials(lambda);
 
-      using stan::math::multiply_log;
       for (size_t i = 0; i < size; i++) {
         if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
           if (include_summand<propto>::value)

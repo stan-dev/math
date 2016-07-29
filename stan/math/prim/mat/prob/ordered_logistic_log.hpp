@@ -24,8 +24,6 @@ namespace stan {
     template <typename T>
     inline T log_inv_logit_diff(const T& alpha, const T& beta) {
       using std::exp;
-      using stan::math::log1m_exp;
-      using stan::math::log1p_exp;
       return beta + log1m_exp(alpha - beta) - log1p_exp(alpha)
         - log1p_exp(beta);
     }
@@ -61,19 +59,9 @@ namespace stan {
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       using std::exp;
       using std::log;
-      using stan::math::inv_logit;
-      using stan::math::log1m;
-      using stan::math::log1p_exp;
 
       static const char* function("stan::math::ordered_logistic");
 
-      using stan::math::check_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater;
-      using stan::math::check_bounded;
 
       int K = c.size() + 1;
 

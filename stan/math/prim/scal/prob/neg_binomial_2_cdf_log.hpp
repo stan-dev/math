@@ -19,9 +19,6 @@ namespace stan {
     neg_binomial_2_cdf_log(const T_n& n,
                            const T_location& mu,
                            const T_precision& phi) {
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
       using std::log;
 
       // check if any vectors are zero length

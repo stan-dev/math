@@ -49,7 +49,6 @@ namespace stan {
 
         inline static double var_dot(const T1* v1, const T2* v2,
                                      size_t length) {
-          using stan::math::value_of;
           Eigen::VectorXd vd1(length), vd2(length);
           for (size_t i = 0; i < length; i++) {
             vd1[i] = value_of(v1[i]);
@@ -61,8 +60,6 @@ namespace stan {
         template<typename Derived1, typename Derived2>
         inline static double var_dot(const Eigen::DenseBase<Derived1> &v1,
                                      const Eigen::DenseBase<Derived2> &v2) {
-          using stan::math::value_of;
-          using stan::math::value_of;
           Eigen::VectorXd vd1(v1.size()), vd2(v1.size());
           for (int i = 0; i < v1.size(); i++) {
             vd1[i] = value_of(v1[i]);

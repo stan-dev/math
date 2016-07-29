@@ -28,8 +28,6 @@ namespace stan {
 
       static const char* function("stan::math::gumbel_rng");
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
 
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", beta);

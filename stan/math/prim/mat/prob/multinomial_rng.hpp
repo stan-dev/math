@@ -23,8 +23,6 @@ namespace stan {
                     const int N,
                     RNG& rng) {
       static const char* function("stan::math::multinomial_rng");
-      using stan::math::check_simplex;
-      using stan::math::check_positive;
 
       check_simplex(function, "Probabilites parameter", theta);
       check_positive(function, "number of trials variables", N);

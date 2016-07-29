@@ -18,7 +18,6 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::square;
 
       stan::math::check_square("cholesky_corr_free", "x", x);
       // should validate lower-triangular, unit lengths

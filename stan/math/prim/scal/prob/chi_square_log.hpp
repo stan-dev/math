@@ -55,11 +55,6 @@ namespace stan {
             && stan::length(nu)))
         return 0.0;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return logp(0.0);
       check_not_nan(function, "Random variable", y);
@@ -84,7 +79,6 @@ namespace stan {
 
       using boost::math::digamma;
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_dof>::value,

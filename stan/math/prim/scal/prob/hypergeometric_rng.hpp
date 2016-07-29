@@ -15,8 +15,6 @@ namespace stan {
     hypergeometric_rng(int N, int a, int b, RNG& rng) {
       using boost::variate_generator;
       using boost::math::hypergeometric_distribution;
-      using stan::math::check_bounded;
-      using stan::math::check_positive;
 
       static const char* function("stan::math::hypergeometric_rng");
 

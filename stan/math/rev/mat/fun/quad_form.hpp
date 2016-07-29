@@ -38,7 +38,6 @@ namespace stan {
                              const Eigen::Matrix<TB, RB, CB>& B,
                              bool symmetric = false)
         : A_(A), B_(B), C_(B_.cols(), B_.cols()), _sym(symmetric) {
-          using stan::math::value_of;
           compute(value_of(A), value_of(B));
         }
 
@@ -99,7 +98,6 @@ namespace stan {
         }
 
         virtual void chain() {
-          using stan::math::value_of;
           Eigen::Matrix<double, CB, CB> adjC(_impl->C_.rows(),
                                              _impl->C_.cols());
 

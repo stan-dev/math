@@ -17,8 +17,6 @@ namespace stan {
                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& v,
                          double& fx,
                          Eigen::Matrix<double, Eigen::Dynamic, 1>& Hv) {
-      using stan::math::fvar;
-      using stan::math::var;
       using Eigen::Matrix;
       start_nested();
       try {

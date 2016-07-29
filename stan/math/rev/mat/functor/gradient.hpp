@@ -43,7 +43,6 @@ namespace stan {
              const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
              double& fx,
              Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
-      using stan::math::var;
       start_nested();
       try {
         Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());

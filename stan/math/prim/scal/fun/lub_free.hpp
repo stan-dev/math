@@ -44,7 +44,6 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T, TL, TU>::type
     lub_free(const T y, TL lb, TU ub) {
-      using stan::math::logit;
       stan::math::check_bounded<T, TL, TU>
         ("stan::math::lub_free",
          "Bounded variable",

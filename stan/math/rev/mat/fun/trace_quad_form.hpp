@@ -25,7 +25,6 @@ namespace stan {
         { }
 
         double compute() {
-          using stan::math::value_of;
           return stan::math::trace_quad_form(value_of(A_),
                                              value_of(B_));
         }
@@ -79,7 +78,6 @@ namespace stan {
         : vari(impl->compute()), _impl(impl) { }
 
         virtual void chain() {
-          using stan::math::value_of;
           chainAB(_impl->A_, _impl->B_,
                   value_of(_impl->A_), value_of(_impl->B_),
                   adj_);

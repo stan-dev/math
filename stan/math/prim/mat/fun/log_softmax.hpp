@@ -44,7 +44,6 @@ namespace stan {
     log_softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
       using std::exp;
       using std::log;
-      using stan::math::log_sum_exp;
       stan::math::check_nonzero_size("log_softmax", "v", v);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
       T z = log_sum_exp(v);

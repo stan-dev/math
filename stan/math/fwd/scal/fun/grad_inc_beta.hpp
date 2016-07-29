@@ -26,10 +26,6 @@ namespace stan {
                        stan::math::fvar<T> a,
                        stan::math::fvar<T> b,
                        stan::math::fvar<T> z) {
-      using stan::math::value_of;
-      using stan::math::value_of;
-      using stan::math::log1m;
-
       stan::math::fvar<T> c1 = log(z);
       stan::math::fvar<T> c2 = log1m(z);
       stan::math::fvar<T> c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);

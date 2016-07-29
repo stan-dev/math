@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("stan::math::exponential_rng");
 
-      using stan::math::check_positive_finite;
 
       check_positive_finite(function, "Inverse scale parameter", beta);
 

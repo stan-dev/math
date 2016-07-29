@@ -40,11 +40,6 @@ namespace stan {
       // Error checks
       static const char* function("stan::math::logistic_cdf");
 
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using boost::math::tools::promote_args;
       using std::exp;
 

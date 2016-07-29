@@ -15,9 +15,6 @@ namespace stan {
     trace_gen_quad_form(const Eigen::Matrix<fvar<T>, RD, CD> &D,
                         const Eigen::Matrix<fvar<T>, RA, CA> &A,
                         const Eigen::Matrix<fvar<T>, RB, CB> &B) {
-      using stan::math::multiply;
-      using stan::math::multiply;
-
       stan::math::check_square("trace_gen_quad_form", "A", A);
       stan::math::check_square("trace_gen_quad_form", "D", D);
       stan::math::check_multiplicable("trace_gen_quad_form",

@@ -51,9 +51,6 @@ namespace stan {
 
     template <typename T_shape>
     T_shape do_lkj_constant(const T_shape& eta, const unsigned int& K) {
-      using stan::math::sum;
-      using stan::math::lgamma;
-
       // Lewandowski, Kurowicka, and Joe (2009) theorem 5
       T_shape constant;
       const int Km1 = K - 1;
@@ -87,9 +84,6 @@ namespace stan {
                  const T_shape& eta) {
       static const char* function("stan::math::lkj_corr_log");
 
-      using stan::math::check_positive;
-      using stan::math::check_corr_matrix;
-      using stan::math::sum;
       using boost::math::tools::promote_args;
 
       typename promote_args<T_y, T_shape>::type lp(0.0);

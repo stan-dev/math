@@ -95,20 +95,6 @@ namespace stan {
         typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type T_lp;
       T_lp lp(0.0);
 
-      using stan::math::add;
-      using stan::math::check_cov_matrix;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_size_match;
-      using stan::math::check_spsd_matrix;
-      using stan::math::check_square;
-      using stan::math::inverse_spd;
-      using stan::math::log_determinant_spd;
-      using stan::math::multiply;
-      using stan::math::quad_form_sym;
-      using stan::math::subtract;
-      using stan::math::trace_quad_form;
-      using stan::math::transpose;
 
       int r = y.rows();  // number of variables
       int T = y.cols();  // number of observations
@@ -301,20 +287,6 @@ namespace stan {
         T_lp;
       T_lp lp(0.0);
 
-      using stan::math::add;
-      using stan::math::check_cov_matrix;
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_size_match;
-      using stan::math::check_spsd_matrix;
-      using stan::math::dot_product;
-      using stan::math::multiply;
-      using stan::math::quad_form_sym;
-      using stan::math::subtract;
-      using stan::math::tcrossprod;
-      using stan::math::trace_quad_form;
-      using stan::math::transpose;
       using std::log;
 
       int r = y.rows();  // number of variables

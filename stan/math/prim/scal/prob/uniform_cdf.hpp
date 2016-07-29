@@ -25,11 +25,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_greater;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
 
       // check if any vectors are zero length
       if (!(stan::length(y)

@@ -24,10 +24,7 @@ namespace stan {
                     RNG& rng) {
       static const char* function("stan::math::inv_wishart_rng");
 
-      using stan::math::check_greater;
-      using stan::math::check_square;
       using Eigen::MatrixXd;
-      using stan::math::index_type;
 
       typename index_type<MatrixXd>::type k = S.rows();
 

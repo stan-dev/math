@@ -23,8 +23,6 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     mdivide_right(const Eigen::Matrix<fvar<T>, R1, C1> &A,
                   const Eigen::Matrix<fvar<T>, R2, C2> &b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_right;
       stan::math::check_square("mdivide_right", "b", b);
       stan::math::check_multiplicable("mdivide_right",
                                                 "A", A,
@@ -67,8 +65,6 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     mdivide_right(const Eigen::Matrix<fvar<T>, R1, C1> &A,
                   const Eigen::Matrix<double, R2, C2> &b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_right;
       stan::math::check_square("mdivide_right", "b", b);
       stan::math::check_multiplicable("mdivide_right",
                                                 "A", A,
@@ -94,8 +90,6 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     mdivide_right(const Eigen::Matrix<double, R1, C1> &A,
                   const Eigen::Matrix<fvar<T>, R2, C2> &b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_right;
       stan::math::check_square("mdivide_right", "b", b);
       stan::math::check_multiplicable("mdivide_right",
                                                 "A", A,

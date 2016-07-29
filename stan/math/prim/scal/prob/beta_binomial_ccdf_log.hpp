@@ -33,11 +33,6 @@ namespace stan {
                                                   T_size2>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
@@ -66,9 +61,6 @@ namespace stan {
       size_t size = max_size(n, N, alpha, beta);
 
       // Compute vectorized cdf_log and gradient
-      using stan::math::lgamma;
-      using stan::math::lbeta;
-      using stan::math::digamma;
       using std::exp;
       using std::log;
       using std::exp;

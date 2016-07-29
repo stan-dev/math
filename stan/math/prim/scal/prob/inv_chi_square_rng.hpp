@@ -31,7 +31,6 @@ namespace stan {
 
       static const char* function("stan::math::inv_chi_square_rng");
 
-      using stan::math::check_positive_finite;
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
 

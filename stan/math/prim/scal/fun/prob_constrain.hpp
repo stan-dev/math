@@ -24,7 +24,6 @@ namespace stan {
     template <typename T>
     inline
     T prob_constrain(const T x) {
-      using stan::math::inv_logit;
       return inv_logit(x);
     }
 
@@ -52,8 +51,6 @@ namespace stan {
     template <typename T>
     inline
     T prob_constrain(const T x, T& lp) {
-      using stan::math::inv_logit;
-      using stan::math::log1m;
       using std::log;
       T inv_logit_x = inv_logit(x);
       lp += log(inv_logit_x) + log1m(inv_logit_x);

@@ -41,12 +41,6 @@ namespace stan {
 
       static const char* function("stan::math::binomial_log");
 
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -76,9 +70,6 @@ namespace stan {
 
       OperandsAndPartials<T_prob> operands_and_partials(theta);
 
-      using stan::math::multiply_log;
-      using stan::math::binomial_coefficient_log;
-      using stan::math::log1m;
 
       if (include_summand<propto>::value) {
         for (size_t i = 0; i < size; ++i)

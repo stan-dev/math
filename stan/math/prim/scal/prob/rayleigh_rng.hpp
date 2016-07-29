@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("stan::math::rayleigh_rng");
 
-      using stan::math::check_positive;
 
       check_positive(function, "Scale parameter", sigma);
 

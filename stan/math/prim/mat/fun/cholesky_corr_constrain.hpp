@@ -21,7 +21,6 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::square;
       int k_choose_2 = (K * (K - 1)) / 2;
       if (k_choose_2 != y.size()) {
         throw std::domain_error("y is not a valid unconstrained cholesky "
@@ -60,8 +59,6 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::log1m;
-      using stan::math::square;
       int k_choose_2 = (K * (K - 1)) / 2;
       if (k_choose_2 != y.size()) {
         throw std::domain_error("y is not a valid unconstrained cholesky "

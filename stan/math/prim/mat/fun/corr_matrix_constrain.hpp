@@ -41,7 +41,6 @@ namespace stan {
                           <Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k_choose_2 = (k * (k - 1)) / 2;
@@ -81,7 +80,6 @@ namespace stan {
       using Eigen::Array;
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k_choose_2 = (k * (k - 1)) / 2;

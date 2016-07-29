@@ -12,7 +12,6 @@ namespace stan {
     template <typename T>
     inline fvar<T>
     exp2(const fvar<T>& x) {
-      using stan::math::exp2;
       using std::log;
       return fvar<T>(exp2(x.val_), x.d_ * exp2(x.val_) * stan::math::LOG_2);
     }

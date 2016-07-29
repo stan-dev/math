@@ -61,7 +61,6 @@ namespace stan {
      */
     inline var fmax(const stan::math::var& a,
                     const stan::math::var& b) {
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(is_nan(a))) {
         if (unlikely(is_nan(b)))
           return var(new precomp_vv_vari(NOT_A_NUMBER,
@@ -93,7 +92,6 @@ namespace stan {
      */
     inline var fmax(const stan::math::var& a,
                     const double& b) {
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(is_nan(a))) {
         if (unlikely(is_nan(b)))
           return var(new precomp_v_vari(stan::math::NOT_A_NUMBER,
@@ -125,7 +123,6 @@ namespace stan {
      */
     inline var fmax(const double& a,
                     const stan::math::var& b) {
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(is_nan(b))) {
         if (unlikely(is_nan(a)))
           return var(new precomp_v_vari(stan::math::NOT_A_NUMBER,

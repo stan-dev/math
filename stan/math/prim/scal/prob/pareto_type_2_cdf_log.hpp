@@ -40,15 +40,6 @@ namespace stan {
       // Check errors
       static const char* function("stan::math::pareto_type_2_cdf_log");
 
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::log1m;
       using std::log;
 
       T_partials_return P(0.0);

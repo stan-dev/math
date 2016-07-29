@@ -40,12 +40,6 @@ namespace stan {
 
       static const char* function("stan::prob::neg_binomial_2_log_log");
 
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive_finite;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -66,10 +60,6 @@ namespace stan {
       if (!include_summand<propto, T_log_location, T_precision>::value)
         return 0.0;
 
-      using stan::math::multiply_log;
-      using stan::math::log_sum_exp;
-      using stan::math::digamma;
-      using stan::math::lgamma;
       using std::exp;
       using std::log;
 

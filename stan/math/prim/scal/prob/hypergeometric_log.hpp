@@ -29,11 +29,6 @@ namespace stan {
                        const T_a& a, const T_b& b) {
       static const char* function("stan::math::hypergeometric_log");
 
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_greater;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(n)

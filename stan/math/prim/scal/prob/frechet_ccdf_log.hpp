@@ -33,11 +33,7 @@ namespace stan {
 
       static const char* function("stan::math::frechet_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -53,7 +49,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_shape, T_scale>
         operands_and_partials(y, alpha, sigma);
 
-      using stan::math::log1m;
       using std::log;
       using std::exp;
       VectorView<const T_y> y_vec(y);

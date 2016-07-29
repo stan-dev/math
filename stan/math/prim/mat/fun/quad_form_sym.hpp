@@ -18,8 +18,6 @@ namespace stan {
     inline Eigen::Matrix<T, CB, CB>
     quad_form_sym(const Eigen::Matrix<T, RA, CA>& A,
                   const Eigen::Matrix<T, RB, CB>& B) {
-      using stan::math::multiply;
-
       stan::math::check_square("quad_form_sym", "A", A);
       stan::math::check_multiplicable("quad_form_sym",
                                                 "A", A,
@@ -33,9 +31,6 @@ namespace stan {
     inline T
     quad_form_sym(const Eigen::Matrix<T, RA, CA>& A,
                   const Eigen::Matrix<T, RB, 1>& B) {
-      using stan::math::multiply;
-      using stan::math::dot_product;
-
       stan::math::check_square("quad_form_sym", "A", A);
       stan::math::check_multiplicable("quad_form_sym",
                                                 "A", A,
@@ -43,8 +38,7 @@ namespace stan {
       stan::math::check_symmetric("quad_form_sym", "A", A);
       return dot_product(B, multiply(A, B));
     }
+
   }
 }
-
 #endif
-

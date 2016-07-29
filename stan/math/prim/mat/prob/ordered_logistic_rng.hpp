@@ -24,17 +24,9 @@ namespace stan {
                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& c,
                          RNG& rng) {
       using boost::variate_generator;
-      using stan::math::inv_logit;
 
       static const char* function("stan::math::ordered_logistic");
 
-      using stan::math::check_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater;
-      using stan::math::check_bounded;
 
       check_finite(function, "Location parameter", eta);
       check_greater(function, "Size of cut points parameter", c.size(), 0);

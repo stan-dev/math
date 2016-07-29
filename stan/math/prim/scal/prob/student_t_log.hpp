@@ -61,10 +61,6 @@ namespace stan {
                                                   T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -97,10 +93,6 @@ namespace stan {
       size_t N = max_size(y, nu, mu, sigma);
 
       using std::log;
-      using stan::math::digamma;
-      using stan::math::lgamma;
-      using stan::math::square;
-      using stan::math::value_of;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,

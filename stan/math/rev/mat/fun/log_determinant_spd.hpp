@@ -12,7 +12,6 @@ namespace stan {
 
     template <int R, int C>
     inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
-      using stan::math::domain_error;
       using Eigen::Matrix;
 
       math::check_square("log_determinant_spd", "m", m);

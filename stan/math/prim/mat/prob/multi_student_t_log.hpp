@@ -38,16 +38,7 @@ namespace stan {
                         const T_scale& Sigma) {
       static const char* function("stan::math::multi_student_t");
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_symmetric;
-      using stan::math::check_positive;
       using boost::math::lgamma;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::LDLT_factor;
-      using stan::math::check_ldlt_factor;
-      using stan::math::log1p;
       using std::log;
 
       typedef typename scalar_type<T_scale>::type T_scale_elem;
@@ -136,9 +127,6 @@ namespace stan {
       if (include_summand<propto>::value)
         lp -= (0.5 * size_y) * LOG_PI * size_vec;
 
-      using stan::math::multiply;
-      using stan::math::dot_product;
-      using stan::math::subtract;
       using Eigen::Array;
 
       if (include_summand<propto, T_scale_elem>::value) {

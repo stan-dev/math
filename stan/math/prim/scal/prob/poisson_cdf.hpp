@@ -29,10 +29,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
 
       // Ensure non-zero argument slengths
       if (!(stan::length(n) && stan::length(lambda)))
@@ -53,8 +49,6 @@ namespace stan {
       size_t size = max_size(n, lambda);
 
       // Compute vectorized CDF and gradient
-      using stan::math::value_of;
-      using stan::math::gamma_q;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;

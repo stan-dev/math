@@ -30,12 +30,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::log1m;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
       using std::log;
 
       // check if any vectors are zero length

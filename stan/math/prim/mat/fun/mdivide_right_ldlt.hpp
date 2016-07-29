@@ -25,7 +25,6 @@ namespace stan {
                   R1, C2>
     mdivide_right_ldlt(const Eigen::Matrix<T1, R1, C1> &b,
                        const stan::math::LDLT_factor<T2, R2, C2> &A) {
-      using stan::math::transpose;
       stan::math::check_multiplicable("mdivide_right_ldlt",
                                                 "b", b,
                                                 "A", A);

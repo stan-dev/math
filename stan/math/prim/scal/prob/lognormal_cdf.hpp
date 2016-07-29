@@ -30,12 +30,7 @@ namespace stan {
 
       T_partials_return cdf = 1.0;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive_finite;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::exp;
       using std::log;
 

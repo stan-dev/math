@@ -29,7 +29,6 @@ namespace stan {
         var_squared_distance(const Eigen::Matrix<var, R1, C1> &v1,
                              const Eigen::Matrix<var, R2, C2> &v2) {
           using Eigen::Matrix;
-          using stan::math::index_type;
           typedef typename index_type<Matrix<var, R1, R2> >::type idx_t;
           double result = 0;
           for (idx_t i = 0; i < v1.size(); i++) {
@@ -73,7 +72,6 @@ namespace stan {
         var_squared_distance(const Eigen::Matrix<var, R1, C1> &v1,
                              const Eigen::Matrix<double, R2, C2> &v2) {
           using Eigen::Matrix;
-          using stan::math::index_type;
           typedef typename index_type<Matrix<double, R1, C1> >::type idx_t;
 
           double result = 0;

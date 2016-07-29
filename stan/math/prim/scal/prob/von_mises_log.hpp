@@ -35,14 +35,7 @@ namespace stan {
         return 0.0;
 
       using stan::is_constant_struct;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_greater;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
-      using stan::math::modified_bessel_first_kind;
       using std::log;
 
       // Result accumulator.

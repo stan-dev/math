@@ -27,7 +27,6 @@ namespace stan {
                      const size_t K) {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = read_corr_L(CPCs, K);
-      using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
 
@@ -56,7 +55,6 @@ namespace stan {
                      T& log_prob) {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = read_corr_L(CPCs, K, log_prob);
-      using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
 

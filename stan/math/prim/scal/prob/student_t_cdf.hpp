@@ -42,11 +42,6 @@ namespace stan {
 
       static const char* function("stan::math::student_t_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return P(1.0);
@@ -73,9 +68,6 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      using stan::math::digamma;
-      using stan::math::lbeta;
-      using stan::math::inc_beta;
       using std::pow;
       using std::exp;
 

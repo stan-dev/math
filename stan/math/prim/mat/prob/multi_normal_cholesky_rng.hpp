@@ -35,7 +35,6 @@ namespace stan {
 
       static const char* function("stan::math::multi_normal_cholesky_rng");
 
-      using stan::math::check_finite;
 
       check_finite(function, "Location parameter", mu);
 

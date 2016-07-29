@@ -36,13 +36,6 @@ namespace stan {
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -75,9 +68,7 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      using stan::math::square;
       using std::log;
-      using stan::math::NEG_LOG_SQRT_TWO_PI;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_scale>::value,

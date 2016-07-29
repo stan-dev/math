@@ -19,7 +19,6 @@ namespace stan {
     inline
     int
     is_nan(const fvar<T>& x) {
-      using stan::math::is_nan;
       return is_nan(x.val());
     }
 

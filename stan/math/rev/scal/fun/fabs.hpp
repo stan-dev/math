@@ -47,7 +47,6 @@ namespace stan {
      * @return Absolute value of variable.
      */
     inline var fabs(const var& a) {
-      using stan::math::NOT_A_NUMBER;
       // cut-and-paste from abs()
       if (a.val() > 0.0)
         return a;

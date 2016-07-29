@@ -31,9 +31,6 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
 
       T_partials_return P(1.0);
       // check if any vectors are zero length
@@ -58,11 +55,6 @@ namespace stan {
       size_t size = max_size(n, mu, phi);
 
       // Compute vectorized CDF and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::inc_beta_ddz;
-      using stan::math::inc_beta_dda;
-      using stan::math::digamma;
 
       OperandsAndPartials<T_location, T_precision>
         operands_and_partials(mu, phi);

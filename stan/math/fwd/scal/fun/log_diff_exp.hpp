@@ -11,8 +11,6 @@ namespace stan {
 
     template <typename T> inline fvar<T>
     log_diff_exp(const fvar<T>& x1, const fvar<T>& x2) {
-       using stan::math::log_diff_exp;
-       using stan::math::NOT_A_NUMBER;
        using std::exp;
        if (x1.val_ <= x2.val_)
          return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
@@ -23,8 +21,6 @@ namespace stan {
 
     template <typename T1, typename T2> inline fvar<T2>
     log_diff_exp(const T1& x1, const fvar<T2>& x2) {
-      using stan::math::log_diff_exp;
-      using stan::math::NOT_A_NUMBER;
       using std::exp;
       if (x1 <= x2.val_)
         return fvar<T2>(NOT_A_NUMBER, NOT_A_NUMBER);
@@ -34,8 +30,6 @@ namespace stan {
 
     template <typename T1, typename T2> inline fvar<T1>
     log_diff_exp(const fvar<T1>& x1, const T2& x2) {
-      using stan::math::log_diff_exp;
-      using stan::math::NOT_A_NUMBER;
       using std::exp;
       if (x1.val_ <= x2)
         return fvar<T1>(NOT_A_NUMBER, NOT_A_NUMBER);

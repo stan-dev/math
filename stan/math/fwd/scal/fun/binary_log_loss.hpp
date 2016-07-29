@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_BINARY_LOG_LOSS_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 
 namespace stan {
@@ -12,8 +11,6 @@ namespace stan {
     inline
     fvar<T>
     binary_log_loss(const int y, const fvar<T>& y_hat) {
-      using stan::math::binary_log_loss;
-
       if (y)
         return fvar<T>(binary_log_loss(y, y_hat.val_),
                        -y_hat.d_ / y_hat.val_);

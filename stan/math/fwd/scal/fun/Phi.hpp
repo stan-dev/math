@@ -11,7 +11,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> Phi(const fvar<T>& x) {
-      using stan::math::Phi;
       using std::exp;
       using std::sqrt;
       T xv = x.val_;

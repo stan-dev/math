@@ -58,10 +58,6 @@ namespace stan {
       using boost::math::tools::promote_args;
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::check_greater;
-      using stan::math::check_size_match;
-      using stan::math::check_square;
-      using stan::math::index_type;
 
       typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
         = S.rows();
@@ -76,12 +72,6 @@ namespace stan {
 
       // FIXME: domain checks
 
-      using stan::math::lmgamma;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::mdivide_left_ldlt;
-      using stan::math::trace;
-      using stan::math::LDLT_factor;
-      using stan::math::check_ldlt_factor;
 
       LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
       check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);

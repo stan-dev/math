@@ -46,13 +46,7 @@ namespace stan {
       // Error checks
       static const char* function("stan::math::beta_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return ccdf_log(0.0);
 
@@ -76,9 +70,6 @@ namespace stan {
         operands_and_partials(y, alpha, beta);
 
       // Compute CDF and its gradients
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::pow;
       using std::exp;
       using std::log;

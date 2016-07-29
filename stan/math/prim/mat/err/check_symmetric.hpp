@@ -41,7 +41,6 @@ namespace stan {
       check_square(function, name, y);
 
       using Eigen::Matrix;
-      using stan::math::index_type;
       using std::fabs;
       using Eigen::Dynamic;
 

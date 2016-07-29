@@ -31,10 +31,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      using stan::math::value_of;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
       // check if any vectors are zero length
@@ -102,7 +98,6 @@ namespace stan {
           log_alpha[n] = log(value_of(alpha_vec[n]));
       }
 
-      using stan::math::multiply_log;
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);

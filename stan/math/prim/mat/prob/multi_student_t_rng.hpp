@@ -33,10 +33,6 @@ namespace stan {
     ) {
       static const char* function("stan::math::multi_student_t_rng");
 
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_symmetric;
-      using stan::math::check_positive;
 
       check_finite(function, "Location parameter", mu);
       check_symmetric(function, "Scale parameter", s);

@@ -27,8 +27,6 @@ namespace stan {
                       RNG& rng) {
       static const char* function("stan::math::beta_binomial_rng");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
 
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,

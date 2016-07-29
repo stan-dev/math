@@ -29,10 +29,6 @@ namespace stan {
                 const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
                 RNG& rng) {
       using Eigen::MatrixXd;
-      using stan::math::index_type;
-      using stan::math::check_positive;
-      using stan::math::check_size_match;
-      using stan::math::check_square;
 
       static const char* function("stan::math::wishart_rng");
 

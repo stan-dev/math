@@ -75,7 +75,6 @@ namespace stan {
                               T& lp) {
       // cut-and-paste from above, so checks twice
 
-      using stan::math::sum;
       if (x.size() != ((N * (N + 1)) / 2 + (M - N) * N))
         throw std::domain_error("cholesky_factor_constrain: x.size() "
                                 "must be (k choose 2) + k");

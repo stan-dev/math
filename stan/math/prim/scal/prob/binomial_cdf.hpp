@@ -35,12 +35,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // Ensure non-zero arguments lenghts
       if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
@@ -64,9 +58,6 @@ namespace stan {
       size_t size = max_size(n, N, theta);
 
       // Compute vectorized CDF and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::lbeta;
       using std::exp;
       using std::pow;
       using std::exp;

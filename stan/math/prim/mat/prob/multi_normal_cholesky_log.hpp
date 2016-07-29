@@ -52,15 +52,7 @@ namespace stan {
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
 
-      using stan::math::mdivide_left_tri_low;
-      using stan::math::dot_self;
-      using stan::math::multiply;
-      using stan::math::subtract;
-      using stan::math::sum;
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
 
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);

@@ -56,13 +56,6 @@ namespace stan {
       // Error checks
       static const char* function("stan::math::gamma_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using boost::math::tools::promote_args;
       using std::exp;
 
@@ -95,8 +88,6 @@ namespace stan {
       }
 
       // Compute CDF and its gradients
-      using stan::math::gamma_p;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
