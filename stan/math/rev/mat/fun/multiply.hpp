@@ -102,9 +102,9 @@ namespace stan {
     template <typename TA, int RA_, int CA_, typename TB>
     class multiply_mat_scal_vari : public vari {
     public:
-      int RA, CA;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, RA_, CA_> Ad_;
+      int RA, CA, Asize;  // A.cols() = B.rows()
       const double Bd_;
+      double* Ad_a;
       vari** variRefA_;
       vari* variRefB_;
       vari** variRefAB_;
@@ -121,16 +121,20 @@ namespace stan {
      multiply_mat_scal_vari(const Eigen::Matrix<TA, RA_, CA_>& A,
                             const TB& B)
         : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          Ad_(value_of(A)), Bd_(value_of(B)),
+          RA(A.rows()), CA(A.cols()), Asize(A.size()),
+          Bd_(value_of(B)),
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.rows() * A.cols())),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * A.cols())),
           variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * A.cols())) {
-            Eigen::Matrix<double, RA_, CA_> AB
-              = Ad_ * Bd_;
-            for (size_type i = 0; i < A.size(); ++i) 
+            for (size_type i = 0; i < A.size(); ++i) { 
                 variRefA_[i] = A.coeffRef(i).vi_;
+                Ad_a[i] = A.coeffRef(i).val();
+            }
+            Eigen::Matrix<double, RA_, CA_> AB
+              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
             variRefB_ = B.vi_;
             for (size_type i = 0; i < AB.size(); ++i) 
                 variRefAB_[i] = new vari(AB.coeffRef(i), false);
@@ -138,6 +142,7 @@ namespace stan {
 
       virtual void chain() {
         using Eigen::Matrix;
+        using Eigen::Map;
         using Eigen::Infinity;
         Matrix<double, RA_, CA_> adjAB(RA, CA);
         Matrix<double, RA_, CA_> adjA(RA, CA);
@@ -146,68 +151,19 @@ namespace stan {
         for (size_type i = 0; i < adjAB.size(); ++i) 
             adjAB(i) = variRefAB_[i]->adj_;
         adjA = adjAB * Bd_;
-        adjB = (Ad_.array() * adjAB.array()).sum();
-        for (size_type i = 0; i < Ad_.size(); ++i) 
+        adjB = (Map<Eigen::Array<double,RA_,CA_> >(Ad_a,RA,CA) * adjAB.array()).sum();
+        for (size_type i = 0; i < Asize; ++i) 
             variRefA_[i]->adj_ += adjA(i); 
         variRefB_->adj_ += adjB; 
       }
     };
 
-    template <typename TA, int RA_, int CA_>
-    class multiply_mat_scal_vari<TA, RA_, CA_, double> : public vari {
-    public:
-      int RA, CA;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, RA_, CA_> Ad_;
-      const double Bd_;
-      vari** variRefA_;
-      vari** variRefAB_;
-
-      /* ctor for multiply function
-       *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
-       *
-       * @param matrix A
-       * @param matrix B
-       * */
-     multiply_mat_scal_vari(const Eigen::Matrix<TA, RA_, CA_>& A,
-                            const double B)
-        : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          Ad_(value_of(A)), Bd_(B),
-          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())),
-          variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())) {
-            Eigen::Matrix<double, RA_, CA_> AB
-              = Ad_ * Bd_;
-            for (size_type i = 0; i < A.size(); ++i) 
-                variRefA_[i] = A.coeffRef(i).vi_;
-            for (size_type i = 0; i < AB.size(); ++i) 
-                variRefAB_[i] = new vari(AB.coeffRef(i), false);
-        }
-
-      virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::Infinity;
-        Matrix<double, RA_, CA_> adjAB(RA, CA);
-        Matrix<double, RA_, CA_> adjA(RA, CA);
-
-        for (size_type i = 0; i < adjAB.size(); ++i) 
-            adjAB(i) = variRefAB_[i]->adj_;
-        adjA = adjAB * Bd_;
-        for (size_type i = 0; i < Ad_.size(); ++i) 
-            variRefA_[i]->adj_ += adjA(i); 
-      }
-    };
-
     template <int RA_, int CA_, typename TB>
-    class multiply_mat_scal_vari<double, RA_, CA_, TB> : public vari {
+    class multiply_mat_scal_vari<double,RA_,CA_,TB> : public vari {
     public:
-      int RA, CA;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, RA_, CA_> Ad_;
+      int RA, CA, Asize;  // A.cols() = B.rows()
       const double Bd_;
+      double* Ad_a;
       vari* variRefB_;
       vari** variRefAB_;
 
@@ -223,13 +179,71 @@ namespace stan {
      multiply_mat_scal_vari(const Eigen::Matrix<double, RA_, CA_>& A,
                             const TB& B)
         : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          Ad_(A), Bd_(value_of(B)),
+          RA(A.rows()), CA(A.cols()), Asize(A.size()),
+          Bd_(value_of(B)),
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.rows() * A.cols())),
           variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * A.cols())) {
+            for (size_type i = 0; i < A.size(); ++i) { 
+                Ad_a[i] = A.coeffRef(i);
+            }
             Eigen::Matrix<double, RA_, CA_> AB
-              = Ad_ * Bd_;
+              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
             variRefB_ = B.vi_;
+            for (size_type i = 0; i < AB.size(); ++i) 
+                variRefAB_[i] = new vari(AB.coeffRef(i), false);
+        }
+
+      virtual void chain() {
+        using Eigen::Matrix;
+        using Eigen::Map;
+        using Eigen::Infinity;
+        Matrix<double, RA_, CA_> adjAB(RA, CA);
+        double adjB;
+
+        for (size_type i = 0; i < adjAB.size(); ++i) 
+            adjAB(i) = variRefAB_[i]->adj_;
+        adjB = (Map<Eigen::Array<double,RA_,CA_> >(Ad_a,RA,CA) * adjAB.array()).sum();
+        variRefB_->adj_ += adjB; 
+      }
+    };
+
+    template <typename TA, int RA_, int CA_>
+    class multiply_mat_scal_vari<TA, RA_, CA_, double> : public vari {
+    public:
+      int RA, CA, Asize;  // A.cols() = B.rows()
+      const double Bd_;
+      double* Ad_a;
+      vari** variRefA_;
+      vari** variRefAB_;
+
+      /* ctor for multiply function
+       *
+       * Stores varis for A
+       * Stores varis for B
+       * Stores varis for AB
+       *
+       * @param matrix A
+       * @param matrix B
+       * */
+     multiply_mat_scal_vari(const Eigen::Matrix<TA, RA_, CA_>& A,
+                            const double B)
+        : vari(0.0),
+          RA(A.rows()), CA(A.cols()), Asize(A.size()),
+          Bd_(value_of(B)),
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.rows() * A.cols())),
+          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * A.cols())),
+          variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * A.cols())) {
+            for (size_type i = 0; i < A.size(); ++i) { 
+                variRefA_[i] = A.coeffRef(i).vi_;
+                Ad_a[i] = A.coeffRef(i).val();
+            }
+            Eigen::Matrix<double, RA_, CA_> AB
+              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
             for (size_type i = 0; i < AB.size(); ++i) 
                 variRefAB_[i] = new vari(AB.coeffRef(i), false);
         }
@@ -239,21 +253,21 @@ namespace stan {
         using Eigen::Infinity;
         Matrix<double, RA_, CA_> adjAB(RA, CA);
         Matrix<double, RA_, CA_> adjA(RA, CA);
-        double adjB;
 
         for (size_type i = 0; i < adjAB.size(); ++i) 
             adjAB(i) = variRefAB_[i]->adj_;
-        adjB = (Ad_.array() * adjAB.array()).sum();
-        variRefB_->adj_ += adjB; 
+        adjA = adjAB * Bd_;
+        for (size_type i = 0; i < Asize; ++i) 
+            variRefA_[i]->adj_ += adjA(i); 
       }
     };
 
     template <typename TA, int CA_, typename TB>
     class multiply_mat_vari<TA, 1, CA_, TB, 1> : public vari {
     public:
-      int RA, CA, CB;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, 1, CA_> Ad_;
-      const Eigen::Matrix<double, CA_, 1> Bd_;
+      int CA;  // A.cols() = B.rows()
+      double* Ad_a; // row_vector
+      double* Bd_a; // column_vector
       vari** variRefA_;
       vari** variRefB_;
       vari* variRefAB_;
@@ -268,36 +282,44 @@ namespace stan {
        * @param matrix B
        * */
      multiply_mat_vari(const Eigen::Matrix<TA, 1, CA_>& A,
-                          const Eigen::Matrix<TB, CA_, 1>& B)
+                       const Eigen::Matrix<TB, CA_, 1>& B)
         : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          CB(B.cols()),
-          Ad_(value_of(A)), Bd_(value_of(B)),
+          CA(A.cols()), 
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.cols())),
+          Bd_a(ChainableStack::memalloc_.alloc_array<double>
+               (B.rows())),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * A.cols())),
           variRefB_(ChainableStack::memalloc_.alloc_array<vari*>
                     (B.rows() * B.cols())) {
-            double AB = Ad_ * Bd_;
-            for (size_type i = 0; i < A.size(); ++i) 
+            for (size_type i = 0; i < A.size(); ++i) {
                 variRefA_[i] = A.coeffRef(i).vi_;
-            for (size_type i = 0; i < B.size(); ++i) 
+                Ad_a[i] = A.coeffRef(i).val();
+            }
+            for (size_type i = 0; i < B.size(); ++i) {
                 variRefB_[i] = B.coeffRef(i).vi_;
+                Bd_a[i] = B.coeffRef(i).val();
+            }
+            double AB = Eigen::Map<Eigen::Matrix<double, 1, CA_> > (Ad_a,1,CA)
+                        * Eigen::Map<Eigen::Matrix<double, CA_, 1> > (Bd_a,CA,1);
             variRefAB_ = new vari(AB, false);
         }
 
       virtual void chain() {
         using Eigen::Matrix;
+        using Eigen::Map;
         using Eigen::Infinity;
         double adjAB;
-        Matrix<double, 1, CA_> adjA(RA, CA);
-        Matrix<double, CA_, 1> adjB(CA, CB);
+        Matrix<double, 1, CA_> adjA(1, CA);
+        Matrix<double, CA_, 1> adjB(CA, 1);
 
         adjAB = variRefAB_->adj_;
-        adjA = adjAB * Bd_.transpose();
-        adjB = Ad_.transpose() * adjAB;
-        for (size_type i = 0; i < Ad_.size(); ++i) 
+        adjA = adjAB * Map<Matrix<double,CA_,1> >(Bd_a,CA,1).transpose();
+        adjB = Map<Matrix<double,1,CA_> >(Ad_a,1,CA).transpose() * adjAB;
+        for (size_type i = 0; i < CA; ++i) 
             variRefA_[i]->adj_ += adjA(i); 
-        for (size_type i = 0; i < Bd_.size(); ++i) 
+        for (size_type i = 0; i < CA; ++i) 
             variRefB_[i]->adj_ += adjB(i); 
       }
     };
@@ -365,9 +387,9 @@ namespace stan {
     template <int CA_, typename TB>
     class multiply_mat_vari<double, 1, CA_, TB, 1> : public vari {
     public:
-      int RA, CA, CB;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, 1, CA_> Ad_;
-      const Eigen::Matrix<double, CA_, 1> Bd_;
+      int CA;  // A.cols() = B.rows()
+      double* Ad_a;
+      double* Bd_a;
       vari** variRefB_;
       vari* variRefAB_;
 
@@ -383,26 +405,34 @@ namespace stan {
      multiply_mat_vari(const Eigen::Matrix<double, 1, CA_>& A,
                        const Eigen::Matrix<TB, CA_, 1>& B)
         : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          CB(B.cols()),
-          Ad_(value_of(A)), Bd_(value_of(B)),
+          CA(A.cols()), 
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.rows() * A.cols())),
+          Bd_a(ChainableStack::memalloc_.alloc_array<double>
+               (B.rows() * B.cols())),
           variRefB_(ChainableStack::memalloc_.alloc_array<vari*>
                     (B.rows() * B.cols())) {
-            double AB = Ad_ * Bd_;
-            for (size_type i = 0; i < B.size(); ++i) 
+            for (size_type i = 0; i < A.size(); ++i) { 
+                Ad_a[i] = A.coeffRef(i);
+            }
+            for (size_type i = 0; i < B.size(); ++i) {
                 variRefB_[i] = B.coeffRef(i).vi_;
+                Bd_a[i] = B.coeffRef(i).val();
+            }
+            double AB
+              = Eigen::Map<Eigen::Matrix<double,1,CA_> >(Ad_a,1, CA) 
+              * Eigen::Map<Eigen::Matrix<double,CA_,1> >(Bd_a,CA,1);
             variRefAB_ = new vari(AB, false);
         }
 
       virtual void chain() {
         using Eigen::Matrix;
-        using Eigen::Infinity;
         double adjAB;
-        Matrix<double, CA_, 1> adjB(CA, CB);
+        Matrix<double, CA_, 1> adjB(CA, 1);
 
         adjAB = variRefAB_->adj_;
-        adjB = Ad_.transpose() * adjAB;
-        for (size_type i = 0; i < Bd_.size(); ++i) 
+        adjB = Eigen::Map<Eigen::Matrix<double,1,CA_> >(Ad_a,1,CA).transpose() * adjAB;
+        for (size_type i = 0; i < CA; ++i) 
             variRefB_[i]->adj_ += adjB(i); 
       }
     };
@@ -470,9 +500,9 @@ namespace stan {
     template <typename TA, int CA_>
     class multiply_mat_vari<TA, 1, CA_, double, 1> : public vari {
     public:
-      int RA, CA, CB;  // A.cols() = B.rows()
-      const Eigen::Matrix<double, 1, CA_> Ad_;
-      const Eigen::Matrix<double, CA_, 1> Bd_;
+      int CA;  // A.cols() = B.rows()
+      double* Ad_a;
+      double* Bd_a;
       vari** variRefA_;
       vari* variRefAB_;
 
@@ -488,14 +518,23 @@ namespace stan {
      multiply_mat_vari(const Eigen::Matrix<TA, 1, CA_>& A,
                        const Eigen::Matrix<double, CA_, 1>& B)
         : vari(0.0),
-          RA(A.rows()), CA(A.cols()), 
-          CB(B.cols()),
-          Ad_(value_of(A)), Bd_(value_of(B)),
+          CA(A.cols()), 
+          Ad_a(ChainableStack::memalloc_.alloc_array<double>
+               (A.rows() * A.cols())),
+          Bd_a(ChainableStack::memalloc_.alloc_array<double>
+               (B.rows() * B.cols())),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * A.cols())) {
-            double AB = Ad_ * Bd_;
-            for (size_type i = 0; i < A.size(); ++i) 
+            for (size_type i = 0; i < A.size(); ++i) { 
                 variRefA_[i] = A.coeffRef(i).vi_;
+                Ad_a[i] = A.coeffRef(i).val();
+            }
+            for (size_type i = 0; i < B.size(); ++i) {
+                Bd_a[i] = B.coeffRef(i);
+            }
+            double AB
+              = Eigen::Map<Eigen::Matrix<double,1,CA_> >(Ad_a,1, CA) 
+              * Eigen::Map<Eigen::Matrix<double,CA_,1> >(Bd_a,CA,1);
             variRefAB_ = new vari(AB, false);
         }
 
@@ -503,11 +542,11 @@ namespace stan {
         using Eigen::Matrix;
         using Eigen::Infinity;
         double adjAB;
-        Matrix<double, 1, CA_> adjA(RA, CA);
+        Matrix<double, 1, CA_> adjA(1, CA);
 
         adjAB = variRefAB_->adj_;
-        adjA = adjAB * Bd_.transpose();
-        for (size_type i = 0; i < Ad_.size(); ++i) 
+        adjA = adjAB * Eigen::Map<Eigen::Matrix<double,CA_,1> >(Bd_a,CA,1).transpose();
+        for (size_type i = 0; i < CA; ++i) 
             variRefA_[i]->adj_ += adjA(i); 
       }
     };
