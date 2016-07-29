@@ -316,7 +316,6 @@ TEST(AgradRevMatrix, multiply_rowvector_vector) {
   
   d1.resize(1);
   v1.resize(1);
-  std::cout << d1 << std::endl;
   EXPECT_THROW(multiply(v1, v2), std::invalid_argument);
   EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
   EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
