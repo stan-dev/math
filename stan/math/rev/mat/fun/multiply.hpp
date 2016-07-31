@@ -15,22 +15,6 @@
 namespace stan {
   namespace math {
 
-    /**
-     * Return the product of two scalars.
-     * @param[in] v First scalar.
-     * @param[in] c Specified scalar.
-     * @return Product of scalars.
-     */
-    template <typename T1, typename T2>
-    inline typename
-    boost::enable_if_c<
-      (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value)
-      && (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
-      typename boost::math::tools::promote_args<T1, T2>::type>::type
-    multiply(const T1& v, const T2& c) {
-      return v * c;
-    }
-    
     template <typename TA, int RA_, int CA_, typename TB, int CB_>
     class multiply_mat_vari : public vari {
     public:
@@ -96,169 +80,6 @@ namespace stan {
             variRefA_[i]->adj_ += adjA(i); 
         for (size_type i = 0; i < Bsize; ++i) 
             variRefB_[i]->adj_ += adjB(i); 
-      }
-    };
-
-    template <typename TA, int RA_, int CA_, typename TB>
-    class multiply_mat_scal_vari : public vari {
-    public:
-      int RA, CA, Asize;  // A.cols() = B.rows()
-      const double Bd_;
-      double* Ad_a;
-      vari** variRefA_;
-      vari* variRefB_;
-      vari** variRefAB_;
-
-      /* ctor for multiply function
-       *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
-       *
-       * @param matrix A
-       * @param matrix B
-       * */
-     multiply_mat_scal_vari(const Eigen::Matrix<TA, RA_, CA_>& A,
-                            const TB& B)
-        : vari(0.0),
-          RA(A.rows()), CA(A.cols()), Asize(A.size()),
-          Bd_(value_of(B)),
-          Ad_a(ChainableStack::memalloc_.alloc_array<double>
-               (A.rows() * A.cols())),
-          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())),
-          variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())) {
-            for (size_type i = 0; i < A.size(); ++i) { 
-                variRefA_[i] = A.coeffRef(i).vi_;
-                Ad_a[i] = A.coeffRef(i).val();
-            }
-            Eigen::Matrix<double, RA_, CA_> AB
-              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
-            variRefB_ = B.vi_;
-            for (size_type i = 0; i < AB.size(); ++i) 
-                variRefAB_[i] = new vari(AB.coeffRef(i), false);
-        }
-
-      virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::Map;
-        using Eigen::Infinity;
-        Matrix<double, RA_, CA_> adjAB(RA, CA);
-        Matrix<double, RA_, CA_> adjA(RA, CA);
-        double adjB;
-
-        for (size_type i = 0; i < adjAB.size(); ++i) 
-            adjAB(i) = variRefAB_[i]->adj_;
-        adjA = adjAB * Bd_;
-        adjB = (Map<Eigen::Array<double,RA_,CA_> >(Ad_a,RA,CA) * adjAB.array()).sum();
-        for (size_type i = 0; i < Asize; ++i) 
-            variRefA_[i]->adj_ += adjA(i); 
-        variRefB_->adj_ += adjB; 
-      }
-    };
-
-    template <int RA_, int CA_, typename TB>
-    class multiply_mat_scal_vari<double,RA_,CA_,TB> : public vari {
-    public:
-      int RA, CA, Asize;  // A.cols() = B.rows()
-      const double Bd_;
-      double* Ad_a;
-      vari* variRefB_;
-      vari** variRefAB_;
-
-      /* ctor for multiply function
-       *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
-       *
-       * @param matrix A
-       * @param matrix B
-       * */
-     multiply_mat_scal_vari(const Eigen::Matrix<double, RA_, CA_>& A,
-                            const TB& B)
-        : vari(0.0),
-          RA(A.rows()), CA(A.cols()), Asize(A.size()),
-          Bd_(value_of(B)),
-          Ad_a(ChainableStack::memalloc_.alloc_array<double>
-               (A.rows() * A.cols())),
-          variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())) {
-            for (size_type i = 0; i < A.size(); ++i) { 
-                Ad_a[i] = A.coeffRef(i);
-            }
-            Eigen::Matrix<double, RA_, CA_> AB
-              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
-            variRefB_ = B.vi_;
-            for (size_type i = 0; i < AB.size(); ++i) 
-                variRefAB_[i] = new vari(AB.coeffRef(i), false);
-        }
-
-      virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::Map;
-        using Eigen::Infinity;
-        Matrix<double, RA_, CA_> adjAB(RA, CA);
-        double adjB;
-
-        for (size_type i = 0; i < adjAB.size(); ++i) 
-            adjAB(i) = variRefAB_[i]->adj_;
-        adjB = (Map<Eigen::Array<double,RA_,CA_> >(Ad_a,RA,CA) * adjAB.array()).sum();
-        variRefB_->adj_ += adjB; 
-      }
-    };
-
-    template <typename TA, int RA_, int CA_>
-    class multiply_mat_scal_vari<TA, RA_, CA_, double> : public vari {
-    public:
-      int RA, CA, Asize;  // A.cols() = B.rows()
-      const double Bd_;
-      double* Ad_a;
-      vari** variRefA_;
-      vari** variRefAB_;
-
-      /* ctor for multiply function
-       *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
-       *
-       * @param matrix A
-       * @param matrix B
-       * */
-     multiply_mat_scal_vari(const Eigen::Matrix<TA, RA_, CA_>& A,
-                            const double B)
-        : vari(0.0),
-          RA(A.rows()), CA(A.cols()), Asize(A.size()),
-          Bd_(value_of(B)),
-          Ad_a(ChainableStack::memalloc_.alloc_array<double>
-               (A.rows() * A.cols())),
-          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())),
-          variRefAB_(ChainableStack::memalloc_.alloc_array<vari*>
-                    (A.rows() * A.cols())) {
-            for (size_type i = 0; i < A.size(); ++i) { 
-                variRefA_[i] = A.coeffRef(i).vi_;
-                Ad_a[i] = A.coeffRef(i).val();
-            }
-            Eigen::Matrix<double, RA_, CA_> AB
-              = Eigen::Map<Eigen::Matrix<double,RA_,CA_> >(Ad_a,RA,CA) * Bd_;
-            for (size_type i = 0; i < AB.size(); ++i) 
-                variRefAB_[i] = new vari(AB.coeffRef(i), false);
-        }
-
-      virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::Infinity;
-        Matrix<double, RA_, CA_> adjAB(RA, CA);
-        Matrix<double, RA_, CA_> adjA(RA, CA);
-
-        for (size_type i = 0; i < adjAB.size(); ++i) 
-            adjAB(i) = variRefAB_[i]->adj_;
-        adjA = adjAB * Bd_;
-        for (size_type i = 0; i < Asize; ++i) 
-            variRefA_[i]->adj_ += adjA(i); 
       }
     };
 
@@ -551,6 +372,48 @@ namespace stan {
       }
     };
 
+    /**
+     * Return the product of two scalars.
+     * @param[in] v First scalar.
+     * @param[in] c Specified scalar.
+     * @return Product of scalars.
+     */
+    template <typename T1, typename T2>
+    inline typename
+    boost::enable_if_c<
+      (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value)
+      && (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
+      typename boost::math::tools::promote_args<T1, T2>::type>::type
+    multiply(const T1& v, const T2& c) {
+      return v * c;
+    }
+
+    /**
+     * Return the product of scalar and matrix.
+     * @param[in] c Specified scalar.
+     * @param[in] m Matrix.
+     * @return Product of scalar and matrix.
+     */
+    template<typename T1, typename T2, int R2, int C2>
+    inline Eigen::Matrix<var, R2, C2>
+    multiply(const T1& c, const Eigen::Matrix<T2, R2, C2>& m) {
+      // FIXME:  pull out to eliminate overpromotion of one side
+      // move to matrix.hpp w. promotion?
+      return to_var(m) * to_var(c);
+    }
+
+    /**
+     * Return the product of scalar and matrix.
+     * @param[in] m Matrix.
+     * @param[in] c Specified scalar.
+     * @return Product of scalar and matrix.
+     */
+    template<typename T1, int R1, int C1, typename T2>
+    inline Eigen::Matrix<var, R1, C1>
+    multiply(const Eigen::Matrix<T1, R1, C1>& m, const T2& c) {
+      return to_var(m) * to_var(c);
+    }
+    
     template <typename TA, int RA, int CA, typename TB, int CB>
     inline typename
     boost::enable_if_c<boost::is_same<TA, var>::value ||
@@ -571,52 +434,6 @@ namespace stan {
       multiply_mat_vari<TA,RA,CA,TB,CB> *baseVari
         = new multiply_mat_vari<TA,RA,CA,TB,CB>(A, B);
       Eigen::Matrix<var, RA, CB> AB_v(A.rows(), B.cols());
-      for (size_type i = 0; i < AB_v.size(); ++i) {
-          AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
-        }
-      return AB_v;
-    }
-
-    template <typename TA, int RA, int CA, typename TB>
-    inline typename
-    boost::enable_if_c<boost::is_same<TA, var>::value ||
-                        boost::is_same<TB, var>::value,
-                        Eigen::Matrix<var, RA, CA> >::type
-    multiply(const Eigen::Matrix<TA, RA, CA>& A,
-             const TB& B) {
-      stan::math::check_not_nan("multiply","A", A);
-      stan::math::check_not_nan("multiply","B", B);
-
-      // NOTE: this is not a memory leak, this vari is used in the
-      // expression graph to evaluate the adjoint, but is not needed
-      // for the returned matrix.  Memory will be cleaned up with the
-      // arena allocator.
-      multiply_mat_scal_vari<TA,RA,CA,TB> *baseVari
-        = new multiply_mat_scal_vari<TA,RA,CA,TB>(A, B);
-      Eigen::Matrix<var, RA, CA> AB_v(A.rows(), A.cols());
-      for (size_type i = 0; i < AB_v.size(); ++i) {
-          AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
-        }
-      return AB_v;
-    }
-
-    template <typename TA, int RA, int CA, typename TB>
-    inline typename
-    boost::enable_if_c<boost::is_same<TA, var>::value ||
-                        boost::is_same<TB, var>::value,
-                        Eigen::Matrix<var, RA, CA> >::type
-    multiply(const TB& B,
-             const Eigen::Matrix<TA, RA, CA>& A) {
-      stan::math::check_not_nan("multiply","A", A);
-      stan::math::check_not_nan("multiply","B", B);
-
-      // NOTE: this is not a memory leak, this vari is used in the
-      // expression graph to evaluate the adjoint, but is not needed
-      // for the returned matrix.  Memory will be cleaned up with the
-      // arena allocator.
-      multiply_mat_scal_vari<TA,RA,CA,TB> *baseVari
-        = new multiply_mat_scal_vari<TA,RA,CA,TB>(A, B);
-      Eigen::Matrix<var, RA, CA> AB_v(A.rows(), A.cols());
       for (size_type i = 0; i < AB_v.size(); ++i) {
           AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
         }
