@@ -45,8 +45,6 @@ namespace stan {
       Eigen::MatrixXd _m2;
     };
 
-  }  // prob
-
-}  // stan
-
+  }
+}
 #endif

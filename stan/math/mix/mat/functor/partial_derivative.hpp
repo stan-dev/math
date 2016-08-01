@@ -36,6 +36,6 @@ namespace stan {
       dfx_dxn = fx_fvar.d_;
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

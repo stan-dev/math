@@ -84,6 +84,6 @@ namespace stan {
         * (log(1 - z) - digamma_b + sum_numer / sum_denom);
     }
 
-  }  // math
-}   // stan
+  }
+}
 #endif

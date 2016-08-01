@@ -55,6 +55,6 @@ namespace stan {
       recover_memory_nested();
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

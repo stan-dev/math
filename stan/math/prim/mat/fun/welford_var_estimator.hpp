@@ -45,8 +45,6 @@ namespace stan {
       Eigen::VectorXd _m2;
     };
 
-  }  // prob
-
-}  // stan
-
+  }
+}
 #endif

@@ -89,6 +89,6 @@ namespace stan {
       return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);
     }
 
-  }  // math
-}   // stan
+  }
+}
 #endif

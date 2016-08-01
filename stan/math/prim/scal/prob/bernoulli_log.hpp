@@ -117,6 +117,6 @@ namespace stan {
       return bernoulli_log<false>(n, theta);
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

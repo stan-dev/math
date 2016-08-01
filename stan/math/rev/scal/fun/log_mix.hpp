@@ -139,8 +139,6 @@ namespace stan {
       return operands_and_partials.value(log_mix_function_value);
     }
 
-  }  // namespace math
-
-}  // namespace stan
-
+  }
+}
 #endif

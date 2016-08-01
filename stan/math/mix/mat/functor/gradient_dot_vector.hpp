@@ -27,6 +27,6 @@ namespace stan {
       grad_fx_dot_v = fx_fvar.d_;
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

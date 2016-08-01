@@ -128,6 +128,6 @@ namespace stan {
       return operands_and_partials.value(P);
     }
 
-  }  // prob
-}  // stan
+  }
+}
 #endif

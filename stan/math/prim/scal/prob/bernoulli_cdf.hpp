@@ -76,6 +76,6 @@ namespace stan {
       return operands_and_partials.value(P);
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

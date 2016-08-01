@@ -34,6 +34,6 @@ namespace stan {
       }
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

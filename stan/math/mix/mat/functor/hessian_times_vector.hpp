@@ -51,6 +51,6 @@ namespace stan {
       Hv = H * v;
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif
