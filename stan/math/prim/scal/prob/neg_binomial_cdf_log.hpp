@@ -37,7 +37,6 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-
       // Ensure non-zero arugment lengths
       if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
         return 0.0;

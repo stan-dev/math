@@ -261,7 +261,6 @@ namespace stan {
       return get_base1(x[i1 - 1], i2, i3, i4, i5, i6, i7, i8, error_msg, idx+1);
     }
 
-
     /**
      * Return a copy of the row of the specified vector at the specified
      * base-one row index.  If the index is out of range, throw a

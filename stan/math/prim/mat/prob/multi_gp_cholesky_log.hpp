@@ -50,7 +50,6 @@ namespace stan {
       T_lp lp(0.0);
 
 
-
       check_size_match(function,
                        "Size of random variable (rows y)", y.rows(),
                        "Size of kernel scales (w)", w.size());

@@ -28,7 +28,6 @@ namespace stan {
 
       static const char* function("gumbel_rng");
 
-
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", beta);
 

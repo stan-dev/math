@@ -62,7 +62,6 @@ namespace stan {
 
       static const char* function("ordered_logistic");
 
-
       int K = c.size() + 1;
 
       check_bounded(function, "Random variable", y, 1, K);

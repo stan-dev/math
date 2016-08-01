@@ -58,7 +58,6 @@ namespace stan {
             && stan::length(nu)))
         return 0.0;
 
-
       T_partials_return logp(0.0);
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_not_nan(function, "Random variable", y);

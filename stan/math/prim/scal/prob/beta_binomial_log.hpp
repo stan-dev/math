@@ -36,7 +36,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 
-
       // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(N)
@@ -73,7 +72,6 @@ namespace stan {
         if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
           return operands_and_partials.value(LOG_ZERO);
       }
-
 
       VectorBuilder<include_summand<propto>::value,
                     T_partials_return, T_n, T_N>

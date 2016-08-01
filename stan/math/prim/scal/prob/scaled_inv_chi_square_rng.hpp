@@ -32,7 +32,6 @@ namespace stan {
 
       static const char* function("scaled_inv_chi_square_rng");
 
-
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_positive_finite(function, "Scale parameter", s);
 

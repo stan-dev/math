@@ -51,7 +51,6 @@ namespace stan {
       typename
         boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(0.0);
 
-
       check_positive(function, "Sigma rows", Sigma.rows());
       check_finite(function, "Sigma", Sigma);
       check_symmetric(function, "Sigma", Sigma);

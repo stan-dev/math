@@ -31,7 +31,6 @@ namespace stan {
 
       static const char* function("frechet_rng");
 
-
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Shape parameter", alpha);
       check_not_nan(function, "Scale parameter", sigma);

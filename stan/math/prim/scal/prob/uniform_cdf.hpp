@@ -25,7 +25,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
-
       // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)

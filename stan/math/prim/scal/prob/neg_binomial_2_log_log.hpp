@@ -40,7 +40,6 @@ namespace stan {
 
       static const char* function("stan::prob::neg_binomial_2_log_log");
 
-
       // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(eta)

@@ -29,7 +29,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-
       // Ensure non-zero argument slengths
       if (!(stan::length(n) && stan::length(lambda)))
         return 1.0;

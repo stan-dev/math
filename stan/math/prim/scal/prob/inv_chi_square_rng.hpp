@@ -31,7 +31,6 @@ namespace stan {
 
       static const char* function("inv_chi_square_rng");
 
-
       check_positive_finite(function, "Degrees of freedom parameter", nu);
 
       variate_generator<RNG&, chi_squared_distribution<> >

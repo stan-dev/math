@@ -27,7 +27,6 @@ namespace stan {
                       RNG& rng) {
       static const char* function("beta_binomial_rng");
 
-
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,
                             "First prior sample size parameter", alpha);

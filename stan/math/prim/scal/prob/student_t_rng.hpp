@@ -33,7 +33,6 @@ namespace stan {
 
       static const char* function("student_t_rng");
 
-
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

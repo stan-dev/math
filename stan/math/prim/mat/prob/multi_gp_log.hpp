@@ -51,7 +51,6 @@ namespace stan {
       T_lp lp(0.0);
 
 
-
       check_positive(function, "Kernel rows", Sigma.rows());
       check_finite(function, "Kernel", Sigma);
       check_symmetric(function, "Kernel", Sigma);

@@ -94,7 +94,6 @@ namespace stan {
         typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type T_lp;
       T_lp lp(0.0);
 
-
       int r = y.rows();  // number of variables
       int T = y.cols();  // number of observations
       int n = G.rows();  // number of states

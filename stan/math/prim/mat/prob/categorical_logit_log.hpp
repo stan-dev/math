@@ -23,7 +23,6 @@ namespace stan {
                           beta) {
       static const char* function("categorical_logit_log");
 
-
       check_bounded(function, "categorical outcome out of support", n,
                     1, beta.size());
       check_finite(function, "log odds parameter", beta);
@@ -51,7 +50,6 @@ namespace stan {
                           const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&
                           beta) {
       static const char* function("categorical_logit_log");
-
 
       for (size_t k = 0; k < ns.size(); ++k)
         check_bounded(function, "categorical outcome out of support",

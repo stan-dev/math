@@ -30,7 +30,6 @@ namespace stan {
                                                   T_shape>::type
         T_partials_return;
 
-
       T_partials_return cdf_log(0.0);
 
       // check if any vectors are zero length

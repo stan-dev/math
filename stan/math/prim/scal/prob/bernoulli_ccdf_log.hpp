@@ -27,7 +27,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
-
       // Ensure non-zero argument lenghts
       if (!(stan::length(n) && stan::length(theta)))
         return 0.0;

@@ -33,7 +33,6 @@ namespace stan {
                                                   T_size2>::type
         T_partials_return;
 
-
       // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))

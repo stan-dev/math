@@ -29,7 +29,6 @@ namespace stan {
 
       static const char* function("logistic_rng");
 
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
 

@@ -87,7 +87,6 @@ namespace stan {
       }
     };
 
-
     // row-major order of returns to match std::vector
     template <typename T, typename S>
     class seq_view<T, Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic> > {
@@ -184,7 +183,6 @@ namespace stan {
         return x_.size();
       }
     };
-
 
 
   }

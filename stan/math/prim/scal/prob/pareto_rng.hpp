@@ -25,7 +25,6 @@ namespace stan {
 
       static const char* function("pareto_rng");
 
-
       check_positive_finite(function, "Scale parameter", y_min);
       check_positive_finite(function, "Shape parameter", alpha);
 

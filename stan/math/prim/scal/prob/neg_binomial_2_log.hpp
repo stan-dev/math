@@ -42,7 +42,6 @@ namespace stan {
 
       static const char* function("neg_binomial_2_log");
 
-
       // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(mu)

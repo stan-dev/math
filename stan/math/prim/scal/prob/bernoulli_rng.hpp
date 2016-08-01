@@ -25,7 +25,6 @@ namespace stan {
 
       static const char* function("bernoulli_rng");
 
-
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0, 1);
 

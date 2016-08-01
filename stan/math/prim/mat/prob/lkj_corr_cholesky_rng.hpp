@@ -54,7 +54,6 @@ namespace stan {
                           RNG& rng) {
       static const char* function("lkj_corr_cholesky_rng");
 
-
       check_positive(function, "Shape parameter", eta);
 
       Eigen::ArrayXd CPCs((K * (K - 1)) / 2);

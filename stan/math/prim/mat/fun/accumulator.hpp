@@ -117,7 +117,6 @@ namespace stan {
     };
 
 
-
   }
 }
 

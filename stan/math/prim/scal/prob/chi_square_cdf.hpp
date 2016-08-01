@@ -40,7 +40,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-
       T_partials_return cdf(1.0);
 
       // Size checks

@@ -59,7 +59,6 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-
       using stan::is_constant_struct;
       using stan::is_vector;
       using std::log;

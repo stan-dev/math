@@ -29,7 +29,6 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-
       T_partials_return cdf(1.0);
       // check if any vectors are zero length
       if (!(stan::length(y)

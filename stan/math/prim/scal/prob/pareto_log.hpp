@@ -98,7 +98,6 @@ namespace stan {
           log_alpha[n] = log(value_of(alpha_vec[n]));
       }
 
-
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         // log probability

@@ -25,7 +25,6 @@ namespace stan {
 
       static const char* function("uniform_rng");
 
-
       check_finite(function, "Lower bound parameter", alpha);
       check_finite(function, "Upper bound parameter", beta);
       check_greater(function, "Upper bound parameter", beta, alpha);

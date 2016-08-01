@@ -53,7 +53,6 @@ namespace stan {
       lp_type lp(0.0);
 
 
-
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);
       // size of std::vector of Eigen vectors

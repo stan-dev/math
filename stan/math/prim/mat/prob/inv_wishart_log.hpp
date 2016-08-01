@@ -71,7 +71,6 @@ namespace stan {
 
       // FIXME: domain checks
 
-
       LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
       check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
       LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);

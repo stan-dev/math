@@ -55,7 +55,6 @@ namespace stan {
             && stan::length(nu)))
         return 0.0;
 
-
       T_partials_return logp(0.0);
       check_not_nan(function, "Random variable", y);
       check_nonnegative(function, "Random variable", y);

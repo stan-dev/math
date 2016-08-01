@@ -29,7 +29,6 @@ namespace stan {
 
       static const char* function("multi_normal_rng");
 
-
       check_positive(function, "Covariance matrix rows", S.rows());
       check_symmetric(function, "Covariance matrix", S);
       check_finite(function, "Location parameter", mu);

@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("rayleigh_rng");
 
-
       check_positive(function, "Scale parameter", sigma);
 
       variate_generator<RNG&, uniform_real_distribution<> >

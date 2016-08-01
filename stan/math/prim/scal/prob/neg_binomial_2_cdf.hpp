@@ -31,7 +31,6 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-
       T_partials_return P(1.0);
       // check if any vectors are zero length
       if (!(stan::length(n)

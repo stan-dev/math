@@ -28,7 +28,6 @@ namespace stan {
                        RNG& rng) {
       static const char* function("exp_mod_normal_rng");
 
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Inv_scale parameter", lambda);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -40,5 +39,4 @@ namespace stan {
   }
 }
 #endif
-
 

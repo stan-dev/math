@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("ordered_logistic");
 
-
       check_finite(function, "Location parameter", eta);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
       for (int i = 1; i < c.size(); ++i) {

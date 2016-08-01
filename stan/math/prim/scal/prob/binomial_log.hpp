@@ -41,7 +41,6 @@ namespace stan {
 
       static const char* function("binomial_log");
 
-
       // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(N)
@@ -69,7 +68,6 @@ namespace stan {
       size_t size = max_size(n, N, theta);
 
       OperandsAndPartials<T_prob> operands_and_partials(theta);
-
 
       if (include_summand<propto>::value) {
         for (size_t i = 0; i < size; ++i)

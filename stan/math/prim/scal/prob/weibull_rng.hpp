@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("weibull_rng");
 
-
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);
 

@@ -264,7 +264,6 @@ namespace stan {
                            error_msg, idx+1);
     }
 
-
     /**
      * Return a copy of the row of the specified vector at the specified
      * base-one row index.  If the index is out of range, throw a

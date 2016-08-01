@@ -27,7 +27,6 @@ namespace stan {
 
       static const char* function("exponential_rng");
 
-
       check_positive_finite(function, "Inverse scale parameter", beta);
 
       variate_generator<RNG&, exponential_distribution<> >
