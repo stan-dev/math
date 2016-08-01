@@ -38,7 +38,7 @@ namespace stan {
         return 0.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_type_2_ccdf_log");
+      static const char* function("pareto_type_2_ccdf_log");
 
       using std::log;
 
@@ -95,7 +95,6 @@ namespace stan {
       }
 
       // Compute vectorized CDF and its gradients
-
       for (size_t n = 0; n < N; n++) {
         // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -115,9 +114,9 @@ namespace stan {
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x4[n] -= log_1p_y_over_lambda[n];
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

@@ -22,7 +22,7 @@ namespace stan {
     double_exponential_rng(const double mu,
                            const double sigma,
                            RNG& rng) {
-      static const char* function("stan::math::double_exponential_rng");
+      static const char* function("double_exponential_rng");
 
       using boost::variate_generator;
       using boost::random::uniform_01;

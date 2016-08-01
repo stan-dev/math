@@ -25,7 +25,7 @@ namespace stan {
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_cdf_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
-      static const char* function("stan::math::gumbel_cdf_log");
+      static const char* function("gumbel_cdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
@@ -70,9 +70,9 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff;
       }
-
       return operands_and_partials.value(cdf_log);
     }
+
   }
 }
 #endif

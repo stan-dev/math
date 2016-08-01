@@ -16,7 +16,7 @@ namespace stan {
      *
      * <p>\f$f^{-1}(x) = \log(x)\f$.
      *
-     * <p>The input is validated using <code>stan::math::check_positive()</code>.
+     * <p>The input is validated using <code>check_positive()</code>.
      *
      * @param y Input scalar.
      * @return Unconstrained value that produces the input when constrained.
@@ -26,13 +26,11 @@ namespace stan {
     template <typename T>
     inline
     T positive_free(const T y) {
-      stan::math::check_positive("stan::math::positive_free",
-                                 "Positive variable", y);
+      check_positive("positive_free",
+                     "Positive variable", y);
       return log(y);
     }
 
   }
-
 }
-
 #endif

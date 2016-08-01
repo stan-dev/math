@@ -58,7 +58,7 @@ namespace stan {
                 const T_dof& nu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>&
                 S) {
-      static const char* function("stan::math::wishart_log");
+      static const char* function("wishart_log");
 
       using boost::math::tools::promote_args;
       using Eigen::Dynamic;
@@ -120,6 +120,5 @@ namespace stan {
     }
 
   }
-
 }
 #endif

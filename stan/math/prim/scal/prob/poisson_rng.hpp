@@ -25,7 +25,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::poisson_distribution;
 
-      static const char* function("stan::math::poisson_rng");
+      static const char* function("poisson_rng");
 
       check_not_nan(function, "Rate parameter", lambda);
       check_nonnegative(function, "Rate parameter", lambda);
@@ -35,6 +35,7 @@ namespace stan {
         poisson_rng(rng, poisson_distribution<>(lambda));
       return poisson_rng();
     }
+
   }
 }
 #endif

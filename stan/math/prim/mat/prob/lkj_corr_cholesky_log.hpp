@@ -56,7 +56,7 @@ namespace stan {
     lkj_corr_cholesky_log(const Eigen::Matrix
                           <T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
                           const T_shape& eta) {
-      static const char* function("stan::math::lkj_corr_cholesky_log");
+      static const char* function("lkj_corr_cholesky_log");
 
       using boost::math::tools::promote_args;
 

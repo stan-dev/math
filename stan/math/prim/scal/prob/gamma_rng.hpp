@@ -32,9 +32,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::gamma_distribution;
 
-      static const char* function("stan::math::gamma_rng");
-
-
+      static const char* function("gamma_rng");
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
 
@@ -50,5 +48,4 @@ namespace stan {
 
   }
 }
-
 #endif

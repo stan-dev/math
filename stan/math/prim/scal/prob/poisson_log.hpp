@@ -29,7 +29,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-      static const char* function("stan::math::poisson_log");
+      static const char* function("poisson_log");
 
       using boost::math::lgamma;
 
@@ -82,7 +82,6 @@ namespace stan {
           operands_and_partials.d_x1[i]
             += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
       }
-
       return operands_and_partials.value(logp);
     }
 
@@ -93,6 +92,7 @@ namespace stan {
     poisson_log(const T_n& n, const T_rate& lambda) {
       return poisson_log<false>(n, lambda);
     }
+
   }
 }
 #endif

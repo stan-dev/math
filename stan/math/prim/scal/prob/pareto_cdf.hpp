@@ -32,7 +32,7 @@ namespace stan {
         return 1.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_cdf");
+      static const char* function("pareto_cdf");
 
       using std::log;
       using std::exp;
@@ -109,9 +109,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(alpha); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

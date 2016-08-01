@@ -14,12 +14,12 @@ namespace stan {
      * <p>The functor must implement
      *
      * <code>
-     * stan::math::fvar<T>
+     * fvar<T>
      * operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>&)
      * </code>
      *
      * using only operations that are defined for
-     * <code>stan::math::fvar</code>.  This latter constraint usually
+     * <code>fvar</code>.  This latter constraint usually
      * requires the functions to be defined in terms of the libraries
      * defined in Stan or in terms of functions with appropriately
      * general namespace imports that eventually depend on functions

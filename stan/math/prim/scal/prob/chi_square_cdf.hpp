@@ -36,7 +36,7 @@ namespace stan {
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_cdf(const T_y& y, const T_dof& nu) {
-      static const char* function("stan::math::chi_square_cdf");
+      static const char* function("chi_square_cdf");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
@@ -111,9 +111,9 @@ namespace stan {
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            -= 0.5 * stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                                    * y_dbl, gamma_vec[n],
-                                                    digamma_vec[n]) / Pn;
+            -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                        * y_dbl, gamma_vec[n],
+                                        digamma_vec[n]) / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
@@ -124,9 +124,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(nu); ++n)
           operands_and_partials.d_x2[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

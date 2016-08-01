@@ -39,7 +39,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      static const char* function("stan::math::binomial_log");
+      static const char* function("binomial_log");
 
 
       // check if any vectors are zero length

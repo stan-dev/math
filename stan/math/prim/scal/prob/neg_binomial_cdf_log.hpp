@@ -32,7 +32,7 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_cdf_log(const T_n& n, const T_shape& alpha,
                          const T_inv_scale& beta) {
-      static const char* function("stan::math::neg_binomial_cdf_log");
+      static const char* function("neg_binomial_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
@@ -71,7 +71,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       // Cache a few expensive function calls if alpha is a parameter
@@ -117,12 +117,12 @@ namespace stan {
           T_partials_return g1 = 0;
           T_partials_return g2 = 0;
 
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl,
-                                        n_dbl + 1, p_dbl,
-                                        digammaAlpha_vec[i],
-                                        digammaN_vec[i],
-                                        digammaSum_vec[i],
-                                        beta_func);
+          grad_reg_inc_beta(g1, g2, alpha_dbl,
+                            n_dbl + 1, p_dbl,
+                            digammaAlpha_vec[i],
+                            digammaN_vec[i],
+                            digammaSum_vec[i],
+                            beta_func);
           operands_and_partials.d_x1[i] += g1 / Pi;
         }
         if (!is_constant_struct<T_inv_scale>::value)
@@ -132,6 +132,7 @@ namespace stan {
 
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

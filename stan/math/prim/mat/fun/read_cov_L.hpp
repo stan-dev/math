@@ -24,12 +24,10 @@ namespace stan {
                T& log_prob) {
       size_t K = sds.rows();
       // adjust due to transformation from correlations to covariances
-      log_prob += (sds.log().sum() + stan::math::LOG_2) * K;
+      log_prob += (sds.log().sum() + LOG_2) * K;
       return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
     }
 
   }
-
 }
-
 #endif

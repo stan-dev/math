@@ -26,7 +26,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("stan::math::skew_normal_log");
+      static const char* function("skew_normal_log");
       typedef typename stan::partials_return_type<T_y, T_loc,
                                                   T_scale, T_shape>::type
         T_partials_return;
@@ -93,7 +93,7 @@ namespace stan {
         // reusable subexpression values
         const T_partials_return y_minus_mu_over_sigma
           = (y_dbl - mu_dbl) * inv_sigma[n];
-        const double pi_dbl = stan::math::pi();
+        const double pi_dbl = pi();
 
         // log probability
         if (include_summand<propto>::value)
@@ -141,6 +141,7 @@ namespace stan {
                     const T_shape& alpha) {
       return skew_normal_log<false>(y, mu, sigma, alpha);
     }
+
   }
 }
 #endif

@@ -29,7 +29,7 @@ namespace stan {
     typename return_type<T_size1, T_size2>::type
     beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
                       const T_size2& beta) {
-      static const char* function("stan::math::beta_binomial_cdf");
+      static const char* function("beta_binomial_cdf");
       typedef typename stan::partials_return_type<T_n, T_N, T_size1,
                                                   T_size2>::type
         T_partials_return;
@@ -90,10 +90,10 @@ namespace stan {
         const T_partials_return mu = alpha_dbl + n_dbl + 1;
         const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
 
-        const T_partials_return F = stan::math::F32((T_partials_return)1, mu,
-                                                    -N_dbl + n_dbl + 1,
-                                                    n_dbl + 2, 1 - nu,
-                                                    (T_partials_return)1);
+        const T_partials_return F = F32((T_partials_return)1, mu,
+                                        -N_dbl + n_dbl + 1,
+                                        n_dbl + 2, 1 - nu,
+                                        (T_partials_return)1);
 
         T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
         C += lgamma(mu) - lgamma(n_dbl + 2);
@@ -114,9 +114,9 @@ namespace stan {
         if (contains_nonconstant_struct<T_size1, T_size2>::value) {
           digammaOne = digamma(mu + nu);
           digammaTwo = digamma(alpha_dbl + beta_dbl);
-          stan::math::grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
-                               n_dbl + 2,
-                               1 - nu, (T_partials_return)1);
+          grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
+                   n_dbl + 2,
+                   1 - nu, (T_partials_return)1);
         }
         if (!is_constant_struct<T_size1>::value) {
           const T_partials_return g

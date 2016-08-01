@@ -24,11 +24,11 @@ namespace stan {
                         Eigen::Matrix<var, CB, CB> >::type
       quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
                     const Eigen::Matrix<TB, RB, CB>& B) {
-      stan::math::check_square("quad_form", "A", A);
-      stan::math::check_symmetric("quad_form_sym", "A", A);
-      stan::math::check_multiplicable("quad_form_sym",
-                                      "A", A,
-                                      "B", B);
+      check_square("quad_form", "A", A);
+      check_symmetric("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym",
+                          "A", A,
+                          "B", B);
 
       quad_form_vari<TA, RA, CA, TB, RB, CB> *baseVari
         = new quad_form_vari<TA, RA, CA, TB, RB, CB>(A, B, true);
@@ -42,18 +42,18 @@ namespace stan {
                         var >::type
       quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
                     const Eigen::Matrix<TB, RB, 1>& B) {
-      stan::math::check_square("quad_form", "A", A);
-      stan::math::check_symmetric("quad_form_sym", "A", A);
-      stan::math::check_multiplicable("quad_form_sym",
-                                      "A", A,
-                                      "B", B);
+      check_square("quad_form", "A", A);
+      check_symmetric("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym",
+                          "A", A,
+                          "B", B);
 
       quad_form_vari<TA, RA, CA, TB, RB, 1> *baseVari
         = new quad_form_vari<TA, RA, CA, TB, RB, 1>(A, B, true);
 
       return baseVari->_impl->C_(0, 0);
     }
+
   }
 }
-
 #endif

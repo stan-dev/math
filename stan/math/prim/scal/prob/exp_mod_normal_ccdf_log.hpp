@@ -24,7 +24,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
     exp_mod_normal_ccdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
                             const T_inv_scale& lambda) {
-      static const char* function("stan::math::exp_mod_normal_ccdf_log");
+      static const char* function("exp_mod_normal_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_inv_scale>::type
         T_partials_return;
@@ -62,11 +62,11 @@ namespace stan {
       VectorView<const T_scale> sigma_vec(sigma);
       VectorView<const T_inv_scale> lambda_vec(lambda);
       size_t N = max_size(y, mu, sigma, lambda);
-      const double sqrt_pi = std::sqrt(stan::math::pi());
+      const double sqrt_pi = std::sqrt(pi());
       for (size_t n = 0; n < N; n++) {
         if (boost::math::isinf(y_vec[n])) {
           if (y_vec[n] > 0.0)
-            return operands_and_partials.value(stan::math::negative_infinity());
+            return operands_and_partials.value(negative_infinity());
           else
             return operands_and_partials.value(0.0);
         }
@@ -121,11 +121,10 @@ namespace stan {
                - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
             / ccdf_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif
-
 

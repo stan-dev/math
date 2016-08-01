@@ -17,7 +17,7 @@ namespace stan {
     tcrossprod(const Eigen::Matrix<fvar<T>, R, C>& m) {
       if (m.rows() == 0)
         return Eigen::Matrix<fvar<T>, R, R>(0, 0);
-      return stan::math::multiply(m, stan::math::transpose(m));
+      return multiply(m, transpose(m));
     }
 
   }

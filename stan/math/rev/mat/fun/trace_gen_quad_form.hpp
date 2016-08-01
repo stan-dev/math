@@ -28,9 +28,9 @@ namespace stan {
         { }
 
         double compute() {
-          return stan::math::trace_gen_quad_form(value_of(D_),
-                                                 value_of(A_),
-                                                 value_of(B_));
+          return trace_gen_quad_form(value_of(D_),
+                                     value_of(A_),
+                                     value_of(B_));
         }
 
         Eigen::Matrix<TD, RD, CD>  D_;
@@ -113,14 +113,14 @@ namespace stan {
       trace_gen_quad_form(const Eigen::Matrix<TD, RD, CD>& D,
                           const Eigen::Matrix<TA, RA, CA>& A,
                           const Eigen::Matrix<TB, RB, CB>& B) {
-      stan::math::check_square("trace_gen_quad_form", "A", A);
-      stan::math::check_square("trace_gen_quad_form", "D", D);
-      stan::math::check_multiplicable("trace_gen_quad_form",
-                                      "A", A,
-                                      "B", B);
-      stan::math::check_multiplicable("trace_gen_quad_form",
-                                      "B", B,
-                                      "D", D);
+      check_square("trace_gen_quad_form", "A", A);
+      check_square("trace_gen_quad_form", "D", D);
+      check_multiplicable("trace_gen_quad_form",
+                          "A", A,
+                          "B", B);
+      check_multiplicable("trace_gen_quad_form",
+                          "B", B,
+                          "D", D);
 
       trace_gen_quad_form_vari_alloc<TD, RD, CD, TA, RA, CA, TB, RB, CB>
         *baseVari
@@ -130,7 +130,7 @@ namespace stan {
       return var(new trace_gen_quad_form_vari
                  <TD, RD, CD, TA, RA, CA, TB, RB, CB>(baseVari));
     }
+
   }
 }
-
 #endif

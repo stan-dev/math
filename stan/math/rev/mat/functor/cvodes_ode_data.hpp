@@ -60,7 +60,7 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           param_var_ind_(initial_var::value ? N_ : 0),
-          ode_system_(f, stan::math::value_of(theta), x, x_int, msgs) { }
+          ode_system_(f, value_of(theta), x, x_int, msgs) { }
 
       static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* user_data) {
         const ode_data* explicit_ode
@@ -109,10 +109,10 @@ namespace stan {
       inline void rhs_sens_initial(const Eigen::MatrixXd& Jy,
                                    N_Vector *yS, N_Vector *ySdot) const {
         for (size_t m = 0; m < N_; ++m) {
-            Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[m]), N_);
-            Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[m]), N_);
-            ySdot_eig = Jy * yS_eig;
-          }
+          Eigen::Map<Eigen::VectorXd> yS_eig(NV_DATA_S(yS[m]), N_);
+          Eigen::Map<Eigen::VectorXd> ySdot_eig(NV_DATA_S(ySdot[m]), N_);
+          ySdot_eig = Jy * yS_eig;
+        }
       }
 
       inline void rhs_sens_param(const Eigen::MatrixXd& Jy,
@@ -138,8 +138,8 @@ namespace stan {
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const std::vector<stan::math::var>& initial,
-                    const std::vector<stan::math::var>& param,
+      void rhs_sens(const std::vector<var>& initial,
+                    const std::vector<var>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
@@ -162,7 +162,7 @@ namespace stan {
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
       void rhs_sens(const std::vector<double>& initial,
-                    const std::vector<stan::math::var>& param,
+                    const std::vector<var>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
@@ -183,7 +183,7 @@ namespace stan {
        * RHS
        * @param[out] ySdot array of M N_Vectors of size N of the sensitivity RHS
        */
-      void rhs_sens(const std::vector<stan::math::var>& initial,
+      void rhs_sens(const std::vector<var>& initial,
                     const std::vector<double>& param,
                     const double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {

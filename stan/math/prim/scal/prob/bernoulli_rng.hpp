@@ -23,7 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::bernoulli_distribution;
 
-      static const char* function("stan::math::bernoulli_rng");
+      static const char* function("bernoulli_rng");
 
 
       check_finite(function, "Probability parameter", theta);
@@ -33,6 +33,7 @@ namespace stan {
         bernoulli_rng(rng, bernoulli_distribution<>(theta));
       return bernoulli_rng();
     }
+
   }
 }
 #endif

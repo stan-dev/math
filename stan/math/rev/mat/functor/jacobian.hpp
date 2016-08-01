@@ -35,10 +35,10 @@ namespace stan {
             J(i, k) = x_var(k).adj();
         }
       } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         throw;
       }
-      stan::math::recover_memory_nested();
+      recover_memory_nested();
     }
 
   }

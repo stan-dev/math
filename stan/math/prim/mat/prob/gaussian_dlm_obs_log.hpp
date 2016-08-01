@@ -21,7 +21,6 @@
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
@@ -89,7 +88,7 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const char* function("stan::math::gaussian_dlm_obs_log");
+      static const char* function("gaussian_dlm_obs_log");
       typedef typename return_type<
         T_y,
         typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type T_lp;
@@ -280,7 +279,7 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const char* function("stan::math::gaussian_dlm_obs_log");
+      static const char* function("gaussian_dlm_obs_log");
       typedef
         typename return_type
         <T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
@@ -420,8 +419,7 @@ namespace stan {
      const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
       return gaussian_dlm_obs_log<false>(y, F, G, V, W, m0, C0);
     }
+
   }
-
 }
-
 #endif

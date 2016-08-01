@@ -24,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::cauchy_distribution;
 
-      static const char* function("stan::math::cauchy_rng");
+      static const char* function("cauchy_rng");
 
 
       check_finite(function, "Location parameter", mu);
@@ -34,6 +34,7 @@ namespace stan {
         cauchy_rng(rng, cauchy_distribution<>(mu, sigma));
       return cauchy_rng();
     }
+
   }
 }
 #endif

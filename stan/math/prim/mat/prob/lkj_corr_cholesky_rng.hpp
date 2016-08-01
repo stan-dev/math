@@ -52,7 +52,7 @@ namespace stan {
     lkj_corr_cholesky_rng(const size_t K,
                           const double eta,
                           RNG& rng) {
-      static const char* function("stan::math::lkj_corr_cholesky_rng");
+      static const char* function("lkj_corr_cholesky_rng");
 
 
       check_positive(function, "Shape parameter", eta);
@@ -63,11 +63,11 @@ namespace stan {
       for (size_t i = 0; i < (K - 1); i++) {
         alpha -= 0.5;
         for (size_t j = i + 1; j < K; j++) {
-          CPCs(count) = 2.0 * stan::math::beta_rng(alpha, alpha, rng) - 1.0;
+          CPCs(count) = 2.0 * beta_rng(alpha, alpha, rng) - 1.0;
           count++;
         }
       }
-      return stan::math::read_corr_L(CPCs, K);
+      return read_corr_L(CPCs, K);
     }
 
   }

@@ -20,21 +20,17 @@ namespace stan {
     inline Eigen::Matrix<T, CB, CB>
     quad_form(const Eigen::Matrix<T, RA, CA>& A,
               const Eigen::Matrix<T, RB, CB>& B) {
-      stan::math::check_square("quad_form", "A", A);
-      stan::math::check_multiplicable("quad_form",
-                                      "A", A,
-                                      "B", B);
-      return multiply(stan::math::transpose(B), multiply(A, B));
+      check_square("quad_form", "A", A);
+      check_multiplicable("quad_form", "A", A, "B", B);
+      return multiply(transpose(B), multiply(A, B));
     }
 
     template<int RA, int CA, int RB, typename T>
     inline T
     quad_form(const Eigen::Matrix<T, RA, CA>& A,
               const Eigen::Matrix<T, RB, 1>& B) {
-      stan::math::check_square("quad_form", "A", A);
-      stan::math::check_multiplicable("quad_form",
-                                      "A", A,
-                                      "B", B);
+      check_square("quad_form", "A", A);
+      check_multiplicable("quad_form", "A", A, "B", B);
       return dot_product(B, multiply(A, B));
     }
 

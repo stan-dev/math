@@ -21,7 +21,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const char* function("stan::math::normal_rng");
+      static const char* function("normal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_not_nan(function, "Location parameter", mu);
@@ -32,6 +32,7 @@ namespace stan {
         norm_rng(rng, normal_distribution<>(mu, sigma));
       return norm_rng();
     }
+
   }
 }
 #endif

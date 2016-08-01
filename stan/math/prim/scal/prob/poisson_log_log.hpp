@@ -32,10 +32,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_log_rate>::type
         T_partials_return;
 
-      static const char* function("stan::math::poisson_log_log");
+      static const char* function("poisson_log_log");
 
       using boost::math::lgamma;
-      using std::exp;
       using std::exp;
 
       // check if any vectors are zero length
@@ -105,6 +104,7 @@ namespace stan {
     poisson_log_log(const T_n& n, const T_log_rate& alpha) {
       return poisson_log_log<false>(n, alpha);
     }
+
   }
 }
 #endif

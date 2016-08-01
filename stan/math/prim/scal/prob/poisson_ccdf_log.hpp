@@ -24,10 +24,9 @@ namespace stan {
     template <typename T_n, typename T_rate>
     typename return_type<T_rate>::type
     poisson_ccdf_log(const T_n& n, const T_rate& lambda) {
-      static const char* function("stan::math::poisson_ccdf_log");
+      static const char* function("poisson_ccdf_log");
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
-
 
       // Ensure non-zero argument slengths
       if (!(stan::length(n) && stan::length(lambda)))
@@ -66,7 +65,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
@@ -76,11 +75,12 @@ namespace stan {
 
         if (!is_constant_struct<T_rate>::value)
           operands_and_partials.d_x1[i] += exp(n_dbl * log(lambda_dbl)
-            - lambda_dbl - lgamma(n_dbl+1) - log_Pi);
+                                               - lambda_dbl - lgamma(n_dbl+1)
+                                               - log_Pi);
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

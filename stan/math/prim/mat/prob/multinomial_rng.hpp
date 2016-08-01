@@ -22,7 +22,7 @@ namespace stan {
     multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta,
                     const int N,
                     RNG& rng) {
-      static const char* function("stan::math::multinomial_rng");
+      static const char* function("multinomial_rng");
 
       check_simplex(function, "Probabilites parameter", theta);
       check_positive(function, "number of trials variables", N);

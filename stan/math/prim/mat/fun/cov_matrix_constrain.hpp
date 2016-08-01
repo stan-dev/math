@@ -11,8 +11,6 @@
 namespace stan {
   namespace math {
 
-    // COVARIANCE MATRIX
-
     /**
      * Return the symmetric, positive-definite matrix of dimensions K
      * by K resulting from transforming the specified finite vector of
@@ -88,7 +86,7 @@ namespace stan {
           L(m, n) = 0.0;
       }
       // Jacobian for complete transform, including exp() above
-      lp += (K * stan::math::LOG_2);  // needless constant; want propto
+      lp += (K * LOG_2);  // needless constant; want propto
       for (int k = 0; k < K; ++k)
         lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
       return L * L.transpose();
@@ -96,7 +94,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

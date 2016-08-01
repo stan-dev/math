@@ -28,7 +28,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     pareto_type_2_log(const T_y& y, const T_loc& mu, const T_scale& lambda,
                       const T_shape& alpha) {
-      static const char* function("stan::math::pareto_type_2_log");
+      static const char* function("pareto_type_2_log");
       typedef
         typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
         T_partials_return;
@@ -141,6 +141,7 @@ namespace stan {
                       const T_scale& lambda, const T_shape& alpha) {
       return pareto_type_2_log<false>(y, mu, lambda, alpha);
     }
+
   }
 }
 #endif

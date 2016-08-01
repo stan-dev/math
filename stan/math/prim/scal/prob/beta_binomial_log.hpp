@@ -32,7 +32,7 @@ namespace stan {
                       const T_N& N,
                       const T_size1& alpha,
                       const T_size2& beta) {
-      static const char* function("stan::math::beta_binomial_log");
+      static const char* function("beta_binomial_log");
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 

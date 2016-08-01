@@ -38,13 +38,13 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             _variRefA(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
@@ -124,10 +124,10 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
@@ -189,10 +189,10 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             _variRefA(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
@@ -249,10 +249,10 @@ namespace stan {
                      const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left_spd", "A", A);
-      stan::math::check_multiplicable("mdivide_left_spd",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_spd", "A", A);
+      check_multiplicable("mdivide_left_spd",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
@@ -276,10 +276,10 @@ namespace stan {
                      const Eigen::Matrix<double, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left_spd", "A", A);
-      stan::math::check_multiplicable("mdivide_left_spd",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_spd", "A", A);
+      check_multiplicable("mdivide_left_spd",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
@@ -303,10 +303,10 @@ namespace stan {
                      const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left_spd", "A", A);
-      stan::math::check_multiplicable("mdivide_left_spd",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_spd", "A", A);
+      check_multiplicable("mdivide_left_spd",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed

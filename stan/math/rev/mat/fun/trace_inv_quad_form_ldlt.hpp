@@ -11,6 +11,7 @@
 
 namespace stan {
   namespace math {
+
     namespace {
       template <typename T2, int R2, int C2, typename T3, int R3, int C3>
       class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
@@ -59,7 +60,7 @@ namespace stan {
       public:
         template<typename T1, int R1, int C1>
         trace_inv_quad_form_ldlt_impl(const Eigen::Matrix<T1, R1, C1> &D,
-                                      const stan::math::LDLT_factor<T2, R2, C2>
+                                      const LDLT_factor<T2, R2, C2>
                                       &A,
                                       const Eigen::Matrix<T3, R3, C3> &B)
           : Dtype_(stan::is_var<T1>::value),
@@ -70,7 +71,7 @@ namespace stan {
           _value = (D_*C_).trace();
         }
 
-        trace_inv_quad_form_ldlt_impl(const stan::math::LDLT_factor<T2, R2, C2>
+        trace_inv_quad_form_ldlt_impl(const LDLT_factor<T2, R2, C2>
                                       &A,
                                       const Eigen::Matrix<T3, R3, C3> &B)
           : Dtype_(2),
@@ -79,7 +80,7 @@ namespace stan {
         }
 
         const int Dtype_;  // 0 = double, 1 = var, 2 = missing
-        stan::math::LDLT_factor<T2, R2, C2> _ldlt;
+        LDLT_factor<T2, R2, C2> _ldlt;
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> D_;
         Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic> _variD;
         Eigen::Matrix<vari*, R3, C3> _variB;
@@ -171,13 +172,13 @@ namespace stan {
     template <typename T2, int R2, int C2, typename T3, int R3, int C3>
     inline typename
     boost::enable_if_c<stan::is_var<T2>::value ||
-                       stan::is_var<T3>::value,
+    stan::is_var<T3>::value,
                        var>::type
-      trace_inv_quad_form_ldlt(const stan::math::LDLT_factor<T2, R2, C2> &A,
+      trace_inv_quad_form_ldlt(const LDLT_factor<T2, R2, C2> &A,
                                const Eigen::Matrix<T3, R3, C3> &B) {
-      stan::math::check_multiplicable("trace_inv_quad_form_ldlt",
-                                                "A", A,
-                                                "B", B);
+      check_multiplicable("trace_inv_quad_form_ldlt",
+                          "A", A,
+                          "B", B);
 
       trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *_impl
         = new trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A, B);
@@ -188,5 +189,4 @@ namespace stan {
 
   }
 }
-
 #endif

@@ -41,7 +41,7 @@ namespace stan {
         return 0.0;
 
       // Error checks
-      static const char* function("stan::math::inv_gamma_ccdf_log");
+      static const char* function("inv_gamma_ccdf_log");
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -100,7 +100,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
 
         // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -121,19 +121,18 @@ namespace stan {
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x2[n]
-            -= stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                              * y_inv_dbl, gamma_vec[n],
-                                              digamma_vec[n]) / Pn;
+            -= grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                  * y_inv_dbl, gamma_vec[n],
+                                  digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
             * pow(beta_dbl * y_inv_dbl, alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
-
 #endif

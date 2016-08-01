@@ -31,7 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::student_t_distribution;
 
-      static const char* function("stan::math::student_t_rng");
+      static const char* function("student_t_rng");
 
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -42,6 +42,7 @@ namespace stan {
         rng_unit_student_t(rng, student_t_distribution<>(nu));
       return mu + sigma * rng_unit_student_t();
     }
+
   }
 }
 #endif

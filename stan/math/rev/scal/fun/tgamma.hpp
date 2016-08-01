@@ -62,7 +62,7 @@ namespace stan {
      * @param a Argument to function.
      * @return The Gamma function applied to the specified argument.
      */
-    inline var tgamma(const stan::math::var& a) {
+    inline var tgamma(const var& a) {
       return var(new tgamma_vari(a.vi_));
     }
 

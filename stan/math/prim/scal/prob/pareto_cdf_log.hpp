@@ -31,7 +31,7 @@ namespace stan {
         return 0.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_cdf_log");
+      static const char* function("pareto_cdf_log");
 
       using std::log;
       using std::exp;
@@ -61,7 +61,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       // Compute vectorized cdf_log and its gradients
@@ -94,9 +94,9 @@ namespace stan {
           operands_and_partials.d_x3[n]
             -= exp(alpha_dbl * log_dbl) * log_dbl / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

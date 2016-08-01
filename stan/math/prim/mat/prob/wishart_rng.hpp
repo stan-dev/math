@@ -30,7 +30,7 @@ namespace stan {
                 RNG& rng) {
       using Eigen::MatrixXd;
 
-      static const char* function("stan::math::wishart_rng");
+      static const char* function("wishart_rng");
 
       typename index_type<MatrixXd>::type k = S.rows();
 
@@ -45,10 +45,9 @@ namespace stan {
         B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
       }
 
-      return stan::math::crossprod(B * S.llt().matrixU());
+      return crossprod(B * S.llt().matrixU());
     }
 
   }
-
 }
 #endif

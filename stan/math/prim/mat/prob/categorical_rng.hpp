@@ -21,7 +21,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const char* function("stan::math::categorical_rng");
+      static const char* function("categorical_rng");
 
       check_simplex(function, "Probabilities parameter", theta);
 

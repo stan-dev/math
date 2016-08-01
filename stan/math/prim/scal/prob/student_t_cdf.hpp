@@ -40,7 +40,7 @@ namespace stan {
             && stan::length(sigma)))
         return 1.0;
 
-      static const char* function("stan::math::student_t_cdf");
+      static const char* function("student_t_cdf");
 
       using std::exp;
 
@@ -129,11 +129,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
-                                          (T_partials_return)0.5, 1.0 - r,
-                                          digammaNu_vec[n], digammaHalf,
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
+                              (T_partials_return)0.5, 1.0 - r,
+                              digammaNu_vec[n], digammaHalf,
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
@@ -166,11 +166,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
-                                          0.5 * nu_dbl, r,
-                                          digammaHalf, digammaNu_vec[n],
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
+                              0.5 * nu_dbl, r,
+                              digammaHalf, digammaNu_vec[n],
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (- d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
@@ -200,9 +200,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x4[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

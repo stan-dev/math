@@ -31,7 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::binomial_distribution;
 
-      static const char* function("stan::math::binomial_rng");
+      static const char* function("binomial_rng");
 
 
       check_nonnegative(function, "Population size parameter", N);

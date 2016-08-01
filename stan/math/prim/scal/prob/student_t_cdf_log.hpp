@@ -40,7 +40,7 @@ namespace stan {
             && stan::length(sigma)))
         return 0.0;
 
-      static const char* function("stan::math::student_t_cdf_log");
+      static const char* function("student_t_cdf_log");
 
       using std::exp;
 
@@ -65,7 +65,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       using std::pow;
@@ -131,11 +131,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
-                                          (T_partials_return)0.5, 1.0 - r,
-                                          digammaNu_vec[n], digammaHalf,
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
+                              (T_partials_return)0.5, 1.0 - r,
+                              digammaNu_vec[n], digammaHalf,
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
@@ -168,11 +168,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
-                                          0.5 * nu_dbl, r,
-                                          digammaHalf, digammaNu_vec[n],
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
+                              0.5 * nu_dbl, r,
+                              digammaHalf, digammaNu_vec[n],
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (- d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
@@ -186,9 +186,9 @@ namespace stan {
               += - zJacobian * d_ibeta * J * sigma_inv * t / Pn;
         }
       }
-
-    return operands_and_partials.value(P);
+      return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

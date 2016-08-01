@@ -37,7 +37,7 @@ namespace stan {
         return 0.0;
 
       // Error checks
-      static const char* function("stan::math::logistic_cdf_log");
+      static const char* function("logistic_cdf_log");
 
       using boost::math::tools::promote_args;
       using std::log;
@@ -75,7 +75,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         }
 
         // Pull out values
@@ -99,9 +99,9 @@ namespace stan {
           operands_and_partials.d_x3[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

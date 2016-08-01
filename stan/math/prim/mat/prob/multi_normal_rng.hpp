@@ -21,14 +21,13 @@ namespace stan {
     template <class RNG>
     inline Eigen::VectorXd
     multi_normal_rng(
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
-      RNG& rng
-    ) {
+        const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
+        RNG& rng) {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const char* function("stan::math::multi_normal_rng");
+      static const char* function("multi_normal_rng");
 
 
       check_positive(function, "Covariance matrix rows", S.rows());
@@ -44,7 +43,7 @@ namespace stan {
 
       return mu + S.llt().matrixL() * z;
     }
+
   }
 }
-
 #endif

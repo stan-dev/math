@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/prob/lognormal_log.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_log.hpp>
@@ -24,7 +23,7 @@ namespace stan {
                 const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
                 const T_shape& eta) {
-      static const char* function("stan::math::lkj_cov_log");
+      static const char* function("lkj_cov_log");
 
       using boost::math::tools::promote_args;
 
@@ -83,7 +82,7 @@ namespace stan {
                 const T_loc& mu,
                 const T_scale& sigma,
                 const T_shape& eta) {
-      static const char* function("stan::math::lkj_cov_log");
+      static const char* function("lkj_cov_log");
 
       using boost::math::tools::promote_args;
 

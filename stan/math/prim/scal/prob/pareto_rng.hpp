@@ -23,7 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::exponential_distribution;
 
-      static const char* function("stan::math::pareto_rng");
+      static const char* function("pareto_rng");
 
 
       check_positive_finite(function, "Scale parameter", y_min);
@@ -33,6 +33,7 @@ namespace stan {
         exp_rng(rng, exponential_distribution<>(alpha));
       return y_min * std::exp(exp_rng());
     }
+
   }
 }
 #endif

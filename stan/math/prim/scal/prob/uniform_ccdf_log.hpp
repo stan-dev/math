@@ -22,7 +22,7 @@ namespace stan {
     template <typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_ccdf_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const char* function("stan::math::uniform_ccdf_log");
+      static const char* function("uniform_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
@@ -81,9 +81,9 @@ namespace stan {
           operands_and_partials.d_x3[n] += (y_dbl - alpha_dbl) / b_min_a
             / b_min_a / ccdf_log_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

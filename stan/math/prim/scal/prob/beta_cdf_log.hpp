@@ -43,7 +43,7 @@ namespace stan {
         return 0.0;
 
       // Error checks
-      static const char* function("stan::math::beta_cdf");
+      static const char* function("beta_cdf");
 
       using boost::math::tools::promote_args;
 
@@ -121,10 +121,10 @@ namespace stan {
         T_partials_return g2 = 0;
 
         if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
-                                        digamma_alpha_vec[n],
-                                        digamma_beta_vec[n], digamma_sum_vec[n],
-                                        betafunc_dbl);
+          grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
+                            digamma_alpha_vec[n],
+                            digamma_beta_vec[n], digamma_sum_vec[n],
+                            betafunc_dbl);
         }
         if (!is_constant_struct<T_scale_succ>::value)
           operands_and_partials.d_x2[n] += g1 / Pn;

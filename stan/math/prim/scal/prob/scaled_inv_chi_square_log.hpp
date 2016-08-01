@@ -49,7 +49,7 @@ namespace stan {
               typename T_y, typename T_dof, typename T_scale>
     typename return_type<T_y, T_dof, T_scale>::type
     scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
-      static const char* function("stan::math::scaled_inv_chi_square_log");
+      static const char* function("scaled_inv_chi_square_log");
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
 
@@ -166,6 +166,7 @@ namespace stan {
     scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
       return scaled_inv_chi_square_log<false>(y, nu, s);
     }
+
   }
 }
 #endif

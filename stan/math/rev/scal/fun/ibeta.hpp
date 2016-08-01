@@ -37,7 +37,7 @@ namespace stan {
       class ibeta_vvv_vari : public op_vvv_vari {
       public:
         ibeta_vvv_vari(vari* avi, vari* bvi, vari* xvi) :
-          op_vvv_vari(stan::math::ibeta(avi->val_, bvi->val_, xvi->val_),
+          op_vvv_vari(ibeta(avi->val_, bvi->val_, xvi->val_),
                       avi, bvi, xvi) {
         }
         void chain() {
@@ -69,7 +69,7 @@ namespace stan {
       class ibeta_vvd_vari : public op_vvd_vari {
       public:
         ibeta_vvd_vari(vari* avi, vari* bvi, double x) :
-          op_vvd_vari(stan::math::ibeta(avi->val_, bvi->val_, x), avi, bvi, x) {
+          op_vvd_vari(ibeta(avi->val_, bvi->val_, x), avi, bvi, x) {
         }
         void chain() {
           double a = avi_->val_;
@@ -98,7 +98,7 @@ namespace stan {
       class ibeta_vdv_vari : public op_vdv_vari {
       public:
         ibeta_vdv_vari(vari* avi, double b, vari* xvi) :
-          op_vdv_vari(stan::math::ibeta(avi->val_, b, xvi->val_), avi, b, xvi) {
+          op_vdv_vari(ibeta(avi->val_, b, xvi->val_), avi, b, xvi) {
         }
         void chain() {
           double a = avi_->val_;
@@ -124,7 +124,7 @@ namespace stan {
       class ibeta_vdd_vari : public op_vdd_vari {
       public:
         ibeta_vdd_vari(vari* avi, double b, double x) :
-          op_vdd_vari(stan::math::ibeta(avi->val_, b, x), avi, b, x) {
+          op_vdd_vari(ibeta(avi->val_, b, x), avi, b, x) {
         }
         void chain() {
           double a = avi_->val_;
@@ -148,7 +148,7 @@ namespace stan {
       class ibeta_dvv_vari : public op_dvv_vari {
       public:
         ibeta_dvv_vari(double a, vari* bvi, vari* xvi) :
-          op_dvv_vari(stan::math::ibeta(a, bvi->val_, xvi->val_), a, bvi, xvi) {
+          op_dvv_vari(ibeta(a, bvi->val_, xvi->val_), a, bvi, xvi) {
         }
         void chain() {
           double a = ad_;
@@ -174,7 +174,7 @@ namespace stan {
       class ibeta_dvd_vari : public op_dvd_vari {
       public:
         ibeta_dvd_vari(double a, vari* bvi, double x) :
-          op_dvd_vari(stan::math::ibeta(a, bvi->val_, x), a, bvi, x) {
+          op_dvd_vari(ibeta(a, bvi->val_, x), a, bvi, x) {
         }
         void chain() {
           double a = ad_;
@@ -198,7 +198,7 @@ namespace stan {
       class ibeta_ddv_vari : public op_ddv_vari {
       public:
         ibeta_ddv_vari(double a, double b, vari* xvi) :
-          op_ddv_vari(stan::math::ibeta(a, b, xvi->val_), a, b, xvi) {
+          op_ddv_vari(ibeta(a, b, xvi->val_), a, b, xvi) {
         }
         void chain() {
           double a = ad_;

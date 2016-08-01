@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
@@ -46,7 +45,7 @@ namespace stan {
                  const Eigen::Matrix
                  <T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
                  const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-      static const char* function("stan::math::multi_gp_log");
+      static const char* function("multi_gp_log");
       typedef typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
         T_lp;
       T_lp lp(0.0);
@@ -103,7 +102,7 @@ namespace stan {
                  const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
       return multi_gp_log<false>(y, Sigma, w);
     }
+
   }
 }
-
 #endif

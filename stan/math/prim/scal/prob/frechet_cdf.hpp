@@ -31,7 +31,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::frechet_cdf");
+      static const char* function("frechet_cdf");
 
       using boost::math::tools::promote_args;
       using std::log;
@@ -86,9 +86,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

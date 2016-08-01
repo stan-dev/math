@@ -23,7 +23,7 @@ namespace stan {
     cholesky_factor_free(const Eigen::Matrix
                          <T, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using std::log;
-      if (!stan::math::check_cholesky_factor("cholesky_factor_free", "y", y))
+      if (!check_cholesky_factor("cholesky_factor_free", "y", y))
         throw std::domain_error("cholesky_factor_free: "
                                 "y is not a Cholesky factor");
       int M = y.rows();
@@ -45,7 +45,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

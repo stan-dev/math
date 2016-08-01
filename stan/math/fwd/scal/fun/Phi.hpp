@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_PHI_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
@@ -15,8 +14,9 @@ namespace stan {
       using std::sqrt;
       T xv = x.val_;
       return fvar<T>(Phi(xv),
-                     x.d_ * exp(xv * xv / -2.0) / sqrt(2.0 * stan::math::pi()));
+                     x.d_ * exp(xv * xv / -2.0) / sqrt(2.0 * pi()));
     }
+
   }
 }
 #endif

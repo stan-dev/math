@@ -118,7 +118,7 @@ namespace stan {
      * cholesky decomposition
      *
      * Internally calls llt rather than using
-     * stan::math::cholesky_decompose in order
+     * cholesky_decompose in order
      * to use selfadjointView<Lower> optimization.
      *
      * Note chainable stack varis are created
@@ -128,9 +128,9 @@ namespace stan {
      * @return L cholesky factor of A
      */
     inline Eigen::Matrix<var, -1, -1>
-    cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
-      stan::math::check_square("cholesky_decompose", "A", A);
-      stan::math::check_symmetric("cholesky_decompose", "A", A);
+      cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
+      check_square("cholesky_decompose", "A", A);
+      check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       Eigen::LLT<Eigen::MatrixXd> L_factor
@@ -144,7 +144,7 @@ namespace stan {
       // arena allocator.
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A, L_A);
-      stan::math::vari dummy(0.0, false);
+      vari dummy(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       size_t accum = 0;
       size_t accum_i = accum;
@@ -161,6 +161,7 @@ namespace stan {
       }
       return L;
     }
+
   }
 }
 #endif

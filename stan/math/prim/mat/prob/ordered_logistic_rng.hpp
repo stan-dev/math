@@ -25,7 +25,7 @@ namespace stan {
                          RNG& rng) {
       using boost::variate_generator;
 
-      static const char* function("stan::math::ordered_logistic");
+      static const char* function("ordered_logistic");
 
 
       check_finite(function, "Location parameter", eta);
@@ -42,9 +42,9 @@ namespace stan {
         cut(j) = inv_logit(eta - c(j - 1)) - inv_logit(eta - c(j));
       cut(c.rows()) = inv_logit(eta - c(c.rows() - 1));
 
-      return stan::math::categorical_rng(cut, rng);
+      return categorical_rng(cut, rng);
     }
+
   }
 }
-
 #endif

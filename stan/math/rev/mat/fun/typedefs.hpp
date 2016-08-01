@@ -12,7 +12,7 @@ namespace stan {
     size_type;
 
     /**
-     * The type of a matrix holding <code>stan::math::var</code>
+     * The type of a matrix holding <code>var</code>
      * values.
      */
     typedef
@@ -20,7 +20,7 @@ namespace stan {
     matrix_v;
 
     /**
-     * The type of a (column) vector holding <code>stan::math::var</code>
+     * The type of a (column) vector holding <code>var</code>
      * values.
      */
     typedef
@@ -28,7 +28,7 @@ namespace stan {
     vector_v;
 
     /**
-     * The type of a row vector holding <code>stan::math::var</code>
+     * The type of a row vector holding <code>var</code>
      * values.
      */
     typedef

@@ -26,14 +26,11 @@ namespace stan {
     template <typename T>
     inline
     T corr_free(const T y) {
-      stan::math::check_bounded<T, double, double>
-        ("stan::math::lub_free",
-         "Correlation variable", y, -1, 1);
+      check_bounded("lub_free",
+                    "Correlation variable", y, -1.0, 1.0);
       return atanh(y);
     }
 
   }
-
 }
-
 #endif

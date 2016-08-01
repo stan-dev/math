@@ -29,7 +29,7 @@ namespace stan {
       (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value)
       && (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
       typename boost::math::tools::promote_args<T1, T2>::type>::type
-    multiply(const T1& v, const T2& c) {
+             multiply(const T1& v, const T2& c) {
       return v * c;
     }
 
@@ -72,13 +72,13 @@ namespace stan {
     template<typename T1, int R1, int C1, typename T2, int R2, int C2>
     inline typename
     boost::enable_if_c< boost::is_same<T1, var>::value ||
-                        boost::is_same<T2, var>::value,
+    boost::is_same<T2, var>::value,
                         Eigen::Matrix<var, R1, C2> >::type
-    multiply(const Eigen::Matrix<T1, R1, C1>& m1,
-             const Eigen::Matrix<T2, R2, C2>& m2) {
-      stan::math::check_multiplicable("multiply",
-                                                "m1", m1,
-                                                "m2", m2);
+      multiply(const Eigen::Matrix<T1, R1, C1>& m1,
+               const Eigen::Matrix<T2, R2, C2>& m2) {
+      check_multiplicable("multiply",
+                          "m1", m1,
+                          "m2", m2);
       Eigen::Matrix<var, R1, C2> result(m1.rows(), m2.cols());
       for (int i = 0; i < m1.rows(); i++) {
         typename Eigen::Matrix<T1, R1, C1>::ConstRowXpr crow(m1.row(i));
@@ -125,9 +125,9 @@ namespace stan {
     template <typename T1, int C1, typename T2, int R2>
     inline typename
     boost::enable_if_c< boost::is_same<T1, var>::value ||
-                        boost::is_same<T2, var>::value, var >::type
-    multiply(const Eigen::Matrix<T1, 1, C1>& rv,
-             const Eigen::Matrix<T2, R2, 1>& v) {
+    boost::is_same<T2, var>::value, var >::type
+      multiply(const Eigen::Matrix<T1, 1, C1>& rv,
+               const Eigen::Matrix<T2, R2, 1>& v) {
       if (rv.size() != v.size())
         throw std::domain_error("row vector and vector must be same length "
                                 "in multiply");

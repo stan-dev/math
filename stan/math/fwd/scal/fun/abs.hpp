@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_ABS_HPP
 #define STAN_MATH_FWD_SCAL_FUN_ABS_HPP
 
-#include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -20,7 +20,7 @@ namespace stan {
       else if (x.val_ == 0.0)
         return fvar<T>(0, 0);
       else
-        return fvar<T>(abs(x.val_), stan::math::NOT_A_NUMBER);
+        return fvar<T>(abs(x.val_), NOT_A_NUMBER);
     }
 
   }

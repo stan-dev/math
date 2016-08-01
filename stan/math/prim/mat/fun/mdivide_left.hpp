@@ -24,10 +24,8 @@ namespace stan {
                   R1, C2>
     mdivide_left(const Eigen::Matrix<T1, R1, C1> &A,
                  const Eigen::Matrix<T2, R2, C2> &b) {
-      stan::math::check_square("mdivide_left", "A", A);
-      stan::math::check_multiplicable("mdivide_left",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left", "A", A);
+      check_multiplicable("mdivide_left", "A", A, "b", b);
       return promote_common<Eigen::Matrix<T1, R1, C1>,
                             Eigen::Matrix<T2, R1, C1> >(A)
         .lu()

@@ -27,7 +27,7 @@ namespace stan {
     double
     hypergeometric_log(const T_n& n, const T_N& N,
                        const T_a& a, const T_b& b) {
-      static const char* function("stan::math::hypergeometric_log");
+      static const char* function("hypergeometric_log");
 
 
       // check if any vectors are zero length
@@ -81,6 +81,7 @@ namespace stan {
                        const T_b& b) {
       return hypergeometric_log<false>(n, N, a, b);
     }
+
   }
 }
 #endif

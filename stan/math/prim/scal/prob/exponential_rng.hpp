@@ -25,7 +25,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::exponential_distribution;
 
-      static const char* function("stan::math::exponential_rng");
+      static const char* function("exponential_rng");
 
 
       check_positive_finite(function, "Inverse scale parameter", beta);
@@ -34,7 +34,7 @@ namespace stan {
         exp_rng(rng, exponential_distribution<>(beta));
       return exp_rng();
     }
+
   }
 }
-
 #endif

@@ -25,15 +25,13 @@ namespace stan {
     template <bool propto, typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
-      static const char* function("stan::math::gumbel_log");
+      static const char* function("gumbel_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
       using std::log;
       using std::exp;
       using stan::is_constant_struct;
-      using std::log;
-      using std::exp;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -111,6 +109,7 @@ namespace stan {
     gumbel_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
       return gumbel_log<false>(y, mu, beta);
     }
+
   }
 }
 #endif

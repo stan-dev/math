@@ -25,7 +25,7 @@ namespace stan {
     template <typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_cdf(const T_y& y, const T_scale& sigma) {
-      static const char* function("stan::math::rayleigh_cdf");
+      static const char* function("rayleigh_cdf");
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
@@ -83,9 +83,9 @@ namespace stan {
           operands_and_partials.d_x2[n] -= y_sqr * inv_sigma_sqr
             * inv_sigma[n] * exp_div_1m_exp * cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

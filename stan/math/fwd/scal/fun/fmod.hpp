@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_FMOD_HPP
 
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
@@ -26,7 +25,7 @@ namespace stan {
       using std::fmod;
       if (unlikely(boost::math::isnan(value_of(x1.val_))
                    || boost::math::isnan(x2)))
-        return fvar<T>(fmod(x1.val_, x2), stan::math::NOT_A_NUMBER);
+        return fvar<T>(fmod(x1.val_, x2), NOT_A_NUMBER);
       else
         return fvar<T>(fmod(x1.val_, x2), x1.d_ / x2);
     }
@@ -39,6 +38,7 @@ namespace stan {
       using std::floor;
       return fvar<T>(fmod(x1, x2.val_), -x2.d_ * floor(x1 / x2.val_));
     }
+
   }
 }
 #endif

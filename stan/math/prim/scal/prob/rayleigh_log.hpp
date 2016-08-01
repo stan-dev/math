@@ -26,7 +26,7 @@ namespace stan {
               typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_log(const T_y& y, const T_scale& sigma) {
-      static const char* function("stan::math::rayleigh_log");
+      static const char* function("rayleigh_log");
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
@@ -103,6 +103,7 @@ namespace stan {
     rayleigh_log(const T_y& y, const T_scale& sigma) {
       return rayleigh_log<false>(y, sigma);
     }
+
   }
 }
 #endif

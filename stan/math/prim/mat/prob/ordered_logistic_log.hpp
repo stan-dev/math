@@ -60,7 +60,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const char* function("stan::math::ordered_logistic");
+      static const char* function("ordered_logistic");
 
 
       int K = c.size() + 1;
@@ -95,7 +95,7 @@ namespace stan {
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       return ordered_logistic_log<false>(y, lambda, c);
     }
+
   }
 }
-
 #endif

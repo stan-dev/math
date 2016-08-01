@@ -38,7 +38,7 @@ namespace stan {
         return 0.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_type_2_cdf_log");
+      static const char* function("pareto_type_2_cdf_log");
 
       using std::log;
 
@@ -116,9 +116,9 @@ namespace stan {
           operands_and_partials.d_x4[n] += log_1p_y_over_lambda[n]
             * inv_p1_pow_alpha_minus_one[n];
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

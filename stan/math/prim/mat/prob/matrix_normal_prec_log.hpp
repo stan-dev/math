@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log_determinant.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
@@ -48,7 +47,7 @@ namespace stan {
                            <T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
                            const Eigen::Matrix
                            <T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
-      static const char* function("stan::math::matrix_normal_prec_log");
+      static const char* function("matrix_normal_prec_log");
       typename
         boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(0.0);
 
@@ -109,7 +108,7 @@ namespace stan {
                            <T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
       return matrix_normal_prec_log<false>(y, Mu, Sigma, D);
     }
+
   }
 }
-
 #endif

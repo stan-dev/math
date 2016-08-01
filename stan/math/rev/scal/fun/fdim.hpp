@@ -60,7 +60,7 @@ namespace stan {
      * Return the positive difference between the first variable's the value
      * and the second's (C99).
      *
-     * See stan::math::fdim() for the double-based version.
+     * See fdim() for the double-based version.
      *
      * The partial derivative with respect to the first argument is
      *
@@ -107,8 +107,8 @@ namespace stan {
      * @return The positive difference between the first and second
      * variable.
      */
-    inline var fdim(const stan::math::var& a,
-                    const stan::math::var& b) {
+    inline var fdim(const var& a,
+                    const var& b) {
       if (!(a.vi_->val_ <= b.vi_->val_))
         return var(new fdim_vv_vari(a.vi_, b.vi_));
       else
@@ -133,7 +133,7 @@ namespace stan {
      * arguments.
      */
     inline var fdim(const double& a,
-                    const stan::math::var& b) {
+                    const var& b) {
       return a <= b.vi_->val_
         ? var(new vari(0.0))
         : var(new fdim_dv_vari(a, b.vi_));
@@ -155,7 +155,7 @@ namespace stan {
      * @param b Second variable.
      * @return The positive difference between the first and second arguments.
      */
-    inline var fdim(const stan::math::var& a,
+    inline var fdim(const var& a,
                     const double& b) {
       return a.vi_->val_ <= b
         ? var(new vari(0.0))

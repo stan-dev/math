@@ -24,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::lognormal_distribution;
 
-      static const char* function("stan::math::lognormal_rng");
+      static const char* function("lognormal_rng");
 
 
       check_finite(function, "Location parameter", mu);
@@ -34,6 +34,7 @@ namespace stan {
         lognorm_rng(rng, lognormal_distribution<>(mu, sigma));
       return lognorm_rng();
     }
+
   }
 }
 #endif

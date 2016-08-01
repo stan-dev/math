@@ -65,7 +65,7 @@ namespace stan {
       }
 
       inline void compute(const Eigen::Matrix<T, R, C> &A) {
-        stan::math::check_square("LDLT_factor", "A", A);
+        check_square("LDLT_factor", "A", A);
         N_ = A.rows();
         _ldltP->compute(A);
       }
@@ -126,6 +126,7 @@ namespace stan {
       size_t N_;
       boost::shared_ptr< Eigen::LDLT< Eigen::Matrix<T, R, C> > > _ldltP;
     };
+
   }
 }
 #endif

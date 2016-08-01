@@ -18,13 +18,13 @@ namespace stan {
      * <p>The functor must implement
      *
      * <code>
-     * stan::math::fvar<stan::math::var>
+     * fvar<var>
      * operator()(const
-     * Eigen::Matrix<stan::math::fvar<stan::math::var>, Eigen::Dynamic, 1>&)
+     * Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>&)
      * </code>
      *
      * using only operations that are defined for
-     * <code>stan::math::fvar</code> and <code>stan::math::var</code>.
+     * <code>fvar</code> and <code>var</code>.
      *
      * This latter constraint usually
      * requires the functions to be defined in terms of the libraries
@@ -60,10 +60,10 @@ namespace stan {
           stan::math::grad(fx_fvar.d_.vi_);
           for (int j = 0; j < x.size(); ++j)
             H(i, j) = x_fvar(j).val_.adj();
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
         }
       } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         throw;
       }
     }

@@ -19,7 +19,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
-      stan::math::check_square("cholesky_corr_free", "x", x);
+      check_square("cholesky_corr_free", "x", x);
       // should validate lower-triangular, unit lengths
 
       int K = (x.rows() * (x.rows() - 1)) / 2;
@@ -35,8 +35,7 @@ namespace stan {
       }
       return z;
     }
+
   }
-
 }
-
 #endif

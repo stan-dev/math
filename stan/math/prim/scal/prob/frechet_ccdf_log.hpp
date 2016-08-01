@@ -31,7 +31,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::frechet_ccdf_log");
+      static const char* function("frechet_ccdf_log");
 
       using boost::math::tools::promote_args;
 
@@ -75,9 +75,9 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += alpha_dbl / sigma_dbl * rep_deriv_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

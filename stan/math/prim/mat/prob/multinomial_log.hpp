@@ -22,7 +22,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_prob>::type
     multinomial_log(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      static const char* function("stan::math::multinomial_log");
+      static const char* function("multinomial_log");
 
       using boost::math::tools::promote_args;
       using boost::math::lgamma;

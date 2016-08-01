@@ -27,7 +27,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::exponential_distribution;
 
-      static const char* function("stan::math::logistic_rng");
+      static const char* function("logistic_rng");
 
 
       check_finite(function, "Location parameter", mu);
@@ -37,6 +37,7 @@ namespace stan {
         exp_rng(rng, exponential_distribution<>(1));
       return mu - sigma * std::log(exp_rng() / exp_rng());
     }
+
   }
 }
 #endif

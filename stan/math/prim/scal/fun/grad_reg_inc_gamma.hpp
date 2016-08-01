@@ -31,7 +31,7 @@ namespace stan {
         s *= - z / k;
         delta = s / ((k + a) * (k + a));
         if (isinf(delta))
-          throw domain_error("stan::math::gradRegIncGamma not converging");
+          throw domain_error("gradRegIncGamma not converging");
       }
       return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
     }

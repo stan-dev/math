@@ -29,7 +29,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::weibull_distribution;
 
-      static const char* function("stan::math::frechet_rng");
+      static const char* function("frechet_rng");
 
 
       check_finite(function, "Shape parameter", alpha);
@@ -41,6 +41,7 @@ namespace stan {
         weibull_rng(rng, weibull_distribution<>(alpha, 1.0/sigma));
       return 1.0 / weibull_rng();
     }
+
   }
 }
 #endif

@@ -7,7 +7,6 @@
 namespace std {
 
   template <typename T>
-
   struct numeric_limits<stan::math::fvar<T> > {
     static const bool is_specialized = true;
     static stan::math::fvar<T> min() { return numeric_limits<double>::min(); }

@@ -57,7 +57,7 @@ namespace stan {
         return 1.0;
 
       // Error checks
-      static const char* function("stan::math::beta_cdf");
+      static const char* function("beta_cdf");
       using boost::math::tools::promote_args;
 
       T_partials_return P(1.0);

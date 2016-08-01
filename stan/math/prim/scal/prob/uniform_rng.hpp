@@ -23,7 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
 
-      static const char* function("stan::math::uniform_rng");
+      static const char* function("uniform_rng");
 
 
       check_finite(function, "Lower bound parameter", alpha);
@@ -34,6 +34,7 @@ namespace stan {
         uniform_rng(rng, uniform_real_distribution<>(alpha, beta));
       return uniform_rng();
     }
+
   }
 }
 #endif

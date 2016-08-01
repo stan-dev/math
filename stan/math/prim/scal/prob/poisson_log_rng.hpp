@@ -24,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::poisson_distribution;
 
-      static const char* function("stan::math::poisson_log_rng");
+      static const char* function("poisson_log_rng");
       static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
 
       using std::exp;
@@ -36,6 +36,7 @@ namespace stan {
         poisson_rng(rng, poisson_distribution<>(exp(alpha)));
       return poisson_rng();
     }
+
   }
 }
 #endif

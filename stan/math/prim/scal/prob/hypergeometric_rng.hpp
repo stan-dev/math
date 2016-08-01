@@ -16,7 +16,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::math::hypergeometric_distribution;
 
-      static const char* function("stan::math::hypergeometric_rng");
+      static const char* function("hypergeometric_rng");
 
       check_bounded(function, "Draws parameter", N, 0, a+b);
       check_positive(function, "Draws parameter", N);
@@ -39,7 +39,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

@@ -25,10 +25,10 @@ namespace stan {
             _rows(A.rows()),
             _cols(A.cols()),
             A_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * A.rows() * A.cols()))),
             _adjARef(reinterpret_cast<vari**>
-                     (stan::math::ChainableStack::memalloc_
+                     (ChainableStack::memalloc_
                       .alloc(sizeof(vari*) * A.rows() * A.cols()))) {
           size_t pos = 0;
           for (size_type j = 0; j < _cols; j++) {
@@ -64,7 +64,7 @@ namespace stan {
 
     template <int R, int C>
     inline var determinant(const Eigen::Matrix<var, R, C>& m) {
-      stan::math::check_square("determinant", "m", m);
+      check_square("determinant", "m", m);
       return var(new determinant_vari<R, C>(m));
     }
 

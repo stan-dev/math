@@ -43,7 +43,7 @@ namespace stan {
               && stan::length(sigma) ) )
         return 1.0;
 
-      static const char* function("stan::math::cauchy_cdf");
+      static const char* function("cauchy_cdf");
 
       using boost::math::tools::promote_args;
 
@@ -119,9 +119,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

@@ -25,11 +25,10 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_ccdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
                          const T_shape& alpha) {
-      static const char* function("stan::math::skew_normal_ccdf_log");
+      static const char* function("skew_normal_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_shape>::type
         T_partials_return;
-
 
       T_partials_return ccdf_log(0.0);
 
@@ -63,7 +62,7 @@ namespace stan {
       VectorView<const T_scale> sigma_vec(sigma);
       VectorView<const T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, sigma, alpha);
-      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / stan::math::pi());
+      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -100,9 +99,9 @@ namespace stan {
                                                       * (1.0 + alpha_dbl_sq))
             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / ccdf_log_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

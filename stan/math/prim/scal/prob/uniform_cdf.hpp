@@ -21,7 +21,7 @@ namespace stan {
     template <typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const char* function("stan::math::uniform_cdf");
+      static const char* function("uniform_cdf");
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
@@ -92,6 +92,7 @@ namespace stan {
 
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

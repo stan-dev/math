@@ -15,12 +15,10 @@ namespace stan {
     // // N * (fwd(2) + bk)
     template <typename F>
     void
-    grad_tr_mat_times_hessian(
-      const F& f,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
-      Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH
-    ) {
+    grad_tr_mat_times_hessian(const F& f,
+        const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
+        Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
       start_nested();
@@ -47,14 +45,14 @@ namespace stan {
           sum += grad_fx_dot_v.d_;
         }
 
-        stan::math::grad(sum.vi_);
+        grad(sum.vi_);
         for (int i = 0; i < x.size(); ++i)
           grad_tr_MH(i) = x_var(i).adj();
       } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         throw;
       }
-      stan::math::recover_memory_nested();
+      recover_memory_nested();
     }
 
   }  // namespace math

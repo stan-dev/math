@@ -15,7 +15,7 @@ namespace stan {
       class log_falling_factorial_vv_vari : public op_vv_vari {
       public:
         log_falling_factorial_vv_vari(vari* avi, vari* bvi) :
-          op_vv_vari(stan::math::log_falling_factorial(avi->val_, bvi->val_),
+          op_vv_vari(log_falling_factorial(avi->val_, bvi->val_),
                      avi, bvi) {
         }
         void chain() {
@@ -36,7 +36,7 @@ namespace stan {
       class log_falling_factorial_vd_vari : public op_vd_vari {
       public:
         log_falling_factorial_vd_vari(vari* avi, double b) :
-          op_vd_vari(stan::math::log_falling_factorial(avi->val_, b), avi, b) {
+          op_vd_vari(log_falling_factorial(avi->val_, b), avi, b) {
         }
         void chain() {
           if (unlikely(boost::math::isnan(avi_->val_)
@@ -52,7 +52,7 @@ namespace stan {
       class log_falling_factorial_dv_vari : public op_dv_vari {
       public:
         log_falling_factorial_dv_vari(double a, vari* bvi) :
-          op_dv_vari(stan::math::log_falling_factorial(a, bvi->val_), a, bvi) {
+          op_dv_vari(log_falling_factorial(a, bvi->val_), a, bvi) {
         }
         void chain() {
           if (unlikely(boost::math::isnan(ad_)
@@ -79,6 +79,7 @@ namespace stan {
                                      const var& b) {
       return var(new log_falling_factorial_dv_vari(a, b.vi_));
     }
+
   }
 }
 #endif

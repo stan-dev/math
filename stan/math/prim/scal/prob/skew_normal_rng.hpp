@@ -24,16 +24,15 @@ namespace stan {
                     RNG& rng) {
       boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 
-      static const char* function("stan::math::skew_normal_rng");
-
+      static const char* function("skew_normal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Scale parameter", sigma);
 
-      return quantile(dist, stan::math::uniform_rng(0.0, 1.0, rng));
+      return quantile(dist, uniform_rng(0.0, 1.0, rng));
     }
+
   }
 }
 #endif
-

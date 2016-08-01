@@ -26,7 +26,7 @@ namespace stan {
     typename return_type<T_prob>::type
     bernoulli_log(const T_n& n,
                   const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_log");
+      static const char* function("bernoulli_log");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
@@ -116,6 +116,7 @@ namespace stan {
                   const T_prob& theta) {
       return bernoulli_log<false>(n, theta);
     }
+
   }  // namespace math
 }  // namespace stan
 #endif

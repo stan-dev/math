@@ -38,7 +38,7 @@ namespace stan {
         return 1.0;
 
       // Error checks
-      static const char* function("stan::math::logistic_cdf");
+      static const char* function("logistic_cdf");
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -113,9 +113,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

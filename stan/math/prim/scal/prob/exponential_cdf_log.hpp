@@ -29,7 +29,7 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::exponential_cdf_log");
+      static const char* function("exponential_cdf_log");
 
       using boost::math::tools::promote_args;
       using std::log;
@@ -67,7 +67,7 @@ namespace stan {
       }
       return operands_and_partials.value(cdf_log);
     }
+
   }
 }
-
 #endif

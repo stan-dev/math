@@ -61,7 +61,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
-      stan::math::check_nonzero_size("log_softmax", "alpha", alpha);
+      check_nonzero_size("log_softmax", "alpha", alpha);
 
       if (alpha.size() == 0)
         throw std::domain_error("arg vector to log_softmax() "
@@ -127,5 +127,4 @@ namespace stan {
 
   }
 }
-
 #endif

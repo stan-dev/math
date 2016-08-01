@@ -30,7 +30,7 @@ namespace stan {
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_cdf_log(const T_n& n, const T_N& N, const T_prob& theta) {
-      static const char* function("stan::math::binomial_cdf_log");
+      static const char* function("binomial_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
@@ -69,7 +69,7 @@ namespace stan {
       // but treated as negative infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -91,7 +91,6 @@ namespace stan {
           operands_and_partials.d_x1[i] -= pow(theta_dbl, n_dbl)
             * pow(1-theta_dbl, N_dbl-n_dbl-1) / betafunc / Pi;
       }
-
       return operands_and_partials.value(P);
     }
 

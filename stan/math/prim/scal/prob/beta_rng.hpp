@@ -31,9 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::gamma_distribution;
       // Error checks
-      static const char* function("stan::math::beta_rng");
-
-
+      static const char* function("beta_rng");
       check_positive_finite(function, "First shape parameter", alpha);
       check_positive_finite(function, "Second shape parameter", beta);
 

@@ -21,9 +21,7 @@ namespace stan {
     inline Eigen::Matrix<double, R1, 1>
     rows_dot_product(const Eigen::Matrix<double, R1, C1>& v1,
                      const Eigen::Matrix<double, R2, C2>& v2) {
-      stan::math::check_matching_sizes("rows_dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
       Eigen::Matrix<double, R1, 1> ret(v1.rows(), 1);
       for (size_type j = 0; j < v1.rows(); ++j) {
         ret(j) = v1.row(j).dot(v2.row(j));

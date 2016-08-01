@@ -31,9 +31,9 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R, C>
     to_fvar(const Eigen::Matrix<T, R, C>& val,
             const Eigen::Matrix<T, R, C>& deriv) {
-      stan::math::check_matching_dims("to_fvar",
-                                      "value", val,
-                                      "deriv", deriv);
+      check_matching_dims("to_fvar",
+                          "value", val,
+                          "deriv", deriv);
       Eigen::Matrix<fvar<T>, R, C> ret(val.rows(), val.cols());
       for (int i = 0; i < val.rows(); i++) {
         for (int j = 0; j < val.cols(); j++) {
@@ -43,6 +43,7 @@ namespace stan {
       }
       return ret;
     }
+
   }
 }
 #endif

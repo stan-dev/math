@@ -76,7 +76,7 @@ namespace stan {
         summand *= z / k;
 
         if (k > 1e5)
-          throw std::domain_error("stan::math::inc_beta_ddb did "
+          throw std::domain_error("inc_beta_ddb did "
                                   "not converge within 100000 iterations");
       }
 
@@ -86,5 +86,4 @@ namespace stan {
 
   }  // math
 }   // stan
-
 #endif

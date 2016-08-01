@@ -40,7 +40,7 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("stan::math::neg_binomial_2_log");
+      static const char* function("neg_binomial_2_log");
 
 
       // check if any vectors are zero length
@@ -134,6 +134,7 @@ namespace stan {
                        const T_precision& phi) {
       return neg_binomial_2_log<false>(n, mu, phi);
     }
+
   }
 }
 #endif

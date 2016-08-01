@@ -31,7 +31,7 @@ namespace stan {
               && stan::length(sigma) ) )
         return 0.0;
 
-      static const char* function("stan::math::cauchy_cdf");
+      static const char* function("cauchy_cdf");
 
       using boost::math::tools::promote_args;
 
@@ -83,6 +83,7 @@ namespace stan {
       }
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

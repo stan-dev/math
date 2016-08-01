@@ -44,16 +44,16 @@ namespace stan {
         mdivide_left_ldlt_alloc<R1, C1, R2, C2> *_alloc;
         const LDLT_alloc<R1, C1> *_alloc_ldlt;
 
-        mdivide_left_ldlt_vv_vari(const stan::math::LDLT_factor<var, R1, C1> &A,
+        mdivide_left_ldlt_vv_vari(const LDLT_factor<var, R1, C1> &A,
                                   const Eigen::Matrix<var, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
             _alloc_ldlt(A._alloc) {
@@ -120,17 +120,17 @@ namespace stan {
         vari** _variRefC;
         mdivide_left_ldlt_alloc<R1, C1, R2, C2> *_alloc;
 
-        mdivide_left_ldlt_dv_vari(const stan::math::LDLT_factor<double, R1, C1>
+        mdivide_left_ldlt_dv_vari(const LDLT_factor<double, R1, C1>
                                   &A,
                                   const Eigen::Matrix<var, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
@@ -194,13 +194,13 @@ namespace stan {
         mdivide_left_ldlt_alloc<R1, C1, R2, C2> *_alloc;
         const LDLT_alloc<R1, C1> *_alloc_ldlt;
 
-        mdivide_left_ldlt_vd_vari(const stan::math::LDLT_factor<var, R1, C1> &A,
+        mdivide_left_ldlt_vd_vari(const LDLT_factor<var, R1, C1> &A,
                                   const Eigen::Matrix<double, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _alloc(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
             _alloc_ldlt(A._alloc) {
@@ -243,11 +243,11 @@ namespace stan {
      */
     template <int R1, int C1, int R2, int C2>
     inline Eigen::Matrix<var, R1, C2>
-    mdivide_left_ldlt(const stan::math::LDLT_factor<var, R1, C1> &A,
+    mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
                       const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_multiplicable("mdivide_left_ldlt",
+      check_multiplicable("mdivide_left_ldlt",
                                       "A", A,
                                       "b", b);
 
@@ -271,11 +271,11 @@ namespace stan {
      */
     template <int R1, int C1, int R2, int C2>
     inline Eigen::Matrix<var, R1, C2>
-    mdivide_left_ldlt(const stan::math::LDLT_factor<var, R1, C1> &A,
+    mdivide_left_ldlt(const LDLT_factor<var, R1, C1> &A,
                       const Eigen::Matrix<double, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_multiplicable("mdivide_left_ldlt",
+      check_multiplicable("mdivide_left_ldlt",
                                       "A", A,
                                       "b", b);
 
@@ -299,11 +299,11 @@ namespace stan {
      */
     template <int R1, int C1, int R2, int C2>
     inline Eigen::Matrix<var, R1, C2>
-    mdivide_left_ldlt(const stan::math::LDLT_factor<double, R1, C1> &A,
+    mdivide_left_ldlt(const LDLT_factor<double, R1, C1> &A,
                       const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_multiplicable("mdivide_left_ldlt",
+      check_multiplicable("mdivide_left_ldlt",
                                       "A", A,
                                       "b", b);
 

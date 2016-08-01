@@ -29,9 +29,9 @@ namespace stan {
       using std::log;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
-      stan::math::check_positive_ordered("stan::math::positive_ordered_free",
-                                         "Positive ordered variable",
-                                         y);
+      check_positive_ordered("stan::math::positive_ordered_free",
+                             "Positive ordered variable",
+                             y);
       size_type k = y.size();
       Matrix<T, Dynamic, 1> x(k);
       if (k == 0)

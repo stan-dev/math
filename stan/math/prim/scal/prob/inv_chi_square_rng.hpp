@@ -29,7 +29,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;
 
-      static const char* function("stan::math::inv_chi_square_rng");
+      static const char* function("inv_chi_square_rng");
 
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -38,6 +38,7 @@ namespace stan {
         chi_square_rng(rng, chi_squared_distribution<>(nu));
       return 1 / chi_square_rng();
     }
+
   }
 }
 #endif

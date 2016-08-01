@@ -16,7 +16,7 @@ namespace stan {
      * arithmetic types as defined by Boost's
      * <code>is_arithmetic</code> trait metaprogram.
      *
-     * <p>This function differs from <code>stan::math::value_of</code> in that it
+     * <p>This function differs from <code>value_of</code> in that it
      * does not cast all return types to <code>double</code>.
      *
      * @tparam T type of arithmetic input.
@@ -48,7 +48,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

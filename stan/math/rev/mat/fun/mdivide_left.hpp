@@ -30,19 +30,19 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             A_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * A.rows() * A.cols()))),
             C_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
             _variRefA(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
           using Eigen::Map;
@@ -124,16 +124,16 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             A_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * A.rows() * A.cols()))),
             C_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
             _variRefB(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
           using Eigen::Map;
@@ -206,16 +206,16 @@ namespace stan {
             M_(A.rows()),
             N_(B.cols()),
             A_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * A.rows() * A.cols()))),
             C_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
             _variRefA(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
             _variRefC(reinterpret_cast<vari**>
-                      (stan::math::ChainableStack::memalloc_
+                      (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
           using Eigen::Map;
@@ -274,10 +274,10 @@ namespace stan {
                  const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left", "A", A);
-      stan::math::check_multiplicable("mdivide_left",
-                                      "A", A,
-                                      "b", b);
+      check_square("mdivide_left", "A", A);
+      check_multiplicable("mdivide_left",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
@@ -301,10 +301,10 @@ namespace stan {
                  const Eigen::Matrix<double, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left", "A", A);
-      stan::math::check_multiplicable("mdivide_left",
-                                      "A", A,
-                                      "b", b);
+      check_square("mdivide_left", "A", A);
+      check_multiplicable("mdivide_left",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed
@@ -328,10 +328,10 @@ namespace stan {
                  const Eigen::Matrix<var, R2, C2> &b) {
       Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
-      stan::math::check_square("mdivide_left", "A", A);
-      stan::math::check_multiplicable("mdivide_left",
-                                      "A", A,
-                                      "b", b);
+      check_square("mdivide_left", "A", A);
+      check_multiplicable("mdivide_left",
+                          "A", A,
+                          "b", b);
 
       // NOTE: this is not a memory leak, this vari is used in the
       // expression graph to evaluate the adjoint, but is not needed

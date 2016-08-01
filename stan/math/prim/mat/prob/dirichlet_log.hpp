@@ -45,7 +45,7 @@ namespace stan {
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix
                   <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
-      static const char* function("stan::math::dirichlet_log");
+      static const char* function("dirichlet_log");
       using boost::math::lgamma;
       using boost::math::tools::promote_args;
 
@@ -76,6 +76,7 @@ namespace stan {
                   <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
       return dirichlet_log<false>(theta, alpha);
     }
+
   }
 }
 #endif

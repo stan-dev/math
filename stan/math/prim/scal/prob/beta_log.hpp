@@ -52,7 +52,7 @@ namespace stan {
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_log(const T_y& y,
              const T_scale_succ& alpha, const T_scale_fail& beta) {
-      static const char* function("stan::math::beta_log");
+      static const char* function("beta_log");
 
       typedef typename stan::partials_return_type<T_y,
                                                   T_scale_succ,

@@ -34,7 +34,7 @@ namespace stan {
     multi_normal_prec_log(const T_y& y,
                           const T_loc& mu,
                           const T_covar& Sigma) {
-      static const char* function("stan::math::multi_normal_prec_log");
+      static const char* function("multi_normal_prec_log");
       typedef typename scalar_type<T_covar>::type T_covar_elem;
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
@@ -44,7 +44,7 @@ namespace stan {
       check_symmetric(function, "Precision matrix", Sigma);
 
       LDLT_factor<T_covar_elem,
-        Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
+                  Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of precision parameter",
                         ldlt_Sigma);
 
@@ -115,7 +115,7 @@ namespace stan {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
           Eigen::Matrix<typename return_type<T_y, T_loc>::type,
-            Eigen::Dynamic, 1> y_minus_mu(size_y);
+                        Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
           sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);

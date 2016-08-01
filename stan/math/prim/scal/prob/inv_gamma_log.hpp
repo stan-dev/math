@@ -48,7 +48,7 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     inv_gamma_log(const T_y& y, const T_shape& alpha, const T_scale& beta) {
-      static const char* function("stan::math::inv_gamma_log");
+      static const char* function("inv_gamma_log");
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
@@ -156,7 +156,7 @@ namespace stan {
     inv_gamma_log(const T_y& y, const T_shape& alpha, const T_scale& beta) {
       return inv_gamma_log<false>(y, alpha, beta);
     }
+
   }
 }
-
 #endif

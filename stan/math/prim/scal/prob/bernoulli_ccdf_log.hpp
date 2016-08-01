@@ -23,7 +23,7 @@ namespace stan {
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_ccdf_log(const T_n& n, const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_ccdf_log");
+      static const char* function("bernoulli_ccdf_log");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
@@ -61,7 +61,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) >= 1) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         } else {
           const T_partials_return Pi = value_of(theta_vec[i]);
 

@@ -42,7 +42,7 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::neg_binomial_log");
+      static const char* function("neg_binomial_log");
 
 
       // check if any vectors are zero length
@@ -175,6 +175,7 @@ namespace stan {
                      const T_inv_scale& beta) {
       return neg_binomial_log<false>(n, alpha, beta);
     }
+
   }
 }
 #endif

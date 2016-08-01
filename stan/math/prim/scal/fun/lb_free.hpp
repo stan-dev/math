@@ -32,13 +32,11 @@ namespace stan {
       using std::log;
       if (lb == -std::numeric_limits<double>::infinity())
         return identity_free(y);
-      stan::math::check_greater_or_equal("stan::math::lb_free",
-                                         "Lower bounded variable", y, lb);
+      check_greater_or_equal("lb_free",
+                             "Lower bounded variable", y, lb);
       return log(y - lb);
     }
 
   }
-
 }
-
 #endif

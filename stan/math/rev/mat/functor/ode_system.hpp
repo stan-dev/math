@@ -134,7 +134,7 @@ namespace stan {
           recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
       }
     };
 

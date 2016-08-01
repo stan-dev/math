@@ -10,7 +10,7 @@ namespace stan {
     /**
      * Returns 1 if the input's value is NaN and 0 otherwise.
      *
-     * Delegates to <code>stan::math::is_nan</code>.
+     * Delegates to <code>is_nan</code>.
      *
      * @param x Value to test.
      * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
@@ -24,5 +24,4 @@ namespace stan {
 
   }
 }
-
 #endif

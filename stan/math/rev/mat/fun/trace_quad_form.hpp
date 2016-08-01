@@ -21,12 +21,12 @@ namespace stan {
       public:
         trace_quad_form_vari_alloc(const Eigen::Matrix<TA, RA, CA>& A,
                                    const Eigen::Matrix<TB, RB, CB>& B)
-        : A_(A), B_(B)
+          : A_(A), B_(B)
         { }
 
         double compute() {
-          return stan::math::trace_quad_form(value_of(A_),
-                                             value_of(B_));
+          return trace_quad_form(value_of(A_),
+                                 value_of(B_));
         }
 
         Eigen::Matrix<TA, RA, CA>  A_;
@@ -75,7 +75,7 @@ namespace stan {
         explicit
         trace_quad_form_vari
         (trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *impl)
-        : vari(impl->compute()), _impl(impl) { }
+          : vari(impl->compute()), _impl(impl) { }
 
         virtual void chain() {
           chainAB(_impl->A_, _impl->B_,
@@ -90,21 +90,21 @@ namespace stan {
     template <typename TA, int RA, int CA, typename TB, int RB, int CB>
     inline typename
     boost::enable_if_c< boost::is_same<TA, var>::value ||
-                        boost::is_same<TB, var>::value,
+    boost::is_same<TB, var>::value,
                         var >::type
-    trace_quad_form(const Eigen::Matrix<TA, RA, CA>& A,
-                    const Eigen::Matrix<TB, RB, CB>& B) {
-      stan::math::check_square("trace_quad_form", "A", A);
-      stan::math::check_multiplicable("trace_quad_form",
-                                                "A", A,
-                                                "B", B);
+      trace_quad_form(const Eigen::Matrix<TA, RA, CA>& A,
+                      const Eigen::Matrix<TB, RB, CB>& B) {
+      check_square("trace_quad_form", "A", A);
+      check_multiplicable("trace_quad_form",
+                          "A", A,
+                          "B", B);
 
       trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *baseVari
         = new trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB>(A, B);
 
       return var(new trace_quad_form_vari<TA, RA, CA, TB, RB, CB>(baseVari));
     }
+
   }
 }
-
 #endif

@@ -52,7 +52,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 1.0;
 
-      static const char* function("stan::math::scaled_inv_chi_square_cdf");
+      static const char* function("scaled_inv_chi_square_cdf");
 
       using std::exp;
 
@@ -135,10 +135,10 @@ namespace stan {
 
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            += (0.5 * stan::math::grad_reg_inc_gamma(half_nu_dbl,
-                                                     half_nu_s2_overx_dbl,
-                                                     gamma_vec[n],
-                                                     digamma_vec[n])
+            += (0.5 * grad_reg_inc_gamma(half_nu_dbl,
+                                         half_nu_s2_overx_dbl,
+                                         gamma_vec[n],
+                                         digamma_vec[n])
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
 
@@ -160,9 +160,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(s); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

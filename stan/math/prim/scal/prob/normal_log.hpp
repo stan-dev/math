@@ -42,7 +42,7 @@ namespace stan {
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::normal_log");
+      static const char* function("normal_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
@@ -120,7 +120,6 @@ namespace stan {
           operands_and_partials.d_x3[n]
             += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
-
       return operands_and_partials.value(logp);
     }
 
@@ -130,6 +129,7 @@ namespace stan {
     normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
       return normal_log<false>(y, mu, sigma);
     }
+
   }
 }
 #endif

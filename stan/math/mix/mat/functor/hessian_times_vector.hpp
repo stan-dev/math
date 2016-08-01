@@ -27,15 +27,15 @@ namespace stan {
         var grad_fx_var_dot_v;
         gradient_dot_vector(f, x_var, v, fx_var, grad_fx_var_dot_v);
         fx = fx_var.val();
-        stan::math::grad(grad_fx_var_dot_v.vi_);
+        grad(grad_fx_var_dot_v.vi_);
         Hv.resize(x.size());
         for (int i = 0; i < x.size(); ++i)
           Hv(i) = x_var(i).adj();
       } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         throw;
       }
-      stan::math::recover_memory_nested();
+      recover_memory_nested();
     }
     template <typename T, typename F>
     void

@@ -29,7 +29,7 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     weibull_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const char* function("stan::math::weibull_log");
+      static const char* function("weibull_log");
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
@@ -136,6 +136,7 @@ namespace stan {
     weibull_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
       return weibull_log<false>(y, alpha, sigma);
     }
+
   }
 }
 #endif

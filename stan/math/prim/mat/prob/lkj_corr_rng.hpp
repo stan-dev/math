@@ -52,7 +52,7 @@ namespace stan {
     lkj_corr_rng(const size_t K,
                  const double eta,
                  RNG& rng) {
-      static const char* function("stan::math::lkj_corr_rng");
+      static const char* function("lkj_corr_rng");
 
 
       check_positive(function, "Shape parameter", eta);

@@ -11,12 +11,10 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T_lp, T_lp_accum>::type
     get_lp(const T_lp& lp,
-           const stan::math::accumulator<T_lp_accum>& lp_accum) {
+           const accumulator<T_lp_accum>& lp_accum) {
       return lp + lp_accum.sum();
     }
 
   }
-
 }
-
 #endif

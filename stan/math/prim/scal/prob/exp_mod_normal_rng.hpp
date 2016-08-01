@@ -26,16 +26,17 @@ namespace stan {
                        const double sigma,
                        const double lambda,
                        RNG& rng) {
-      static const char* function("stan::math::exp_mod_normal_rng");
+      static const char* function("exp_mod_normal_rng");
 
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Inv_scale parameter", lambda);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      return stan::math::normal_rng(mu, sigma, rng)
-        + stan::math::exponential_rng(lambda, rng);
+      return normal_rng(mu, sigma, rng)
+        + exponential_rng(lambda, rng);
     }
+
   }
 }
 #endif

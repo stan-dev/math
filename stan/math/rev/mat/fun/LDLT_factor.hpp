@@ -8,9 +8,10 @@
 
 namespace stan {
   namespace math {
+
     /**
      * A template specialization of src/stan/math/matrix/LDLT_factor.hpp for
-     * stan::math::var which can be used with all the *_ldlt functions.
+     * var which can be used with all the *_ldlt functions.
      *
      * The usage pattern is:
      *
@@ -42,17 +43,17 @@ namespace stan {
      *
      **/
     template<int R, int C>
-    class LDLT_factor<stan::math::var, R, C> {
+    class LDLT_factor<var, R, C> {
     public:
       /**
        * Default constructor.  The caller *MUST* call compute() after this.  Any
        * calls which use the LDLT_factor without calling compute() run the risk
        * of crashing Stan from within Eigen.
        **/
-      LDLT_factor() : _alloc(new stan::math::LDLT_alloc<R, C>()) {}
+      LDLT_factor() : _alloc(new LDLT_alloc<R, C>()) {}
 
-      explicit LDLT_factor(const Eigen::Matrix<stan::math::var, R, C> &A)
-      : _alloc(new stan::math::LDLT_alloc<R, C>()) {
+      explicit LDLT_factor(const Eigen::Matrix<var, R, C> &A)
+        : _alloc(new LDLT_alloc<R, C>()) {
         compute(A);
       }
 
@@ -64,8 +65,8 @@ namespace stan {
        *
        * @param A A symmetric positive definite matrix to factorize
        **/
-      inline void compute(const Eigen::Matrix<stan::math::var, R, C> &A) {
-        stan::math::check_square("comute", "A", A);
+      inline void compute(const Eigen::Matrix<var, R, C> &A) {
+        check_square("comute", "A", A);
         _alloc->compute(A);
       }
 
@@ -117,7 +118,7 @@ namespace stan {
       inline size_t cols() const { return _alloc->N_; }
 
       typedef size_t size_type;
-      typedef stan::math::var value_type;
+      typedef var value_type;
 
       /**
        * The LDLT_alloc object actually contains the factorization but is
@@ -127,8 +128,9 @@ namespace stan {
        * factorization is required during the chain() calls which happen
        * after an LDLT_factor object will most likely have been destroyed.
        **/
-      stan::math::LDLT_alloc<R, C> *_alloc;
+      LDLT_alloc<R, C> *_alloc;
     };
+
   }
 }
 #endif

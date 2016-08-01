@@ -23,7 +23,7 @@ namespace stan {
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_cdf_log(const T_n& n, const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_cdf_log");
+      static const char* function("bernoulli_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
@@ -54,7 +54,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {

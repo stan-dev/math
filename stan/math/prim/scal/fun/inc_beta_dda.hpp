@@ -83,7 +83,7 @@ namespace stan {
         summand *= z / k;
 
         if (k > 1e5)
-          throw std::domain_error("stan::math::inc_beta_dda did "
+          throw std::domain_error("inc_beta_dda did "
                                   "not converge within 100000 iterations");
       }
       return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);
@@ -91,5 +91,4 @@ namespace stan {
 
   }  // math
 }   // stan
-
 #endif
