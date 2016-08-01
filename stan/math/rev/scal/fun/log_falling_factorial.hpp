@@ -66,7 +66,7 @@ namespace stan {
     }
 
     inline var log_falling_factorial(const var& a,
-                                     const double& b) {
+                                     double b) {
       return var(new log_falling_factorial_vd_vari(a.vi_, b));
     }
 
@@ -75,7 +75,7 @@ namespace stan {
       return var(new log_falling_factorial_vv_vari(a.vi_, b.vi_));
     }
 
-    inline var log_falling_factorial(const double& a,
+    inline var log_falling_factorial(double a,
                                      const var& b) {
       return var(new log_falling_factorial_dv_vari(a, b.vi_));
     }

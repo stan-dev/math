@@ -88,7 +88,7 @@ namespace stan {
      * value promoted to a fresh variable.
      */
     inline var fmax(const var& a,
-                    const double& b) {
+                    double b) {
       if (unlikely(is_nan(a))) {
         if (unlikely(is_nan(b)))
           return var(new precomp_v_vari(NOT_A_NUMBER,
@@ -115,7 +115,7 @@ namespace stan {
      * return the first value promoted to a variable, otherwise return the
      * second variable.
      */
-    inline var fmax(const double& a,
+    inline var fmax(double a,
                     const var& b) {
       if (unlikely(is_nan(b))) {
         if (unlikely(is_nan(a)))

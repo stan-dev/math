@@ -61,11 +61,11 @@ namespace stan {
     }
 
     inline var gamma_q(const var& a,
-                       const double& b) {
+                       double b) {
       return var(new gamma_q_vd_vari(a.vi_, b));
     }
 
-    inline var gamma_q(const double& a,
+    inline var gamma_q(double a,
                        const var& b) {
       return var(new gamma_q_dv_vari(a, b.vi_));
     }

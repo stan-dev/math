@@ -44,7 +44,7 @@ namespace stan {
       class trace_gen_quad_form_vari : public vari {
       protected:
         static inline void
-        computeAdjoints(const double& adj,
+        computeAdjoints(double adj,
                         const Eigen::Matrix<double, RD, CD>& D,
                         const Eigen::Matrix<double, RA, CA>& A,
                         const Eigen::Matrix<double, RB, CB>& B,

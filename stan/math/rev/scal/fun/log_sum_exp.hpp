@@ -55,13 +55,13 @@ namespace stan {
      * Returns the log sum of exponentials.
      */
     inline var log_sum_exp(const var& a,
-                           const double& b) {
+                           double b) {
       return var(new log_sum_exp_vd_vari(a.vi_, b));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var log_sum_exp(const double& a,
+    inline var log_sum_exp(double a,
                            const var& b) {
       return var(new log_sum_exp_dv_vari(a, b.vi_));
     }

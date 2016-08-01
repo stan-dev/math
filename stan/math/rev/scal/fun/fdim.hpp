@@ -132,7 +132,7 @@ namespace stan {
      * @return The positive difference between the first and second
      * arguments.
      */
-    inline var fdim(const double& a,
+    inline var fdim(double a,
                     const var& b) {
       return a <= b.vi_->val_
         ? var(new vari(0.0))
@@ -156,7 +156,7 @@ namespace stan {
      * @return The positive difference between the first and second arguments.
      */
     inline var fdim(const var& a,
-                    const double& b) {
+                    double b) {
       return a.vi_->val_ <= b
         ? var(new vari(0.0))
         : var(new fdim_vd_vari(a.vi_, b));

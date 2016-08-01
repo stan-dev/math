@@ -24,9 +24,9 @@ namespace stan {
      * @param[out] one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1 shared term in deriv calculation.
      */
     inline void
-    log_mix_partial_helper(const double& theta_val,
-                           const double& lambda1_val,
-                           const double& lambda2_val,
+    log_mix_partial_helper(double theta_val,
+                           double lambda1_val,
+                           double lambda2_val,
                            double& one_m_exp_lam2_m_lam1,
                            double& one_m_t_prod_exp_lam2_m_lam1,
                            double& one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1) {

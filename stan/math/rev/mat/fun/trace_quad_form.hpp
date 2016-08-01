@@ -38,15 +38,15 @@ namespace stan {
       protected:
         static inline void chainA(Eigen::Matrix<double, RA, CA>& A,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {}
+                                  double adjC) {}
         static inline void chainB(Eigen::Matrix<double, RB, CB>& B,
                                   const Eigen::Matrix<double, RA, CA>& Ad,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {}
+                                  double adjC) {}
 
         static inline void chainA(Eigen::Matrix<var, RA, CA>& A,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {
+                                  double adjC) {
           Eigen::Matrix<double, RA, CA>     adjA(adjC*Bd*Bd.transpose());
           for (int j = 0; j < A.cols(); j++)
             for (int i = 0; i < A.rows(); i++)
@@ -55,7 +55,7 @@ namespace stan {
         static inline void chainB(Eigen::Matrix<var, RB, CB>& B,
                                   const Eigen::Matrix<double, RA, CA>& Ad,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {
+                                  double adjC) {
           Eigen::Matrix<double, RA, CA>     adjB(adjC*(Ad + Ad.transpose())*Bd);
           for (int j = 0; j < B.cols(); j++)
             for (int i = 0; i < B.rows(); i++)
@@ -66,7 +66,7 @@ namespace stan {
                             Eigen::Matrix<TB, RB, CB>& B,
                             const Eigen::Matrix<double, RA, CA>& Ad,
                             const Eigen::Matrix<double, RB, CB>& Bd,
-                            const double& adjC) {
+                            double adjC) {
           chainA(A, Bd, adjC);
           chainB(B, Ad, Bd, adjC);
         }

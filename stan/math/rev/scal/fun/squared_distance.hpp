@@ -44,23 +44,24 @@ namespace stan {
      * Returns the log sum of exponentials.
      */
     inline var squared_distance(const var& a,
-                            const var& b) {
+                                const var& b) {
       return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
     }
     /**
      * Returns the log sum of exponentials.
      */
     inline var squared_distance(const var& a,
-                            const double& b) {
+                                double b) {
       return var(new scal_squared_distance_vd_vari(a.vi_, b));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var squared_distance(const double& a,
+    inline var squared_distance(double a,
                                 const var& b) {
       return var(new scal_squared_distance_dv_vari(a, b.vi_));
     }
+
   }
 }
 #endif

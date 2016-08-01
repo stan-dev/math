@@ -14,7 +14,7 @@ namespace stan {
      * @param[in] x A scalar value
      * @return An automatic differentiation variable with the input value.
      */
-    inline var to_var(const double& x) {
+    inline var to_var(double x) {
       return var(x);
     }
 

@@ -106,11 +106,11 @@ namespace stan {
     }
 
     inline var gamma_p(const var& a,
-                       const double& b) {
+                       double b) {
       return var(new gamma_p_vd_vari(a.vi_, b));
     }
 
-    inline var gamma_p(const double& a,
+    inline var gamma_p(double a,
                        const var& b) {
       return var(new gamma_p_dv_vari(a, b.vi_));
     }
