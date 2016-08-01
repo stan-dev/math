@@ -24,7 +24,7 @@ namespace stan {
       };
     }
 
-    inline var bessel_second_kind(const int& v,
+    inline var bessel_second_kind(int v,
                                   const var& a) {
       return var(new bessel_second_kind_dv_vari(v, a.vi_));
     }
