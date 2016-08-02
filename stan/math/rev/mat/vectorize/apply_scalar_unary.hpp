@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
-#define STAN_MATH_REV_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
+#ifndef STAN_MATH_REV_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_REV_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/rev/core/var.hpp>

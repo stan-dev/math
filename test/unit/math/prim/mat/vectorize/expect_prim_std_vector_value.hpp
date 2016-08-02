@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_STD_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_STD_VECTOR_VALUE_HPP
 
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
-#include <gtest/gtest.h>
 
 template <typename F>
 void expect_prim_std_vector_value() {
@@ -13,7 +13,7 @@ void expect_prim_std_vector_value() {
   vector<double> fy = F::template apply<vector<double> >(valid_inputs);
   EXPECT_EQ(valid_inputs.size(), fy.size());
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
-    EXPECT_FLOAT_EQ(F::apply_base(valid_inputs[i]), fy[i]);
+    expect_val_eq(F::apply_base(valid_inputs[i]), fy[i]);
   }
 
   vector<vector<double> > z;
@@ -24,15 +24,16 @@ void expect_prim_std_vector_value() {
   EXPECT_EQ(z.size(), fz.size());
   for (size_t i = 0; i < fz.size(); ++i) {
     EXPECT_EQ(z[i].size(), fz[i].size());
-    for (size_t j = 0; j < z[i].size(); ++j)
-      EXPECT_FLOAT_EQ(F::apply_base(z[i][j]), fz[i][j]);
+    for (size_t j = 0; j < z[i].size(); ++j) {
+      expect_val_eq(F::apply_base(z[i][j]), fz[i][j]);
+    }
   }
 
   vector<int> int_valid_inputs = F::int_valid_inputs();
   vector<double> u2 = F::template apply<vector<double> >(int_valid_inputs);
   EXPECT_EQ(int_valid_inputs.size(), u2.size());
   for (size_t i = 0; i < int_valid_inputs.size(); ++i) {
-    EXPECT_FLOAT_EQ(F::apply_base(int_valid_inputs[i]), u2[i]);
+    expect_val_eq(F::apply_base(int_valid_inputs[i]), u2[i]);
   }
 }
 

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INV_CLOGLOG_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INV_CLOGLOG_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -44,9 +44,7 @@ namespace stan {
      * @param x Argument.
      * @return Inverse complementary log-log of the argument.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    inv_cloglog(T x) {
+    inline double inv_cloglog(const double x) {
       using std::exp;
       return 1 - exp(-exp(x));
     }

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -39,9 +39,7 @@ namespace stan {
        \f]
      *
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log1p_exp(const T a) {
+    inline double log1p_exp(const double a) {
       using std::exp;
       // like log_sum_exp below with b=0.0; prevents underflow
       if (a > 0.0)
