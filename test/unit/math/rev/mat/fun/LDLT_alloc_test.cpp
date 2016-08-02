@@ -9,7 +9,7 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
   EXPECT_EQ(0U, alloc->N_);
 #ifdef EIGEN_NO_DEBUG
   EXPECT_NO_THROW(alloc->log_abs_det());
-  EXPECT_NO_THROW(alloc->_ldlt.info());
+  EXPECT_NO_THROW(alloc->ldlt_.info());
 #else
   // Note: If -DEIGEN_NO_DEBUG is not included in the compilation flags
   //       asserts will force these calls to die instead of the above
@@ -19,7 +19,7 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
   // Google test under Windows is having trouble with these tests.
   EXPECT_DEATH(alloc->log_abs_det(),
                "m_isInitialized && \"LDLT is not initialized.\"");
-  EXPECT_DEATH(alloc->_ldlt.info(), 
+  EXPECT_DEATH(alloc->ldlt_.info(), 
                "m_isInitialized && \"LDLT is not initialized.\"");
 #endif
 
@@ -37,7 +37,7 @@ TEST(AgradRevMatrix,LDLT_alloc_constructor) {
 
   EXPECT_EQ(2U, alloc->N_);
   EXPECT_FLOAT_EQ(1.0986122886681096, alloc->log_abs_det());
-  EXPECT_EQ(Eigen::Success, alloc->_ldlt.info());
+  EXPECT_EQ(Eigen::Success, alloc->ldlt_.info());
 
   Eigen::Matrix<double,-1,-1> expectedL(2,2);
   expectedL(0,0) = 1.0;
@@ -45,7 +45,7 @@ TEST(AgradRevMatrix,LDLT_alloc_constructor) {
   expectedL(1,0) = 0.5;
   expectedL(1,1) = 1.0;
   
-  Eigen::Matrix<double,-1,-1> L = alloc->_ldlt.matrixL();
+  Eigen::Matrix<double,-1,-1> L = alloc->ldlt_.matrixL();
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expectedL(i,j), L(i,j));
@@ -63,7 +63,7 @@ TEST(AgradRevMatrix, LDLT_alloc_compute) {
   
   EXPECT_NO_THROW(alloc->compute(A));
   EXPECT_EQ(2U, alloc->N_);
-  EXPECT_EQ(Eigen::Success, alloc->_ldlt.info());
+  EXPECT_EQ(Eigen::Success, alloc->ldlt_.info());
   EXPECT_FLOAT_EQ(alloc->log_abs_det(),1.0986122886681096);
 
   Eigen::Matrix<double,-1,-1> expectedL(2,2);
@@ -72,7 +72,7 @@ TEST(AgradRevMatrix, LDLT_alloc_compute) {
   expectedL(1,0) = 0.5;
   expectedL(1,1) = 1.0;
   
-  Eigen::Matrix<double,-1,-1> L = alloc->_ldlt.matrixL();
+  Eigen::Matrix<double,-1,-1> L = alloc->ldlt_.matrixL();
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expectedL(i,j), L(i,j));

@@ -23,24 +23,24 @@ namespace stan {
       class log_det_ldlt_vari : public vari {
       public:
         explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
-          : vari(A._alloc->log_abs_det()), _alloc_ldlt(A._alloc)
+          : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_)
         { }
 
         virtual void chain() {
           Eigen::Matrix<double, R, C> invA;
 
           // If we start computing Jacobians, this may be a bit inefficient
-          invA.setIdentity(_alloc_ldlt->N_, _alloc_ldlt->N_);
-          _alloc_ldlt->_ldlt.solveInPlace(invA);
+          invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
+          alloc_ldlt_->ldlt_.solveInPlace(invA);
 
-          for (size_t j = 0; j < _alloc_ldlt->N_; j++) {
-            for (size_t i = 0; i < _alloc_ldlt->N_; i++) {
-              _alloc_ldlt->_variA(i, j)->adj_ += adj_ * invA(i, j);
+          for (size_t j = 0; j < alloc_ldlt_->N_; j++) {
+            for (size_t i = 0; i < alloc_ldlt_->N_; i++) {
+              alloc_ldlt_->variA_(i, j)->adj_ += adj_ * invA(i, j);
             }
           }
         }
 
-        const LDLT_alloc<R, C> *_alloc_ldlt;
+        const LDLT_alloc<R, C> *alloc_ldlt_;
       };
     }
 

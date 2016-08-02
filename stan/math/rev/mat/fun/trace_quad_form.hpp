@@ -75,15 +75,15 @@ namespace stan {
         explicit
         trace_quad_form_vari
         (trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *impl)
-          : vari(impl->compute()), _impl(impl) { }
+          : vari(impl->compute()), impl_(impl) { }
 
         virtual void chain() {
-          chainAB(_impl->A_, _impl->B_,
-                  value_of(_impl->A_), value_of(_impl->B_),
+          chainAB(impl_->A_, impl_->B_,
+                  value_of(impl_->A_), value_of(impl_->B_),
                   adj_);
         }
 
-        trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *_impl;
+        trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *impl_;
       };
     }
 

@@ -82,23 +82,23 @@ namespace stan {
         explicit
         trace_gen_quad_form_vari(trace_gen_quad_form_vari_alloc
                                  <TD, RD, CD, TA, RA, CA, TB, RB, CB> *impl)
-          : vari(impl->compute()), _impl(impl) { }
+          : vari(impl->compute()), impl_(impl) { }
 
         virtual void chain() {
           computeAdjoints(adj_,
-                          value_of(_impl->D_),
-                          value_of(_impl->A_),
-                          value_of(_impl->B_),
+                          value_of(impl_->D_),
+                          value_of(impl_->A_),
+                          value_of(impl_->B_),
                           reinterpret_cast<Eigen::Matrix<var, RD, CD> *>
-                          (boost::is_same<TD, var>::value?(&_impl->D_):NULL),
+                          (boost::is_same<TD, var>::value?(&impl_->D_):NULL),
                           reinterpret_cast<Eigen::Matrix<var, RA, CA> *>
-                          (boost::is_same<TA, var>::value?(&_impl->A_):NULL),
+                          (boost::is_same<TA, var>::value?(&impl_->A_):NULL),
                           reinterpret_cast<Eigen::Matrix<var, RB, CB> *>
-                          (boost::is_same<TB, var>::value?(&_impl->B_):NULL));
+                          (boost::is_same<TB, var>::value?(&impl_->B_):NULL));
         }
 
         trace_gen_quad_form_vari_alloc<TD, RD, CD, TA, RA, CA, TB, RB, CB>
-        *_impl;
+        *impl_;
       };
     }
 

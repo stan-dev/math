@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_WELFORD_VAR_ESTIMATOR_HPP
-#define STAN_MATH_PRIM_MAT_FUN_WELFORD_VAR_ESTIMATOR_HPP
+#ifndef STANm_ATH_PRIMm_AT_FUN_WELFORD_VAR_ESTIMATOR_HPP
+#define STANm_ATH_PRIMm_AT_FUN_WELFORD_VAR_ESTIMATOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
@@ -10,39 +10,39 @@ namespace stan {
     class welford_var_estimator {
     public:
       explicit welford_var_estimator(int n)
-        : _m(Eigen::VectorXd::Zero(n)),
-          _m2(Eigen::VectorXd::Zero(n)) {
+        : m_(Eigen::VectorXd::Zero(n)),
+          m2_(Eigen::VectorXd::Zero(n)) {
         restart();
       }
 
       void restart() {
         _num_samples = 0;
-        _m.setZero();
-        _m2.setZero();
+        m_.setZero();
+        m2_.setZero();
       }
 
       void add_sample(const Eigen::VectorXd& q) {
         ++_num_samples;
 
-        Eigen::VectorXd delta(q - _m);
-        _m  += delta / _num_samples;
-        _m2 += delta.cwiseProduct(q - _m);
+        Eigen::VectorXd delta(q - m_);
+        m_  += delta / _num_samples;
+        m2_ += delta.cwiseProduct(q - m_);
       }
 
       int num_samples() { return _num_samples; }
 
-      void sample_mean(Eigen::VectorXd& mean) { mean = _m; }
+      void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
       void sample_variance(Eigen::VectorXd& var) {
         if (_num_samples > 1)
-          var = _m2 / (_num_samples - 1.0);
+          var = m2_ / (_num_samples - 1.0);
       }
 
     protected:
       double _num_samples;
 
-      Eigen::VectorXd _m;
-      Eigen::VectorXd _m2;
+      Eigen::VectorXd m_;
+      Eigen::VectorXd m2_;
     };
 
   }

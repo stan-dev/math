@@ -50,10 +50,10 @@ namespace stan {
        * calls which use the LDLT_factor without calling compute() run the risk
        * of crashing Stan from within Eigen.
        **/
-      LDLT_factor() : _alloc(new LDLT_alloc<R, C>()) {}
+      LDLT_factor() : alloc_(new LDLT_alloc<R, C>()) {}
 
       explicit LDLT_factor(const Eigen::Matrix<var, R, C> &A)
-        : _alloc(new LDLT_alloc<R, C>()) {
+        : alloc_(new LDLT_alloc<R, C>()) {
         compute(A);
       }
 
@@ -67,7 +67,7 @@ namespace stan {
        **/
       inline void compute(const Eigen::Matrix<var, R, C> &A) {
         check_square("comute", "A", A);
-        _alloc->compute(A);
+        alloc_->compute(A);
       }
 
       /**
@@ -86,7 +86,7 @@ namespace stan {
       Eigen::internal::solve_retval<Eigen::LDLT<Eigen::Matrix<double, R, C> >,
                                     Rhs>
       solve(const Eigen::MatrixBase<Rhs>& b) const {
-        return _alloc->_ldlt.solve(b);
+        return alloc_->ldlt_.solve(b);
       }
 
       /**
@@ -96,10 +96,10 @@ namespace stan {
        **/
       inline bool success() const {
         bool ret;
-        ret = _alloc->N_ != 0;
-        ret = ret && _alloc->_ldlt.info() == Eigen::Success;
-        ret = ret && _alloc->_ldlt.isPositive();
-        ret = ret && (_alloc->_ldlt.vectorD().array() > 0).all();
+        ret = alloc_->N_ != 0;
+        ret = ret && alloc_->ldlt_.info() == Eigen::Success;
+        ret = ret && alloc_->ldlt_.isPositive();
+        ret = ret && (alloc_->ldlt_.vectorD().array() > 0).all();
         return ret;
       }
 
@@ -111,11 +111,11 @@ namespace stan {
        *    this function runs the risk of crashing Stan from within Eigen.
        **/
       inline Eigen::VectorXd vectorD() const {
-        return _alloc->_ldlt.vectorD();
+        return alloc_->ldlt_.vectorD();
       }
 
-      inline size_t rows() const { return _alloc->N_; }
-      inline size_t cols() const { return _alloc->N_; }
+      inline size_t rows() const { return alloc_->N_; }
+      inline size_t cols() const { return alloc_->N_; }
 
       typedef size_t size_type;
       typedef var value_type;
@@ -128,7 +128,7 @@ namespace stan {
        * factorization is required during the chain() calls which happen
        * after an LDLT_factor object will most likely have been destroyed.
        **/
-      LDLT_alloc<R, C> *_alloc;
+      LDLT_alloc<R, C> *alloc_;
     };
 
   }

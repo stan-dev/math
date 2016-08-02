@@ -27,26 +27,26 @@ namespace stan {
       public:
         int M_;  // A.rows() = A.cols() = B.rows()
         int N_;  // B.cols()
-        vari** _variRefA;
-        vari** _variRefB;
-        vari** _variRefC;
-        mdivide_left_spd_alloc<R1, C1, R2, C2> *_alloc;
+        vari** variRefA_;
+        vari** variRefB_;
+        vari** variRefC_;
+        mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
         mdivide_left_spd_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                                  const Eigen::Matrix<var, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
-            _variRefA(reinterpret_cast<vari**>
+            variRefA_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
-            _variRefB(reinterpret_cast<vari**>
+            variRefB_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
+            alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
           using Eigen::Map;
 
@@ -55,29 +55,29 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < M_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefA[pos] = A(i, j).vi_;
+              variRefA_[pos] = A(i, j).vi_;
               Ad(i, j) = A(i, j).val();
               pos++;
             }
           }
 
           pos = 0;
-          _alloc->C_.resize(M_, N_);
+          alloc_->C_.resize(M_, N_);
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefB[pos] = B(i, j).vi_;
-              _alloc->C_(i, j) = B(i, j).val();
+              variRefB_[pos] = B(i, j).vi_;
+              alloc_->C_(i, j) = B(i, j).val();
               pos++;
             }
           }
 
-          _alloc->_llt = Ad.llt();
-          _alloc->_llt.solveInPlace(_alloc->C_);
+          alloc_->_llt = Ad.llt();
+          alloc_->_llt.solveInPlace(alloc_->C_);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefC[pos] = new vari(_alloc->C_(i, j), false);
+              variRefC_[pos] = new vari(alloc_->C_(i, j), false);
               pos++;
             }
           }
@@ -92,20 +92,20 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < N_; j++)
             for (size_type i = 0; i < M_; i++)
-              adjB(i, j) = _variRefC[pos++]->adj_;
+              adjB(i, j) = variRefC_[pos++]->adj_;
 
-          _alloc->_llt.solveInPlace(adjB);
-          adjA.noalias() = -adjB * _alloc->C_.transpose();
+          alloc_->_llt.solveInPlace(adjB);
+          adjA.noalias() = -adjB * alloc_->C_.transpose();
 
           pos = 0;
           for (size_type j = 0; j < M_; j++)
             for (size_type i = 0; i < M_; i++)
-              _variRefA[pos++]->adj_ += adjA(i, j);
+              variRefA_[pos++]->adj_ += adjA(i, j);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++)
             for (size_type i = 0; i < M_; i++)
-              _variRefB[pos++]->adj_ += adjB(i, j);
+              variRefB_[pos++]->adj_ += adjB(i, j);
         }
       };
 
@@ -114,42 +114,42 @@ namespace stan {
       public:
         int M_;  // A.rows() = A.cols() = B.rows()
         int N_;  // B.cols()
-        vari** _variRefB;
-        vari** _variRefC;
-        mdivide_left_spd_alloc<R1, C1, R2, C2> *_alloc;
+        vari** variRefB_;
+        vari** variRefC_;
+        mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
         mdivide_left_spd_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                                  const Eigen::Matrix<var, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
-            _variRefB(reinterpret_cast<vari**>
+            variRefB_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
+            alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
           using Eigen::Map;
 
           size_t pos = 0;
-          _alloc->C_.resize(M_, N_);
+          alloc_->C_.resize(M_, N_);
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefB[pos] = B(i, j).vi_;
-              _alloc->C_(i, j) = B(i, j).val();
+              variRefB_[pos] = B(i, j).vi_;
+              alloc_->C_(i, j) = B(i, j).val();
               pos++;
             }
           }
 
-          _alloc->_llt = A.llt();
-          _alloc->_llt.solveInPlace(_alloc->C_);
+          alloc_->_llt = A.llt();
+          alloc_->_llt.solveInPlace(alloc_->C_);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefC[pos] = new vari(_alloc->C_(i, j), false);
+              variRefC_[pos] = new vari(alloc_->C_(i, j), false);
               pos++;
             }
           }
@@ -163,14 +163,14 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < adjB.cols(); j++)
             for (size_type i = 0; i < adjB.rows(); i++)
-              adjB(i, j) = _variRefC[pos++]->adj_;
+              adjB(i, j) = variRefC_[pos++]->adj_;
 
-          _alloc->_llt.solveInPlace(adjB);
+          alloc_->_llt.solveInPlace(adjB);
 
           pos = 0;
           for (size_type j = 0; j < adjB.cols(); j++)
             for (size_type i = 0; i < adjB.rows(); i++)
-              _variRefB[pos++]->adj_ += adjB(i, j);
+              variRefB_[pos++]->adj_ += adjB(i, j);
         }
       };
 
@@ -179,22 +179,22 @@ namespace stan {
       public:
         int M_;  // A.rows() = A.cols() = B.rows()
         int N_;  // B.cols()
-        vari** _variRefA;
-        vari** _variRefC;
-        mdivide_left_spd_alloc<R1, C1, R2, C2> *_alloc;
+        vari** variRefA_;
+        vari** variRefC_;
+        mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
         mdivide_left_spd_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                                  const Eigen::Matrix<double, R2, C2> &B)
           : vari(0.0),
             M_(A.rows()),
             N_(B.cols()),
-            _variRefA(reinterpret_cast<vari**>
+            variRefA_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _alloc(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
+            alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
           using Eigen::Matrix;
           using Eigen::Map;
 
@@ -203,19 +203,19 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < M_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefA[pos] = A(i, j).vi_;
+              variRefA_[pos] = A(i, j).vi_;
               Ad(i, j) = A(i, j).val();
               pos++;
             }
           }
 
-          _alloc->_llt = Ad.llt();
-          _alloc->C_ = _alloc->_llt.solve(B);
+          alloc_->_llt = Ad.llt();
+          alloc_->C_ = alloc_->_llt.solve(B);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefC[pos] = new vari(_alloc->C_(i, j), false);
+              variRefC_[pos] = new vari(alloc_->C_(i, j), false);
               pos++;
             }
           }
@@ -230,14 +230,14 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < adjC.cols(); j++)
             for (size_type i = 0; i < adjC.rows(); i++)
-              adjC(i, j) = _variRefC[pos++]->adj_;
+              adjC(i, j) = variRefC_[pos++]->adj_;
 
-          adjA = -_alloc->_llt.solve(adjC*_alloc->C_.transpose());
+          adjA = -alloc_->_llt.solve(adjC*alloc_->C_.transpose());
 
           pos = 0;
           for (size_type j = 0; j < adjA.cols(); j++)
             for (size_type i = 0; i < adjA.rows(); i++)
-              _variRefA[pos++]->adj_ += adjA(i, j);
+              variRefA_[pos++]->adj_ += adjA(i, j);
         }
       };
     }
@@ -264,7 +264,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }
@@ -291,7 +291,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }
@@ -318,7 +318,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }

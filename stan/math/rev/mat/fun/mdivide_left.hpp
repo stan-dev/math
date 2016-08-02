@@ -20,9 +20,9 @@ namespace stan {
         int N_;  // B.cols()
         double* A_;
         double* C_;
-        vari** _variRefA;
-        vari** _variRefB;
-        vari** _variRefC;
+        vari** variRefA_;
+        vari** variRefB_;
+        vari** variRefC_;
 
         mdivide_left_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                              const Eigen::Matrix<var, R2, C2> &B)
@@ -35,13 +35,13 @@ namespace stan {
             C_(reinterpret_cast<double*>
                (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
-            _variRefA(reinterpret_cast<vari**>
+            variRefA_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
-            _variRefB(reinterpret_cast<vari**>
+            variRefB_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
@@ -50,7 +50,7 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < M_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefA[pos] = A(i, j).vi_;
+              variRefA_[pos] = A(i, j).vi_;
               A_[pos++] = A(i, j).val();
             }
           }
@@ -58,7 +58,7 @@ namespace stan {
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefB[pos] = B(i, j).vi_;
+              variRefB_[pos] = B(i, j).vi_;
               C_[pos++] = B(i, j).val();
             }
           }
@@ -73,7 +73,7 @@ namespace stan {
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
               C_[pos] = C(i, j);
-              _variRefC[pos] = new vari(C_[pos], false);
+              variRefC_[pos] = new vari(C_[pos], false);
               pos++;
             }
           }
@@ -89,7 +89,7 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < adjC.cols(); j++)
             for (size_type i = 0; i < adjC.rows(); i++)
-              adjC(i, j) = _variRefC[pos++]->adj_;
+              adjC(i, j) = variRefC_[pos++]->adj_;
 
           adjB = Map<Matrix<double, R1, C1> >(A_, M_, M_)
             .transpose().colPivHouseholderQr().solve(adjC);
@@ -99,12 +99,12 @@ namespace stan {
           pos = 0;
           for (size_type j = 0; j < adjA.cols(); j++)
             for (size_type i = 0; i < adjA.rows(); i++)
-              _variRefA[pos++]->adj_ += adjA(i, j);
+              variRefA_[pos++]->adj_ += adjA(i, j);
 
           pos = 0;
           for (size_type j = 0; j < adjB.cols(); j++)
             for (size_type i = 0; i < adjB.rows(); i++)
-              _variRefB[pos++]->adj_ += adjB(i, j);
+              variRefB_[pos++]->adj_ += adjB(i, j);
         }
       };
 
@@ -115,8 +115,8 @@ namespace stan {
         int N_;  // B.cols()
         double* A_;
         double* C_;
-        vari** _variRefB;
-        vari** _variRefC;
+        vari** variRefB_;
+        vari** variRefC_;
 
         mdivide_left_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                              const Eigen::Matrix<var, R2, C2> &B)
@@ -129,10 +129,10 @@ namespace stan {
             C_(reinterpret_cast<double*>
                (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
-            _variRefB(reinterpret_cast<vari**>
+            variRefB_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
@@ -148,7 +148,7 @@ namespace stan {
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefB[pos] = B(i, j).vi_;
+              variRefB_[pos] = B(i, j).vi_;
               C_[pos++] = B(i, j).val();
             }
           }
@@ -163,7 +163,7 @@ namespace stan {
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
               C_[pos] = C(i, j);
-              _variRefC[pos] = new vari(C_[pos], false);
+              variRefC_[pos] = new vari(C_[pos], false);
               pos++;
             }
           }
@@ -178,7 +178,7 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < adjC.cols(); j++)
             for (size_type i = 0; i < adjC.rows(); i++)
-              adjC(i, j) = _variRefC[pos++]->adj_;
+              adjC(i, j) = variRefC_[pos++]->adj_;
 
           adjB = Map<Matrix<double, R1, C1> >(A_, M_, M_)
             .transpose().colPivHouseholderQr().solve(adjC);
@@ -186,7 +186,7 @@ namespace stan {
           pos = 0;
           for (size_type j = 0; j < adjB.cols(); j++)
             for (size_type i = 0; i < adjB.rows(); i++)
-              _variRefB[pos++]->adj_ += adjB(i, j);
+              variRefB_[pos++]->adj_ += adjB(i, j);
         }
       };
 
@@ -197,8 +197,8 @@ namespace stan {
         int N_;  // B.cols()
         double* A_;
         double* C_;
-        vari** _variRefA;
-        vari** _variRefC;
+        vari** variRefA_;
+        vari** variRefC_;
 
         mdivide_left_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                              const Eigen::Matrix<double, R2, C2> &B)
@@ -211,10 +211,10 @@ namespace stan {
             C_(reinterpret_cast<double*>
                (ChainableStack::memalloc_
                 .alloc(sizeof(double) * B.rows() * B.cols()))),
-            _variRefA(reinterpret_cast<vari**>
+            variRefA_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * A.rows() * A.cols()))),
-            _variRefC(reinterpret_cast<vari**>
+            variRefC_(reinterpret_cast<vari**>
                       (ChainableStack::memalloc_
                        .alloc(sizeof(vari*) * B.rows() * B.cols()))) {
           using Eigen::Matrix;
@@ -223,7 +223,7 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < M_; j++) {
             for (size_type i = 0; i < M_; i++) {
-              _variRefA[pos] = A(i, j).vi_;
+              variRefA_[pos] = A(i, j).vi_;
               A_[pos++] = A(i, j).val();
             }
           }
@@ -236,7 +236,7 @@ namespace stan {
           for (size_type j = 0; j < N_; j++) {
             for (size_type i = 0; i < M_; i++) {
               C_[pos] = C(i, j);
-              _variRefC[pos] = new vari(C_[pos], false);
+              variRefC_[pos] = new vari(C_[pos], false);
               pos++;
             }
           }
@@ -251,7 +251,7 @@ namespace stan {
           size_t pos = 0;
           for (size_type j = 0; j < adjC.cols(); j++)
             for (size_type i = 0; i < adjC.rows(); i++)
-              adjC(i, j) = _variRefC[pos++]->adj_;
+              adjC(i, j) = variRefC_[pos++]->adj_;
 
           // FIXME: add .noalias() to LHS
           adjA = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
@@ -262,7 +262,7 @@ namespace stan {
           pos = 0;
           for (size_type j = 0; j < adjA.cols(); j++)
             for (size_type i = 0; i < adjA.rows(); i++)
-              _variRefA[pos++]->adj_ += adjA(i, j);
+              variRefA_[pos++]->adj_ += adjA(i, j);
         }
       };
     }
@@ -289,7 +289,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }
@@ -316,7 +316,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }
@@ -343,7 +343,7 @@ namespace stan {
       size_t pos = 0;
       for (size_type j = 0; j < res.cols(); j++)
         for (size_type i = 0; i < res.rows(); i++)
-          res(i, j).vi_ = baseVari->_variRefC[pos++];
+          res(i, j).vi_ = baseVari->variRefC_[pos++];
 
       return res;
     }

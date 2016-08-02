@@ -192,8 +192,8 @@ namespace Eigen {
       typedef typename scalar_product_traits<LhsScalar, RhsScalar>::ReturnType
       ResScalar;
       static void run(Index rows, Index cols, Index depth,
-                      const LhsScalar* _lhs, Index lhsStride,
-                      const RhsScalar* _rhs, Index rhsStride,
+                      const LhsScalar* lhs, Index lhsStride,
+                      const RhsScalar* rhs, Index rhsStride,
                       ResScalar* res, Index resStride,
                       const ResScalar &alpha,
                       level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
@@ -201,8 +201,8 @@ namespace Eigen {
         for (Index i = 0; i < cols; i++) {
           general_matrix_vector_product<Index, LhsScalar, LhsStorageOrder,
                                         ConjugateLhs, RhsScalar, ConjugateRhs>
-            ::run(rows, depth, _lhs, lhsStride,
-                  &_rhs[(static_cast<int>(RhsStorageOrder)
+            ::run(rows, depth, lhs, lhsStride,
+                  &rhs[(static_cast<int>(RhsStorageOrder)
                          == static_cast<int>(ColMajor))
                         ? (i*rhsStride) :(i) ],
                   (static_cast<int>(RhsStorageOrder)
