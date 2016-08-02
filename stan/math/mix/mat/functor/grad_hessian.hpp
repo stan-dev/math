@@ -17,9 +17,9 @@ namespace stan {
      * <p>The functor must implement
      *
      * <code>
-     * fvar<fvar<var> >
-     * operator()(const Eigen::Matrix<fvar<fvar<var> >,
-     *            Eigen::Dynamic, 1>&)
+     * fvar\<fvar\<var\> \>
+     * operator()(const Eigen::Matrix\<fvar\<fvar\<var\> \>,
+     *            Eigen::Dynamic, 1\>&)
      * </code>
      *
      * using only operations that are defined for
