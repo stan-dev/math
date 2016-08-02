@@ -23,6 +23,7 @@
 
 # other binary
 *.o
+*.o-*
 *.exe
 *.a
 
