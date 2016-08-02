@@ -26,7 +26,7 @@ namespace stan {
     inline int divide(const int x, const int y) {
       if (unlikely(y == 0))
         domain_error("divide", "denominator is", y, "");
-      return std::div(x, y).quot;
+      return x / y;
     }
 
   }
