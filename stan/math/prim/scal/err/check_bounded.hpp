@@ -34,8 +34,8 @@ namespace stan {
           for (size_t n = 0; n < max_size(low, high); n++) {
             if (!(low_vec[n] <= y && y <= high_vec[n])) {
               std::stringstream msg;
-              msg << ", but must be between ";
-              msg << "(" << low_vec[n] << ", " << high_vec[n] << ")";
+              msg << ", but must be in the interval ";
+              msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
               std::string msg_str(msg.str());
               domain_error(function, name, y,
                            "is ", msg_str.c_str());
@@ -60,8 +60,8 @@ namespace stan {
           for (size_t n = 0; n < length(y); n++) {
             if (!(low_vec[n] <= get(y, n) && get(y, n) <= high_vec[n])) {
               std::stringstream msg;
-              msg << ", but must be between ";
-              msg << "(" << low_vec[n] << ", " << high_vec[n] << ")";
+              msg << ", but must be in the interval ";
+              msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
               std::string msg_str(msg.str());
               domain_error_vec(function, name, y, n,
                                "is ", msg_str.c_str());
