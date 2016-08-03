@@ -7,14 +7,12 @@
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>
     inline
     fvar<T>
     log_rising_factorial(const fvar<T>& x, const fvar<T>& n) {
-      using stan::math::log_rising_factorial;
       using boost::math::digamma;
 
       return fvar<T>(log_rising_factorial(x.val_, n.val_),
@@ -26,7 +24,6 @@ namespace stan {
     inline
     fvar<T>
     log_rising_factorial(const fvar<T>& x, const double n) {
-      using stan::math::log_rising_factorial;
       using boost::math::digamma;
 
       return fvar<T>(log_rising_factorial(x.val_, n),
@@ -37,7 +34,6 @@ namespace stan {
     inline
     fvar<T>
     log_rising_factorial(const double x, const fvar<T>& n) {
-      using stan::math::log_rising_factorial;
       using boost::math::digamma;
 
       return fvar<T>(log_rising_factorial(x, n.val_),

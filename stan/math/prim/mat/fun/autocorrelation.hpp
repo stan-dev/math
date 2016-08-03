@@ -6,9 +6,7 @@
 #include <complex>
 #include <vector>
 
-
 namespace stan {
-
   namespace math {
 
     namespace {
@@ -61,7 +59,6 @@ namespace stan {
       size_t M = fft_next_good_size(N);
       size_t Mt2 = 2 * M;
 
-
       vector<complex<T> > freqvec;
 
       // centered_signal = y-mean(y) followed by N zeroes
@@ -79,21 +76,21 @@ namespace stan {
       ac.resize(N);
 
       /*
-      vector<T> mask_correction_factors;
-      vector<T> mask;
-      mask.insert(mask.end(), N, 1.0);
-      mask.insert(mask.end(), N, 0.0);
+        vector<T> mask_correction_factors;
+        vector<T> mask;
+        mask.insert(mask.end(), N, 1.0);
+        mask.insert(mask.end(), N, 0.0);
 
-      freqvec.resize(0);
-      fft.fwd(freqvec, mask);
-      for (size_t i = 0; i < Nt2; ++i)
+        freqvec.resize(0);
+        fft.fwd(freqvec, mask);
+        for (size_t i = 0; i < Nt2; ++i)
         freqvec[i] = complex<T>(norm(freqvec[i]), 0.0);
 
-      fft.inv(mask_correction_factors, freqvec);
+        fft.inv(mask_correction_factors, freqvec);
 
-      for (size_t i = 0; i < N; ++i) {
+        for (size_t i = 0; i < N; ++i) {
         ac[i] /= mask_correction_factors[i];
-      }
+        }
       */
       for (size_t i = 0; i < N; ++i) {
         ac[i] /= (N - i);
@@ -126,8 +123,6 @@ namespace stan {
       return autocorrelation(y, ac, fft);
     }
 
-
   }
 }
-
 #endif

@@ -10,7 +10,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /** \addtogroup csr_format
@@ -32,8 +31,8 @@ namespace stan {
     */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    csr_to_dense_matrix(const int& m,
-                        const int& n,
+    csr_to_dense_matrix(int m,
+                        int n,
                         const Eigen::Matrix<T, Eigen::Dynamic, 1>& w,
                         const std::vector<int>& v,
                         const std::vector<int>& u) {

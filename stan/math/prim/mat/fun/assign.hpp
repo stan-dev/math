@@ -13,7 +13,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -112,9 +111,9 @@ namespace stan {
     inline void
     assign(Eigen::Matrix<LHS, R, C>& x,
            const Eigen::Matrix<RHS, R, C>& y) {
-      stan::math::check_matching_dims("assign",
-                                      "left-hand-side", x,
-                                      "right-hand-side", y);
+      check_matching_dims("assign",
+                          "left-hand-side", x,
+                          "right-hand-side", y);
       for (int i = 0; i < x.size(); ++i)
         assign(x(i), y(i));
     }
@@ -141,17 +140,16 @@ namespace stan {
     inline void
     assign(Eigen::Block<LHS> x,
            const Eigen::Matrix<RHS, R, C>& y) {
-      stan::math::check_size_match("assign",
-                                   "left-hand side rows", x.rows(),
-                                   "right-hand side rows", y.rows());
-      stan::math::check_size_match("assign",
-                                   "left-hand side cols", x.cols(),
-                                   "right-hand side cols", y.cols());
+      check_size_match("assign",
+                       "left-hand side rows", x.rows(),
+                       "right-hand side rows", y.rows());
+      check_size_match("assign",
+                       "left-hand side cols", x.cols(),
+                       "right-hand side cols", y.cols());
       for (int n = 0; n < y.cols(); ++n)
         for (int m = 0; m < y.rows(); ++m)
           assign(x(m, n), y(m, n));
     }
-
 
     /**
      * Copy the right-hand side's value to the left-hand side
@@ -175,9 +173,9 @@ namespace stan {
     template <typename LHS, typename RHS>
     inline void
     assign(std::vector<LHS>& x, const std::vector<RHS>& y) {
-      stan::math::check_matching_sizes("assign",
-                                       "left-hand side", x,
-                                       "right-hand side", y);
+      check_matching_sizes("assign",
+                           "left-hand side", x,
+                           "right-hand side", y);
       for (size_t i = 0; i < x.size(); ++i)
         assign(x[i], y[i]);
     }

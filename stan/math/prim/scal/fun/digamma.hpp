@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -26,7 +25,6 @@ namespace stan {
          \textrm{NaN} & \mbox{if } x = \textrm{NaN}
        \end{cases}
        \f]
-
 
        \f[
        \Psi(x)=\frac{\Gamma'(x)}{\Gamma(x)}

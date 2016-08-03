@@ -11,7 +11,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -41,7 +40,6 @@ namespace stan {
       using Eigen::Array;
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k = y.rows();

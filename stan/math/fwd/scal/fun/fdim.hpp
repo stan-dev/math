@@ -9,7 +9,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> fdim(const fvar<T>& x1, const fvar<T>& x2) {
-      using stan::math::fdim;
       using std::floor;
       if (x1.val_ < x2.val_)
         return fvar<T>(fdim(x1.val_, x2.val_), 0);
@@ -20,7 +19,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> fdim(const fvar<T>& x1, const double x2) {
-      using stan::math::fdim;
       using std::floor;
       if (x1.val_ < x2)
         return fvar<T>(fdim(x1.val_, x2), 0);
@@ -30,7 +28,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> fdim(const double x1, const fvar<T>& x2) {
-      using stan::math::fdim;
       using std::floor;
       if (x1 < x2.val_)
         return fvar<T>(fdim(x1, x2.val_), 0);

@@ -13,16 +13,16 @@ namespace stan {
       class rising_factorial_vv_vari : public op_vv_vari {
       public:
         rising_factorial_vv_vari(vari* avi, vari* bvi) :
-          op_vv_vari(stan::math::rising_factorial(avi->val_, bvi->val_),
+          op_vv_vari(rising_factorial(avi->val_, bvi->val_),
                      avi, bvi) {
         }
         void chain() {
           avi_->adj_ += adj_
-            * stan::math::rising_factorial(avi_->val_, bvi_->val_)
+            * rising_factorial(avi_->val_, bvi_->val_)
             * (boost::math::digamma(avi_->val_ + bvi_->val_)
                - boost::math::digamma(avi_->val_));
           bvi_->adj_ += adj_
-            * stan::math::rising_factorial(avi_->val_, bvi_->val_)
+            * rising_factorial(avi_->val_, bvi_->val_)
             * boost::math::digamma(bvi_->val_ + avi_->val_);
         }
       };
@@ -30,10 +30,10 @@ namespace stan {
       class rising_factorial_vd_vari : public op_vd_vari {
       public:
         rising_factorial_vd_vari(vari* avi, double b) :
-          op_vd_vari(stan::math::rising_factorial(avi->val_, b), avi, b) {
+          op_vd_vari(rising_factorial(avi->val_, b), avi, b) {
         }
         void chain() {
-          avi_->adj_ += adj_ * stan::math::rising_factorial(avi_->val_, bd_)
+          avi_->adj_ += adj_ * rising_factorial(avi_->val_, bd_)
             * (boost::math::digamma(avi_->val_ + bd_)
                - boost::math::digamma(avi_->val_));
         }
@@ -42,17 +42,17 @@ namespace stan {
       class rising_factorial_dv_vari : public op_dv_vari {
       public:
         rising_factorial_dv_vari(double a, vari* bvi) :
-          op_dv_vari(stan::math::rising_factorial(a, bvi->val_), a, bvi) {
+          op_dv_vari(rising_factorial(a, bvi->val_), a, bvi) {
         }
         void chain() {
-          bvi_->adj_ += adj_ * stan::math::rising_factorial(ad_, bvi_->val_)
+          bvi_->adj_ += adj_ * rising_factorial(ad_, bvi_->val_)
             * boost::math::digamma(bvi_->val_ + ad_);
         }
       };
     }
 
     inline var rising_factorial(const var& a,
-                                const double& b) {
+                                double b) {
       return var(new rising_factorial_vd_vari(a.vi_, b));
     }
 
@@ -61,7 +61,7 @@ namespace stan {
       return var(new rising_factorial_vv_vari(a.vi_, b.vi_));
     }
 
-    inline var rising_factorial(const double& a,
+    inline var rising_factorial(double a,
                                 const var& b) {
       return var(new rising_factorial_dv_vari(a, b.vi_));
     }

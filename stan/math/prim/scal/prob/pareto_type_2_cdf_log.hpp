@@ -18,7 +18,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
   namespace math {
 
@@ -39,17 +38,8 @@ namespace stan {
         return 0.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_type_2_cdf_log");
+      static const char* function("pareto_type_2_cdf_log");
 
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::log1m;
       using std::log;
 
       T_partials_return P(0.0);
@@ -126,9 +116,9 @@ namespace stan {
           operands_and_partials.d_x4[n] += log_1p_y_over_lambda[n]
             * inv_p1_pow_alpha_minus_one[n];
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

@@ -5,9 +5,7 @@
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Return the primitive value of the specified forward-mode
@@ -20,10 +18,8 @@ namespace stan {
      */
     template <typename T>
     inline double primitive_value(const fvar<T>& v) {
-      using stan::math::primitive_value;
       return primitive_value(v.val_);
     }
-
 
   }
 

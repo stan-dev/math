@@ -18,10 +18,11 @@ namespace stan {
     inline
     fvar<T>
     log_determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
-      stan::math::check_square("log_determinant", "m", m);
+      check_square("log_determinant", "m", m);
 
-      return stan::math::log(stan::math::fabs(stan::math::determinant(m)));
+      return log(fabs(determinant(m)));
     }
+
   }
 }
 #endif

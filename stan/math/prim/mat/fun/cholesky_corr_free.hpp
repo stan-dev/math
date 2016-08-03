@@ -9,9 +9,7 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
-
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
@@ -20,9 +18,8 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::square;
 
-      stan::math::check_square("cholesky_corr_free", "x", x);
+      check_square("cholesky_corr_free", "x", x);
       // should validate lower-triangular, unit lengths
 
       int K = (x.rows() * (x.rows() - 1)) / 2;
@@ -38,8 +35,7 @@ namespace stan {
       }
       return z;
     }
+
   }
-
 }
-
 #endif

@@ -27,17 +27,15 @@ namespace stan {
                   R1, C2>
     mdivide_left_spd(const Eigen::Matrix<T1, R1, C1> &A,
                      const Eigen::Matrix<T2, R2, C2> &b) {
-      stan::math::check_symmetric("mdivide_left_spd", "A", A);
-      stan::math::check_pos_definite("mdivide_left_spd", "A", A);
-      stan::math::check_square("mdivide_left_spd", "A", A);
-      stan::math::check_multiplicable("mdivide_left_spd",
-                                                "A", A,
-                                                "b", b);
+      check_symmetric("mdivide_left_spd", "A", A);
+      check_pos_definite("mdivide_left_spd", "A", A);
+      check_square("mdivide_left_spd", "A", A);
+      check_multiplicable("mdivide_left_spd", "A", A, "b", b);
       return promote_common<Eigen::Matrix<T1, R1, C1>,
                             Eigen::Matrix<T2, R1, C1> >(A)
         .llt()
         .solve(promote_common<Eigen::Matrix<T1, R2, C2>,
-                               Eigen::Matrix<T2, R2, C2> >(b));
+               Eigen::Matrix<T2, R2, C2> >(b));
     }
 
   }

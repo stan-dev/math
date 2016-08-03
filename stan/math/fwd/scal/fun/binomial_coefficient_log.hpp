@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -16,7 +15,6 @@ namespace stan {
     binomial_coefficient_log(const fvar<T>& x1, const fvar<T>& x2) {
       using boost::math::digamma;
       using std::log;
-      using stan::math::binomial_coefficient_log;
       const double cutoff = 1000;
       if ((x1.val_ < cutoff) || (x1.val_ - x2.val_ < cutoff)) {
         return fvar<T>(binomial_coefficient_log(x1.val_, x2.val_),
@@ -46,7 +44,6 @@ namespace stan {
     binomial_coefficient_log(const fvar<T>& x1, const double x2) {
       using boost::math::digamma;
       using std::log;
-      using stan::math::binomial_coefficient_log;
       const double cutoff = 1000;
       if ((x1.val_ < cutoff) || (x1.val_ - x2 < cutoff)) {
         return fvar<T>(binomial_coefficient_log(x1.val_, x2),
@@ -70,7 +67,6 @@ namespace stan {
     binomial_coefficient_log(const double x1, const fvar<T>& x2) {
       using boost::math::digamma;
       using std::log;
-      using stan::math::binomial_coefficient_log;
       const double cutoff = 1000;
       if ((x1 < cutoff) || (x1 - x2.val_ < cutoff)) {
         return fvar<T>(binomial_coefficient_log(x1, x2.val_),

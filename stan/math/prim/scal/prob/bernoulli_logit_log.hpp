@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Bernoulli(n|inv_logit(theta))   [0 <= n <= 1;   -inf <= theta <= inf]
@@ -26,18 +25,11 @@ namespace stan {
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_log(const T_n& n, const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_logit_log");
+      static const char* function("bernoulli_logit_log");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_bounded;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1p;
-      using stan::math::inv_logit;
       using std::exp;
 
       // check if any vectors are zero length
@@ -108,6 +100,6 @@ namespace stan {
       return bernoulli_logit_log<false>(n, theta);
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

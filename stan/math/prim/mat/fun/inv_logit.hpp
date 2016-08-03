@@ -16,7 +16,6 @@ namespace stan {
     struct inv_logit_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::inv_logit;
         return inv_logit(x);
       }
     };

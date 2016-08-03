@@ -77,15 +77,13 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     multiply(const Eigen::Matrix<fvar<T>, R1, C1>& m1,
              const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-      stan::math::check_multiplicable("multiply",
-                                                "m1", m1,
-                                                "m2", m2);
+      check_multiplicable("multiply", "m1", m1, "m2", m2);
       Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
       for (size_type i = 0; i < m1.rows(); i++) {
         Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
         for (size_type j = 0; j < m2.cols(); j++) {
           Eigen::Matrix<fvar<T>, R2, 1> ccol = m2.col(j);
-          result(i, j) = stan::math::dot_product(crow, ccol);
+          result(i, j) = dot_product(crow, ccol);
         }
       }
       return result;
@@ -96,15 +94,13 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     multiply(const Eigen::Matrix<fvar<T>, R1, C1>& m1,
              const Eigen::Matrix<double, R2, C2>& m2) {
-      stan::math::check_multiplicable("multiply",
-                                                "m1", m1,
-                                                "m2", m2);
+      check_multiplicable("multiply", "m1", m1, "m2", m2);
       Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
       for (size_type i = 0; i < m1.rows(); i++) {
         Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
         for (size_type j = 0; j < m2.cols(); j++) {
           Eigen::Matrix<double, R2, 1> ccol = m2.col(j);
-          result(i, j) = stan::math::dot_product(crow, ccol);
+          result(i, j) = dot_product(crow, ccol);
         }
       }
       return result;
@@ -115,15 +111,15 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C2>
     multiply(const Eigen::Matrix<double, R1, C1>& m1,
              const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-      stan::math::check_multiplicable("multiply",
-                                                "m1", m1,
-                                                "m2", m2);
+      check_multiplicable("multiply",
+                          "m1", m1,
+                          "m2", m2);
       Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
       for (size_type i = 0; i < m1.rows(); i++) {
         Eigen::Matrix<double, 1, C1> crow = m1.row(i);
         for (size_type j = 0; j < m2.cols(); j++) {
           Eigen::Matrix<fvar<T>, R2, 1> ccol = m2.col(j);
-          result(i, j) = stan::math::dot_product(crow, ccol);
+          result(i, j) = dot_product(crow, ccol);
         }
       }
       return result;
@@ -161,6 +157,7 @@ namespace stan {
                                 "in multiply");
       return dot_product(rv, v);
     }
+
   }
 }
 #endif

@@ -27,14 +27,10 @@ namespace stan {
               typename T_y, typename T_scale, typename T_shape>
     typename return_type<T_y, T_scale, T_shape>::type
     pareto_log(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-      static const char* function("stan::math::pareto_log");
+      static const char* function("pareto_log");
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      using stan::math::value_of;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
       // check if any vectors are zero length
@@ -102,8 +98,6 @@ namespace stan {
           log_alpha[n] = log(value_of(alpha_vec[n]));
       }
 
-      using stan::math::multiply_log;
-
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         // log probability
@@ -132,6 +126,7 @@ namespace stan {
     pareto_log(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
       return pareto_log<false>(y, y_min, alpha);
     }
+
   }
 }
 #endif

@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
@@ -45,19 +44,11 @@ namespace stan {
                           const Eigen::Matrix
                           <T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
                           const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-      static const char* function("stan::math::multi_gp_cholesky_log");
+      static const char* function("multi_gp_cholesky_log");
       typedef
         typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
       T_lp lp(0.0);
 
-      using stan::math::mdivide_left_tri_low;
-      using stan::math::dot_self;
-      using stan::math::sum;
-      using stan::math::log;
-
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_positive;
 
       check_size_match(function,
                        "Size of random variable (rows y)", y.rows(),
@@ -110,7 +101,7 @@ namespace stan {
                           const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
       return multi_gp_cholesky_log<false>(y, L, w);
     }
+
   }
 }
-
 #endif

@@ -32,14 +32,8 @@ namespace stan {
         return 0.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_ccdf_log");
+      static const char* function("pareto_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
@@ -77,7 +71,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         }
 
         // Pull out values
@@ -96,9 +90,9 @@ namespace stan {
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x3[n] += log_dbl;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

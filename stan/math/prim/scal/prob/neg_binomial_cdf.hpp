@@ -28,13 +28,10 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_cdf(const T_n& n, const T_shape& alpha,
                      const T_inv_scale& beta) {
-      static const char* function("stan::math::neg_binomial_cdf");
+      static const char* function("neg_binomial_cdf");
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_consistent_sizes;
 
       // Ensure non-zero arugment lengths
       if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
@@ -57,11 +54,6 @@ namespace stan {
       size_t size = max_size(n, alpha, beta);
 
       // Compute vectorized CDF and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::inc_beta_ddz;
-      using stan::math::inc_beta_dda;
-      using stan::math::digamma;
 
       OperandsAndPartials<T_shape, T_inv_scale>
         operands_and_partials(alpha, beta);
@@ -136,6 +128,6 @@ namespace stan {
       return operands_and_partials.value(P);
     }
 
-  }  // prob
-}  // stan
+  }
+}
 #endif

@@ -10,7 +10,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
     /**
      * Return the lower- and upper-bounded scalar derived by
@@ -44,7 +43,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T, TL, TU>::type
     lub_constrain(const T x, TL lb, TU ub) {
       using std::exp;
-      stan::math::check_less("lub_constrain", "lb", lb, ub);
+      check_less("lub_constrain", "lb", lb, ub);
       if (lb == -std::numeric_limits<double>::infinity())
         return ub_constrain(x, ub);
       if (ub == std::numeric_limits<double>::infinity())
@@ -57,14 +56,14 @@ namespace stan {
         // Prevent x from reaching one unless it really really should.
         if ((x < std::numeric_limits<double>::infinity())
             && (inv_logit_x == 1))
-            inv_logit_x = 1 - 1e-15;
+          inv_logit_x = 1 - 1e-15;
       } else {
         T exp_x = exp(x);
         inv_logit_x = 1.0 - 1.0 / (1.0 + exp_x);
         // Prevent x from reaching zero unless it really really should.
         if ((x > -std::numeric_limits<double>::infinity())
             && (inv_logit_x== 0))
-            inv_logit_x = 1e-15;
+          inv_logit_x = 1e-15;
       }
       return lb + (ub - lb) * inv_logit_x;
     }
@@ -133,7 +132,7 @@ namespace stan {
         // Prevent x from reaching one unless it really really should.
         if ((x < std::numeric_limits<double>::infinity())
             && (inv_logit_x == 1))
-            inv_logit_x = 1 - 1e-15;
+          inv_logit_x = 1 - 1e-15;
       } else {
         T exp_x = exp(x);
         inv_logit_x = 1.0 - 1.0 / (1.0 + exp_x);
@@ -141,13 +140,11 @@ namespace stan {
         // Prevent x from reaching zero unless it really really should.
         if ((x > -std::numeric_limits<double>::infinity())
             && (inv_logit_x== 0))
-            inv_logit_x = 1e-15;
+          inv_logit_x = 1e-15;
       }
       return lb + (ub - lb) * inv_logit_x;
     }
 
   }
-
 }
-
 #endif

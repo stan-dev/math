@@ -17,21 +17,15 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_cdf_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const char* function("stan::math::uniform_cdf_log");
+      static const char* function("uniform_cdf_log");
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_greater;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
       // check if any vectors are zero length
@@ -63,7 +57,7 @@ namespace stan {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         if (y_dbl < value_of(alpha_vec[n])
             || y_dbl > value_of(beta_vec[n]))
-          return stan::math::negative_infinity();
+          return negative_infinity();
         if (y_dbl == value_of(beta_vec[n]))
           return operands_and_partials.value(0.0);
       }
@@ -87,9 +81,9 @@ namespace stan {
         if (!is_constant_struct<T_high>::value)
           operands_and_partials.d_x3[n] -= 1.0 / b_min_a;
       }
-
       return operands_and_partials.value(cdf_log);
     }
+
   }
 }
 #endif

@@ -24,10 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::lognormal_distribution;
 
-      static const char* function("stan::math::lognormal_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
+      static const char* function("lognormal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -36,6 +33,7 @@ namespace stan {
         lognorm_rng(rng, lognormal_distribution<>(mu, sigma));
       return lognorm_rng();
     }
+
   }
 }
 #endif

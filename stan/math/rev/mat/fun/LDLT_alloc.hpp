@@ -9,12 +9,12 @@ namespace stan {
     /**
      * This object stores the actual (double typed) LDLT factorization of
      * an Eigen::Matrix<var> along with pointers to its vari's which allow the
-     * *_ldlt functions to save memory.  It is derived from a chainable_alloc
+     * *ldlt_ functions to save memory.  It is derived from a chainable_alloc
      * object so that it is allocated on the stack but does not have a chain()
      * function called.
      *
      * This class should only be instantiated as part of an LDLT_factor object
-     * and is only used in *_ldlt functions.
+     * and is only used in *ldlt_ functions.
      **/
     template<int R, int C>
     class LDLT_alloc : public chainable_alloc {
@@ -33,26 +33,26 @@ namespace stan {
         Eigen::Matrix<double, R, C> Ad(A.rows(), A.cols());
 
         N_ = A.rows();
-        _variA.resize(A.rows(), A.cols());
+        variA_.resize(A.rows(), A.cols());
 
         for (size_t j = 0; j < N_; j++) {
           for (size_t i = 0; i < N_; i++) {
             Ad(i, j) = A(i, j).val();
-            _variA(i, j) = A(i, j).vi_;
+            variA_(i, j) = A(i, j).vi_;
           }
         }
 
-        _ldlt.compute(Ad);
+        ldlt_.compute(Ad);
       }
 
       /// Compute the log(abs(det(A))).  This is just a convenience function.
       inline double log_abs_det() const {
-        return _ldlt.vectorD().array().log().sum();
+        return ldlt_.vectorD().array().log().sum();
       }
 
       size_t N_;
-      Eigen::LDLT<Eigen::Matrix<double, R, C> > _ldlt;
-      Eigen::Matrix<vari*, R, C> _variA;
+      Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
+      Eigen::Matrix<vari*, R, C> variA_;
     };
   }
 }

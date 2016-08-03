@@ -44,7 +44,6 @@ namespace stan {
       };
     }
 
-
     /**
      * Return the softmax of the specified Eigen vector.  Softmax is
      * guaranteed to return a simplex.
@@ -60,7 +59,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
-      stan::math::check_nonzero_size("softmax", "alpha", alpha);
+      check_nonzero_size("softmax", "alpha", alpha);
 
       vari** alpha_vi_array
         = reinterpret_cast<vari**>(ChainableStack::memalloc_
@@ -73,7 +72,7 @@ namespace stan {
         alpha_d(i) = alpha(i).val();
 
       Matrix<double, Dynamic, 1> softmax_alpha_d
-        = stan::math::softmax(alpha_d);
+        = softmax(alpha_d);
 
       double* softmax_alpha_d_array
         = reinterpret_cast<double*>(ChainableStack::memalloc_
@@ -91,8 +90,6 @@ namespace stan {
       return softmax_alpha;
     }
 
-
   }
 }
-
 #endif

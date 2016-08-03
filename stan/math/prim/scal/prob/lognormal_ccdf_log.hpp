@@ -23,18 +23,13 @@ namespace stan {
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     lognormal_ccdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::lognormal_ccdf_log");
+      static const char* function("lognormal_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
       T_partials_return ccdf_log = 0.0;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive_finite;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
@@ -57,7 +52,7 @@ namespace stan {
       VectorView<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      const double sqrt_pi = std::sqrt(stan::math::pi());
+      const double sqrt_pi = std::sqrt(pi());
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0.0)
@@ -88,9 +83,9 @@ namespace stan {
           operands_and_partials.d_x3[n] += rep_deriv * scaled_diff * SQRT_2
             / erfc_calc;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

@@ -32,7 +32,7 @@ namespace stan {
      * @param a The variable.
      * @return Log gamma of the variable.
      */
-    inline var lgamma(const stan::math::var& a) {
+    inline var lgamma(const var& a) {
       double lgamma_a = boost::math::lgamma(a.val());
       return var(new lgamma_vari(lgamma_a, a.vi_));
     }

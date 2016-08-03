@@ -22,11 +22,9 @@ namespace stan {
 
     template <int R1, int C1, int R2, int C2, typename T2>
     inline Eigen::Matrix<fvar<T2>, R1, C2>
-    mdivide_left_ldlt(const stan::math::LDLT_factor<double, R1, C1> &A,
+    mdivide_left_ldlt(const LDLT_factor<double, R1, C1> &A,
                       const Eigen::Matrix<fvar<T2>, R2, C2> &b) {
-      stan::math::check_multiplicable("mdivide_left_ldlt",
-                                                "A", A,
-                                                "b", b);
+      check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
       Eigen::Matrix<T2, R2, C2> b_val(b.rows(), b.cols());
       Eigen::Matrix<T2, R2, C2> b_der(b.rows(), b.cols());
@@ -39,6 +37,7 @@ namespace stan {
       return to_fvar(mdivide_left_ldlt(A, b_val),
                      mdivide_left_ldlt(A, b_der));
     }
+
   }
 }
 #endif

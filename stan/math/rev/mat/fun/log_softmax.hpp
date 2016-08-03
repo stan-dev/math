@@ -46,7 +46,6 @@ namespace stan {
 
     }
 
-
     /**
      * Return the softmax of the specified Eigen vector.  Softmax is
      * guaranteed to return a simplex.
@@ -62,7 +61,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
-      stan::math::check_nonzero_size("log_softmax", "alpha", alpha);
+      check_nonzero_size("log_softmax", "alpha", alpha);
 
       if (alpha.size() == 0)
         throw std::domain_error("arg vector to log_softmax() "
@@ -80,7 +79,6 @@ namespace stan {
         (vari::operator new(sizeof(vari*) * alpha.size()));
       for (int i = 0; i < alpha.size(); ++i)
         alpha_vi_array[i] = alpha(i).vi_;
-
 
       Matrix<double, Dynamic, 1> alpha_d(alpha.size());
       for (int i = 0; i < alpha_d.size(); ++i)
@@ -127,8 +125,6 @@ namespace stan {
       return log_softmax_alpha;
     }
 
-
   }
 }
-
 #endif

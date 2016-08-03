@@ -21,7 +21,6 @@
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
@@ -89,26 +88,11 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const char* function("stan::math::gaussian_dlm_obs_log");
+      static const char* function("gaussian_dlm_obs_log");
       typedef typename return_type<
         T_y,
         typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type T_lp;
       T_lp lp(0.0);
-
-      using stan::math::add;
-      using stan::math::check_cov_matrix;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_size_match;
-      using stan::math::check_spsd_matrix;
-      using stan::math::check_square;
-      using stan::math::inverse_spd;
-      using stan::math::log_determinant_spd;
-      using stan::math::multiply;
-      using stan::math::quad_form_sym;
-      using stan::math::subtract;
-      using stan::math::trace_quad_form;
-      using stan::math::transpose;
 
       int r = y.rows();  // number of variables
       int T = y.cols();  // number of observations
@@ -294,27 +278,13 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const char* function("stan::math::gaussian_dlm_obs_log");
+      static const char* function("gaussian_dlm_obs_log");
       typedef
         typename return_type
         <T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
         T_lp;
       T_lp lp(0.0);
 
-      using stan::math::add;
-      using stan::math::check_cov_matrix;
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_size_match;
-      using stan::math::check_spsd_matrix;
-      using stan::math::dot_product;
-      using stan::math::multiply;
-      using stan::math::quad_form_sym;
-      using stan::math::subtract;
-      using stan::math::tcrossprod;
-      using stan::math::trace_quad_form;
-      using stan::math::transpose;
       using std::log;
 
       int r = y.rows();  // number of variables
@@ -448,8 +418,7 @@ namespace stan {
      const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
       return gaussian_dlm_obs_log<false>(y, F, G, V, W, m0, C0);
     }
+
   }
-
 }
-
 #endif

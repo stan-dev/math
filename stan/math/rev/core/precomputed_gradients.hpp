@@ -8,7 +8,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -81,7 +80,6 @@ namespace stan {
           varis_[i]->adj_ += adj_ * gradients_[i];
       }
     };
-
 
     /**
      * This function returns a var for an expression that has the

@@ -9,9 +9,7 @@
 #include <iostream>
 
 namespace stan {
-
   namespace math {
-
 
     // MATRIX TRANSFORMS +/- JACOBIANS
 
@@ -65,7 +63,6 @@ namespace stan {
       return L.matrix();
     }
 
-
     /**
      * Return the Cholesky factor of the correlation matrix of the
      * specified dimensionality corresponding to the specified
@@ -95,10 +92,6 @@ namespace stan {
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
                 const size_t K,
                 T& log_prob) {
-      using stan::math::log1m;
-      using stan::math::square;
-      using stan::math::sum;
-
       Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
       size_t pos = 0;
       // no need to abs() because this Jacobian determinant
@@ -115,7 +108,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

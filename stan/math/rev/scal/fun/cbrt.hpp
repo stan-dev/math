@@ -9,7 +9,6 @@
 using boost::math::cbrt;
 #endif
 
-
 namespace stan {
   namespace math {
 

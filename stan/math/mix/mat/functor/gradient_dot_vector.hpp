@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // aka directional derivative (not length normalized)
@@ -19,8 +18,6 @@ namespace stan {
                         const Eigen::Matrix<T2, Eigen::Dynamic, 1>& v,
                         T1& fx,
                         T1& grad_fx_dot_v) {
-      using stan::math::fvar;
-      using stan::math::var;
       using Eigen::Matrix;
       Matrix<fvar<T1>, Eigen::Dynamic, 1> x_fvar(x.size());
       for (int i = 0; i < x.size(); ++i)
@@ -30,6 +27,6 @@ namespace stan {
       grad_fx_dot_v = fx_fvar.d_;
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

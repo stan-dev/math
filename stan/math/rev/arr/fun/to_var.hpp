@@ -11,7 +11,7 @@ namespace stan {
     /**
      * Converts argument to an automatic differentiation variable.
      *
-     * Returns a stan::math::var variable with the input value.
+     * Returns a var variable with the input value.
      *
      * @param[in] v A std::vector<double>
      * @return A std::vector<var> with the values set
@@ -23,10 +23,11 @@ namespace stan {
         var_vector[n] = v[n];
       return var_vector;
     }
+
     /**
      * Converts argument to an automatic differentiation variable.
      *
-     * Returns a stan::math::var variable with the input value.
+     * Returns a var variable with the input value.
      *
      * @param[in] v A std::vector<var>
      * @return A std::vector<var> 

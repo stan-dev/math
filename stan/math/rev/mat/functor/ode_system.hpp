@@ -70,7 +70,6 @@ namespace stan {
         using Eigen::Matrix;
         using Eigen::Map;
         using Eigen::RowVectorXd;
-        using stan::math::var;
         using std::vector;
         vector<double> grad(y.size());
         Map<RowVectorXd> grad_eig(&grad[0], y.size());
@@ -112,7 +111,6 @@ namespace stan {
         using Eigen::Map;
         using Eigen::Matrix;
         using Eigen::RowVectorXd;
-        using stan::math::var;
         using std::vector;
         vector<double> grad(y.size() + theta_.size());
         Map<RowVectorXd> grad_eig(&grad[0], y.size() + theta_.size());
@@ -136,7 +134,7 @@ namespace stan {
           recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
       }
     };
 

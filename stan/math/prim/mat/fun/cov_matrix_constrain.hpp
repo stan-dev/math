@@ -9,10 +9,7 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
-
-    // COVARIANCE MATRIX
 
     /**
      * Return the symmetric, positive-definite matrix of dimensions K
@@ -35,8 +32,6 @@ namespace stan {
 
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      using stan::math::multiply_lower_tri_self_transpose;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
       Matrix<T, Dynamic, Dynamic> L(K, K);
@@ -52,7 +47,6 @@ namespace stan {
       }
       return multiply_lower_tri_self_transpose(L);
     }
-
 
     /**
      * Return the symmetric, positive-definite matrix of dimensions K
@@ -78,7 +72,6 @@ namespace stan {
 
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
       if (x.size() != (K * (K + 1)) / 2)
@@ -93,7 +86,7 @@ namespace stan {
           L(m, n) = 0.0;
       }
       // Jacobian for complete transform, including exp() above
-      lp += (K * stan::math::LOG_2);  // needless constant; want propto
+      lp += (K * LOG_2);  // needless constant; want propto
       for (int k = 0; k < K; ++k)
         lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
       return L * L.transpose();
@@ -101,7 +94,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

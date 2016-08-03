@@ -49,7 +49,6 @@ namespace stan {
 
         inline static double var_dot(const T1* v1, const T2* v2,
                                      size_t length) {
-          using stan::math::value_of;
           Eigen::VectorXd vd1(length), vd2(length);
           for (size_t i = 0; i < length; i++) {
             vd1[i] = value_of(v1[i]);
@@ -61,8 +60,6 @@ namespace stan {
         template<typename Derived1, typename Derived2>
         inline static double var_dot(const Eigen::DenseBase<Derived1> &v1,
                                      const Eigen::DenseBase<Derived2> &v2) {
-          using stan::math::value_of;
-          using stan::math::value_of;
           Eigen::VectorXd vd1(v1.size()), vd2(v1.size());
           for (int i = 0; i < v1.size(); i++) {
             vd1[i] = value_of(v1[i]);
@@ -140,12 +137,12 @@ namespace stan {
         dot_product_vari(typename dot_product_store_type<T1>::type v1,
                          typename dot_product_store_type<T2>::type v2,
                          size_t length)
-        : vari(var_dot(v1, v2, length)), v1_(v1), v2_(v2), length_(length) {}
+          : vari(var_dot(v1, v2, length)), v1_(v1), v2_(v2), length_(length) {}
 
         dot_product_vari(const T1* v1, const T2* v2, size_t length,
                          dot_product_vari<T1, T2>* shared_v1 = NULL,
                          dot_product_vari<T1, T2>* shared_v2 = NULL) :
-        vari(var_dot(v1, v2, length)), length_(length) {
+          vari(var_dot(v1, v2, length)), length_(length) {
           if (shared_v1 == NULL) {
             initialize(v1_, v1);
           } else {
@@ -162,7 +159,7 @@ namespace stan {
                          const Eigen::DenseBase<Derived2> &v2,
                          dot_product_vari<T1, T2>* shared_v1 = NULL,
                          dot_product_vari<T1, T2>* shared_v2 = NULL) :
-        vari(var_dot(v1, v2)), length_(v1.size()) {
+          vari(var_dot(v1, v2)), length_(v1.size()) {
           if (shared_v1 == NULL) {
             initialize(v1_, v1);
           } else {
@@ -179,7 +176,7 @@ namespace stan {
                          const Eigen::Matrix<T2, R2, C2> &v2,
                          dot_product_vari<T1, T2>* shared_v1 = NULL,
                          dot_product_vari<T1, T2>* shared_v2 = NULL) :
-        vari(var_dot(v1, v2)), length_(v1.size()) {
+          vari(var_dot(v1, v2)), length_(v1.size()) {
           if (shared_v1 == NULL) {
             initialize(v1_, v1);
           } else {
@@ -208,14 +205,14 @@ namespace stan {
     template<typename T1, int R1, int C1, typename T2, int R2, int C2>
     inline
     typename boost::enable_if_c<boost::is_same<T1, var>::value ||
-                                boost::is_same<T2, var>::value, var>::type
-    dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
-                const Eigen::Matrix<T2, R2, C2>& v2) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+    boost::is_same<T2, var>::value, var>::type
+      dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
+                  const Eigen::Matrix<T2, R2, C2>& v2) {
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
+      check_matching_sizes("dot_product",
+                           "v1", v1,
+                           "v2", v2);
       return var(new dot_product_vari<T1, T2>(v1, v2));
     }
     /**
@@ -229,8 +226,8 @@ namespace stan {
     template<typename T1, typename T2>
     inline
     typename boost::enable_if_c<boost::is_same<T1, var>::value ||
-                                boost::is_same<T2, var>::value, var>::type
-    dot_product(const T1* v1, const T2* v2, size_t length) {
+    boost::is_same<T2, var>::value, var>::type
+      dot_product(const T1* v1, const T2* v2, size_t length) {
       return var(new dot_product_vari<T1, T2>(v1, v2, length));
     }
 
@@ -245,12 +242,12 @@ namespace stan {
     template<typename T1, typename T2>
     inline
     typename boost::enable_if_c<boost::is_same<T1, var>::value ||
-                                boost::is_same<T2, var>::value, var>::type
-    dot_product(const std::vector<T1>& v1,
-                const std::vector<T2>& v2) {
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+    boost::is_same<T2, var>::value, var>::type
+      dot_product(const std::vector<T1>& v1,
+                  const std::vector<T2>& v2) {
+      check_matching_sizes("dot_product",
+                           "v1", v1,
+                           "v2", v2);
       return var(new dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
     }
 

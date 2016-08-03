@@ -11,7 +11,6 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -43,7 +42,6 @@ namespace stan {
                        const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
 
       typedef typename index_type<Matrix<T_prob, Dynamic, 1> >::type size_t;
 

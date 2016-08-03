@@ -37,7 +37,6 @@ namespace stan {
     enum { value = true };
   };
 
-
   /**
    * Template metaprogram indicates whether a type is vector_like.
    *

@@ -10,14 +10,14 @@ namespace stan {
 
     /**
      * Writes the inverse softmax of the simplex argument into the second
-     * argument.  See <code>stan::math::softmax</code> for the inverse
+     * argument.  See <code>softmax</code> for the inverse
      * function and a definition of the relation.
      *
      * The inverse softmax function is defined by
      *
      * \f$\mbox{inverse\_softmax}(x)[i] = \log x[i]\f$.
      *
-     * This function defines the inverse of <code>stan::math::softmax</code>
+     * This function defines the inverse of <code>softmax</code>
      * up to a scaling factor.
      *
      * Because of the definition, values of 0.0 in the simplex
@@ -42,5 +42,4 @@ namespace stan {
 
   }
 }
-
 #endif

@@ -21,8 +21,8 @@ namespace stan {
       using Eigen::Dynamic;
       using Eigen::LDLT;
       using Eigen::Matrix;
-      stan::math::check_square("inverse_spd", "m", m);
-      stan::math::check_symmetric("inverse_spd", "m", m);
+      check_square("inverse_spd", "m", m);
+      check_symmetric("inverse_spd", "m", m);
       Matrix<T, Dynamic, Dynamic> mmt = T(0.5) * (m + m.transpose());
       // mmt = T(0.5) * mmt;
       LDLT<Matrix<T, Dynamic, Dynamic> > ldlt(mmt);  // 0.5*(m+m.transpose()));

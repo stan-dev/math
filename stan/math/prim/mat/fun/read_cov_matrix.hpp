@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -25,7 +24,6 @@ namespace stan {
                     T& log_prob) {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = read_cov_L(CPCs, sds, log_prob);
-      using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
 
@@ -45,7 +43,6 @@ namespace stan {
       D.diagonal() = sds;
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = D * read_corr_L(CPCs, K);
-      using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
 

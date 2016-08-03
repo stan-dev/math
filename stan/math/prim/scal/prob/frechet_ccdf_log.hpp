@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_scale>
@@ -32,13 +31,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::frechet_ccdf_log");
+      static const char* function("frechet_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -54,7 +49,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_shape, T_scale>
         operands_and_partials(y, alpha, sigma);
 
-      using stan::math::log1m;
       using std::log;
       using std::exp;
       VectorView<const T_y> y_vec(y);
@@ -81,9 +75,9 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += alpha_dbl / sigma_dbl * rep_deriv_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

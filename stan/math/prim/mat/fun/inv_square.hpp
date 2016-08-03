@@ -16,7 +16,6 @@ namespace stan {
     struct inv_square_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::inv_square;
         return inv_square(x);
       }
     };

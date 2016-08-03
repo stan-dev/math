@@ -3,9 +3,7 @@
 
 #include <stan/math/fwd/core/fvar.hpp>
 
-
 namespace stan {
-
   namespace math {
 
     template <typename T>

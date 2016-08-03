@@ -21,7 +21,7 @@ namespace stan {
       };
     }
 
-    inline var digamma(const stan::math::var& a) {
+    inline var digamma(const var& a) {
       return var(new digamma_vari(a.vi_));
     }
 

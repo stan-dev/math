@@ -94,15 +94,15 @@ namespace stan {
       typedef stan::is_var<T_initial> initial_var;
       typedef stan::is_var<T_param> param_var;
 
-      stan::math::check_finite("integrate_ode_bdf", "initial state", y0);
-      stan::math::check_finite("integrate_ode_bdf", "initial time", t0);
-      stan::math::check_finite("integrate_ode_bdf", "times", ts);
-      stan::math::check_finite("integrate_ode_bdf", "parameter vector", theta);
-      stan::math::check_finite("integrate_ode_bdf", "continuous data", x);
-      stan::math::check_nonzero_size("integrate_ode_bdf", "times", ts);
-      stan::math::check_nonzero_size("integrate_ode_bdf", "initial state", y0);
-      stan::math::check_ordered("integrate_ode_bdf", "times", ts);
-      stan::math::check_less("integrate_ode_bdf", "initial time", t0, ts[0]);
+      check_finite("integrate_ode_bdf", "initial state", y0);
+      check_finite("integrate_ode_bdf", "initial time", t0);
+      check_finite("integrate_ode_bdf", "times", ts);
+      check_finite("integrate_ode_bdf", "parameter vector", theta);
+      check_finite("integrate_ode_bdf", "continuous data", x);
+      check_nonzero_size("integrate_ode_bdf", "times", ts);
+      check_nonzero_size("integrate_ode_bdf", "initial state", y0);
+      check_ordered("integrate_ode_bdf", "times", ts);
+      check_less("integrate_ode_bdf", "initial time", t0, ts[0]);
       if (relative_tolerance <= 0)
         invalid_argument("integrate_ode_bdf",
                          "relative_tolerance,", relative_tolerance,
@@ -143,7 +143,7 @@ namespace stan {
 
         // Assign pointer to this as user data
         cvodes_check_flag(CVodeSetUserData(cvodes_mem,
-                                   reinterpret_cast<void*>(&cvodes_data)),
+                            reinterpret_cast<void*>(&cvodes_data)),
                           "CVodeSetUserData");
 
         cvodes_set_options(cvodes_mem,

@@ -22,7 +22,7 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T>::type
     variance(const std::vector<T>& v) {
-      stan::math::check_nonzero_size("variance", "v", v);
+      check_nonzero_size("variance", "v", v);
       if (v.size() == 1)
         return 0.0;
       T v_mean(mean(v));
@@ -44,7 +44,7 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T>::type
     variance(const Eigen::Matrix<T, R, C>& m) {
-      stan::math::check_nonzero_size("variance", "m", m);
+      check_nonzero_size("variance", "m", m);
 
       if (m.size() == 1)
         return 0.0;

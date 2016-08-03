@@ -20,9 +20,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 
-
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -33,12 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::binomial_distribution;
 
-      static const char* function("stan::math::binomial_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_nonnegative;
+      static const char* function("binomial_rng");
 
       check_nonnegative(function, "Population size parameter", N);
       check_finite(function, "Probability parameter", theta);

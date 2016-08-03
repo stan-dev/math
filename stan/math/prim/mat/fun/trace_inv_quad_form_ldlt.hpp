@@ -21,18 +21,18 @@ namespace stan {
     template <typename T1, typename T2, int R2, int C2, int R3, int C3>
     inline typename
     boost::enable_if_c<!stan::is_var<T1>::value &&
-                       !stan::is_var<T2>::value,
+    !stan::is_var<T2>::value,
                        typename
                        boost::math::tools::promote_args<T1, T2>::type>::type
-    trace_inv_quad_form_ldlt(const stan::math::LDLT_factor<T1, R2, C2> &A,
-                             const Eigen::Matrix<T2, R3, C3> &B) {
-      stan::math::check_multiplicable("trace_inv_quad_form_ldlt",
-                                                "A", A,
-                                                "B", B);
+      trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
+                               const Eigen::Matrix<T2, R3, C3> &B) {
+      check_multiplicable("trace_inv_quad_form_ldlt",
+                          "A", A,
+                          "B", B);
 
       return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
     }
+
   }
 }
-
 #endif

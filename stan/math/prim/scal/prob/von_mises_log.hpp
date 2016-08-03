@@ -18,14 +18,13 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template<bool propto,
              typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
-      static char const* const function = "stan::math::von_mises_log";
+      static char const* const function = "von_mises_log";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
@@ -36,14 +35,7 @@ namespace stan {
         return 0.0;
 
       using stan::is_constant_struct;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_greater;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
-      using stan::math::modified_bessel_first_kind;
       using std::log;
 
       // Result accumulator.
@@ -58,7 +50,6 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", kappa);
 
-
       // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return logp;
@@ -71,7 +62,7 @@ namespace stan {
       // Determine which expensive computations to perform.
       const bool compute_bessel0 = include_summand<propto, T_scale>::value;
       const bool compute_bessel1 = !kappa_const;
-      const double TWO_PI = 2.0 * stan::math::pi();
+      const double TWO_PI = 2.0 * pi();
 
       // Wrap scalars into vector views.
       VectorView<const T_y> y_vec(y);
@@ -126,7 +117,6 @@ namespace stan {
           operands_and_partials.d_x3[n] += kappa_cos / kappa_dbl[n]
             - bessel1 / bessel0;
       }
-
       return operands_and_partials.value(logp);
     }
 
@@ -135,6 +125,7 @@ namespace stan {
     von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
       return von_mises_log<false>(y, mu, kappa);
     }
+
   }
 }
 #endif

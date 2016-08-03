@@ -9,7 +9,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     // forward declare
@@ -63,7 +62,6 @@ namespace stan {
        * as for a basic double.
        */
       var() : vi_(static_cast<vari*>(0U)) { }
-
 
       /**
        * Construct a variable from a pointer to a variable implementation.
@@ -197,7 +195,6 @@ namespace stan {
        */
       var(size_t x) : vi_(new vari(static_cast<double>(x))) { }  // NOLINT
 
-
       /**
        * Construct a variable from the specified arithmetic argument
        * by constructing a new <code>vari</code> with the argument
@@ -207,7 +204,6 @@ namespace stan {
        */
       var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) { }  // NOLINT
 #endif
-
 
 #ifdef BOOST_MATH_USE_FLOAT128
 

@@ -11,7 +11,7 @@ namespace stan {
       class inv_logit_vari : public op_v_vari {
       public:
         explicit inv_logit_vari(vari* avi) :
-          op_v_vari(stan::math::inv_logit(avi->val_), avi) {
+          op_v_vari(inv_logit(avi->val_), avi) {
         }
         void chain() {
           avi_->adj_ +=  adj_ * val_ * (1.0 - val_);
@@ -22,7 +22,7 @@ namespace stan {
     /**
      * The inverse logit function for variables (stan).
      *
-     * See stan::math::inv_logit() for the double-based version.
+     * See inv_logit() for the double-based version.
      *
      * The derivative of inverse logit is
      *
@@ -31,7 +31,7 @@ namespace stan {
      * @param a Argument variable.
      * @return Inverse logit of argument.
      */
-    inline var inv_logit(const stan::math::var& a) {
+    inline var inv_logit(const var& a) {
       return var(new inv_logit_vari(a.vi_));
     }
 

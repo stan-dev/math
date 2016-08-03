@@ -12,7 +12,7 @@ namespace stan {
 
     /**
      * Return <code>true</code> if the argument is a valid
-     * <code>stan::math::LDLT_factor</code>.
+     * <code>LDLT_factor</code>.
      *
      * <code>LDLT_factor</code> can be constructed in an invalid
      * state, so it must be checked. A invalid <code>LDLT_factor</code>
@@ -24,7 +24,7 @@ namespace stan {
      *
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
-     * @param A <code>stan::math::LDLT_factor</code> to check for validity.
+     * @param A <code>LDLT_factor</code> to check for validity.
      *
      * @return <code>true</code> if the matrix is positive definite.
      * @return throws <code>std::domain_error</code> the LDLT_factor was
@@ -33,7 +33,7 @@ namespace stan {
     template <typename T, int R, int C>
     inline bool check_ldlt_factor(const char* function,
                                   const char* name,
-                                  stan::math::LDLT_factor<T, R, C> &A) {
+                                  LDLT_factor<T, R, C> &A) {
       if (!A.success()) {
         std::ostringstream msg;
         msg << "is not positive definite. "

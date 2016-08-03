@@ -8,7 +8,6 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
@@ -22,12 +21,9 @@ namespace stan {
                     const Eigen::Matrix
                     <double, Eigen::Dynamic, Eigen::Dynamic>& S,
                     RNG& rng) {
-      static const char* function("stan::math::inv_wishart_rng");
+      static const char* function("inv_wishart_rng");
 
-      using stan::math::check_greater;
-      using stan::math::check_square;
       using Eigen::MatrixXd;
-      using stan::math::index_type;
 
       typename index_type<MatrixXd>::type k = S.rows();
 
@@ -39,6 +35,7 @@ namespace stan {
 
       return wishart_rng(nu, S_inv, rng).inverse();
     }
+
   }
 }
 #endif

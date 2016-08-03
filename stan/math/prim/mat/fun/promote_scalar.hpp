@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -37,7 +36,6 @@ namespace stan {
       }
     };
 
-
     /**
      * Struct to hold static function for promoting underlying scalar
      * types.  This specialization is for Eigen column vector inputs.
@@ -65,7 +63,6 @@ namespace stan {
         return y;
       }
     };
-
 
     /**
      * Struct to hold static function for promoting underlying scalar
@@ -95,13 +92,9 @@ namespace stan {
       }
     };
 
-
   }
 }
 
-
 #endif
-
-
 
 

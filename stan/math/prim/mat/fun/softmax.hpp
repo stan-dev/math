@@ -8,7 +8,7 @@
 namespace stan {
   namespace math {
 
-   /**
+    /**
      * Return the softmax of the specified vector.
      *
      * <p>
@@ -45,7 +45,7 @@ namespace stan {
     inline Eigen::Matrix<T, Eigen::Dynamic, 1>
     softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
       using std::exp;
-      stan::math::check_nonzero_size("softmax", "v", v);
+      check_nonzero_size("softmax", "v", v);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
       T sum(0.0);
       T max_v = v.maxCoeff();

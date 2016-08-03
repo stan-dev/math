@@ -27,7 +27,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_inv_scale>
@@ -41,15 +40,8 @@ namespace stan {
         T_partials_return;
 
       // Error checks
-      static const char* function("stan::math::gamma_cdf_log");
+      static const char* function("gamma_cdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using boost::math::tools::promote_args;
       using std::exp;
 
@@ -78,12 +70,10 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       // Compute cdf_log and its gradients
-      using stan::math::gamma_p;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
@@ -126,17 +116,16 @@ namespace stan {
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x2[n]
-            -= stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                              * y_dbl, gamma_vec[n],
-                                              digamma_vec[n]) / Pn;
+            -= grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                  * y_dbl, gamma_vec[n],
+                                  digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_inv_scale>::value)
           operands_and_partials.d_x3[n] += y_dbl * exp(-beta_dbl * y_dbl)
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
-
 #endif

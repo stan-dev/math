@@ -5,50 +5,45 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     class welford_covar_estimator {
     public:
       explicit welford_covar_estimator(int n)
-        : _m(Eigen::VectorXd::Zero(n)),
-          _m2(Eigen::MatrixXd::Zero(n, n)) {
+        : m_(Eigen::VectorXd::Zero(n)),
+          m2_(Eigen::MatrixXd::Zero(n, n)) {
         restart();
       }
 
       void restart() {
-        _num_samples = 0;
-        _m.setZero();
-        _m2.setZero();
+        num_samples_ = 0;
+        m_.setZero();
+        m2_.setZero();
       }
 
       void add_sample(const Eigen::VectorXd& q) {
-        ++_num_samples;
+        ++num_samples_;
 
-        Eigen::VectorXd delta(q - _m);
-        _m  += delta / _num_samples;
-        _m2 += (q - _m) * delta.transpose();
+        Eigen::VectorXd delta(q - m_);
+        m_  += delta / num_samples_;
+        m2_ += (q - m_) * delta.transpose();
       }
 
-      int num_samples() { return _num_samples; }
+      int num_samples() { return num_samples_; }
 
-      void sample_mean(Eigen::VectorXd& mean) { mean = _m; }
+      void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
       void sample_covariance(Eigen::MatrixXd& covar) {
-        if (_num_samples > 1)
-          covar = _m2 / (_num_samples - 1.0);
+        if (num_samples_ > 1)
+          covar = m2_ / (num_samples_ - 1.0);
       }
 
     protected:
-      double _num_samples;
-
-      Eigen::VectorXd _m;
-      Eigen::MatrixXd _m2;
+      double num_samples_;
+      Eigen::VectorXd m_;
+      Eigen::MatrixXd m2_;
     };
 
-  }  // prob
-
-}  // stan
-
-
+  }
+}
 #endif
