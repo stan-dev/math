@@ -1,15 +1,16 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/mat/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/fun/decouple_ode_states.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
@@ -62,13 +63,14 @@ namespace stan {
      * @return a vector of states, each state being a vector of the
      * same size as the state variable, corresponding to a time in ts.
      */
-    template <typename F, typename T1, typename T2>
-    std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
+    template <typename F, typename T_initial, typename T_param>
+    std::vector<std::vector<typename stan::return_type<T_initial,
+                                                       T_param>::type> >
     integrate_ode_rk45(const F& f,
-                       const std::vector<T1> y0,
+                       const std::vector<T_initial>& y0,
                        const double t0,
                        const std::vector<double>& ts,
-                       const std::vector<T2>& theta,
+                       const std::vector<T_param>& theta,
                        const std::vector<double>& x,
                        const std::vector<int>& x_int,
                        std::ostream* msgs = 0,
@@ -105,7 +107,7 @@ namespace stan {
                          "", ", must be greater than 0");
 
       // creates basic or coupled system by template specializations
-      coupled_ode_system<F, T1, T2>
+      coupled_ode_system<F, T_initial, T_param>
         coupled_system(f, y0, theta, x, x_int, msgs);
 
       // first time in the vector must be time of initial state
@@ -138,8 +140,8 @@ namespace stan {
       // remove the first state corresponding to the initial value
       y_coupled.erase(y_coupled.begin());
 
-      // the coupled system also encapsulates the decoupling operation
-      return coupled_system.decouple_states(y_coupled);
+      // return the decoupled ODE states
+      return decouple_ode_states(y_coupled, y0, theta);
     }
 
   }

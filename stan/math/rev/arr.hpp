@@ -11,6 +11,5 @@
 #include <stan/math/rev/arr/fun/log_sum_exp.hpp>
 #include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <ostream>
@@ -18,10 +18,10 @@ namespace stan {
      * <code>stan::aggrad</code>.
      *
      * @tparam F the functor for the base ode system
-     * @tparam T1 type of the initial state
-     * @tparam T2 type of the parameters
+     * @tparam T_initial type of the initial state
+     * @tparam T_param type of the parameters
      */
-    template <typename F, typename T1, typename T2>
+    template <typename F, typename T_initial, typename T_param>
     struct coupled_ode_system {
     };
 
@@ -37,7 +37,6 @@ namespace stan {
      */
     template <typename F>
     class coupled_ode_system<F, double, double> {
-    public:
       const F& f_;
       const std::vector<double>& y0_dbl_;
       const std::vector<double>& theta_dbl_;
@@ -48,6 +47,7 @@ namespace stan {
       const size_t size_;
       std::ostream* msgs_;
 
+    public:
       /**
        * Construct the coupled ODE system from the base system
        * function, initial state, parameters, data and a stream for
@@ -123,25 +123,7 @@ namespace stan {
        * @return initial state of the coupled system
        */
       std::vector<double> initial_state() {
-        std::vector<double> state(size_, 0.0);
-        for (size_t n = 0; n < N_; n++)
-          state[n] = y0_dbl_[n];
-        return state;
-      }
-
-      /**
-       * Returns the base portion of the coupled state.
-       *
-       * <p>In this class's implementation, the coupled system is
-       * equivalent to the base system, so this function just returns
-       * its input.
-       *
-       * @param y the vector of the coupled states after solving the ode
-       * @return the decoupled states
-       */
-      std::vector<std::vector<double> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
-        return y;
+        return y0_dbl_;
       }
     };
   }  // math

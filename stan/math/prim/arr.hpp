@@ -26,10 +26,9 @@
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/decouple_ode_states.hpp>
 
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
-#include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
 
 #include <stan/math/prim/scal.hpp>
 
