@@ -18,7 +18,7 @@ namespace stan {
       public:
         virtual ~mdivide_left_spd_alloc() {}
 
-        Eigen::LLT< Eigen::Matrix<double, R1, C1> > _llt;
+        Eigen::LLT< Eigen::Matrix<double, R1, C1> > llt_;
         Eigen::Matrix<double, R2, C2> C_;
       };
 
@@ -71,8 +71,8 @@ namespace stan {
             }
           }
 
-          alloc_->_llt = Ad.llt();
-          alloc_->_llt.solveInPlace(alloc_->C_);
+          alloc_->llt_ = Ad.llt();
+          alloc_->llt_.solveInPlace(alloc_->C_);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
@@ -94,7 +94,7 @@ namespace stan {
             for (size_type i = 0; i < M_; i++)
               adjB(i, j) = variRefC_[pos++]->adj_;
 
-          alloc_->_llt.solveInPlace(adjB);
+          alloc_->llt_.solveInPlace(adjB);
           adjA.noalias() = -adjB * alloc_->C_.transpose();
 
           pos = 0;
@@ -143,8 +143,8 @@ namespace stan {
             }
           }
 
-          alloc_->_llt = A.llt();
-          alloc_->_llt.solveInPlace(alloc_->C_);
+          alloc_->llt_ = A.llt();
+          alloc_->llt_.solveInPlace(alloc_->C_);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
@@ -165,7 +165,7 @@ namespace stan {
             for (size_type i = 0; i < adjB.rows(); i++)
               adjB(i, j) = variRefC_[pos++]->adj_;
 
-          alloc_->_llt.solveInPlace(adjB);
+          alloc_->llt_.solveInPlace(adjB);
 
           pos = 0;
           for (size_type j = 0; j < adjB.cols(); j++)
@@ -209,8 +209,8 @@ namespace stan {
             }
           }
 
-          alloc_->_llt = Ad.llt();
-          alloc_->C_ = alloc_->_llt.solve(B);
+          alloc_->llt_ = Ad.llt();
+          alloc_->C_ = alloc_->llt_.solve(B);
 
           pos = 0;
           for (size_type j = 0; j < N_; j++) {
@@ -232,7 +232,7 @@ namespace stan {
             for (size_type i = 0; i < adjC.rows(); i++)
               adjC(i, j) = variRefC_[pos++]->adj_;
 
-          adjA = -alloc_->_llt.solve(adjC*alloc_->C_.transpose());
+          adjA = -alloc_->llt_.solve(adjC*alloc_->C_.transpose());
 
           pos = 0;
           for (size_type j = 0; j < adjA.cols(); j++)

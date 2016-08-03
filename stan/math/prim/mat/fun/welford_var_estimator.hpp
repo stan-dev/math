@@ -1,5 +1,5 @@
-#ifndef STANm_ATH_PRIMm_AT_FUN_WELFORD_VAR_ESTIMATOR_HPP
-#define STANm_ATH_PRIMm_AT_FUN_WELFORD_VAR_ESTIMATOR_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_WELFORD_VAR_ESTIMATOR_HPP
+#define STAN_MATH_PRIM_MAT_FUN_WELFORD_VAR_ESTIMATOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
@@ -16,31 +16,30 @@ namespace stan {
       }
 
       void restart() {
-        _num_samples = 0;
+        num_samples_ = 0;
         m_.setZero();
         m2_.setZero();
       }
 
       void add_sample(const Eigen::VectorXd& q) {
-        ++_num_samples;
+        ++num_samples_;
 
         Eigen::VectorXd delta(q - m_);
-        m_  += delta / _num_samples;
+        m_  += delta / num_samples_;
         m2_ += delta.cwiseProduct(q - m_);
       }
 
-      int num_samples() { return _num_samples; }
+      int num_samples() { return num_samples_; }
 
       void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
       void sample_variance(Eigen::VectorXd& var) {
-        if (_num_samples > 1)
-          var = m2_ / (_num_samples - 1.0);
+        if (num_samples_ > 1)
+          var = m2_ / (num_samples_ - 1.0);
       }
 
     protected:
-      double _num_samples;
-
+      double num_samples_;
       Eigen::VectorXd m_;
       Eigen::VectorXd m2_;
     };
