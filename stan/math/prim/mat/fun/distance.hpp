@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {

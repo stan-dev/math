@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>

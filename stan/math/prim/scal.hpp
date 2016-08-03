@@ -91,7 +91,6 @@
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/scal/fun/inverse_softmax.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_uninitialized.hpp>
