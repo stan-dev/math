@@ -316,9 +316,9 @@ TEST(AgradRevMatrix, multiply_rowvector_vector) {
   
   d1.resize(1);
   v1.resize(1);
-  EXPECT_THROW(multiply(v1, v2), std::domain_error);
-  EXPECT_THROW(multiply(v1, d2), std::domain_error);
-  EXPECT_THROW(multiply(d1, v2), std::domain_error);
+  EXPECT_THROW(multiply(v1, v2), std::invalid_argument);
+  EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
+  EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, multiply_vector_rowvector) {
   using stan::math::matrix_v;

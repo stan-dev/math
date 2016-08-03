@@ -357,9 +357,9 @@ TEST(AgradMixMatrixOperatorMultiplication,fv_rowvector_vector_1stDeriv) {
 
   d1.resize(1);
   v1.resize(1);
-  EXPECT_THROW(multiply(v1, v2), std::domain_error);
-  EXPECT_THROW(multiply(v1, d2), std::domain_error);
-  EXPECT_THROW(multiply(d1, v2), std::domain_error);
+  EXPECT_THROW(multiply(v1, v2), std::invalid_argument);
+  EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
+  EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorMultiplication,fv_rowvector_vector_2ndDeriv) {
   using stan::math::vector_d;
@@ -1367,9 +1367,9 @@ TEST(AgradMixMatrixOperatorMultiplication,ffv_rowvector_vector_1stDeriv) {
 
   d1.resize(1);
   v1.resize(1);
-  EXPECT_THROW(multiply(v1, v2), std::domain_error);
-  EXPECT_THROW(multiply(v1, d2), std::domain_error);
-  EXPECT_THROW(multiply(d1, v2), std::domain_error);
+  EXPECT_THROW(multiply(v1, v2), std::invalid_argument);
+  EXPECT_THROW(multiply(v1, d2), std::invalid_argument);
+  EXPECT_THROW(multiply(d1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorMultiplication,ffv_rowvector_vector_2ndDeriv_1) {
   using stan::math::vector_d;

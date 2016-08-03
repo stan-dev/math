@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <cmath>
 #include <stdexcept>
@@ -31,9 +31,9 @@ namespace stan {
                               int M,
                               int N) {
       using std::exp;
-      check_greater("cholesky_factor_constrain",
-                    "num rows (must be greater than num cols)",
-                    M, N);
+      check_greater_or_equal("cholesky_factor_constrain",
+                             "num rows (must be greater or equal to num cols)",
+                             M, N);
       check_size_match("cholesky_factor_constrain",
                        "x.size()", x.size(),
                        "((N * (N + 1)) / 2 + (M - N) * N)",
