@@ -31,5 +31,4 @@ namespace stan {
 
   }
 }
-
 #endif
