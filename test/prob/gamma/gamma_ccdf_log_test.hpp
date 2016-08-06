@@ -89,10 +89,10 @@ public:
   typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
   ccdf_log_function(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
                     const T3&, const T4&, const T5&) {
-    using stan::math::gamma_p;
-    using boost::math::gamma_p;
+    using stan::math::gamma_q;
+    using boost::math::gamma_q;
     using std::log;
 
-    return log(1.0 - gamma_p(alpha, beta * y));
+    return log(gamma_q(alpha, beta * y));
   }
 };
