@@ -77,7 +77,7 @@ TEST(ProbTransform,choleskyFactorConstrainError) {
   x << 1, 2, 3;
   EXPECT_THROW(cholesky_factor_constrain(x,9,9), std::invalid_argument);
   double lp = 0;
-  EXPECT_THROW(cholesky_factor_constrain(x,9,9,lp),std::invalid_argument);
+  EXPECT_THROW(cholesky_factor_constrain(x,9,9,lp), std::invalid_argument);
 }
 TEST(ProbTransform,choleskyFactorFreeError) {
   using Eigen::Matrix;

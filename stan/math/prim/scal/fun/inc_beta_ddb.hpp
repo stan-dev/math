@@ -77,7 +77,7 @@ namespace stan {
 
         if (k > 1e5)
           domain_error("inc_beta_ddb",
-                       "did not converge within 10000 iterations", "", "");
+                       "did not converge within 100000 iterations", "", "");
       }
 
       return inc_beta(a, b, z)
