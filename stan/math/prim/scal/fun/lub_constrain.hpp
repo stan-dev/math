@@ -7,10 +7,10 @@
 #include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
+
     /**
      * Return the lower- and upper-bounded scalar derived by
      * transforming the specified free scalar given the specified
@@ -114,12 +114,7 @@ namespace stan {
     lub_constrain(const T x, const TL lb, const TU ub, T& lp) {
       using std::log;
       using std::exp;
-      if (!(lb < ub)) {
-        std::stringstream s;
-        s << "domain error in lub_constrain;  lower bound = " << lb
-          << " must be strictly less than upper bound = " << ub;
-        throw std::domain_error(s.str());
-      }
+      check_less("lub_constrain", "lb", lb, ub);
       if (lb == -std::numeric_limits<double>::infinity())
         return ub_constrain(x, ub, lp);
       if (ub == std::numeric_limits<double>::infinity())

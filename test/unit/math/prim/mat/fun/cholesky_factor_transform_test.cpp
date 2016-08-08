@@ -75,9 +75,9 @@ TEST(ProbTransform,choleskyFactorConstrainError) {
 
   Matrix<double,Dynamic,1> x(3);
   x << 1, 2, 3;
-  EXPECT_THROW(cholesky_factor_constrain(x,9,9),std::domain_error);
+  EXPECT_THROW(cholesky_factor_constrain(x,9,9), std::invalid_argument);
   double lp = 0;
-  EXPECT_THROW(cholesky_factor_constrain(x,9,9,lp),std::domain_error);
+  EXPECT_THROW(cholesky_factor_constrain(x,9,9,lp), std::invalid_argument);
 }
 TEST(ProbTransform,choleskyFactorFreeError) {
   using Eigen::Matrix;
@@ -87,14 +87,15 @@ TEST(ProbTransform,choleskyFactorFreeError) {
   Matrix<double,Dynamic,Dynamic> y(1,1);
   y.resize(1,1);
   y << -2;
-  EXPECT_THROW(cholesky_factor_free(y),std::domain_error);
+  EXPECT_THROW(cholesky_factor_free(y), std::domain_error);
 
   y.resize(2,2);
   y << 1, 2, 3, 4;
-  EXPECT_THROW(cholesky_factor_free(y),std::domain_error);
+  EXPECT_THROW(cholesky_factor_free(y), std::domain_error);
 
   y.resize(2,3);
   y << 1, 0, 0,
     2, 3, 0;
-  EXPECT_THROW(cholesky_factor_free(y),std::domain_error);
+  EXPECT_THROW(cholesky_factor_free(y), std::domain_error);
 }
+

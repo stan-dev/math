@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <cmath>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -76,8 +76,8 @@ namespace stan {
         summand *= z / k;
 
         if (k > 1e5)
-          throw std::domain_error("inc_beta_ddb did "
-                                  "not converge within 100000 iterations");
+          domain_error("inc_beta_ddb",
+                       "did not converge within 100000 iterations", "", "");
       }
 
       return inc_beta(a, b, z)

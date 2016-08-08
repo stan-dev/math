@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/fwd/core/operator_subtraction.hpp>
 #include <stan/math/fwd/mat/fun/dot_self.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>

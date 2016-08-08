@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/read_corr_matrix.hpp>
 #include <stdexcept>
@@ -44,8 +45,9 @@ namespace stan {
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k_choose_2 = (k * (k - 1)) / 2;
-      if (k_choose_2 != x.size())
-        throw std::invalid_argument("x is not a valid correlation matrix");
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "k_choose_2", k_choose_2);
       Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
       for (size_type i = 0; i < k_choose_2; ++i)
         cpcs[i] = corr_constrain(x[i]);
@@ -83,8 +85,9 @@ namespace stan {
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k_choose_2 = (k * (k - 1)) / 2;
-      if (k_choose_2 != x.size())
-        throw std::invalid_argument("x is not a valid correlation matrix");
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "k_choose_2", k_choose_2);
       Array<T, Dynamic, 1> cpcs(k_choose_2);
       for (size_type i = 0; i < k_choose_2; ++i)
         cpcs[i] = corr_constrain(x[i], lp);
@@ -92,7 +95,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

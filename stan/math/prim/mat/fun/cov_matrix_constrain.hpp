@@ -4,9 +4,9 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <cmath>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -21,7 +21,7 @@ namespace stan {
      * @param x The vector to convert to a covariance matrix.
      * @param K The number of rows and columns of the resulting
      * covariance matrix.
-     * @throws std::domain_error if (x.size() != K + (K choose 2)).
+     * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
      */
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
@@ -35,8 +35,9 @@ namespace stan {
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
       Matrix<T, Dynamic, Dynamic> L(K, K);
-      if (x.size() != (K * (K + 1)) / 2)
-        throw std::domain_error("x.size() != K + (K choose 2)");
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "K + (K choose 2)", (K * (K + 1)) / 2);
       int i = 0;
       for (size_type m = 0; m < K; ++m) {
         for (int n = 0; n < m; ++n)
@@ -74,8 +75,9 @@ namespace stan {
       using Eigen::Matrix;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
-      if (x.size() != (K * (K + 1)) / 2)
-        throw std::domain_error("x.size() != K + (K choose 2)");
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "K + (K choose 2)", (K * (K + 1)) / 2);
       Matrix<T, Dynamic, Dynamic> L(K, K);
       int i = 0;
       for (size_type m = 0; m < K; ++m) {

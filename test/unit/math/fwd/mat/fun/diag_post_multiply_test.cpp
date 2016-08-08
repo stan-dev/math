@@ -300,15 +300,15 @@ TEST(AgradFwdMatrixDiagPostMultiply, exceptions) {
   vector_fd rvf(2);
   rvf << -1.7, 111.2;
 
-  EXPECT_THROW(diag_post_multiply(mf,mf), std::domain_error);
+  EXPECT_THROW(diag_post_multiply(mf,mf), std::invalid_argument);
 
-  EXPECT_THROW(diag_post_multiply(mf,v), std::domain_error);
-  EXPECT_THROW(diag_post_multiply(m,vf), std::domain_error);
-  EXPECT_THROW(diag_post_multiply(mf,vf), std::domain_error);
+  EXPECT_THROW(diag_post_multiply(mf,v), std::invalid_argument);
+  EXPECT_THROW(diag_post_multiply(m,vf), std::invalid_argument);
+  EXPECT_THROW(diag_post_multiply(mf,vf), std::invalid_argument);
 
-  EXPECT_THROW(diag_post_multiply(mf,rv), std::domain_error);
-  EXPECT_THROW(diag_post_multiply(m,rvf), std::domain_error);
-  EXPECT_THROW(diag_post_multiply(mf,rvf), std::domain_error);
+  EXPECT_THROW(diag_post_multiply(mf,rv), std::invalid_argument);
+  EXPECT_THROW(diag_post_multiply(m,rvf), std::invalid_argument);
+  EXPECT_THROW(diag_post_multiply(mf,rvf), std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd) {
@@ -378,10 +378,10 @@ TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd_exception) {
   vector_ffd B(3);
   vector_ffd C(4);
 
-  EXPECT_THROW(stan::math::diag_post_multiply(B,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(C,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_post_multiply(B,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(C,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(Y,Z), std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd) {
@@ -451,8 +451,8 @@ TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd_exception) {
   row_vector_ffd B(3);
   row_vector_ffd C(4);
 
-  EXPECT_THROW(stan::math::diag_post_multiply(B,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(Y,C), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_post_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_post_multiply(B,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(Y,C), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_post_multiply(Y,Z), std::invalid_argument);
 }

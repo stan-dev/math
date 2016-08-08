@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <cmath>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -34,15 +36,13 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     cov_matrix_free(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+      check_square("cov_matrix_free", "y", y);
+      check_nonzero_size("cov_matrix_free", "y", y);
+
       using std::log;
       int K = y.rows();
-      if (y.cols() != K)
-        throw std::domain_error("y is not a square matrix");
-      if (K == 0)
-        throw std::domain_error("y has no elements");
       for (int k = 0; k < K; ++k)
-        if (!(y(k, k) > 0.0))
-          throw std::domain_error("y has non-positive diagonal");
+        check_positive("cov_matrix_free", "y", y(k, k));
       Eigen::Matrix<T, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
       // FIXME: see Eigen LDLT for rank-revealing version -- use that
       // even if less efficient?
@@ -60,7 +60,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif
