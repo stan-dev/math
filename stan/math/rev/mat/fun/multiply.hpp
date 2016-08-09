@@ -12,8 +12,6 @@
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
@@ -22,7 +20,7 @@ namespace stan {
     template <typename TA, int RA_, int CA_, typename TB, int CB_>
     class multiply_mat_vari : public vari {
     public:
-      int RA, CA, CB, Asize, Bsize;  // A.cols() = B.rows()
+      int RA, CA, CB, Asize, Bsize;
       double* Ad_a;
       double* Bd_a;
       vari** variRefA_;
@@ -162,7 +160,7 @@ namespace stan {
     template <int RA_, int CA_, typename TB, int CB_>
     class multiply_mat_vari<double, RA_, CA_, TB, CB_> : public vari {
     public:
-      int RA, CA, CB, Asize, Bsize;  // A.cols() = B.rows()
+      int RA, CA, CB, Asize, Bsize;
       double* Ad_a;
       double* Bd_a;
       vari** variRefB_;
@@ -225,7 +223,7 @@ namespace stan {
     template <int CA_, typename TB>
     class multiply_mat_vari<double, 1, CA_, TB, 1> : public vari {
     public:
-      int CA;  // A.cols() = B.rows()
+      int CA;
       double* Ad_a;
       double* Bd_a;
       vari** variRefB_;
@@ -282,7 +280,7 @@ namespace stan {
     template <typename TA, int RA_, int CA_, int CB_>
     class multiply_mat_vari<TA, RA_, CA_, double, CB_> : public vari {
     public:
-      int RA, CA, CB, Asize, Bsize;  // A.cols() = B.rows()
+      int RA, CA, CB, Asize, Bsize;
       double* Ad_a;
       double* Bd_a;
       vari** variRefA_;
@@ -345,7 +343,7 @@ namespace stan {
     template <typename TA, int CA_>
     class multiply_mat_vari<TA, 1, CA_, double, 1> : public vari {
     public:
-      int CA;  // A.cols() = B.rows()
+      int CA;
       double* Ad_a;
       double* Bd_a;
       vari** variRefA_;
@@ -429,8 +427,6 @@ namespace stan {
     template<typename T1, typename T2, int R2, int C2>
     inline Eigen::Matrix<var, R2, C2>
     multiply(const T1& c, const Eigen::Matrix<T2, R2, C2>& m) {
-      // FIXME:  pull out to eliminate overpromotion of one side
-      // move to matrix.hpp w. promotion?
       return to_var(m) * to_var(c);
     }
 
