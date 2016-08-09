@@ -18,22 +18,15 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_cdf_log(const T_y& y, const T_loc& mu,
                                const T_scale& sigma) {
-      static const char* function("stan::math::double_exponential_cdf_log");
+      static const char* function("double_exponential_cdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
-
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return cdf_log(0.0);
 
@@ -53,7 +46,6 @@ namespace stan {
 
       using std::log;
       using std::exp;
-      using stan::math::log1m;
       using std::exp;
 
       OperandsAndPartials<T_y, T_loc, T_scale>

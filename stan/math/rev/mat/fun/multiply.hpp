@@ -12,6 +12,9 @@
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
   namespace math {
@@ -409,7 +412,7 @@ namespace stan {
       (boost::is_scalar<T1>::value || boost::is_same<T1, var>::value)
       && (boost::is_scalar<T2>::value || boost::is_same<T2, var>::value),
       typename boost::math::tools::promote_args<T1, T2>::type>::type
-    multiply(const T1& v, const T2& c) {
+             multiply(const T1& v, const T2& c) {
       return v * c;
     }
 

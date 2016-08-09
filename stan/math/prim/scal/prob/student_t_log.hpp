@@ -24,7 +24,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -57,15 +56,10 @@ namespace stan {
     typename return_type<T_y, T_dof, T_loc, T_scale>::type
     student_t_log(const T_y& y, const T_dof& nu, const T_loc& mu,
                   const T_scale& sigma) {
-      static const char* function("stan::math::student_t_log");
+      static const char* function("student_t_log");
       typedef typename stan::partials_return_type<T_y, T_dof, T_loc,
                                                   T_scale>::type
         T_partials_return;
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -98,10 +92,6 @@ namespace stan {
       size_t N = max_size(y, nu, mu, sigma);
 
       using std::log;
-      using stan::math::digamma;
-      using stan::math::lgamma;
-      using stan::math::square;
-      using stan::math::value_of;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
@@ -223,6 +213,7 @@ namespace stan {
                   const T_scale& sigma) {
       return student_t_log<false>(y, nu, mu, sigma);
     }
+
   }
 }
 #endif

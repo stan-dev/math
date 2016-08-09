@@ -27,7 +27,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -57,15 +56,8 @@ namespace stan {
         return 1.0;
 
       // Error checks
-      static const char* function("stan::math::inv_gamma_cdf");
+      static const char* function("inv_gamma_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using boost::math::tools::promote_args;
       using std::exp;
 
@@ -98,8 +90,6 @@ namespace stan {
       }
 
       // Compute CDF and its gradients
-      using stan::math::gamma_q;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
@@ -145,9 +135,9 @@ namespace stan {
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
           operands_and_partials.d_x2[n]
-            += stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                              * y_inv_dbl, gamma_vec[n],
-                                              digamma_vec[n]) / Pn;
+            += grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                  * y_inv_dbl, gamma_vec[n],
+                                  digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += - y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
@@ -167,10 +157,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(beta); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
-
 #endif

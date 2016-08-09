@@ -15,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -23,9 +22,7 @@ namespace stan {
     multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta,
                     const int N,
                     RNG& rng) {
-      static const char* function("stan::math::multinomial_rng");
-      using stan::math::check_simplex;
-      using stan::math::check_positive;
+      static const char* function("multinomial_rng");
 
       check_simplex(function, "Probabilites parameter", theta);
       check_positive(function, "number of trials variables", N);
@@ -42,7 +39,6 @@ namespace stan {
       }
       return result;
     }
-
 
   }
 }

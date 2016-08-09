@@ -5,7 +5,6 @@
 #include <stan/math/rev/core/var.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -17,11 +16,11 @@ namespace stan {
      * @tparam F Type of function to apply.
      */
     template <typename F>
-    struct apply_scalar_unary<F, stan::math::var> {
+    struct apply_scalar_unary<F, var> {
       /**
        * Function return type, which is <code>var</code>.
        */
-      typedef stan::math::var return_t;
+      typedef var return_t;
 
       /**
        * Apply the function specified by F to the specified argument.  
@@ -29,7 +28,7 @@ namespace stan {
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
-      static inline return_t apply(const stan::math::var& x) {
+      static inline return_t apply(const var& x) {
         return F::fun(x);
       }
     };

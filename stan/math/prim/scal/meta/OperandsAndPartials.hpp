@@ -4,7 +4,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 
-
 namespace stan {
   namespace math {
 

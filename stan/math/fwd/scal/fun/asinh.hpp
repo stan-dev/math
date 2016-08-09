@@ -13,7 +13,6 @@ namespace stan {
     inline fvar<T> asinh(const fvar<T>& x) {
       using ::asinh;
       using std::sqrt;
-      using stan::math::square;
       return fvar<T>(asinh(x.val_), x.d_ / sqrt(square(x.val_) + 1));
     }
 

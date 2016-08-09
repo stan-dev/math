@@ -36,10 +36,10 @@ namespace stan {
                  T_sigma& sigma,
                  T_l& l) {
       using std::exp;
-      stan::math::check_positive("cov_exp_quad", "sigma", sigma);
-      stan::math::check_positive("cov_exp_quad", "l", l);
+      check_positive("cov_exp_quad", "sigma", sigma);
+      check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x.size(); n++)
-        stan::math::check_not_nan("cov_exp_quad", "x", x[n]);
+        check_not_nan("cov_exp_quad", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
@@ -87,12 +87,12 @@ namespace stan {
                  T_sigma& sigma,
                  T_l& l) {
       using std::exp;
-      stan::math::check_positive("cov_exp_quad", "sigma", sigma);
-      stan::math::check_positive("cov_exp_quad", "l", l);
+      check_positive("cov_exp_quad", "sigma", sigma);
+      check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x1.size(); n++)
-        stan::math::check_not_nan("cov_exp_quad", "x1", x1[n]);
+        check_not_nan("cov_exp_quad", "x1", x1[n]);
       for (size_t n = 0; n < x2.size(); n++)
-        stan::math::check_not_nan("cov_exp_quad", "x2", x2[n]);
+        check_not_nan("cov_exp_quad", "x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
@@ -111,7 +111,7 @@ namespace stan {
       }
       return cov;
     }
-  }
 
+  }
 }
 #endif

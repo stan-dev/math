@@ -24,9 +24,7 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-
 namespace stan {
-
   namespace math {
 
     // BinomialLogit(n|N, alpha)  [N >= 0;  0 <= n <= N]
@@ -42,14 +40,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      static const char* function("stan::math::binomial_logit_log");
-
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
+      static const char* function("binomial_logit_log");
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -77,10 +68,6 @@ namespace stan {
       size_t size = max_size(n, N, alpha);
 
       OperandsAndPartials<T_prob> operands_and_partials(alpha);
-
-      using stan::math::binomial_coefficient_log;
-      using stan::math::log_inv_logit;
-      using stan::math::inv_logit;
 
       if (include_summand<propto>::value) {
         for (size_t i = 0; i < size; ++i)
@@ -135,6 +122,7 @@ namespace stan {
                        const T_prob& alpha) {
       return binomial_logit_log<false>(n, N, alpha);
     }
+
   }
 }
 #endif

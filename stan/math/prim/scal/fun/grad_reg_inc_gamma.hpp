@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <cmath>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -15,7 +15,6 @@ namespace stan {
     template<typename T>
     T grad_reg_inc_gamma(T a, T z, T g, T dig, T precision = 1e-6) {
       using boost::math::isinf;
-      using stan::math::gamma_p;
       using std::domain_error;
       using std::exp;
       using std::fabs;
@@ -32,7 +31,8 @@ namespace stan {
         s *= - z / k;
         delta = s / ((k + a) * (k + a));
         if (isinf(delta))
-          throw domain_error("stan::math::gradRegIncGamma not converging");
+          stan::math::domain_error("grad_reg_inc_gamma",
+                                   "is not converging", "", "");
       }
       return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
     }

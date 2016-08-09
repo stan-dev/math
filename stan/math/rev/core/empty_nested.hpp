@@ -13,7 +13,6 @@ namespace stan {
       return ChainableStack::nested_var_stack_sizes_.empty();
     }
 
-
   }
 }
 #endif

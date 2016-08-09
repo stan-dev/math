@@ -20,16 +20,14 @@ namespace stan {
     inline
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     sub_col(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m,
-          size_t i, size_t j, size_t nrows) {
-      stan::math::check_row_index("sub_col", "i", m, i);
+            size_t i, size_t j, size_t nrows) {
+      check_row_index("sub_col", "i", m, i);
       if (nrows > 0)
-        stan::math::check_row_index("sub_col", "i+nrows-1", m, i+nrows-1);
-      stan::math::check_column_index("sub_col", "j", m, j);
+        check_row_index("sub_col", "i+nrows-1", m, i+nrows-1);
+      check_column_index("sub_col", "j", m, j);
       return m.block(i - 1, j - 1, nrows, 1);
     }
 
-
   }
 }
-
 #endif

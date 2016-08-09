@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
@@ -24,13 +24,12 @@ namespace stan {
     distance(const Eigen::Matrix<T1, R1, C1>& v1,
              const Eigen::Matrix<T2, R2, C2>& v2) {
       using std::sqrt;
-      stan::math::check_vector("distance", "v1", v1);
-      stan::math::check_vector("distance", "v2", v2);
-      stan::math::check_matching_sizes("distance",
-                                       "v1", v1,
-                                       "v2", v2);
+      check_vector("distance", "v1", v1);
+      check_vector("distance", "v2", v2);
+      check_matching_sizes("distance", "v1", v1, "v2", v2);
       return sqrt(squared_distance(v1, v2));
     }
+
   }
 }
 #endif

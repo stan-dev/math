@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -24,10 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
 
-      static const char* function("stan::math::uniform_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_greater;
+      static const char* function("uniform_rng");
 
       check_finite(function, "Lower bound parameter", alpha);
       check_finite(function, "Upper bound parameter", beta);
@@ -37,6 +33,7 @@ namespace stan {
         uniform_rng(rng, uniform_real_distribution<>(alpha, beta));
       return uniform_rng();
     }
+
   }
 }
 #endif

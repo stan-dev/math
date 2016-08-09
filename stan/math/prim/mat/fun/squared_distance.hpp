@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 
 namespace stan {
@@ -25,12 +25,10 @@ namespace stan {
     inline double
     squared_distance(const Eigen::Matrix<double, R, C>& v1,
                      const Eigen::Matrix<double, R, C>& v2) {
-      stan::math::check_vector("squared_distance", "v1", v1);
-      stan::math::check_vector("squared_distance", "v2", v2);
-      stan::math::check_matching_sizes("squared_distance",
-                                       "v1", v1,
-                                       "v2", v2);
-        return (v1-v2).squaredNorm();
+      check_vector("squared_distance", "v1", v1);
+      check_vector("squared_distance", "v2", v2);
+      check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
+      return (v1-v2).squaredNorm();
     }
 
     /**
@@ -51,13 +49,12 @@ namespace stan {
     inline double
     squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
                      const Eigen::Matrix<double, R2, C2>& v2) {
-      stan::math::check_vector("squared_distance", "v1", v1);
-      stan::math::check_vector("squared_distance", "v2", v2);
-      stan::math::check_matching_sizes("squared_distance",
-                                       "v1", v1,
-                                       "v2", v2);
+      check_vector("squared_distance", "v1", v1);
+      check_vector("squared_distance", "v2", v2);
+      check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
       return (v1.transpose()-v2).squaredNorm();
     }
+
   }
 }
 #endif

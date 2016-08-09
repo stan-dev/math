@@ -17,21 +17,15 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     // Bernoulli CDF
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_cdf(const T_n& n, const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_cdf");
+      static const char* function("bernoulli_cdf");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
-
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // Ensure non-zero argument lenghts
       if (!(stan::length(n) && stan::length(theta)))
@@ -52,7 +46,6 @@ namespace stan {
       size_t size = max_size(n, theta);
 
       // Compute vectorized CDF and gradient
-      using stan::math::value_of;
       OperandsAndPartials<T_prob> operands_and_partials(theta);
 
       // Explicit return for extreme values
@@ -83,6 +76,6 @@ namespace stan {
       return operands_and_partials.value(P);
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

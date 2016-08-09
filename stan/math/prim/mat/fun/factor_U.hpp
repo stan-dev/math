@@ -12,9 +12,7 @@
 #include <sstream>
 #include <vector>
 
-
 namespace stan {
-
   namespace math {
 
     /**

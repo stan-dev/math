@@ -19,20 +19,14 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_rate>
     typename return_type<T_rate>::type
     poisson_cdf_log(const T_n& n, const T_rate& lambda) {
-      static const char* function("stan::math::poisson_cdf_log");
+      static const char* function("poisson_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
-
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
 
       // Ensure non-zero argument slengths
       if (!(stan::length(n) && stan::length(lambda)))
@@ -53,7 +47,6 @@ namespace stan {
       size_t size = max_size(n, lambda);
 
       // Compute vectorized cdf_log and gradient
-      using stan::math::value_of;
       using boost::math::gamma_q;
       using boost::math::lgamma;
       using std::log;
@@ -65,7 +58,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as neg infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -82,11 +75,12 @@ namespace stan {
 
         if (!is_constant_struct<T_rate>::value)
           operands_and_partials.d_x1[i] += - exp(n_dbl * log(lambda_dbl)
-            - lambda_dbl - lgamma(n_dbl+1) - log_Pi);
+                                                 - lambda_dbl - lgamma(n_dbl+1)
+                                                 - log_Pi);
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

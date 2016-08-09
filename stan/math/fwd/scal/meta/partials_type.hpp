@@ -13,4 +13,3 @@ namespace stan {
 
 }
 #endif
-

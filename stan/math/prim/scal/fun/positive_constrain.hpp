@@ -4,7 +4,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -45,7 +44,6 @@ namespace stan {
       lp += x;
       return exp(x);
     }
-
 
   }
 

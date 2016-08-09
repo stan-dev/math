@@ -12,7 +12,6 @@
 #include <sstream>
 
 namespace stan {
-
   namespace math {
     /**
      * Return <code>true</code> if the specified matrix is positive definite

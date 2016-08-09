@@ -7,7 +7,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
     // LOWER BOUND
 
@@ -65,7 +64,6 @@ namespace stan {
       lp += x;
       return exp(x) + lb;
     }
-
 
   }
 

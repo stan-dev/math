@@ -8,7 +8,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /* Returns an array of size N with partials of log_mix wrt to its
@@ -116,9 +115,6 @@ namespace stan {
     fvar<T>
     log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
             const fvar<T>& lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1.val_ > lambda2.val_) {
         fvar<T> partial_deriv_array[3];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -142,9 +138,6 @@ namespace stan {
     fvar<T>
     log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
             const double lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1.val_ > lambda2) {
         fvar<T> partial_deriv_array[2];
         log_mix_partial_helper(theta, lambda1, lambda2,
@@ -167,9 +160,6 @@ namespace stan {
     fvar<T>
     log_mix(const fvar<T>& theta, const double lambda1,
             const fvar<T>& lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1 > lambda2.val_) {
         fvar<T> partial_deriv_array[2];
         log_mix_partial_helper(theta, lambda1, lambda2,
@@ -192,9 +182,6 @@ namespace stan {
     fvar<T>
     log_mix(const double theta, const fvar<T>& lambda1,
             const fvar<T>& lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1.val_ > lambda2.val_) {
         fvar<T> partial_deriv_array[2];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -215,9 +202,6 @@ namespace stan {
     inline
     fvar<T>
     log_mix(const fvar<T>& theta, const double lambda1, const double lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1 > lambda2) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -236,9 +220,6 @@ namespace stan {
     inline
     fvar<T>
     log_mix(const double theta, const fvar<T>& lambda1, const double lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1.val_ > lambda2) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -257,9 +238,6 @@ namespace stan {
     inline
     fvar<T>
     log_mix(const double theta, const double lambda1, const fvar<T>& lambda2) {
-      using stan::math::log_mix;
-      using stan::math::value_of;
-
       if (lambda1 > lambda2.val_) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);

@@ -5,7 +5,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -22,9 +21,7 @@ namespace stan {
       typedef typename std::vector<T>::size_type type;
     };
 
-
   }
 }
-
 
 #endif

@@ -24,11 +24,10 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     ordered_free(const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
-      stan::math::check_ordered("stan::math::ordered_free",
-                                          "Ordered variable", y);
+      check_ordered("stan::math::ordered_free",
+                    "Ordered variable", y);
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::index_type;
       using std::log;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 

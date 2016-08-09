@@ -16,7 +16,7 @@ namespace stan {
           op_v_vari(std::pow(2.0, avi->val_), avi) {
         }
         void chain() {
-          avi_->adj_ += adj_ * val_ * stan::math::LOG_2;
+          avi_->adj_ += adj_ * val_ * LOG_2;
         }
       };
     }

@@ -8,7 +8,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -40,14 +39,11 @@ namespace stan {
       using std::log;
       if (ub == std::numeric_limits<double>::infinity())
         return identity_free(y);
-      stan::math::check_less_or_equal("stan::math::ub_free",
-                                      "Upper bounded variable", y, ub);
+      check_less_or_equal("ub_free",
+                          "Upper bounded variable", y, ub);
       return log(ub - y);
     }
 
-
   }
-
 }
-
 #endif

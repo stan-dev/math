@@ -58,7 +58,6 @@ namespace stan {
     const matrix_t* x_;
   };
 
-
 }
 #endif
 

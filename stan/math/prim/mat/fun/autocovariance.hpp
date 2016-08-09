@@ -6,9 +6,7 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Write autocovariance estimates for every lag for the specified
@@ -34,9 +32,9 @@ namespace stan {
     void autocovariance(const std::vector<T>& y,
                         std::vector<T>& acov,
                         Eigen::FFT<T>& fft) {
-      stan::math::autocorrelation(y, acov, fft);
+      autocorrelation(y, acov, fft);
 
-      T var = stan::math::variance(y) * (y.size()-1) / y.size();
+      T var = variance(y) * (y.size()-1) / y.size();
       for (size_t i = 0; i < y.size(); i++) {
         acov[i] *= var;
       }
@@ -65,8 +63,6 @@ namespace stan {
       autocovariance(y, acov, fft);
     }
 
-
   }
 }
-
 #endif

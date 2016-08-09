@@ -19,10 +19,8 @@ namespace stan {
 
     template <typename T>
     inline double value_of_rec(const fvar<T>& v) {
-      using stan::math::value_of_rec;
       return value_of_rec(v.val_);
     }
-
 
   }
 }

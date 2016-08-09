@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 
 namespace stan {
-
   namespace math {
 
     // BetaBinomial(n|alpha, beta) [alpha > 0;  beta > 0;  n >= 0]
@@ -33,15 +32,9 @@ namespace stan {
                       const T_N& N,
                       const T_size1& alpha,
                       const T_size2& beta) {
-      static const char* function("stan::math::beta_binomial_log");
+      static const char* function("beta_binomial_log");
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -79,10 +72,6 @@ namespace stan {
         if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
           return operands_and_partials.value(LOG_ZERO);
       }
-
-      using stan::math::lbeta;
-      using stan::math::binomial_coefficient_log;
-      using stan::math::digamma;
 
       VectorBuilder<include_summand<propto>::value,
                     T_partials_return, T_n, T_N>

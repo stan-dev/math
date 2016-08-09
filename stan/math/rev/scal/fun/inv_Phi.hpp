@@ -13,7 +13,7 @@ namespace stan {
       class inv_Phi_vari : public op_v_vari {
       public:
         explicit inv_Phi_vari(vari* avi) :
-          op_v_vari(stan::math::inv_Phi(avi->val_), avi) {
+          op_v_vari(inv_Phi(avi->val_), avi) {
         }
         void chain() {
           static const double NEG_HALF = -0.5;
@@ -27,14 +27,14 @@ namespace stan {
     /**
      * The inverse of unit normal cumulative density function.
      *
-     * See stan::math::inv_Phi() for the double-based version.
+     * See inv_Phi() for the double-based version.
      *
      * The derivative is the reciprocal of unit normal density function,
      *
      * @param p Probability
      * @return The unit normal inverse cdf evaluated at p
      */
-    inline var inv_Phi(const stan::math::var& p) {
+    inline var inv_Phi(const var& p) {
       return var(new inv_Phi_vari(p.vi_));
     }
 

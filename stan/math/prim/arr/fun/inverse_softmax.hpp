@@ -1,23 +1,22 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_INVERSE_SOFTMAX_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_INVERSE_SOFTMAX_HPP
+#ifndef STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
+#define STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
 
-#include <boost/math/tools/promotion.hpp>
-#include <boost/throw_exception.hpp>
-#include <stdexcept>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
 
     /**
      * Writes the inverse softmax of the simplex argument into the second
-     * argument.  See <code>stan::math::softmax</code> for the inverse
+     * argument.  See <code>softmax</code> for the inverse
      * function and a definition of the relation.
      *
      * The inverse softmax function is defined by
      *
      * \f$\mbox{inverse\_softmax}(x)[i] = \log x[i]\f$.
      *
-     * This function defines the inverse of <code>stan::math::softmax</code>
+     * This function defines the inverse of <code>softmax</code>
      * up to a scaling factor.
      *
      * Because of the definition, values of 0.0 in the simplex
@@ -28,19 +27,19 @@ namespace stan {
      *
      * @param simplex Simplex vector input.
      * @param y Vector into which the inverse softmax is written.
-     * @throw std::invalid_argument if size of the input and output vectors differ.
+     * @throw std::invalid_argument if size of the input and
+     *    output vectors differ.
      */
     template <typename Vector>
     void inverse_softmax(const Vector& simplex, Vector& y) {
       using std::log;
-      if (simplex.size() != y.size())
-        BOOST_THROW_EXCEPTION(std::invalid_argument
-                              ("simplex.size() != y.size()"));
+      check_matching_sizes("inverse_softmax",
+                           "simplex", simplex,
+                           "y", y);
       for (size_t i = 0; i < simplex.size(); ++i)
         y[i] = log(simplex[i]);
     }
 
   }
 }
-
 #endif

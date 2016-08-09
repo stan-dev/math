@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -25,10 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::cauchy_distribution;
 
-      static const char* function("stan::math::cauchy_rng");
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
+      static const char* function("cauchy_rng");
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -37,6 +33,7 @@ namespace stan {
         cauchy_rng(rng, cauchy_distribution<>(mu, sigma));
       return cauchy_rng();
     }
+
   }
 }
 #endif

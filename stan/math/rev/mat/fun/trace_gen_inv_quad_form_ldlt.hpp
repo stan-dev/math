@@ -25,15 +25,15 @@ namespace stan {
     stan::is_var<T2>::value ||
     stan::is_var<T3>::value, var>::type
       trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
-                                   const stan::math::LDLT_factor<T2, R2, C2> &A,
+                                   const LDLT_factor<T2, R2, C2> &A,
                                    const Eigen::Matrix<T3, R3, C3> &B) {
-      stan::math::check_square("trace_gen_inv_quad_form_ldlt", "D", D);
-      stan::math::check_multiplicable("trace_gen_inv_quad_form_ldlt",
-                                                "A", A,
-                                                "B", B);
-      stan::math::check_multiplicable("trace_gen_inv_quad_form_ldlt",
-                                                "B", B,
-                                                "D", D);
+      check_square("trace_gen_inv_quad_form_ldlt", "D", D);
+      check_multiplicable("trace_gen_inv_quad_form_ldlt",
+                          "A", A,
+                          "B", B);
+      check_multiplicable("trace_gen_inv_quad_form_ldlt",
+                          "B", B,
+                          "D", D);
 
       trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *_impl
         = new trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(D, A, B);
@@ -42,8 +42,6 @@ namespace stan {
                  (_impl));
     }
 
-
   }
 }
-
 #endif
