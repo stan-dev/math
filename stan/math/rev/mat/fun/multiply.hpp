@@ -28,10 +28,16 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for A
+       * Stores pointers to varis for B
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
+       * @tparam TA Scalar type for matrix A
+       * @tparam RA_ Rows for matrix A
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
+       * @tparam TB Scalar type for matrix B
+       * @tparam CB_ Columns for matrix B
        * @param matrix A
        * @param matrix B
        * */
@@ -95,12 +101,16 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for A
+       * Stores pointers to varis for B
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
-       * @param row vector A
-       * @param column vector B
+       * @tparam TA Scalar type for matrix A
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
+       * @tparam TB Scalar type for matrix B
+       * @param matrix A
+       * @param matrix B
        * */
      multiply_mat_vari(const Eigen::Matrix<TA, 1, CA_>& A,
                        const Eigen::Matrix<TB, CA_, 1>& B)
@@ -157,10 +167,14 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for B
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
+       * @tparam RA_ Rows for matrix A
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
+       * @tparam TB Scalar type for matrix B
+       * @tparam CB_ Columns for matrix B
        * @param matrix A
        * @param matrix B
        * */
@@ -216,10 +230,12 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for B
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
+       * @tparam TB Scalar type for matrix B
        * @param matrix A
        * @param matrix B
        * */
@@ -271,10 +287,14 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for A
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
+       * @tparam TA Scalar type for matrix A
+       * @tparam RA_ Rows for matrix A
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
+       * @tparam CB_ Columns for matrix B
        * @param matrix A
        * @param matrix B
        * */
@@ -330,10 +350,12 @@ namespace stan {
 
       /* ctor for multiply function
        *
-       * Stores varis for A
-       * Stores varis for B
-       * Stores varis for AB
+       * Stores pointers to varis for A
+       * Stores pointers to varis for AB
+       * All memory allocated on ChainableStack
        *
+       * @tparam TA Scalar type for matrix A
+       * @tparam CA_ Columns for matrix A, Rows for matrix B
        * @param matrix A
        * @param matrix B
        * */
@@ -464,13 +486,13 @@ namespace stan {
     }
 
     /**
-     * Return the product of two vectors.
+     * Return the scalar product of two vectors.
      * @tparam TA scalar type row vector A 
      * @tparam CA Columns matrix A
      * @tparam TB scalar type vector B 
      * @param[in] A Row vector.
      * @param[in] B Column vector.
-     * @return Product of scalar and matrix.
+     * @return Scalar product of row vector and vector.
      */
     template <typename TA, int CA, typename TB>
     inline typename
