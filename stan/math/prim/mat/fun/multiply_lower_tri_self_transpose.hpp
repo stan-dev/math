@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
   namespace math {
