@@ -14,6 +14,10 @@ namespace stan {
      * @return Natural log of x.
      */
     struct log_fun {
+      static double fun(int x) {
+        return std::log(static_cast<double>(x));
+      }
+
       template <typename T>
       static inline T fun(const T& x) {
         using std::log;
