@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_LOG_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/scal/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -9,15 +10,15 @@ namespace stan {
 
     /**
      * Structure to wrap log() so that it can be vectorized.
-     * @param x Variable.
-     * @tparam T Variable type.
-     * @return Natural log of x.
      */
     struct log_fun {
-      static double fun(int x) {
-        return std::log(static_cast<double>(x));
-      }
-
+      /** 
+       * Return natural log of specified argument.
+       *
+       * @tparam T Scalar argument type.
+       * @param[in] x Argument.
+       * @return Natural log of x.
+       */
       template <typename T>
       static inline T fun(const T& x) {
         using std::log;
@@ -26,10 +27,13 @@ namespace stan {
     };
 
     /**
-     * Vectorized version of log().
-     * @param x Container.
-     * @tparam T Container type.
-     * @return Natural log applied to each value in x.
+     * Return the elementwise natural log of the specified argument,
+     * which may be a scalar or any Stan container of numeric scalars.
+     * The return type is the same as the argument type.
+     *
+     * @tparam T Argument type.
+     * @param[in] x Argument.
+     * @return Elementwise application of natural log to the argument.
      */
     template <typename T>
     inline typename apply_scalar_unary<log_fun, T>::return_t
@@ -39,5 +43,4 @@ namespace stan {
 
   }
 }
-
 #endif
