@@ -34,3 +34,10 @@ TEST(MathFunctions, modulus) {
   EXPECT_EQ(-6, modulus(-34, 7));
   EXPECT_EQ(-10, modulus(-44, 17));
 }
+
+TEST(MathFunctions, int_modulus_0) {
+  int x = 1;
+  int y = 0;
+  int z;
+  EXPECT_THROW(z = stan::math::modulus(x, y), std::domain_error);
+}

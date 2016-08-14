@@ -12,7 +12,6 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -128,9 +127,9 @@ namespace stan {
     boost::is_same<T2, var>::value, var >::type
       multiply(const Eigen::Matrix<T1, 1, C1>& rv,
                const Eigen::Matrix<T2, R2, 1>& v) {
-      if (rv.size() != v.size())
-        throw std::domain_error("row vector and vector must be same length "
-                                "in multiply");
+      check_multiplicable("multiply",
+                          "rv", rv,
+                          "v", v);
       return dot_product(rv, v);
     }
 

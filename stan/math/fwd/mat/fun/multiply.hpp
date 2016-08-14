@@ -9,7 +9,6 @@
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <stdexcept>
 #include <vector>
 
 namespace stan {
@@ -130,9 +129,7 @@ namespace stan {
     fvar<T>
     multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
              const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-      if (rv.size() != v.size())
-        throw std::domain_error("row vector and vector must be same length "
-                                "in multiply");
+      check_multiplicable("multiply", "rv", rv, "v", v);
       return dot_product(rv, v);
     }
 
@@ -141,9 +138,7 @@ namespace stan {
     fvar<T>
     multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
              const Eigen::Matrix<double, R2, 1>& v) {
-      if (rv.size() != v.size())
-        throw std::domain_error("row vector and vector must be same length "
-                                "in multiply");
+      check_multiplicable("multiply", "rv", rv, "v", v);
       return dot_product(rv, v);
     }
 
@@ -152,9 +147,7 @@ namespace stan {
     fvar<T>
     multiply(const Eigen::Matrix<double, 1, C1>& rv,
              const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-      if (rv.size() != v.size())
-        throw std::domain_error("row vector and vector must be same length "
-                                "in multiply");
+      check_multiplicable("multiply", "rv", rv, "v", v);
       return dot_product(rv, v);
     }
 

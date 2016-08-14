@@ -7,7 +7,6 @@
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
-#include <stdexcept>
 #include <vector>
 
 namespace stan {
@@ -62,16 +61,6 @@ namespace stan {
       using Eigen::Dynamic;
 
       check_nonzero_size("log_softmax", "alpha", alpha);
-
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
 
       // TODO(carpenter): replace with array alloc
       vari** alpha_vi_array
