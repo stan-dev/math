@@ -21,6 +21,7 @@ namespace stan {
      * @param z   location z >= 0
      * @param g   boost::math::tgamma(a) (precomputed value)
      * @param dig boost::math::digamma(a) (precomputed value)
+     * @param precision required precision; applies to series expansion only
      *
      * For the asymptotic expansion, the gradient is given by:
        \f[
