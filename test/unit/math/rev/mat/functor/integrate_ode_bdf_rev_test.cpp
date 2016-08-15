@@ -88,46 +88,49 @@ void sho_data_finite_diff_test(double t0) {
 
   test_ode_cvode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
-  sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,var>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts,
+                                                   theta, x, x_int);
+  sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts,
+                                                   theta, x, x_int);
+  sho_value_test<harm_osc_ode_data_fun,var,var>(harm_osc, y0, t0, ts,
+                                                theta, x, x_int);
 }
 
 
-// FIXME(carpenter): g++6 failure
-// TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
-//   sho_finite_diff_test(0);
-//   sho_finite_diff_test(1.0);
-//   sho_finite_diff_test(-1.0);
+// TODO(carpenter): g++6 failure
+TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
+  sho_finite_diff_test(0);
+  sho_finite_diff_test(1.0);
+  sho_finite_diff_test(-1.0);
 
-//   sho_data_finite_diff_test(0);
-//   sho_data_finite_diff_test(1.0);
-//   sho_data_finite_diff_test(-1.0);
-// }
+  sho_data_finite_diff_test(0);
+  sho_data_finite_diff_test(1.0);
+  sho_data_finite_diff_test(-1.0);
+}
 
-// FIXME(carpenter): g++6 failure
-// TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
-//   lorenz_ode_fun lorenz;
+// TODO(carpenter): g++6 failure
+TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
+  lorenz_ode_fun lorenz;
 
-//   std::vector<double> y0;
-//   std::vector<double> theta;
-//   double t0;
-//   std::vector<double> ts;
+  std::vector<double> y0;
+  std::vector<double> theta;
+  double t0;
+  std::vector<double> ts;
 
-//   t0 = 0;
+  t0 = 0;
 
-//   theta.push_back(10.0);
-//   theta.push_back(28.0);
-//   theta.push_back(8.0/3.0);
-//   y0.push_back(10.0);
-//   y0.push_back(1.0);
-//   y0.push_back(1.0);
+  theta.push_back(10.0);
+  theta.push_back(28.0);
+  theta.push_back(8.0/3.0);
+  y0.push_back(10.0);
+  y0.push_back(1.0);
+  y0.push_back(1.0);
 
-//   std::vector<double> x;
-//   std::vector<int> x_int;
+  std::vector<double> x;
+  std::vector<int> x_int;
 
-//   for (int i = 0; i < 100; i++)
-//     ts.push_back(0.1*(i+1));
+  for (int i = 0; i < 100; i++)
+    ts.push_back(0.1*(i+1));
 
-//   test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
-// }
+  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
+}
