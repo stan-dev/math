@@ -57,8 +57,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param matrix A
-         * @param matrix B
+         * @param A matrix
+         * @param B matrix
          */
         multiply_mat_vari(const Eigen::Matrix<TA, RA, CA>& A,
                           const Eigen::Matrix<TB, CA, CB>& B)
@@ -146,8 +146,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param row vector A
-         * @param vector B
+         * @param A row vector
+         * @param B vector
          */
         multiply_mat_vari(const Eigen::Matrix<TA, 1, CA>& A,
                           const Eigen::Matrix<TB, CA, 1>& B)
@@ -231,8 +231,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param row vector A
-         * @param vector B
+         * @param A row vector
+         * @param B vector
          */
         multiply_mat_vari(const Eigen::Matrix<double, RA, CA>& A,
                           const Eigen::Matrix<TB, CA, CB>& B)
@@ -311,8 +311,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param row vector A
-         * @param vector B
+         * @param A row vector
+         * @param B vector
          */
         multiply_mat_vari(const Eigen::Matrix<double, 1, CA>& A,
                           const Eigen::Matrix<TB, CA, 1>& B)
@@ -389,8 +389,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param row vector A
-         * @param vector B
+         * @param A row vector
+         * @param B vector
          */
         multiply_mat_vari(const Eigen::Matrix<TA, RA, CA>& A,
                           const Eigen::Matrix<double, CA, CB>& B)
@@ -472,8 +472,8 @@ namespace stan {
          * controlled to the second argument to 
          * vari's constructor.
          *
-         * @param row vector A
-         * @param vector B
+         * @param A row vector
+         * @param B vector
          */
         multiply_mat_vari(const Eigen::Matrix<TA, 1, CA>& A,
                           const Eigen::Matrix<double, CA, 1>& B)
