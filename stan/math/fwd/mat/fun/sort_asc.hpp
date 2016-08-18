@@ -3,8 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <algorithm>    // std::sort
-#include <functional>   // std::greater
+#include <algorithm>
 #include <vector>
 
 namespace stan {
@@ -22,7 +21,7 @@ namespace stan {
     inline
     typename Eigen::Matrix<fvar<T>, R, C>
     sort_asc(Eigen::Matrix<fvar<T>, R, C> xs) {
-      std::sort(xs.data(), xs.data()+xs.size());
+      std::sort(xs.data(), xs.data() + xs.size());
       return xs;
     }
 

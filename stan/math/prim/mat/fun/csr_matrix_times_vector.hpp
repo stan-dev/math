@@ -99,14 +99,14 @@ namespace stan {
       for (int row = 0; row < m; ++row) {
         int idx = csr_u_to_z(u, row);
         int row_end_in_w = (u[row] - stan::error_index::value) + idx;
-        int i = 0;  // index into dot-product segment entries.
+        int i = 0; 
         Eigen::Matrix<result_t, Eigen::Dynamic, 1> b_sub(idx);
         b_sub.setZero();
         for (int nze = u[row] - stan::error_index::value;
              nze < row_end_in_w; ++nze, ++i) {
           check_range("csr_matrix_times_vector", "j", n, v[nze]);
           b_sub.coeffRef(i) = b.coeffRef(v[nze] - stan::error_index::value);
-        }  // loop skipped when z is zero.
+        }
         Eigen::Matrix<T1, Eigen::Dynamic, 1>
           w_sub(w.segment(u[row] - stan::error_index::value, idx));
         result.coeffRef(row) = dot_product(w_sub, b_sub);
@@ -117,7 +117,5 @@ namespace stan {
     /** @}*/   // end of csr_format group
 
   }
-
 }
-
 #endif

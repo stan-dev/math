@@ -32,7 +32,6 @@ namespace stan {
       check_multiplicable("mdivide_right_spd", "b", b, "A", A);
       check_symmetric("mdivide_right_spd", "A", A);
       check_pos_definite("mdivide_right_spd", "A", A);
-      // FIXME: This is nice and general but likely slow.
       // FIXME: After allowing for general MatrixBase in mdivide_left_spd,
       //        change to b.transpose()
       return mdivide_left_spd(A, transpose(b)).transpose();

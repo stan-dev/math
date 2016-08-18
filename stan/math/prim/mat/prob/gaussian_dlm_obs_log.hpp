@@ -98,10 +98,8 @@ namespace stan {
       int T = y.cols();  // number of observations
       int n = G.rows();  // number of states
 
-      // check y
       check_finite(function, "y", y);
       check_not_nan(function, "y", y);
-      // check F
       check_size_match(function,
                        "columns of F", F.cols(),
                        "rows of y", y.rows());
@@ -109,29 +107,24 @@ namespace stan {
                        "rows of F", F.rows(),
                        "rows of G", G.rows());
       check_finite(function, "F", F);
-      // check G
       check_square(function, "G", G);
       check_finite(function, "G", G);
-      // check V
       check_size_match(function,
                        "rows of V", V.rows(),
                        "rows of y", y.rows());
       // TODO(anyone): incorporate support for infinite V
       check_finite(function, "V", V);
       check_spsd_matrix(function, "V", V);
-      // check W
       check_size_match(function,
                        "rows of W", W.rows(),
                        "rows of G", G.rows());
       // TODO(anyone): incorporate support for infinite W
       check_finite(function, "W", W);
       check_spsd_matrix(function, "W", W);
-      // check m0
       check_size_match(function,
                        "size of m0", m0.size(),
                        "rows of G", G.rows());
       check_finite(function, "m0", m0);
-      // check C0
       check_size_match(function,
                        "rows of C0", C0.rows(),
                        "rows of G", G.rows());
@@ -291,10 +284,8 @@ namespace stan {
       int T = y.cols();  // number of observations
       int n = G.rows();  // number of states
 
-      // check y
       check_finite(function, "y", y);
       check_not_nan(function, "y", y);
-      // check F
       check_size_match(function,
                        "columns of F", F.cols(),
                        "rows of y", y.rows());
@@ -303,13 +294,11 @@ namespace stan {
                        "rows of G", G.rows());
       check_finite(function, "F", F);
       check_not_nan(function, "F", F);
-      // check G
       check_size_match(function,
                        "rows of G", G.rows(),
                        "columns of G", G.cols());
       check_finite(function, "G", G);
       check_not_nan(function, "G", G);
-      // check V
       check_nonnegative(function, "V", V);
       check_size_match(function,
                        "size of V", V.size(),
@@ -317,7 +306,6 @@ namespace stan {
       // TODO(anyone): support infinite V
       check_finite(function, "V", V);
       check_not_nan(function, "V", V);
-      // check W
       check_spsd_matrix(function, "W", W);
       check_size_match(function,
                        "rows of W", W.rows(),
@@ -325,13 +313,11 @@ namespace stan {
       // TODO(anyone): support infinite W
       check_finite(function, "W", W);
       check_not_nan(function, "W", W);
-      // check m0
       check_size_match(function,
                        "size of m0", m0.size(),
                        "rows of G", G.rows());
       check_finite(function, "m0", m0);
       check_not_nan(function, "m0", m0);
-      // check C0
       check_cov_matrix(function, "C0", C0);
       check_size_match(function,
                        "rows of C0", C0.rows(),
@@ -378,19 +364,19 @@ namespace stan {
             for (int k = 0; k < F.rows(); ++k) {
               Fj(k) = F(k, j);
             }
-            // // f_{t, i} = F_{t, i}' m_{t, i-1}
+            // f_{t, i} = F_{t, i}' m_{t, i-1}
             f = dot_product(Fj, m);
             Q = trace_quad_form(C, Fj) + V(j);
             Q_inv = 1.0 / Q;
-            // // filtered observation
-            // // e_{t, i} = y_{t, i} - f_{t, i}
+            // filtered observation
+            // e_{t, i} = y_{t, i} - f_{t, i}
             e = yij - f;
-            // // A_{t, i} = C_{t, i-1} F_{t, i} Q_{t, i}^{-1}
+            // A_{t, i} = C_{t, i-1} F_{t, i} Q_{t, i}^{-1}
             A = multiply(multiply(C, Fj), Q_inv);
-            // // m_{t, i} = m_{t, i-1} + A_{t, i} e_{t, i}
+            // m_{t, i} = m_{t, i-1} + A_{t, i} e_{t, i}
             m += multiply(A, e);
-            // // c_{t, i} = C_{t, i-1} - Q_{t, i} A_{t, i} A_{t, i}'
-            // // // tcrossprod throws an error (ambiguous)
+            // c_{t, i} = C_{t, i-1} - Q_{t, i} A_{t, i} A_{t, i}'
+            // tcrossprod throws an error (ambiguous)
             // C = subtract(C, multiply(Q, tcrossprod(A)));
             C -= multiply(Q, multiply(A, transpose(A)));
             C = 0.5 * add(C, transpose(C));

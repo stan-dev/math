@@ -35,7 +35,6 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T>::type
     sd(const Eigen::Matrix<T, R, C>& m) {
-      // FIXME: redundant with test in variance; second line saves sqrt
       check_nonzero_size("sd", "m", m);
       if (m.size() == 1) return 0.0;
       return sqrt(variance(m));

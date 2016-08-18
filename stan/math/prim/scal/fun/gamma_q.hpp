@@ -47,13 +47,12 @@ namespace stan {
        \f[
        \frac{\partial \, Q(a, z)}{\partial z} = -\frac{z^{a-1}e^{-z}}{\Gamma(a)}
        \f]
+       * @throws domain_error if x is at pole
      */
-    // throws domain_error if x is at pole
     inline double gamma_q(double x, double a) {
       return boost::math::gamma_q(x, a);
     }
 
   }
 }
-
 #endif

@@ -12,8 +12,6 @@
 namespace stan {
   namespace math {
 
-    // dot_product for vec (in matrix) * vec (in matrix);
-    // does all combos of row row, col col, row col, col row
     template<typename T, int R1, int C1, int R2, int C2>
     inline
     fvar<T>

@@ -7,7 +7,6 @@
 namespace stan {
   namespace math {
 
-    // x <- x + lambda * y
     inline void scaled_add(std::vector<double>& x,
                            const std::vector<double>& y,
                            const double lambda) {
