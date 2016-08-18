@@ -13,11 +13,9 @@ namespace stan {
     template<typename T>
     inline fvar<T> fabs(const fvar<T>& x) {
       using std::fabs;
-      using stan::math::NOT_A_NUMBER;
-      using stan::math::value_of;
 
       if (unlikely(boost::math::isnan(value_of(x.val_))))
-        return fvar<T>(fabs(x.val_), stan::math::NOT_A_NUMBER);
+        return fvar<T>(fabs(x.val_), NOT_A_NUMBER);
       else if (x.val_ > 0.0)
         return x;
       else if (x.val_ < 0.0)

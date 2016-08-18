@@ -28,8 +28,8 @@ namespace stan {
     inline bool check_positive_finite(const char* function,
                                       const char* name,
                                       const T_y& y) {
-      stan::math::check_positive(function, name, y);
-      stan::math::check_finite(function, name, y);
+      check_positive(function, name, y);
+      check_finite(function, name, y);
 
       return true;
     }

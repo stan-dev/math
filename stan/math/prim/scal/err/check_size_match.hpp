@@ -44,7 +44,6 @@ namespace stan {
       return false;
     }
 
-
     /**
      * Return <code>true</code> if the provided sizes match.
      *

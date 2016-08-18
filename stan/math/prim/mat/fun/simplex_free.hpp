@@ -8,7 +8,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -30,14 +29,12 @@ namespace stan {
     simplex_free(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      using stan::math::logit;
       using std::log;
 
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
-      stan::math::check_simplex("stan::math::simplex_free",
-                                "Simplex variable", x);
+      check_simplex("stan::math::simplex_free",
+                    "Simplex variable", x);
       int Km1 = x.size() - 1;
       Eigen::Matrix<T, Eigen::Dynamic, 1> y(Km1);
       T stick_len(x(Km1));
@@ -51,7 +48,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

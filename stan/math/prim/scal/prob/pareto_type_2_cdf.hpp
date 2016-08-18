@@ -39,16 +39,8 @@ namespace stan {
         return 1.0;
 
       // Check errors
-      static const char* function("stan::math::pareto_type_2_cdf");
+      static const char* function("pareto_type_2_cdf");
 
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::log;
 
       T_partials_return P(1.0);
@@ -140,9 +132,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(alpha); ++n)
           operands_and_partials.d_x4[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

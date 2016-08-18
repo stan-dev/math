@@ -98,7 +98,6 @@ namespace stan {
       return false;
     }
 
-
   }
 }
 #endif

@@ -9,7 +9,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -23,7 +22,6 @@ namespace stan {
     std::vector<int> sort_indices_desc(const C& xs) {
       return sort_indices<false>(xs);
     }
-
 
   }
 }

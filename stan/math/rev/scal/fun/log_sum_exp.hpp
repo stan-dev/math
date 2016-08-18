@@ -13,7 +13,7 @@ namespace stan {
       class log_sum_exp_vv_vari : public op_vv_vari {
       public:
         log_sum_exp_vv_vari(vari* avi, vari* bvi) :
-          op_vv_vari(stan::math::log_sum_exp(avi->val_, bvi->val_),
+          op_vv_vari(log_sum_exp(avi->val_, bvi->val_),
                      avi, bvi) {
         }
         void chain() {
@@ -24,7 +24,7 @@ namespace stan {
       class log_sum_exp_vd_vari : public op_vd_vari {
       public:
         log_sum_exp_vd_vari(vari* avi, double b) :
-          op_vd_vari(stan::math::log_sum_exp(avi->val_, b),
+          op_vd_vari(log_sum_exp(avi->val_, b),
                      avi, b) {
         }
         void chain() {
@@ -34,7 +34,7 @@ namespace stan {
       class log_sum_exp_dv_vari : public op_dv_vari {
       public:
         log_sum_exp_dv_vari(double a, vari* bvi) :
-          op_dv_vari(stan::math::log_sum_exp(a, bvi->val_),
+          op_dv_vari(log_sum_exp(a, bvi->val_),
                      a, bvi) {
         }
         void chain() {
@@ -47,22 +47,22 @@ namespace stan {
     /**
      * Returns the log sum of exponentials.
      */
-    inline var log_sum_exp(const stan::math::var& a,
-                           const stan::math::var& b) {
+    inline var log_sum_exp(const var& a,
+                           const var& b) {
       return var(new log_sum_exp_vv_vari(a.vi_, b.vi_));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var log_sum_exp(const stan::math::var& a,
-                           const double& b) {
+    inline var log_sum_exp(const var& a,
+                           double b) {
       return var(new log_sum_exp_vd_vari(a.vi_, b));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var log_sum_exp(const double& a,
-                           const stan::math::var& b) {
+    inline var log_sum_exp(double a,
+                           const var& b) {
       return var(new log_sum_exp_dv_vari(a, b.vi_));
     }
 

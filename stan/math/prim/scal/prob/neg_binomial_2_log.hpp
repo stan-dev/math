@@ -26,7 +26,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
@@ -41,13 +40,7 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("stan::math::neg_binomial_2_log");
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
+      static const char* function("neg_binomial_2_log");
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -68,9 +61,6 @@ namespace stan {
       if (!include_summand<propto, T_location, T_precision>::value)
         return 0.0;
 
-      using stan::math::multiply_log;
-      using stan::math::digamma;
-      using stan::math::lgamma;
       using std::log;
       using std::log;
 
@@ -143,6 +133,7 @@ namespace stan {
                        const T_precision& phi) {
       return neg_binomial_2_log<false>(n, mu, phi);
     }
+
   }
 }
 #endif

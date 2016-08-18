@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -52,17 +51,12 @@ namespace stan {
               typename T_y, typename T_shape, typename T_inv_scale>
     typename return_type<T_y, T_shape, T_inv_scale>::type
     gamma_log(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
-      static const char* function("stan::math::gamma_log");
+      static const char* function("gamma_log");
       typedef typename stan::partials_return_type<T_y, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -102,7 +96,6 @@ namespace stan {
         operands_and_partials(y, alpha, beta);
 
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using boost::math::digamma;
       using std::log;
 
@@ -166,7 +159,7 @@ namespace stan {
     gamma_log(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
       return gamma_log<false>(y, alpha, beta);
     }
+
   }
 }
-
 #endif

@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
-
 namespace stan {
   namespace math {
 
@@ -18,7 +17,6 @@ namespace stan {
         static bool check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           if ((boost::math::isnan)(value_of_rec(y)))
             domain_error(function, name, y,
                          "is ", ", but must not be nan!");
@@ -31,7 +29,6 @@ namespace stan {
         static bool check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           for (size_t n = 0; n < stan::length(y); n++) {
             if ((boost::math::isnan)(value_of_rec(stan::get(y, n))))
               domain_error_vec(function, name, y, n,

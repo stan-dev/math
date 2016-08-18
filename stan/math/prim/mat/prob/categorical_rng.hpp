@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -21,9 +20,8 @@ namespace stan {
                     RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;
-      using stan::math::check_simplex;
 
-      static const char* function("stan::math::categorical_rng");
+      static const char* function("categorical_rng");
 
       check_simplex(function, "Probabilities parameter", theta);
 

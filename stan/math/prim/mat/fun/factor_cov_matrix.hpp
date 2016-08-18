@@ -5,9 +5,7 @@
 #include <stan/math/prim/mat/fun/factor_U.hpp>
 #include <cstddef>
 
-
 namespace stan {
-
   namespace math {
 
     /**

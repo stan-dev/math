@@ -13,7 +13,7 @@ namespace stan {
       class log1p_vari : public op_v_vari {
       public:
         explicit log1p_vari(vari* avi) :
-          op_v_vari(stan::math::log1p(avi->val_), avi) {
+          op_v_vari(log1p(avi->val_), avi) {
         }
         void chain() {
           avi_->adj_ += adj_ / (1 + avi_->val_);
@@ -31,7 +31,7 @@ namespace stan {
      * @param a The variable.
      * @return The log of 1 plus the variable.
      */
-    inline var log1p(const stan::math::var& a) {
+    inline var log1p(const var& a) {
       return var(new log1p_vari(a.vi_));
     }
 

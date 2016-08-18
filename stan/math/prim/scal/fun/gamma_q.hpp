@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -50,7 +49,7 @@ namespace stan {
        \f]
      */
     // throws domain_error if x is at pole
-    double gamma_q(double x, double a) {
+    inline double gamma_q(double x, double a) {
       return boost::math::gamma_q(x, a);
     }
 

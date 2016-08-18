@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -30,12 +29,8 @@ namespace stan {
                 const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
                 RNG& rng) {
       using Eigen::MatrixXd;
-      using stan::math::index_type;
-      using stan::math::check_positive;
-      using stan::math::check_size_match;
-      using stan::math::check_square;
 
-      static const char* function("stan::math::wishart_rng");
+      static const char* function("wishart_rng");
 
       typename index_type<MatrixXd>::type k = S.rows();
 
@@ -50,11 +45,9 @@ namespace stan {
         B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
       }
 
-      return stan::math::crossprod(B * S.llt().matrixU());
+      return crossprod(B * S.llt().matrixU());
     }
 
-
   }
-
 }
 #endif

@@ -9,19 +9,19 @@ namespace stan {
     /**
      * Converts argument to an automatic differentiation variable.
      *
-     * Returns a stan::math::var variable with the input value.
+     * Returns a var variable with the input value.
      *
      * @param[in] x A scalar value
      * @return An automatic differentiation variable with the input value.
      */
-    inline var to_var(const double& x) {
+    inline var to_var(double x) {
       return var(x);
     }
 
     /**
      * Converts argument to an automatic differentiation variable.
      *
-     * Returns a stan::math::var variable with the input value.
+     * Returns a var variable with the input value.
      *
      * @param[in] x An automatic differentiation variable.
      * @return An automatic differentiation variable with the input value.

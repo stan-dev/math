@@ -13,10 +13,7 @@ namespace stan {
     template<typename T>
     void grad_reg_inc_beta(T& g1, T& g2, T a, T b, T z,
                            T digammaA, T digammaB, T digammaSum, T betaAB) {
-      using stan::math::inc_beta;
-      using stan::math::grad_inc_beta;
       using std::exp;
-      using stan::math::lbeta;
 
       T dBda = 0;
       T dBdb = 0;

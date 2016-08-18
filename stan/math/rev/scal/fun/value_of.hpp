@@ -10,10 +10,10 @@ namespace stan {
      * Return the value of the specified variable.
      *
      * <p>This function is used internally by auto-dif functions along
-     * with <code>stan::math::value_of(T x)</code> to extract the
+     * with <code>value_of(T x)</code> to extract the
      * <code>double</code> value of either a scalar or an auto-dif
      * variable.  This function will be called when the argument is a
-     * <code>stan::math::var</code> even if the function is not
+     * <code>var</code> even if the function is not
      * referred to by namespace because of argument-dependent lookup.
      *
      * @param v Variable.

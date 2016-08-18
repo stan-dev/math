@@ -4,7 +4,7 @@
 TEST(MathMatrix, min) {
   using stan::math::min;
   std::vector<int> n;
-  EXPECT_THROW(min(n),std::domain_error);
+  EXPECT_THROW(min(n),std::invalid_argument);
   n.push_back(1);
   EXPECT_EQ(1,min(n));
   n.push_back(2);

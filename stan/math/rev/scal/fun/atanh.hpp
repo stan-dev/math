@@ -55,7 +55,6 @@ namespace stan {
        \end{cases}
        \f]
 
-
        \f[
        \tanh^{-1}(x)=\frac{1}{2}\ln\left(\frac{1+x}{1-x}\right)
        \f]

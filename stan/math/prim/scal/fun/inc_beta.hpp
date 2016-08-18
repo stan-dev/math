@@ -4,15 +4,15 @@
 #include <boost/math/special_functions/beta.hpp>
 
 namespace stan {
-
   namespace math {
 
-    inline double inc_beta(const double& a,
-                           const double& b,
-                           const double& x) {
+    inline double inc_beta(double a,
+                           double b,
+                           double x) {
       using boost::math::ibeta;
       return ibeta(a, b, x);
     }
+
   }
 }
 #endif

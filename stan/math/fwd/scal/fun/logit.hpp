@@ -8,16 +8,12 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
     inline
     fvar<T>
     logit(const fvar<T>& x) {
-      using stan::math::logit;
-      using stan::math::square;
-      using stan::math::NOT_A_NUMBER;
       if (x.val_ > 1 || x.val_ < 0)
         return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
       else

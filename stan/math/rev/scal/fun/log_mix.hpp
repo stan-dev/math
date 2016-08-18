@@ -12,7 +12,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /* Computes shared terms in log_mix partial derivative calculations
@@ -25,9 +24,9 @@ namespace stan {
      * @param[out] one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1 shared term in deriv calculation.
      */
     inline void
-    log_mix_partial_helper(const double& theta_val,
-                           const double& lambda1_val,
-                           const double& lambda2_val,
+    log_mix_partial_helper(double theta_val,
+                           double lambda1_val,
+                           double lambda2_val,
                            double& one_m_exp_lam2_m_lam1,
                            double& one_m_t_prod_exp_lam2_m_lam1,
                            double& one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1) {
@@ -89,8 +88,6 @@ namespace stan {
             const T_lambda1& lambda1,
             const T_lambda2& lambda2) {
       using std::log;
-      using stan::math::log_mix;
-      using stan::math::log1m;
       using stan::is_constant_struct;
 
       OperandsAndPartials<T_theta, T_lambda1, T_lambda2>
@@ -142,8 +139,6 @@ namespace stan {
       return operands_and_partials.value(log_mix_function_value);
     }
 
-  }  // namespace math
-
-}  // namespace stan
-
+  }
+}
 #endif

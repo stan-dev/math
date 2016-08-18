@@ -5,7 +5,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -41,7 +40,6 @@ namespace stan {
     template <typename T>
     inline
     T corr_constrain(const T x, T& lp) {
-      using stan::math::log1m;
       T tanh_x = tanh(x);
       lp += log1m(tanh_x * tanh_x);
       return tanh_x;

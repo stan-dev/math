@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/fun/promoter.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T1, typename T2, typename F>
@@ -18,6 +17,5 @@ namespace stan {
 
   }
 }
-
 
 #endif

@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

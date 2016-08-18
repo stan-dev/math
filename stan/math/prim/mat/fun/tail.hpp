@@ -10,7 +10,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -23,10 +22,9 @@ namespace stan {
     tail(const Eigen::Matrix<T, Eigen::Dynamic, 1>& v,
          size_t n) {
       if (n != 0)
-        stan::math::check_row_index("tail", "n", v, n);
+        check_row_index("tail", "n", v, n);
       return v.tail(n);
     }
-
 
     /**
      * Return the specified number of elements as a row vector
@@ -38,7 +36,7 @@ namespace stan {
     tail(const Eigen::Matrix<T, 1, Eigen::Dynamic>& rv,
          size_t n) {
       if (n != 0)
-        stan::math::check_column_index("tail", "n", rv, n);
+        check_column_index("tail", "n", rv, n);
       return rv.tail(n);
     }
 
@@ -47,13 +45,12 @@ namespace stan {
                         size_t n) {
       typedef typename index_type<std::vector<T> >::type idx_t;
       if (n != 0)
-        stan::math::check_std_vector_index("tail", "n", sv, n);
+        check_std_vector_index("tail", "n", sv, n);
       std::vector<T> s;
       for (idx_t i = sv.size() - n; i < sv.size(); ++i)
         s.push_back(sv[i]);
       return s;
     }
-
 
   }
 }

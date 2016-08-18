@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
@@ -32,16 +31,10 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     frechet_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const char* function("stan::math::frechet_log");
+      static const char* function("frechet_log");
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::multiply_log;
       using std::log;
 
       // check if any vectors are zero length
@@ -140,6 +133,7 @@ namespace stan {
     frechet_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
       return frechet_log<false>(y, alpha, sigma);
     }
+
   }
 }
 #endif

@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -30,7 +29,6 @@ namespace stan {
         type;
     };
 
-
     /**
      * Template metaprogram to calculate a type for a vector whose
      * underlying scalar is converted from the second template
@@ -49,7 +47,6 @@ namespace stan {
         type;
     };
 
-
     /**
      * Template metaprogram to calculate a type for a row vector whose
      * underlying scalar is converted from the second template
@@ -67,7 +64,6 @@ namespace stan {
                             1, Eigen::Dynamic>
         type;
     };
-
 
   }
 

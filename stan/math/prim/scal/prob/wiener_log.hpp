@@ -45,10 +45,9 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
 
-     /**
+    /**
      * The log of the first passage time density function for a (Wiener)
      *  drift diffusion model for the given \f$y\f$,
      * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
@@ -66,13 +65,13 @@ namespace stan {
      * @return The log of the Wiener first passage time density of
      *  the specified arguments.
      */
-     template <bool propto,
-               typename T_y, typename T_alpha, typename T_tau,
-               typename T_beta, typename T_delta>
-     typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-     wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-       const T_beta& beta, const T_delta& delta) {
-      static const char* function("stan::math::wiener_log(%1%)");
+    template <bool propto,
+              typename T_y, typename T_alpha, typename T_tau,
+              typename T_beta, typename T_delta>
+    typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
+    wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
+               const T_beta& beta, const T_delta& delta) {
+      static const char* function("wiener_log(%1%)");
 
       using boost::math::tools::promote_args;
       using boost::math::isinf;
@@ -89,15 +88,15 @@ namespace stan {
         TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR =
         2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
       static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI =
-       LOG_TWO / 2 + LOG_SQRT_PI;
+        LOG_TWO / 2 + LOG_SQRT_PI;
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
       if (!(stan::length(y)
-        && stan::length(alpha)
-        && stan::length(beta)
-        && stan::length(tau)
-        && stan::length(delta)))
+            && stan::length(alpha)
+            && stan::length(beta)
+            && stan::length(tau)
+            && stan::length(delta)))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,
@@ -153,6 +152,12 @@ namespace stan {
         return 0;
       }
 
+      for (size_t i = 0; i < N; i++)
+        if (y_vec[i] < tau_vec[i]) {
+          lp = negative_infinity();
+          return lp;
+        }
+
       for (size_t i = 0; i < N; i++) {
         typename scalar_type<T_beta>::type one_minus_beta
           = 1.0 - beta_vec[i];
@@ -161,7 +166,6 @@ namespace stan {
         T_return_type x = y_vec[i];
         T_return_type kl, ks, tmp = 0;
         T_return_type k, K;
-
 
         x = x - tau_vec[i];  // remove non-decision time from x
         x = x / alpha2;  // convert t to normalized time tt
@@ -174,11 +178,11 @@ namespace stan {
         if (PI_TIMES_WIENER_ERR * x < 1) {
           // compute bound
           kl = sqrt(-2.0 * SQRT_PI *
-               (LOG_PI_LOG_WIENER_ERR + log_x)) /
-               sqrt_x;
+                    (LOG_PI_LOG_WIENER_ERR + log_x)) /
+            sqrt_x;
           // ensure boundary conditions met
           kl = (kl > one_over_pi_times_sqrt_x) ?
-               kl : one_over_pi_times_sqrt_x;
+            kl : one_over_pi_times_sqrt_x;
         } else {  // if error threshold set too high
           kl = one_over_pi_times_sqrt_x;  // set to boundary condition
         }
@@ -203,27 +207,26 @@ namespace stan {
           for (k = -floor(tmp_expr1); k <= tmp_expr2; k++)
             // increment sum
             tmp += (one_minus_beta + 2.0 * k) *
-                    exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
-            // add constant term
-            tmp = log(tmp) -
-                  LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
+              exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
+          // add constant term
+          tmp = log(tmp) -
+            LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
         } else {  // if large t is better...
           K = ceil(kl);  // round to smallest integer meeting error
           for (k = 1; k <= K; k++)
             // increment sum
             tmp += k * exp(-(square(k)) *
-                   (SQUARE_PI_OVER_TWO * x)) *
-                   sin(k * pi() * one_minus_beta);
-            tmp = log(tmp) +
-                  TWO_TIMES_LOG_SQRT_PI;  // add constant term
+                           (SQUARE_PI_OVER_TWO * x)) *
+              sin(k * pi() * one_minus_beta);
+          tmp = log(tmp) +
+            TWO_TIMES_LOG_SQRT_PI;  // add constant term
         }
 
         // convert to f(t|v,a,w) and return result
         lp += delta_vec[i] * alpha_vec[i] * one_minus_beta -
-              square(delta_vec[i]) * x * alpha2 / 2.0 -
-              log(alpha2) + tmp;
+          square(delta_vec[i]) * x * alpha2 / 2.0 -
+          log(alpha2) + tmp;
       }
-
       return lp;
     }
 
@@ -235,6 +238,7 @@ namespace stan {
                const T_beta& beta, const T_delta& delta) {
       return wiener_log<false>(y, alpha, tau, beta, delta);
     }
+
   }
 }
 #endif

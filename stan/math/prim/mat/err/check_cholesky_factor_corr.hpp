@@ -9,7 +9,6 @@
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
 
 namespace stan {
-
   namespace math {
     /**
      * Return <code>true</code> if the specified matrix is a valid

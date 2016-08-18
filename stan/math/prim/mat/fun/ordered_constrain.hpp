@@ -6,7 +6,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -23,7 +22,6 @@ namespace stan {
     ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::index_type;
       using std::exp;
 
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
@@ -56,7 +54,6 @@ namespace stan {
     ordered_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::index_type;
 
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 

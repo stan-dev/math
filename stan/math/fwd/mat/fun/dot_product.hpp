@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
 #include <vector>
@@ -19,11 +19,9 @@ namespace stan {
     fvar<T>
     dot_product(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
                 const Eigen::Matrix<fvar<T>, R2, C2>& v2) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < v1.size(); i++)
@@ -36,11 +34,9 @@ namespace stan {
     fvar<T>
     dot_product(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
                 const Eigen::Matrix<double, R2, C2>& v2) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < v1.size(); i++)
@@ -53,11 +49,9 @@ namespace stan {
     fvar<T>
     dot_product(const Eigen::Matrix<double, R1, C1>& v1,
                 const Eigen::Matrix<fvar<T>, R2, C2>& v2) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < v1.size(); i++)
@@ -71,8 +65,8 @@ namespace stan {
     dot_product(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
                 const Eigen::Matrix<fvar<T>, R2, C2>& v2,
                 size_type& length) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < length; i++)
@@ -86,8 +80,8 @@ namespace stan {
     dot_product(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
                 const Eigen::Matrix<double, R2, C2>& v2,
                 size_type& length) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < length; i++)
@@ -101,8 +95,8 @@ namespace stan {
     dot_product(const Eigen::Matrix<double, R1, C1>& v1,
                 const Eigen::Matrix<fvar<T>, R2, C2>& v2,
                 size_type& length) {
-      stan::math::check_vector("dot_product", "v1", v1);
-      stan::math::check_vector("dot_product", "v2", v2);
+      check_vector("dot_product", "v1", v1);
+      check_vector("dot_product", "v2", v2);
 
       fvar<T> ret(0, 0);
       for (size_type i = 0; i < length; i++)
@@ -115,9 +109,7 @@ namespace stan {
     fvar<T>
     dot_product(const std::vector<fvar<T> >& v1,
                 const std::vector<fvar<T> >& v2) {
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
       fvar<T> ret(0, 0);
       for (size_t i = 0; i < v1.size(); i++)
         ret += v1.at(i) * v2.at(i);
@@ -129,9 +121,7 @@ namespace stan {
     fvar<T>
     dot_product(const std::vector<double>& v1,
                 const std::vector<fvar<T> >& v2) {
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
       fvar<T> ret(0, 0);
       for (size_t i = 0; i < v1.size(); i++)
         ret += v1.at(i) * v2.at(i);
@@ -143,9 +133,7 @@ namespace stan {
     fvar<T>
     dot_product(const std::vector<fvar<T> >& v1,
                 const std::vector<double>& v2) {
-      stan::math::check_matching_sizes("dot_product",
-                                                 "v1", v1,
-                                                 "v2", v2);
+      check_matching_sizes("dot_product", "v1", v1, "v2", v2);
       fvar<T> ret(0, 0);
       for (size_t i = 0; i < v1.size(); i++)
         ret += v1.at(i) * v2.at(i);
@@ -187,6 +175,7 @@ namespace stan {
         ret += v1.at(i) * v2.at(i);
       return ret;
     }
+
   }
 }
 #endif

@@ -20,21 +20,15 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_cdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
-      static const char* function("stan::math::gumbel_cdf");
+      static const char* function("gumbel_cdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return cdf(1.0);
@@ -92,9 +86,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(beta); ++n)
           operands_and_partials.d_x3[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

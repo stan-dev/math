@@ -24,7 +24,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -50,7 +49,7 @@ namespace stan {
               typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     inv_chi_square_log(const T_y& y, const T_dof& nu) {
-      static const char* function("stan::math::inv_chi_square_log");
+      static const char* function("inv_chi_square_log");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
@@ -59,18 +58,12 @@ namespace stan {
             && stan::length(nu)))
         return 0.0;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-
       T_partials_return logp(0.0);
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_not_nan(function, "Random variable", y);
       check_consistent_sizes(function,
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
-
 
       // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
@@ -83,7 +76,6 @@ namespace stan {
 
       using boost::math::digamma;
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_dof>::value,
@@ -142,6 +134,7 @@ namespace stan {
     inv_chi_square_log(const T_y& y, const T_dof& nu) {
       return inv_chi_square_log<false>(y, nu);
     }
+
   }
 }
 #endif

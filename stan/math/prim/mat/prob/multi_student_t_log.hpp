@@ -23,6 +23,7 @@
 
 namespace stan {
   namespace math {
+
     /**
      * Return the log of the multivariate Student t distribution
      * at the specified arguments.
@@ -36,18 +37,9 @@ namespace stan {
                         const T_dof& nu,
                         const T_loc& mu,
                         const T_scale& Sigma) {
-      static const char* function("stan::math::multi_student_t");
+      static const char* function("multi_student_t");
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_symmetric;
-      using stan::math::check_positive;
       using boost::math::lgamma;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::LDLT_factor;
-      using stan::math::check_ldlt_factor;
-      using stan::math::log1p;
       using std::log;
 
       typedef typename scalar_type<T_scale>::type T_scale_elem;
@@ -69,7 +61,6 @@ namespace stan {
       VectorViewMvt<const T_loc> mu_vec(mu);
       // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
-
 
       // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
@@ -105,7 +96,6 @@ namespace stan {
         (void) size_mu_new;
       }
 
-
       check_size_match(function,
                        "Size of random variable", size_y,
                        "size of location parameter", size_mu);
@@ -122,9 +112,8 @@ namespace stan {
       }
       check_symmetric(function, "Scale parameter", Sigma);
 
-
       LDLT_factor<T_scale_elem,
-        Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
+                  Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
       if (size_y == 0)  // y_vec[0].size() == 0
@@ -139,11 +128,7 @@ namespace stan {
       if (include_summand<propto>::value)
         lp -= (0.5 * size_y) * LOG_PI * size_vec;
 
-      using stan::math::multiply;
-      using stan::math::dot_product;
-      using stan::math::subtract;
       using Eigen::Array;
-
 
       if (include_summand<propto, T_scale_elem>::value) {
         lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
@@ -153,7 +138,7 @@ namespace stan {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
           Eigen::Matrix<typename return_type<T_y, T_loc>::type,
-            Eigen::Dynamic, 1> y_minus_mu(size_y);
+                        Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j)-mu_vec[i](j);
           sum_lp_vec += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu)

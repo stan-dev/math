@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -17,7 +16,7 @@ namespace stan {
      * arithmetic types as defined by Boost's
      * <code>is_arithmetic</code> trait metaprogram.
      *
-     * <p>This function differs from <code>stan::math::value_of</code> in that it
+     * <p>This function differs from <code>value_of</code> in that it
      * does not cast all return types to <code>double</code>.
      *
      * @tparam T type of arithmetic input.
@@ -45,12 +44,9 @@ namespace stan {
     inline
     typename boost::disable_if<boost::is_arithmetic<T>, double>::type
     primitive_value(const T& x) {
-      using stan::math::value_of;
       return value_of(x);
     }
 
   }
-
 }
-
 #endif

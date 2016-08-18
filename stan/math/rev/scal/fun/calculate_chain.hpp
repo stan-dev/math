@@ -5,9 +5,11 @@
 
 namespace stan {
   namespace math {
-    inline double calculate_chain(const double& x, const double& val) {
+
+    inline double calculate_chain(double x, double val) {
       return std::exp(x - val);  // works out to inv_logit(x)
     }
+
   }
 }
 #endif

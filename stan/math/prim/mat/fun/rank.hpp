@@ -18,7 +18,6 @@ namespace stan {
      */
     template <typename T>
     inline int rank(const std::vector<T> & v, int s) {
-      using stan::math::check_range;
       int size = static_cast<int>(v.size());
       check_range("rank", "v", size, s);
       --s;
@@ -40,7 +39,6 @@ namespace stan {
      */
     template <typename T, int R, int C>
     inline int rank(const Eigen::Matrix<T, R, C> & v, int s) {
-      using stan::math::check_range;
       int size = v.size();
       check_range("rank", "v", size, s);
       --s;

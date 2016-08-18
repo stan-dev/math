@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_META_CHILD_TYPE_HPP
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -37,6 +36,5 @@ namespace stan {
 
   }
 }
-
 
 #endif

@@ -27,7 +27,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
@@ -44,15 +43,9 @@ namespace stan {
         return 0.0;
 
       // Error checks
-      static const char* function("stan::math::beta_cdf");
+      static const char* function("beta_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return cdf_log(0.0);
 
@@ -76,9 +69,6 @@ namespace stan {
         operands_and_partials(y, alpha, beta);
 
       // Compute CDF and its gradients
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::pow;
       using std::exp;
       using std::log;
@@ -131,10 +121,10 @@ namespace stan {
         T_partials_return g2 = 0;
 
         if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
-                                        digamma_alpha_vec[n],
-                                        digamma_beta_vec[n], digamma_sum_vec[n],
-                                        betafunc_dbl);
+          grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
+                            digamma_alpha_vec[n],
+                            digamma_beta_vec[n], digamma_sum_vec[n],
+                            betafunc_dbl);
         }
         if (!is_constant_struct<T_scale_succ>::value)
           operands_and_partials.d_x2[n] += g1 / Pn;

@@ -9,7 +9,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -48,7 +47,6 @@ namespace stan {
              return xs_[i-1] > xs_[j-1];
          }
       };
-
 
       /**
        * Return an integer array of indices of the specified container

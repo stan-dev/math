@@ -24,9 +24,7 @@
 #include <limits>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -54,13 +52,8 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 1.0;
 
-      static const char* function("stan::math::scaled_inv_chi_square_cdf");
+      static const char* function("scaled_inv_chi_square_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return P(1.0);
@@ -92,8 +85,6 @@ namespace stan {
       }
 
       // Compute CDF and its gradients
-      using stan::math::gamma_q;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
@@ -141,14 +132,12 @@ namespace stan {
           operands_and_partials.d_x1[n] += half_nu_s2_overx_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
 
-
-
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            += (0.5 * stan::math::grad_reg_inc_gamma(half_nu_dbl,
-                                                     half_nu_s2_overx_dbl,
-                                                     gamma_vec[n],
-                                                     digamma_vec[n])
+            += (0.5 * grad_reg_inc_gamma(half_nu_dbl,
+                                         half_nu_s2_overx_dbl,
+                                         gamma_vec[n],
+                                         digamma_vec[n])
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
 
@@ -170,9 +159,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(s); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

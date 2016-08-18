@@ -11,7 +11,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
     /** 
      * @defgroup csr_format Compressed Sparse Row matrix format.
@@ -76,8 +75,8 @@ namespace stan {
     inline
     Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
                   Eigen::Dynamic, 1>
-    csr_matrix_times_vector(const int& m,
-                            const int& n,
+    csr_matrix_times_vector(int m,
+                            int n,
                             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                             const std::vector<int>& v,
                             const std::vector<int>& u,

@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -32,10 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::student_t_distribution;
 
-      static const char* function("stan::math::student_t_rng");
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
+      static const char* function("student_t_rng");
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_finite(function, "Location parameter", mu);
@@ -45,6 +41,7 @@ namespace stan {
         rng_unit_student_t(rng, student_t_distribution<>(nu));
       return mu + sigma * rng_unit_student_t();
     }
+
   }
 }
 #endif

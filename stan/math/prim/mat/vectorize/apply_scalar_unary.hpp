@@ -1,11 +1,10 @@
-#ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
-#define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
+#ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <Eigen/Dense>
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**

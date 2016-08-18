@@ -21,7 +21,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_scale>
@@ -30,12 +29,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::weibull_cdf_log");
+      static const char* function("weibull_cdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
@@ -77,9 +73,9 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] -= rep_deriv * alpha_dbl / sigma_dbl;
       }
-
       return operands_and_partials.value(cdf_log);
     }
+
   }
 }
 #endif

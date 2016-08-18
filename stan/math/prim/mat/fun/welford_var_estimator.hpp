@@ -5,50 +5,45 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     class welford_var_estimator {
     public:
       explicit welford_var_estimator(int n)
-        : _m(Eigen::VectorXd::Zero(n)),
-          _m2(Eigen::VectorXd::Zero(n)) {
+        : m_(Eigen::VectorXd::Zero(n)),
+          m2_(Eigen::VectorXd::Zero(n)) {
         restart();
       }
 
       void restart() {
-        _num_samples = 0;
-        _m.setZero();
-        _m2.setZero();
+        num_samples_ = 0;
+        m_.setZero();
+        m2_.setZero();
       }
 
       void add_sample(const Eigen::VectorXd& q) {
-        ++_num_samples;
+        ++num_samples_;
 
-        Eigen::VectorXd delta(q - _m);
-        _m  += delta / _num_samples;
-        _m2 += delta.cwiseProduct(q - _m);
+        Eigen::VectorXd delta(q - m_);
+        m_  += delta / num_samples_;
+        m2_ += delta.cwiseProduct(q - m_);
       }
 
-      int num_samples() { return _num_samples; }
+      int num_samples() { return num_samples_; }
 
-      void sample_mean(Eigen::VectorXd& mean) { mean = _m; }
+      void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
       void sample_variance(Eigen::VectorXd& var) {
-        if (_num_samples > 1)
-          var = _m2 / (_num_samples - 1.0);
+        if (num_samples_ > 1)
+          var = m2_ / (num_samples_ - 1.0);
       }
 
     protected:
-      double _num_samples;
-
-      Eigen::VectorXd _m;
-      Eigen::VectorXd _m2;
+      double num_samples_;
+      Eigen::VectorXd m_;
+      Eigen::VectorXd m2_;
     };
 
-  }  // prob
-
-}  // stan
-
-
+  }
+}
 #endif
