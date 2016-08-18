@@ -36,7 +36,7 @@ namespace stan {
      */
     template <typename T>
     inline typename boost::math::tools::promote_args<T>::type
-    log1p(const T x) {
+    log1p(const T& x) {
       using std::log;
       if (!(x >= -1.0))
         return std::numeric_limits<double>::quiet_NaN();
@@ -47,6 +47,18 @@ namespace stan {
         return x - 0.5 * x * x;  // 2nd order Taylor, if close to 1
       else
         return x;                // 1st order Taylor, if very close to 1
+    }
+
+    /**
+     * Return the natural logarithm of one plus the specified
+     * argument.  This version is required to disambiguate
+     * <code>log1p(int)</code>.
+     *
+     * @param[in] x Argument.
+     * @return Natural logarithm of one plus the argument.
+     */
+    inline double log1p(int x) {
+      return log1p(static_cast<double>(x));
     }
 
   }
