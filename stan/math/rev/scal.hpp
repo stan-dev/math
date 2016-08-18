@@ -98,4 +98,6 @@
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 
+#include <stan/math/rev/scal/fun/frexp.hpp>
+
 #endif

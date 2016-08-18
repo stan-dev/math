@@ -7,11 +7,14 @@
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Edited to work with Stan AD
 
 #ifndef EIGEN_MATRIX_EXPONENTIAL
 #define EIGEN_MATRIX_EXPONENTIAL
 
 #include "StemFunction.h"
+#include <stan/model/model_header.hpp> // Stan AD
 
 namespace Eigen {
 
@@ -129,6 +132,8 @@ class MatrixExponential {
      *  \sa computeUV(double);
      */
     void computeUV(long double);
+    
+    void computeUV(stan::math::var); // Stan AD
 
     typedef typename internal::traits<MatrixType>::Scalar Scalar;
     typedef typename NumTraits<Scalar>::Real RealScalar;
@@ -318,6 +323,29 @@ void MatrixExponential<MatrixType>::computeUV(double)
     MatrixType A = m_M / pow(Scalar(2), m_squarings);
     pade13(A);
   }
+}
+    
+// overload function for Stan AD
+template <typename MatrixType>
+void MatrixExponential<MatrixType>::computeUV(stan::math::var)
+{
+    using stan::math::frexp;
+    using stan::math::pow; 
+    if (m_l1norm < 1.495585217958292e-002) {
+      pade3(m_M);
+    } else if (m_l1norm < 2.539398330063230e-001) {
+      pade5(m_M);
+    } else if (m_l1norm < 9.504178996162932e-001) {
+      pade7(m_M);
+    } else if (m_l1norm < 2.097847961257068e+000) {
+      pade9(m_M);
+    } else {
+      const double maxnorm = 5.371920351148152;
+      frexp(m_l1norm / maxnorm, &m_squarings);
+      if (m_squarings < 0) m_squarings = 0;
+      MatrixType A = m_M / pow(Scalar(2), m_squarings);
+      pade13(A);
+    }
 }
 
 template <typename MatrixType>

@@ -32,7 +32,3 @@ $(CVODES)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	$(AR) -rs $@ $^
 
 LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
-
-.PHONY: clean-libraries
-clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES))
