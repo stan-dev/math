@@ -12,9 +12,9 @@
 
 namespace stan {
   namespace math {
-    /** 
+    /**
      * @defgroup csr_format Compressed Sparse Row matrix format.
-     *  A compressed Sparse Row (CSR) sparse matrix is defined by four 
+     *  A compressed Sparse Row (CSR) sparse matrix is defined by four
      *  component vectors labeled w, v, and u.  They are defined as:
      *    - w: the non-zero values in the sparse matrix.
      *    - v: column index for each value in w,  as a result this
@@ -23,8 +23,8 @@ namespace stan {
      *      is equal to the number of rows plus one.  Last entry is
      *      one-past-the-end in w, following the Eigen spec.
      *  Indexing is either zero-based or one-based depending on the value of
-     *  stan::error_index::value.  Following the definition of the format in 
-     *  Eigen, we allow for unused garbage values in w/v which are never read. 
+     *  stan::error_index::value.  Following the definition of the format in
+     *  Eigen, we allow for unused garbage values in w/v which are never read.
      *  All indexing _internal_ to a given function is zero-based.
      *
      *  With only m/n/w/v/u in hand, it is possible to check all
@@ -33,7 +33,7 @@ namespace stan {
      *  except the column dimension before any work is done inside a
      *  function.  The column index is checked as it is constructed and
      *  used for each entry.  If the column index is not needed it is
-     *  not checked.  As a result indexing mistakes might produce non-sensical 
+     *  not checked.  As a result indexing mistakes might produce non-sensical
      *  operations but out-of-bounds indexing will be caught.
      *
      *  Except for possible garbage values in w/v/u, memory usage is
@@ -99,7 +99,7 @@ namespace stan {
       for (int row = 0; row < m; ++row) {
         int idx = csr_u_to_z(u, row);
         int row_end_in_w = (u[row] - stan::error_index::value) + idx;
-        int i = 0; 
+        int i = 0;
         Eigen::Matrix<result_t, Eigen::Dynamic, 1> b_sub(idx);
         b_sub.setZero();
         for (int nze = u[row] - stan::error_index::value;
