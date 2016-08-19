@@ -20,31 +20,13 @@ namespace stan {
 
 
     /**
-     * Return the sine of a radian-scaled variable (cmath).
+     * Decomposes a float-like variable into a normalized 
+     * fraction and an integral power of two.
      *
-     * The derivative is defined by
-     *
-     * \f$\frac{d}{dx} \sin x = \cos x\f$.
-     *
-     *
-       \f[
-       \mbox{sin}(x) =
-       \begin{cases}
-         \sin(x) & \mbox{if } -\infty\leq x \leq \infty \\[6pt]
-         \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-       \end{cases}
-       \f]
-
-       \f[
-       \frac{\partial\, \mbox{sin}(x)}{\partial x} =
-       \begin{cases}
-         \cos(x) & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
-         \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-       \end{cases}
-       \f]
-     *
-     * @param a Variable for radians of angle.
-     * @return Sine of variable.
+     * @param the variable that will be decomposed.
+     * @param pointer to an integer that will stored the
+     *        integral power of two.
+     * @return normalized fraction
      */
       inline var frexp(const var& a, int* b) {
           return var(new frexp_vari(a.vi_, b));
