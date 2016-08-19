@@ -11,7 +11,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
@@ -109,7 +109,7 @@ namespace stan {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
         // Compute
-        const T_partials_return Pn = 1.0 - gamma_p(alpha_dbl, beta_dbl * y_dbl);
+        const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
 
         P += log(Pn);
 

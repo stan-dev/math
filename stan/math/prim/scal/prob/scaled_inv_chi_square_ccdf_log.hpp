@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -101,8 +101,8 @@ namespace stan {
         const T_partials_return half_nu_s2_overx_dbl
           = 2.0 * half_nu_dbl * half_s2_overx_dbl;
 
-        const T_partials_return Pn = 1.0 - gamma_q(half_nu_dbl,
-                                                   half_nu_s2_overx_dbl);
+        const T_partials_return Pn = gamma_p(half_nu_dbl,
+                                             half_nu_s2_overx_dbl);
         const T_partials_return gamma_p_deriv = exp(-half_nu_s2_overx_dbl)
           * pow(half_nu_s2_overx_dbl, half_nu_dbl-1) / tgamma(half_nu_dbl);
 
