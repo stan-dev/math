@@ -21,7 +21,7 @@ namespace stan {
      * @param[in] x array of specified values
      * @return The log of the sum of the exponentiated vector values.
      */
-    double log_sum_exp(const std::vector<double>& x) {
+    inline double log_sum_exp(const std::vector<double>& x) {
       using std::numeric_limits;
       using std::log;
       using std::exp;

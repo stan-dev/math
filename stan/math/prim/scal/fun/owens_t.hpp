@@ -6,7 +6,6 @@
 namespace stan {
   namespace math {
 
-
     /**
      * The Owen's T function of h and a.
      *

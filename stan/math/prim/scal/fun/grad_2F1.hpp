@@ -4,7 +4,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Gradient of the hypergeometric function 2F1(a, b | c | z)
@@ -39,7 +38,6 @@ namespace stan {
           if (k > 200) break;
         }
     }
-
 
   }
 

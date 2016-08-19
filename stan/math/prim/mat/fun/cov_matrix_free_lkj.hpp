@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_LKJ_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_LKJ_HPP
 
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stdexcept>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -34,20 +35,18 @@ namespace stan {
       using Eigen::Array;
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
 
+      check_nonzero_size("cov_matrix_free_lkj", "y", y);
+      check_square("cov_matrix_free_lkj", "y", y);
       size_type k = y.rows();
-      if (y.cols() != k)
-        throw std::domain_error("y is not a square matrix");
-      if (k == 0)
-        throw std::domain_error("y has no elements");
       size_type k_choose_2 = (k * (k-1)) / 2;
       Array<T, Dynamic, 1> cpcs(k_choose_2);
       Array<T, Dynamic, 1> sds(k);
       bool successful = factor_cov_matrix(y, cpcs, sds);
       if (!successful)
-        throw std::runtime_error("factor_cov_matrix failed on y");
+        domain_error("cov_matrix_free_lkj",
+                     "factor_cov_matrix failed on y", "", "");
       Matrix<T, Dynamic, 1> x(k_choose_2 + k);
       size_type pos = 0;
       for (size_type i = 0; i < k_choose_2; ++i)
@@ -58,7 +57,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

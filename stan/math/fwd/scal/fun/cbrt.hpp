@@ -13,7 +13,6 @@ namespace stan {
     fvar<T>
     cbrt(const fvar<T>& x) {
       using ::cbrt;
-      using stan::math::square;
       return fvar<T>(cbrt(x.val_),
                      x.d_ / (square(cbrt(x.val_)) * 3.0));
     }

@@ -17,7 +17,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // CONTINUOUS, UNIVARIATE DENSITIES
@@ -46,15 +45,10 @@ namespace stan {
               typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const char* function("stan::math::uniform_log");
+      static const char* function("uniform_log");
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_greater;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
       // check if any vectors are zero length
@@ -126,6 +120,7 @@ namespace stan {
     uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
       return uniform_log<false>(y, alpha, beta);
     }
+
   }
 }
 #endif

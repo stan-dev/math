@@ -25,22 +25,14 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_ccdf_log(const T_n& n, const T_N& N, const T_prob& theta) {
-      static const char* function("stan::math::binomial_ccdf_log");
+      static const char* function("binomial_ccdf_log");
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
-
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
 
       // Ensure non-zero arguments lenghts
       if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
@@ -64,9 +56,6 @@ namespace stan {
       size_t size = max_size(n, N, theta);
 
       // Compute vectorized cdf_log and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::lbeta;
       using std::exp;
       using std::pow;
       using std::log;
@@ -86,7 +75,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         }
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return N_dbl = value_of(N_vec[i]);
@@ -104,6 +93,7 @@ namespace stan {
 
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

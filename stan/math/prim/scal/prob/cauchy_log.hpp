@@ -19,7 +19,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -43,16 +42,11 @@ namespace stan {
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     cauchy_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::cauchy_log");
+      static const char* function("cauchy_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(y)
@@ -76,8 +70,6 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      using stan::math::log1p;
-      using stan::math::square;
       using std::log;
 
       // set up template expressions wrapping scalars into vector views
@@ -147,7 +139,6 @@ namespace stan {
     cauchy_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
       return cauchy_log<false>(y, mu, sigma);
     }
-
 
   }
 }

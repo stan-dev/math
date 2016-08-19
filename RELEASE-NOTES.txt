@@ -1,6 +1,64 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.11.0 (27 July 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* vectorization of a many unary math functions (#202)
+
+Bug Fixes
+--------------------------------------------------
+* throw exception on integer divide by 0 (#321)
+* allow inclusing of Stan headers in multiple translation units (#311)
+
+
+
+
+
+v2.10.0 (15 June 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* append_row and append_col for scalars (stan-dev/stan #1347)
+* PYTHON2 property in makefile for 2.x requirement for
+  cpplint (#300)
+* refactored general ODE interface and add CVODES bdf
+  integrator (#262, #293, #281, #284, #288)
+* rename integrate_ode to integrate_ode_rk45 (#292)
+* update to Eigen 3.2.8 (#256)
+* efficiency improvement in value_of and value_of_rec (#249)
+* generalize dependencies in runTests.py (#247)
+* untangle include dependencies, add finer headers (#246)
+* std::vector version of value_of and value_of_rec (#243)
+* doc for is_vector_like and more tests (#241)
+* issue and pull-request templates on GitHub (#237)
+* top-level includes by shape and autodiff type (#236)
+* upgrade to Boost 1.60 (#221)
+* unary vectorization infrastructure (#202)
+* ODE integrator fails if precision not reachable (#179)
+
+Bug Fixes
+--------------------------------------------------
+* fix elementwise division argument cast problem with 
+  operator/(matrix, var) not compiling (#290)
+* fix QR decomposition segfault for no-square matrices (#286)
+* fix off-by-one bug in nested Jacobian autodiff in degenerate
+  set_zero_all_adjoints_nested() call (#278)
+* squash compiler warnings in OperandsAndPartials (#274)
+* ifdef out residual Sundials (CVODES) print statements (#257)
+* fix binomial coefficient branch to remove integer division and
+  rounding (#239)
+* refine clean-all make target to remove .d files (#234)
+* fix Jacobian bug returning transposed result (#230)
+* include stdexcept so container_view header compiles (#223)
+
+
+
+
+
 
 v2.9.0 (3 December 2015)
 ======================================================================

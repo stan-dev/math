@@ -20,7 +20,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     // Poisson(n|lambda)  [lambda > 0;  n >= 0]
@@ -30,14 +29,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-      static const char* function("stan::math::poisson_log");
+      static const char* function("poisson_log");
 
       using boost::math::lgamma;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::include_summand;
-      using stan::math::value_of;
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -74,7 +68,6 @@ namespace stan {
       // return accumulator with gradients
       OperandsAndPartials<T_rate> operands_and_partials(lambda);
 
-      using stan::math::multiply_log;
       for (size_t i = 0; i < size; i++) {
         if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
           if (include_summand<propto>::value)
@@ -89,8 +82,6 @@ namespace stan {
           operands_and_partials.d_x1[i]
             += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
       }
-
-
       return operands_and_partials.value(logp);
     }
 
@@ -101,6 +92,7 @@ namespace stan {
     poisson_log(const T_n& n, const T_rate& lambda) {
       return poisson_log<false>(n, lambda);
     }
+
   }
 }
 #endif

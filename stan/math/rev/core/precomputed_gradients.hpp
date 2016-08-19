@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 #define STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <algorithm>
-#include <stdexcept>
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -64,9 +63,8 @@ namespace stan {
                  .alloc_array<vari*>(vars.size())),
           gradients_(ChainableStack::memalloc_
                      .alloc_array<double>(vars.size())) {
-        if (vars.size() != gradients.size())
-          throw std::invalid_argument("sizes of vars and gradients"
-                                      " do not match");
+        check_consistent_sizes("precomputed_gradients_vari",
+                               "vars", vars, "gradients", gradients);
         for (size_t i = 0; i < vars.size(); ++i)
           varis_[i] = vars[i].vi_;
         std::copy(gradients.begin(), gradients.end(), gradients_);
@@ -82,7 +80,6 @@ namespace stan {
       }
     };
 
-
     /**
      * This function returns a var for an expression that has the
      * specified value, vector of operands, and vector of partial
@@ -95,7 +92,7 @@ namespace stan {
      * @return An auto-diff variable that uses the precomputed
      *   gradients provided.
      */
-    var precomputed_gradients(const double value,
+    inline var precomputed_gradients(const double value,
                               const std::vector<var>& operands,
                               const std::vector<double>& gradients) {
       return var(new precomputed_gradients_vari(value, operands, gradients));

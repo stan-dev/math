@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 
 namespace stan {
-
   namespace {
     template <bool is_vec, typename T>
     struct scalar_type_helper {

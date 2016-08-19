@@ -8,7 +8,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -43,19 +42,17 @@ namespace stan {
      * @param lambda2 second log density.
      * @return log mixture of densities in specified proportion
      */
-    double log_mix(double theta,
-                   double lambda1,
-                   double lambda2) {
+    inline double log_mix(double theta,
+                          double lambda1,
+                          double lambda2) {
       using std::log;
-      stan::math::check_not_nan("log_mix", "lambda1", lambda1);
-      stan::math::check_not_nan("log_mix", "lambda2", lambda2);
-      stan::math::check_bounded("log_mix", "theta", theta, 0, 1);
+      check_not_nan("log_mix", "lambda1", lambda1);
+      check_not_nan("log_mix", "lambda2", lambda2);
+      check_bounded("log_mix", "theta", theta, 0, 1);
       return log_sum_exp(log(theta) + lambda1,
                          log1m(theta) + lambda2);
     }
 
   }
-
 }
-
 #endif

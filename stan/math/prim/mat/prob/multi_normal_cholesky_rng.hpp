@@ -22,22 +22,17 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
     template <class RNG>
     inline Eigen::VectorXd
     multi_normal_cholesky_rng(
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
-      RNG& rng
-    ) {
+        const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
+        RNG& rng) {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const char* function("stan::math::multi_normal_cholesky_rng");
-
-      using stan::math::check_finite;
-
+      static const char* function("multi_normal_cholesky_rng");
       check_finite(function, "Location parameter", mu);
 
       variate_generator<RNG&, normal_distribution<> >
@@ -51,5 +46,4 @@ namespace stan {
     }
   }
 }
-
 #endif

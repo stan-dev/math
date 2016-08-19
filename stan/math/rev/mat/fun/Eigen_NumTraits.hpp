@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 #define STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <limits>
 
 namespace Eigen {
@@ -11,80 +11,24 @@ namespace Eigen {
   /**
    * Numerical traits template override for Eigen for automatic
    * gradient variables.
+   *
+   * Documentation here: 
+   *   http://eigen.tuxfamily.org/dox/structEigen_1_1NumTraits.html
    */
-  template <>
-  struct NumTraits<stan::math::var> {
-    /**
-     * Real-valued variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::var Real;
-
-    /**
-     * Non-integer valued variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::var NonInteger;
-
-    /**
-     * Nested variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::var Nested;
-
-    /**
-     * Return standard library's epsilon for double-precision floating
-     * point, <code>std::numeric_limits<double>::epsilon()</code>.
-     *
-     * @return Same epsilon as a <code>double</code>.
-     */
-    inline static Real epsilon() {
-      return std::numeric_limits<double>::epsilon();
+  template<> struct NumTraits<stan::math::var>
+    : GenericNumTraits<stan::math::var> {
+    static inline stan::math::var dummy_precision() {
+      return NumTraits<double>::dummy_precision();
     }
 
-    /**
-     * Return dummy precision
-     */
-    inline static Real dummy_precision() {
-      return 1e-12;  // copied from NumTraits.h values for double
-    }
-
-    /**
-     * Return standard library's highest for double-precision floating
-     * point, <code>std::numeric_limits&lt;double&gt;::max()</code>.
-     *
-     * @return Same highest value as a <code>double</code>.
-     */
-    inline static Real highest() {
-      return std::numeric_limits<double>::max();
-    }
-
-    /**
-     * Return standard library's lowest for double-precision floating
-     * point, <code>&#45;std::numeric_limits&lt;double&gt;::max()</code>.
-     *
-     * @return Same lowest value as a <code>double</code>.
-     */
-    inline static Real lowest() {
-      return -std::numeric_limits<double>::max();
-    }
-
-    /**
-     * Properties for automatic differentiation variables
-     * read by Eigen matrix library.
-     */
     enum {
-      IsInteger = 0,
-      IsSigned = 1,
-      IsComplex = 0,
       RequireInitialization = 0,
-      ReadCost = 1,
-      AddCost = 1,
-      MulCost = 1,
-      HasFloatingPoint = 1
+      // ReadCost = twice the cost to copy a double
+      ReadCost = 2 * NumTraits<double>::ReadCost,
+      // AddCost = single addition going forward
+      AddCost = NumTraits<double>::AddCost,
+      // MulCost = single multiplication going forward
+      MulCost = NumTraits<double>::MulCost
     };
   };
 
@@ -192,8 +136,8 @@ namespace Eigen {
       typedef typename scalar_product_traits<LhsScalar, RhsScalar>::ReturnType
       ResScalar;
       static void run(Index rows, Index cols, Index depth,
-                      const LhsScalar* _lhs, Index lhsStride,
-                      const RhsScalar* _rhs, Index rhsStride,
+                      const LhsScalar* lhs, Index lhsStride,
+                      const RhsScalar* rhs, Index rhsStride,
                       ResScalar* res, Index resStride,
                       const ResScalar &alpha,
                       level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
@@ -201,8 +145,8 @@ namespace Eigen {
         for (Index i = 0; i < cols; i++) {
           general_matrix_vector_product<Index, LhsScalar, LhsStorageOrder,
                                         ConjugateLhs, RhsScalar, ConjugateRhs>
-            ::run(rows, depth, _lhs, lhsStride,
-                  &_rhs[(static_cast<int>(RhsStorageOrder)
+            ::run(rows, depth, lhs, lhsStride,
+                  &rhs[(static_cast<int>(RhsStorageOrder)
                          == static_cast<int>(ColMajor))
                         ? (i*rhsStride) :(i) ],
                   (static_cast<int>(RhsStorageOrder)

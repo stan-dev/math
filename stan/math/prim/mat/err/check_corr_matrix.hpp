@@ -14,8 +14,8 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
+
     /**
      * Return <code>true</code> if the specified matrix is a valid
      * correlation matrix.
@@ -38,17 +38,15 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the matrix is not square
      *   or if the matrix is 0x0
      * @throw <code>std::domain_error</code> if the matrix is non-symmetric,
-     *   diagonals not near 1, not positive definite, or any of the elements nan.
+     *   diagonals not near 1, not positive definite, or any of the
+     *   elements nan.
      */
     template <typename T_y>
     inline bool
-    check_corr_matrix(
-      const char* function,
-      const char* name,
-      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
-    ) {
+    check_corr_matrix(const char* function,
+        const char* name,
+        const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using Eigen::Matrix;
-      using stan::math::index_type;
 
       typedef typename index_type<Matrix<
         T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
@@ -73,7 +71,7 @@ namespace stan {
           return false;
         }
       }
-      stan::math::check_pos_definite(function, "y", y);
+      check_pos_definite(function, "y", y);
       return true;
     }
 

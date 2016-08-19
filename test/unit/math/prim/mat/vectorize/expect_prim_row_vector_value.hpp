@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_ROW_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_ROW_VECTOR_VALUE_HPP
 
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <Eigen/Dense>
-#include <gtest/gtest.h>
 #include <vector>
 
 template <typename F>
@@ -17,8 +17,9 @@ void expect_prim_row_vector_value() {
 
   RowVectorXd fc = F::template apply<RowVectorXd>(c);
   EXPECT_EQ(c.size(), fc.size());
-  for (int i = 0; i < fc.size(); ++i)
-    EXPECT_FLOAT_EQ(F::apply_base(c(i)), fc(i));
+  for (int i = 0; i < fc.size(); ++i) {
+    expect_val_eq(F::apply_base(c(i)), fc(i));
+  }
 
   vector<RowVectorXd> d;
   d.push_back(c);
@@ -28,8 +29,9 @@ void expect_prim_row_vector_value() {
   EXPECT_EQ(d.size(), fd.size());
   for (size_t i = 0; i < fd.size(); ++i) {
     EXPECT_EQ(d[i].size(), fd[i].size());
-    for (int j = 0; j < fd[i].size(); ++j)
-      EXPECT_FLOAT_EQ(F::apply_base(d[i](j)), fd[i](j));
+    for (int j = 0; j < fd[i].size(); ++j) {
+      expect_val_eq(F::apply_base(d[i](j)), fd[i](j));
+    }
   }
 }
 

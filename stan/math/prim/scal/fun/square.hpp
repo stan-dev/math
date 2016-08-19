@@ -16,10 +16,8 @@ namespace stan {
      *
      * @param x Input to square.
      * @return Square of input.
-     * @tparam T Type of scalar.
      */
-    template <typename T>
-    inline T square(const T x) {
+    inline double square(const double x) {
       return x * x;
     }
 

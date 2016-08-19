@@ -27,7 +27,6 @@ namespace stan {
       return ret;
     }
 
-
   }
 }
 #endif

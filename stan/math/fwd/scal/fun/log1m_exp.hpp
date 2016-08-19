@@ -14,8 +14,6 @@ namespace stan {
     inline
     fvar<T>
     log1m_exp(const fvar<T>& x) {
-      using stan::math::log1m_exp;
-      using stan::math::NOT_A_NUMBER;
       using ::expm1;
       if (x.val_ >= 0)
         return fvar<T>(NOT_A_NUMBER);

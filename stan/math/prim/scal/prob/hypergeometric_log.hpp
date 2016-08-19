@@ -16,7 +16,6 @@
 #include <boost/math/distributions.hpp>
 
 namespace stan {
-
   namespace math {
 
     // Hypergeometric(n|N, a, b)  [0 <= n <= a;  0 <= N-n <= b;  0 <= N <= a+b]
@@ -28,13 +27,7 @@ namespace stan {
     double
     hypergeometric_log(const T_n& n, const T_N& N,
                        const T_a& a, const T_b& b) {
-      static const char* function("stan::math::hypergeometric_log");
-
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
-      using stan::math::check_greater;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
+      static const char* function("hypergeometric_log");
 
       // check if any vectors are zero length
       if (!(stan::length(n)
@@ -42,7 +35,6 @@ namespace stan {
             && stan::length(a)
             && stan::length(b)))
         return 0.0;
-
 
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
@@ -69,7 +61,6 @@ namespace stan {
       if (!include_summand<propto>::value)
         return 0.0;
 
-
       for (size_t i = 0; i < size; i++)
         logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
           + math::binomial_coefficient_log(b_vec[i], N_vec[i]-n_vec[i])
@@ -89,6 +80,7 @@ namespace stan {
                        const T_b& b) {
       return hypergeometric_log<false>(n, N, a, b);
     }
+
   }
 }
 #endif

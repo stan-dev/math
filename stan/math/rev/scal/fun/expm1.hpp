@@ -54,7 +54,7 @@ namespace stan {
      * @param a The variable.
      * @return Two to the power of the specified variable.
      */
-    inline var expm1(const stan::math::var& a) {
+    inline var expm1(const var& a) {
       return var(new expm1_vari(a.vi_));
     }
 

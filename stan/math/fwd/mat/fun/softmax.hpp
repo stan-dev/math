@@ -12,7 +12,6 @@ namespace stan {
     inline
     Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>
     softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
-      using stan::math::softmax;
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
@@ -50,7 +49,6 @@ namespace stan {
 
       return softmax_alpha;
     }
-
 
   }
 }

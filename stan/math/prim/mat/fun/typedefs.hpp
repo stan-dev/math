@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -25,7 +25,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_dof, typename T_scale>
@@ -39,13 +38,8 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 0.0;
 
-      static const char* function("stan::math::scaled_inv_chi_square_ccdf_log");
+      static const char* function("scaled_inv_chi_square_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return P(0.0);
@@ -76,8 +70,6 @@ namespace stan {
       }
 
       // Compute cdf_log and its gradients
-      using stan::math::gamma_q;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
@@ -102,7 +94,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         }
 
         // Pull out values
@@ -116,8 +108,8 @@ namespace stan {
           = 2.0 * half_nu_dbl * half_s2_overx_dbl;
 
         // Compute
-        const T_partials_return Pn = 1.0 - gamma_q(half_nu_dbl,
-                                                   half_nu_s2_overx_dbl);
+        const T_partials_return Pn = gamma_p(half_nu_dbl,
+                                             half_nu_s2_overx_dbl);
         const T_partials_return gamma_p_deriv = exp(-half_nu_s2_overx_dbl)
           * pow(half_nu_s2_overx_dbl, half_nu_dbl-1) / tgamma(half_nu_dbl);
 
@@ -128,19 +120,19 @@ namespace stan {
             * gamma_p_deriv / Pn;
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            -= (0.5 * stan::math::grad_reg_inc_gamma(half_nu_dbl,
-                                                     half_nu_s2_overx_dbl,
-                                                     gamma_vec[n],
-                                                     digamma_vec[n])
+            -= (0.5 * grad_reg_inc_gamma(half_nu_dbl,
+                                         half_nu_s2_overx_dbl,
+                                         gamma_vec[n],
+                                         digamma_vec[n])
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

@@ -1,6 +1,6 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, gradRegIncGamma_typical) {
   double a = 0.5;
@@ -17,9 +17,18 @@ TEST(ProbInternalMath, gradRegIncGamma_infLoopInVersion2_0_1) {
   double g = 5143.28;
   double dig = 2.01698;
   
-  EXPECT_THROW(stan::math::grad_reg_inc_gamma(a, b, g, dig),
-               std::domain_error);
+  EXPECT_FLOAT_EQ(0, stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
+
+TEST(ProbInternalMath, gradRegIncGamma_largeZ) {
+  double a = 3;
+  double z = 48;
+  double g = 2.0;
+  double dig = 0.9227843;
+
+  EXPECT_FLOAT_EQ(5.08294581508e-18, stan::math::grad_reg_inc_gamma(a, z, g, dig));
+}
+
 TEST(ProbInternalMath, gradRegIncGamma_fd) {
   using stan::math::fvar;
 

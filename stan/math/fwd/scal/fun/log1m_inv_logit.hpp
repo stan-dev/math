@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -14,7 +13,6 @@ namespace stan {
     fvar<T>
     log1m_inv_logit(const fvar<T>& x) {
       using std::exp;
-      using stan::math::log1m_inv_logit;
       return fvar<T>(log1m_inv_logit(x.val_),
                      -x.d_ / (1 + exp(-x.val_)));
     }

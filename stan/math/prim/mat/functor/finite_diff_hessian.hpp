@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename F>

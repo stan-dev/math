@@ -20,7 +20,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -41,13 +40,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::exponential_cdf");
+      static const char* function("exponential_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return cdf(1.0);
@@ -87,10 +82,9 @@ namespace stan {
         if (!is_constant_struct<T_inv_scale>::value)
           operands_and_partials.d_x2[n] += rep_deriv * y_dbl * cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
-
 #endif

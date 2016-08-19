@@ -15,7 +15,6 @@
 #include <stan/math/prim/scal/fun/sign.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -23,15 +22,12 @@ namespace stan {
     double_exponential_rng(const double mu,
                            const double sigma,
                            RNG& rng) {
-      static const char* function("stan::math::double_exponential_rng");
+      static const char* function("double_exponential_rng");
 
       using boost::variate_generator;
       using boost::random::uniform_01;
       using std::log;
       using std::abs;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::log1m;
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

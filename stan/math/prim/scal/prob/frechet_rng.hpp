@@ -19,7 +19,6 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -30,11 +29,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::weibull_distribution;
 
-      static const char* function("stan::math::frechet_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive;
+      static const char* function("frechet_rng");
 
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Shape parameter", alpha);
@@ -45,6 +40,7 @@ namespace stan {
         weibull_rng(rng, weibull_distribution<>(alpha, 1.0/sigma));
       return 1.0 / weibull_rng();
     }
+
   }
 }
 #endif

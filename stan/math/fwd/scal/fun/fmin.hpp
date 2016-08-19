@@ -12,7 +12,6 @@ namespace stan {
     template <typename T>
     inline fvar<T> fmin(const fvar<T>& x1, const fvar<T>& x2) {
       using ::fmin;
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(boost::math::isnan(x1.val_))) {
         if (boost::math::isnan(x2.val_))
           return fvar<T>(fmin(x1.val_, x2.val_), NOT_A_NUMBER);
@@ -32,7 +31,6 @@ namespace stan {
     template <typename T>
     inline fvar<T> fmin(const double x1, const fvar<T>& x2) {
       using ::fmin;
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(boost::math::isnan(x1))) {
         if (boost::math::isnan(x2.val_))
           return fvar<T>(fmin(x1, x2.val_), NOT_A_NUMBER);
@@ -52,7 +50,6 @@ namespace stan {
     template <typename T>
     inline fvar<T> fmin(const fvar<T>& x1, const double x2) {
       using ::fmin;
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(boost::math::isnan(x1.val_))) {
         if (boost::math::isnan(x2))
           return fvar<T>(fmin(x1.val_, x2), NOT_A_NUMBER);

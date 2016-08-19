@@ -18,7 +18,7 @@ namespace stan {
       class log1m_exp_v_vari : public op_v_vari {
       public:
         explicit log1m_exp_v_vari(vari* avi) :
-          op_v_vari(stan::math::log1m_exp(avi->val_),
+          op_v_vari(log1m_exp(avi->val_),
                     avi) {
         }
         void chain() {
@@ -35,7 +35,7 @@ namespace stan {
      * Return the log of 1 minus the exponential of the specified
      * variable.
      */
-    inline var log1m_exp(const stan::math::var& a) {
+    inline var log1m_exp(const var& a) {
       return var(new log1m_exp_v_vari(a.vi_));
     }
 

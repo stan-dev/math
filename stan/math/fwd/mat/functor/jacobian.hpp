@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <typename T, typename F>
@@ -17,7 +16,6 @@ namespace stan {
              Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& J) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::fvar;
       Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
       for (int i = 0; i < x.size(); ++i) {
         for (int k = 0; k < x.size(); ++k)
@@ -36,6 +34,6 @@ namespace stan {
       }
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

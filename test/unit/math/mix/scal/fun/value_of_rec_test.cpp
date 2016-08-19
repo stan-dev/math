@@ -1,6 +1,6 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradRev,value_of_rec) {
   using stan::math::var;

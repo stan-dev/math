@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_REV_SCAL_FUN_VALUE_OF_REC_HPP
 
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {

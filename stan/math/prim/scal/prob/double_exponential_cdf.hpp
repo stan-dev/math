@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -39,7 +38,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_cdf(const T_y& y,
                            const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::double_exponential_cdf");
+      static const char* function("double_exponential_cdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
@@ -48,10 +47,6 @@ namespace stan {
               && stan::length(sigma) ) )
         return 1.0;
 
-      using stan::math::value_of;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
       using std::exp;
 
@@ -112,6 +107,7 @@ namespace stan {
       }
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

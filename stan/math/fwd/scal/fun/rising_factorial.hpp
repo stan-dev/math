@@ -7,15 +7,12 @@
 #include <iostream>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>
     inline
     fvar<T>
     rising_factorial(const fvar<T>& x, const fvar<T>& n) {
-      using stan::math::rising_factorial;
-
       T rising_fact(rising_factorial(x.val_, n.val_));
       return fvar<T>(rising_fact,
                      rising_fact * (digamma(x.val_ + n.val_)
@@ -26,7 +23,6 @@ namespace stan {
     inline
     fvar<T>
     rising_factorial(const fvar<T>& x, const double n) {
-      using stan::math::rising_factorial;
       using boost::math::digamma;
 
       T rising_fact(rising_factorial(x.val_, n));
@@ -39,7 +35,6 @@ namespace stan {
     inline
     fvar<T>
     rising_factorial(const double x, const fvar<T>& n) {
-      using stan::math::rising_factorial;
       using boost::math::digamma;
 
       T rising_fact(rising_factorial(x, n.val_));

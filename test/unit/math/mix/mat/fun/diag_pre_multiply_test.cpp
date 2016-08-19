@@ -99,10 +99,10 @@ TEST(AgradMixMatrixDiagPreMultiply, vector_fv_exception) {
   vector_fv B(3);
   vector_fv C(4);
 
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::invalid_argument);
 }
 TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_1stDeriv) {
   using stan::math::matrix_fv;
@@ -201,10 +201,10 @@ TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_exception) {
   row_vector_fv B(3);
   row_vector_fv C(4);
 
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::invalid_argument);
 }
 TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_1stDeriv) {
   using stan::math::matrix_ffv;
@@ -373,10 +373,10 @@ TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_exception) {
   vector_ffv B(3);
   vector_ffv C(4);
 
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::invalid_argument);
 }
 
 TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_1stDeriv) {
@@ -546,8 +546,8 @@ TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_exception) {
   row_vector_ffv B(3);
   row_vector_ffv C(4);
 
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::domain_error);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::domain_error);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,B), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(C,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Z,Y), std::invalid_argument);
+  EXPECT_THROW(stan::math::diag_pre_multiply(Y,Z), std::invalid_argument);
 }

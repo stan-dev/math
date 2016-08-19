@@ -11,7 +11,6 @@ namespace stan {
     template <typename T>
     inline fvar<T> atan(const fvar<T>& x) {
       using std::atan;
-      using stan::math::square;
       return fvar<T>(atan(x.val_), x.d_ / (1 + square(x.val_)));
     }
 

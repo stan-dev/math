@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -24,9 +23,7 @@ namespace stan {
     cholesky_factor_free(const Eigen::Matrix
                          <T, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using std::log;
-      if (!stan::math::check_cholesky_factor("cholesky_factor_free", "y", y))
-        throw std::domain_error("cholesky_factor_free: "
-                                "y is not a Cholesky factor");
+      check_cholesky_factor("cholesky_factor_free", "y", y);
       int M = y.rows();
       int N = y.cols();
       Eigen::Matrix<T, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
@@ -45,9 +42,6 @@ namespace stan {
       return x;
     }
 
-
   }
-
 }
-
 #endif

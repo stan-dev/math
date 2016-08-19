@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -46,13 +45,9 @@ namespace stan {
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix
                   <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
-      static const char* function("stan::math::dirichlet_log");
+      static const char* function("dirichlet_log");
       using boost::math::lgamma;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_positive;
-      using stan::math::check_simplex;
-      using stan::math::multiply_log;
 
       typename promote_args<T_prob, T_prior_sample_size>::type lp(0.0);
       check_consistent_sizes(function,
@@ -81,6 +76,7 @@ namespace stan {
                   <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
       return dirichlet_log<false>(theta, alpha);
     }
+
   }
 }
 #endif

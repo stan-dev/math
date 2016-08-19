@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>
@@ -32,14 +31,9 @@ namespace stan {
               && stan::length(sigma) ) )
         return 0.0;
 
-      static const char* function("stan::math::cauchy_cdf");
+      static const char* function("cauchy_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       T_partials_return ccdf_log(0.0);
 
@@ -62,7 +56,6 @@ namespace stan {
 
       // Compute CDFLog and its gradients
       using std::atan;
-      using stan::math::pi;
       using std::log;
 
       // Compute vectorized CDF and gradient
@@ -90,6 +83,7 @@ namespace stan {
       }
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

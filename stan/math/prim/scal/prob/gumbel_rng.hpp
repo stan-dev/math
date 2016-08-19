@@ -16,7 +16,6 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -27,11 +26,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const char* function("stan::math::gumbel_rng");
-
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-
+      static const char* function("gumbel_rng");
 
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", beta);
@@ -40,7 +35,7 @@ namespace stan {
         uniform01_rng(rng, uniform_01<>());
       return mu - beta * std::log(-std::log(uniform01_rng()));
     }
+
   }
 }
 #endif
-

@@ -28,10 +28,9 @@ namespace stan {
         { }
 
         double compute() {
-          using stan::math::value_of;
-          return stan::math::trace_gen_quad_form(value_of(D_),
-                                                 value_of(A_),
-                                                 value_of(B_));
+          return trace_gen_quad_form(value_of(D_),
+                                     value_of(A_),
+                                     value_of(B_));
         }
 
         Eigen::Matrix<TD, RD, CD>  D_;
@@ -45,7 +44,7 @@ namespace stan {
       class trace_gen_quad_form_vari : public vari {
       protected:
         static inline void
-        computeAdjoints(const double& adj,
+        computeAdjoints(double adj,
                         const Eigen::Matrix<double, RD, CD>& D,
                         const Eigen::Matrix<double, RA, CA>& A,
                         const Eigen::Matrix<double, RB, CB>& B,
@@ -79,29 +78,27 @@ namespace stan {
           }
         }
 
-
       public:
         explicit
         trace_gen_quad_form_vari(trace_gen_quad_form_vari_alloc
                                  <TD, RD, CD, TA, RA, CA, TB, RB, CB> *impl)
-          : vari(impl->compute()), _impl(impl) { }
+          : vari(impl->compute()), impl_(impl) { }
 
         virtual void chain() {
-          using stan::math::value_of;
           computeAdjoints(adj_,
-                          value_of(_impl->D_),
-                          value_of(_impl->A_),
-                          value_of(_impl->B_),
+                          value_of(impl_->D_),
+                          value_of(impl_->A_),
+                          value_of(impl_->B_),
                           reinterpret_cast<Eigen::Matrix<var, RD, CD> *>
-                          (boost::is_same<TD, var>::value?(&_impl->D_):NULL),
+                          (boost::is_same<TD, var>::value?(&impl_->D_):NULL),
                           reinterpret_cast<Eigen::Matrix<var, RA, CA> *>
-                          (boost::is_same<TA, var>::value?(&_impl->A_):NULL),
+                          (boost::is_same<TA, var>::value?(&impl_->A_):NULL),
                           reinterpret_cast<Eigen::Matrix<var, RB, CB> *>
-                          (boost::is_same<TB, var>::value?(&_impl->B_):NULL));
+                          (boost::is_same<TB, var>::value?(&impl_->B_):NULL));
         }
 
         trace_gen_quad_form_vari_alloc<TD, RD, CD, TA, RA, CA, TB, RB, CB>
-        *_impl;
+        *impl_;
       };
     }
 
@@ -116,14 +113,14 @@ namespace stan {
       trace_gen_quad_form(const Eigen::Matrix<TD, RD, CD>& D,
                           const Eigen::Matrix<TA, RA, CA>& A,
                           const Eigen::Matrix<TB, RB, CB>& B) {
-      stan::math::check_square("trace_gen_quad_form", "A", A);
-      stan::math::check_square("trace_gen_quad_form", "D", D);
-      stan::math::check_multiplicable("trace_gen_quad_form",
-                                      "A", A,
-                                      "B", B);
-      stan::math::check_multiplicable("trace_gen_quad_form",
-                                      "B", B,
-                                      "D", D);
+      check_square("trace_gen_quad_form", "A", A);
+      check_square("trace_gen_quad_form", "D", D);
+      check_multiplicable("trace_gen_quad_form",
+                          "A", A,
+                          "B", B);
+      check_multiplicable("trace_gen_quad_form",
+                          "B", B,
+                          "D", D);
 
       trace_gen_quad_form_vari_alloc<TD, RD, CD, TA, RA, CA, TB, RB, CB>
         *baseVari
@@ -133,7 +130,7 @@ namespace stan {
       return var(new trace_gen_quad_form_vari
                  <TD, RD, CD, TA, RA, CA, TB, RB, CB>(baseVari));
     }
+
   }
 }
-
 #endif

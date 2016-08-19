@@ -4,14 +4,13 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
      * Return the value of the specified scalar argument
      * converted to a double value.
      *
-     * <p>See the <code>stan::math::primitive_value</code> function to
+     * <p>See the <code>primitive_value</code> function to
      * extract values without casting to <code>double</code>.
      *
      * <p>This function is meant to cover the primitive types. For
@@ -45,5 +44,4 @@ namespace stan {
 
   }
 }
-
 #endif

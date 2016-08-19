@@ -6,13 +6,12 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
      * Returns 1 if the input's value is infinite and 0 otherwise.
      *
-     * Delegates to <code>stan::math::is_inf</code>.
+     * Delegates to <code>is_inf</code>.
      *
      * @param v Value to test.
      *
@@ -21,10 +20,9 @@ namespace stan {
     inline
     int
     is_inf(const var& v) {
-      return stan::math::is_inf(v.val());
+      return is_inf(v.val());
     }
 
   }
 }
-
 #endif

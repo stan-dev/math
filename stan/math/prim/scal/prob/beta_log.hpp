@@ -27,7 +27,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -53,27 +52,15 @@ namespace stan {
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_log(const T_y& y,
              const T_scale_succ& alpha, const T_scale_fail& beta) {
-      static const char* function("stan::math::beta_log");
+      static const char* function("beta_log");
 
       typedef typename stan::partials_return_type<T_y,
                                                   T_scale_succ,
                                                   T_scale_fail>::type
         T_partials_return;
 
-      using stan::math::digamma;
-      using stan::math::lgamma;
-
       using stan::is_constant_struct;
       using stan::is_vector;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1m;
-      using stan::math::multiply_log;
-      using stan::math::value_of;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using std::log;
 
       // check if any vectors are zero length

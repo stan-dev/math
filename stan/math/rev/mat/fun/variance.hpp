@@ -9,13 +9,12 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     namespace {  // anonymous
 
-      var calc_variance(size_t size,
-                        const var* dtrs) {
+      inline var calc_variance(size_t size,
+                               const var* dtrs) {
         vari** varis = reinterpret_cast<vari**>(ChainableStack::memalloc_
                                                 .alloc(size * sizeof(vari*)));
         for (size_t i = 0; i < size; ++i)
@@ -49,8 +48,8 @@ namespace stan {
      * @param[in] v a vector
      * @return sample variance of specified vector
      */
-    var variance(const std::vector<var>& v) {
-      stan::math::check_nonzero_size("variance", "v", v);
+    inline var variance(const std::vector<var>& v) {
+      check_nonzero_size("variance", "v", v);
       if (v.size() == 1) return 0;
       return calc_variance(v.size(), &v[0]);
     }
@@ -67,12 +66,11 @@ namespace stan {
      */
     template <int R, int C>
     var variance(const Eigen::Matrix<var, R, C>& m) {
-      stan::math::check_nonzero_size("variance", "m", m);
+      check_nonzero_size("variance", "m", m);
       if (m.size() == 1) return 0;
       return calc_variance(m.size(), &m(0));
     }
 
   }
 }
-
 #endif

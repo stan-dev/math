@@ -19,7 +19,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto,
@@ -27,19 +26,13 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("stan::math::skew_normal_log");
+      static const char* function("skew_normal_log");
       typedef typename stan::partials_return_type<T_y, T_loc,
                                                   T_scale, T_shape>::type
         T_partials_return;
 
       using std::log;
       using stan::is_constant_struct;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::include_summand;
       using std::exp;
 
       // check if any vectors are zero length
@@ -100,7 +93,7 @@ namespace stan {
         // reusable subexpression values
         const T_partials_return y_minus_mu_over_sigma
           = (y_dbl - mu_dbl) * inv_sigma[n];
-        const double pi_dbl = stan::math::pi();
+        const double pi_dbl = pi();
 
         // log probability
         if (include_summand<propto>::value)
@@ -148,6 +141,7 @@ namespace stan {
                     const T_shape& alpha) {
       return skew_normal_log<false>(y, mu, sigma, alpha);
     }
+
   }
 }
 #endif

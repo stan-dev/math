@@ -7,7 +7,6 @@
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
-#include <stdexcept>
 #include <vector>
 
 namespace stan {
@@ -46,7 +45,6 @@ namespace stan {
 
     }
 
-
     /**
      * Return the softmax of the specified Eigen vector.  Softmax is
      * guaranteed to return a simplex.
@@ -62,17 +60,7 @@ namespace stan {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
-      stan::math::check_nonzero_size("log_softmax", "alpha", alpha);
-
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
-      if (alpha.size() == 0)
-        throw std::domain_error("arg vector to log_softmax() "
-                                "must have size > 0");
+      check_nonzero_size("log_softmax", "alpha", alpha);
 
       // TODO(carpenter): replace with array alloc
       vari** alpha_vi_array
@@ -80,7 +68,6 @@ namespace stan {
         (vari::operator new(sizeof(vari*) * alpha.size()));
       for (int i = 0; i < alpha.size(); ++i)
         alpha_vi_array[i] = alpha(i).vi_;
-
 
       Matrix<double, Dynamic, 1> alpha_d(alpha.size());
       for (int i = 0; i < alpha_d.size(); ++i)
@@ -127,8 +114,6 @@ namespace stan {
       return log_softmax_alpha;
     }
 
-
   }
 }
-
 #endif

@@ -12,11 +12,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
-      using stan::math::owens_t;
-      using stan::math::pi;
-      using stan::math::INV_SQRT_2;
-      using stan::math::INV_SQRT_TWO_PI;
-      using stan::math::square;
       using std::exp;
       using ::erf;
 
@@ -32,9 +27,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> owens_t(const double x1, const fvar<T>& x2) {
-      using stan::math::owens_t;
-      using stan::math::pi;
-      using stan::math::square;
       using std::exp;
 
       T neg_x1_sq_div_2 = -square(x1) * 0.5;
@@ -46,11 +38,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> owens_t(const fvar<T>& x1, const double x2) {
-      using stan::math::owens_t;
-      using stan::math::pi;
-      using stan::math::square;
-      using stan::math::INV_SQRT_2;
-      using stan::math::INV_SQRT_TWO_PI;
       using std::exp;
       using ::erf;
 

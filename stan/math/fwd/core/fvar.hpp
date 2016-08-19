@@ -6,7 +6,6 @@
 #include <ostream>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -39,7 +38,6 @@ namespace stan {
         if (unlikely(boost::math::isnan(val)))
           d_ = val;
       }
-
 
       inline
       fvar<T>&

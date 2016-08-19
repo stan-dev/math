@@ -18,7 +18,6 @@ namespace stan {
      */
     template <typename T>
     inline fvar<T> sum(const std::vector<fvar<T> >& m) {
-      using stan::math::sum;
       if (m.size() == 0)
         return 0.0;
       std::vector<T> vals(m.size());

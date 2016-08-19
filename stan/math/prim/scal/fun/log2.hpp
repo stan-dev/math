@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <math.h>
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -22,9 +22,21 @@ namespace stan {
      */
     template <typename T>
     inline typename boost::math::tools::promote_args<T>::type
-    log2(const T a) {
+    log2(const T& a) {
       using std::log;
       return log(a) / LOG_2;
+    }
+
+    /**
+     * Return the base two logarithm of the specified
+     * argument.  This version is required to disambiguate
+     * <code>log2(int)</code>.
+     *
+     * @param[in] x Argument.
+     * @return Base two logarithm of the argument.
+     */
+    inline double log2(int x) {
+      return log2(static_cast<double>(x));
     }
 
     /**

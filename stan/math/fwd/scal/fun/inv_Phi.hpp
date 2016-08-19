@@ -8,12 +8,10 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
     inline fvar<T> inv_Phi(const fvar<T>& p) {
-      using stan::math::inv_Phi;
       using std::exp;
       T xv = inv_Phi(p.val_);
       return fvar<T>(xv,

@@ -5,7 +5,6 @@
 #include <Eigen/Core>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -21,10 +20,8 @@ namespace stan {
       typedef typename Eigen::Matrix<T, R, C>::Scalar type;
     };
 
-
   }
 
 }
-
 
 #endif

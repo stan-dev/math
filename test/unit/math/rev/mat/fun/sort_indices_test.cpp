@@ -49,7 +49,6 @@ void test_sort_indices_asc(Eigen::Matrix<T,R,C> val) {
   using stan::math::sort_indices_asc;
 
   typedef Eigen::Matrix<AVAR,R,C> AVEC;
-  typedef Eigen::Matrix<double,R,C> VEC;
   
   const size_t size = val.size();
 
@@ -76,7 +75,6 @@ void test_sort_indices_desc(Eigen::Matrix<T,R,C> val) {
   using stan::math::sort_indices_desc;
 
   typedef Eigen::Matrix<AVAR,R,C> AVEC;
-  typedef Eigen::Matrix<double,R,C> VEC;
   
   const size_t size = val.size();
 

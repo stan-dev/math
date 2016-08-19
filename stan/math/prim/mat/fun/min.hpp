@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MIN_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <algorithm>
 #include <limits>
-#include <stdexcept>
 #include <vector>
 
 namespace stan {
@@ -18,8 +18,7 @@ namespace stan {
      * @tparam Type of values being compared and returned
      */
     inline int min(const std::vector<int>& x) {
-      if (x.size() == 0)
-        throw std::domain_error("error: cannot take min of empty int vector");
+      check_nonzero_size("min", "int vector", x);
       int min = x[0];
       for (size_t i = 1; i < x.size(); ++i)
         if (x[i] < min)
