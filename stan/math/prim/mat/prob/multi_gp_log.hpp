@@ -18,8 +18,6 @@
 
 namespace stan {
   namespace math {
-    // MultiGP(y|Sigma, w)   [y.rows() = w.size(), y.cols() = Sigma.rows();
-    //                            Sigma symmetric, non-negative, definite]
     /**
      * The log of a multivariate Gaussian Process for the given y, Sigma, and
      * w.  y is a dxN matrix, where each column is a different observation and each

@@ -187,5 +187,4 @@ namespace stan {
 
   }
 }
-
 #endif

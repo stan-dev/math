@@ -27,13 +27,10 @@ namespace stan {
         softmax_alpha(k).d_ = 0;
       }
 
-      // for each input position
       for (int m = 0; m < alpha.size(); ++m) {
-        // for each output position
         T negative_alpha_m_d_times_softmax_alpha_t_m
           = - alpha(m).d_ * softmax_alpha_t(m);
         for (int k = 0; k < alpha.size(); ++k) {
-          // chain from input to output
           if (m == k) {
             softmax_alpha(k).d_
               += softmax_alpha_t(k)
@@ -52,5 +49,4 @@ namespace stan {
 
   }
 }
-
 #endif
