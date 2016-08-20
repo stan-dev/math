@@ -25,20 +25,15 @@ TEST(ProbDistributionsWishartRng, rng) {
 
 TEST(probdistributionsWishartRng, symmetry) {
   using Eigen::MatrixXd;
-  using stan::math::normal_rng;
   using stan::math::wishart_rng;
   using stan::test::unit::expect_symmetric;
+  using stan::test::unit::spd_rng;
 
   boost::random::mt19937 rng;
-  for (int k = 1; k < 20; ++k) {
-    MatrixXd sigma(k, k);
-    for (int j = 0; j < k; ++j)
-      for (int i = 0; i < k; ++i)
-        sigma(i, j) = normal_rng(0, 2, rng);
-    sigma = 0.5 * (sigma + sigma.transpose());
-    for (double nu = k - 0.99; nu < k + 10; ++nu)
-      expect_symmetric(wishart_rng(nu, sigma, rng));
-  }
+  for (int k = 1; k < 20; ++k)
+    for (double nu = k - 0.9; nu < k + 10; ++nu)
+      for (int n = 0; n < 10; ++n)
+        expect_symmetric(wishart_rng(nu, spd_rng(k, rng), rng));
 }
 
 TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {

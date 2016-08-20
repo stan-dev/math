@@ -7,7 +7,6 @@
 TEST(ProbDistributionsInvWishartRng, rng) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
-
   boost::random::mt19937 rng;
 
   MatrixXd omega(3,4);
@@ -23,28 +22,15 @@ TEST(ProbDistributionsInvWishartRng, rng) {
 }
 TEST(probdistributionsInvWishartRng, symmetry) {
   using Eigen::MatrixXd;
-  using stan::math::normal_rng;
   using stan::math::inv_wishart_rng;
   using stan::test::unit::expect_symmetric;
+  using stan::test::unit::spd_rng;
 
   boost::random::mt19937 rng;
-  for (int k = 1; k < 20; ++k) {
-    std::cout << "k=" << k << std::endl;
-    // generate Choleksy factor for symm, pos def matrix
-    MatrixXd sigma = MatrixXd::Zero(k, k);
-    for (int j = 0; j < k; ++j)
-      for (int i = 0; i <= j; ++i)
-        sigma(i, j) = normal_rng(0, 1, rng);
-    for (int i = 0; i < k; ++i)
-      sigma(i, i) *= sigma(i, i);  // pos. diagonal
-    sigma = sigma.transpose() * sigma;  // reconstruct full matrix
-    sigma = 0.5 * (sigma + sigma.transpose());  // symmetrize
-    for (int i = 0; i < k; ++i)
-      sigma(i, i) += 5;  // condition
+  for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.5; nu < k + 20; ++nu)
       for (int n = 0; n < 10; ++n)
-        expect_symmetric(inv_wishart_rng(nu, sigma, rng));
-  }
+        expect_symmetric(inv_wishart_rng(nu, spd_rng(k, rng), rng));
 }
 
 TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
