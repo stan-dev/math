@@ -15,6 +15,12 @@ namespace stan {
     /**
      * Return the specified number of elements as a vector
      * from the back of the specified vector.
+     *
+     * @tparam T Type of value in vector.
+     * @param v Vector input.
+     * @param n Size of return.
+     * @return The last n elements of v.
+     * @throw std::out_of_range if n is out of range.
      */
     template <typename T>
     inline
@@ -29,6 +35,12 @@ namespace stan {
     /**
      * Return the specified number of elements as a row vector
      * from the back of the specified row vector.
+     *
+     * @tparam T Type of value in vector.
+     * @param rv Row vector.
+     * @param n Size of return row vector.
+     * @return The last n elements of rv.
+     * @throw std::out_of_range if n is out of range.
      */
     template <typename T>
     inline
@@ -40,6 +52,16 @@ namespace stan {
       return rv.tail(n);
     }
 
+    /**
+     * Return the specified number of elements as a standard vector
+     * from the back of the specified standard vector.
+     *
+     * @tparam T Type of value in vector.
+     * @param sv Standard vector.
+     * @param n Size of return.
+     * @return The last n elements of sv.
+     * @throw std::out_of_range if n is out of range.     
+     */
     template <typename T>
     std::vector<T> tail(const std::vector<T>& sv,
                         size_t n) {
@@ -54,5 +76,4 @@ namespace stan {
 
   }
 }
-
 #endif
