@@ -72,10 +72,10 @@ namespace stan {
         container_view(const T1& x, scalar_t* y) { }
 
         /**
-         * operator[](int i) 
-         * throws exception
+         * operator[](int i)
          *
          * @param n index
+         * @throw std::out_of_range regardless of the input.
          */
         scalar_t operator[](int n) const {
           throw std::out_of_range("can't access dummy elements.");
