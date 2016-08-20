@@ -35,7 +35,6 @@ namespace stan {
                                                   T_scale>::type
         T_partials_return;
 
-      // Size checks
       if (!(stan::length(y) && stan::length(nu) && stan::length(mu)
             && stan::length(sigma)))
         return 1.0;
@@ -51,7 +50,6 @@ namespace stan {
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       VectorView<const T_loc> mu_vec(mu);
@@ -71,7 +69,6 @@ namespace stan {
       using std::pow;
       using std::exp;
 
-      // Cache a few expensive function calls if nu is a parameter
       T_partials_return digammaHalf = 0;
 
       VectorBuilder<!is_constant_struct<T_dof>::value,
@@ -95,7 +92,6 @@ namespace stan {
         }
       }
 
-      // Compute vectorized CDF and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero

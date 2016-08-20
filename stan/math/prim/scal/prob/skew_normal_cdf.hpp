@@ -32,7 +32,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
@@ -76,10 +75,8 @@ namespace stan {
         const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff) - 2
           * owens_t(diff, alpha_dbl);
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         const T_partials_return deriv_erfc = SQRT_TWO_OVER_PI * 0.5
           * exp(-scaled_diff_sq)
           / sigma_dbl;

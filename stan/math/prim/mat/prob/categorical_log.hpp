@@ -56,7 +56,6 @@ namespace stan {
       return categorical_log<false>(n, theta);
     }
 
-    // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
     template <bool propto,
               typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type

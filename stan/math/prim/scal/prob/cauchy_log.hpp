@@ -48,16 +48,13 @@ namespace stan {
 
       using stan::is_constant_struct;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -66,13 +63,11 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
       using std::log;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
@@ -96,11 +91,9 @@ namespace stan {
         operands_and_partials(y, mu, sigma);
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-        // reusable subexpression values
         const T_partials_return y_minus_mu
           = y_dbl - mu_dbl;
         const T_partials_return y_minus_mu_squared
@@ -110,7 +103,6 @@ namespace stan {
         const T_partials_return y_minus_mu_over_sigma_squared
           = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
-        // log probability
         if (include_summand<propto>::value)
           logp += NEG_LOG_PI;
         if (include_summand<propto, T_scale>::value)
@@ -118,7 +110,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp -= log1p(y_minus_mu_over_sigma_squared);
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= 2 * y_minus_mu
             / (sigma_squared[n] + y_minus_mu_squared);

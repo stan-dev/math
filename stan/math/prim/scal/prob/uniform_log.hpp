@@ -19,7 +19,6 @@
 namespace stan {
   namespace math {
 
-    // CONTINUOUS, UNIVARIATE DENSITIES
     /**
      * The log of a uniform density for the given
      * y, lower, and upper bound.
@@ -51,13 +50,11 @@ namespace stan {
 
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Lower bound parameter", alpha);
@@ -68,7 +65,6 @@ namespace stan {
                              "Lower bound parameter", alpha,
                              "Upper bound parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_low, T_high>::value)
         return 0.0;
 

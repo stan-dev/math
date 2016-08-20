@@ -50,7 +50,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)))
         return 0.0;
@@ -63,7 +62,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
@@ -72,7 +70,6 @@ namespace stan {
         if (value_of(y_vec[n]) < 0)
           return LOG_ZERO;
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_dof>::value)
         return 0.0;
 

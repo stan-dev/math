@@ -37,13 +37,11 @@ namespace stan {
 
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_positive(function, "Random variable", y);
       check_positive_finite(function, "Shape parameter", alpha);
@@ -53,7 +51,6 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 

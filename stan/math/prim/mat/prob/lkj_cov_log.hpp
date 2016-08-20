@@ -38,7 +38,6 @@ namespace stan {
       check_positive(function, "Shape parameter", eta);
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Scale parameter", sigma);
-      // FIXME: build vectorized versions
       for (int m = 0; m < y.rows(); ++m)
         for (int n = 0; n < y.cols(); ++n)
           check_finite(function, "Covariance matrix", y(m, n));
