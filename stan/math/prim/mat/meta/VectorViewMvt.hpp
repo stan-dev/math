@@ -59,6 +59,7 @@ namespace stan {
       else
         return x_[0];
     }
+
   private:
     matrix_t* x_;
   };
@@ -95,6 +96,7 @@ namespace stan {
       else
         return x_[0];
     }
+
   private:
     const matrix_t* x_;
   };
