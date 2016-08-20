@@ -18,9 +18,9 @@ namespace stan {
    *
    * @tparam T Type of scalar of the matrix being wrapped.  
    * @tparam is_array True if underlying type T can be indexed with
-   * operator[].  
+   *   operator[].  
    * @tparam throw_if_accessed True if the behavior is to
-   * throw an exception whenever <code>operator[]</code> is called.
+   *   throw an exception whenever <code>operator[]</code> is called.
    */
   template <typename T, bool is_array
             = stan::is_vector_like
@@ -49,7 +49,7 @@ namespace stan {
      * @param i index. Only used if access is true.
      * @return Reference to a matrix.
      * @throw std::out_of_range if the template parameter, 
-     * throw_if_accessed, is true.
+     *   throw_if_accessed, is true.
      */
     matrix_t& operator[](int i) {
       if (throw_if_accessed)
@@ -85,7 +85,7 @@ namespace stan {
      * @param i index. Only used if access is true.
      * @return Reference to a matrix.
      * @throw std::out_of_range if the template parameter, 
-     * throw_if_accessed, is true.
+     *   throw_if_accessed, is true.
      */
     const matrix_t& operator[](int i) const {
       if (throw_if_accessed)
