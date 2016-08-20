@@ -64,10 +64,11 @@ namespace stan {
      * @throw std::domain_error if m and n are not positive or are nan.
      * @throw std::domain_error if the implied sparse matrix and b are
      *                          not multiplicable.
-     * @throw std::domain_error if m/n/w/v/u are not internally
-     * consistent, as defined by the indexing scheme.  Extractors are
-     * defined in Stan which guarantee a consistent set of m/n/w/v/u
-     * for a given sparse matrix.
+     * @throw std::invalid_argument if m/n/w/v/u are not internally
+     *   consistent, as defined by the indexing scheme.  Extractors are
+     *   defined in Stan which guarantee a consistent set of m/n/w/v/u
+     *   for a given sparse matrix.
+     * @throw std::out_of_range if any of the indexes are out of range.
      */
     /** \addtogroup csr_format
      */
@@ -113,7 +114,6 @@ namespace stan {
       }
       return result;
     }
-
     /** @}*/   // end of csr_format group
 
   }
