@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_INV_WISHART_RNG_HPP
 
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/fun/inverse_spd.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -22,8 +23,7 @@ namespace stan {
 
       MatrixXd S_inv = MatrixXd::Identity(k, k);
       S_inv = S.ldlt().solve(S_inv);
-
-      MatrixXd asym = wishart_rng(nu, S_inv, rng).inverse();
+      MatrixXd asym = inverse_spd(wishart_rng(nu, S_inv, rng));
       return 0.5 * (asym.transpose() + asym);  // ensure symmetry
     }
 

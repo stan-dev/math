@@ -18,7 +18,6 @@ namespace stan {
       static const char* function("wishart_rng");
 
       using Eigen::MatrixXd;
-
       typename index_type<MatrixXd>::type k = S.rows();
 
       check_square(function, "scale parameter", S);
@@ -30,8 +29,7 @@ namespace stan {
           B(i, j) = normal_rng(0, 1, rng);
         B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
       }
-      MatrixXd asym = crossprod(B * S.llt().matrixU());
-      return 0.5 * (asym.transpose() + asym);  // ensure symmetry
+      return crossprod(B * S.llt().matrixU());
     }
 
   }

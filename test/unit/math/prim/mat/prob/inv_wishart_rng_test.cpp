@@ -29,13 +29,21 @@ TEST(probdistributionsInvWishartRng, symmetry) {
 
   boost::random::mt19937 rng;
   for (int k = 1; k < 20; ++k) {
-    MatrixXd sigma(k, k);
+    std::cout << "k=" << k << std::endl;
+    // generate Choleksy factor for symm, pos def matrix
+    MatrixXd sigma = MatrixXd::Zero(k, k);
     for (int j = 0; j < k; ++j)
-      for (int i = 0; i < k; ++i)
-        sigma(i, j) = normal_rng(0, 2, rng);
-    sigma = 0.5 * (sigma + sigma.transpose());
-    for (double nu = k - 0.99; nu < k + 10; ++nu)
-      expect_symmetric(inv_wishart_rng(nu, sigma, rng));
+      for (int i = 0; i <= j; ++i)
+        sigma(i, j) = normal_rng(0, 1, rng);
+    for (int i = 0; i < k; ++i)
+      sigma(i, i) *= sigma(i, i);  // pos. diagonal
+    sigma = sigma.transpose() * sigma;  // reconstruct full matrix
+    sigma = 0.5 * (sigma + sigma.transpose());  // symmetrize
+    for (int i = 0; i < k; ++i)
+      sigma(i, i) += 5;  // condition
+    for (double nu = k - 0.5; nu < k + 20; ++nu)
+      for (int n = 0; n < 10; ++n)
+        expect_symmetric(inv_wishart_rng(nu, sigma, rng));
   }
 }
 
