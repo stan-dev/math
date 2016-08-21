@@ -33,15 +33,12 @@ namespace stan {
 
       using boost::math::lgamma;
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(lambda)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args
       check_nonnegative(function, "Random variable", n);
       check_not_nan(function, "Rate parameter", lambda);
       check_nonnegative(function, "Rate parameter", lambda);
@@ -49,11 +46,9 @@ namespace stan {
                              "Random variable", n,
                              "Rate parameter", lambda);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_rate>::value)
         return 0.0;
 
-      // set up expression templates wrapping scalars/vecs into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
@@ -65,7 +60,6 @@ namespace stan {
         if (lambda_vec[i] == 0 && n_vec[i] != 0)
           return LOG_ZERO;
 
-      // return accumulator with gradients
       OperandsAndPartials<T_rate> operands_and_partials(lambda);
 
       for (size_t i = 0; i < size; i++) {
@@ -77,7 +71,6 @@ namespace stan {
               - value_of(lambda_vec[i]);
         }
 
-        // gradients
         if (!is_constant_struct<T_rate>::value)
           operands_and_partials.d_x1[i]
             += n_vec[i] / value_of(lambda_vec[i]) - 1.0;

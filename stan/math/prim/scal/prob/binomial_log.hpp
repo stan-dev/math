@@ -41,7 +41,6 @@ namespace stan {
 
       static const char* function("binomial_log");
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(N)
             && stan::length(theta)))
@@ -57,11 +56,9 @@ namespace stan {
                              "Population size parameter", N,
                              "Probability parameter", theta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_prob> theta_vec(theta);
@@ -78,7 +75,6 @@ namespace stan {
       for (size_t i = 0; i < length(theta); ++i)
         log1m_theta[i] = log1m(value_of(theta_vec[i]));
 
-      // no test for include_summand because return if not live
       for (size_t i = 0; i < size; ++i)
         logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
           + (N_vec[i] - n_vec[i]) * log1m_theta[i];

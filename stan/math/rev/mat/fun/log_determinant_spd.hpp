@@ -28,7 +28,7 @@ namespace stan {
                 "failed LDLT factorization");
       }
 
-       // compute the inverse of A (needed for the derivative)
+      // compute the inverse of A (needed for the derivative)
       m_d.setIdentity(m.rows(), m.cols());
       ldlt.solveInPlace(m_d);
 

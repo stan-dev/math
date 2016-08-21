@@ -94,7 +94,6 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
         operands_and_partials(y, alpha, beta);
 
