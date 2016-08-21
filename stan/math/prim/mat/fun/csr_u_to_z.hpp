@@ -20,6 +20,8 @@ namespace stan {
      * @param[in] u U vector.
      * @param[in] i Index into resulting z vector.
      * @return z[i] where z is conversion from u.
+     * @throw std::domain_error if u is zero length.
+     * @throw std::out_of_range if i is out of range.
      */
     inline int csr_u_to_z(const std::vector<int>& u, int i) {
       check_positive("csr_u_to_z", "u.size()", u.size());

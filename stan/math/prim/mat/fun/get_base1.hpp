@@ -21,6 +21,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at <code>i - 1</code>
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -46,6 +47,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -73,6 +75,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -102,6 +105,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -133,6 +137,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -167,6 +172,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -203,6 +209,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -241,6 +248,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of vector at indexes.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -279,6 +287,7 @@ namespace stan {
      * the index is out of range.
      * @return Row of matrix at <code>i - 1</code>.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline Eigen::Matrix<T, 1, Eigen::Dynamic>
@@ -305,6 +314,7 @@ namespace stan {
      * @return Value of matrix at row <code>m - 1</code> and column
      * <code>n - 1</code>.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline const T&
@@ -331,6 +341,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of column vector at row <code>m - 1</code>.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.
      */
     template <typename T>
     inline
@@ -355,6 +366,7 @@ namespace stan {
      * the index is out of range.
      * @return Value of row vector at column <code>n - 1</code>.
      * @tparam T type of value.
+     * @throw std::out_of_range if idx is out of range.     
      */
     template <typename T>
     inline const T&
