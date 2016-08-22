@@ -33,10 +33,8 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(nu) ) ) return 0.0;
 
-      // Error checks
       static const char* function("inv_chi_square_cdf_log");
 
       using boost::math::tools::promote_args;
@@ -51,7 +49,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
@@ -60,18 +57,15 @@ namespace stan {
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-
       for (size_t i = 0; i < stan::length(y); i++)
         if (value_of(y_vec[i]) == 0)
           return operands_and_partials.value(negative_infinity());
 
-      // Compute cdf_log and its gradients
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
       using std::log;
 
-      // Cache a few expensive function calls if nu is a parameter
       VectorBuilder<!is_constant_struct<T_dof>::value,
                     T_partials_return, T_dof> gamma_vec(stan::length(nu));
       VectorBuilder<!is_constant_struct<T_dof>::value,
@@ -85,7 +79,6 @@ namespace stan {
         }
       }
 
-      // Compute vectorized cdf_log and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
@@ -93,12 +86,10 @@ namespace stan {
           continue;
         }
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return y_inv_dbl = 1.0 / y_dbl;
         const T_partials_return nu_dbl = value_of(nu_vec[n]);
 
-        // Compute
         const T_partials_return Pn = gamma_q(0.5 * nu_dbl, 0.5 * y_inv_dbl);
 
         P += log(Pn);

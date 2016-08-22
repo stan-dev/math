@@ -37,13 +37,11 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      // Ensure non-zero arugment lengths
       if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       T_partials_return P(0.0);
 
-      // Validate arguments
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
       check_consistent_sizes(function,
@@ -51,13 +49,11 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
-      // Compute vectorized cdf_log and gradient
       using std::exp;
       using std::pow;
       using std::log;
@@ -73,7 +69,6 @@ namespace stan {
           return operands_and_partials.value(negative_infinity());
       }
 
-      // Cache a few expensive function calls if alpha is a parameter
       VectorBuilder<!is_constant_struct<T_shape>::value,
                     T_partials_return, T_shape>
         digammaN_vec(stan::length(alpha));

@@ -32,7 +32,6 @@ namespace stan {
       using boost::math::tools::promote_args;
 
       T_partials_return ccdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(beta)))
         return ccdf_log;
@@ -50,10 +49,8 @@ namespace stan {
       for (size_t n = 0; n < N; n++) {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
         const T_partials_return y_dbl = value_of(y_vec[n]);
-        // log ccdf
         ccdf_log += -beta_dbl * y_dbl;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)

@@ -37,12 +37,9 @@ namespace stan {
       Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
         = divide(tcrossprod(y_t),  -norm * squared_norm);
 
-      // for each input position
       for (int m = 0; m < y.size(); ++m) {
         J.coeffRef(m, m) += inv_norm;
-        // for each output position
         for (int k = 0; k < y.size(); ++k) {
-          // chain from input to output
           unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
         }
       }

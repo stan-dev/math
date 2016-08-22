@@ -18,7 +18,6 @@ namespace stan {
     neg_binomial_2_ccdf_log(const T_n& n,
                             const T_location& mu,
                             const T_precision& phi) {
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(mu)
             && stan::length(phi)))

@@ -36,17 +36,14 @@ namespace stan {
       using std::log;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(lambda)
             && stan::length(alpha)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_greater_or_equal(function, "Random variable", y, mu);
       check_not_nan(function, "Random variable", y);
       check_positive_finite(function, "Scale parameter", lambda);
@@ -56,7 +53,6 @@ namespace stan {
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
         return 0.0;
 
@@ -66,7 +62,6 @@ namespace stan {
       VectorView<const T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, lambda, alpha);
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
         operands_and_partials(y, mu, lambda, alpha);
 
@@ -112,7 +107,6 @@ namespace stan {
         const T_partials_return alpha_div_sum = alpha_dbl / sum_dbl;
         const T_partials_return deriv_1_2 = inv_sum + alpha_div_sum;
 
-        // // log probability
         if (include_summand<propto, T_shape>::value)
           logp += log_alpha[n];
         if (include_summand<propto, T_scale>::value)
@@ -120,7 +114,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_scale, T_shape>::value)
           logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= deriv_1_2;
         if (!is_constant_struct<T_loc>::value)

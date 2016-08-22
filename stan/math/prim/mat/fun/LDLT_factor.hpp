@@ -9,10 +9,6 @@
 namespace stan {
   namespace math {
 
-    // This class is conceptually similar to the corresponding Eigen class
-    // Any spd matrix A can be decomposed as LDL' where L is unit
-    // lower-triangular and D is diagonal with positive diagonal elements
-
     template<typename T, int R, int C>
     class LDLT_factor;
 
@@ -52,6 +48,9 @@ namespace stan {
      * d2 = log_determinant_ldlt(ldlt_A2);
      * ~~~
      *
+     * This class is conceptually similar to the corresponding Eigen class
+     * Any spd matrix A can be decomposed as LDL' where L is unit
+     * lower-triangular and D is diagonal with positive diagonal elements
      **/
     template<int R, int C, typename T>
     class LDLT_factor<T, R, C> {
@@ -71,12 +70,6 @@ namespace stan {
       }
 
       inline bool success() const {
-        // bool ret;
-        // ret = ldltP_->info() == Eigen::Success;
-        // ret = ret && ldltP_->isPositive();
-        // ret = ret && (ldltP_->vectorD().array() > 0).all();
-        // return ret;
-
         if (ldltP_->info() != Eigen::Success)
           return false;
         if (!(ldltP_->isPositive()))

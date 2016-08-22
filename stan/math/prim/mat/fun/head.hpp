@@ -13,10 +13,12 @@ namespace stan {
     /**
      * Return the specified number of elements as a vector
      * from the front of the specified vector.
-     * @tparam T Type of value in vector
-     * @param v Vector input
-     * @param n Size of return
-     * @return The first n elements of v
+     *
+     * @tparam T Type of value in vector.
+     * @param v Vector input.
+     * @param n Size of return.
+     * @return The first n elements of v.
+     * @throw std::out_of_range if n is out of range.
      */
     template <typename T>
     inline
@@ -31,10 +33,12 @@ namespace stan {
     /**
      * Return the specified number of elements as a row vector
      * from the front of the specified row vector.
-     * @tparam T Type of value in vector
-     * @param rv Row vector
-     * @param n Size of return row vector
-     * @return The first n elements of rv
+     *
+     * @tparam T Type of value in vector.
+     * @param rv Row vector.
+     * @param n Size of return row vector.
+     * @return The first n elements of rv.
+     * @throw std::out_of_range if n is out of range.
      */
     template <typename T>
     inline
@@ -49,10 +53,12 @@ namespace stan {
     /**
      * Return the specified number of elements as a standard vector
      * from the front of the specified standard vector.
-     * @tparam T Type of value in vector
-     * @param sv Standard vector
-     * @param n Size of return
-     * @return The first n elements of sv
+     *
+     * @tparam T Type of value in vector.
+     * @param sv Standard vector.
+     * @param n Size of return.
+     * @return The first n elements of sv.
+     * @throw std::out_of_range if n is out of range.     
      */
     template <typename T>
     std::vector<T> head(const std::vector<T>& sv,

@@ -32,15 +32,12 @@ namespace stan {
 
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(theta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_bounded(function, "n", n, 0, 1);
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -48,11 +45,9 @@ namespace stan {
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_prob> theta_vec(theta);
       size_t N = max_size(n, theta);
@@ -80,7 +75,6 @@ namespace stan {
           logp += sum * log_theta;
           logp += (N - sum) * log1m_theta;
 
-          // gradient
           if (!is_constant_struct<T_prob>::value) {
             operands_and_partials.d_x1[0] += sum / theta_dbl;
             operands_and_partials.d_x1[0] += (N - sum) / (theta_dbl - 1);
@@ -88,7 +82,6 @@ namespace stan {
         }
       } else {
         for (size_t n = 0; n < N; n++) {
-          // pull out values of arguments
           const int n_int = value_of(n_vec[n]);
           const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
@@ -97,7 +90,6 @@ namespace stan {
           else
             logp += log1m(theta_dbl);
 
-          // gradient
           if (!is_constant_struct<T_prob>::value) {
             if (n_int == 1)
               operands_and_partials.d_x1[n] += 1.0 / theta_dbl;

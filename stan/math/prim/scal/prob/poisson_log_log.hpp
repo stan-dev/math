@@ -37,26 +37,21 @@ namespace stan {
       using boost::math::lgamma;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(alpha)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args
       check_nonnegative(function, "Random variable", n);
       check_not_nan(function, "Log rate parameter", alpha);
       check_consistent_sizes(function,
                              "Random variable", n,
                              "Log rate parameter", alpha);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_log_rate>::value)
         return 0.0;
 
-      // set up expression templates wrapping scalars/vecs into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_log_rate> alpha_vec(alpha);
       size_t size = max_size(n, alpha);
@@ -70,7 +65,6 @@ namespace stan {
             && n_vec[i] != 0)
           return LOG_ZERO;
 
-      // return accumulator with gradients
       OperandsAndPartials<T_log_rate> operands_and_partials(alpha);
 
       // FIXME: cache value_of for alpha_vec?  faster if only one?
@@ -90,7 +84,6 @@ namespace stan {
             logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
         }
 
-        // gradients
         if (!is_constant_struct<T_log_rate>::value)
           operands_and_partials.d_x1[i] += n_vec[i] - exp_alpha[i];
       }

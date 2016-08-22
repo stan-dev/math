@@ -27,9 +27,6 @@ namespace stan {
       return c * m;
     }
 
-    // FIXME:  apply above pattern everywhere below to remove
-    //         extra defs, etc.
-
     /**
      * Return specified scalar multiplied by specified matrix.
      * @tparam R Row type for matrix.

@@ -33,7 +33,6 @@ namespace stan {
       using std::exp;
 
       T_partials_return ccdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(beta)))

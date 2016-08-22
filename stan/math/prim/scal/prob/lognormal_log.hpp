@@ -26,7 +26,6 @@ namespace stan {
   namespace math {
 
     // LogNormal(y|mu, sigma)  [y >= 0;  sigma > 0]
-    // FIXME: document
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
@@ -37,16 +36,13 @@ namespace stan {
 
       using stan::is_constant_struct;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_nonnegative(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
@@ -120,7 +116,6 @@ namespace stan {
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value)
           logy_m_mu_div_sigma = logy_m_mu * inv_sigma_sq[n];
 
-        // log probability
         if (include_summand<propto, T_scale>::value)
           logp -= log_sigma[n];
         if (include_summand<propto, T_y>::value)
@@ -128,7 +123,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp -= 0.5 * logy_m_mu_sq * inv_sigma_sq[n];
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= (1 + logy_m_mu_div_sigma) * inv_y[n];
         if (!is_constant_struct<T_loc>::value)

@@ -29,7 +29,6 @@ namespace stan {
                        const T_a& a, const T_b& b) {
       static const char* function("hypergeometric_log");
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(N)
             && stan::length(a)
@@ -57,7 +56,6 @@ namespace stan {
                              "Successes in population parameter", a,
                              "Failures in population parameter", b);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto>::value)
         return 0.0;
 

@@ -44,7 +44,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -84,10 +83,8 @@ namespace stan {
         else
           cdf_ = 0.5 * (1.0 + erf(scaled_diff));
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
           const T_partials_return rep_deriv
             = (scaled_diff < -37.5 * INV_SQRT_2)

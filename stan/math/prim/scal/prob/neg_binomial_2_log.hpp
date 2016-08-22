@@ -42,7 +42,6 @@ namespace stan {
 
       static const char* function("neg_binomial_2_log");
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(mu)
             && stan::length(phi)))
@@ -57,14 +56,12 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision parameter", phi);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_location, T_precision>::value)
         return 0.0;
 
       using std::log;
       using std::log;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_location> mu_vec(mu);
       VectorView<const T_precision> phi_vec(phi);
