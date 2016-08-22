@@ -10,7 +10,7 @@ namespace stan {
       class frexp_vari : public op_v_vari {
       public:
           explicit frexp_vari(vari* avi, int* b) :
-          op_v_vari(::frexp(avi->val_, b), avi) {
+          op_v_vari(std::frexp(avi->val_, b), avi) {
           }
           void chain() {
               if (unlikely(boost::math::isnan(avi_->val_)))
