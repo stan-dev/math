@@ -40,8 +40,8 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/distributions.hpp>
+#include <algorithm>
 #include <cmath>
-#include <algorithm>  // for max
 
 namespace stan {
   namespace math {

@@ -7,7 +7,6 @@
 namespace stan {
   namespace math {
 
-    // x' * x
     inline double dot_self(const std::vector<double>& x) {
       double sum = 0.0;
       for (size_t i = 0; i < x.size(); ++i)
@@ -17,5 +16,4 @@ namespace stan {
 
   }
 }
-
 #endif

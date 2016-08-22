@@ -40,7 +40,6 @@ namespace stan {
 
       static const char* function("stan::prob::neg_binomial_2_log_log");
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(eta)
             && stan::length(phi)))
@@ -55,14 +54,12 @@ namespace stan {
                              "Log location parameter", eta,
                              "Precision parameter", phi);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_log_location, T_precision>::value)
         return 0.0;
 
       using std::exp;
       using std::log;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_log_location> eta_vec(eta);
       VectorView<const T_precision> phi_vec(phi);

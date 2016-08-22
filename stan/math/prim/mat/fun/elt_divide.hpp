@@ -47,7 +47,7 @@ namespace stan {
     template <typename T1, typename T2, int R, int C>
     Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
     elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
-      return divide(m, s);  // TODO(carp): divide(m, s);
+      return divide(m, s);
     }
 
     /**

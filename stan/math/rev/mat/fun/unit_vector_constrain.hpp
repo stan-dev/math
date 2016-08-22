@@ -48,8 +48,6 @@ namespace stan {
       };
     }
 
-    // Unit vector
-
     /**
      * Return the unit length vector corresponding to the free vector y.
      * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points

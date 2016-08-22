@@ -11,8 +11,6 @@
 namespace stan {
   namespace math {
 
-    // FIXME: add other results that are easy to extract
-    // // N * (fwd(2) + bk)
     template <typename F>
     void
     grad_tr_mat_times_hessian(const F& f,

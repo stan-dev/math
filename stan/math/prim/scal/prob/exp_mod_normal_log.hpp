@@ -33,17 +33,14 @@ namespace stan {
       using stan::is_constant_struct;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
             && stan::length(lambda)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Inv_scale parameter", lambda);
@@ -54,7 +51,6 @@ namespace stan {
                              "Scale parameter", sigma,
                              "Inv_scale paramter", lambda);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value)
         return 0.0;
 
@@ -63,7 +59,6 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale, T_inv_scale>
         operands_and_partials(y, mu, sigma, lambda);
 
@@ -74,7 +69,6 @@ namespace stan {
       size_t N = max_size(y, mu, sigma, lambda);
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
@@ -82,7 +76,6 @@ namespace stan {
 
         const T_partials_return pi_dbl = boost::math::constants::pi<double>();
 
-        // log probability
         if (include_summand<propto>::value)
           logp -= log(2.0);
         if (include_summand<propto, T_inv_scale>::value)
@@ -94,7 +87,6 @@ namespace stan {
                         * sigma_dbl - y_dbl)
                        / (sqrt(2.0) * sigma_dbl)));
 
-        // gradients
         const T_partials_return deriv_logerfc
           = -2.0 / sqrt(pi_dbl)
           * exp(-(mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)

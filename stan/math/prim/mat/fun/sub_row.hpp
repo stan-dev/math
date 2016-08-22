@@ -11,11 +11,12 @@ namespace stan {
     /**
      * Return a 1 x nrows subrow starting at (i-1, j-1).
      *
-     * @param m Matrix
-     * @param i Starting row + 1
-     * @param j Starting column + 1
-     * @param ncols Number of columns in block
-     **/
+     * @param m Matrix Input matrix.
+     * @param i Starting row + 1.
+     * @param j Starting column + 1.
+     * @param ncols Number of columns in block.
+     * @throw std::out_of_range if either index is out of range.
+     */
     template <typename T>
     inline
     Eigen::Matrix<T, 1, Eigen::Dynamic>

@@ -54,7 +54,6 @@ namespace stan {
         domain_error("corr_matrix_free",
                      "factor_cov_matrix failed on y", y, "");
       for (size_type i = 0; i < k; ++i) {
-        // sds on log scale unconstrained
         check_bounded("corr_matrix_free", "log(sd)",
                       sds[i], -CONSTRAINT_TOLERANCE, CONSTRAINT_TOLERANCE);
       }

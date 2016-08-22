@@ -53,7 +53,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)
             && stan::length(s)))
@@ -68,7 +67,6 @@ namespace stan {
                              "Degrees of freedom parameter", nu,
                              "Scale parameter", s);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_dof, T_scale>::value)
         return 0.0;
 

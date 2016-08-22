@@ -27,7 +27,6 @@
 namespace stan {
   namespace math {
 
-    // Binomial CDF
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
@@ -35,13 +34,11 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      // Ensure non-zero arguments lenghts
       if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
         return 1.0;
 
       T_partials_return P(1.0);
 
-      // Validate arguments
       check_nonnegative(function, "Population size parameter", N);
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -50,13 +47,11 @@ namespace stan {
                              "Population size parameter", N,
                              "Probability parameter", theta);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_prob> theta_vec(theta);
       size_t size = max_size(n, N, theta);
 
-      // Compute vectorized CDF and gradient
       using std::exp;
       using std::pow;
       using std::exp;

@@ -28,7 +28,6 @@ namespace stan {
         - log1p_exp(beta);
     }
 
-    // y in 0, ..., K-1;   c.size()==K-2, c increasing,  lambda finite
     /**
      * Returns the (natural) log probability of the specified integer
      * outcome given the continuous location and specified cutpoints
