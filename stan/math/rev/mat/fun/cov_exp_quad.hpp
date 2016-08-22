@@ -14,6 +14,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/rev/mat/type/symmetric.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <boost/math/tools/promotion.hpp>
@@ -27,25 +28,11 @@ namespace stan {
   namespace math {
 
     /**
-     * This is a subclass of the vari class for matrix 
-     * multiplication A * B where A is N by M and B 
-     * is M by K.
-     *
-     * The class stores the structure of each matrix,
-     * the double values of A and B, and pointers to
-     * the varis for A and B if A or B is a var. It
-     * also instantiates and stores pointers to
-     * varis for all elements of A * B.
-     *
-     * @tparam TA Scalar type for matrix A
-     * @tparam RA Rows for matrix A
-     * @tparam CA Columns for matrix A, Rows for matrix B
-     * @tparam TB Scalar type for matrix B
-     * @tparam CB Columns for matrix B
      */
     class cov_exp_quad_vari : public vari {
       public:
         int size_;
+        int tri_size_;
         double l_d_;
         double sigma_d_;
         double sigma_sq_d_;
@@ -75,17 +62,16 @@ namespace stan {
                           const var& l)
           : vari(0.0),
           size_(x.size()),
+          tri_size_(size_ * (size_ + 1) / 2),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           sigma_sq_d_(std::pow(sigma_d_,2)),
-          dist_(ChainableStack::memalloc_.alloc_array<double>(size_
-                                                                  * size_)),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(tri_size_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_
-                                                            * size_)) {
+          cov_(ChainableStack::memalloc_.alloc_array<vari*>(tri_size_)) {
             size_t pos = 0;
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_,2));
             for (size_t j = 0; j < static_cast<size_t>(size_); ++j) 
-              for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
+              for (size_t i = j; i < static_cast<size_t>(size_); ++i) {
                 dist_[pos] = squared_distance(x[i],x[j]) 
                              * inv_half_sq_l_d;
                 cov_[pos] = new vari((i == j) ? sigma_sq_d_ : sigma_sq_d_ * exp(-dist_[pos]), false);
@@ -95,18 +81,18 @@ namespace stan {
 
         virtual void chain() {
           using Eigen::MatrixXd;
-          using Eigen::ArrayXXd;
+          using Eigen::ArrayXd;
           using Eigen::Map;
           double adjl;
           double adjsigma;
-          ArrayXXd adj_cov(size_, size_);
-          ArrayXXd cov(size_, size_);
+          ArrayXd adj_cov(tri_size_);
+          ArrayXd cov(tri_size_);
 
-          for (size_t i = 0; i < static_cast<size_t>(adj_cov.size()); ++i) {
+          for (size_t i = 0; i < static_cast<size_t>(tri_size_); ++i) {
             adj_cov(i) = cov_[i]->adj_;
             cov(i) = cov_[i]->val_;
           }
-          adjl = (adj_cov * Map<ArrayXXd>(dist_, size_, size_)
+          adjl = (adj_cov * Map<ArrayXd>(dist_, tri_size_)
             * cov).sum() * 2 / l_d_;
           adjsigma = 2 / sigma_d_ * (adj_cov * cov).sum();
           l_vari_->adj_ += adjl;
@@ -129,27 +115,26 @@ namespace stan {
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
      */
-    inline
-    Eigen::Matrix<var, -1, -1>
+    inline symmetric 
     cov_exp_quad(const std::vector<double>& x,
                  const var& sigma,
                  const var& l) {
-      using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x.size(); n++)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
-      Eigen::Matrix<var,Eigen::Dynamic, Eigen::Dynamic>
-        cov(x.size(), x.size());
+      symmetric cov(x.size());
       if (x.size() == 0)
         return cov;
 
       cov_exp_quad_vari *baseVari
         = new cov_exp_quad_vari(x, sigma, l);
 
-      for (size_t i = 0; i < x.size() * x.size(); ++i)
-        cov.coeffRef(i).vi_ = baseVari->cov_[i];
+      size_t pos = 0;
+      for (size_t j = 0; j < x.size(); ++j)
+        for (size_t i = j; i < x.size(); ++i)
+          cov(i,j).vi_ = baseVari->cov_[pos++];
       return cov;
     }
   }
