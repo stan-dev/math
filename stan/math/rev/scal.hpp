@@ -44,6 +44,7 @@
 #include <stan/math/rev/scal/fun/fmax.hpp>
 #include <stan/math/rev/scal/fun/fmin.hpp>
 #include <stan/math/rev/scal/fun/fmod.hpp>
+#include <stan/math/rev/scal/fun/frexp.hpp>
 #include <stan/math/rev/scal/fun/gamma_p.hpp>
 #include <stan/math/rev/scal/fun/gamma_q.hpp>
 #include <stan/math/rev/scal/fun/grad_inc_beta.hpp>
@@ -97,7 +98,5 @@
 #include <stan/math/rev/scal/fun/trunc.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
-
-#include <stan/math/rev/scal/fun/frexp.hpp>
 
 #endif

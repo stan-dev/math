@@ -23,10 +23,10 @@ namespace stan {
      * Decomposes a float-like variable into a normalized 
      * fraction and an integral power of two.
      *
-     * @param the variable that will be decomposed.
-     * @param pointer to an integer that will stored the
-     *        integral power of two.
-     * @return normalized fraction
+     * @param a The variable that will be decomposed.
+     * @param b Pointer to an integer that will stored the
+     *          integral power of two.
+     * @return Normalized fraction
      */
       inline var frexp(const var& a, int* b) {
           return var(new frexp_vari(a.vi_, b));
