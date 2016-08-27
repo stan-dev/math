@@ -39,7 +39,7 @@ namespace stan {
    * @tparam T  Type of scalar or container being wrapped.
    * @tparam is_array True if underlying type T can be indexed with
    * operator[].
-   * @tparam throw_if_accessed True if the behaviro is to throw an
+   * @tparam throw_if_accessed True if the behavior is to throw an
    * exception whenever <code>operator[]</code> is called.
    */
   template <typename T,

@@ -55,8 +55,7 @@ public:
     log_prob.push_back(-26.4531852275477);  // expected log_prob
   }
 
-  void invalid_values(vector<size_t>& index,
-          vector<double>& value) {
+  void invalid_values(vector<size_t>& index, vector<double>& value) {
     // alpha
     index.push_back(1U);
     value.push_back(numeric_limits<double>::infinity());
@@ -64,7 +63,6 @@ public:
     // tau
     index.push_back(2U);
     value.push_back(numeric_limits<double>::infinity());
-
     index.push_back(2U);
     value.push_back(50.2);
 
@@ -85,9 +83,8 @@ public:
     return stan::math::wiener_log(y, alpha, tau, beta, delta);
   }
 
-  template <bool propto,
-      typename T_y, typename T_alpha, typename T_tau,
-      typename T_beta, typename T_delta, typename T5>
+  template <bool propto, typename T_y, typename T_alpha, typename T_tau,
+            typename T_beta, typename T_delta, typename T5>
   typename stan::return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
   log_prob(const T_y& y, const T_alpha& alpha, const T_tau& tau,
            const T_beta& beta, const T_delta& delta, const T5&) {
@@ -100,12 +97,6 @@ public:
   typename stan::return_type<T_y, T_alpha, T_tau, T_beta, T_delta, T5>::type
   log_prob_function(const T_y& y, const T_alpha& alpha, const T_tau& tau,
            const T_beta& beta, const T_delta& delta, const T5&) {
-    using stan::math::include_summand;
-    using stan::math::pi;
-    using stan::math::square;
-    using boost::math::tools::promote_args;
-
-    // FIXME
     return stan::math::wiener_log<true>(y, alpha, tau, beta, delta);
   }
 };

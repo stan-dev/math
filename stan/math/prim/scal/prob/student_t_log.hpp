@@ -61,7 +61,6 @@ namespace stan {
                                                   T_scale>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)
             && stan::length(mu)
@@ -70,7 +69,6 @@ namespace stan {
 
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_finite(function, "Location parameter", mu);
@@ -81,7 +79,6 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value)
         return 0.0;
 

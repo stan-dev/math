@@ -30,7 +30,6 @@ namespace stan {
 
       T_partials_return cdf_log(0.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -64,10 +63,8 @@ namespace stan {
         const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
         const T_partials_return inv_sigma = 1.0 / sigma_dbl;
         if (y_dbl < mu_dbl) {
-          // log cdf
           cdf_log += log_half + scaled_diff;
 
-          // gradients
           if (!is_constant_struct<T_y>::value)
             operands_and_partials.d_x1[n] += inv_sigma;
           if (!is_constant_struct<T_loc>::value)
@@ -75,10 +72,8 @@ namespace stan {
           if (!is_constant_struct<T_scale>::value)
             operands_and_partials.d_x3[n] -= scaled_diff * inv_sigma;
         } else {
-          // log cdf
           cdf_log += log1m(0.5 * exp(-scaled_diff));
 
-          // gradients
           const T_partials_return rep_deriv = 1.0
             / (2.0 * exp(scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)

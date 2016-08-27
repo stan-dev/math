@@ -17,12 +17,21 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the incomplete beta function beta(a, b, z)
-    // with respect to the first two arguments, using the
-    // equivalence to a hypergeometric function.
-    // See http://dlmf.nist.gov/8.17#ii
+    /**
+     * Gradient of the incomplete beta function beta(a, b, z) with
+     * respect to the first two arguments.
+     *
+     * Uses the equivalence to a hypergeometric function. See
+     * http://dlmf.nist.gov/8.17#ii
+     *
+     * @param[out] g1 d/da
+     * @param[out] g2 d/db
+     * @param[in] a a
+     * @param[in] b b
+     * @param[in] z z
+     */
     inline void grad_inc_beta(var& g1, var& g2,
-                       const var& a, const var& b, const var& z) {
+                              const var& a, const var& b, const var& z) {
       var c1 = log(z);
       var c2 = log1m(z);
       var c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);

@@ -17,6 +17,7 @@ namespace stan {
      * @param m Matrix.
      * @param j Column index (count from 1).
      * @return Specified column of the matrix.
+     * @throw std::out_of_range if j is out of range.
      */
     template <typename T>
     inline

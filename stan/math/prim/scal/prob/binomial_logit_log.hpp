@@ -42,7 +42,6 @@ namespace stan {
 
       static const char* function("binomial_logit_log");
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(N)
             && stan::length(alpha)))
@@ -57,11 +56,9 @@ namespace stan {
                              "Population size parameter", N,
                              "Probability parameter", alpha);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_prob> alpha_vec(alpha);

@@ -18,16 +18,17 @@ namespace Eigen {
 
     enum {
       RequireInitialization = 1,
-      // ReadCost = twice the cost to copy a double
+      /**< stan::math::fvar requires initialization */
       ReadCost = 2 * NumTraits<double>::ReadCost,
-      // AddCost: 2 * AddCost
-      // (a + b) = a + b
-      // (a + b)' = a' + b'
+      /**< twice the cost to copy a double */
       AddCost = 2 * NumTraits<T>::AddCost,
-      // MulCost: 3 * MulCost + AddCost
-      // (a * b) = a * b
-      // (a * b)' = a' * b + a * b'
+      /**< 2 * AddCost <br>
+         (a + b) = a + b <br>
+         (a + b)' = a' + b' */
       MulCost = 3 * NumTraits<T>::MulCost + NumTraits<T>::AddCost
+      /**< 3 * MulCost + AddCost <br>
+         (a * b) = a * b <br>
+         (a * b)' = a' * b + a * b' */
     };
   };
 
@@ -48,5 +49,4 @@ namespace Eigen {
 
   }
 }
-
 #endif

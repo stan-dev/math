@@ -34,14 +34,12 @@ namespace stan {
                                                   T_size2>::type
         T_partials_return;
 
-      // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 1.0;
 
       T_partials_return P(1.0);
 
-      // Validate arguments
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,
                             "First prior sample size parameter", alpha);
@@ -53,14 +51,12 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_size1> alpha_vec(alpha);
       VectorView<const T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
-      // Compute vectorized CDF and gradient
       using std::exp;
       using std::exp;
 

@@ -100,7 +100,6 @@ namespace stan {
       int dense_jacobian(const double* y, DlsMat J, double t) const {
         const std::vector<double> y_vec(y, y + N_);
         Eigen::VectorXd fy(N_);
-        // Eigen and CVODES use column major addressing
         Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
         ode_system_.jacobian(t, y_vec, fy, Jy_map);
         return 0;

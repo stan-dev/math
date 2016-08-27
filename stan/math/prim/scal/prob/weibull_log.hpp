@@ -24,7 +24,6 @@ namespace stan {
   namespace math {
 
     // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]
-    // FIXME: document
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -35,13 +34,11 @@ namespace stan {
 
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_finite(function, "Random variable", y);
       check_positive_finite(function, "Shape parameter", alpha);
@@ -51,7 +48,6 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 

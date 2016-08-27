@@ -26,11 +26,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(y_min) && stan::length(alpha) ) )
         return 0.0;
 
-      // Check errors
       static const char* function("pareto_cdf_log");
 
       using std::log;
@@ -47,7 +45,6 @@ namespace stan {
                              "Scale parameter", y_min,
                              "Shape parameter", alpha);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_scale> y_min_vec(y_min);
       VectorView<const T_shape> alpha_vec(alpha);
@@ -58,13 +55,10 @@ namespace stan {
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
           return operands_and_partials.value(negative_infinity());
       }
-
-      // Compute vectorized cdf_log and its gradients
 
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
@@ -73,13 +67,11 @@ namespace stan {
           return operands_and_partials.value(0.0);
         }
 
-        // Pull out values
         const T_partials_return log_dbl = log(value_of(y_min_vec[n])
                                               / value_of(y_vec[n]));
         const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
-        // Compute
         const T_partials_return Pn = 1.0 - exp(alpha_dbl * log_dbl);
 
         P += log(Pn);

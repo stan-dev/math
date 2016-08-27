@@ -21,7 +21,6 @@ namespace stan {
                            const T_precision& phi) {
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(mu)
             && stan::length(phi)))

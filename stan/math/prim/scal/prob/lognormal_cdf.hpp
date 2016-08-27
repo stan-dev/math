@@ -34,7 +34,6 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -69,11 +68,9 @@ namespace stan {
         const T_partials_return rep_deriv = SQRT_2 * 0.5 / sqrt_pi
           * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
-        // cdf
         const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
         cdf *= cdf_;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += rep_deriv / cdf_ / y_dbl;
         if (!is_constant_struct<T_loc>::value)

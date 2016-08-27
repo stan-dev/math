@@ -25,7 +25,6 @@ namespace stan {
   namespace math {
 
     // Logistic(y|mu, sigma)    [sigma > 0]
-    // FIXME: document
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
@@ -37,16 +36,13 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_finite(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -55,11 +51,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 

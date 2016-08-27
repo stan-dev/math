@@ -45,8 +45,6 @@ namespace stan {
      * @return The corresponding unit normal cdf approximation.
      */
     inline var Phi_approx(const var& a) {
-      // return inv_logit(0.07056 * pow(a, 3.0) + 1.5976 * a);
-
       double av = a.vi_->val_;
       double av_squared = av * av;
       double av_cubed = av * av_squared;

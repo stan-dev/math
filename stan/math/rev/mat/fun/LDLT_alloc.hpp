@@ -45,7 +45,7 @@ namespace stan {
         ldlt_.compute(Ad);
       }
 
-      /// Compute the log(abs(det(A))).  This is just a convenience function.
+      // Compute the log(abs(det(A))).  This is just a convenience function.
       inline double log_abs_det() const {
         return ldlt_.vectorD().array().log().sum();
       }

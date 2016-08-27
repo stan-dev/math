@@ -16,10 +16,20 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the incomplete beta function beta(a, b, z)
-    // with respect to the first two arguments, using the
-    // equivalence to a hypergeometric function.
-    // See http://dlmf.nist.gov/8.17#ii
+    /**
+     * Gradient of the incomplete beta function beta(a, b, z) with
+     * respect to the first two arguments.
+     *
+     * Uses the equivalence to a hypergeometric function. See
+     * http://dlmf.nist.gov/8.17#ii
+     *
+     * @tparam T type of fvar
+     * @param[out] g1 d/da
+     * @param[out] g2 d/db
+     * @param[in] a a
+     * @param[in] b b
+     * @param[in] z z
+     */
     template<typename T>
     void grad_inc_beta(fvar<T>& g1,
                        fvar<T>& g2,
