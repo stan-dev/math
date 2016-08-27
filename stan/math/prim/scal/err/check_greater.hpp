@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_GREATER_HPP
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
