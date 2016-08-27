@@ -43,7 +43,6 @@
 #include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <cmath>
-#include <algorithm>  // for max
 #include <string>
 
 namespace stan {
@@ -142,7 +141,7 @@ namespace stan {
                        msg_str.c_str());
         }
       }
-      
+
       if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value)
         return 0;
 
@@ -179,7 +178,7 @@ namespace stan {
         } else {  // if error threshold was set too high
           ks = 2.0;  // minimal kappa for that case
         }
-        if (ks < kl) {  // samll t 
+        if (ks < kl) {  // small t
           K = ceil(ks);  // round to smallest integer meeting error
           T_return_type tmp_expr1 = (K - 1.0) / 2.0;
           T_return_type tmp_expr2 = ceil(tmp_expr1);

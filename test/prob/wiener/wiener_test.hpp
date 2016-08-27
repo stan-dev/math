@@ -65,6 +65,8 @@ public:
     value.push_back(numeric_limits<double>::infinity());
     index.push_back(2U);
     value.push_back(50.2);
+    index.push_back(2U);
+    value.push_back(0.5);  // less than all valid_values() y 
 
     // beta
     index.push_back(3U);
