@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 
 #include <boost/math/tools/promotion.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <limits>
 
 namespace stan {
@@ -35,7 +37,9 @@ namespace stan {
      * @return Natural log of one plus <code>x</code>.
      */
     template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
+    inline typename
+    boost::enable_if<boost::is_arithmetic<T>,
+                     typename boost::math::tools::promote_args<T>::type >::type
     log1p(const T& x) {
       using std::log;
       if (!(x >= -1.0))
@@ -49,17 +53,17 @@ namespace stan {
         return x;                // 1st order Taylor, if very close to 1
     }
 
-    /**
-     * Return the natural logarithm of one plus the specified
-     * argument.  This version is required to disambiguate
-     * <code>log1p(int)</code>.
-     *
-     * @param[in] x Argument.
-     * @return Natural logarithm of one plus the argument.
-     */
-    inline double log1p(int x) {
-      return log1p(static_cast<double>(x));
-    }
+    // /**
+    //  * Return the natural logarithm of one plus the specified
+    //  * argument.  This version is required to disambiguate
+    //  * <code>log1p(int)</code>.
+    //  *
+    //  * @param[in] x Argument.
+    //  * @return Natural logarithm of one plus the argument.
+    //  */
+    // inline double log1p(int x) {
+    //   return ::log1p(static_cast<double>(x));
+    // }
 
   }
 }
