@@ -61,6 +61,7 @@
 #include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/is_uninitialized.hpp>
+#include <stan/math/rev/scal/fun/ldexp.hpp>
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>

@@ -108,6 +108,7 @@
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/make_nu.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
+#include <stan/math/prim/mat/fun/MatrixExponential.h>
 #include <stan/math/prim/mat/fun/max.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>

@@ -21,7 +21,7 @@ namespace stan {
 
     /**
      * Decomposes a float-like variable into a normalized 
-     * fraction and an integral power of two.
+     * fraction and an integral power of two. (cmath)
      *
      * @param a The variable that will be decomposed.
      * @param b Pointer to an integer that will stored the

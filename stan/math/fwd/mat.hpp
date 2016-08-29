@@ -21,6 +21,7 @@
 #include <stan/math/fwd/mat/fun/log_determinant.hpp>
 #include <stan/math/fwd/mat/fun/log_softmax.hpp>
 #include <stan/math/fwd/mat/fun/log_sum_exp.hpp>
+#include <stan/math/fwd/mat/fun/matrix_exp.hpp>
 #include <stan/math/fwd/mat/fun/mdivide_left.hpp>
 #include <stan/math/fwd/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/fwd/mat/fun/mdivide_left_tri_low.hpp>
