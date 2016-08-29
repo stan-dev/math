@@ -4,8 +4,6 @@
 using stan::math::matrix_fd;
 using stan::math::fvar;
 
-// INCOMPLETE - need to finish writing up second test
-
 TEST(MathMatrix, matrix_exp) {
     
     fvar<double> a;
@@ -56,7 +54,7 @@ TEST(MathMatrix, matrix_exp2) {
     
     // note: in this particular example, derivatives
     // is the same as the value, due to the way the
-    // input matrix was constructed. 
+    // input matrix was constructed.
     EXPECT_FLOAT_EQ(-0.735759, output(0,0).d_);
     EXPECT_FLOAT_EQ(0.551819, output(0,1).d_);
     EXPECT_FLOAT_EQ(-1.471518, output(1,0).d_);
