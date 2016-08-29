@@ -35,35 +35,31 @@ TEST(MathMatrix, matrix_exp) {
 
 TEST(MathMatrix, matrix_exp2) {
     
-    // example from Moler & Van Loan, 2003
-    matrix_fd input(2,2), output;
-    fvar<double> a, b, c, d;
-    
-    a.val_ = -49.0;
-    b.val_ = 24.0;
-    c.val_ = -64.0;
-    d.val_ = 31.0;
+    // example from Moler & Van Loan, 2003, section 3
+    matrix_fd input_diag(2,2), input(2,2), output;
+    fvar<double> a, b;
+    a.val_ = -1.0;
+    b.val_ = -17.0;
     a.d_ = 1.0;
     b.d_ = 1.0;
-    c.d_ = 1.0;
-    d.d_ = 1.0;
     
-    input << a, b,
-             c, d;
+    
+    input << -2*a + 3*b, 1.5*a - 1.5*b,
+            -4*a + 4*b, 3*a - 2*b;
     
     output = matrix_exp(input);
-    
-    //m2 << -.735759, .551819,
-    //-1.471518, 1.103638;
     
     EXPECT_FLOAT_EQ(-0.735759, output(0,0).val_);
     EXPECT_FLOAT_EQ(0.551819, output(0,1).val_);
     EXPECT_FLOAT_EQ(-1.471518, output(1,0).val_);
     EXPECT_FLOAT_EQ(1.103638, output(1,1).val_);
-    /*EXPECT_EQ(-0.735759, output(0,0).d_);
-    EXPECT_EQ(0.551819, output(0,1).d_);
-    EXPECT_EQ(-1.47152, output(1,0).d_);
-    EXPECT_EQ(1.103654, output(1,1).d_);*/
     
+    // note: in this particular example, derivatives
+    // is the same as the value, due to the way the
+    // input matrix was constructed. 
+    EXPECT_FLOAT_EQ(-0.735759, output(0,0).d_);
+    EXPECT_FLOAT_EQ(0.551819, output(0,1).d_);
+    EXPECT_FLOAT_EQ(-1.471518, output(1,0).d_);
+    EXPECT_FLOAT_EQ(1.103638, output(1,1).d_);
 
 }
