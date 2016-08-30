@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
@@ -19,8 +18,6 @@
 
 namespace stan {
   namespace math {
-    // MultiGP(y|Sigma, w)   [y.rows() = w.size(), y.cols() = Sigma.rows();
-    //                            Sigma symmetric, non-negative, definite]
     /**
      * The log of a multivariate Gaussian Process for the given y, Sigma, and
      * w.  y is a dxN matrix, where each column is a different observation and each
@@ -46,24 +43,11 @@ namespace stan {
                  const Eigen::Matrix
                  <T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
                  const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-      static const char* function("stan::math::multi_gp_log");
+      static const char* function("multi_gp_log");
       typedef typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
         T_lp;
       T_lp lp(0.0);
 
-      using stan::math::sum;
-      using stan::math::log;
-      using stan::math::LDLT_factor;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::trace_gen_inv_quad_form_ldlt;
-
-      using stan::math::check_size_match;
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_symmetric;
-      using stan::math::check_ldlt_factor;
-      using stan::math::check_not_nan;
 
       check_positive(function, "Kernel rows", Sigma.rows());
       check_finite(function, "Kernel", Sigma);
@@ -115,7 +99,7 @@ namespace stan {
                  const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
       return multi_gp_log<false>(y, Sigma, w);
     }
+
   }
 }
-
 #endif

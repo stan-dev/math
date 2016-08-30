@@ -18,7 +18,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
   namespace math {
 
@@ -30,26 +29,14 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
         T_partials_return;
 
-      // Check sizes
-      // Size checks
       if ( !( stan::length(y)
               && stan::length(mu)
               && stan::length(lambda)
               && stan::length(alpha) ) )
         return 0.0;
 
-      // Check errors
-      static const char* function("stan::math::pareto_type_2_cdf_log");
+      static const char* function("pareto_type_2_cdf_log");
 
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::log1m;
       using std::log;
 
       T_partials_return P(0.0);
@@ -64,7 +51,6 @@ namespace stan {
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> lambda_vec(lambda);
@@ -100,10 +86,7 @@ namespace stan {
           log_1p_y_over_lambda[i] = log(temp);
       }
 
-      // Compute vectorized CDF and its gradients
-
       for (size_t n = 0; n < N; n++) {
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
@@ -112,7 +95,6 @@ namespace stan {
         const T_partials_return grad_1_2 =  alpha_dbl
           * inv_p1_pow_alpha_minus_one[n] / (lambda_dbl - mu_dbl + y_dbl);
 
-        // Compute
         P += cdf_log[n];
 
         if (!is_constant_struct<T_y>::value)
@@ -126,9 +108,9 @@ namespace stan {
           operands_and_partials.d_x4[n] += log_1p_y_over_lambda[n]
             * inv_p1_pow_alpha_minus_one[n];
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

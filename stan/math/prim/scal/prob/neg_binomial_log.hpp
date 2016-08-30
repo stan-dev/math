@@ -28,7 +28,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
@@ -43,15 +42,8 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::neg_binomial_log");
+      static const char* function("neg_binomial_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(alpha)
             && stan::length(beta)))
@@ -66,18 +58,12 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_shape, T_inv_scale>::value)
         return 0.0;
 
-      using stan::math::multiply_log;
-      using stan::math::binomial_coefficient_log;
-      using stan::math::digamma;
-      using stan::math::lgamma;
       using std::log;
       using std::log;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
@@ -185,6 +171,7 @@ namespace stan {
                      const T_inv_scale& beta) {
       return neg_binomial_log<false>(n, alpha, beta);
     }
+
   }
 }
 #endif

@@ -7,7 +7,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -22,13 +21,11 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     unit_vector_free(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
-      stan::math::check_unit_vector("stan::math::unit_vector_free",
-                                    "Unit vector variable", x);
+      check_unit_vector("stan::math::unit_vector_free",
+                        "Unit vector variable", x);
       return x;
     }
 
   }
-
 }
-
 #endif

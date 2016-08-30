@@ -1,3 +1,4 @@
+// Original code from which Stan's code is derived:
 // Copyright (c) 2013, Joachim Vandekerckhove.
 // All rights reserved.
 //
@@ -40,14 +41,14 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/distributions.hpp>
+#include <algorithm>
 #include <cmath>
-#include <algorithm>  // for max
+#include <string>
 
 namespace stan {
-
   namespace math {
 
-     /**
+    /**
      * The log of the first passage time density function for a (Wiener)
      *  drift diffusion model for the given \f$y\f$,
      * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
@@ -65,13 +66,13 @@ namespace stan {
      * @return The log of the Wiener first passage time density of
      *  the specified arguments.
      */
-     template <bool propto,
-               typename T_y, typename T_alpha, typename T_tau,
-               typename T_beta, typename T_delta>
-     typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-     wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-       const T_beta& beta, const T_delta& delta) {
-      static const char* function("stan::math::wiener_log(%1%)");
+    template <bool propto,
+              typename T_y, typename T_alpha, typename T_tau,
+              typename T_beta, typename T_delta>
+    typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
+    wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
+               const T_beta& beta, const T_delta& delta) {
+      static const char* function("wiener_log(%1%)");
 
       using boost::math::tools::promote_args;
       using boost::math::isinf;
@@ -88,15 +89,15 @@ namespace stan {
         TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR =
         2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
       static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI =
-       LOG_TWO / 2 + LOG_SQRT_PI;
+        LOG_TWO / 2 + LOG_SQRT_PI;
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
       if (!(stan::length(y)
-        && stan::length(alpha)
-        && stan::length(beta)
-        && stan::length(tau)
-        && stan::length(delta)))
+            && stan::length(alpha)
+            && stan::length(beta)
+            && stan::length(tau)
+            && stan::length(delta)))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,
@@ -116,46 +117,40 @@ namespace stan {
       check_positive(function, "Boundary separation", alpha);
       check_positive(function, "Nondecision time", tau);
       check_bounded(function, "A-priori bias", beta , 0, 1);
-      check_consistent_sizes(function,
-                             "Random variable", y,
+      check_consistent_sizes(function, "Random variable", y,
                              "Boundary separation", alpha,
                              "A-priori bias", beta,
-                             "Nondecision time", tau,
-                             "Drift rate", delta);
+                             "Nondecision time", tau, "Drift rate", delta);
 
-      size_t N =
-        std::max(max_size(y, alpha, beta), max_size(tau, delta));
-      if (!N)
-        return 0.0;
+      size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
+      if (!N) return 0.0;
+
       VectorView<const T_y> y_vec(y);
       VectorView<const T_alpha> alpha_vec(alpha);
       VectorView<const T_beta> beta_vec(beta);
       VectorView<const T_tau> tau_vec(tau);
       VectorView<const T_delta> delta_vec(delta);
 
-      if (!include_summand<propto, T_y, T_alpha, T_tau,
-          T_beta, T_delta>::value) {
-        return 0;
+      size_t N_y_tau = max_size(y, tau);
+      for (size_t i = 0; i < N_y_tau; ++i) {
+        if (y_vec[i] <= tau_vec[i]) {
+          std::stringstream msg;
+          msg << ", but must be greater than nondecision time = " << tau_vec[i];
+          std::string msg_str(msg.str());
+          domain_error(function, "Random variable", y_vec[i], " = ",
+                       msg_str.c_str());
+        }
       }
 
-      for (size_t i = 0; i < N; i++)
-        if (y_vec[i] < tau_vec[i]) {
-          lp = stan::math::negative_infinity();
-          return lp;
-        }
+      if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value)
+        return 0;
 
       for (size_t i = 0; i < N; i++) {
-        typename scalar_type<T_beta>::type one_minus_beta
-          = 1.0 - beta_vec[i];
-        typename scalar_type<T_alpha>::type alpha2
-          = square(alpha_vec[i]);
-        T_return_type x = y_vec[i];
+        typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
+        typename scalar_type<T_alpha>::type alpha2 = square(alpha_vec[i]);
+        T_return_type x = (y_vec[i] - tau_vec[i]) / alpha2;
         T_return_type kl, ks, tmp = 0;
         T_return_type k, K;
-
-
-        x = x - tau_vec[i];  // remove non-decision time from x
-        x = x / alpha2;  // convert t to normalized time tt
         T_return_type sqrt_x = sqrt(x);
         T_return_type log_x = log(x);
         T_return_type one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
@@ -164,13 +159,10 @@ namespace stan {
         // if error threshold is set low enough
         if (PI_TIMES_WIENER_ERR * x < 1) {
           // compute bound
-          kl = sqrt(-2.0 * SQRT_PI *
-               (LOG_PI_LOG_WIENER_ERR + log_x)) /
-               sqrt_x;
+          kl = sqrt(-2.0 * SQRT_PI * (LOG_PI_LOG_WIENER_ERR + log_x)) / sqrt_x;
           // ensure boundary conditions met
-          kl = (kl > one_over_pi_times_sqrt_x) ?
-               kl : one_over_pi_times_sqrt_x;
-        } else {  // if error threshold set too high
+          kl = (kl > one_over_pi_times_sqrt_x) ? kl : one_over_pi_times_sqrt_x;
+        } else {
           kl = one_over_pi_times_sqrt_x;  // set to boundary condition
         }
         // calculate number of terms needed for small t:
@@ -186,35 +178,27 @@ namespace stan {
         } else {  // if error threshold was set too high
           ks = 2.0;  // minimal kappa for that case
         }
-        // compute density: f(tt|0,1,w)
-        if (ks < kl) {  // if small t is better (i.e., lambda<0)
+        if (ks < kl) {  // small t
           K = ceil(ks);  // round to smallest integer meeting error
           T_return_type tmp_expr1 = (K - 1.0) / 2.0;
           T_return_type tmp_expr2 = ceil(tmp_expr1);
           for (k = -floor(tmp_expr1); k <= tmp_expr2; k++)
-            // increment sum
             tmp += (one_minus_beta + 2.0 * k) *
-                    exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
-            // add constant term
-            tmp = log(tmp) -
-                  LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
+              exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
+          tmp = log(tmp) - LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
         } else {  // if large t is better...
           K = ceil(kl);  // round to smallest integer meeting error
-          for (k = 1; k <= K; k++)
-            // increment sum
-            tmp += k * exp(-(square(k)) *
-                   (SQUARE_PI_OVER_TWO * x)) *
-                   sin(k * pi() * one_minus_beta);
-            tmp = log(tmp) +
-                  TWO_TIMES_LOG_SQRT_PI;  // add constant term
+          for (k = 1; k <= K; ++k)
+            tmp += k * exp(-(square(k)) * (SQUARE_PI_OVER_TWO * x))
+              * sin(k * pi() * one_minus_beta);
+          tmp = log(tmp) + TWO_TIMES_LOG_SQRT_PI;
         }
 
         // convert to f(t|v,a,w) and return result
-        lp += delta_vec[i] * alpha_vec[i] * one_minus_beta -
-              square(delta_vec[i]) * x * alpha2 / 2.0 -
-              log(alpha2) + tmp;
+        lp += delta_vec[i] * alpha_vec[i] * one_minus_beta
+          - square(delta_vec[i]) * x * alpha2 / 2.0
+          - log(alpha2) + tmp;
       }
-
       return lp;
     }
 
@@ -226,6 +210,7 @@ namespace stan {
                const T_beta& beta, const T_delta& delta) {
       return wiener_log<false>(y, alpha, tau, beta, delta);
     }
+
   }
 }
 #endif

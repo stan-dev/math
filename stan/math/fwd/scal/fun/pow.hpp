@@ -9,7 +9,6 @@
 #include <stan/math/fwd/scal/fun/inv_square.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -39,12 +38,7 @@ namespace stan {
     fvar<T>
     pow(const fvar<T>& x1, const double x2) {
       using std::pow;
-      using stan::math::sqrt;
-      using stan::math::inv;
-      using stan::math::inv_sqrt;
-      using stan::math::inv_square;
       using std::sqrt;
-      using stan::math::square;
 
       if (x2 == -2)
         return inv_square(x1);

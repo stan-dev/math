@@ -19,12 +19,8 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
-    // Wishart(Sigma|n, Omega)  [Sigma, Omega symmetric, non-neg, definite;
-    //                          Sigma.dims() = Omega.dims();
-    //                           n > Sigma.rows() - 1]
     /**
      * The log of the Wishart density for the given W, degrees of freedom,
      * and scale matrix.
@@ -59,21 +55,12 @@ namespace stan {
                 const T_dof& nu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>&
                 S) {
-      static const char* function("stan::math::wishart_log");
+      static const char* function("wishart_log");
 
       using boost::math::tools::promote_args;
       using Eigen::Dynamic;
       using Eigen::Lower;
       using Eigen::Matrix;
-      using stan::math::check_greater;
-      using stan::math::check_ldlt_factor;
-      using stan::math::check_size_match;
-      using stan::math::check_square;
-      using stan::math::index_type;
-      using stan::math::LDLT_factor;
-      using stan::math::log_determinant_ldlt;
-      using stan::math::mdivide_left_ldlt;
-
 
       typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
         = W.rows();
@@ -84,7 +71,6 @@ namespace stan {
       check_size_match(function,
                        "Rows of random variable", W.rows(),
                        "columns of scale parameter", S.rows());
-      // FIXME: domain checks
 
       LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
       if (!check_ldlt_factor(function, "LDLT_Factor of random variable",
@@ -96,8 +82,6 @@ namespace stan {
                              ldlt_S))
         return lp;
 
-      using stan::math::trace;
-      using stan::math::lmgamma;
       if (include_summand<propto, T_dof>::value)
         lp += nu * k * NEG_LOG_TWO_OVER_TWO;
 
@@ -132,6 +116,5 @@ namespace stan {
     }
 
   }
-
 }
 #endif

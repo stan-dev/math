@@ -17,34 +17,31 @@ namespace stan {
       class inc_beta_vvv_vari : public op_vvv_vari {
       public:
         inc_beta_vvv_vari(vari* avi, vari* bvi, vari* cvi) :
-          op_vvv_vari(stan::math::inc_beta(avi->val_, bvi->val_, cvi->val_),
+          op_vvv_vari(inc_beta(avi->val_, bvi->val_, cvi->val_),
                       avi, bvi, cvi) {
         }
         void chain() {
-          using stan::math::digamma;
-          using stan::math::lbeta;
-
           double d_a; double d_b;
-          stan::math::grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_,
-                                        cvi_->val_, digamma(avi_->val_),
-                                        digamma(bvi_->val_),
-                                        digamma(avi_->val_ + bvi_->val_),
-                                        std::exp(lbeta(avi_->val_,
-                                                       bvi_->val_)));
+          grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_,
+                            cvi_->val_, digamma(avi_->val_),
+                            digamma(bvi_->val_),
+                            digamma(avi_->val_ + bvi_->val_),
+                            std::exp(lbeta(avi_->val_,
+                                           bvi_->val_)));
 
           avi_->adj_ += adj_ * d_a;
           bvi_->adj_ += adj_ * d_b;
           cvi_->adj_ += adj_ * std::pow((1-cvi_->val_), bvi_->val_-1)
             * std::pow(cvi_->val_, avi_->val_-1)
-            / std::exp(stan::math::lbeta(avi_->val_, bvi_->val_));
+            / std::exp(lbeta(avi_->val_, bvi_->val_));
         }
       };
 
     }
 
-    inline var inc_beta(const stan::math::var& a,
-                        const stan::math::var& b,
-                        const stan::math::var& c) {
+    inline var inc_beta(const var& a,
+                        const var& b,
+                        const var& c) {
       return var(new inc_beta_vvv_vari(a.vi_, b.vi_, c.vi_));
     }
 

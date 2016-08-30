@@ -23,9 +23,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -51,16 +49,10 @@ namespace stan {
               typename T_y, typename T_dof, typename T_scale>
     typename return_type<T_y, T_dof, T_scale>::type
     scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
-      static const char* function("stan::math::scaled_inv_chi_square_log");
+      static const char* function("scaled_inv_chi_square_log");
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)
             && stan::length(s)))
@@ -75,7 +67,6 @@ namespace stan {
                              "Degrees of freedom parameter", nu,
                              "Scale parameter", s);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_dof, T_scale>::value)
         return 0.0;
 
@@ -89,9 +80,6 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      using stan::math::lgamma;
-      using stan::math::digamma;
-      using stan::math::square;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
@@ -175,6 +163,7 @@ namespace stan {
     scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
       return scaled_inv_chi_square_log<false>(y, nu, s);
     }
+
   }
 }
 #endif

@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_MAT_FUN_EIGEN_NUMTRAITS_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <limits>
 
@@ -12,78 +13,22 @@ namespace Eigen {
    * gradient variables.
    */
   template <typename T>
-  struct NumTraits<stan::math::fvar<T> > {
-    /**
-     * Real-valued variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::fvar<T> Real;
+  struct NumTraits<stan::math::fvar<T> >
+    : GenericNumTraits<stan::math::fvar<T> > {
 
-    /**
-     * Non-integer valued variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::fvar<T> NonInteger;
-
-    /**
-     * Nested variables.
-     *
-     * Required for numerical traits.
-     */
-    typedef stan::math::fvar<T> Nested;
-
-    /**
-     * Return standard library's epsilon for double-precision floating
-     * point, <code>std::numeric_limits<double>::epsilon()</code>.
-     *
-     * @return Same epsilon as a <code>double</code>.
-     */
-    inline static Real epsilon() {
-      return std::numeric_limits<double>::epsilon();
-    }
-
-    /**
-     * Return dummy precision
-     */
-    inline static Real dummy_precision() {
-      return 1e-12;  // copied from NumTraits.h values for double
-    }
-
-    /**
-     * Return standard library's highest for double-precision floating
-     * point, <code>std::numeric_limits&lt;double&gt;::max()</code>.
-     *
-     * @return Same highest value as a <code>double</code>.
-     */
-    inline static Real highest() {
-      return std::numeric_limits<double>::max();
-    }
-
-    /**
-     * Return standard library's lowest for double-precision floating
-     * point, <code>&#45;std::numeric_limits&lt;double&gt;::max()</code>.
-     *
-     * @return Same lowest value as a <code>double</code>.
-     */
-    inline static Real lowest() {
-      return -std::numeric_limits<double>::max();
-    }
-
-    /**
-     * Properties for automatic differentiation variables
-     * read by Eigen matrix library.
-     */
     enum {
-      IsInteger = 0,
-      IsSigned = 1,
-      IsComplex = 0,
       RequireInitialization = 1,
-      ReadCost = 1,
-      AddCost = 1,
-      MulCost = 1,
-      HasFloatingPoint = 1
+      /**< stan::math::fvar requires initialization */
+      ReadCost = 2 * NumTraits<double>::ReadCost,
+      /**< twice the cost to copy a double */
+      AddCost = 2 * NumTraits<T>::AddCost,
+      /**< 2 * AddCost <br>
+         (a + b) = a + b <br>
+         (a + b)' = a' + b' */
+      MulCost = 3 * NumTraits<T>::MulCost + NumTraits<T>::AddCost
+      /**< 3 * MulCost + AddCost <br>
+         (a * b) = a * b <br>
+         (a * b)' = a' * b + a * b' */
     };
   };
 
@@ -104,5 +49,4 @@ namespace Eigen {
 
   }
 }
-
 #endif

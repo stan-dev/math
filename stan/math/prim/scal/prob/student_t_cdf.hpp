@@ -25,7 +25,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
@@ -36,18 +35,12 @@ namespace stan {
                                                   T_scale>::type
         T_partials_return;
 
-      // Size checks
       if (!(stan::length(y) && stan::length(nu) && stan::length(mu)
             && stan::length(sigma)))
         return 1.0;
 
-      static const char* function("stan::math::student_t_cdf");
+      static const char* function("student_t_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using std::exp;
 
       T_partials_return P(1.0);
@@ -57,7 +50,6 @@ namespace stan {
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       VectorView<const T_loc> mu_vec(mu);
@@ -74,13 +66,9 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      using stan::math::digamma;
-      using stan::math::lbeta;
-      using stan::math::inc_beta;
       using std::pow;
       using std::exp;
 
-      // Cache a few expensive function calls if nu is a parameter
       T_partials_return digammaHalf = 0;
 
       VectorBuilder<!is_constant_struct<T_dof>::value,
@@ -104,7 +92,6 @@ namespace stan {
         }
       }
 
-      // Compute vectorized CDF and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
@@ -138,11 +125,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
-                                          (T_partials_return)0.5, 1.0 - r,
-                                          digammaNu_vec[n], digammaHalf,
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl,
+                              (T_partials_return)0.5, 1.0 - r,
+                              digammaNu_vec[n], digammaHalf,
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
@@ -175,11 +162,11 @@ namespace stan {
             T_partials_return g1 = 0;
             T_partials_return g2 = 0;
 
-            stan::math::grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
-                                          0.5 * nu_dbl, r,
-                                          digammaHalf, digammaNu_vec[n],
-                                          digammaNuPlusHalf_vec[n],
-                                          betaNuHalf);
+            grad_reg_inc_beta(g1, g2, (T_partials_return)0.5,
+                              0.5 * nu_dbl, r,
+                              digammaHalf, digammaNu_vec[n],
+                              digammaNuPlusHalf_vec[n],
+                              betaNuHalf);
 
             operands_and_partials.d_x2[n]
               += zJacobian * (- d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
@@ -209,9 +196,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x4[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

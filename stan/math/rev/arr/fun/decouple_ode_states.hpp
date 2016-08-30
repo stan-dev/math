@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -39,8 +38,6 @@ namespace stan {
                         const std::vector<T_initial>& y0,
                         const std::vector<T_param>& theta) {
       using std::vector;
-      using stan::math::var;
-      using stan::math::precomputed_gradients;
 
       vector<typename stan::return_type<T_initial, T_param>::type> vars;
       typedef stan::is_var<T_initial> initial_var;

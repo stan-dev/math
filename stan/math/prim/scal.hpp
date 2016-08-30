@@ -68,6 +68,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp2.hpp>
+#include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/fdim.hpp>
@@ -91,7 +92,6 @@
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/scal/fun/inverse_softmax.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_uninitialized.hpp>
@@ -100,6 +100,7 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
+#include <stan/math/prim/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
 #include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>

@@ -9,8 +9,6 @@
 namespace stan {
   namespace math {
 
-    // These are helpers to the OperandsAndPartials specialization for
-    // stan::math::fvar
     namespace {
       template <typename T_derivative,
                 typename T,
@@ -71,10 +69,9 @@ namespace stan {
           deriv += increment_derivative<T, T5, D5>()(x5, d_x5);
         if (!is_constant_struct<T6>::value)
           deriv += increment_derivative<T, T6, D6>()(x6, d_x6);
-        return stan::math::fvar<T>(logp, deriv);
+        return fvar<T>(logp, deriv);
       }
     }
-
 
     /**
      * This class builds partial derivatives with respect to a set of
@@ -86,7 +83,7 @@ namespace stan {
      * seamlessly.
      *
      * This is the partial template specialization for when the return
-     * type is stan::math::fvar<T>.
+     * type is fvar<T>.
      *
      * @tparam T1 First set of operands.
      * @tparam T2 Second set of operands.
@@ -102,8 +99,8 @@ namespace stan {
              typename T4, typename T5, typename T6,
              typename T_partials_return>
     struct OperandsAndPartials<T1, T2, T3, T4, T5, T6,
-                               typename stan::math::fvar<T_partials_return> > {
-      typedef typename stan::math::fvar<T_partials_return> T_return_type;
+                               fvar<T_partials_return> > {
+      typedef fvar<T_partials_return> T_return_type;
 
       const T1& x1_;
       const T2& x2_;
@@ -114,7 +111,6 @@ namespace stan {
 
       size_t n_partials;
       T_partials_return* all_partials;
-
 
       VectorView<T_partials_return,
                  is_vector<T1>::value,
@@ -181,7 +177,6 @@ namespace stan {
         delete[] all_partials;
       }
     };
-
 
   }
 }

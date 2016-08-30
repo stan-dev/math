@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -48,13 +47,14 @@ namespace stan {
        \f[
        \frac{\partial \, P(a, z)}{\partial z} = \frac{z^{a-1}e^{-z}}{\Gamma(a)}
        \f]
+       
+       * @throws domain_error if x is at pole
+
      */
-    // throws domain_error if x is at pole
     inline double gamma_p(double x, double a) {
       return boost::math::gamma_p(x, a);
     }
 
   }
 }
-
 #endif

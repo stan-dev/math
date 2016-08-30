@@ -10,7 +10,7 @@ namespace stan {
     class scal_squared_distance_vv_vari : public op_vv_vari {
     public:
       scal_squared_distance_vv_vari(vari* avi, vari* bvi) :
-        op_vv_vari(stan::math::squared_distance(avi->val_, bvi->val_),
+        op_vv_vari(squared_distance(avi->val_, bvi->val_),
                    avi, bvi) {
       }
       void chain() {
@@ -22,7 +22,7 @@ namespace stan {
     class scal_squared_distance_vd_vari : public op_vd_vari {
     public:
       scal_squared_distance_vd_vari(vari* avi, double b) :
-        op_vd_vari(stan::math::squared_distance(avi->val_, b),
+        op_vd_vari(squared_distance(avi->val_, b),
                    avi, b) {
       }
       void chain() {
@@ -32,7 +32,7 @@ namespace stan {
     class scal_squared_distance_dv_vari : public op_dv_vari {
     public:
       scal_squared_distance_dv_vari(double a, vari* bvi) :
-        op_dv_vari(stan::math::squared_distance(a, bvi->val_),
+        op_dv_vari(squared_distance(a, bvi->val_),
                    a, bvi) {
       }
       void chain() {
@@ -43,24 +43,25 @@ namespace stan {
     /**
      * Returns the log sum of exponentials.
      */
-    inline var squared_distance(const stan::math::var& a,
-                            const stan::math::var& b) {
+    inline var squared_distance(const var& a,
+                                const var& b) {
       return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var squared_distance(const stan::math::var& a,
-                            const double& b) {
+    inline var squared_distance(const var& a,
+                                double b) {
       return var(new scal_squared_distance_vd_vari(a.vi_, b));
     }
     /**
      * Returns the log sum of exponentials.
      */
-    inline var squared_distance(const double& a,
-                                const stan::math::var& b) {
+    inline var squared_distance(double a,
+                                const var& b) {
       return var(new scal_squared_distance_dv_vari(a, b.vi_));
     }
+
   }
 }
 #endif

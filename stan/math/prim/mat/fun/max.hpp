@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <algorithm>
 #include <limits>
@@ -19,8 +20,7 @@ namespace stan {
      * @throw std::domain_error If the size of the vector is zero.
      */
     inline int max(const std::vector<int>& x) {
-      if (x.size() == 0)
-        throw std::domain_error("error: cannot take max of empty int vector");
+      check_nonzero_size("max", "int vector", x);
       int max = x[0];
       for (size_t i = 1; i < x.size(); ++i)
         if (x[i] > max)

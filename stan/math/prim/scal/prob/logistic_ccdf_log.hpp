@@ -32,18 +32,11 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(mu) && stan::length(sigma) ) )
         return 0.0;
 
-      // Error checks
-      static const char* function("stan::math::logistic_cdf_log");
+      static const char* function("logistic_cdf_log");
 
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
       using boost::math::tools::promote_args;
       using std::log;
       using std::exp;
@@ -58,7 +51,6 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
@@ -69,27 +61,23 @@ namespace stan {
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
           return operands_and_partials.value(0.0);
       }
 
-      // Compute vectorized cdf_log and its gradients
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
         }
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-        // Compute
         const T_partials_return Pn = 1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl)
                                                             * sigma_inv_vec));
         P += log(Pn);
@@ -104,9 +92,9 @@ namespace stan {
           operands_and_partials.d_x3[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

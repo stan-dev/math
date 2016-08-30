@@ -4,7 +4,6 @@
 #include <math.h>
 #include <stan/math/fwd/core.hpp>
 
-
 namespace stan {
   namespace math {
 

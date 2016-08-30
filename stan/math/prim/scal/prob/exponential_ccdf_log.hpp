@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_inv_scale>
@@ -28,16 +27,11 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::exponential_ccdf_log");
+      static const char* function("exponential_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       T_partials_return ccdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(beta)))
         return ccdf_log;
@@ -55,10 +49,8 @@ namespace stan {
       for (size_t n = 0; n < N; n++) {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
         const T_partials_return y_dbl = value_of(y_vec[n]);
-        // log ccdf
         ccdf_log += -beta_dbl * y_dbl;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)
@@ -66,7 +58,7 @@ namespace stan {
       }
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
-
 #endif

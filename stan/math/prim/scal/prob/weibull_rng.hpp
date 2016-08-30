@@ -15,7 +15,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -26,9 +25,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::weibull_distribution;
 
-      static const char* function("stan::math::weibull_rng");
-
-      using stan::math::check_positive_finite;
+      static const char* function("weibull_rng");
 
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -37,6 +34,7 @@ namespace stan {
         weibull_rng(rng, weibull_distribution<>(alpha, sigma));
       return weibull_rng();
     }
+
   }
 }
 #endif

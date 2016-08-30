@@ -17,13 +17,14 @@ namespace stan {
      * @param m Matrix.
      * @param j Column index (count from 1).
      * @return Specified column of the matrix.
+     * @throw std::out_of_range if j is out of range.
      */
     template <typename T>
     inline
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     col(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m,
         size_t j) {
-      stan::math::check_column_index("col", "j", m, j);
+      check_column_index("col", "j", m, j);
       return m.col(j - 1);
     }
 

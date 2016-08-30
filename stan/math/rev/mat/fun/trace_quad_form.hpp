@@ -21,13 +21,12 @@ namespace stan {
       public:
         trace_quad_form_vari_alloc(const Eigen::Matrix<TA, RA, CA>& A,
                                    const Eigen::Matrix<TB, RB, CB>& B)
-        : A_(A), B_(B)
+          : A_(A), B_(B)
         { }
 
         double compute() {
-          using stan::math::value_of;
-          return stan::math::trace_quad_form(value_of(A_),
-                                             value_of(B_));
+          return trace_quad_form(value_of(A_),
+                                 value_of(B_));
         }
 
         Eigen::Matrix<TA, RA, CA>  A_;
@@ -39,15 +38,15 @@ namespace stan {
       protected:
         static inline void chainA(Eigen::Matrix<double, RA, CA>& A,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {}
+                                  double adjC) {}
         static inline void chainB(Eigen::Matrix<double, RB, CB>& B,
                                   const Eigen::Matrix<double, RA, CA>& Ad,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {}
+                                  double adjC) {}
 
         static inline void chainA(Eigen::Matrix<var, RA, CA>& A,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {
+                                  double adjC) {
           Eigen::Matrix<double, RA, CA>     adjA(adjC*Bd*Bd.transpose());
           for (int j = 0; j < A.cols(); j++)
             for (int i = 0; i < A.rows(); i++)
@@ -56,7 +55,7 @@ namespace stan {
         static inline void chainB(Eigen::Matrix<var, RB, CB>& B,
                                   const Eigen::Matrix<double, RA, CA>& Ad,
                                   const Eigen::Matrix<double, RB, CB>& Bd,
-                                  const double& adjC) {
+                                  double adjC) {
           Eigen::Matrix<double, RA, CA>     adjB(adjC*(Ad + Ad.transpose())*Bd);
           for (int j = 0; j < B.cols(); j++)
             for (int i = 0; i < B.rows(); i++)
@@ -67,47 +66,45 @@ namespace stan {
                             Eigen::Matrix<TB, RB, CB>& B,
                             const Eigen::Matrix<double, RA, CA>& Ad,
                             const Eigen::Matrix<double, RB, CB>& Bd,
-                            const double& adjC) {
+                            double adjC) {
           chainA(A, Bd, adjC);
           chainB(B, Ad, Bd, adjC);
         }
-
 
       public:
         explicit
         trace_quad_form_vari
         (trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *impl)
-        : vari(impl->compute()), _impl(impl) { }
+          : vari(impl->compute()), impl_(impl) { }
 
         virtual void chain() {
-          using stan::math::value_of;
-          chainAB(_impl->A_, _impl->B_,
-                  value_of(_impl->A_), value_of(_impl->B_),
+          chainAB(impl_->A_, impl_->B_,
+                  value_of(impl_->A_), value_of(impl_->B_),
                   adj_);
         }
 
-        trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *_impl;
+        trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *impl_;
       };
     }
 
     template <typename TA, int RA, int CA, typename TB, int RB, int CB>
     inline typename
     boost::enable_if_c< boost::is_same<TA, var>::value ||
-                        boost::is_same<TB, var>::value,
+    boost::is_same<TB, var>::value,
                         var >::type
-    trace_quad_form(const Eigen::Matrix<TA, RA, CA>& A,
-                    const Eigen::Matrix<TB, RB, CB>& B) {
-      stan::math::check_square("trace_quad_form", "A", A);
-      stan::math::check_multiplicable("trace_quad_form",
-                                                "A", A,
-                                                "B", B);
+      trace_quad_form(const Eigen::Matrix<TA, RA, CA>& A,
+                      const Eigen::Matrix<TB, RB, CB>& B) {
+      check_square("trace_quad_form", "A", A);
+      check_multiplicable("trace_quad_form",
+                          "A", A,
+                          "B", B);
 
       trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB> *baseVari
         = new trace_quad_form_vari_alloc<TA, RA, CA, TB, RB, CB>(A, B);
 
       return var(new trace_quad_form_vari<TA, RA, CA, TB, RB, CB>(baseVari));
     }
+
   }
 }
-
 #endif

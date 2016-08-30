@@ -48,9 +48,6 @@ namespace stan {
       };
     }
 
-
-    // Unit vector
-
     /**
      * Return the unit length vector corresponding to the free vector y.
      * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
@@ -62,8 +59,8 @@ namespace stan {
     template <int R, int C>
     Eigen::Matrix<var, R, C>
     unit_vector_constrain(const Eigen::Matrix<var, R, C>& y) {
-      stan::math::check_vector("unit_vector", "y", y);
-      stan::math::check_nonzero_size("unit_vector", "y", y);
+      check_vector("unit_vector", "y", y);
+      check_nonzero_size("unit_vector", "y", y);
 
       vari** y_vi_array
         = reinterpret_cast<vari**>(ChainableStack::memalloc_
@@ -75,9 +72,8 @@ namespace stan {
       for (int i = 0; i < y.size(); ++i)
         y_d.coeffRef(i) = y.coeff(i).val();
 
-
       const double norm = y_d.norm();
-      stan::math::check_positive_finite("unit_vector", "norm", norm);
+      check_positive_finite("unit_vector", "norm", norm);
       Eigen::VectorXd unit_vector_d = y_d / norm;
 
       double* unit_vector_y_d_array
@@ -111,12 +107,10 @@ namespace stan {
     Eigen::Matrix<var, R, C>
     unit_vector_constrain(const Eigen::Matrix<var, R, C>& y, var &lp) {
       Eigen::Matrix<var, R, C> x = unit_vector_constrain(y);
-      lp -= 0.5 * stan::math::dot_self(y);
+      lp -= 0.5 * dot_self(y);
       return x;
     }
 
   }
-
 }
-
 #endif

@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -26,13 +25,12 @@ namespace stan {
          \textrm{NaN} & \mbox{if } x = \textrm{NaN}
        \end{cases}
     \f]
-     */
-    // throws domain_error if x is at pole
+    * @throws domain_error if x is at pole
+    */
     inline double lgamma(double x) {
       return boost::math::lgamma(x);
     }
 
   }
 }
-
 #endif

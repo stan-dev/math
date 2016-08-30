@@ -16,7 +16,6 @@ namespace stan {
     struct inv_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::inv;
         return inv(x);
       }
     };

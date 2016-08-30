@@ -18,7 +18,6 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto,
@@ -27,32 +26,24 @@ namespace stan {
     multi_normal_log(const T_y& y,
                      const T_loc& mu,
                      const T_covar& Sigma) {
-      static const char* function("stan::math::multi_normal_log");
+      static const char* function("multi_normal_log");
       typedef typename scalar_type<T_covar>::type T_covar_elem;
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
 
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive;
-      using stan::math::check_symmetric;
-      using stan::math::check_ldlt_factor;
       using Eigen::Dynamic;
 
       check_positive(function, "Covariance matrix rows", Sigma.rows());
       check_symmetric(function, "Covariance matrix", Sigma);
 
-      stan::math::LDLT_factor<T_covar_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma);
+      LDLT_factor<T_covar_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function,
                         "LDLT_Factor of covariance parameter", ldlt_Sigma);
 
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);
-      // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
 
-      // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
       int size_mu = mu_vec[0].size();
       if (size_vec > 1) {
@@ -99,7 +90,7 @@ namespace stan {
         check_not_nan(function, "Random variable", y_vec[i]);
       }
 
-      if (size_y == 0)  // y_vec[0].size() == 0
+      if (size_y == 0)
         return lp;
 
       if (include_summand<propto>::value)
@@ -133,5 +124,4 @@ namespace stan {
 
   }
 }
-
 #endif

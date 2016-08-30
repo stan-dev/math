@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -43,30 +42,21 @@ namespace stan {
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::normal_log");
+      static const char* function("normal_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
       using std::log;
       using stan::is_constant_struct;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::include_summand;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", sigma);
@@ -74,11 +64,9 @@ namespace stan {
                              "Random variable", y,
                              "Location parameter", mu,
                              "Scale parameter", sigma);
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
@@ -97,11 +85,9 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-        // reusable subexpression values
         const T_partials_return y_minus_mu_over_sigma
           = (y_dbl - mu_dbl) * inv_sigma[n];
         const T_partials_return y_minus_mu_over_sigma_squared
@@ -109,7 +95,6 @@ namespace stan {
 
         static double NEGATIVE_HALF = - 0.5;
 
-        // log probability
         if (include_summand<propto>::value)
           logp += NEG_LOG_SQRT_TWO_PI;
         if (include_summand<propto, T_scale>::value)
@@ -117,7 +102,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
 
-        // gradients
         T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= scaled_diff;
@@ -127,8 +111,6 @@ namespace stan {
           operands_and_partials.d_x3[n]
             += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
-
-
       return operands_and_partials.value(logp);
     }
 
@@ -138,6 +120,7 @@ namespace stan {
     normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
       return normal_log<false>(y, mu, sigma);
     }
+
   }
 }
 #endif

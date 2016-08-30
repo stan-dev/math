@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/is_uninitialized.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -13,7 +12,7 @@ namespace stan {
      * uninitialized.
      *
      * This overload of the
-     * <code>stan::math::is_uninitialized()</code> function delegates
+     * <code>is_uninitialized()</code> function delegates
      * the return to the <code>is_uninitialized()</code> method on the
      * specified variable.
      *

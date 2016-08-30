@@ -22,25 +22,17 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_cdf_log(const T_y& y, const T_dof& nu) {
-      static const char* function("stan::math::chi_square_cdf_log");
+      static const char* function("chi_square_cdf_log");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-
       T_partials_return cdf_log(0.0);
 
-      // Size checks
       if (!(stan::length(y) && stan::length(nu)))
         return cdf_log;
 
@@ -51,7 +43,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
@@ -63,19 +54,15 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
-      // Compute cdf_log and its gradients
-      using stan::math::gamma_p;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
       using std::log;
       using std::exp;
 
-      // Cache a few expensive function calls if nu is a parameter
       VectorBuilder<!is_constant_struct<T_dof>::value,
                     T_partials_return, T_dof> gamma_vec(stan::length(nu));
       VectorBuilder<!is_constant_struct<T_dof>::value,
@@ -89,19 +76,16 @@ namespace stan {
         }
       }
 
-      // Compute vectorized cdf_log and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
           return operands_and_partials.value(0.0);
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
         const T_partials_return beta_dbl = 0.5;
 
-        // Compute
         const T_partials_return Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
 
         cdf_log += log(Pn);
@@ -111,11 +95,10 @@ namespace stan {
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            -= 0.5 * stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                                    * y_dbl, gamma_vec[n],
-                                                    digamma_vec[n]) / Pn;
+            -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                        * y_dbl, gamma_vec[n],
+                                        digamma_vec[n]) / Pn;
       }
-
       return operands_and_partials.value(cdf_log);
     }
 

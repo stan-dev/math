@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -24,10 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::bernoulli_distribution;
 
-      static const char* function("stan::math::bernoulli_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_bounded;
+      static const char* function("bernoulli_rng");
 
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0, 1);
@@ -36,6 +32,7 @@ namespace stan {
         bernoulli_rng(rng, bernoulli_distribution<>(theta));
       return bernoulli_rng();
     }
+
   }
 }
 #endif

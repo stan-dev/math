@@ -24,7 +24,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
@@ -41,14 +40,6 @@ namespace stan {
 
       static const char* function("stan::prob::neg_binomial_2_log_log");
 
-      using stan::math::check_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive_finite;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(eta)
             && stan::length(phi)))
@@ -63,18 +54,12 @@ namespace stan {
                              "Log location parameter", eta,
                              "Precision parameter", phi);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_log_location, T_precision>::value)
         return 0.0;
 
-      using stan::math::multiply_log;
-      using stan::math::log_sum_exp;
-      using stan::math::digamma;
-      using stan::math::lgamma;
       using std::exp;
       using std::log;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_log_location> eta_vec(eta);
       VectorView<const T_precision> phi_vec(phi);
@@ -93,7 +78,6 @@ namespace stan {
       VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
       for (size_t i = 0, size = length(phi); i < size; ++i)
         phi__[i] = value_of(phi_vec[i]);
-
 
       VectorBuilder<true, T_partials_return, T_precision>
         log_phi(length(phi));

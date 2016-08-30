@@ -13,7 +13,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 namespace stan {
-
   namespace math {
 
     /**

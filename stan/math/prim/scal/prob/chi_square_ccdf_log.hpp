@@ -11,7 +11,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
@@ -22,25 +22,17 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_ccdf_log(const T_y& y, const T_dof& nu) {
-      static const char* function("stan::math::chi_square_ccdf_log");
+      static const char* function("chi_square_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-
       T_partials_return ccdf_log(0.0);
 
-      // Size checks
       if (!(stan::length(y) && stan::length(nu)))
         return ccdf_log;
 
@@ -51,7 +43,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
@@ -66,16 +57,12 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      // Compute ccdf_log and its gradients
-      using stan::math::gamma_p;
-      using stan::math::digamma;
       using boost::math::tgamma;
       using std::exp;
       using std::pow;
       using std::log;
       using std::exp;
 
-      // Cache a few expensive function calls if nu is a parameter
       VectorBuilder<!is_constant_struct<T_dof>::value,
                     T_partials_return, T_dof> gamma_vec(stan::length(nu));
       VectorBuilder<!is_constant_struct<T_dof>::value,
@@ -89,20 +76,17 @@ namespace stan {
         }
       }
 
-      // Compute vectorized ccdf_log and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
         const T_partials_return beta_dbl = 0.5;
 
-        // Compute
-        const T_partials_return Pn = 1.0 - gamma_p(alpha_dbl, beta_dbl * y_dbl);
+        const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
 
         ccdf_log += log(Pn);
 
@@ -111,13 +95,13 @@ namespace stan {
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n]
-            += 0.5 * stan::math::grad_reg_inc_gamma(alpha_dbl, beta_dbl
-                                                    * y_dbl, gamma_vec[n],
-                                                    digamma_vec[n]) / Pn;
+            += 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
+                                        * y_dbl, gamma_vec[n],
+                                        digamma_vec[n]) / Pn;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

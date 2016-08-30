@@ -28,7 +28,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
@@ -39,21 +38,13 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(alpha)
               && stan::length(beta) ) )
         return 0.0;
 
-      // Error checks
-      static const char* function("stan::math::beta_cdf");
+      static const char* function("beta_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return ccdf_log(0.0);
 
@@ -67,7 +58,6 @@ namespace stan {
                              "First shape parameter", alpha,
                              "Second shape parameter", beta);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_scale_succ> alpha_vec(alpha);
       VectorView<const T_scale_fail> beta_vec(beta);
@@ -76,16 +66,11 @@ namespace stan {
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
         operands_and_partials(y, alpha, beta);
 
-      // Compute CDF and its gradients
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::pow;
       using std::exp;
       using std::log;
       using std::exp;
 
-      // Cache a few expensive function calls if alpha or beta is a parameter
       VectorBuilder<contains_nonconstant_struct<T_scale_succ,
                                                 T_scale_fail>::value,
                     T_partials_return, T_scale_succ, T_scale_fail>
@@ -110,15 +95,12 @@ namespace stan {
         }
       }
 
-      // Compute vectorized CDFLog and gradient
       for (size_t n = 0; n < N; n++) {
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
         const T_partials_return betafunc_dbl = exp(lbeta(alpha_dbl, beta_dbl));
 
-        // Compute
         const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
         ccdf_log += log(Pn);
@@ -131,20 +113,20 @@ namespace stan {
         T_partials_return g2 = 0;
 
         if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
-                                        digamma_alpha_vec[n],
-                                        digamma_beta_vec[n],
-                                        digamma_sum_vec[n],
-                                        betafunc_dbl);
+          grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
+                            digamma_alpha_vec[n],
+                            digamma_beta_vec[n],
+                            digamma_sum_vec[n],
+                            betafunc_dbl);
         }
         if (!is_constant_struct<T_scale_succ>::value)
           operands_and_partials.d_x2[n] -= g1 / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
           operands_and_partials.d_x3[n] -= g2 / Pn;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

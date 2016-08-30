@@ -7,7 +7,6 @@
 #include <stan/math/prim/mat/fun/read_cov_matrix.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**

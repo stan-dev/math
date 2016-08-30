@@ -216,9 +216,9 @@ TEST(MathMatrix,diagPreMultiplyException) {
   m << 
     2, 3,
     4, 5;
-  EXPECT_THROW(diag_pre_multiply(m,m), std::domain_error);
+  EXPECT_THROW(diag_pre_multiply(m,m), std::invalid_argument);
 
   Matrix<var,Dynamic,1> v(3);
   v << 1, 2, 3;
-  EXPECT_THROW(diag_pre_multiply(v,m), std::domain_error);
+  EXPECT_THROW(diag_pre_multiply(v,m), std::invalid_argument);
 }

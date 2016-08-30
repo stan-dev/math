@@ -24,8 +24,7 @@ namespace stan {
         for (size_type j = 0; (j < i + 1) && (j < m.cols()); j++)
           L(i, j) = m(i, j);
       }
-
-      return stan::math::multiply(L, stan::math::transpose(L));
+      return multiply(L, transpose(L));
     }
 
   }

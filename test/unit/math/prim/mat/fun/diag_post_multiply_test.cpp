@@ -46,9 +46,9 @@ TEST(MathMatrix,diagPostMultiplyException) {
   m << 
     2, 3,
     4, 5;
-  EXPECT_THROW(diag_post_multiply(m,m), std::domain_error);
+  EXPECT_THROW(diag_post_multiply(m,m), std::invalid_argument);
 
   Matrix<double,Dynamic,1> v(3);
   v << 1, 2, 3;
-  EXPECT_THROW(diag_post_multiply(m,v), std::domain_error);
+  EXPECT_THROW(diag_post_multiply(m,v), std::invalid_argument);
 }

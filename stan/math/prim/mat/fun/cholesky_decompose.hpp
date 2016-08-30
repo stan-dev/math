@@ -24,12 +24,12 @@ namespace stan {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     cholesky_decompose(const Eigen::Matrix
                        <T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-      stan::math::check_square("cholesky_decompose", "m", m);
-      stan::math::check_symmetric("cholesky_decompose", "m", m);
+      check_square("cholesky_decompose", "m", m);
+      check_symmetric("cholesky_decompose", "m", m);
       Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
         llt(m.rows());
       llt.compute(m);
-      stan::math::check_pos_definite("cholesky_decompose", "m", llt);
+      check_pos_definite("cholesky_decompose", "m", llt);
       return llt.matrixL();
     }
 

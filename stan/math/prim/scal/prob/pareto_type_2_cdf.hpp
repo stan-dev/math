@@ -30,25 +30,14 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
         T_partials_return;
 
-      // Check sizes
-      // Size checks
       if ( !( stan::length(y)
               && stan::length(mu)
               && stan::length(lambda)
               && stan::length(alpha) ) )
         return 1.0;
 
-      // Check errors
-      static const char* function("stan::math::pareto_type_2_cdf");
+      static const char* function("pareto_type_2_cdf");
 
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_consistent_sizes;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
       using std::log;
 
       T_partials_return P(1.0);
@@ -63,7 +52,6 @@ namespace stan {
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> lambda_vec(lambda);
@@ -100,17 +88,13 @@ namespace stan {
           grad_3[i] = log(temp) * p1_pow_alpha[i];
       }
 
-      // Compute vectorized CDF and its gradients
-
       for (size_t n = 0; n < N; n++) {
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
 
         const T_partials_return Pn = 1.0 - p1_pow_alpha[n];
 
-        // Compute
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
@@ -140,9 +124,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(alpha); ++n)
           operands_and_partials.d_x4[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

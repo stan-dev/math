@@ -16,7 +16,6 @@
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -25,17 +24,8 @@ namespace stan {
                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& c,
                          RNG& rng) {
       using boost::variate_generator;
-      using stan::math::inv_logit;
 
-      static const char* function("stan::math::ordered_logistic");
-
-      using stan::math::check_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater;
-      using stan::math::check_bounded;
+      static const char* function("ordered_logistic");
 
       check_finite(function, "Location parameter", eta);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
@@ -51,9 +41,9 @@ namespace stan {
         cut(j) = inv_logit(eta - c(j - 1)) - inv_logit(eta - c(j));
       cut(c.rows()) = inv_logit(eta - c(c.rows() - 1));
 
-      return stan::math::categorical_rng(cut, rng);
+      return categorical_rng(cut, rng);
     }
+
   }
 }
-
 #endif

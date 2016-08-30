@@ -16,10 +16,6 @@ namespace stan {
     // See http://dlmf.nist.gov/8.17#ii
     inline void grad_inc_beta(double& g1, double& g2,
                               double a, double b, double z) {
-      using stan::math::lbeta;
-      using stan::math::inc_beta;
-      using stan::math::log1m;
-      using stan::math::grad_2F1;
       using std::exp;
       using std::log;
 

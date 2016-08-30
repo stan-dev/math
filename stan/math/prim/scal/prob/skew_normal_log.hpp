@@ -19,7 +19,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <bool propto,
@@ -27,32 +26,23 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("stan::math::skew_normal_log");
+      static const char* function("skew_normal_log");
       typedef typename stan::partials_return_type<T_y, T_loc,
                                                   T_scale, T_shape>::type
         T_partials_return;
 
       using std::log;
       using stan::is_constant_struct;
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::include_summand;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
             && stan::length(alpha)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Shape parameter", alpha);
@@ -63,11 +53,9 @@ namespace stan {
                              "Scale parameter", sigma,
                              "Shape paramter", alpha);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
         operands_and_partials(y, mu, sigma, alpha);
 
@@ -91,18 +79,15 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
-        // reusable subexpression values
         const T_partials_return y_minus_mu_over_sigma
           = (y_dbl - mu_dbl) * inv_sigma[n];
-        const double pi_dbl = stan::math::pi();
+        const double pi_dbl = pi();
 
-        // log probability
         if (include_summand<propto>::value)
           logp -=  0.5 * log(2.0 * pi_dbl);
         if (include_summand<propto, T_scale>::value)
@@ -113,7 +98,6 @@ namespace stan {
           logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma
                            / std::sqrt(2.0)));
 
-        // gradients
         T_partials_return deriv_logerf
           = 2.0 / std::sqrt(pi_dbl)
           * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)
@@ -148,6 +132,7 @@ namespace stan {
                     const T_shape& alpha) {
       return skew_normal_log<false>(y, mu, sigma, alpha);
     }
+
   }
 }
 #endif

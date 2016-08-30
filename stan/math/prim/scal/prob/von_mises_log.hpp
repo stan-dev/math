@@ -18,38 +18,27 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template<bool propto,
              typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
-      static char const* const function = "stan::math::von_mises_log";
+      static char const* const function = "von_mises_log";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(kappa)))
         return 0.0;
 
       using stan::is_constant_struct;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_greater;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
-      using stan::math::modified_bessel_first_kind;
       using std::log;
 
-      // Result accumulator.
       T_partials_return logp = 0.0;
 
-      // Validate arguments.
       check_finite(function, "Random variable", y);
       check_finite(function, "Location paramter", mu);
       check_positive_finite(function, "Scale parameter", kappa);
@@ -58,22 +47,17 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", kappa);
 
-
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return logp;
 
-      // Determine constants.
       const bool y_const = is_constant_struct<T_y>::value;
       const bool mu_const = is_constant_struct<T_loc>::value;
       const bool kappa_const = is_constant_struct<T_scale>::value;
 
-      // Determine which expensive computations to perform.
       const bool compute_bessel0 = include_summand<propto, T_scale>::value;
       const bool compute_bessel1 = !kappa_const;
-      const double TWO_PI = 2.0 * stan::math::pi();
+      const double TWO_PI = 2.0 * pi();
 
-      // Wrap scalars into vector views.
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> kappa_vec(kappa);
@@ -94,12 +78,10 @@ namespace stan {
       size_t N = max_size(y, mu, kappa);
 
       for (size_t n = 0; n < N; n++) {
-        // Extract argument values.
         const T_partials_return y_ = value_of(y_vec[n]);
         const T_partials_return y_dbl =  y_ - floor(y_ / TWO_PI) * TWO_PI;
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-        // Reusable values.
         T_partials_return bessel0 = 0;
         if (compute_bessel0)
           bessel0 = modified_bessel_first_kind(0, kappa_dbl[n]);
@@ -109,7 +91,6 @@ namespace stan {
         const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
         const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
 
-        // Log probability.
         if (include_summand<propto>::value)
           logp -= LOG_TWO_PI;
         if (include_summand<propto, T_scale>::value)
@@ -117,7 +98,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp += kappa_cos;
 
-        // Gradient.
         if (!y_const)
           operands_and_partials.d_x1[n] += kappa_sin;
         if (!mu_const)
@@ -126,7 +106,6 @@ namespace stan {
           operands_and_partials.d_x3[n] += kappa_cos / kappa_dbl[n]
             - bessel1 / bessel0;
       }
-
       return operands_and_partials.value(logp);
     }
 
@@ -135,6 +114,7 @@ namespace stan {
     von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
       return von_mises_log<false>(y, mu, kappa);
     }
+
   }
 }
 #endif

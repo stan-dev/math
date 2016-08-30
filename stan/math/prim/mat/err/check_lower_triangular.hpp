@@ -8,7 +8,6 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
     /**
      * Return <code>true</code> if the specified matrix is lower

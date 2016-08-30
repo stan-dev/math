@@ -18,7 +18,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Bernoulli(n|inv_logit(theta))   [0 <= n <= 1;   -inf <= theta <= inf]
@@ -26,51 +25,37 @@ namespace stan {
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_log(const T_n& n, const T_prob& theta) {
-      static const char* function("stan::math::bernoulli_logit_log");
+      static const char* function("bernoulli_logit_log");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_bounded;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1p;
-      using stan::math::inv_logit;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(theta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_bounded(function, "n", n, 0, 1);
       check_not_nan(function, "Logit transformed probability parameter", theta);
       check_consistent_sizes(function,
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_prob> theta_vec(theta);
       size_t N = max_size(n, theta);
       OperandsAndPartials<T_prob> operands_and_partials(theta);
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        // reusable subexpression values
         const int sign = 2*n_int-1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
@@ -84,7 +69,6 @@ namespace stan {
         else
           logp -= log1p(exp_m_ntheta);
 
-        // gradients
         if (!is_constant_struct<T_prob>::value) {
           static const double cutoff = 20.0;
           if (ntheta > cutoff)
@@ -108,6 +92,6 @@ namespace stan {
       return bernoulli_logit_log<false>(n, theta);
     }
 
-  }  // namespace math
-}  // namespace stan
+  }
+}
 #endif

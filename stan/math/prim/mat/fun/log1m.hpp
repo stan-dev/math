@@ -16,7 +16,6 @@ namespace stan {
     struct log1m_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::log1m;
         return log1m(x);
       }
     };

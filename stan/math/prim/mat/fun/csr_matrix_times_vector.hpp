@@ -11,11 +11,10 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
-    /** 
+    /**
      * @defgroup csr_format Compressed Sparse Row matrix format.
-     *  A compressed Sparse Row (CSR) sparse matrix is defined by four 
+     *  A compressed Sparse Row (CSR) sparse matrix is defined by four
      *  component vectors labeled w, v, and u.  They are defined as:
      *    - w: the non-zero values in the sparse matrix.
      *    - v: column index for each value in w,  as a result this
@@ -24,8 +23,8 @@ namespace stan {
      *      is equal to the number of rows plus one.  Last entry is
      *      one-past-the-end in w, following the Eigen spec.
      *  Indexing is either zero-based or one-based depending on the value of
-     *  stan::error_index::value.  Following the definition of the format in 
-     *  Eigen, we allow for unused garbage values in w/v which are never read. 
+     *  stan::error_index::value.  Following the definition of the format in
+     *  Eigen, we allow for unused garbage values in w/v which are never read.
      *  All indexing _internal_ to a given function is zero-based.
      *
      *  With only m/n/w/v/u in hand, it is possible to check all
@@ -34,7 +33,7 @@ namespace stan {
      *  except the column dimension before any work is done inside a
      *  function.  The column index is checked as it is constructed and
      *  used for each entry.  If the column index is not needed it is
-     *  not checked.  As a result indexing mistakes might produce non-sensical 
+     *  not checked.  As a result indexing mistakes might produce non-sensical
      *  operations but out-of-bounds indexing will be caught.
      *
      *  Except for possible garbage values in w/v/u, memory usage is
@@ -65,10 +64,11 @@ namespace stan {
      * @throw std::domain_error if m and n are not positive or are nan.
      * @throw std::domain_error if the implied sparse matrix and b are
      *                          not multiplicable.
-     * @throw std::domain_error if m/n/w/v/u are not internally
-     * consistent, as defined by the indexing scheme.  Extractors are
-     * defined in Stan which guarantee a consistent set of m/n/w/v/u
-     * for a given sparse matrix.
+     * @throw std::invalid_argument if m/n/w/v/u are not internally
+     *   consistent, as defined by the indexing scheme.  Extractors are
+     *   defined in Stan which guarantee a consistent set of m/n/w/v/u
+     *   for a given sparse matrix.
+     * @throw std::out_of_range if any of the indexes are out of range.
      */
     /** \addtogroup csr_format
      */
@@ -76,8 +76,8 @@ namespace stan {
     inline
     Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
                   Eigen::Dynamic, 1>
-    csr_matrix_times_vector(const int& m,
-                            const int& n,
+    csr_matrix_times_vector(int m,
+                            int n,
                             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                             const std::vector<int>& v,
                             const std::vector<int>& u,
@@ -100,25 +100,22 @@ namespace stan {
       for (int row = 0; row < m; ++row) {
         int idx = csr_u_to_z(u, row);
         int row_end_in_w = (u[row] - stan::error_index::value) + idx;
-        int i = 0;  // index into dot-product segment entries.
+        int i = 0;
         Eigen::Matrix<result_t, Eigen::Dynamic, 1> b_sub(idx);
         b_sub.setZero();
         for (int nze = u[row] - stan::error_index::value;
              nze < row_end_in_w; ++nze, ++i) {
           check_range("csr_matrix_times_vector", "j", n, v[nze]);
           b_sub.coeffRef(i) = b.coeffRef(v[nze] - stan::error_index::value);
-        }  // loop skipped when z is zero.
+        }
         Eigen::Matrix<T1, Eigen::Dynamic, 1>
           w_sub(w.segment(u[row] - stan::error_index::value, idx));
         result.coeffRef(row) = dot_product(w_sub, b_sub);
       }
       return result;
     }
-
     /** @}*/   // end of csr_format group
 
   }
-
 }
-
 #endif

@@ -28,6 +28,12 @@ public:
     param[2] = 1.0;                 // beta
     parameters.push_back(param);
     ccdf_log.push_back(std::log(1.0 - 0.6321205588285576659757));       // expected ccdf_log
+
+    param[0] = 16.0;                // y
+    param[1] = 3.0;                 // alpha
+    param[2] = 3.0;                 // beta
+    parameters.push_back(param);
+    ccdf_log.push_back(std::log(1.7116220633718619e-18));       // expected ccdf_log
   }
  
   void invalid_values(vector<size_t>& index, 
@@ -89,10 +95,10 @@ public:
   typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
   ccdf_log_function(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
                     const T3&, const T4&, const T5&) {
-    using stan::math::gamma_p;
-    using boost::math::gamma_p;
+    using stan::math::gamma_q;
+    using boost::math::gamma_q;
     using std::log;
 
-    return log(1.0 - gamma_p(alpha, beta * y));
+    return log(gamma_q(alpha, beta * y));
   }
 };

@@ -31,18 +31,12 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-
       T_partials_return P(1.0);
-      // check if any vectors are zero length
       if (!(stan::length(n)
             && stan::length(mu)
             && stan::length(phi)))
         return P;
 
-      // Validate arguments
       check_positive_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Precision parameter", phi);
       check_not_nan(function, "Random variable", n);
@@ -51,18 +45,10 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision Parameter", phi);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_location> mu_vec(mu);
       VectorView<const T_precision> phi_vec(phi);
       size_t size = max_size(n, mu, phi);
-
-      // Compute vectorized CDF and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::inc_beta_ddz;
-      using stan::math::inc_beta_dda;
-      using stan::math::digamma;
 
       OperandsAndPartials<T_location, T_precision>
         operands_and_partials(mu, phi);
@@ -74,7 +60,6 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      // Cache a few expensive function calls if  phi is a parameter
       VectorBuilder<!is_constant_struct<T_precision>::value,
                     T_partials_return, T_precision>
         digamma_phi_vec(stan::length(phi));

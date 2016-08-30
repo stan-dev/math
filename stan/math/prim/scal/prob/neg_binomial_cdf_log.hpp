@@ -25,7 +25,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_shape,
@@ -33,23 +32,16 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_cdf_log(const T_n& n, const T_shape& alpha,
                          const T_inv_scale& beta) {
-      static const char* function("stan::math::neg_binomial_cdf_log");
+      static const char* function("neg_binomial_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-
-      // Ensure non-zero arugment lengths
       if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       T_partials_return P(0.0);
 
-      // Validate arguments
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
       check_consistent_sizes(function,
@@ -57,22 +49,15 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
-      // Compute vectorized cdf_log and gradient
-      using stan::math::value_of;
-      using stan::math::inc_beta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::exp;
       using std::pow;
       using std::log;
       using std::exp;
-
 
       OperandsAndPartials<T_shape, T_inv_scale>
         operands_and_partials(alpha, beta);
@@ -81,10 +66,9 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
-      // Cache a few expensive function calls if alpha is a parameter
       VectorBuilder<!is_constant_struct<T_shape>::value,
                     T_partials_return, T_shape>
         digammaN_vec(stan::length(alpha));
@@ -121,19 +105,18 @@ namespace stan {
         const T_partials_return Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
         const T_partials_return beta_func = exp(lbeta(n_dbl + 1, alpha_dbl));
 
-
         P += log(Pi);
 
         if (!is_constant_struct<T_shape>::value) {
           T_partials_return g1 = 0;
           T_partials_return g2 = 0;
 
-          stan::math::grad_reg_inc_beta(g1, g2, alpha_dbl,
-                                        n_dbl + 1, p_dbl,
-                                        digammaAlpha_vec[i],
-                                        digammaN_vec[i],
-                                        digammaSum_vec[i],
-                                        beta_func);
+          grad_reg_inc_beta(g1, g2, alpha_dbl,
+                            n_dbl + 1, p_dbl,
+                            digammaAlpha_vec[i],
+                            digammaN_vec[i],
+                            digammaSum_vec[i],
+                            beta_func);
           operands_and_partials.d_x1[i] += g1 / Pi;
         }
         if (!is_constant_struct<T_inv_scale>::value)
@@ -143,6 +126,7 @@ namespace stan {
 
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

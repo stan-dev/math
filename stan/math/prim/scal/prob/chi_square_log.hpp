@@ -21,7 +21,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -47,20 +46,13 @@ namespace stan {
               typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_log(const T_y& y, const T_dof& nu) {
-      static const char* function("stan::math::chi_square_log");
+      static const char* function("chi_square_log");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)))
         return 0.0;
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
       T_partials_return logp(0.0);
       check_not_nan(function, "Random variable", y);
@@ -70,8 +62,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
@@ -80,13 +70,11 @@ namespace stan {
         if (value_of(y_vec[n]) < 0)
           return LOG_ZERO;
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_dof>::value)
         return 0.0;
 
       using boost::math::digamma;
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_dof>::value,

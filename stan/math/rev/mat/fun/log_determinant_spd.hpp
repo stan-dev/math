@@ -8,12 +8,10 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <int R, int C>
     inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
-      using stan::math::domain_error;
       using Eigen::Matrix;
 
       math::check_square("log_determinant_spd", "m", m);
@@ -30,7 +28,7 @@ namespace stan {
                 "failed LDLT factorization");
       }
 
-       // compute the inverse of A (needed for the derivative)
+      // compute the inverse of A (needed for the derivative)
       m_d.setIdentity(m.rows(), m.cols());
       ldlt.solveInPlace(m_d);
 
@@ -63,7 +61,6 @@ namespace stan {
       return var(new precomputed_gradients_vari(val, m.size(),
                                                 operands, gradients));
     }
-
 
   }
 

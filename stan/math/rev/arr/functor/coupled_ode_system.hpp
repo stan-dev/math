@@ -19,7 +19,6 @@ namespace stan {
     // It is in namespace stan::math so that the partial template
     // specializations are treated as such.
 
-
     /**
      * Increment the state derived from the coupled system in the with
      * the original initial state.  This is necessary because the
@@ -31,8 +30,8 @@ namespace stan {
      * @param[in, out] y state of the coupled system on input,
      * incremented with initial values on output.
      */
-    inline void add_initial_values(const std::vector<stan::math::var>& y0,
-                            std::vector<std::vector<stan::math::var> >& y) {
+    inline void add_initial_values(const std::vector<var>& y0,
+                                   std::vector<std::vector<var> >& y) {
       for (size_t n = 0; n < y.size(); n++)
         for (size_t m = 0; m < y0.size(); m++)
           y[n][m] += y0[m];
@@ -60,10 +59,10 @@ namespace stan {
      * @tparam F type of functor for the base ode system.
      */
     template <typename F>
-    struct coupled_ode_system <F, double, stan::math::var> {
+    struct coupled_ode_system <F, double, var> {
       const F& f_;
       const std::vector<double>& y0_dbl_;
-      const std::vector<stan::math::var>& theta_;
+      const std::vector<var>& theta_;
       std::vector<double> theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
@@ -86,7 +85,7 @@ namespace stan {
        */
       coupled_ode_system(const F& f,
                          const std::vector<double>& y0,
-                         const std::vector<stan::math::var>& theta,
+                         const std::vector<var>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
                          std::ostream* msgs)
@@ -99,9 +98,9 @@ namespace stan {
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * M_),
-                msgs_(msgs) {
+          msgs_(msgs) {
         for (size_t m = 0; m < M_; m++)
-          theta_dbl_[m] = stan::math::value_of(theta[m]);
+          theta_dbl_[m] = value_of(theta[m]);
       }
 
       /**
@@ -125,18 +124,17 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         vector<double> y(z.begin(), z.begin() + N_);
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        stan::math::check_equal("coupled_ode_system",
-                                "dz_dt", dz_dt.size(), N_);
+        check_equal("coupled_ode_system",
+                    "dz_dt", dz_dt.size(), N_);
 
         vector<double> coupled_sys(N_ * M_);
         vector<double> grad(N_ + M_);
 
         try {
-          stan::math::start_nested();
+          start_nested();
 
           vector<var> z_vars;
           z_vars.reserve(N_ + M_);
@@ -165,10 +163,10 @@ namespace stan {
             }
           }
         } catch (const std::exception& e) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
 
         dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
@@ -208,12 +206,11 @@ namespace stan {
        *
        * @param y coupled states after solving the ode
        */
-      std::vector<std::vector<stan::math::var> >
+      std::vector<std::vector<var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
-        using stan::math::precomputed_gradients;
-        std::vector<stan::math::var> temp_vars(N_);
+        std::vector<var> temp_vars(N_);
         std::vector<double> temp_gradients(M_);
-        std::vector<std::vector<stan::math::var> > y_return(y.size());
+        std::vector<std::vector<var> > y_return(y.size());
 
         for (size_t i = 0; i < y.size(); i++) {
           // iterate over number of equations
@@ -259,9 +256,9 @@ namespace stan {
      * @tparam F type of base ODE system functor
      */
     template <typename F>
-    struct coupled_ode_system <F, stan::math::var, double> {
+    struct coupled_ode_system <F, var, double> {
       const F& f_;
-      const std::vector<stan::math::var>& y0_;
+      const std::vector<var>& y0_;
       std::vector<double> y0_dbl_;
       const std::vector<double>& theta_dbl_;
       const std::vector<double>& x_;
@@ -285,7 +282,7 @@ namespace stan {
        * @param[in, out] msgs output stream for messages.
        */
       coupled_ode_system(const F& f,
-                         const std::vector<stan::math::var>& y0,
+                         const std::vector<var>& y0,
                          const std::vector<double>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
@@ -298,10 +295,10 @@ namespace stan {
           x_int_(x_int),
           msgs_(msgs),
           N_(y0.size()),
-        M_(theta.size()),
-        size_(N_ + N_ * N_) {
+          M_(theta.size()),
+          size_(N_ + N_ * N_) {
         for (size_t n = 0; n < N_; n++)
-          y0_dbl_[n] = stan::math::value_of(y0_[n]);
+          y0_dbl_[n] = value_of(y0_[n]);
       }
 
       /**
@@ -324,21 +321,20 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
 
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        stan::math::check_equal("coupled_ode_system",
-                                "dz_dt", dz_dt.size(), N_);
+        check_equal("coupled_ode_system",
+                    "dz_dt", dz_dt.size(), N_);
 
         std::vector<double> coupled_sys(N_ * N_);
         std::vector<double> grad(N_);
 
         try {
-          stan::math::start_nested();
+          start_nested();
 
           vector<var> z_vars;
           z_vars.reserve(N_);
@@ -364,10 +360,10 @@ namespace stan {
             }
           }
         } catch (const std::exception& e) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
 
         dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
@@ -406,10 +402,8 @@ namespace stan {
        *
        * @param y the vector of the coupled states after solving the ode
        */
-      std::vector<std::vector<stan::math::var> >
+      std::vector<std::vector<var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
-        using stan::math::precomputed_gradients;
-        using stan::math::var;
         using std::vector;
 
         vector<var> temp_vars(N_);
@@ -471,11 +465,11 @@ namespace stan {
      * @tparam F the functor for the base ode system
      */
     template <typename F>
-    struct coupled_ode_system <F, stan::math::var, stan::math::var> {
+    struct coupled_ode_system <F, var, stan::math::var> {
       const F& f_;
-      const std::vector<stan::math::var>& y0_;
+      const std::vector<var>& y0_;
       std::vector<double> y0_dbl_;
-      const std::vector<stan::math::var>& theta_;
+      const std::vector<var>& theta_;
       std::vector<double> theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
@@ -498,8 +492,8 @@ namespace stan {
        * @param[in, out] msgs output stream to which to print messages.
        */
       coupled_ode_system(const F& f,
-                         const std::vector<stan::math::var>& y0,
-                         const std::vector<stan::math::var>& theta,
+                         const std::vector<var>& y0,
+                         const std::vector<var>& theta,
                          const std::vector<double>& x,
                          const std::vector<int>& x_int,
                          std::ostream* msgs)
@@ -515,10 +509,10 @@ namespace stan {
           size_(N_ + N_ * (N_ + M_)),
           msgs_(msgs) {
         for (size_t n = 0; n < N_; n++)
-          y0_dbl_[n] = stan::math::value_of(y0[n]);
+          y0_dbl_[n] = value_of(y0[n]);
 
         for (size_t m = 0; m < M_; m++)
-          theta_dbl_[m] = stan::math::value_of(theta[m]);
+          theta_dbl_[m] = value_of(theta[m]);
       }
 
       /**
@@ -541,21 +535,20 @@ namespace stan {
                       std::vector<double>& dz_dt,
                       double t) {
         using std::vector;
-        using stan::math::var;
 
         vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
 
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        stan::math::check_equal("coupled_ode_system",
-                                "dz_dt", dz_dt.size(), N_);
+        check_equal("coupled_ode_system",
+                    "dz_dt", dz_dt.size(), N_);
 
         vector<double> coupled_sys(N_ * (N_ + M_));
         vector<double> grad(N_ + M_);
 
         try {
-          stan::math::start_nested();
+          start_nested();
 
           vector<var> z_vars;
           z_vars.reserve(N_ + M_);
@@ -584,10 +577,10 @@ namespace stan {
             }
           }
         } catch (const std::exception& e) {
-          stan::math::recover_memory_nested();
+          recover_memory_nested();
           throw;
         }
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
 
         dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
@@ -623,11 +616,9 @@ namespace stan {
        *
        * @param y the vector of the coupled states after solving the ode
        */
-      std::vector<std::vector<stan::math::var> >
+      std::vector<std::vector<var> >
       decouple_states(const std::vector<std::vector<double> >& y) {
         using std::vector;
-        using stan::math::var;
-        using stan::math::precomputed_gradients;
 
         vector<var> vars = y0_;
         vars.insert(vars.end(), theta_.begin(), theta_.end());
@@ -652,7 +643,7 @@ namespace stan {
         return y_return;
       }
     };
-  }  // math
-}  // stan
 
+  }
+}
 #endif

@@ -18,26 +18,18 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_ccdf_log(const T_y& y, const T_loc& mu,
                                 const T_scale& sigma) {
-      static const char* function("stan::math::double_exponential_ccdf_log");
+      static const char* function("double_exponential_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-
       T_partials_return ccdf_log(0.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -53,7 +45,6 @@ namespace stan {
 
       using std::log;
       using std::exp;
-      using stan::math::log1m;
       using std::exp;
 
       OperandsAndPartials<T_y, T_loc, T_scale>
@@ -72,10 +63,8 @@ namespace stan {
         const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
         const T_partials_return inv_sigma = 1.0 / sigma_dbl;
         if (y_dbl < mu_dbl) {
-          // log ccdf
           ccdf_log += log1m(0.5 * exp(scaled_diff));
 
-          // gradients
           const T_partials_return rep_deriv = 1.0
             / (2.0 * exp(-scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
@@ -86,10 +75,8 @@ namespace stan {
             operands_and_partials.d_x3[n] += rep_deriv * scaled_diff
               * inv_sigma;
         } else {
-          // log ccdf
           ccdf_log += log_half - scaled_diff;
 
-          // gradients
           if (!is_constant_struct<T_y>::value)
             operands_and_partials.d_x1[n] -= inv_sigma;
           if (!is_constant_struct<T_loc>::value)
@@ -100,6 +87,7 @@ namespace stan {
       }
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

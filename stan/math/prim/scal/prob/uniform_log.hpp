@@ -17,10 +17,8 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
-    // CONTINUOUS, UNIVARIATE DENSITIES
     /**
      * The log of a uniform density for the given
      * y, lower, and upper bound.
@@ -46,24 +44,17 @@ namespace stan {
               typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const char* function("stan::math::uniform_log");
+      static const char* function("uniform_log");
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 
-      using stan::math::check_not_nan;
-      using stan::math::check_finite;
-      using stan::math::check_greater;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Lower bound parameter", alpha);
@@ -74,7 +65,6 @@ namespace stan {
                              "Lower bound parameter", alpha,
                              "Upper bound parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_low, T_high>::value)
         return 0.0;
 
@@ -126,6 +116,7 @@ namespace stan {
     uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
       return uniform_log<false>(y, alpha, beta);
     }
+
   }
 }
 #endif

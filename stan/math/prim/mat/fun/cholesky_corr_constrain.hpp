@@ -2,18 +2,15 @@
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_CONSTRAIN_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <cmath>
 #include <iostream>
-#include <stdexcept>
 
 namespace stan {
-
   namespace math {
-
-    // CHOLESKY CORRELATION MATRIX
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
@@ -22,13 +19,10 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::square;
       int k_choose_2 = (K * (K - 1)) / 2;
-      if (k_choose_2 != y.size()) {
-        throw std::domain_error("y is not a valid unconstrained cholesky "
-                                "correlation matrix."
-                                "Require (K choose 2) elements in y.");
-      }
+      check_size_match("cholesky_corr_constrain",
+                       "y.size()", y.size(),
+                       "k_choose_2", k_choose_2);
       Matrix<T, Dynamic, 1> z(k_choose_2);
       for (int i = 0; i < k_choose_2; ++i)
         z(i) = corr_constrain(y(i));
@@ -61,14 +55,10 @@ namespace stan {
       using std::sqrt;
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::log1m;
-      using stan::math::square;
       int k_choose_2 = (K * (K - 1)) / 2;
-      if (k_choose_2 != y.size()) {
-        throw std::domain_error("y is not a valid unconstrained cholesky "
-                                "correlation matrix."
-                                " Require (K choose 2) elements in y.");
-      }
+      check_size_match("cholesky_corr_constrain",
+                       "y.size()", y.size(),
+                       "k_choose_2", k_choose_2);
       Matrix<T, Dynamic, 1> z(k_choose_2);
       for (int i = 0; i < k_choose_2; ++i)
         z(i) = corr_constrain(y(i), lp);
@@ -94,7 +84,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

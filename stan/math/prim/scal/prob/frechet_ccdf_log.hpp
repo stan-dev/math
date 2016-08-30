@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_scale>
@@ -32,15 +31,10 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::frechet_ccdf_log");
+      static const char* function("frechet_ccdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
@@ -54,7 +48,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_shape, T_scale>
         operands_and_partials(y, alpha, sigma);
 
-      using stan::math::log1m;
       using std::log;
       using std::exp;
       VectorView<const T_y> y_vec(y);
@@ -69,10 +62,8 @@ namespace stan {
         const T_partials_return pow_ = pow(sigma_dbl / y_dbl, alpha_dbl);
         const T_partials_return exp_ = exp(-pow_);
 
-        // ccdf_log
         ccdf_log += log1m(exp_);
 
-        // gradients
         const T_partials_return rep_deriv_ = pow_ / (1.0 / exp_ - 1);
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= alpha_dbl / y_dbl * rep_deriv_;
@@ -81,9 +72,9 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] += alpha_dbl / sigma_dbl * rep_deriv_;
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

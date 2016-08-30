@@ -27,26 +27,19 @@ namespace stan {
               typename T_y, typename T_scale, typename T_shape>
     typename return_type<T_y, T_scale, T_shape>::type
     pareto_log(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-      static const char* function("stan::math::pareto_log");
+      static const char* function("pareto_log");
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      using stan::math::value_of;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(y_min)
             && stan::length(alpha)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_positive_finite(function, "Scale parameter", y_min);
       check_positive_finite(function, "Shape parameter", alpha);
@@ -55,7 +48,6 @@ namespace stan {
                              "Scale parameter", y_min,
                              "Shape parameter", alpha);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_scale, T_shape>::value)
         return 0.0;
 
@@ -69,7 +61,6 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale, T_shape>
         operands_and_partials(y, y_min, alpha);
 
@@ -102,11 +93,8 @@ namespace stan {
           log_alpha[n] = log(value_of(alpha_vec[n]));
       }
 
-      using stan::math::multiply_log;
-
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-        // log probability
         if (include_summand<propto, T_shape>::value)
           logp += log_alpha[n];
         if (include_summand<propto, T_scale, T_shape>::value)
@@ -114,7 +102,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_shape>::value)
           logp -= alpha_dbl * log_y[n] + log_y[n];
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= alpha_dbl * inv_y[n] + inv_y[n];
         if (!is_constant_struct<T_scale>::value)
@@ -132,6 +119,7 @@ namespace stan {
     pareto_log(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
       return pareto_log<false>(y, y_min, alpha);
     }
+
   }
 }
 #endif

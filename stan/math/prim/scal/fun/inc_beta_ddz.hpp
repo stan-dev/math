@@ -37,7 +37,6 @@ namespace stan {
       return ibeta_derivative(a, b, z);
     }
 
-  }  // math
-}   // stan
-
+  }
+}
 #endif

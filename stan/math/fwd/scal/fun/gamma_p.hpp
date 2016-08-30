@@ -6,14 +6,12 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
     inline
     fvar<T>
     gamma_p(const fvar<T>& x1, const fvar<T>& x2) {
-      using stan::math::gamma_p;
       using std::log;
       using std::exp;
       using std::pow;
@@ -49,7 +47,6 @@ namespace stan {
     inline
     fvar<T>
     gamma_p(const fvar<T>& x1, const double x2) {
-      using stan::math::gamma_p;
       using std::log;
       using std::exp;
       using std::pow;
@@ -84,7 +81,6 @@ namespace stan {
     inline
     fvar<T>
     gamma_p(const double x1, const fvar<T>& x2) {
-      using stan::math::gamma_p;
       using std::exp;
       using std::pow;
 

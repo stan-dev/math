@@ -9,7 +9,6 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
 
     // no-op error handler to silence CVodes error output;  errors handled

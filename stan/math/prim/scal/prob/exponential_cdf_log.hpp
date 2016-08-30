@@ -20,7 +20,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_inv_scale>
@@ -30,18 +29,13 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::exponential_cdf_log");
+      static const char* function("exponential_cdf_log");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
       T_partials_return cdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(beta)))
         return cdf_log;
@@ -60,10 +54,8 @@ namespace stan {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
         const T_partials_return y_dbl = value_of(y_vec[n]);
         T_partials_return one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
-        // log cdf
         cdf_log += log(one_m_exp);
 
-        // gradients
         T_partials_return rep_deriv = -exp(-beta_dbl * y_dbl) / one_m_exp;
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] -= rep_deriv * beta_dbl;
@@ -72,7 +64,7 @@ namespace stan {
       }
       return operands_and_partials.value(cdf_log);
     }
+
   }
 }
-
 #endif

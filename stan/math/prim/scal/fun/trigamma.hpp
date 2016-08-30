@@ -12,7 +12,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -64,14 +63,14 @@ namespace stan {
       double b8 = -1.0 / 30.0;
 
       // negative integers and zero return postiive infinity
-      // see http:// mathworld.wolfram.com/PolygammaFunction.html
+      // see http://mathworld.wolfram.com/PolygammaFunction.html
       if ((x <= 0.0) && (floor(x) == x)) {
         value = positive_infinity();
         return value;
       }
 
       // negative non-integers: use the reflection formula
-      // see http:// mathworld.wolfram.com/PolygammaFunction.html
+      // see http://mathworld.wolfram.com/PolygammaFunction.html
       if ((x <= 0) && (floor(x) != x)) {
         value = -trigamma(-x + 1.0) + (pi() / sin(-pi() * x))
           * (pi() / sin(-pi() * x));
@@ -83,7 +82,7 @@ namespace stan {
         return 1.0 / (x * x);
 
       // use recurrence relation until x >= large
-      // see http:// mathworld.wolfram.com/PolygammaFunction.html
+      // see http://mathworld.wolfram.com/PolygammaFunction.html
       z = x;
       value = 0.0;
       while (z < large) {
@@ -92,7 +91,7 @@ namespace stan {
       }
 
       // asymptotic expansion as a Laurent series if x >= large
-      // see http:// en.wikipedia.org/wiki/Trigamma_function
+      // see http://en.wikipedia.org/wiki/Trigamma_function
       y = 1.0 / (z * z);
       value += 0.5 * y + (1.0 + y * (b2  + y * (b4 + y * (b6 + y * b8)))) / z;
 

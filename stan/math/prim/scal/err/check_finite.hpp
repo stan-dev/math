@@ -17,7 +17,6 @@ namespace stan {
         static bool check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           if (!(boost::math::isfinite)(value_of_rec(y)))
             domain_error(function, name, y,
                          "is ", ", but must be finite!");
@@ -30,7 +29,6 @@ namespace stan {
         static bool check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           using stan::length;
           for (size_t n = 0; n < length(y); n++) {
             if (!(boost::math::isfinite)(value_of_rec(stan::get(y, n))))

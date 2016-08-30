@@ -21,7 +21,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_scale>
@@ -30,16 +29,12 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::weibull_cdf");
+      static const char* function("weibull_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
@@ -65,10 +60,8 @@ namespace stan {
         const T_partials_return exp_ = exp(-pow_);
         const T_partials_return cdf_ = 1.0 - exp_;
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         const T_partials_return rep_deriv = exp_ * pow_ / cdf_;
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += rep_deriv * alpha_dbl / y_dbl;
@@ -90,9 +83,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

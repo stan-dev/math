@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_IDENTITY_CONSTRAIN_HPP
 
 namespace stan {
-
   namespace math {
 
     /**

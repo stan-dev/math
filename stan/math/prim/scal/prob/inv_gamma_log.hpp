@@ -26,7 +26,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -49,24 +48,18 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     inv_gamma_log(const T_y& y, const T_shape& alpha, const T_scale& beta) {
-      static const char* function("stan::math::inv_gamma_log");
+      static const char* function("inv_gamma_log");
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
       using boost::math::tools::promote_args;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
       check_not_nan(function, "Random variable", y);
@@ -77,11 +70,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_scale> beta_vec(beta);
@@ -96,8 +87,6 @@ namespace stan {
       OperandsAndPartials<T_y, T_shape, T_scale>
         operands_and_partials(y, alpha, beta);
 
-      using stan::math::lgamma;
-      using stan::math::digamma;
       using std::log;
 
       VectorBuilder<include_summand<propto, T_y, T_shape>::value,
@@ -131,7 +120,6 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
@@ -144,7 +132,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_scale>::value)
           logp -= beta_dbl * inv_y[n];
 
-        // gradients
         if (!is_constant<typename is_vector<T_y>::type>::value)
           operands_and_partials.d_x1[n]
             += -(alpha_dbl+1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
@@ -163,7 +150,7 @@ namespace stan {
     inv_gamma_log(const T_y& y, const T_shape& alpha, const T_scale& beta) {
       return inv_gamma_log<false>(y, alpha, beta);
     }
+
   }
 }
-
 #endif

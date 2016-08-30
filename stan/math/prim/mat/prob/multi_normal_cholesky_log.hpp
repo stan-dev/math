@@ -47,27 +47,16 @@ namespace stan {
     multi_normal_cholesky_log(const T_y& y,
                               const T_loc& mu,
                               const T_covar& L) {
-      static const char* function("stan::math::multi_normal_cholesky_log");
+      static const char* function("multi_normal_cholesky_log");
       typedef typename scalar_type<T_covar>::type T_covar_elem;
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
 
-      using stan::math::mdivide_left_tri_low;
-      using stan::math::dot_self;
-      using stan::math::multiply;
-      using stan::math::subtract;
-      using stan::math::sum;
-
-      using stan::math::check_size_match;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
 
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);
-      // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
 
-      // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
       int size_mu = mu_vec[0].size();
       if (size_vec > 1) {
@@ -127,7 +116,7 @@ namespace stan {
         lp_type sum_lp_vec(0.0);
         for (size_t i = 0; i < size_vec; i++) {
           Eigen::Matrix<typename return_type<T_y, T_loc>::type,
-            Eigen::Dynamic, 1> y_minus_mu(size_y);
+                        Eigen::Dynamic, 1> y_minus_mu(size_y);
           for (int j = 0; j < size_y; j++)
             y_minus_mu(j) = y_vec[i](j)-mu_vec[i](j);
           Eigen::Matrix<typename return_type<T_y, T_loc, T_covar>::type,

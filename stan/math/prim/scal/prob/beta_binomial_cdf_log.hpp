@@ -21,7 +21,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_n, typename T_N,
@@ -29,25 +28,17 @@ namespace stan {
     typename return_type<T_size1, T_size2>::type
     beta_binomial_cdf_log(const T_n& n, const T_N& N, const T_size1& alpha,
                           const T_size2& beta) {
-      static const char* function("stan::math::beta_binomial_cdf_log");
+      static const char* function("beta_binomial_cdf_log");
       typedef typename stan::partials_return_type<T_n, T_N, T_size1,
                                                   T_size2>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-
-      // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
       T_partials_return P(0.0);
 
-      // Validate arguments
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,
                             "First prior sample size parameter", alpha);
@@ -59,17 +50,12 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      // Wrap arguments in vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_N> N_vec(N);
       VectorView<const T_size1> alpha_vec(alpha);
       VectorView<const T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
-      // Compute vectorized cdf_log and gradient
-      using stan::math::lgamma;
-      using stan::math::digamma;
-      using stan::math::lbeta;
       using std::exp;
       using std::log;
       using std::exp;
@@ -81,7 +67,7 @@ namespace stan {
       // The gradients are technically ill-defined, but treated as neg infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) <= 0)
-          return operands_and_partials.value(stan::math::negative_infinity());
+          return operands_and_partials.value(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -99,7 +85,7 @@ namespace stan {
         const T_partials_return mu = alpha_dbl + n_dbl + 1;
         const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
 
-        const T_partials_return F = stan::math::F32((T_partials_return)1, mu,
+        const T_partials_return F = F32((T_partials_return)1, mu,
                                                     -N_dbl + n_dbl + 1,
                                                     n_dbl + 2, 1 - nu,
                                                     (T_partials_return)1);
@@ -123,7 +109,7 @@ namespace stan {
         if (contains_nonconstant_struct<T_size1, T_size2>::value) {
           digammaOne = digamma(mu + nu);
           digammaTwo = digamma(alpha_dbl + beta_dbl);
-          stan::math::grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
+          grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
                                n_dbl + 2, 1 - nu, (T_partials_return)1);
         }
         if (!is_constant_struct<T_size1>::value) {

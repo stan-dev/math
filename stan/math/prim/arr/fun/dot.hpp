@@ -7,7 +7,6 @@
 namespace stan {
   namespace math {
 
-    // x' * y
     inline double dot(const std::vector<double>& x,
                       const std::vector<double>& y) {
       double sum = 0.0;
@@ -18,5 +17,4 @@ namespace stan {
 
   }
 }
-
 #endif

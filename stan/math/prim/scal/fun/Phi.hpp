@@ -26,8 +26,6 @@ namespace stan {
      * @return Probability random sample is less than or equal to argument.
      */
     inline double Phi(const double x) {
-      using stan::math::check_not_nan;
-
       check_not_nan("Phi",  "x", x);
       if (x < -37.5)
         return 0;
@@ -41,5 +39,4 @@ namespace stan {
 
   }
 }
-
 #endif

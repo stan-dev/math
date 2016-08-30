@@ -18,27 +18,19 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     normal_ccdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::normal_ccdf_log");
+      static const char* function("normal_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
-      using stan::math::INV_SQRT_2;
       using std::log;
       using std::exp;
 
       T_partials_return ccdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -62,7 +54,7 @@ namespace stan {
       size_t N = max_size(y, mu, sigma);
       double log_half = std::log(0.5);
 
-      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / stan::math::pi());
+      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -81,10 +73,8 @@ namespace stan {
         else
           one_m_erf = 1.0 - erf(scaled_diff);
 
-        // log ccdf
         ccdf_log += log_half + log(one_m_erf);
 
-        // gradients
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
           const T_partials_return rep_deriv_div_sigma
             = scaled_diff > 8.25 * INV_SQRT_2
@@ -97,11 +87,12 @@ namespace stan {
             operands_and_partials.d_x2[n] += rep_deriv_div_sigma;
           if (!is_constant_struct<T_scale>::value)
             operands_and_partials.d_x3[n] += rep_deriv_div_sigma
-              * scaled_diff * stan::math::SQRT_2;
+              * scaled_diff * SQRT_2;
         }
       }
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif

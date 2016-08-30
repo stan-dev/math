@@ -7,12 +7,7 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
-
   namespace math {
-
-    // This class is conceptually similar to the corresponding Eigen class
-    // Any spd matrix A can be decomposed as LDL' where L is unit
-    // lower-triangular and D is diagonal with positive diagonal elements
 
     template<typename T, int R, int C>
     class LDLT_factor;
@@ -53,37 +48,33 @@ namespace stan {
      * d2 = log_determinant_ldlt(ldlt_A2);
      * ~~~
      *
+     * This class is conceptually similar to the corresponding Eigen class
+     * Any spd matrix A can be decomposed as LDL' where L is unit
+     * lower-triangular and D is diagonal with positive diagonal elements
      **/
     template<int R, int C, typename T>
     class LDLT_factor<T, R, C> {
     public:
       LDLT_factor()
-        : N_(0), _ldltP(new Eigen::LDLT< Eigen::Matrix<T, R, C> >()) {}
+        : N_(0), ldltP_(new Eigen::LDLT< Eigen::Matrix<T, R, C> >()) {}
 
       explicit LDLT_factor(const Eigen::Matrix<T, R, C> &A)
-        : N_(0), _ldltP(new Eigen::LDLT< Eigen::Matrix<T, R, C> >()) {
+        : N_(0), ldltP_(new Eigen::LDLT< Eigen::Matrix<T, R, C> >()) {
         compute(A);
       }
 
       inline void compute(const Eigen::Matrix<T, R, C> &A) {
-        stan::math::check_square("LDLT_factor", "A", A);
+        check_square("LDLT_factor", "A", A);
         N_ = A.rows();
-        _ldltP->compute(A);
+        ldltP_->compute(A);
       }
 
       inline bool success() const {
-        using stan::math::is_nan;
-        // bool ret;
-        // ret = _ldltP->info() == Eigen::Success;
-        // ret = ret && _ldltP->isPositive();
-        // ret = ret && (_ldltP->vectorD().array() > 0).all();
-        // return ret;
-
-        if (_ldltP->info() != Eigen::Success)
+        if (ldltP_->info() != Eigen::Success)
           return false;
-        if (!(_ldltP->isPositive()))
+        if (!(ldltP_->isPositive()))
           return false;
-        Eigen::Matrix<T, Eigen::Dynamic, 1> ldltP_diag(_ldltP->vectorD());
+        Eigen::Matrix<T, Eigen::Dynamic, 1> ldltP_diag(ldltP_->vectorD());
         for (int i = 0; i < ldltP_diag.size(); ++i)
           if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i)))
             return false;
@@ -91,32 +82,32 @@ namespace stan {
       }
 
       inline T log_abs_det() const {
-        return _ldltP->vectorD().array().log().sum();
+        return ldltP_->vectorD().array().log().sum();
       }
 
       inline void inverse(Eigen::Matrix<T, R, C> &invA) const {
         invA.setIdentity(N_);
-        _ldltP->solveInPlace(invA);
+        ldltP_->solveInPlace(invA);
       }
 
       template<typename Rhs>
       inline const
       Eigen::internal::solve_retval<Eigen::LDLT< Eigen::Matrix<T, R, C> >, Rhs>
       solve(const Eigen::MatrixBase<Rhs>& b) const {
-        return _ldltP->solve(b);
+        return ldltP_->solve(b);
       }
 
       inline Eigen::Matrix<T, R, C>
       solveRight(const Eigen::Matrix<T, R, C> &B) const {
-        return _ldltP->solve(B.transpose()).transpose();
+        return ldltP_->solve(B.transpose()).transpose();
       }
 
       inline Eigen::Matrix<T, Eigen::Dynamic, 1> vectorD() const {
-        return _ldltP->vectorD();
+        return ldltP_->vectorD();
       }
 
       inline Eigen::LDLT<Eigen::Matrix<T, R, C> > matrixLDLT() const {
-        return _ldltP->matrixLDLT();
+        return ldltP_->matrixLDLT();
       }
 
       inline size_t rows() const { return N_; }
@@ -126,8 +117,9 @@ namespace stan {
       typedef double value_type;
 
       size_t N_;
-      boost::shared_ptr< Eigen::LDLT< Eigen::Matrix<T, R, C> > > _ldltP;
+      boost::shared_ptr< Eigen::LDLT< Eigen::Matrix<T, R, C> > > ldltP_;
     };
+
   }
 }
 #endif

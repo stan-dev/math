@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -52,28 +51,20 @@ namespace stan {
               typename T_y, typename T_shape, typename T_inv_scale>
     typename return_type<T_y, T_shape, T_inv_scale>::type
     gamma_log(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
-      static const char* function("stan::math::gamma_log");
+      static const char* function("gamma_log");
       typedef typename stan::partials_return_type<T_y, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
       using stan::is_constant_struct;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::check_consistent_sizes;
-      using stan::math::value_of;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
@@ -82,11 +73,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
@@ -102,7 +91,6 @@ namespace stan {
         operands_and_partials(y, alpha, beta);
 
       using boost::math::lgamma;
-      using stan::math::multiply_log;
       using boost::math::digamma;
       using std::log;
 
@@ -134,7 +122,6 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -148,7 +135,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_inv_scale>::value)
           logp -= beta_dbl * y_dbl;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
         if (!is_constant_struct<T_shape>::value)
@@ -166,7 +152,7 @@ namespace stan {
     gamma_log(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
       return gamma_log<false>(y, alpha, beta);
     }
+
   }
 }
-
 #endif

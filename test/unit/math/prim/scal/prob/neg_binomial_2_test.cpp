@@ -27,7 +27,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
 
   std::string error_msg;
 
-  error_msg = "stan::math::neg_binomial_2_rng: Location parameter "
+  error_msg = "neg_binomial_2_rng: Location parameter "
               "divided by the precision parameter is "
               "inf, but must be finite!";
   try {
@@ -41,7 +41,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
     SUCCEED();
   }
 
-  error_msg = "stan::math::neg_binomial_2_rng: Random number that "
+  error_msg = "neg_binomial_2_rng: Random number that "
               "came from gamma distribution is";
   try {
     stan::math::neg_binomial_2_rng(1e10, 1e20, rng);

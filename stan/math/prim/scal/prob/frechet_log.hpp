@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
@@ -32,25 +31,17 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     frechet_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const char* function("stan::math::frechet_log");
+      static const char* function("frechet_log");
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_not_nan;
-      using stan::math::check_positive_finite;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::multiply_log;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_positive(function, "Random variable", y);
       check_positive_finite(function, "Shape parameter", alpha);
@@ -60,7 +51,6 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
@@ -140,6 +130,7 @@ namespace stan {
     frechet_log(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
       return frechet_log<false>(y, alpha, sigma);
     }
+
   }
 }
 #endif

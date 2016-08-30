@@ -37,7 +37,6 @@ namespace stan {
         }
       };
 
-      // throws if y or eq is nan
       template <typename T_y,
                 typename T_eq>
       struct equal<T_y, T_eq, true> {

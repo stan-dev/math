@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
@@ -16,10 +15,8 @@ namespace stan {
     hypergeometric_rng(int N, int a, int b, RNG& rng) {
       using boost::variate_generator;
       using boost::math::hypergeometric_distribution;
-      using stan::math::check_bounded;
-      using stan::math::check_positive;
 
-      static const char* function("stan::math::hypergeometric_rng");
+      static const char* function("hypergeometric_rng");
 
       check_bounded(function, "Draws parameter", N, 0, a+b);
       check_positive(function, "Draws parameter", N);
@@ -42,7 +39,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

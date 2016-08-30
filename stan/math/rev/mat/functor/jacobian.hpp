@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <typename F>
@@ -18,7 +17,6 @@ namespace stan {
              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
-      using stan::math::var;
       start_nested();
       try {
         Matrix<var, Dynamic, 1> x_var(x.size());
@@ -37,10 +35,10 @@ namespace stan {
             J(i, k) = x_var(k).adj();
         }
       } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
+        recover_memory_nested();
         throw;
       }
-      stan::math::recover_memory_nested();
+      recover_memory_nested();
     }
 
   }

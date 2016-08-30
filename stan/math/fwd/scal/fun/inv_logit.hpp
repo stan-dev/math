@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -15,7 +14,6 @@ namespace stan {
     inv_logit(const fvar<T>& x) {
       using std::exp;
       using std::pow;
-      using stan::math::inv_logit;
       return fvar<T>(inv_logit(x.val_),
            x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
     }

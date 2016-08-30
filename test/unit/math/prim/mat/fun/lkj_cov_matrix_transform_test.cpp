@@ -21,15 +21,15 @@ TEST(prob_transform,lkj_cov_matrix_rt) {
 TEST(prob_transform,lkj_cov_matrix_free_exception) {
   Matrix<double,Dynamic,Dynamic> y(0,0);
   
-  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::domain_error);
+  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::invalid_argument);
   y.resize(0,10);
-  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::domain_error);
+  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::invalid_argument);
   y.resize(10,0);
-  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::domain_error);
+  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::invalid_argument);
   y.resize(1,2);
-  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::domain_error);
+  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::invalid_argument);
 
   y.resize(2,2);
   y << 0, 0, 0, 0;
-  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::runtime_error);
+  EXPECT_THROW(stan::math::cov_matrix_free_lkj(y), std::domain_error);
 }

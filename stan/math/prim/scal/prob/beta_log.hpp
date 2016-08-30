@@ -27,7 +27,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -53,39 +52,24 @@ namespace stan {
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_log(const T_y& y,
              const T_scale_succ& alpha, const T_scale_fail& beta) {
-      static const char* function("stan::math::beta_log");
+      static const char* function("beta_log");
 
       typedef typename stan::partials_return_type<T_y,
                                                   T_scale_succ,
                                                   T_scale_fail>::type
         T_partials_return;
 
-      using stan::math::digamma;
-      using stan::math::lgamma;
-
       using stan::is_constant_struct;
       using stan::is_vector;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-      using stan::math::log1m;
-      using stan::math::multiply_log;
-      using stan::math::value_of;
-      using stan::math::check_nonnegative;
-      using stan::math::check_less_or_equal;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_positive_finite(function, "First shape parameter", alpha);
       check_positive_finite(function, "Second shape parameter", beta);
       check_not_nan(function, "Random variable", y);
@@ -96,7 +80,6 @@ namespace stan {
       check_nonnegative(function, "Random variable", y);
       check_less_or_equal(function, "Random variable", y, 1);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value)
         return 0.0;
 
@@ -111,7 +94,6 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
         operands_and_partials(y, alpha, beta);
 
@@ -175,12 +157,10 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
-        // log probability
         if (include_summand<propto, T_scale_succ, T_scale_fail>::value)
           logp += lgamma_alpha_beta[n];
         if (include_summand<propto, T_scale_succ>::value)
@@ -192,7 +172,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_scale_fail>::value)
           logp += (beta_dbl-1.0) * log1m_y[n];
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl
             + (beta_dbl-1)/(y_dbl-1);

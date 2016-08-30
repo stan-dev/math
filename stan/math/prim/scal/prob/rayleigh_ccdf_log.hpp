@@ -19,28 +19,19 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_ccdf_log(const T_y& y, const T_scale& sigma) {
-      static const char* function("stan::math::rayleigh_ccdf_log");
+      static const char* function("rayleigh_ccdf_log");
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_nonnegative;
-      using stan::math::check_positive;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
       using stan::is_constant_struct;
-      using stan::math::square;
-      using stan::math::value_of;
 
       T_partials_return ccdf_log(0.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y) && stan::length(sigma)))
         return ccdf_log;
 
@@ -52,8 +43,6 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
       VectorView<const T_y> y_vec(y);
@@ -79,9 +68,9 @@ namespace stan {
           operands_and_partials.d_x2[n] += y_sqr * inv_sigma_sqr
             * inv_sigma[n];
       }
-
       return operands_and_partials.value(ccdf_log);
     }
+
   }
 }
 #endif
