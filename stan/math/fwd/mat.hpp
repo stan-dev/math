@@ -5,6 +5,7 @@
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/fwd/scal/meta/partials_type.hpp>
 
+#include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/fwd/arr.hpp>
 
@@ -35,6 +36,7 @@
 #include <stan/math/fwd/mat/fun/softmax.hpp>
 #include <stan/math/fwd/mat/fun/sort_asc.hpp>
 #include <stan/math/fwd/mat/fun/sort_desc.hpp>
+#include <stan/math/fwd/mat/fun/squared_distance.hpp>
 #include <stan/math/fwd/mat/fun/sum.hpp>
 #include <stan/math/fwd/mat/fun/tcrossprod.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>

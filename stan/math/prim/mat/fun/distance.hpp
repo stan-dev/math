@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_DISTANCE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
   namespace math {
@@ -28,8 +27,8 @@ namespace stan {
       stan::math::check_vector("distance", "v1", v1);
       stan::math::check_vector("distance", "v2", v2);
       stan::math::check_matching_sizes("distance",
-                                                 "v1", v1,
-                                                 "v2", v2);
+                                       "v1", v1,
+                                       "v2", v2);
       return sqrt(squared_distance(v1, v2));
     }
   }

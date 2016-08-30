@@ -10,13 +10,14 @@ namespace stan {
 
     /**
      * Example of how to define a functor for a vectorized function.
-     * The example includes a constrained version of exp().
+     * The example includes a constrained, punctured version of exp().
      */
     struct foo_fun {
       template <typename T>
       static inline T fun(const T& x) {
         using std::exp;
         stan::math::check_less_or_equal("foo_fun vectorize", "x", x, 5);
+        if (x == 0) return std::numeric_limits<double>::quiet_NaN();
         return exp(x);
       }
     };

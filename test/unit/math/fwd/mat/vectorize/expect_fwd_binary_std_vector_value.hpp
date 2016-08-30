@@ -12,12 +12,12 @@ std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
 bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   for (size_t i = 0; i < template_v1.size(); ++i) {
+    input_t1 input_a = 0;
+    if (seed_one)
+      input_a = build_binary_vector1<F>(template_v1, i)[i];
+    else
+      input_a = build_binary_vector1<F>(template_v1)[i];
     for (size_t j = 0; j < 5; ++j) {
-      input_t1 input_a;
-      if (seed_one)
-        input_a = build_binary_vector1<F>(template_v1, i)[i];
-      else
-        input_a = build_binary_vector1<F>(template_v1)[i];
       vector<input_t2> input_v(5, build_binary_vector2<F>(template_v2)[i]); 
       if (seed_two)
         input_v[j] = build_binary_vector2<F>(template_v2, i)[i]; 
@@ -34,15 +34,15 @@ std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
 bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   for (size_t i = 0; i < template_v2.size(); ++i) {
+    input_t2 input_b = 0; 
+    if (seed_two)
+      input_b = build_binary_vector2<F>(template_v2, i)[i];
+    else
+      input_b = build_binary_vector2<F>(template_v2)[i];
     for (size_t j = 0; j < 5; ++j) {
       vector<input_t1> input_v(5, build_binary_vector1<F>(template_v1)[i]);
       if (seed_one)
         input_v[j] = build_binary_vector1<F>(template_v1, i)[i];
-      input_t2 input_b; 
-      if (seed_two)
-        input_b = build_binary_vector2<F>(template_v2, i)[i];
-      else
-        input_b = build_binary_vector2<F>(template_v2)[i];
       vector<FV> fa = F::template apply<vector<FV> >(input_v, input_b);
       EXPECT_EQ(input_v.size(), fa.size());
       expect_val_deriv_eq(F::apply_base(input_v[j], input_b), fa[j]);
@@ -59,13 +59,13 @@ bool seed_one = 1, bool seed_two = 1) {
 
   const size_t num_v = 2;
   for (size_t i = 0; i < template_v1.size(); ++i) {
+    input_t1 input_a = 0;
+    if (seed_one)
+      input_a = build_binary_vector1<F>(template_v1, i)[i];
+    else
+      input_a = build_binary_vector1<F>(template_v1)[i];
     for (size_t j = 0; j < num_v; ++j) {
       for (size_t k = 0; k < 5; ++k) {
-        input_t1 input_a;
-        if (seed_one)
-          input_a = build_binary_vector1<F>(template_v1, i)[i];
-        else
-          input_a = build_binary_vector1<F>(template_v1)[i];
         vector<vector<input_t2> > input_v;
         for (size_t l = 0; l < num_v; ++l) {
           vector<input_t2> input_b(5, build_binary_vector2<F>(
@@ -94,6 +94,11 @@ bool seed_one = 1, bool seed_two = 1) {
 
   const size_t num_v = 2;
   for (size_t i = 0; i < template_v2.size(); ++i) {
+    input_t2 input_b = 0;
+    if (seed_two)
+      input_b = build_binary_vector2<F>(template_v2, i)[i];
+    else
+      input_b = build_binary_vector2<F>(template_v2)[i];
     for (size_t j = 0; j < num_v; ++j) {
       for (size_t k = 0; k < 5; ++k) {
         vector<vector<input_t1> > input_v;
@@ -104,11 +109,6 @@ bool seed_one = 1, bool seed_two = 1) {
             input_a[k] = build_binary_vector2<F>(template_v1, i)[i];
           input_v.push_back(input_a);
         }
-        input_t2 input_b;
-        if (seed_two)
-          input_b = build_binary_vector2<F>(template_v2, i)[i];
-        else
-          input_b = build_binary_vector2<F>(template_v2)[i];
         vector<vector<FV> > fa = F::template apply<vector<vector<FV> > >(
         input_v, input_b);
         EXPECT_EQ(input_v.size(), fa.size());

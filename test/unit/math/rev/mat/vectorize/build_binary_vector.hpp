@@ -7,7 +7,8 @@
 
 template <typename F>
 static inline std::vector<stan::math::var>
-build_binary_vector1(std::vector<stan::math::var> template_v) {
+build_binary_vector1(std::vector<stan::math::var> template_v,
+int seed = -1) {
   using std::vector;
   using stan::math::var;
   vector<double> inputs = F::valid_inputs1();
@@ -16,7 +17,8 @@ build_binary_vector1(std::vector<stan::math::var> template_v) {
 
 template <typename F>
 static inline std::vector<stan::math::var>
-build_binary_vector2(std::vector<stan::math::var> template_v) {
+build_binary_vector2(std::vector<stan::math::var> template_v,
+int seed = -1) {
   using std::vector;
   using stan::math::var;
   vector<double> inputs = F::valid_inputs2();

@@ -19,13 +19,13 @@ input_t2, R, C>& template_m, bool seed_one = 1, bool seed_two = 1) {
 
   const size_t num_v = 2;
   for (size_t i = 0; i < template_scalar_v.size(); ++i) {
+    input_t1 input_1 = 0; 
+    if (seed_one)
+      input_1 = build_binary_vector1<F>(template_scalar_v, i)[i];
+    else
+      input_1 = build_binary_vector1<F>(template_scalar_v)[i];
     for (size_t j = 0; j < num_v; ++j) {
       for (int k = 0; k < template_m.size(); ++k) {
-        input_t1 input_1; 
-        if (seed_one)
-          input_1 = build_binary_vector1<F>(template_scalar_v, i)[i];
-        else
-          input_1 = build_binary_vector1<F>(template_scalar_v)[i];
         vector<input_matrix_t> input_mv; 
         for (size_t l = 0; l < num_v; ++l) {
           if (seed_two && l == j)

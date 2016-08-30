@@ -12,17 +12,20 @@ int seed_index = -1) {
   using std::vector;
   using stan::math::fvar;
 
-  vector<FV> template_v = build_binary_vector1<F>(vector<FV>(), seed_index);
+  vector<FV> template_v1 = 
+  build_binary_vector1<F>(vector<FV>(), seed_index);
+  vector<FV> template_v2;
+  if (seed_index != -1)
+    template_v2 = build_binary_vector1<F>(vector<FV>(), seed_index);
   vector<fvar<FV> > result_v;
-
-  for (size_t i = 0; i < template_v.size(); ++i) {
+  for (size_t i = 0; i < template_v1.size(); ++i) {
   
     // For fvar<fvar<double> >, this will fill in 
     // all four components
     if (seed_index == static_cast<int>(i))
-      result_v.push_back(fvar<FV>(template_v[i], template_v[i]));
+      result_v.push_back(fvar<FV>(template_v1[i], template_v2[i]));
     else
-      result_v.push_back(fvar<FV>(template_v[i]));
+      result_v.push_back(fvar<FV>(template_v1[i]));
   }
   return result_v;
 }
@@ -34,16 +37,20 @@ int seed_index = -1) {
   using std::vector;
   using stan::math::fvar;
 
-  vector<FV> template_v = build_binary_vector2<F>(vector<FV>(), seed_index);
+  vector<FV> template_v1 = 
+  build_binary_vector2<F>(vector<FV>(), seed_index);
+  vector<FV> template_v2;
+  if (seed_index != -1)
+    template_v2 = build_binary_vector2<F>(vector<FV>(), seed_index);
   vector<fvar<FV> > result_v;
-  for (size_t i = 0; i < template_v.size(); ++i) {
+  for (size_t i = 0; i < template_v1.size(); ++i) {
   
     // For fvar<fvar<double> >, this will fill in 
     // all four components
     if (seed_index == static_cast<int>(i))
-      result_v.push_back(fvar<FV>(template_v[i], template_v[i]));
+      result_v.push_back(fvar<FV>(template_v1[i], template_v2[i]));
     else
-      result_v.push_back(fvar<FV>(template_v[i]));
+      result_v.push_back(fvar<FV>(template_v1[i]));
   }
   return result_v;
 }

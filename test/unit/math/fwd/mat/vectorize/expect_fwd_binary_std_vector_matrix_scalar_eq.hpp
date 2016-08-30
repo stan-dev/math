@@ -19,6 +19,11 @@ input_t2>& template_scalar_v, bool seed_one = 1, bool seed_two = 1) {
 
   const size_t num_v = 2;
   for (size_t i = 0; i < template_scalar_v.size(); ++i) {
+    input_t2 input_2 = 0;
+    if (seed_two)
+      input_2 = build_binary_vector2<F>(template_scalar_v, i)[i];
+    else
+      input_2 = build_binary_vector2<F>(template_scalar_v)[i];
     for (size_t j = 0; j < num_v; ++j) {
       for (int k = 0; k < template_m.size(); ++k) {
         vector<input_matrix_t> input_mv;
@@ -29,11 +34,6 @@ input_t2>& template_scalar_v, bool seed_one = 1, bool seed_two = 1) {
           else
             input_mv.push_back(build_fwd_binary_matrix1<F>(i, template_m));
         }
-        input_t2 input_2;
-        if (seed_two)
-          input_2 = build_binary_vector2<F>(template_scalar_v, i)[i];
-        else
-          input_2 = build_binary_vector2<F>(template_scalar_v)[i];
         vector<result_matrix_t> fa = F::template 
         apply<vector<result_matrix_t> >(input_mv, input_2);
         EXPECT_EQ(input_mv.size(), fa.size());

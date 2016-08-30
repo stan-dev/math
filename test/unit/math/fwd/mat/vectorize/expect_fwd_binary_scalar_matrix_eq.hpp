@@ -18,12 +18,12 @@ template_m, bool seed_one = 1, bool seed_two = 1) {
   typedef Eigen::Matrix<FV, R, C> result_matrix_t;
 
   for (size_t i = 0; i < template_scalar_v.size(); ++i) {
+    input_t1 input_1 = 0;
+    if (seed_one)
+      input_1 = build_binary_vector1<F>(template_scalar_v, i)[i];
+    else
+      input_1 = build_binary_vector1<F>(template_scalar_v)[i];
     for (int j = 0; j < template_m.size(); ++j) {
-      input_t1 input_1;
-      if (seed_one)
-        input_1 = build_binary_vector1<F>(template_scalar_v, i)[i];
-      else
-        input_1 = build_binary_vector1<F>(template_scalar_v)[i];
       input_matrix_t input_m(template_m.rows(), template_m.cols()); 
       if (seed_two)
         input_m = build_fwd_binary_matrix2<F>(i, template_m, j);

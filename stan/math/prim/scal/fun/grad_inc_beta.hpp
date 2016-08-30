@@ -14,7 +14,8 @@ namespace stan {
     // with respect to the first two arguments, using the
     // equivalence to a hypergeometric function.
     // See http://dlmf.nist.gov/8.17#ii
-    void grad_inc_beta(double& g1, double& g2, double a, double b, double z) {
+    inline void grad_inc_beta(double& g1, double& g2,
+                              double a, double b, double z) {
       using stan::math::lbeta;
       using stan::math::inc_beta;
       using stan::math::log1m;
