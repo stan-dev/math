@@ -41,7 +41,8 @@ namespace stan {
 
       double val = ldlt.vectorD().array().log().sum();
 
-      check_finite("log_determinant_spd", "log determininant of the matrix argument", val);
+      check_finite("log_determinant_spd",
+                   "log determininant of the matrix argument", val);
 
       vari** operands = ChainableStack::memalloc_
         .alloc_array<vari*>(m.size());
