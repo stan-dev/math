@@ -30,7 +30,7 @@ namespace stan {
      * gradients of cov_exp_quad.
      *
      * The class stores the double values for the distance
-     * matrix, pointers to the varis for the covariance 
+     * matrix, pointers to the varis for the covariance
      * matrix, along with a pointer to the vari for sigma,
      * and the vari for l.
      *
@@ -42,6 +42,7 @@ namespace stan {
     class cov_exp_quad_vari : public vari {
       public:
         int size_;
+        int size_sq_;
         double l_d_;
         double sigma_d_;
         double sigma_sq_d_;
@@ -73,43 +74,37 @@ namespace stan {
                           const T_l& l)
           : vari(0.0),
           size_(x.size()),
+          size_sq_(size_ * size_),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           sigma_sq_d_(std::pow(sigma_d_, 2)),
-          dist_(ChainableStack::memalloc_.alloc_array<double>(size_
-                                                                  * size_)),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_sq_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_
-                                                            * size_)) {
+          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_sq_)) {
             size_t pos = 0;
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
             for (size_t j = 0; j < static_cast<size_t>(size_); ++j)
               for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
-                dist_[pos] = squared_distance(x[i], x[j])
-                             * inv_half_sq_l_d;
+                dist_[pos] = squared_distance(x[i], x[j]);
                 cov_[pos] = new vari((i == j) ? sigma_sq_d_
-                                     : sigma_sq_d_ * exp(-dist_[pos]), false);
+                                     : sigma_sq_d_
+                                     * exp(-dist_[pos]
+                                           * inv_half_sq_l_d), false);
                 ++pos;
               }
           }
 
         virtual void chain() {
-          using Eigen::MatrixXd;
-          using Eigen::ArrayXXd;
-          using Eigen::Map;
-          double adjl;
-          double adjsigma;
-          ArrayXXd adj_cov(size_, size_);
-          ArrayXXd cov(size_, size_);
+          double adjl(0.0);
+          double adjsigma(0.0);
 
-          for (size_t i = 0; i < static_cast<size_t>(adj_cov.size()); ++i) {
-            adj_cov(i) = cov_[i]->adj_;
-            cov(i) = cov_[i]->val_;
+          for (size_t i = 0; i < static_cast<size_t>(size_sq_); ++i) {
+            vari* el = cov_[i];
+            double prod_adj_cov = el->adj_ * el->val_;
+            adjl += prod_adj_cov * dist_[i];
+            adjsigma += prod_adj_cov;
           }
-          adjl = (adj_cov * Map<ArrayXXd>(dist_, size_, size_)
-            * cov).sum() * 2 / l_d_;
-          adjsigma = 2 / sigma_d_ * (adj_cov * cov).sum();
-          l_vari_->adj_ += adjl;
-          sigma_vari_->adj_ += adjsigma;
+          l_vari_->adj_ += adjl / std::pow(l_d_, 3);
+          sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
         }
     };
 
@@ -119,7 +114,7 @@ namespace stan {
      * double valued amplitude, sigma.
      *
      * The class stores the double values for the distance
-     * matrix, pointers to the varis for the covariance 
+     * matrix, pointers to the varis for the covariance
      * matrix, along with a pointer to the vari for l.
      *
      * @tparam T_x type of std::vector of elements
@@ -129,6 +124,7 @@ namespace stan {
     class cov_exp_quad_vari<T_x, double, T_l> : public vari {
       public:
         int size_;
+        int size_sq_;
         double l_d_;
         double sigma_d_;
         double sigma_sq_d_;
@@ -159,40 +155,35 @@ namespace stan {
                           const T_l& l)
           : vari(0.0),
           size_(x.size()),
+          size_sq_(size_ * size_),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           sigma_sq_d_(std::pow(sigma_d_, 2)),
-          dist_(ChainableStack::memalloc_.alloc_array<double>(size_
-                                                              * size_)),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_sq_)),
           l_vari_(l.vi_),
-          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_
-                                                            * size_)) {
+          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_sq_)) {
             size_t pos = 0;
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
             for (size_t j = 0; j < static_cast<size_t>(size_); ++j)
               for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
-                dist_[pos] = squared_distance(x[i], x[j])
-                             * inv_half_sq_l_d;
+                dist_[pos] = squared_distance(x[i], x[j]);
                 cov_[pos] = new vari((i == j) ? sigma_sq_d_
-                                     : sigma_sq_d_ * exp(-dist_[pos]), false);
+                                     : sigma_sq_d_
+                                     * exp(-dist_[pos]
+                                           * inv_half_sq_l_d), false);
                 ++pos;
               }
           }
 
         virtual void chain() {
-          using Eigen::MatrixXd;
-          using Eigen::ArrayXXd;
-          using Eigen::Map;
-          double adjl;
-          ArrayXXd adj_cov(size_, size_);
-          ArrayXXd cov(size_, size_);
+          double adjl(0.0);
 
-          for (size_t i = 0; i < static_cast<size_t>(adj_cov.size()); ++i) {
-            adj_cov(i) = cov_[i]->adj_;
-            cov(i) = cov_[i]->val_;
+          for (size_t i = 0; i < static_cast<size_t>(size_sq_); ++i) {
+            vari* el = cov_[i];
+            double prod_adj_cov = el->adj_ * el->val_;
+            adjl += dist_[i] * prod_adj_cov;
           }
-          adjl = (adj_cov * Map<ArrayXXd>(dist_, size_, size_)
-            * cov).sum() * 2 / l_d_;
-          l_vari_->adj_ += adjl;
+
+          l_vari_->adj_ += adjl / std::pow(l_d_, 3);
         }
     };
 
@@ -202,7 +193,7 @@ namespace stan {
      * double valued length scale, l.
      *
      * The class stores the double values for the distance
-     * matrix, pointers to the varis for the covariance 
+     * matrix, pointers to the varis for the covariance
      * matrix, along with a pointer to the vari for sigma.
      *
      * @tparam T_x type of std::vector of elements
@@ -212,10 +203,10 @@ namespace stan {
     class cov_exp_quad_vari<T_x, T_sigma, double> : public vari {
       public:
         int size_;
+        int size_sq_;
         double l_d_;
         double sigma_d_;
         double sigma_sq_d_;
-        double* dist_;
         vari* sigma_vari_;
         vari** cov_;
 
@@ -242,10 +233,9 @@ namespace stan {
                           const double l)
           : vari(0.0),
           size_(x.size()),
+          size_sq_(size_ * size_),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           sigma_sq_d_(std::pow(sigma_d_, 2)),
-          dist_(ChainableStack::memalloc_.alloc_array<double>(size_
-                                                                  * size_)),
           sigma_vari_(sigma.vi_),
           cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_
                                                             * size_)) {
@@ -253,28 +243,24 @@ namespace stan {
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
             for (size_t j = 0; j < static_cast<size_t>(size_); ++j)
               for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
-                dist_[pos] = squared_distance(x[i], x[j])
-                             * inv_half_sq_l_d;
                 cov_[pos] = new vari((i == j) ? sigma_sq_d_
-                                     : sigma_sq_d_ * exp(-dist_[pos]), false);
+                                     : sigma_sq_d_
+                                     * exp(-squared_distance(x[i], x[j])
+                                           * inv_half_sq_l_d), false);
                 ++pos;
               }
           }
 
         virtual void chain() {
-          using Eigen::MatrixXd;
-          using Eigen::ArrayXXd;
-          using Eigen::Map;
-          double adjsigma;
-          ArrayXXd adj_cov(size_, size_);
-          ArrayXXd cov(size_, size_);
+          double adjsigma(0.0);
 
-          for (size_t i = 0; i < static_cast<size_t>(adj_cov.size()); ++i) {
-            adj_cov(i) = cov_[i]->adj_;
-            cov(i) = cov_[i]->val_;
+          for (size_t i = 0; i < static_cast<size_t>(size_sq_); ++i) {
+            vari* el = cov_[i];
+            double prod_adj_cov = el->adj_ * el->val_;
+            adjsigma += prod_adj_cov;
           }
-          adjsigma = 2 / sigma_d_ * (adj_cov * cov).sum();
-          sigma_vari_->adj_ += adjsigma;
+
+          sigma_vari_->adj_ += 2 / sigma_d_ * adjsigma;
         }
     };
     /**
