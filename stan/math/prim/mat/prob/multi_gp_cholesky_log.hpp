@@ -15,12 +15,11 @@
 
 namespace stan {
   namespace math {
-    // MultiGPCholesky(y|L, w)   [y.rows() = w.size(), y.cols() = Sigma.rows();
-    //                            Sigma symmetric, non-negative, definite]
     /**
      * The log of a multivariate Gaussian Process for the given y, w, and
      * a Cholesky factor L of the kernel matrix Sigma.
-     * Sigma = LL', a square, semi-positive definite matrix..  y is a dxN matrix, where each column is a different observation and each
+     * Sigma = LL', a square, semi-positive definite matrix.
+     * y is a dxN matrix, where each column is a different observation and each
      * row is a different output dimension.  The Gaussian Process is assumed to
      * have a scaled kernel matrix with a different scale for each output dimension.
      * This distribution is equivalent to:

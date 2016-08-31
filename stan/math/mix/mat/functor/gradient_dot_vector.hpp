@@ -9,8 +9,6 @@
 namespace stan {
   namespace math {
 
-    // aka directional derivative (not length normalized)
-    // T2 must be assignable to T1
     template <typename T1, typename T2, typename F>
     void
     gradient_dot_vector(const F& f,

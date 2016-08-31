@@ -4,7 +4,6 @@
 
 TEST(AgradFwdFvar,Fvar) {
   using stan::math::fvar;
-  typedef stan::math::fvar<double> fvd;
 
   fvar<double> a;
   EXPECT_FLOAT_EQ(0.0, a.val_);

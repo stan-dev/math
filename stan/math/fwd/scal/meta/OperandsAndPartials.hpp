@@ -9,8 +9,6 @@
 namespace stan {
   namespace math {
 
-    // These are helpers to the OperandsAndPartials specialization for
-    // fvar
     namespace {
       template <typename T_derivative,
                 typename T,

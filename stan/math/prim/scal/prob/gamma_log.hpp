@@ -58,16 +58,13 @@ namespace stan {
 
       using stan::is_constant_struct;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
@@ -76,11 +73,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
@@ -127,7 +122,6 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -141,7 +135,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_inv_scale>::value)
           logp -= beta_dbl * y_dbl;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
         if (!is_constant_struct<T_shape>::value)

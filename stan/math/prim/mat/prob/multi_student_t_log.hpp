@@ -46,23 +46,20 @@ namespace stan {
       typedef typename return_type<T_y, T_dof, T_loc, T_scale>::type lp_type;
       lp_type lp(0.0);
 
-      // allows infinities
       check_not_nan(function, "Degrees of freedom parameter", nu);
       check_positive(function, "Degrees of freedom parameter", nu);
 
       using boost::math::isinf;
 
-      if (isinf(nu))  // already checked nu > 0
+      if (isinf(nu))
         return multi_normal_log(y, mu, Sigma);
 
       using Eigen::Matrix;
       using std::vector;
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);
-      // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
 
-      // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
       int size_mu = mu_vec[0].size();
       if (size_vec > 1) {
@@ -116,7 +113,7 @@ namespace stan {
                   Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
       check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
-      if (size_y == 0)  // y_vec[0].size() == 0
+      if (size_y == 0)
         return lp;
 
       if (include_summand<propto, T_dof>::value) {

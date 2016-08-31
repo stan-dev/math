@@ -28,13 +28,11 @@ namespace stan {
 
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return cdf_log(0.0);
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Lower bound parameter", alpha);
@@ -69,10 +67,8 @@ namespace stan {
         const T_partials_return b_min_a = beta_dbl - alpha_dbl;
         const T_partials_return cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
 
-        // cdf_log
         cdf_log += log(cdf_log_);
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += 1.0 / b_min_a / cdf_log_;
         if (!is_constant_struct<T_low>::value)

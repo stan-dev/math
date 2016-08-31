@@ -34,14 +34,11 @@ namespace stan {
       using stan::is_constant_struct;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y) && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
 
-      // validate args (here done over var, which should be OK)
       check_not_nan(function, "Random variable", y);
       check_positive(function, "Scale parameter", sigma);
       check_positive(function, "Random variable", y);
@@ -49,11 +46,9 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
       VectorView<const T_y> y_vec(y);
@@ -70,23 +65,16 @@ namespace stan {
       }
 
       for (size_t n = 0; n < N; n++) {
-        // pull out values of arguments
         const T_partials_return y_dbl = value_of(y_vec[n]);
-
-        // reusable subexpression values
         const T_partials_return y_over_sigma = y_dbl * inv_sigma[n];
-
         static double NEGATIVE_HALF = -0.5;
 
-        // log probability
         if (include_summand<propto, T_scale>::value)
           logp -= 2.0 * log_sigma[n];
         if (include_summand<propto, T_y>::value)
           logp += log(y_dbl);
-        // if (include_summand<propto, T_y, T_scale>::value)
         logp += NEGATIVE_HALF * y_over_sigma * y_over_sigma;
 
-        // gradients
         T_partials_return scaled_diff = inv_sigma[n] * y_over_sigma;
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += 1.0 / y_dbl - scaled_diff;

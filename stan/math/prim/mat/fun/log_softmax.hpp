@@ -50,14 +50,6 @@ namespace stan {
       for (int i = 0; i < v.size(); ++i)
         theta(i) = v(i) - z;
       return theta;
-      // T sum(0.0);
-      // T max_v = v.maxCoeff();
-      // for (int i = 0; i < v.size(); ++i)
-      //   sum += exp(v(i) - max_v); // log_sum_exp trick
-      // T log_sum = log(sum);
-      // for (int i = 0; i < v.size(); ++i)
-      //   theta(i) = (v(i) - max_v) - log_sum;
-      // return theta;
     }
 
   }

@@ -11,8 +11,6 @@
 namespace stan {
   namespace math {
 
-    // MATRIX TRANSFORMS +/- JACOBIANS
-
     /**
      * Return the Cholesky factor of the correlation matrix of the
      * specified dimensionality corresponding to the specified

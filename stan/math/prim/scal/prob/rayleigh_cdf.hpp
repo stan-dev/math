@@ -34,7 +34,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y) && stan::length(sigma)))
         return cdf;
 
@@ -46,7 +45,6 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
       VectorView<const T_y> y_vec(y);
@@ -68,7 +66,6 @@ namespace stan {
           cdf *= (1.0 - exp_val);
       }
 
-      // gradients
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return y_sqr = square(y_dbl);

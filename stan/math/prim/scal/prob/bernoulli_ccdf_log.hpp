@@ -27,25 +27,21 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
-      // Ensure non-zero argument lenghts
       if (!(stan::length(n) && stan::length(theta)))
         return 0.0;
 
       T_partials_return P(0.0);
 
-      // Validate arguments
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
       check_consistent_sizes(function,
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_n> n_vec(n);
       VectorView<const T_prob> theta_vec(theta);
       size_t size = max_size(n, theta);
 
-      // Compute vectorized cdf_log and gradient
       using std::log;
       OperandsAndPartials<T_prob> operands_and_partials(theta);
 

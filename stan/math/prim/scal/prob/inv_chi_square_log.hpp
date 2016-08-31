@@ -53,7 +53,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(nu)))
         return 0.0;
@@ -65,7 +64,6 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);

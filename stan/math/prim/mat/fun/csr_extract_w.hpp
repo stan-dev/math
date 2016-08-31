@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Sparse>
-// #include <numeric>
 
 namespace stan {
   namespace math {

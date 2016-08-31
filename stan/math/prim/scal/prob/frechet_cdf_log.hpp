@@ -36,7 +36,6 @@ namespace stan {
       using boost::math::tools::promote_args;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
@@ -60,10 +59,8 @@ namespace stan {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return pow_ = pow(sigma_dbl / y_dbl, alpha_dbl);
 
-        // cdf_log
         cdf_log -= pow_;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += pow_ * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)

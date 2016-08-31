@@ -38,13 +38,11 @@ namespace stan {
       using std::fabs;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
         return 0.0;
 
-      // set up return value accumulator
       T_partials_return logp(0.0);
       check_finite(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
@@ -54,11 +52,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Shape parameter", sigma);
 
-      // check if no variables are involved and prop-to
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      // set up template expressions wrapping scalars into vector views
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
@@ -87,11 +83,9 @@ namespace stan {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-        // reusable subexpressions values
         const T_partials_return y_m_mu = y_dbl - mu_dbl;
         const T_partials_return fabs_y_m_mu = fabs(y_m_mu);
 
-        // log probability
         if (include_summand<propto>::value)
           logp += NEG_LOG_TWO;
         if (include_summand<propto, T_scale>::value)
@@ -99,7 +93,6 @@ namespace stan {
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp -= fabs_y_m_mu * inv_sigma[n];
 
-        // gradients
         T_partials_return sign_y_m_mu_times_inv_sigma(0);
         if (contains_nonconstant_struct<T_y, T_loc>::value)
           sign_y_m_mu_times_inv_sigma = sign(y_m_mu) * inv_sigma[n];

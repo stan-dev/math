@@ -42,7 +42,6 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(mu)
               && stan::length(sigma) ) )
         return 1.0;
@@ -64,7 +63,6 @@ namespace stan {
       VectorView<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      // cdf
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -78,7 +76,6 @@ namespace stan {
           cdf *= 1.0 - 0.5 / exp_scaled_diff;
       }
 
-      // gradients
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);

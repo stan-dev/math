@@ -21,9 +21,6 @@
 namespace stan {
   namespace math {
 
-    // Wishart(Sigma|n, Omega)  [Sigma, Omega symmetric, non-neg, definite;
-    //                          Sigma.dims() = Omega.dims();
-    //                           n > Sigma.rows() - 1]
     /**
      * The log of the Wishart density for the given W, degrees of freedom,
      * and scale matrix.
@@ -74,7 +71,6 @@ namespace stan {
       check_size_match(function,
                        "Rows of random variable", W.rows(),
                        "columns of scale parameter", S.rows());
-      // FIXME: domain checks
 
       LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
       if (!check_ldlt_factor(function, "LDLT_Factor of random variable",

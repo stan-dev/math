@@ -50,6 +50,5 @@ TEST(MathFunctions, divide_modulus) {
 TEST(MathFunctions, int_divide_by_0) {
   int x = 1;
   int y = 0;
-  int z;
-  EXPECT_THROW(z = stan::math::divide(x, y), std::domain_error);
+  EXPECT_THROW(stan::math::divide(x, y), std::domain_error);
 }

@@ -9,8 +9,6 @@
 namespace stan {
   namespace math {
 
-    // UPPER BOUND
-
     /**
      * Return the upper-bounded value for the specified unconstrained
      * scalar and upper bound.

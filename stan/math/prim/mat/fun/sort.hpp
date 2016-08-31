@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
-#include <algorithm>    // std::sort
-#include <functional>   // std::greater
+#include <algorithm>
+#include <functional>
 
 namespace stan {
   namespace math {

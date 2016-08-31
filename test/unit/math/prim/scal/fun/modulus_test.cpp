@@ -38,6 +38,5 @@ TEST(MathFunctions, modulus) {
 TEST(MathFunctions, int_modulus_0) {
   int x = 1;
   int y = 0;
-  int z;
-  EXPECT_THROW(z = stan::math::modulus(x, y), std::domain_error);
+  EXPECT_THROW(stan::math::modulus(x, y), std::domain_error);
 }

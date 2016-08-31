@@ -30,7 +30,6 @@ namespace stan {
         T_partials_return;
 
       T_partials_return cdf_log(0.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)

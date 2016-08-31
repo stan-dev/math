@@ -42,10 +42,8 @@ namespace stan {
 
       VectorViewMvt<const T_y> y_vec(y);
       VectorViewMvt<const T_loc> mu_vec(mu);
-      // size of std::vector of Eigen vectors
       size_t size_vec = max_size_mvt(y, mu);
 
-      // Check if every vector of the array has the same size
       int size_y = y_vec[0].size();
       int size_mu = mu_vec[0].size();
       if (size_vec > 1) {
@@ -92,7 +90,7 @@ namespace stan {
         check_not_nan(function, "Random variable", y_vec[i]);
       }
 
-      if (size_y == 0)  // y_vec[0].size() == 0
+      if (size_y == 0)
         return lp;
 
       if (include_summand<propto>::value)

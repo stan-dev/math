@@ -26,6 +26,7 @@ namespace stan {
     template <typename T>
     inline
     T positive_free(const T y) {
+      using std::log;
       check_positive("positive_free",
                      "Positive variable", y);
       return log(y);

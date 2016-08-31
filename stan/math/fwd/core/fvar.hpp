@@ -85,8 +85,6 @@ namespace stan {
         return *this;
       }
 
-      // SPEEDUP: specialize for T2 == var with d_ function
-
       inline
       fvar<T>&
       operator/=(const fvar<T>& x2) {

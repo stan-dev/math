@@ -37,12 +37,10 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(alpha)
               && stan::length(beta) ) )
         return 0.0;
 
-      // Error checks
       static const char* function("beta_cdf");
 
       using boost::math::tools::promote_args;
@@ -59,7 +57,6 @@ namespace stan {
                              "First shape parameter", alpha,
                              "Second shape parameter", beta);
 
-      // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_scale_succ> alpha_vec(alpha);
       VectorView<const T_scale_fail> beta_vec(beta);
@@ -68,13 +65,11 @@ namespace stan {
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
         operands_and_partials(y, alpha, beta);
 
-      // Compute CDF and its gradients
       using std::pow;
       using std::exp;
       using std::log;
       using std::exp;
 
-      // Cache a few expensive function calls if alpha or beta is a parameter
       VectorBuilder<contains_nonconstant_struct<T_scale_succ,
                                                 T_scale_fail>::value,
                     T_partials_return, T_scale_succ, T_scale_fail>
@@ -101,14 +96,11 @@ namespace stan {
         }
       }
 
-      // Compute vectorized CDFLog and gradient
       for (size_t n = 0; n < N; n++) {
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
         const T_partials_return betafunc_dbl = exp(lbeta(alpha_dbl, beta_dbl));
-        // Compute
         const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
         cdf_log += log(Pn);

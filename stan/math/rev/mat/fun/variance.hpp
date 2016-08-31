@@ -11,7 +11,7 @@
 namespace stan {
   namespace math {
 
-    namespace {  // anonymous
+    namespace {
 
       inline var calc_variance(size_t size,
                                const var* dtrs) {

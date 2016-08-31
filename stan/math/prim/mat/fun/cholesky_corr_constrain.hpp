@@ -12,7 +12,6 @@
 namespace stan {
   namespace math {
 
-    // CHOLESKY CORRELATION MATRIX
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     cholesky_corr_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
