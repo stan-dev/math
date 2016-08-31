@@ -4,7 +4,6 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 namespace stan {

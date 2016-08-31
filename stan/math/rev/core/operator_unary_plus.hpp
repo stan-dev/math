@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
   namespace math {

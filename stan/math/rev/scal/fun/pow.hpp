@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
 #include <limits>
 

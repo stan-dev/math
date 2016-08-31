@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/normal_distribution.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 

@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 namespace stan {
