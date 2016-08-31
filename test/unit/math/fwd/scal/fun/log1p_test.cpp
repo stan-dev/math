@@ -1,5 +1,6 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog1p,Fvar) {
@@ -8,20 +9,20 @@ TEST(AgradFwdLog1p,Fvar) {
   using std::isnan;
 
   fvar<double> x(0.5,1.0);
-  fvar<double> y(-1.0,2.0);
-  fvar<double> z(-2.0,3.0);
 
   fvar<double> a = log1p(x);
   EXPECT_FLOAT_EQ(log1p(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / (1 + 0.5), a.d_);
+}
 
-  fvar<double> b = log1p(y);
-  isnan(b.val_);
-  isnan(b.d_);
+TEST(AgradFwdLog1p, exceps) {
+  using stan::math::log1p;
+  using stan::math::fvar;
+  fvar<double> x = -2;
+  EXPECT_THROW(log1p(x), std::domain_error);
 
-  fvar<double> c = log1p(z);
-  isnan(c.val_);
-  isnan(c.d_);
+  fvar<double> y = -1;
+  EXPECT_THROW(log1p(y), std::overflow_error);
 }
 
 TEST(AgradFwdLog1p,FvarFvarDouble) {

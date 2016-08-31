@@ -1,37 +1,32 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/acosh.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <cmath>
 
 TEST(AgradFwdAcosh,Fvar) {
   using stan::math::fvar;
-  using boost::math::acosh;
+  using stan::math::acosh;
   using std::sqrt;
   using std::isnan;
 
-  fvar<double> x(1.5,1.0);
+  fvar<double> x(1.5, 1.0);
 
   fvar<double> a = acosh(x);
   EXPECT_FLOAT_EQ(acosh(1.5), a.val_);
   EXPECT_FLOAT_EQ(1 / sqrt(-1 + (1.5) * (1.5)), a.d_);
-
-  fvar<double> y(-1.2,1.0);
-
-  fvar<double> b = acosh(y);
-  isnan(b.val_);
-  isnan(b.d_);
-
-  fvar<double> z(0.5,1.0);
-
-  fvar<double> c = acosh(z);
-  isnan(c.val_);
-  isnan(c.d_);
 }
 
+TEST(AgradFwdAcosh, excepts) {
+  using stan::math::fvar;
+  using stan::math::acosh;
+  EXPECT_THROW(acosh(fvar<double>(0.5)), std::domain_error);
+  EXPECT_THROW(acosh(fvar<double>(std::numeric_limits<double>::infinity())), std::overflow_error);
+
+}
 
 TEST(AgradFwdAcosh,FvarFvarDouble) {
   using stan::math::fvar;
-  using boost::math::acosh;
+  using stan::math::acosh;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -40,7 +35,7 @@ TEST(AgradFwdAcosh,FvarFvarDouble) {
   fvar<fvar<double> > a = acosh(x);
 
   EXPECT_FLOAT_EQ(acosh(1.5), a.val_.val_);
-  EXPECT_FLOAT_EQ(2.0 / sqrt(-1.0 + 1.5 * 1.5), a.val_.d_);
+  EXPECT_FLOAT_EQ(2 / sqrt(-1 + 1.5 * 1.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 
@@ -51,19 +46,19 @@ TEST(AgradFwdAcosh,FvarFvarDouble) {
   a = acosh(y);
   EXPECT_FLOAT_EQ(acosh(1.5), a.val_.val_);
   EXPECT_FLOAT_EQ(0, a.val_.d_);
-  EXPECT_FLOAT_EQ(2.0 / sqrt(-1.0 + 1.5 * 1.5), a.d_.val_);
+  EXPECT_FLOAT_EQ(2 / sqrt(-1 + 1.5 * 1.5), a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
 struct acosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
+    using stan::math::acosh;
     return acosh(arg1);
   }
 };
 
 TEST(AgradFwdAcosh,acosh_NaN) {
   acosh_fun acosh_;
-  test_nan_fwd(acosh_,false);
+  test_nan_fwd(acosh_, false);
 }
