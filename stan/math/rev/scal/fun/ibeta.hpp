@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_IBETA_HPP
 #define STAN_MATH_REV_SCAL_FUN_IBETA_HPP
 
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <boost/math/special_functions/digamma.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
   namespace math {
@@ -25,7 +26,7 @@ namespace stan {
         double bprod = 1;
         while (std::abs(diff) > precision
                && ++k < max_steps
-               && !std::isnan(diff)) {
+               && !is_nan(diff)) {
           val += diff;
           bprod *= b+k-1.0;
           diff = a_2 * std::pow(a+k, -2) * bprod * std::pow(z, k)

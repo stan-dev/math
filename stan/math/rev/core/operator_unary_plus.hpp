@@ -2,9 +2,10 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_PLUS_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
   namespace math {
@@ -41,7 +42,7 @@ namespace stan {
      * @return The input reference.
      */
     inline var operator+(const var& a) {
-      if (unlikely(boost::math::isnan(a.vi_->val_)))
+      if (unlikely(is_nan(a.vi_->val_)))
         return var(new precomp_v_vari(NOT_A_NUMBER,
                                       a.vi_,
                                       NOT_A_NUMBER));

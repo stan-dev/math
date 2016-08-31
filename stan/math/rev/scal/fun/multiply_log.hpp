@@ -18,8 +18,8 @@ namespace stan {
         }
         void chain() {
           using std::log;
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -38,8 +38,8 @@ namespace stan {
         }
         void chain() {
           using std::log;
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_ * log(bd_);

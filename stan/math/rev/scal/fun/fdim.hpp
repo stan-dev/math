@@ -2,8 +2,9 @@
 #define STAN_MATH_REV_SCAL_FUN_FDIM_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 namespace stan {
@@ -16,8 +17,8 @@ namespace stan {
           op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -33,8 +34,8 @@ namespace stan {
           op_vd_vari(avi->val_ - b, avi, b) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_;
@@ -47,8 +48,8 @@ namespace stan {
           op_dv_vari(a - bvi->val_, a, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(bvi_->val_)
-                       || boost::math::isnan(ad_)))
+          if (unlikely(is_nan(bvi_->val_)
+                       || is_nan(ad_)))
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             bvi_->adj_ -= adj_;

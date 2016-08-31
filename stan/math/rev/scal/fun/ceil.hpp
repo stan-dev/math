@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_CEIL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
@@ -17,7 +18,7 @@ namespace stan {
           op_v_vari(std::ceil(avi->val_), avi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)))
+          if (unlikely(is_nan(avi_->val_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
         }
       };
