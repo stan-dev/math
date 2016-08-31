@@ -12,7 +12,6 @@
 
 template <typename F>
 void expect_prim_binary_matrix_value() {
-  using stan::math::is_nan;
   using Eigen::MatrixXd;
   using std::vector;
 

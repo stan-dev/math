@@ -4,18 +4,10 @@
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <stan/math/fwd/mat.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-<<<<<<< HEAD
 #include <gtest/gtest.h>
 
 static inline void expect_val_deriv_eq(double exp_var, double test_var) {
-  using stan::math::is_nan;
-  if (is_nan(exp_var) && is_nan(test_var)) return;
-  EXPECT_FLOAT_EQ(exp_var, test_var);
-=======
-
-static inline void expect_val_deriv_eq(double exp_var, double test_var) {
   expect_val_eq(exp_var, test_var);
->>>>>>> aa1730da8125f64dd50100e9b217ea2423cdee53
 }
 
 template <typename T>
