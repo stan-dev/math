@@ -3,7 +3,6 @@
 
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <stan/math/fwd/mat.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <gtest/gtest.h>
 
 static inline void expect_val_deriv_eq(double exp_var, double test_var) {
