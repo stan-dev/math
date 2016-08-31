@@ -75,7 +75,6 @@ namespace stan {
       static const char* function("wiener_log(%1%)");
 
       using boost::math::tools::promote_args;
-      using boost::math::isinf;
       using boost::math::isfinite;
       using std::log;
       using std::exp;

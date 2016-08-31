@@ -12,8 +12,9 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
@@ -49,9 +50,7 @@ namespace stan {
       check_not_nan(function, "Degrees of freedom parameter", nu);
       check_positive(function, "Degrees of freedom parameter", nu);
 
-      using boost::math::isinf;
-
-      if (isinf(nu))
+      if (is_inf(nu))
         return multi_normal_log(y, mu, Sigma);
 
       using Eigen::Matrix;

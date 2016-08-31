@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_STD_ISINF_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <cmath>
 
 namespace std {
@@ -16,7 +17,7 @@ namespace std {
    * @return <code>true</code> if value is infinite.
    */
   inline int isinf(const stan::math::var& a) {
-    return isinf(a.val());
+    return is_inf(a);
   }
 
 }

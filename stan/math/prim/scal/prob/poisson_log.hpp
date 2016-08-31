@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -54,7 +55,7 @@ namespace stan {
       size_t size = max_size(n, lambda);
 
       for (size_t i = 0; i < size; i++)
-        if (boost::math::isinf(lambda_vec[i]))
+        if (is_inf(lambda_vec[i]))
           return LOG_ZERO;
       for (size_t i = 0; i < size; i++)
         if (lambda_vec[i] == 0 && n_vec[i] != 0)

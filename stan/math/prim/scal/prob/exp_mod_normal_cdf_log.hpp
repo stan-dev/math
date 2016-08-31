@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -62,7 +63,7 @@ namespace stan {
       size_t N = max_size(y, mu, sigma, lambda);
       const double sqrt_pi = std::sqrt(pi());
       for (size_t n = 0; n < N; n++) {
-        if (boost::math::isinf(y_vec[n])) {
+        if (is_inf(y_vec[n])) {
           if (y_vec[n] < 0.0)
             return operands_and_partials.value(negative_infinity());
           else

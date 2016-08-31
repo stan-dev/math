@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
 
@@ -66,7 +67,7 @@ namespace stan {
      * @return Inverse hyperbolic cosine of the variable.
      */
     inline var acosh(const var& a) {
-      if (boost::math::isinf(a.val()) && a > 0.0)
+      if (is_inf(a.val()) && a > 0.0)
         return var(new acosh_vari(a.val(), a.vi_));
       return var(new acosh_vari(::acosh(a.val()), a.vi_));
     }
