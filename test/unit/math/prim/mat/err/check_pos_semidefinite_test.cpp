@@ -22,7 +22,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
   y << -1.0;
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::domain_error,
-                   "function: y is not positive semi-definite: -1");
+                   "function: y is not positive semi-definite.");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
@@ -50,7 +50,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
   y << -1, 0, 0, 1;
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::domain_error,
-                   "function: y is not positive semi-definite:\n-1  0\n 0  1");
+                   "function: y is not positive semi-definite.");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
