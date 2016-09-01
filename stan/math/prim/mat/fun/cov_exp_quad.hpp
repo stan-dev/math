@@ -33,8 +33,8 @@ namespace stan {
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x,
-                 T_sigma& sigma,
-                 T_l& l) {
+                 const T_sigma& sigma,
+                 const T_l& l) {
       using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
@@ -84,8 +84,8 @@ namespace stan {
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x1>& x1,
                  const std::vector<T_x2>& x2,
-                 T_sigma& sigma,
-                 T_l& l) {
+                 const T_sigma& sigma,
+                 const T_l& l) {
       using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);

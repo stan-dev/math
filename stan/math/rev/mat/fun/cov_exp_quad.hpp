@@ -170,7 +170,7 @@ namespace stan {
          * @param l length scale
          */
         cov_exp_quad_vari(const std::vector<T_x>& x,
-                          const double sigma,
+                          double sigma,
                           const T_l& l)
           : vari(0.0),
           size_(x.size()),
@@ -225,12 +225,11 @@ namespace stan {
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
      */
-    template <>
     inline
     Eigen::Matrix<var, -1, -1>
     cov_exp_quad(const std::vector<double>& x,
-                 var& sigma,
-                 var& l) {
+                 const var& sigma,
+                 const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x.size(); n++)
@@ -268,18 +267,16 @@ namespace stan {
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
      */
-    template <>
     inline
     Eigen::Matrix<var, -1, -1>
     cov_exp_quad(const std::vector<double>& x,
-                 double& sigma,
-                 var& l) {
+                 double sigma,
+                 const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x.size(); n++)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
-      std::cout << "new func" << std::endl;
       int x_size = x.size();
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
         cov(x_size, x_size);
