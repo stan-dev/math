@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
@@ -22,15 +21,13 @@ namespace stan {
         double val = 0;
         double diff = 1;
         double k = 0;
-        double a_2 = a*a;
+        double a_2 = a * a;
         double bprod = 1;
-        while (std::abs(diff) > precision
-               && ++k < max_steps
-               && !is_nan(diff)) {
+        while (std::abs(diff) > precision && ++k < max_steps) {
           val += diff;
-          bprod *= b+k-1.0;
-          diff = a_2 * std::pow(a+k, -2) * bprod * std::pow(z, k)
-            / boost::math::tgamma(k+1);
+          bprod *= b + k - 1.0;
+          diff = a_2 * std::pow(a + k, -2) * bprod * std::pow(z, k)
+            / boost::math::tgamma(k + 1);
         }
         return val;
       }
