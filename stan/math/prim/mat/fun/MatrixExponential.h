@@ -8,8 +8,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// File edited to be added to the Stan math library and create the
-// matrix exponential function (matrix_exp);
+// This file has been edited to be added to the Stan math library and
+// create the matrix exponential function (matrix_exp), 2016.
 
 
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXPONENTIAL_H
@@ -228,5 +228,6 @@ namespace stan {
     
     } // end namespace internal
 } // end namespace eigen
+
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <stan/math/prim/mat/fun/matrix_exp_spec.hpp>
 
 namespace stan {
     namespace math {
@@ -21,7 +22,12 @@ namespace stan {
             check_nonzero_size("matrix_exp", "input matrix", A);
             check_square("matrix_exp", "input matrix", A);
             
-            return A.exp();
+            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B;
+            
+            if(A.cols() == 2) matrix_exp_compute_2x2(A, B);
+            else B = A.exp();
+                
+            return B;
         }
         
     }

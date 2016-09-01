@@ -3,6 +3,7 @@
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include <stan/math/prim/mat/fun/MatrixExponential.h>
+#include <stan/math/prim/mat/fun/matrix_exp_spec.hpp>
 
 
 namespace stan {
@@ -42,16 +43,17 @@ namespace stan {
          * @param A input matrix
          * @return B matrix exponential of A
          */
-      
        inline
        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
        matrix_exp(const Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>& A) {
     
-           check_nonzero_size("matrix_exp", "input matrix", A);
-           check_square("matrix_exp", "input matrix", A);
+        check_nonzero_size("matrix_exp", "input matrix", A);
+        check_square("matrix_exp", "input matrix", A);
            
-           Matrix<var, Dynamic, Dynamic> B;
-           matrix_exp_compute(A, B);
+        Matrix<var, Dynamic, Dynamic> B;
+           
+        if(A.cols() == 2) matrix_exp_compute_2x2(A, B);
+        else matrix_exp_compute(A, B);
     
         return B; 
        }
