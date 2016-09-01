@@ -30,14 +30,8 @@ namespace stan {
      */
     template<typename T_x, typename T_sigma, typename T_l>
     inline typename
-    boost::enable_if_c<!boost::is_same<typename scalar_type<T_x>::type,
-                                       double>::value
-                       || (boost::is_same<typename scalar_type<T_x>::type,
-                                          double>::value
-                           & boost::is_same<T_sigma, double>::value
-                           & boost::is_same<T_l, double>::value),
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
-                  Eigen::Dynamic, Eigen::Dynamic> >::type
+                  Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x,
                  T_sigma& sigma,
                  T_l& l) {
