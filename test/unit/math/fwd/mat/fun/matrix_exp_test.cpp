@@ -61,3 +61,10 @@ TEST(MathMatrix, matrix_exp2) {
     EXPECT_FLOAT_EQ(1.103638, output(1,1).d_);
 
 }
+
+TEST(MathMatrix, matrix_exp3) {
+    matrix_fd m1(0,0), m2(1,2);
+    
+    EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
+    EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
+}

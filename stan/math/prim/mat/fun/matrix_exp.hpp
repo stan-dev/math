@@ -17,6 +17,10 @@ namespace stan {
         inline
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
         matrix_exp(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
+            
+            check_nonzero_size("matrix_exp", "input matrix", A);
+            check_square("matrix_exp", "input matrix", A);
+            
             return A.exp();
         }
         
