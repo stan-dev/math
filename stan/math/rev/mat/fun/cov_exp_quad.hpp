@@ -43,13 +43,16 @@ namespace stan {
       public:
         int size_;
         int size_sq_;
+        int size_vech_;
         double l_d_;
         double sigma_d_;
         double sigma_sq_d_;
         double* dist_;
         vari* l_vari_;
         vari* sigma_vari_;
-        vari** cov_;
+        vari** cov_lower_;
+        vari** cov_upper_;
+        vari** cov_diag_;
 
         /**
          * Constructor for cov_exp_quad.
@@ -74,42 +77,51 @@ namespace stan {
                           const T_l& l)
           : vari(0.0),
           size_(x.size()),
-          size_sq_(size_ * size_),
+          size_vech_(size_ * (size_ - 1) / 2),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           sigma_sq_d_(std::pow(sigma_d_, 2)),
-          dist_(ChainableStack::memalloc_.alloc_array<double>(size_sq_)),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_vech_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-          cov_(ChainableStack::memalloc_.alloc_array<vari*>(size_sq_)) {
-            size_t pos = 0;
+          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)), 
+          cov_upper_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)),
+          cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
-            for (size_t j = 0; j < static_cast<size_t>(size_); ++j)
-              for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
-                if (i == j) {
-                  dist_[pos] = 0;
-                  cov_[pos] = new vari(sigma_sq_d_, false);
-                } else {
-                  dist_[pos] = squared_distance(x[i], x[j]);
-                  cov_[pos] = new vari(sigma_sq_d_
-                                       * exp(-dist_[pos]
-                                             * inv_half_sq_l_d), false);
-                }
+            size_t pos = 0;
+            for (size_t j = 0; j < static_cast<size_t>(size_ - 1); ++j)
+              for (size_t i = j + 1; i < static_cast<size_t>(size_); ++i) {
+                double dist_sq = squared_distance(x[i],x[j]);
+                double val = sigma_sq_d_ * exp(-dist_sq
+                                              * inv_half_sq_l_d);
+                dist_[pos] = dist_sq;
+                cov_upper_[pos] = new vari(val, false);
+                cov_lower_[pos] = new vari(val, false);
                 ++pos;
               }
+              for (size_t i = 0; i < static_cast<size_t>(size_); ++i) 
+                cov_diag_[i] = new vari(sigma_sq_d_, false);
           }
 
         virtual void chain() {
           double adjl(0.0);
           double adjsigma(0.0);
 
-          for (size_t i = 0; i < static_cast<size_t>(size_sq_); ++i) {
-            vari* el = cov_[i];
+          for (size_t i = 0; i < static_cast<size_t>(size_vech_); ++i) {
+            vari* el_low = cov_lower_[i];
+            vari* el_high = cov_upper_[i];
+            double prod_adj_cov_low = el_low->adj_ * el_low->val_;
+            double prod_adj_cov_high = el_high->adj_ * el_high->val_;
+            double prod_add = prod_adj_cov_low + prod_adj_cov_high;
+            adjl += prod_add * dist_[i];
+            adjsigma += prod_add;
+          }
+          for (size_t i = 0; i < static_cast<size_t>(size_); ++i) {
+            vari* el = cov_diag_[i];
             double prod_adj_cov = el->adj_ * el->val_;
-            adjl += prod_adj_cov * dist_[i];
             adjsigma += prod_adj_cov;
           }
-          l_vari_->adj_ += adjl / std::pow(l_d_, 3);
+          l_vari_->adj_ +=  adjl / std::pow(l_d_, 3);
           sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
-        }
+          }
     };
 
     /**
@@ -134,16 +146,25 @@ namespace stan {
       for (size_t n = 0; n < x.size(); n++)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
+      int x_size = x.size();
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-        cov(x.size(), x.size());
-      if (x.size() == 0)
+        cov(x_size, x_size);
+      if (x_size == 0)
         return cov;
 
       cov_exp_quad_vari<double, var, var> *baseVari
         = new cov_exp_quad_vari<double, var, var>(x, sigma, l);
 
-      for (size_t i = 0; i < static_cast<size_t>(cov.size()); ++i)
-        cov.coeffRef(i).vi_ = baseVari->cov_[i];
+      size_t pos = 0;
+      for (size_t j = 0; j < static_cast<size_t>(x_size - 1); ++j) {
+        for (size_t i = (j + 1); i < static_cast<size_t>(x_size); ++i) {
+          cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
+          cov.coeffRef(j, i).vi_ = baseVari->cov_upper_[pos];
+          ++pos;
+        }
+        cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
+      }
+      cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
   }
