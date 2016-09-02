@@ -18,6 +18,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/exp.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
@@ -52,7 +53,6 @@ namespace stan {
       vari* l_vari_;
       vari* sigma_vari_;
       vari** cov_lower_;
-      vari** cov_upper_;
       vari** cov_diag_;
 
       /**
@@ -84,17 +84,16 @@ namespace stan {
         dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_), sigma_vari_(sigma.vi_),
         cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
-        cov_upper_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
         cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
           double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
           size_t pos = 0;
           for (size_t j = 0; j < size_ - 1; ++j) {
             for (size_t i = j + 1; i < size_; ++i) {
               double dist_sq = square(x[i] - x[j]);
-              double val = sigma_sq_d_ * exp(-dist_sq * inv_half_sq_l_d);
               dist_[pos] = dist_sq;
-              cov_upper_[pos] = new vari(val, false);
-              cov_lower_[pos] = new vari(val, false);
+              cov_lower_[pos] = new vari(sigma_sq_d_
+                                         * exp(-dist_sq
+                                               * inv_half_sq_l_d), false);
               ++pos;
             }
           }
@@ -108,9 +107,7 @@ namespace stan {
 
         for (size_t i = 0; i < size_ltri_; ++i) {
           vari* el_low = cov_lower_[i];
-          vari* el_high = cov_upper_[i];
-          double prod_add = el_low->adj_ * el_low->val_
-                            + el_high->adj_ * el_high->val_;
+          double prod_add = el_low->adj_ * el_low->val_;
           adjl += prod_add * dist_[i];
           adjsigma += prod_add;
         }
@@ -146,7 +143,6 @@ namespace stan {
       double* dist_;
       vari* l_vari_;
       vari** cov_lower_;
-      vari** cov_upper_;
       vari** cov_diag_;
 
       /**
@@ -178,17 +174,16 @@ namespace stan {
         dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_),
         cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
-        cov_upper_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
         cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
           double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
           size_t pos = 0;
           for (size_t j = 0; j < size_ - 1; ++j) {
             for (size_t i = j + 1; i < size_; ++i) {
               double dist_sq = square(x[i] - x[j]);
-              double val = sigma_sq_d_ * exp(-dist_sq * inv_half_sq_l_d);
               dist_[pos] = dist_sq;
-              cov_upper_[pos] = new vari(val, false);
-              cov_lower_[pos] = new vari(val, false);
+              cov_lower_[pos] = new vari(sigma_sq_d_
+                                         * exp(-dist_sq
+                                               * inv_half_sq_l_d), false);
               ++pos;
             }
           }
@@ -201,9 +196,7 @@ namespace stan {
 
         for (size_t i = 0; i < size_ltri_; ++i) {
           vari* el_low = cov_lower_[i];
-          vari* el_high = cov_upper_[i];
-          adjl += (el_low->adj_ * el_low->val_
-                   + el_high->adj_ * el_high->val_) * dist_[i];
+          adjl += el_low->adj_ * el_low->val_ * dist_[i];
         }
         l_vari_->adj_ +=  adjl / (l_d_ * l_d_ * l_d_);
       }
@@ -241,7 +234,7 @@ namespace stan {
       for (size_t j = 0; j < x_size - 1; ++j) {
         for (size_t i = (j + 1); i < x_size; ++i) {
           cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-          cov.coeffRef(j, i).vi_ = baseVari->cov_upper_[pos];
+          cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
           ++pos;
         }
         cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
@@ -282,7 +275,7 @@ namespace stan {
       for (size_t j = 0; j < x_size - 1; ++j) {
         for (size_t i = (j + 1); i < x_size; ++i) {
           cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-          cov.coeffRef(j, i).vi_ = baseVari->cov_upper_[pos];
+          cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
           ++pos;
         }
         cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
