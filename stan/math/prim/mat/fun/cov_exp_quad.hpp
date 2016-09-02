@@ -45,20 +45,22 @@ namespace stan {
                     Eigen::Dynamic, Eigen::Dynamic>
         cov(x.size(), x.size());
 
-      if (x.size() == 0)
+      int x_size = x.size();
+      if (x_size == 0)
         return cov;
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_half_inv_l_sq = - 0.5 / square(l);
 
-      for (size_t i = 0; i < x.size(); ++i) {
-        cov(i, i) = sigma_sq;
-        for (size_t j = i + 1; j < x.size(); ++j) {
+      for (int j = 0; j < (x_size - 1); ++j) {
+        cov(j, j) = sigma_sq;
+        for (int i = j + 1; i < x_size; ++i) {
           cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j])
                                      * neg_half_inv_l_sq);
           cov(j, i) = cov(i, j);
         }
       }
+      cov(x_size - 1, x_size - 1) = sigma_sq;
       return cov;
     }
 
