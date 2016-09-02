@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
   namespace math {
