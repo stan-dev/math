@@ -37,6 +37,7 @@ namespace stan {
     cov_exp_quad(const std::vector<T_x>& x,
                  const T_sigma& sigma,
                  const T_l& l) {
+      using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x.size(); ++n)
@@ -89,6 +90,7 @@ namespace stan {
                  const std::vector<T_x2>& x2,
                  const T_sigma& sigma,
                  const T_l& l) {
+      using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       for (size_t n = 0; n < x1.size(); ++n)
