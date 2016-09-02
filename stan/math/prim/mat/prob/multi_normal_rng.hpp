@@ -47,11 +47,8 @@ namespace stan {
       check_finite(function, "Location parameter", mu);
 
       Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
-      if (llt_of_S.info() != Eigen::Success) {
-        throw std::domain_error("multi_normal_rng:"
-                                " Matrix argument not solvable;"
-                                " probably not positive definite.");
-      }
+      check_pos_definite("multi_normal_rng", "covariance matrix argument",
+                         llt_of_S);
 
       variate_generator<RNG&, normal_distribution<> >
         std_normal_rng(rng, normal_distribution<>(0, 1));
