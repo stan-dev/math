@@ -81,14 +81,14 @@ namespace stan {
           sigma_sq_d_(std::pow(sigma_d_, 2)),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_vech_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)), 
+          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)),
           cov_upper_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)),
           cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
             size_t pos = 0;
             for (size_t j = 0; j < static_cast<size_t>(size_ - 1); ++j) {
               for (size_t i = j + 1; i < static_cast<size_t>(size_); ++i) {
-                double dist_sq = squared_distance(x[i],x[j]);
+                double dist_sq = squared_distance(x[i], x[j]);
                 double val = sigma_sq_d_ * exp(-dist_sq
                                               * inv_half_sq_l_d);
                 dist_[pos] = dist_sq;
@@ -97,7 +97,7 @@ namespace stan {
                 ++pos;
               }
             }
-              for (size_t i = 0; i < static_cast<size_t>(size_); ++i) 
+              for (size_t i = 0; i < static_cast<size_t>(size_); ++i)
                 cov_diag_[i] = new vari(sigma_sq_d_, false);
           }
 
@@ -179,14 +179,14 @@ namespace stan {
           sigma_sq_d_(std::pow(sigma_d_, 2)),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_vech_)),
           l_vari_(l.vi_),
-          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)), 
+          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)),
           cov_upper_(ChainableStack::memalloc_.alloc_array<vari*>(size_vech_)),
           cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
             double inv_half_sq_l_d = 0.5 / (std::pow(l_d_, 2));
             size_t pos = 0;
             for (size_t j = 0; j < static_cast<size_t>(size_ - 1); ++j) {
               for (size_t i = j + 1; i < static_cast<size_t>(size_); ++i) {
-                double dist_sq = squared_distance(x[i],x[j]);
+                double dist_sq = squared_distance(x[i], x[j]);
                 double val = sigma_sq_d_ * exp(-dist_sq
                                               * inv_half_sq_l_d);
                 dist_[pos] = dist_sq;
@@ -195,7 +195,7 @@ namespace stan {
                 ++pos;
               }
             }
-              for (size_t i = 0; i < static_cast<size_t>(size_); ++i) 
+              for (size_t i = 0; i < static_cast<size_t>(size_); ++i)
                 cov_diag_[i] = new vari(sigma_sq_d_, false);
           }
 
@@ -253,7 +253,8 @@ namespace stan {
         }
         cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
       }
-      cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
+      cov.coeffRef(x_size - 1, x_size - 1).vi_
+        = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
     /**
@@ -295,7 +296,8 @@ namespace stan {
         }
         cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
       }
-      cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
+      cov.coeffRef(x_size - 1, x_size - 1).vi_
+        = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
   }
