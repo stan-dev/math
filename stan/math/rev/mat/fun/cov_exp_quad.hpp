@@ -92,7 +92,7 @@ namespace stan {
               double dist_sq = square(x[i] - x[j]);
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
-                                         * exp(-dist_sq
+                                         * std::exp(-dist_sq
                                                * inv_half_sq_l_d), false);
               ++pos;
             }
@@ -182,7 +182,7 @@ namespace stan {
               double dist_sq = square(x[i] - x[j]);
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
-                                         * exp(-dist_sq
+                                         * std::exp(-dist_sq
                                                * inv_half_sq_l_d), false);
               ++pos;
             }
