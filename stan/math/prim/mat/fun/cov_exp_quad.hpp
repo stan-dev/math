@@ -35,10 +35,9 @@ namespace stan {
     cov_exp_quad(const std::vector<T_x>& x,
                  const T_sigma& sigma,
                  const T_l& l) {
-      using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      for (size_t n = 0; n < x.size(); n++)
+      for (size_t n = 0; n < x.size(); ++n)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
@@ -88,12 +87,11 @@ namespace stan {
                  const std::vector<T_x2>& x2,
                  const T_sigma& sigma,
                  const T_l& l) {
-      using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      for (size_t n = 0; n < x1.size(); n++)
+      for (size_t n = 0; n < x1.size(); ++n)
         check_not_nan("cov_exp_quad", "x1", x1[n]);
-      for (size_t n = 0; n < x2.size(); n++)
+      for (size_t n = 0; n < x2.size(); ++n)
         check_not_nan("cov_exp_quad", "x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
