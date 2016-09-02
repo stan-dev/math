@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <valarray>
 #include <limits>
@@ -27,9 +27,9 @@ namespace stan {
                       avi, bvi, cvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_)
-                       || boost::math::isnan(cvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_)
+                       || is_nan(cvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -48,9 +48,9 @@ namespace stan {
                       avi, bvi, c) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_)
-                       || boost::math::isnan(cd_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_)
+                       || is_nan(cd_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -67,9 +67,9 @@ namespace stan {
                       avi, b, cvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(cvi_->val_)
-                       || boost::math::isnan(bd_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(cvi_->val_)
+                       || is_nan(bd_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -86,9 +86,9 @@ namespace stan {
                       avi, b, c) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)
-                       || boost::math::isnan(cd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)
+                       || is_nan(cd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_ * bd_;
@@ -102,9 +102,9 @@ namespace stan {
                       a, b, cvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(cvi_->val_)
-                       || boost::math::isnan(ad_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(cvi_->val_)
+                       || is_nan(ad_)
+                       || is_nan(bd_)))
             cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             cvi_->adj_ += adj_;

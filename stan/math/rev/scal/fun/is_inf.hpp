@@ -17,9 +17,7 @@ namespace stan {
      *
      * @return <code>1</code> if the value is infinite and <code>0</code> otherwise.
      */
-    inline
-    int
-    is_inf(const var& v) {
+    inline int is_inf(const var& v) {
       return is_inf(v.val());
     }
 

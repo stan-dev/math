@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 
@@ -37,7 +38,6 @@ namespace stan {
      */
     template<typename T>
     T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6) {
-      using boost::math::isinf;
       using std::domain_error;
       using std::exp;
       using std::fabs;
@@ -63,7 +63,7 @@ namespace stan {
           fac *= a_minus_one_minus_k;
           delta = dfac / zpow;
 
-          if (isinf(delta))
+          if (is_inf(delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
         }
@@ -81,7 +81,7 @@ namespace stan {
           ++k;
           s *= - z / k;
           delta = s / square(k + a);
-          if (isinf(delta))
+          if (is_inf(delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
         }
