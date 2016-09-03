@@ -3,17 +3,18 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
+#include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
+#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
@@ -84,7 +85,7 @@ namespace stan {
           size_t pos = 0;
           for (size_t j = 0; j < size_ - 1; ++j) {
             for (size_t i = j + 1; i < size_; ++i) {
-              double dist_sq = square(x[i] - x[j]);
+              double dist_sq = squared_distance(x[i], x[j]);
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
                                          * std::exp(-dist_sq
@@ -174,7 +175,7 @@ namespace stan {
           size_t pos = 0;
           for (size_t j = 0; j < size_ - 1; ++j) {
             for (size_t i = j + 1; i < size_; ++i) {
-              double dist_sq = square(x[i] - x[j]);
+              double dist_sq = squared_distance(x[i], x[j]);
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
                                          * std::exp(-dist_sq
@@ -208,23 +209,27 @@ namespace stan {
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
      */
-    inline Eigen::Matrix<var, -1, -1>
-    cov_exp_quad(const std::vector<double>& x,
+    template <typename T_x>
+    inline typename
+    boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
+                                      double>::value,
+                       Eigen::Matrix<var, -1, -1> >::type
+    cov_exp_quad(const std::vector<T_x>& x,
                  const var& sigma,
                  const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-			for (size_t i = 0; i < x.size(); ++i)
+      size_t x_size = x.size();
+      for (size_t i = 0; i < x_size; ++i)
         check_not_nan("cov_exp_quad", "x", x[i]);
 
-      size_t x_size = x.size();
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
       if (x_size == 0)
         return cov;
 
-      cov_exp_quad_vari<double, var, var> *baseVari
-        = new cov_exp_quad_vari<double, var, var>(x, sigma, l);
+      cov_exp_quad_vari<T_x, var, var> *baseVari
+        = new cov_exp_quad_vari<T_x, var, var>(x, sigma, l);
 
       size_t pos = 0;
       for (size_t j = 0; j < x_size - 1; ++j) {
@@ -250,23 +255,27 @@ namespace stan {
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
      */
-    inline Eigen::Matrix<var, -1, -1>
-    cov_exp_quad(const std::vector<double>& x,
+    template <typename T_x>
+    inline typename
+    boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
+                                      double>::value,
+                       Eigen::Matrix<var, -1, -1> >::type
+    cov_exp_quad(const std::vector<T_x>& x,
                  double sigma,
                  const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-			for (size_t i = 0; i < x.size(); ++i)
+      size_t x_size = x.size();
+      for (size_t i = 0; i < x_size; ++i)
         check_not_nan("cov_exp_quad", "x", x[i]);
 
-      size_t x_size = x.size();
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
       if (x_size == 0)
         return cov;
 
-      cov_exp_quad_vari<double, double, var> *baseVari
-        = new cov_exp_quad_vari<double, double, var>(x, sigma, l);
+      cov_exp_quad_vari<T_x, double, var> *baseVari
+        = new cov_exp_quad_vari<T_x, double, var>(x, sigma, l);
 
       size_t pos = 0;
       for (size_t j = 0; j < x_size - 1; ++j) {
