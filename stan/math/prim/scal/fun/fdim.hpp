@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
-#include <math.h>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <math.h>
 #include <cmath>
 #include <limits>
 
@@ -27,7 +27,7 @@ namespace stan {
       using ::fdim;
       using std::numeric_limits;
       using boost::math::tools::promote_args;
-      if (boost::math::isnan(a) || boost::math::isnan(b))
+      if (is_nan(a) || is_nan(b))
         return numeric_limits<typename promote_args<T1, T2>::type>::quiet_NaN();
       return fdim(a, b);
     }
