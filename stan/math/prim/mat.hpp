@@ -158,7 +158,8 @@
 #include <stan/math/prim/mat/fun/singular_values.hpp>
 #include <stan/math/prim/mat/fun/size.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/prim/mat/fun/sort.hpp>
+#include <stan/math/prim/mat/fun/sort_asc.hpp>
+#include <stan/math/prim/mat/fun/sort_desc.hpp>
 #include <stan/math/prim/mat/fun/sort_indices.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/mat/fun/sort_indices_desc.hpp>
