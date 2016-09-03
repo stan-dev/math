@@ -7,11 +7,6 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
@@ -93,7 +88,7 @@ namespace stan {
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
                                          * std::exp(-dist_sq
-                                               * inv_half_sq_l_d), false);
+                                                    * inv_half_sq_l_d), false);
               ++pos;
             }
           }
@@ -183,7 +178,7 @@ namespace stan {
               dist_[pos] = dist_sq;
               cov_lower_[pos] = new vari(sigma_sq_d_
                                          * std::exp(-dist_sq
-                                               * inv_half_sq_l_d), false);
+                                                    * inv_half_sq_l_d), false);
               ++pos;
             }
           }
@@ -219,7 +214,8 @@ namespace stan {
                  const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      check_not_nan("cov_exp_quad", "x", x);
+			for (size_t i = 0; i < x.size(); ++i)
+        check_not_nan("cov_exp_quad", "x", x[i]);
 
       size_t x_size = x.size();
       Eigen::Matrix<var, -1, -1>
@@ -260,7 +256,8 @@ namespace stan {
                  const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      check_not_nan("cov_exp_quad", "x", x);
+			for (size_t i = 0; i < x.size(); ++i)
+        check_not_nan("cov_exp_quad", "x", x[i]);
 
       size_t x_size = x.size();
       Eigen::Matrix<var, -1, -1>
