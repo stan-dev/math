@@ -120,7 +120,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
                    std::domain_error,
                    expected_msg1_mat.str());
 
-  expected_msg1_llt << "function: Cholesky decomposition of y failed";
+  expected_msg1_llt << "function: Matrix y is not positive definite";
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_err1(y); 
   EXPECT_THROW_MSG(check_pos_definite(function, "y", llt_err1),
                    std::domain_error,
