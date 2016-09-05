@@ -15,7 +15,7 @@
 namespace stan {
   namespace math {
 
-    class cholesky_decompose_blocked_v_vari : public vari {
+    class cholesky_decompose_v_vari : public vari {
     public:
       int M_;  // A.rows() = A.cols()
       int block_size_;
@@ -23,7 +23,7 @@ namespace stan {
       vari** variRefA_;
       vari** variRefL_;
 
-      /* ctor for cholesky function
+      /* Constructor for cholesky function
        *
        * Stores varis for A
        * Instantiates and stores varis for L
@@ -36,12 +36,15 @@ namespace stan {
        * and computation. Note that varis for
        * L are constructed externally in
        * cholesky_decompose.
+			 *
+			 * block_size_ determined using the same
+			 * calculation Eigen/LLT.h 
        *
        * @param matrix A
        * @param matrix L, cholesky factor of A
        * */
-      cholesky_decompose_blocked_v_vari(const Eigen::Matrix<var, -1, -1>& A,
-                                const Eigen::Matrix<double, -1, -1>& L_A)
+      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
+																				const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
@@ -51,7 +54,7 @@ namespace stan {
             size_t pos = 0;
          block_size_ = M_/8;
          block_size_ = (block_size_/16)*16;
-         block_size_ = (std::min)((std::max)(block_size_,8), 256);
+         block_size_ = (std::min)((std::max)(block_size_,8), 128);
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             variRefA_[pos] = A.coeffRef(i, j).vi_;
@@ -78,17 +81,9 @@ namespace stan {
       /* Reverse mode differentiation
        * algorithm refernce:
        *
-       * Mike Giles. An extended collection of matrix
-       * derivative results for forward and reverse mode AD.
-       * Jan. 2008.
-       *
-       * Note algorithm  as laid out in Giles is
-       * row-major, so Eigen::Matrices are explicitly storage
-       * order RowMajor, whereas Eigen defaults to
-       * ColumnMajor. Also note algorithm
-       * starts by calculating the adjoint for
-       * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented
-       * to start at pos = M_ * (M_ + 1) / 2.
+       * Iain Murray: Differentiation of 
+			 * the Cholesky decomposition, 2016.
+			 *
        * */
       virtual void chain() {
         using Eigen::MatrixXd;
@@ -99,8 +94,8 @@ namespace stan {
         MatrixXd Lbar(M_, M_);
         MatrixXd L(M_, M_);
 
-        Lbar.setZero();
-        L.setZero();
+				Lbar.setZero();
+				L.setZero();
         size_t pos = 0;
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
@@ -121,7 +116,9 @@ namespace stan {
           Block_ Bbar = Lbar.block(k, 0, M_ - k, j);
           Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
           if (Cbar.size() > 0) {
-            Cbar = D.transpose().triangularView<Upper>().solve(Cbar.transpose()).transpose();
+            Cbar 
+							= D.transpose().triangularView<Upper>()
+							.solve(Cbar.transpose()).transpose();
             Bbar.noalias() -= Cbar * R;
             Dbar.noalias() -= Cbar.transpose() * C;
           }
@@ -144,6 +141,9 @@ namespace stan {
      * Internally calls llt rather than using
      * cholesky_decompose in order
      * to use selfadjointView<Lower> optimization.
+		 *
+		 * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky
+		 * when possible
      *
      * Note chainable stack varis are created
      * below in Matrix<var, -1, -1>
@@ -162,12 +162,9 @@ namespace stan {
       check_pos_definite("cholesky_decompose", "m", L_factor);
       L_A = L_factor.matrixL();
 
-      // NOTE: this is not a memory leak, this vari is used in the
-      // expression graph to evaluate the adjoint, but is not needed
-      // for the returned matrix.  Memory will be cleaned up with the
-      // arena allocator.
-      cholesky_decompose_blocked_v_vari *baseVari
-        = new cholesky_decompose_blocked_v_vari(A, L_A);
+      // Memory allocated in arena. 
+      cholesky_decompose_v_vari *baseVari
+        = new cholesky_decompose_v_vari(A, L_A);
       vari dummy(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       size_t pos = 0;
