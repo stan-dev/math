@@ -73,7 +73,8 @@ namespace stan {
         using Eigen::StrictlyUpper;
         L.transposeInPlace();
         Lbar = (L * Lbar.triangularView<Lower>()).eval();
-        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
+        Lbar.triangularView<StrictlyUpper>()
+          = Lbar.adjoint().triangularView<StrictlyUpper>();
         L.triangularView<Upper>().solveInPlace(Lbar);
         L.triangularView<Upper>().solveInPlace(Lbar.transpose());
       }
