@@ -36,15 +36,15 @@ namespace stan {
        * and computation. Note that varis for
        * L are constructed externally in
        * cholesky_decompose.
-			 *
-			 * block_size_ determined using the same
-			 * calculation Eigen/LLT.h 
+       *
+       * block_size_ determined using the same
+       * calculation Eigen/LLT.h 
        *
        * @param matrix A
        * @param matrix L, cholesky factor of A
        * */
       cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
-																				const Eigen::Matrix<double, -1, -1>& L_A)
+                                const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
@@ -82,8 +82,8 @@ namespace stan {
        * algorithm refernce:
        *
        * Iain Murray: Differentiation of 
-			 * the Cholesky decomposition, 2016.
-			 *
+       * the Cholesky decomposition, 2016.
+       *
        * */
       virtual void chain() {
         using Eigen::MatrixXd;
@@ -94,8 +94,8 @@ namespace stan {
         MatrixXd Lbar(M_, M_);
         MatrixXd L(M_, M_);
 
-				Lbar.setZero();
-				L.setZero();
+        Lbar.setZero();
+        L.setZero();
         size_t pos = 0;
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
@@ -117,8 +117,8 @@ namespace stan {
           Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
           if (Cbar.size() > 0) {
             Cbar 
-							= D.transpose().triangularView<Upper>()
-							.solve(Cbar.transpose()).transpose();
+              = D.transpose().triangularView<Upper>()
+              .solve(Cbar.transpose()).transpose();
             Bbar.noalias() -= Cbar * R;
             Dbar.noalias() -= Cbar.transpose() * C;
           }
@@ -141,9 +141,9 @@ namespace stan {
      * Internally calls llt rather than using
      * cholesky_decompose in order
      * to use selfadjointView<Lower> optimization.
-		 *
-		 * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky
-		 * when possible
+     *
+     * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky
+     * when possible
      *
      * Note chainable stack varis are created
      * below in Matrix<var, -1, -1>
