@@ -15,9 +15,11 @@
 namespace stan {
   namespace math {
 
-    class cholesky_decompose_v_vari : public vari {
+    class cholesky_decompose_blocked_v_vari : public vari {
     public:
       int M_;  // A.rows() = A.cols()
+      int block_size_;
+      typedef Eigen::Block<Eigen::MatrixXd> Block_;
       vari** variRefA_;
       vari** variRefL_;
 
@@ -38,7 +40,7 @@ namespace stan {
        * @param matrix A
        * @param matrix L, cholesky factor of A
        * */
-      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
+      cholesky_decompose_blocked_v_vari(const Eigen::Matrix<var, -1, -1>& A,
                                 const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
@@ -46,18 +48,31 @@ namespace stan {
                     (A.rows() * (A.rows() + 1) / 2)),
           variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * (A.rows() + 1) / 2)) {
-        size_t accum = 0;
-        size_t accum_i = accum;
+            size_t pos = 0;
+         block_size_ = M_/8;
+         block_size_ = (block_size_/16)*16;
+         block_size_ = (std::min)((std::max)(block_size_,8), 256);
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
-            accum_i += i;
-            size_t pos = j + accum_i;
             variRefA_[pos] = A.coeffRef(i, j).vi_;
             variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
+            ++pos;
           }
-          accum += j;
-          accum_i = accum;
         }
+      }
+
+      inline void symbolic_rev(Block_& L,
+                               Block_& Lbar,
+                               int size) {
+
+        using Eigen::Lower;
+        using Eigen::Upper;
+        using Eigen::StrictlyUpper;
+        L.transposeInPlace();
+        Lbar = (L * Lbar.triangularView<Lower>()).eval();
+        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
+        L.triangularView<Upper>().solveInPlace(Lbar);
+        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
       }
 
       /* Reverse mode differentiation
@@ -76,41 +91,50 @@ namespace stan {
        * to start at pos = M_ * (M_ + 1) / 2.
        * */
       virtual void chain() {
-        using Eigen::Matrix;
-        using Eigen::RowMajor;
-        Matrix<double, -1, -1, RowMajor> adjL(M_, M_);
-        Matrix<double, -1, -1, RowMajor> LA(M_, M_);
-        Matrix<double, -1, -1, RowMajor> adjA(M_, M_);
+        using Eigen::MatrixXd;
+        using Eigen::Lower;
+        using Eigen::Block;
+        using Eigen::Upper;
+        using Eigen::StrictlyUpper;
+        MatrixXd Lbar(M_, M_);
+        MatrixXd L(M_, M_);
+
+        Lbar.setZero();
+        L.setZero();
         size_t pos = 0;
-        for (size_type i = 0; i < M_; ++i) {
-          for (size_type j = 0; j <= i; ++j) {
-            adjL.coeffRef(i, j) = variRefL_[pos]->adj_;
-            LA.coeffRef(i, j) = variRefL_[pos]->val_;
+        for (size_type j = 0; j < M_; ++j) {
+          for (size_type i = j; i < M_; ++i) {
+            Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
+            L.coeffRef(i, j) = variRefL_[pos]->val_;
             ++pos;
           }
         }
 
-        --pos;
-        for (int i = M_ - 1; i >= 0; --i) {
-          for (int j = i; j >= 0; --j) {
-            if (i == j) {
-              adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j)
-                / LA.coeff(i, j);
-            } else {
-              adjA.coeffRef(i, j) = adjL.coeff(i, j)
-                / LA.coeff(j, j);
-              adjL.coeffRef(j, j) -= adjL.coeff(i, j)
-                * LA.coeff(i, j) / LA.coeff(j, j);
-            }
-            for (int k = j - 1; k >=0; --k) {
-              adjL.coeffRef(i, k) -= adjA.coeff(i, j)
-                * LA.coeff(j, k);
-              adjL.coeffRef(j, k) -= adjA.coeff(i, j)
-                * LA.coeff(i, k);
-            }
-            variRefA_[pos--]->adj_ += adjA.coeffRef(i, j);
+        for (int k = M_; k > 0; k -= block_size_) {
+          int j = std::max(0, k - block_size_);
+          Block_ R = L.block(j, 0, k - j, j);
+          Block_ D = L.block(j, j, k - j, k - j);
+          Block_ B = L.block(k, 0, M_ - k, j);
+          Block_ C = L.block(k, j, M_ - k, k - j);
+          Block_ Rbar = Lbar.block(j, 0, k - j, j);
+          Block_ Dbar = Lbar.block(j, j, k - j, k - j);
+          Block_ Bbar = Lbar.block(k, 0, M_ - k, j);
+          Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
+          if (Cbar.size() > 0) {
+            Cbar = D.transpose().triangularView<Upper>().solve(Cbar.transpose()).transpose();
+            Bbar.noalias() -= Cbar * R;
+            Dbar.noalias() -= Cbar.transpose() * C;
           }
+          symbolic_rev(D, Dbar, D.rows());
+          Rbar.noalias() -= Cbar.transpose() * B;
+          Rbar.noalias() -= Dbar.selfadjointView<Lower>() * R;
+          Dbar.diagonal().array() *= 0.5;
+          Dbar.triangularView<StrictlyUpper>().setZero();
         }
+        pos = 0;
+        for (size_type j = 0; j < M_; ++j)
+          for (size_type i = j; i < M_; ++i) 
+            variRefA_[pos++]->adj_ += Lbar.coeffRef(i,j);
       }
     };
 
@@ -142,22 +166,17 @@ namespace stan {
       // expression graph to evaluate the adjoint, but is not needed
       // for the returned matrix.  Memory will be cleaned up with the
       // arena allocator.
-      cholesky_decompose_v_vari *baseVari
-        = new cholesky_decompose_v_vari(A, L_A);
+      cholesky_decompose_blocked_v_vari *baseVari
+        = new cholesky_decompose_blocked_v_vari(A, L_A);
       vari dummy(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
-      size_t accum = 0;
-      size_t accum_i = accum;
+      size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
         for (size_type i = j; i < L.cols(); ++i) {
-          accum_i += i;
-          size_t pos = j + accum_i;
-          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos];
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
         }
         for (size_type k = 0; k < j; ++k)
           L.coeffRef(k, j).vi_ = &dummy;
-        accum += j;
-        accum_i = accum;
       }
       return L;
     }
