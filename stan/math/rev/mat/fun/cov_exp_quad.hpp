@@ -68,28 +68,28 @@ namespace stan {
                         const T_sigma& sigma,
                         const T_l& l)
         : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)), sigma_d_(value_of(sigma)),
-        sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-        l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-        cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
-        cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
-          double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
-          size_t pos = 0;
-          for (size_t j = 0; j < size_ - 1; ++j) {
-            for (size_t i = j + 1; i < size_; ++i) {
-              double dist_sq = squared_distance(x[i], x[j]);
-              dist_[pos] = dist_sq;
-              cov_lower_[pos] = new vari(sigma_sq_d_
-                                         * std::exp(-dist_sq
-                                                    * inv_half_sq_l_d), false);
-              ++pos;
-            }
+          size_(x.size()),
+          size_ltri_(size_ * (size_ - 1) / 2),
+          l_d_(value_of(l)), sigma_d_(value_of(sigma)),
+          sigma_sq_d_(sigma_d_ * sigma_d_),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          l_vari_(l.vi_), sigma_vari_(sigma.vi_),
+          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
+          cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
+        double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
+        size_t pos = 0;
+        for (size_t j = 0; j < size_ - 1; ++j) {
+          for (size_t i = j + 1; i < size_; ++i) {
+            double dist_sq = squared_distance(x[i], x[j]);
+            dist_[pos] = dist_sq;
+            cov_lower_[pos] = new vari(sigma_sq_d_
+                                       * std::exp(-dist_sq
+                                                  * inv_half_sq_l_d), false);
+            ++pos;
           }
-          for (size_t i = 0; i < size_; ++i)
-            cov_diag_[i] = new vari(sigma_sq_d_, false);
+        }
+        for (size_t i = 0; i < size_; ++i)
+          cov_diag_[i] = new vari(sigma_sq_d_, false);
       }
 
       virtual void chain() {
@@ -158,28 +158,28 @@ namespace stan {
                         const double sigma,
                         const T_l& l)
         : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)), sigma_d_(value_of(sigma)),
-        sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-        l_vari_(l.vi_),
-        cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
-        cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
-          double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
-          size_t pos = 0;
-          for (size_t j = 0; j < size_ - 1; ++j) {
-            for (size_t i = j + 1; i < size_; ++i) {
-              double dist_sq = squared_distance(x[i], x[j]);
-              dist_[pos] = dist_sq;
-              cov_lower_[pos] = new vari(sigma_sq_d_
-                                         * std::exp(-dist_sq
-                                                    * inv_half_sq_l_d), false);
-              ++pos;
-            }
+          size_(x.size()),
+          size_ltri_(size_ * (size_ - 1) / 2),
+          l_d_(value_of(l)), sigma_d_(value_of(sigma)),
+          sigma_sq_d_(sigma_d_ * sigma_d_),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          l_vari_(l.vi_),
+          cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
+          cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
+        double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
+        size_t pos = 0;
+        for (size_t j = 0; j < size_ - 1; ++j) {
+          for (size_t i = j + 1; i < size_; ++i) {
+            double dist_sq = squared_distance(x[i], x[j]);
+            dist_[pos] = dist_sq;
+            cov_lower_[pos] = new vari(sigma_sq_d_
+                                       * std::exp(-dist_sq
+                                                  * inv_half_sq_l_d), false);
+            ++pos;
           }
-          for (size_t i = 0; i < size_; ++i)
-            cov_diag_[i] = new vari(sigma_sq_d_, false);
+        }
+        for (size_t i = 0; i < size_; ++i)
+          cov_diag_[i] = new vari(sigma_sq_d_, false);
       }
 
       virtual void chain() {
@@ -209,9 +209,9 @@ namespace stan {
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
                        Eigen::Matrix<var, -1, -1> >::type
-    cov_exp_quad(const std::vector<T_x>& x,
-                 const var& sigma,
-                 const var& l) {
+      cov_exp_quad(const std::vector<T_x>& x,
+                   const var& sigma,
+                   const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       size_t x_size = x.size();
@@ -239,6 +239,7 @@ namespace stan {
         = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
+
     /**
      * Returns a squared exponential kernel.
      *
@@ -255,9 +256,9 @@ namespace stan {
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
                        Eigen::Matrix<var, -1, -1> >::type
-    cov_exp_quad(const std::vector<T_x>& x,
-                 double sigma,
-                 const var& l) {
+      cov_exp_quad(const std::vector<T_x>& x,
+                   double sigma,
+                   const var& l) {
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
       size_t x_size = x.size();
@@ -285,6 +286,7 @@ namespace stan {
         = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
+
   }
 }
 #endif
