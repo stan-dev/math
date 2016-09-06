@@ -11,6 +11,7 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <algorithm>
 
 namespace stan {
   namespace math {
@@ -23,10 +24,11 @@ namespace stan {
       vari** variRefA_;
       vari** variRefL_;
 
-      /* Constructor for cholesky function
+      /**
+       * Constructor for cholesky function.
        *
-       * Stores varis for A
-       * Instantiates and stores varis for L
+       * Stores varis for A.
+       * Instantiates and stores varis for L.
        * Instantiates and stores dummy vari for
        * upper triangular part of var result returned
        * in cholesky_decompose function call
@@ -38,11 +40,11 @@ namespace stan {
        * cholesky_decompose.
        *
        * block_size_ determined using the same
-       * calculation Eigen/LLT.h 
+       * calculation Eigen/LLT.h
        *
        * @param matrix A
        * @param matrix L, cholesky factor of A
-       * */
+       */
       cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
                                 const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
@@ -54,7 +56,7 @@ namespace stan {
             size_t pos = 0;
          block_size_ = M_/8;
          block_size_ = (block_size_/16)*16;
-         block_size_ = (std::min)((std::max)(block_size_,8), 128);
+         block_size_ = (std::min)((std::max)(block_size_, 8), 128);
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
             variRefA_[pos] = A.coeffRef(i, j).vi_;
@@ -67,7 +69,6 @@ namespace stan {
       inline void symbolic_rev(Block_& L,
                                Block_& Lbar,
                                int size) {
-
         using Eigen::Lower;
         using Eigen::Upper;
         using Eigen::StrictlyUpper;
@@ -79,13 +80,14 @@ namespace stan {
         L.triangularView<Upper>().solveInPlace(Lbar.transpose());
       }
 
-      /* Reverse mode differentiation
+      /**
+       * Reverse mode differentiation
        * algorithm refernce:
        *
-       * Iain Murray: Differentiation of 
+       * Iain Murray: Differentiation of
        * the Cholesky decomposition, 2016.
        *
-       * */
+       */
       virtual void chain() {
         using Eigen::MatrixXd;
         using Eigen::Lower;
@@ -117,7 +119,7 @@ namespace stan {
           Block_ Bbar = Lbar.block(k, 0, M_ - k, j);
           Block_ Cbar = Lbar.block(k, j, M_ - k, k - j);
           if (Cbar.size() > 0) {
-            Cbar 
+            Cbar
               = D.transpose().triangularView<Upper>()
               .solve(Cbar.transpose()).transpose();
             Bbar.noalias() -= Cbar * R;
@@ -131,12 +133,13 @@ namespace stan {
         }
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i) 
-            variRefA_[pos++]->adj_ += Lbar.coeffRef(i,j);
+          for (size_type i = j; i < M_; ++i)
+            variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
       }
     };
 
-    /* Reverse mode specialization of
+    /**
+     * Reverse mode specialization of
      * cholesky decomposition
      *
      * Internally calls llt rather than using
@@ -163,7 +166,7 @@ namespace stan {
       check_pos_definite("cholesky_decompose", "m", L_factor);
       L_A = L_factor.matrixL();
 
-      // Memory allocated in arena. 
+      // Memory allocated in arena.
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A, L_A);
       vari dummy(0.0, false);
