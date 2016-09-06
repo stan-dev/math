@@ -2,12 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_COV_EXP_QUAD_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -95,7 +90,7 @@ namespace stan {
           }
           for (size_t i = 0; i < size_; ++i)
             cov_diag_[i] = new vari(sigma_sq_d_, false);
-        }
+      }
 
       virtual void chain() {
         double adjl = 0;
@@ -185,7 +180,7 @@ namespace stan {
           }
           for (size_t i = 0; i < size_; ++i)
             cov_diag_[i] = new vari(sigma_sq_d_, false);
-        }
+      }
 
       virtual void chain() {
         double adjl = 0;
