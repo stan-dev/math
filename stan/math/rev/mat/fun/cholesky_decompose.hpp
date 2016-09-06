@@ -54,17 +54,17 @@ namespace stan {
           variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * (A.rows() + 1) / 2)) {
             size_t pos = 0;
-         block_size_ = M_/8;
-         block_size_ = (block_size_/16)*16;
-         block_size_ = (std::min)((std::max)(block_size_, 8), 128);
-        for (size_type j = 0; j < M_; ++j) {
-          for (size_type i = j; i < M_; ++i) {
-            variRefA_[pos] = A.coeffRef(i, j).vi_;
-            variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
-            ++pos;
+            block_size_ = M_/8;
+            block_size_ = (block_size_/16)*16;
+            block_size_ = (std::min)((std::max)(block_size_, 8), 128);
+            for (size_type j = 0; j < M_; ++j) {
+              for (size_type i = j; i < M_; ++i) {
+                variRefA_[pos] = A.coeffRef(i, j).vi_;
+                variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
+                ++pos;
+              }
+            }
           }
-        }
-      }
 
       inline void symbolic_rev(Block_& L,
                                Block_& Lbar,
@@ -181,7 +181,6 @@ namespace stan {
       }
       return L;
     }
-
   }
 }
 #endif
