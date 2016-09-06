@@ -15,7 +15,7 @@ namespace stan {
          * Source for algorithm: http://mathworld.wolfram.com/MatrixExponential.html
          *
          * @param A A 2x2 matrix
-         * @return Matrix exponential.
+         * @return Matrix exponential of A.
          */
         template <typename T>
         void
@@ -35,6 +35,39 @@ namespace stan {
             
             B = 1/delta * B;
         }
+        
+        /** 
+         * Return the matrix exponential of a symmetric matrix.
+         *
+         * @param A A symmetric matrix.
+         * @return Matrix exponential of A.
+         */
+        template <typename T>
+        void matrix_exp_compute_sym(const Matrix<T, Dynamic, Dynamic>& A,
+                                    Matrix<T, Dynamic, Dynamic>& B) {
+            
+            Matrix<T, Dynamic, Dynamic> landa = diag_matrix(eigenvalues_sym(A)),
+                                        V = eigenvectors_sym(A),
+                                        V_inv = inverse(V);
+            
+            B = V * exp(landa); 
+            B *= V_inv;
+            
+        }
+        
+        /**
+         * Return the matrix expontential of a nilpotent matrix.
+         *
+         * @param A A nilpotent matrix.
+         * @return Matrix exponential of A. 
+         */
+        
+        /*template <typename T>
+        void matrix_exp_compute_nil(const Matrix<T, Dynamic, Dynamic>& A,
+                                    Matrix<T, Dynamic, Dynamic>& B) {
+            
+            
+        }*/
             
             
         

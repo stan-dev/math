@@ -4,6 +4,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <stan/math/prim/mat/fun/MatrixExponential.h>
 #include <stan/math/prim/mat/fun/matrix_exp_spec.hpp>
+#include <stan/math/prim/mat/fun/is_symmetric.hpp>
 
 
 namespace stan {
@@ -53,6 +54,7 @@ namespace stan {
         Matrix<var, Dynamic, Dynamic> B;
            
         if(A.cols() == 2) matrix_exp_compute_2x2(A, B);
+        else if (is_symmetric(A)) matrix_exp_compute_sym(A, B);
         else matrix_exp_compute(A, B);
     
         return B; 

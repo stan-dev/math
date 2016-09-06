@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_HPP
-#define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_HPP
+#ifndef STAN_MATH_FWD_MAT_FUN_MATRIX_EXP_HPP
+#define STAN_MATH_FWD_MAT_FUN_MATRIX_EXP_HPP
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include <stan/math/prim/mat/fun/MatrixExponential.h>
@@ -55,6 +55,7 @@ namespace stan {
         Matrix<fvar<T>, Dynamic, Dynamic> B;
            
         if (A.cols() == 2) matrix_exp_compute_2x2(A, B);
+        else if (is_symmetric(A)) matrix_exp_compute_sym(A, B);
         else matrix_exp_compute(A, B);
     
         return B; 
