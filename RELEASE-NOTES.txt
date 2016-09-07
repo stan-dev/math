@@ -10,7 +10,8 @@ New Features
 * lots of unary functions vectorized (#202)
 * reverse-mode gradients for matrix/matrix multiply,
   matrix/vector multiply, and vector/vector multiply
-  rewritten and sped up significantly (#323)
+  received rewrites and significant speed ups for
+  large matrices/vectors (#323)
 
 Bug Fixes
 --------------------------------------------------
