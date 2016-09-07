@@ -17,7 +17,7 @@ namespace stan {
         template <typename T>
         inline
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-        matrix_exp(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
+        expm(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
             
             check_nonzero_size("matrix_exp", "input matrix", A);
             check_square("matrix_exp", "input matrix", A);
@@ -26,6 +26,7 @@ namespace stan {
             
             if (A.cols() == 2) matrix_exp_compute_2x2(A, B);
             else if (is_symmetric(A)) matrix_exp_compute_sym(A, B);
+            else if (is_nilpotent(A)) matrix_exp_compute_nil(A, B);
             else B = A.exp();
                 
             return B;

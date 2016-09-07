@@ -9,7 +9,6 @@ namespace stan {
         using Eigen::Matrix;
         using Eigen::Dynamic;
         
-        
         /**
          * Return the matrix exponential for a 2x2 matrix.
          * Source for algorithm: http://mathworld.wolfram.com/MatrixExponential.html
@@ -46,31 +45,82 @@ namespace stan {
         void matrix_exp_compute_sym(const Matrix<T, Dynamic, Dynamic>& A,
                                     Matrix<T, Dynamic, Dynamic>& B) {
             
-            Matrix<T, Dynamic, Dynamic> landa = diag_matrix(eigenvalues_sym(A)),
+            Matrix<T, Dynamic, Dynamic> landa = diag_matrix(exp(eigenvalues_sym(A))),
                                         V = eigenvectors_sym(A),
                                         V_inv = inverse(V);
             
-            B = V * exp(landa); 
+            B = V * landa;
             B *= V_inv;
-            
         }
         
+        
+        /**
+         * Returns a boolean for whether a matrix is nilpotent 
+         * or not. 
+         *
+         * @input: A a matrix
+         * @return: true if the matrix is nilpotent, else false. 
+         */ 
+         template <typename T> 
+         bool is_nilpotent(const Matrix<T, Dynamic, Dynamic> A) {
+         	
+         	int i, j;
+         
+         	if (A.rows() == 1) return false;
+         	for (i = 0; i < A.rows(); i++) {
+         		for (j = 0; j < i; j++) if (A(i,j) != 0) return false; 
+         		}
+         	return true;
+         }
+         
+        /**
+         * Compute the factorial of an integer.
+         *
+         * @param[in] a integer
+         * @return the factorial of a.
+         */
+        int factorial(int a) {
+        	
+        	if (a == 0 || a == 1) return 1;
+        	else return a * factorial(a - 1);
+        }
+        
+        /**
+         * Compute the power of a matrix. 
+         *
+         * @param[in] A the input matrix.
+         * @param[in] a the exponent of the matrix.
+         * @return a matrix that is the power of the input matrix.
+         */
+        template <typename T>
+        Eigen::Matrix<T, Dynamic, Dynamic> 
+        pow(Eigen::Matrix<T, Dynamic, Dynamic> A, int a) {
+                
+        	Matrix<T, Dynamic, Dynamic> B 
+        				= Matrix<T, Dynamic, Dynamic>::Identity(A.cols(), A.rows());
+        	
+        	if(a != 0) for (int i = 0; i < a; i++) B *= A;
+        	
+        	return B;
+        }
+        	
         /**
          * Return the matrix expontential of a nilpotent matrix.
          *
          * @param A A nilpotent matrix.
          * @return Matrix exponential of A. 
          */
-        
-        /*template <typename T>
+        template <typename T>
         void matrix_exp_compute_nil(const Matrix<T, Dynamic, Dynamic>& A,
                                     Matrix<T, Dynamic, Dynamic>& B) {
-            
-            
-        }*/
-            
-            
-        
-    }
-}
+                                    
+        	int n = A.cols();
+        	B = Matrix<T, Dynamic, Dynamic>::Identity(A.cols(), A.rows());
+        	
+        	for (int i = 1; i < n;  i++) B += (1 / factorial(i)) * pow(A, i);         	
+        }                    
+    
+    } // end namespace math
+} // end namespace stan
+
 #endif

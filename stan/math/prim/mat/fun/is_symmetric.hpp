@@ -14,7 +14,7 @@ namespace stan {
          * Return a boolean for whether a matrix is symmetric
          * or not.
          * @param A A matrix
-         * @return Boolean: True is the matrix is symmetric, false
+         * @return Boolean: True if the matrix is symmetric, false
          * otherwise.
          */
         
@@ -23,7 +23,7 @@ namespace stan {
         bool
         is_symmetric(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
             
-            typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type
+            typedef typename index_type<Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >::type
             size_type;
             
             size_type k = A.rows();
