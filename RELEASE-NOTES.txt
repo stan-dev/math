@@ -8,6 +8,9 @@ New Features
 --------------------------------------------------
 * update to Eigen 3.2.9 (#362)
 * lots of unary functions vectorized (#202)
+* reverse-mode gradients for matrix/matrix multiply,
+  matrix/vector multiply, and vector/vector multiply
+  rewritten and sped up significantly (#323)
 
 Bug Fixes
 --------------------------------------------------
