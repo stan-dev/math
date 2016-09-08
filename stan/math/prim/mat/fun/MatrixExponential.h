@@ -8,8 +8,10 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// This file has been edited to be added to the Stan math library and
-// create the matrix exponential function (matrix_exp), 2016.
+// This file was edited for to the Stan math library to create
+// the matrix exponential function (expm), 2016. Note that as of
+// September 2016, Stan uses Eigen 3.2.9, while the code below is from
+// the beta version of Eigen 3.3.0.
 
 
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXPONENTIAL_H
@@ -172,13 +174,15 @@ namespace stan {
         };
     
         template <typename MatrixType>
-        struct matrix_exp_computeUV<MatrixType, double>
+        struct matrix_exp_computeUV<MatrixType>
         {
-            static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings)
+        	template <typename T>
+            static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings,
+            				T scalar_type)
             {
                 using std::frexp;
                 using std::pow;
-                const double l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
+                const T l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
                 squarings = 0;
                 if (l1norm < 1.495585217958292e-002) {
                     matrix_exp_pade3(arg, U, V);
@@ -192,7 +196,7 @@ namespace stan {
                     const double maxnorm = 5.371920351148152;
                     frexp(l1norm / maxnorm, &squarings);
                     if (squarings < 0) squarings = 0;
-                    MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<double>(squarings));
+                    MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<T>(squarings));
                     matrix_exp_pade13(A, U, V);
                 }
             }
@@ -204,9 +208,12 @@ namespace stan {
          * \param arg    argument of matrix exponential (should be plain object)
          * \param result variable in which result will be stored
          */
-        template <typename MatrixType, typename ResultType>
-        void matrix_exp_compute(const MatrixType& arg, ResultType &result)
+        template <typename MatrixType>
+        MatrixType 
+        matrix_exp_compute(const MatrixType& arg)
         {
+        	MatrixType result;
+        
         #if LDBL_MANT_DIG > 112 // rarely happens
             typedef typename traits<MatrixType>::Scalar Scalar;
             typedef typename NumTraits<Scalar>::Real RealScalar;
@@ -218,16 +225,18 @@ namespace stan {
         #endif
             MatrixType U, V;
             int squarings;
-            matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings); // Pade approximant is (U+V) / (-U+V)
+            matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0,0)); // Pade approximant is (U+V) / (-U+V)
             MatrixType numer = U + V;
             MatrixType denom = -U + V;
             result = denom.partialPivLu().solve(numer);
             for (int i=0; i<squarings; i++)
                 result *= result;   // undo scaling by repeated squaring
+                
+            return result;
         }
     
-    } // end namespace internal
-} // end namespace eigen
+    } // end namespace math
+} // end namespace stan
 
 
 #endif

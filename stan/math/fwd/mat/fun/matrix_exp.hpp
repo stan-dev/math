@@ -9,6 +9,9 @@
 namespace stan {
     namespace math {
         
+        using Eigen::Matrix;
+        using Eigen::Dynamic;
+          
         template <typename MatrixType, typename T>
         struct matrix_exp_computeUV<MatrixType, fvar<T> >
         {
@@ -16,7 +19,7 @@ namespace stan {
           {
             using std::frexp;
             using std::pow;
-            const stan::math::fvar<T> l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
+            const fvar<T> l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
             squarings = 0;
             if (l1norm < 1.495585217958292e-002) {
               matrix_exp_pade3(arg, U, V);
@@ -35,6 +38,63 @@ namespace stan {
             }
           }
         };
+        
+        
+        /**
+          * Computes the derivative of matrix raised to a power
+          * with respect to a parameter, by recursively applying 
+          * the chain rule. 
+          *
+          * @param A input matrix
+          * @param k the exponent of the matrix
+          * @return matrix of derivatives
+          */
+        
+        template<typename T>
+        Matrix<fvar<T>, Dynamic, Dynamic> 
+        dpow(Matrix<fvar<T>, Dynamic, Dynamic>, k) {  
+        
+        	
+        	
+        
+        
+        /**
+          * Computes the derivative of the matrix exponential, 
+          * obtained through a Pade approximation.
+          *
+          * @param A input matrix
+          * @param degree of Pade approximation (assume p = q).
+          */
+        
+        template<typename T>
+        void
+        dexpm(const Matrix<fvar<T>, Dynamic, Dynamic>& A, int p) {
+        
+        	Matrix<T, Dynamic, Dynamic> dA(A.rows(), A.cols());
+        	Matrix<T, Dynamic, Dynamic> dN(A.rows(), A.cols())
+        		= Matrix<T, Dynamic, Dynamic>::Zero(A.rows(), A.cols());
+        	Matrix<T, Dynamic, Dynamic> dD(A.rows(), A.cols())
+        		= Matrix<T, Dynamic, Dynamic>::Zero(A.rows(), A.cols());
+        	
+        	for (int i = 0; i < A.rows(); i++) {
+        		for (int j = 0; i < A.cols(); i++) {
+        			dA(i,j) = A(i,j).d_;
+        		}
+        	}
+        	
+        	for (int i = 0; i <= p; i++) {
+        		dN += factorial(2*p - i) * factorial(p) * dpow(A, i)
+        				/ (factorial(2*p) * factorial(i) * factorial(p-k));
+        				
+        		dD += factorial(2*p - i) * factorial(q) * 
+        		
+        	
+        
+        	
+        	
+        
+        	          
+          
         
         
        /**

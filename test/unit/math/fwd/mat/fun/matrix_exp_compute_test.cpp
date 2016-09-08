@@ -1,10 +1,12 @@
 #include <stan/math/fwd/mat.hpp>
+#include <stan/math/prim/mat/fun/MatrixExponential.h>
 #include <gtest/gtest.h>
 
 using stan::math::matrix_fd;
 using stan::math::fvar;
+using stan::math::matrix_exp_compute;
 
-TEST(MathMatrix, expm) {
+TEST(MathMatrix, matrix_exp_compute_1) {
     
     fvar<double> a;
     a.val_ = 0.0;
@@ -12,7 +14,7 @@ TEST(MathMatrix, expm) {
     matrix_fd input(1,1), output;
     
     input << a;
-    output = expm(input);
+    output = matrix_exp_compute(input);
     
     EXPECT_EQ(1.0, output(0,0).val_);
     EXPECT_EQ(1.0, output(0,0).d_);
@@ -22,13 +24,11 @@ TEST(MathMatrix, expm) {
     b.d_ = 2.0;
     
     input << b;
-    output = expm(input);
+    output = matrix_exp_compute(input);
     
     EXPECT_EQ(exp(1.0), output(0,0).val_);
     EXPECT_EQ(b.d_ * output(0,0).val_, output(0,0).d_);
-
 }
-
 
 TEST(MathMatrix, expm2) {
     
@@ -44,7 +44,7 @@ TEST(MathMatrix, expm2) {
     input << -2*a + 3*b, 1.5*a - 1.5*b,
             -4*a + 4*b, 3*a - 2*b;
     
-    output = expm(input);
+    output = matrix_exp_compute(input);
     
     EXPECT_FLOAT_EQ(-0.735759, output(0,0).val_);
     EXPECT_FLOAT_EQ(0.551819, output(0,1).val_);
@@ -59,11 +59,4 @@ TEST(MathMatrix, expm2) {
     EXPECT_FLOAT_EQ(-1.471518, output(1,0).d_);
     EXPECT_FLOAT_EQ(1.103638, output(1,1).d_);
 
-}
-
-TEST(MathMatrix, expm3) {
-    matrix_fd m1(0,0), m2(1,2);
-    
-    EXPECT_THROW(expm(m1), std::invalid_argument);
-    EXPECT_THROW(expm(m2), std::invalid_argument);
 }

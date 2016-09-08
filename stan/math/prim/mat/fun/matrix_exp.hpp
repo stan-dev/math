@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_HPP
 
 #include <unsupported/Eigen/MatrixFunctions>
-#include <stan/math/prim/mat/fun/matrix_exp_spec.hpp>
-#include <stan/math/prim/mat/fun/is_symmetric.hpp>
+#include <stan/math/prim/mat/fun/MatrixExponential.h>
+#include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
 
 namespace stan {
-    namespace math {
+    namespace math {   
         
         /**
          * Return the matrix exponential.
@@ -24,11 +24,9 @@ namespace stan {
             
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B;
             
-            if (A.cols() == 2) matrix_exp_compute_2x2(A, B);
-            else if (is_symmetric(A)) matrix_exp_compute_sym(A, B);
-            else if (is_nilpotent(A)) matrix_exp_compute_nil(A, B);
-            else B = A.exp();
-                
+            if (A.cols() == 2) B = matrix_exp_compute_2x2(A);
+            else B = matrix_exp_compute(A);
+                                   
             return B;
         }
         
