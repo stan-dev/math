@@ -12,10 +12,10 @@ namespace stan {
         using Eigen::Dynamic;
         
         /**
-         * Return the matrix exponential for a 2x2 matrix.
-         * Reference for algorithm: http://mathworld.wolfram.com/MatrixExponential.html
+         * Return the matrix exponential of a 2x2 matrix. Reference for 
+         * algorithm: http://mathworld.wolfram.com/MatrixExponential.html
          *
-         * @param A A 2x2 matrix
+         * @param[in] A A 2x2 matrix
          * @return Matrix exponential of A.
          */
         template <typename T>

@@ -9,9 +9,7 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 // This file was edited for to the Stan math library to create
-// the matrix exponential function (expm), 2016. Note that as of
-// September 2016, Stan uses Eigen 3.2.9, while the code below is from
-// the beta version of Eigen 3.3.0.
+// the matrix exponential function (expm), 2016.
 
 
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXPONENTIAL_H
@@ -169,6 +167,11 @@ namespace stan {
              * approximant of \f$ \exp(2^{-\mbox{squarings}}M) \f$ around \f$ M = 0 \f$, where \f$ M \f$
              * denotes the matrix \c arg. The degree of the Pad&eacute; approximant and the value of squarings
              * are chosen such that the approximation error is no more than the round-off error.
+             *
+             * <p> Edit for Stan: template ComputeUV::run so that it may used on 
+             * autodiff variables (var and fvar). This required adding the scalar_type
+             * argument, which tells the function the type of elements used in the 
+             * matrix. 
              */
             static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings);
         };

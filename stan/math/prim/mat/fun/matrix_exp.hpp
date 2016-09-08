@@ -9,8 +9,10 @@ namespace stan {
     namespace math {   
         
         /**
-         * Return the matrix exponential.
-         * @param A A matrix
+         * Return the matrix exponential of the input
+         * matrix. 
+         *
+         * @param[in] A A matrix
          * @return Matrix exponential. 
          */
         
