@@ -1,6 +1,9 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
+
+
 
 void test_sort_asc(VEC val) {
   using stan::math::sort_asc;
@@ -164,4 +167,26 @@ TEST(AgradRev, sort_no_thrown) {
   EXPECT_EQ(0, vec2.size());
   EXPECT_NO_THROW(sort_asc(vec2));
   EXPECT_NO_THROW(sort_desc(vec2));
+}
+
+TEST(MathMatrix, sortAscStdVecNan) {
+  test_sort_asc_throws<std::vector<stan::math::var> >();
+}
+
+TEST(MathMatrix, sortDescStdVecNan) {
+  test_sort_desc_throws<std::vector<stan::math::var> >();
+}
+
+TEST(MathMatrix, sortAscEigenVecNan) {
+  test_sort_asc_throws<Eigen::Matrix<stan::math::var, -1, 1> >();
+}
+TEST(MathMatrix, sortAscEigenRowVecNan) {
+  test_sort_asc_throws<Eigen::Matrix<stan::math::var, 1, -1> >();
+}
+
+TEST(MathMatrix, sortDescEigenVecNan) {
+  test_sort_desc_throws<Eigen::Matrix<stan::math::var, -1, 1> >();
+}
+TEST(MathMatrix, sortDescEigenRowVecNan) {
+  test_sort_desc_throws<Eigen::Matrix<stan::math::var, 1, -1> >();
 }

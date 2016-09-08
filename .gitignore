@@ -20,6 +20,7 @@
 /test/**/*_generated_*_test.cpp
 /test/**/*.xml
 /test/dummy.cpp
+/test/**/*.so
 
 # other binary
 *.o

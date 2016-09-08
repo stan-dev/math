@@ -114,14 +114,13 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
     -1, 0, 0,
     0, -1, 0,
     0, 0, -1;
-  
-  expected_msg1_mat << "function: y is not positive definite:\n" << 
-    "-1  0  0\n 0 -1  0\n 0  0 -1";
+
+  expected_msg1_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg1_mat.str());
 
-  expected_msg1_llt << "function: Cholesky decomposition of y failed";
+  expected_msg1_llt << "function: Matrix y is not positive definite";
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_err1(y); 
   EXPECT_THROW_MSG(check_pos_definite(function, "y", llt_err1),
                    std::domain_error,
@@ -135,8 +134,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
   y <<
     1, 2, 
     2, 1; 
-  expected_msg2_mat << "function: y is not positive definite:\n" <<
-    "1 2\n2 1";
+  expected_msg2_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg2_mat.str());
@@ -152,8 +150,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
   y <<
     1, 1, 
     1, 1; 
-  expected_msg3_mat << "function: y is not positive definite:\n" <<
-    "1 1\n1 1";
+  expected_msg3_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg3_mat.str());
@@ -176,8 +173,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   y << nan;
 
   std::stringstream expected_msg;
-  expected_msg << "function: y is not positive definite: "
-               << nan;
+  expected_msg << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), 
                    std::domain_error,
                    expected_msg.str());
@@ -226,8 +222,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
 
   y << 0, 0, 0, 0, 0, 0, 0, 0, 0;
   expected_msg.str("");
-  expected_msg << "function: y is not positive definite:\n"
-               << y;
+  expected_msg << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), 
                    std::domain_error,
                    expected_msg.str());
