@@ -3,7 +3,6 @@
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-//#include <stan/math/prim/mat/err/check_2x2.hpp>
 
 namespace stan {
     namespace math {   
