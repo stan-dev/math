@@ -8,7 +8,9 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/exp.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -33,32 +35,34 @@ namespace stan {
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x,
-                 T_sigma& sigma,
-                 T_l& l) {
+                 const T_sigma& sigma,
+                 const T_l& l) {
       using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      for (size_t n = 0; n < x.size(); n++)
+      for (size_t n = 0; n < x.size(); ++n)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
         cov(x.size(), x.size());
 
-      if (x.size() == 0)
+      int x_size = x.size();
+      if (x_size == 0)
         return cov;
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_half_inv_l_sq = - 0.5 / square(l);
 
-      for (size_t i = 0; i < x.size(); ++i) {
-        cov(i, i) = sigma_sq;
-        for (size_t j = i + 1; j < x.size(); ++j) {
+      for (int j = 0; j < (x_size - 1); ++j) {
+        cov(j, j) = sigma_sq;
+        for (int i = j + 1; i < x_size; ++i) {
           cov(i, j) = sigma_sq * exp(squared_distance(x[i], x[j])
                                      * neg_half_inv_l_sq);
           cov(j, i) = cov(i, j);
         }
       }
+      cov(x_size - 1, x_size - 1) = sigma_sq;
       return cov;
     }
 
@@ -84,14 +88,14 @@ namespace stan {
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x1>& x1,
                  const std::vector<T_x2>& x2,
-                 T_sigma& sigma,
-                 T_l& l) {
+                 const T_sigma& sigma,
+                 const T_l& l) {
       using std::exp;
       check_positive("cov_exp_quad", "sigma", sigma);
       check_positive("cov_exp_quad", "l", l);
-      for (size_t n = 0; n < x1.size(); n++)
+      for (size_t n = 0; n < x1.size(); ++n)
         check_not_nan("cov_exp_quad", "x1", x1[n]);
-      for (size_t n = 0; n < x2.size(); n++)
+      for (size_t n = 0; n < x2.size(); ++n)
         check_not_nan("cov_exp_quad", "x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,

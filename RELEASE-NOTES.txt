@@ -1,6 +1,46 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.12.0 (6 September 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* update to Eigen 3.2.9 (#362)
+* lots of unary functions vectorized (#202)
+* reverse-mode gradients for matrix/matrix multiply,
+  matrix/vector multiply, and vector/vector multiply
+  received rewrites and significant speed ups for
+  large matrices/vectors (#323)
+
+Bug Fixes
+--------------------------------------------------
+* fixed exception handling with CVODES for g++6 (#348)
+* squashed warnings with g++6 (#345)
+* enforce symmetry on cov_matrix parameter inverse transform (#342)
+* added int overload for log(), exp(), log2(), and log1p() to resolve
+  ambiguity with g++6 (#327)
+* sort_asc and sort_desc check for NaN (#253)
+* wiener_log: raise exception for tau >= y (#150)
+* stopped printing matrices in check functions (#146)
+* added check for positive definiteness in multi_normal_rng (#44)
+
+
+Other
+--------------------------------------------------
+* added multi-core to travis builds (#373)
+* fixed makefile to recognize N_TESTS (#367)
+* updated error message for check_bounded() (#332)
+* made the use of stan::math namespace within the math library
+  more consistent (#331)
+* reimplemented integer division (#329)
+* added test for multiple translation units (#328)
+* updated costs for Eigen::NumTraits (#233)
+* worked on getting the Math library working with Eigen 3.3-beta (#187)
+
+
+
+
 v2.11.0 (27 July 2016)
 ======================================================================
 
