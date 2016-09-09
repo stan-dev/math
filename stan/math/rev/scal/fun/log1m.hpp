@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_LOG1M_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/log1m.hpp>
 
 namespace stan {
   namespace math {
