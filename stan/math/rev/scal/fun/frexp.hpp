@@ -3,10 +3,11 @@
 
 #include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
   namespace math {
-      
+
       class frexp_vari : public op_v_vari {
       public:
           explicit frexp_vari(vari* avi, int* b) :
