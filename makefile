@@ -152,6 +152,8 @@ clean:
 	$(shell find test -type f -name "*_test.d" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
+	$(shell find test -type f -name "*.o" -exec rm {} +)
+	$(shell find test -type f -name "lib*.so" -exec rm {} +)
 
 clean-doxygen:
 	$(RM) -r doc/api

@@ -1,5 +1,8 @@
 #include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stdexcept>
 
 template <typename T>
 void test_sort_asc() {
@@ -30,8 +33,31 @@ void test_sort_asc() {
   T z; 
   EXPECT_NO_THROW(sort_asc(z));
   EXPECT_EQ(typename index_type<T>::type(0), z.size());
-
 }
+
+
+TEST(MathMatrix, sortAscStdVecNan) {
+  test_sort_asc_throws<std::vector<double> >();
+}
+
+TEST(MathMatrix, sortDescStdVecNan) {
+  test_sort_desc_throws<std::vector<double> >();
+}
+
+TEST(MathMatrix, sortAscEigenVecNan) {
+  test_sort_asc_throws<Eigen::VectorXd>();
+}
+TEST(MathMatrix, sortAscEigenRowVecNan) {
+  test_sort_asc_throws<Eigen::RowVectorXd>();
+}
+
+TEST(MathMatrix, sortDescEigenVecNan) {
+  test_sort_desc_throws<Eigen::VectorXd>();
+}
+TEST(MathMatrix, sortDescEigenRowVecNan) {
+  test_sort_desc_throws<Eigen::RowVectorXd>();
+}
+
 
 TEST(MathMatrix,sort_asc) {
   using stan::math::sort_asc;
