@@ -5,12 +5,12 @@
 
 using stan::math::matrix_v;
 
-TEST(MathMatrix, expm) {
+TEST(MathMatrix, matrix_exp) {
        
     matrix_v m1(1,1), m2(1,1), m1_exp;
     m1 << 0;
     m2 << 1;
-    m1_exp = expm(m1);
+    m1_exp = matrix_exp(m1);
     expect_matrix_eq(m2, m1_exp);
     
     AVEC x = createAVEC(m1(0,0));
@@ -20,7 +20,7 @@ TEST(MathMatrix, expm) {
     
 }
 
-TEST(MathMatrix, expm_2x2) {
+TEST(MathMatrix, matrix_exp_2x2) {
     
     // example from Moler & Van Loan, 2003
     for (size_t k = 0; k < 2; k++) {
@@ -33,7 +33,7 @@ TEST(MathMatrix, expm_2x2) {
    
     		m1 << -2*a + 3*b, 1.5*a - 1.5*b, -4*a + 4*b, 3*a - 2*b;
    			m2 << -.735759, .551819, -1.471518, 1.103638;
-    		m1_exp = expm(m1);
+    		m1_exp = matrix_exp(m1);
     		expect_matrix_eq(m2, m1_exp);
     
     		dm1_exp_da << -2*exp(a), 1.5*exp(a), -4*exp(a), 3*exp(a);
@@ -49,11 +49,11 @@ TEST(MathMatrix, expm_2x2) {
  
 }
 
-TEST(MathMatrix, expm3) {
+TEST(MathMatrix, matrix_exp3) {
     matrix_v m1(0,0), m2(1,2);
     
     m2 << 1, 2;
     
-    EXPECT_THROW(expm(m1), std::invalid_argument);
-    EXPECT_THROW(expm(m2), std::invalid_argument);
+    EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
+    EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
 }
