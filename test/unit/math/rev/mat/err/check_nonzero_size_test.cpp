@@ -9,9 +9,9 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   var result;
   
   y.resize(3,3);
-  EXPECT_TRUE(check_nonzero_size("checkNonzeroSize", "y", y));
+  EXPECT_NO_THROW(check_nonzero_size("checkNonzeroSize", "y", y));
   y.resize(2, 3);
-  EXPECT_TRUE(check_nonzero_size("checkNonzeroSize", "y", y));
+  EXPECT_NO_THROW(check_nonzero_size("checkNonzeroSize", "y", y));
 
   y.resize(0,0);
   EXPECT_THROW_MSG(check_nonzero_size("checkNonzeroSize", "y", y),
@@ -24,12 +24,12 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   a.push_back(3.0);
 
 
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "a", a));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "a", a));
 
   a.resize(2);
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "a", a));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "a", a));
 
   a.resize(0);
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a),
@@ -45,12 +45,12 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
 
   y.resize(3,3);
   y << nan, nan, nan,nan, nan, nan,nan, nan, nan;
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "y", y));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "y", y));
   y.resize(2, 3);
   y << nan, nan, nan,nan, nan, nan;
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "y", y));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "y", y));
 
   y.resize(0,0);
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "y", y),
@@ -63,12 +63,12 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
   a.push_back(nan);
   a.push_back(nan);
 
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "a", a));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "a", a));
 
   a.resize(2);
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                                       "a", a));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "a", a));
 
   a.resize(0);
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize","a", a),

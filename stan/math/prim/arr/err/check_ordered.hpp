@@ -12,7 +12,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the specified vector is sorted into
+     * Check if the specified vector is sorted into
      * strictly increasing order.
      *
      * @tparam T_y Type of scalar
@@ -21,17 +21,16 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param y <code>std::vector</code> to test
      *
-     * @return <code>true</code> if the vector is ordered
      * @throw <code>std::domain_error</code> if the vector elements are
      *   not ordered, if there are duplicated
      *   values, or if any element is <code>NaN</code>.
      */
     template <typename T_y>
-    bool check_ordered(const char* function,
+    void check_ordered(const char* function,
                        const char* name,
                        const std::vector<T_y>& y) {
       if (y.size() == 0)
-        return true;
+        return;
 
       for (size_t n = 1; n < y.size(); n++) {
         if (!(y[n] > y[n-1])) {
@@ -46,10 +45,8 @@ namespace stan {
           std::string msg2_str(msg2.str());
           domain_error(function, name, y[n],
                        msg1_str.c_str(), msg2_str.c_str());
-          return false;
         }
       }
-      return true;
     }
   }
 }
