@@ -6,7 +6,7 @@ using stan::math::fvar;
 using stan::math::matrix_fd;
 using stan::math::matrix_exp_compute_2x2;
 
-TEST(MathMatrix, matrix_exp_compute_2x2_2) {
+TEST(MathMatrix, matrix_exp_compute_2x2_1) {
 
 	fvar<double> a;
 	a.val_ = 3.0;
@@ -29,7 +29,7 @@ TEST(MathMatrix, matrix_exp_compute_2x2_2) {
 }
 
 
-TEST(MathMatrix, matrix_exp_compute_2x2_1) {
+TEST(MathMatrix, matrix_exp_compute_2x2_2) {
     
     // example from Moler & Van Loan, 2003, section 3
     matrix_fd input_diag(2,2), input(2,2), output;

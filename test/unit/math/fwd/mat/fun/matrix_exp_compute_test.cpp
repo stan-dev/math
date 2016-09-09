@@ -30,7 +30,7 @@ TEST(MathMatrix, matrix_exp_compute_1) {
     EXPECT_EQ(b.d_ * output(0,0).val_, output(0,0).d_);
 }
 
-TEST(MathMatrix, expm2) {
+TEST(MathMatrix, matrix_exp_compute_2) {
     
     // example from Moler & Van Loan, 2003, section 3
     matrix_fd input_diag(2,2), input(2,2), output;
