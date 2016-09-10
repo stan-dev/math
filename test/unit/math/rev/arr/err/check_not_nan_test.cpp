@@ -37,10 +37,10 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_NO_THROW(5U == stack_size);
+  EXPECT_TRUE(5U == stack_size);
   EXPECT_NO_THROW(check_not_nan(function,"a",a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_NO_THROW(5U == stack_size_after_call);
+  EXPECT_TRUE(5U == stack_size_after_call);
   stan::math::recover_memory();
 }

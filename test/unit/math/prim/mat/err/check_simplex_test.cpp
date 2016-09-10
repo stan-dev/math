@@ -34,10 +34,10 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NO_THROW(std::string::npos != message.find(" y is not a valid simplex"))
+  EXPECT_TRUE(std::string::npos != message.find(" y is not a valid simplex"))
     << message;
 
-  EXPECT_NO_THROW(std::string::npos != message.find("y[1] = -0.1"))
+  EXPECT_TRUE(std::string::npos != message.find("y[1] = -0.1"))
     << message;
 
 
@@ -56,10 +56,10 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NO_THROW(std::string::npos != message.find(" y is not a valid simplex"))
+  EXPECT_TRUE(std::string::npos != message.find(" y is not a valid simplex"))
     << message;
 
-  EXPECT_NO_THROW(std::string::npos != message.find(" y[2] = -0.1"))
+  EXPECT_TRUE(std::string::npos != message.find(" y[2] = -0.1"))
     << message;
 }
 
@@ -80,10 +80,10 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_sum) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NO_THROW(std::string::npos != message.find(" y is not a valid simplex"))
+  EXPECT_TRUE(std::string::npos != message.find(" y is not a valid simplex"))
     << message;
 
-  EXPECT_NO_THROW(std::string::npos != message.find("sum(y) = 0.9"))
+  EXPECT_TRUE(std::string::npos != message.find("sum(y) = 0.9"))
     << message;
 }
 

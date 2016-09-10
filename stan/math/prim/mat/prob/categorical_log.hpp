@@ -30,7 +30,6 @@ namespace stan {
 
       int lb = 1;
 
-      T_prob lp = 0.0;
       check_bounded(function, "Number of categories", n, lb, theta.size());
       check_simplex(function, "Probabilities parameter", theta);
 
@@ -61,7 +60,6 @@ namespace stan {
 
       int lb = 1;
 
-      T_prob lp = 0.0;
       for (size_t i = 0; i < ns.size(); ++i)
         check_bounded(function, "element of outcome array", ns[i],
                       lb, theta.size());
