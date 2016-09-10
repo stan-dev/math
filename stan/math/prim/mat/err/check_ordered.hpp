@@ -35,9 +35,6 @@ namespace stan {
 
       typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
 
-      if (y.size() == 0)
-        return;
-
       for (size_t n = 1; n < y.size(); n++) {
         if (!(y[n] > y[n-1])) {
           std::ostringstream msg1;
