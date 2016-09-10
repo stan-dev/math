@@ -29,9 +29,6 @@ namespace stan {
     void check_ordered(const char* function,
                        const char* name,
                        const std::vector<T_y>& y) {
-      if (y.size() == 0)
-        return;
-
       for (size_t n = 1; n < y.size(); n++) {
         if (!(y[n] > y[n-1])) {
           std::ostringstream msg1;
