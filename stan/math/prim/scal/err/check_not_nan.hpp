@@ -14,19 +14,18 @@ namespace stan {
     namespace {
       template <typename T_y, bool is_vec>
       struct not_nan {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y) {
           if (is_nan(value_of_rec(y)))
             domain_error(function, name, y,
                          "is ", ", but must not be nan!");
-          return true;
         }
       };
 
       template <typename T_y>
       struct not_nan<T_y, true> {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y) {
           for (size_t n = 0; n < stan::length(y); n++) {
@@ -34,13 +33,12 @@ namespace stan {
               domain_error_vec(function, name, y, n,
                                "is ", ", but must not be nan!");
           }
-          return true;
         }
       };
     }
 
     /**
-     * Return <code>true</code> if <code>y</code> is not
+     * Check if <code>y</code> is not
      * <code>NaN</code>.
      *
      * This function is vectorized and will check each element of
@@ -53,15 +51,13 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param y Variable to check
      *
-     * @return <code>true</code> if y is not NaN.
      * @throw <code>domain_error</code> if any element of y is NaN.
      */
     template <typename T_y>
-    inline bool check_not_nan(const char* function,
+    inline void check_not_nan(const char* function,
                               const char* name,
                               const T_y& y) {
-      return not_nan<T_y, is_vector_like<T_y>::value>
-        ::check(function, name, y);
+      not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
     }
 
   }

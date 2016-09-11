@@ -7,11 +7,11 @@ TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   using stan::math::check_nonzero_size;
   
   y.resize(3,3);
-  EXPECT_TRUE(check_nonzero_size("checkNonzeroSize",
-                                 "y", y));
+  EXPECT_NO_THROW(check_nonzero_size("checkNonzeroSize",
+                                     "y", y));
   y.resize(2, 3);
-  EXPECT_TRUE(check_nonzero_size("checkNonzeroSize",
-                                 "y", y));
+  EXPECT_NO_THROW(check_nonzero_size("checkNonzeroSize",
+                                     "y", y));
 
   y.resize(0,0);
   EXPECT_THROW_MSG(check_nonzero_size("checkNonzeroSize",
@@ -26,12 +26,12 @@ TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
 
   y.resize(3,3);
   y << nan, nan, nan,nan, nan, nan,nan, nan, nan;
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                             "y", y));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "y", y));
   y.resize(2, 3);
   y << nan, nan, nan,nan, nan, nan;
-  EXPECT_TRUE(stan::math::check_nonzero_size("checkNonzeroSize",
-                                             "y", y));
+  EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize",
+                                                 "y", y));
 
   y.resize(0,0);
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "y", y), 

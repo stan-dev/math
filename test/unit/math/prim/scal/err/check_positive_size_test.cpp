@@ -10,7 +10,7 @@ TEST(ErrorHandlingScalar, CheckPositiveSize) {
   std::string expected_msg;
 
   
-  EXPECT_TRUE(check_positive_size(function, name, expr, 10));
+  EXPECT_NO_THROW(check_positive_size(function, name, expr, 10));
 
   
   expected_msg = "name must have a positive size, but is 0; "

@@ -8,7 +8,7 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix) {
   y.resize(2,2);
   
   y << 1, 0, 0, 1;
-  EXPECT_TRUE(check_corr_matrix("test", "y", y));
+  EXPECT_NO_THROW(check_corr_matrix("test", "y", y));
 
   y << 10, 0, 0, 10;
   EXPECT_THROW(check_corr_matrix("test", "y", y), 
