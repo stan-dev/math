@@ -9,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar,CheckLess) {
   var x = -10.0;
   var lb = 0.0;
  
-  EXPECT_TRUE(check_less(function, "x", x, lb)) 
+  EXPECT_NO_THROW(check_less(function, "x", x, lb)) 
     << "check_less should be true with x < lb";
   
   x = 1.0;
@@ -21,7 +21,7 @@ TEST(AgradRevErrorHandlingScalar,CheckLess) {
     << "check_less should throw an exception with x == lb";
 
   x = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less(function, "x", x, lb))
+  EXPECT_NO_THROW(check_less(function, "x", x, lb))
     << "check_less should be true with x == -Inf and lb = 0.0";
 
   x = -10.0;
@@ -51,7 +51,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckUnivariate) {
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);
 
-  EXPECT_TRUE(check_less(function,"a",a,10.0));
+  EXPECT_NO_THROW(check_less(function,"a",a,10.0));
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);
 

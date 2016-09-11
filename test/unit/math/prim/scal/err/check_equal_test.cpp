@@ -8,7 +8,7 @@ TEST(ErrorHandlingScalar,CheckEqual) {
   double x = 0.0;
   double eq = 0.0;
  
-  EXPECT_TRUE(check_equal(function, "x", x, eq))
+  EXPECT_NO_THROW(check_equal(function, "x", x, eq))
     << "check_equal should be true with x = eq";
   
   x = -1.0;

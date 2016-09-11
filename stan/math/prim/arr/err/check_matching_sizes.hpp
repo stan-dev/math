@@ -8,7 +8,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if two structures at the same size.
+     * Check if two structures at the same size.
      *
      * This function only checks the runtime sizes for variables that
      * implement a <code>size()</code> method.
@@ -22,11 +22,10 @@ namespace stan {
      * @param name2 Second variable name (for error messages)
      * @param y2 Second variable
      *
-     * @return <code>true</code> if the sizes match
      * @throw <code>std::invalid_argument</code> if the sizes do not match
      */
     template <typename T_y1, typename T_y2>
-    inline bool check_matching_sizes(const char* function,
+    inline void check_matching_sizes(const char* function,
                                      const char* name1,
                                      const T_y1& y1,
                                      const char* name2,
@@ -34,7 +33,6 @@ namespace stan {
       check_size_match(function,
                        "size of ", name1, y1.size(),
                        "size of ", name2, y2.size());
-      return true;
     }
 
   }

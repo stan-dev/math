@@ -7,15 +7,15 @@ TEST(ErrorHandlingScalar,CheckNotNan) {
   const char* function = "check_not_nan";
   double x = 0;
 
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with finite x: " << x;
 
   x = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with x = Inf: " << x;
 
   x = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with x = -Inf: " << x;
 
   x = std::numeric_limits<double>::quiet_NaN();

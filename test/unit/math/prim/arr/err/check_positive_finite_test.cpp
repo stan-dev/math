@@ -11,7 +11,7 @@ TEST(ErrorHandlingScalar,CheckPositiveFinite_Vector) {
   x.push_back (1.5);
   x.push_back (0.1);
   x.push_back (1);
-  ASSERT_TRUE(check_positive_finite(function, "x", x)) 
+  ASSERT_NO_THROW(check_positive_finite(function, "x", x)) 
     << "check_positive_finite should be true with finite x";
 
   x.clear();

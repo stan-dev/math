@@ -73,14 +73,12 @@ namespace stan {
                        "columns of scale parameter", S.rows());
 
       LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
-      if (!check_ldlt_factor(function, "LDLT_Factor of random variable",
-                             ldlt_W))
-        return lp;
+      check_ldlt_factor(function, "LDLT_Factor of random variable",
+                        ldlt_W);
 
       LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
-      if (!check_ldlt_factor(function, "LDLT_Factor of scale parameter",
-                             ldlt_S))
-        return lp;
+      check_ldlt_factor(function, "LDLT_Factor of scale parameter",
+                        ldlt_S);
 
       if (include_summand<propto, T_dof>::value)
         lp += nu * k * NEG_LOG_TWO_OVER_TWO;
