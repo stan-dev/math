@@ -13,7 +13,7 @@ TEST(ErrorHandlingScalar,CheckEqualMatrix) {
   // x_vec, low_vec
   x_vec   << -1, 0, 1;
   eq_vec << -1, 0, 1;
-  EXPECT_TRUE(check_equal(function, "x", x_vec, eq_vec)) 
+  EXPECT_NO_THROW(check_equal(function, "x", x_vec, eq_vec)) 
     << "check_equal: matrix<3,1>, matrix<3,1>";
 
   x_vec   <<   -1,    0,   1;

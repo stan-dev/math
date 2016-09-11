@@ -12,11 +12,9 @@ namespace stan {
   namespace math {
 
     namespace {
-      template <typename T_y,
-                typename T_eq,
-                bool is_vec>
+      template <typename T_y, typename T_eq, bool is_vec>
       struct equal {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_eq& eq) {
@@ -33,14 +31,12 @@ namespace stan {
                            "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
 
-      template <typename T_y,
-                typename T_eq>
+      template <typename T_y, typename T_eq>
       struct equal<T_y, T_eq, true> {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_eq& eq) {
@@ -57,13 +53,12 @@ namespace stan {
                                "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
     }
 
     /**
-     * Return <code>true</code> if <code>y</code> is equal to
+     * Check if <code>y</code> is equal to
      * <code>eq</code>.
      *
      * This function is vectorized over both <code>y</code> and
@@ -81,16 +76,15 @@ namespace stan {
      * @param y Variable to check equality
      * @param eq Expected value for y
      *
-     * @return <code>true</code> if y is equal to eq
      * @throw <code>std::domain_error</code> if y is unequal to eq or
      *    if any element of y or eq is NaN.
      */
     template <typename T_y, typename T_eq>
-    inline bool check_equal(const char* function,
+    inline void check_equal(const char* function,
                             const char* name,
                             const T_y& y,
                             const T_eq& eq) {
-      return equal<T_y, T_eq, is_vector_like<T_y>::value>
+      equal<T_y, T_eq, is_vector_like<T_y>::value>
         ::check(function, name, y, eq);
     }
   }

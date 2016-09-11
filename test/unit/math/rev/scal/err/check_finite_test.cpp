@@ -9,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar,CheckFinite) {
   const char* name = "x";
   var x = 0;
  
-  EXPECT_TRUE(check_finite(function, name, x)) 
+  EXPECT_NO_THROW(check_finite(function, name, x)) 
     << "check_finite should be TRUE with x: " << x;
   
   x = std::numeric_limits<double>::quiet_NaN();
@@ -36,7 +36,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(1U,stack_size);
-  EXPECT_TRUE(check_finite(function,"a",a));
+  EXPECT_NO_THROW(check_finite(function,"a",a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);

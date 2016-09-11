@@ -14,7 +14,7 @@ TEST(AgradRevErrorHandlingScalar,CheckEqualMatrix) {
   // x_vec, low_vec
   x_vec   << -1, 0, 1;
   eq_vec << -1, 0, 1;
-  EXPECT_TRUE(check_equal(function, "x", x_vec, eq_vec)) 
+  EXPECT_NO_THROW(check_equal(function, "x", x_vec, eq_vec)) 
     << "check_equal: matrix<3,1>, matrix<3,1>";
 
   x_vec   <<   -1,    0,   1;
@@ -50,7 +50,7 @@ TEST(AgradRevErrorHandlingScalar, CheckEqualVarCheckMatrix) {
   size_t stack_size_expected = 2 * N * N;
 
   EXPECT_EQ(stack_size_expected,stack_size);
-  EXPECT_TRUE(check_equal(function,"a",a,b));
+  EXPECT_NO_THROW(check_equal(function,"a",a,b));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(stack_size_expected,stack_size_after_call);

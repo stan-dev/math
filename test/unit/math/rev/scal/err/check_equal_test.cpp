@@ -9,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar,CheckEqual) {
   var x = 0.0;
   var eq = 0.0;
  
-  EXPECT_TRUE(check_equal(function, "x", x, eq))
+  EXPECT_NO_THROW(check_equal(function, "x", x, eq))
     << "check_equal should be true with x = eq";
   
   x = -1.0;
@@ -55,7 +55,7 @@ TEST(AgradRevErrorHandlingScalar, CheckEqualVarCheckUnivariate) {
   EXPECT_EQ(2U,stack_size_after_call);
 
   b = 5.0;
-  EXPECT_TRUE(check_equal(function,"a",a,b));
+  EXPECT_NO_THROW(check_equal(function,"a",a,b));
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(3U,stack_size_after_call);
 

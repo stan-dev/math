@@ -9,15 +9,15 @@ TEST(ErrorHandlingScalar,CheckNotNanVectorized) {
   std::vector<double> x(N);
 
   x.assign(N, 0);
-  EXPECT_TRUE(check_not_nan(function, "x", x)) 
+  EXPECT_NO_THROW(check_not_nan(function, "x", x)) 
     << "check_not_nan(vector) should be true with finite x: " << x[0];
 
   x.assign(N, std::numeric_limits<double>::infinity());
-  EXPECT_TRUE(check_not_nan(function, "x", x)) 
+  EXPECT_NO_THROW(check_not_nan(function, "x", x)) 
     << "check_not_nan(vector) should be true with x = Inf: " << x[0];
 
   x.assign(N, -std::numeric_limits<double>::infinity());
-  EXPECT_TRUE(check_not_nan(function, "x", x)) 
+  EXPECT_NO_THROW(check_not_nan(function, "x", x)) 
     << "check_not_nan(vector) should be true with x = -Inf: " << x[0];
 
   x.assign(N, std::numeric_limits<double>::quiet_NaN());

@@ -11,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the specified index is a valid
+     * Check if the specified index is a valid
      * column of the matrix.
      *
      * By default, this is a 1-indexed check (as opposed to
@@ -29,27 +29,21 @@ namespace stan {
      * @param y Matrix
      * @param i Index to check
      *
-     * @return <code>true</code> if the index is a valid column index
-     *   of the matrix.
      * @throw std::out_of_range if index is an invalid column index
      */
     template <typename T_y, int R, int C>
-    inline bool check_column_index(const char* function,
+    inline void check_column_index(const char* function,
                                    const char* name,
                                    const Eigen::Matrix<T_y, R, C>& y,
                                    const size_t i) {
       if (i >= stan::error_index::value
           && i < static_cast<size_t>(y.cols()) + stan::error_index::value)
-        return true;
+        return;
 
       std::stringstream msg;
       msg << " for columns of " << name;
       std::string msg_str(msg.str());
-      out_of_range(function,
-                   y.cols(),
-                   i,
-                   msg_str.c_str());
-      return false;
+      out_of_range(function, y.cols(), i, msg_str.c_str());
     }
 
   }

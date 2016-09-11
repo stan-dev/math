@@ -14,12 +14,12 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
   vector<var> a;
 
   for (int i = 0; i < N; ++i)
-   a.push_back(var(i));
+    a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(5U,stack_size);
-  EXPECT_TRUE(check_less_or_equal(function,"a",a,10.0));
+  EXPECT_NO_THROW(check_less_or_equal(function,"a",a,10.0));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(5U,stack_size_after_call);
