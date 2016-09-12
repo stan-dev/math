@@ -17,26 +17,26 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite) {
 
   y.resize(1,1);
   y << 1;
-  EXPECT_TRUE(check_pos_definite(function, "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", y));
 
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_1(y); 
-  EXPECT_TRUE(check_pos_definite(function, "y", llt_1));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", llt_1));
 
   Eigen::LDLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > ldlt_1 = y.ldlt(); 
-  EXPECT_TRUE(check_pos_definite(function, "y", ldlt_1));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_1));
 
   y.resize(3,3);
   y << 
     1, 0, 0,
     0, 1, 0,
     0, 0, 1;
-  EXPECT_TRUE(check_pos_definite(function, "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", y));
 
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_2(y); 
-  EXPECT_TRUE(check_pos_definite(function, "y", llt_2));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", llt_2));
 
   Eigen::LDLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > ldlt_2 = y.ldlt(); 
-  EXPECT_TRUE(check_pos_definite(function, "y", ldlt_2));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_2));
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
@@ -188,8 +188,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   y << 2, -1, 0,
     -1, 2, -1,
     0, -1, 2;
-  EXPECT_TRUE(check_pos_definite(function, 
-                                 "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, 
+                                     "y", y));
   for (int i = 0; i < y.rows(); i++)
     for (int j = 0; j < y.cols(); j++) {
       y << 2, -1, 0, -1, 2, -1, 0, -1, 2;

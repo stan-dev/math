@@ -9,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar,CheckGreaterOrEqual) {
   var x = 10.0;
   var lb = 0.0;
  
-  EXPECT_TRUE(check_greater_or_equal(function, "x", x, lb)) 
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb)) 
     << "check_greater_or_equal should be true with x > lb";
   
   x = -1.0;
@@ -22,7 +22,7 @@ TEST(AgradRevErrorHandlingScalar,CheckGreaterOrEqual) {
     << "check_greater_or_equal should not throw an exception with x == lb";
 
   x = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_greater_or_equal(function, "x", x, lb))
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb))
     << "check_greater should be true with x == Inf and lb = 0.0";
 
   x = 10.0;
@@ -49,7 +49,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(1U,stack_size);
-  EXPECT_TRUE(check_greater_or_equal(function,"a",a,2.0));
+  EXPECT_NO_THROW(check_greater_or_equal(function,"a",a,2.0));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);

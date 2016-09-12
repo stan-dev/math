@@ -10,15 +10,15 @@ TEST(ErrorHandlingScalar,CheckBounded_x) {
   double low = -1;
   double high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high))
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high))
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
   
   x = low;
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " equal to the lower bound: " << low;
 
   x = high;
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " equal to the lower bound: " << low;
 
   x = low-1;
@@ -49,11 +49,11 @@ TEST(ErrorHandlingScalar,CheckBounded_Low) {
   double low = -1;
   double high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high))
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high))
     << "check_bounded should be true x: " << x << " and bounds: " << low << ", " << high;
   
   low = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_bounded(function, name, x, low, high))
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high))
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
 
   low = std::numeric_limits<double>::quiet_NaN();
@@ -72,11 +72,11 @@ TEST(ErrorHandlingScalar,CheckBounded_High) {
   double low = -1;
   double high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high))
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high))
     << "check_bounded should be true x: " << x << " and bounds: " << low << ", " << high;
 
   high = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
   
   high = std::numeric_limits<double>::quiet_NaN();

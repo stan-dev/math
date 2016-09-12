@@ -9,7 +9,7 @@ TEST(ErrorHandlingScalar,CheckPositiveFinite_Matrix) {
   
   x.resize(3);
   x << 3, 2, 1;
-  ASSERT_TRUE(check_positive_finite(function, "x", x))
+  ASSERT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x";
 
   x.resize(3);

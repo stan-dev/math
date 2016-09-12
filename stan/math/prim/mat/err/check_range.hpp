@@ -11,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if specified index is within range.
+     * Check if specified index is within range.
      *
      * This check is 1-indexed by default. This behavior can be
      * changed by setting <code>stan::error_index::value</code>.
@@ -23,10 +23,9 @@ namespace stan {
      * @param nested_level Nested level (for error messages)
      * @param error_msg Additional error message (for error messages)
      *
-     * @return <code>true</code> if the index is within range
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline bool check_range(const char* function,
+    inline void check_range(const char* function,
                             const char* name,
                             const int max,
                             const int index,
@@ -34,18 +33,17 @@ namespace stan {
                             const char* error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
-        return true;
+        return;
 
       std::stringstream msg;
       msg << "; index position = " << nested_level;
       std::string msg_str(msg.str());
 
       out_of_range(function, max, index, msg_str.c_str(), error_msg);
-      return false;
     }
 
     /**
-     * Return <code>true</code> if specified index is within range.
+     * Check if specified index is within range.
      *
      * This check is 1-indexed by default. This behavior can be
      * changed by setting <code>stan::error_index::value</code>.
@@ -56,24 +54,22 @@ namespace stan {
      * @param index Index to check
      * @param error_msg Additional error message (for error messages)
      *
-     * @return <code>true</code> if the index is within range
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline bool check_range(const char* function,
+    inline void check_range(const char* function,
                             const char* name,
                             const int max,
                             const int index,
                             const char* error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
-        return true;
+        return;
 
       out_of_range(function, max, index, error_msg);
-      return false;
     }
 
     /**
-     * Return <code>true</code> if specified index is within range.
+     * Check if specified index is within range.
      *
      * This check is 1-indexed by default. This behavior can be
      * changed by setting <code>stan::error_index::value</code>.
@@ -83,19 +79,17 @@ namespace stan {
      * @param max Maximum size of the variable
      * @param index Index to check
      *
-     * @return <code>true</code> if the index is within range
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline bool check_range(const char* function,
+    inline void check_range(const char* function,
                             const char* name,
                             const int max,
                             const int index) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
-        return true;
+        return;
 
       out_of_range(function, max, index);
-      return false;
     }
 
   }

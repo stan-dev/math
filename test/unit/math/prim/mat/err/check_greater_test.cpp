@@ -14,18 +14,18 @@ TEST(ErrorHandlingScalar,CheckGreater_Matrix) {
   // x_vec, low_vec
   x_vec   << -1, 0, 1;
   low_vec << -2, -1, 0;
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec)) 
     << "check_greater: matrix<3,1>, matrix<3,1>";
 
   x_vec   <<   -1,    0,   1;
   low_vec << -1.1, -0.1, 0.9;
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec)) 
     << "check_greater: matrix<3,1>, matrix<3,1>";
 
 
   x_vec   << -1, 0, std::numeric_limits<double>::infinity();
   low_vec << -2, -1, 0;
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec)) 
     << "check_greater: matrix<3,1>, matrix<3,1>, y has infinity";
   
   x_vec   << -1, 0, 1;
@@ -45,18 +45,18 @@ TEST(ErrorHandlingScalar,CheckGreater_Matrix) {
   
   x_vec   << -1, 0,  1;
   low_vec << -2, -1, -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low_vec))
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec))
     << "check_greater: matrix<3,1>, matrix<3,1>, should pass with -infinity";
 
   // x_vec, low
   x_vec   << -1, 0, 1;
   low = -2;
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low)) 
     << "check_greater: matrix<3,1>, double";
 
   x_vec   <<   -1,    0,   1;
   low = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_greater(function, "x", x_vec, low)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x_vec, low)) 
     << "check_greater: matrix<3,1>, double";
 
   x_vec   << -1, 0, 1;
@@ -72,12 +72,12 @@ TEST(ErrorHandlingScalar,CheckGreater_Matrix) {
   // x, low_vec
   x = 2;
   low_vec << -1, 0, 1;
-  EXPECT_TRUE(check_greater(function, "x", x, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x, low_vec)) 
     << "check_greater: double, matrix<3,1>";
 
   x = 10;
   low_vec << -1, 0, -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_greater(function, "x", x, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x, low_vec)) 
     << "check_greater: double, matrix<3,1>, low has -inf";
 
   x = 10;
@@ -92,12 +92,12 @@ TEST(ErrorHandlingScalar,CheckGreater_Matrix) {
   
   x = std::numeric_limits<double>::infinity();
   low_vec << -1, 0, 1;
-  EXPECT_TRUE(check_greater(function, "x", x, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x, low_vec)) 
     << "check_greater: double, matrix<3,1>, x is inf";
 
   x = 1.1;
   low_vec << -1, 0, 1;
-  EXPECT_TRUE(check_greater(function, "x", x, low_vec)) 
+  EXPECT_NO_THROW(check_greater(function, "x", x, low_vec)) 
     << "check_greater: double, matrix<3,1>";
   
   x = 0.9;
