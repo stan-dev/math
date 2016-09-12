@@ -20,8 +20,8 @@ TEST(MathMatrix, matrix_exp_compute_2x2) {
    
     		m1 << -2*a + 3*b, 1.5*a - 1.5*b, -4*a + 4*b, 3*a - 2*b;
    			m2 << -.735759, .551819, -1.471518, 1.103638;
-    		m1_exp = matrix_exp_compute(m1);
-    		expect_matrix_eq(m2, expm(m1));
+    		m1_exp = matrix_exp_compute_2x2(m1);
+    		expect_matrix_eq(m2, m1_exp);
     
     		dm1_exp_da << -2*exp(a), 1.5*exp(a), -4*exp(a), 3*exp(a);
     		dm1_exp_db << 3*exp(b), -1.5*exp(b), 4*exp(b), -2*exp(b);
