@@ -8,6 +8,10 @@
 namespace stan {
   namespace math {
 
+	/*
+	 * The derivative of frexp is 0, because frexp returns
+	 * a discontinuous object. 
+	 */
       class frexp_vari : public op_v_vari {
       public:
           explicit frexp_vari(vari* avi, int* b) :
