@@ -24,12 +24,8 @@ namespace stan {
             check_square("matrix_exp", "input matrix", A);
 
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B;
-
-            if (A.cols() == 2) B = matrix_exp_compute_2x2(A);
-            else
-               B = matrix_exp_compute(A);
-
-            return B;
+            
+            return (A.cols() == 2) ? matrix_exp_compute_2x2(A) : matrix_exp_compute(A);
        }
 
     }
