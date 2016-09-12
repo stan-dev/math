@@ -213,7 +213,7 @@ namespace stan {
          */
         template <typename MatrixType>
         MatrixType 
-        matrix_exp_compute(const MatrixType& arg)
+        matrix_exp_pade(const MatrixType& arg)
         {
         	MatrixType result;
         

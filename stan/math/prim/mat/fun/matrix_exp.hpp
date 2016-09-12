@@ -25,7 +25,7 @@ namespace stan {
 
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B;
             
-            return (A.cols() == 2) ? matrix_exp_compute_2x2(A) : matrix_exp_compute(A);
+            return (A.cols() == 2) ? matrix_exp_2x2(A) : matrix_exp_pade(A);
        }
 
     }

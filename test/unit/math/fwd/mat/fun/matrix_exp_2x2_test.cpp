@@ -4,9 +4,9 @@
 
 using stan::math::fvar;
 using stan::math::matrix_fd;
-using stan::math::matrix_exp_compute_2x2;
+using stan::math::matrix_exp_2x2;
 
-TEST(MathMatrix, matrix_exp_compute_2x2_1) {
+TEST(MathMatrix, matrix_exp_2x2_1) {
 
 	fvar<double> a;
 	a.val_ = 3.0;
@@ -14,7 +14,7 @@ TEST(MathMatrix, matrix_exp_compute_2x2_1) {
 	matrix_fd input(2,2), output(2,2);
 	
 	input << a, 0, 0, 4;
-	output = matrix_exp_compute_2x2(input);	
+	output = matrix_exp_2x2(input);	
 	
 	EXPECT_FLOAT_EQ(exp(3), output(0,0).val_);
 	EXPECT_FLOAT_EQ(0, output(1,0).val_);
@@ -29,7 +29,7 @@ TEST(MathMatrix, matrix_exp_compute_2x2_1) {
 }
 
 
-TEST(MathMatrix, matrix_exp_compute_2x2_2) {
+TEST(MathMatrix, matrix_exp_2x2_2) {
     
     // example from Moler & Van Loan, 2003, section 3
     matrix_fd input_diag(2,2), input(2,2), output;
@@ -43,7 +43,7 @@ TEST(MathMatrix, matrix_exp_compute_2x2_2) {
     input << -2*a + 3*b, 1.5*a - 1.5*b,
             -4*a + 4*b, 3*a - 2*b;
     
-    output = matrix_exp_compute_2x2(input);
+    output = matrix_exp_2x2(input);
     
     EXPECT_FLOAT_EQ(-0.735759, output(0,0).val_);
     EXPECT_FLOAT_EQ(0.551819, output(0,1).val_);
