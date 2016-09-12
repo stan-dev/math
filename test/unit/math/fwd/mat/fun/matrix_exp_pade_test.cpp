@@ -6,7 +6,7 @@ using stan::math::matrix_fd;
 using stan::math::fvar;
 using stan::math::matrix_exp_pade;
 
-TEST(MathMatrix, matrix_exp_pade_1) {
+TEST(MathMatrix, matrix_exp_pade_1x1) {
     
     fvar<double> a;
     a.val_ = 0.0;
@@ -30,7 +30,7 @@ TEST(MathMatrix, matrix_exp_pade_1) {
     EXPECT_EQ(b.d_ * output(0,0).val_, output(0,0).d_);
 }
 
-TEST(MathMatrix, matrix_exp_pade_2) {
+TEST(MathMatrix, matrix_exp_pade_2x2) {
     
     // example from Moler & Van Loan, 2003, section 3
     matrix_fd input_diag(2,2), input(2,2), output;

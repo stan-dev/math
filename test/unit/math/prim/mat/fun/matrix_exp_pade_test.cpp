@@ -7,7 +7,7 @@ using Eigen::Matrix;
 using Eigen::Dynamic;
 using stan::math::matrix_exp_pade;
 
-TEST(MathMatrix, matrix_exp_pade_1) {
+TEST(MathMatrix, matrix_exp_pade_1x1) {
     
     Matrix<double, Dynamic, Dynamic> m1(1,1), m2(1,1);
     m1 << 0;
@@ -16,18 +16,7 @@ TEST(MathMatrix, matrix_exp_pade_1) {
     expect_matrix_eq(m2, matrix_exp_pade(m1));
 }
 
-TEST(MathMatrix, matrix_exp_pade_2) {
-    
-    // example from http://www.sosmath.com/matrix/expo/expo.html
-    Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3), m3(3,3), I(3,3);
-    m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
-    m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
-    
-    expect_matrix_eq(m2, matrix_exp_pade(m1));
-    
-}
-
-TEST(MathMatrix, matrix_exp_pade_3) {
+TEST(MathMatrix, matrix_exp_pade_2x2) {
     
     // example from Moler & Van Loan, 2003
     Matrix<double, Dynamic, Dynamic> m1(2,2), m2(2,2);
@@ -36,4 +25,15 @@ TEST(MathMatrix, matrix_exp_pade_3) {
     m2 << -.735759, .551819, -1.471518, 1.103638;
     
     expect_matrix_eq(m2, matrix_exp_pade(m1));
+}
+
+TEST(MathMatrix, matrix_exp_pade_3x3) {
+    
+    // example from http://www.sosmath.com/matrix/expo/expo.html
+    Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3);
+    m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
+    m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
+    
+    expect_matrix_eq(m2, matrix_exp_pade(m1));
+    
 }

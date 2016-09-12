@@ -6,24 +6,13 @@ using Eigen::Matrix;
 using Eigen::Dynamic;
 using stan::math::matrix_exp;
 
-TEST(MathMatrix, matrix_exp_1) {
+TEST(MathMatrix, matrix_exp_1x1) {
     
     Matrix<double, Dynamic, Dynamic> m1(1,1), m2(1,1);
     m1 << 0;
     m2 << 1;
         
     expect_matrix_eq(m2, matrix_exp(m1));
-}
-
-TEST(MathMatrix, matrix_exp_2) {
-    
-    // example from http://www.sosmath.com/matrix/expo/expo.html
-    Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3), m3(3,3), I(3,3);
-    m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
-    m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
-    
-    expect_matrix_eq(m2, matrix_exp(m1));
-    
 }
 
 TEST(MathMatrix, matrix_exp_2x2) {
@@ -35,6 +24,17 @@ TEST(MathMatrix, matrix_exp_2x2) {
     m2 << -.735759, .551819, -1.471518, 1.103638;
     
     expect_matrix_eq(m2, matrix_exp(m1));
+}
+
+TEST(MathMatrix, matrix_exp_3x3) {
+    
+    // example from http://www.sosmath.com/matrix/expo/expo.html
+    Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3), m3(3,3), I(3,3);
+    m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
+    m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
+    
+    expect_matrix_eq(m2, matrix_exp(m1));
+    
 }
 
 TEST(MathMatrix, matrix_exp_exceptions) {

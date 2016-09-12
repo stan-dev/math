@@ -58,4 +58,3 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
     EXPECT_FLOAT_EQ(-1.471518, output(1,0).d_);
     EXPECT_FLOAT_EQ(1.103638, output(1,1).d_);
 }
-

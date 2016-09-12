@@ -27,13 +27,12 @@ namespace stan {
 			T exp_half_a_plus_d = exp(0.5 * (a + d));
 			T exp_sinh = exp_half_a_plus_d * sinh_half_delta;
 			T delta_cosh = delta * cosh_half_delta;
+			T ad_sinh_half_delta = (a - d) * sinh_half_delta;
 			
-			B(0, 0) = exp_half_a_plus_d * (delta_cosh + 
-					  (a - d) * sinh_half_delta);
+			B(0, 0) = exp_half_a_plus_d * (delta_cosh + ad_sinh_half_delta);
 			B(0, 1) = 2 * b * exp_sinh;
 			B(1, 0) = 2 * c * exp_sinh;
-			B(1, 1) = exp_half_a_plus_d * (delta_cosh + 
-					  (d - a) * sinh_half_delta);
+			B(1, 1) = exp_half_a_plus_d * (delta_cosh - ad_sinh_half_delta);
 
             return 1/delta * B;
         }

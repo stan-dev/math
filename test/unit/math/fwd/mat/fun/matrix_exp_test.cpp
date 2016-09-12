@@ -4,7 +4,7 @@
 using stan::math::matrix_fd;
 using stan::math::fvar;
 
-TEST(MathMatrix, matrix_exp) {
+TEST(MathMatrix, matrix_exp_1x1) {
     
     fvar<double> a;
     a.val_ = 0.0;
@@ -30,7 +30,7 @@ TEST(MathMatrix, matrix_exp) {
 }
 
 
-TEST(MathMatrix, matrix_exp2) {
+TEST(MathMatrix, matrix_exp_2x2) {
     
     // example from Moler & Van Loan, 2003, section 3
     matrix_fd input_diag(2,2), input(2,2), output;
@@ -61,7 +61,7 @@ TEST(MathMatrix, matrix_exp2) {
 
 }
 
-TEST(MathMatrix, matrix_exp3) {
+TEST(MathMatrix, matrix_exp_exceptions) {
     matrix_fd m1(0,0), m2(1,2);
     
     EXPECT_THROW(matrix_exp(m1), std::invalid_argument);

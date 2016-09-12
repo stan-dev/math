@@ -5,7 +5,7 @@
 
 using stan::math::matrix_v;
 
-TEST(MathMatrix, matrix_exp) {
+TEST(MathMatrix, matrix_exp_1x1) {
        
     matrix_v m1(1,1), m2(1,1), m1_exp;
     m1 << 0;
@@ -49,7 +49,7 @@ TEST(MathMatrix, matrix_exp_2x2) {
  
 }
 
-TEST(MathMatrix, matrix_exp3) {
+TEST(MathMatrix, matrix_exp_exceptions) {
     matrix_v m1(0,0), m2(1,2);
     
     m2 << 1, 2;

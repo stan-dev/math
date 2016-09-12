@@ -7,7 +7,7 @@ using Eigen::Matrix;
 using Eigen::Dynamic;
 using stan::math::matrix_exp_2x2;
 
-TEST(MathMatrix, matrix_exp_2x2_2) {
+TEST(MathMatrix, matrix_exp_2x2_1) {
 
 	Matrix<double, Dynamic, Dynamic> m1(2,2), m2(2,2);
 	
@@ -19,7 +19,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
 }
 
 
-TEST(MathMatrix, matrix_exp_2x2_1) {
+TEST(MathMatrix, matrix_exp_2x2_2) {
     
     // example from Moler & Van Loan, 2003
     Matrix<double, Dynamic, Dynamic> m1(2,2), m2(2,2);
@@ -29,4 +29,3 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
     
     expect_matrix_eq(m2, matrix_exp_2x2(m1));
 }
-

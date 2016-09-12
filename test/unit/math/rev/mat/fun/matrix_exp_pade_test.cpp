@@ -7,7 +7,7 @@
 using stan::math::matrix_v;
 using stan::math::matrix_exp_pade;
 
-TEST(MathMatrix, matrix_exp_pade_1) {
+TEST(MathMatrix, matrix_exp_pade_1x1) {
     
     matrix_v m1(1,1), m2(1,1), m1_exp;
     m1 << 0;
@@ -21,7 +21,7 @@ TEST(MathMatrix, matrix_exp_pade_1) {
     EXPECT_FLOAT_EQ(m1_exp(0,0).val(), g[0]);
 }
 
-TEST(MathMatrix, matrix_exp_pade_2) {
+TEST(MathMatrix, matrix_exp_pade_2x2) {
     
     // example from Moler & Van Loan, 2003
     for (size_t k = 0; k < 2; k++) {

@@ -35,4 +35,3 @@ TEST(MathMatrix, matrix_exp_2x2) {
     }
 
 }
-
