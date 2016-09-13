@@ -9,7 +9,23 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the regularized incomplete beta function ibeta(a, b, z)
+    /**
+     * Computes the gradients of the regularized incomplete beta function.
+     *
+     * This function computes gradients of <code>ibeta</code>, with
+     * respect to the arguments <code>a</code> and <code>b</code>.
+     *
+     * @tparam T type of arguments
+     * @param[out] g1 gradient with respect to a: $\frac{d \mathrm{ibeta}(a, b, z)}{d a}$
+     * @param[out] g2 gradient with respect to b: $\frac{d \mathrm{ibeta}(a, b, z)}{d b}$
+     * @param[in] a a
+     * @param[in] b b
+     * @param[in] z z
+     * @param[in] digammaA the value of <code>digamma(a)</code>
+     * @param[in] digammaB the value of <code>digamma(b)</code>
+     * @param[in] digammaSum the value of <code>digamma(a + b)</code>
+     * @param[in] betaAB the value of <code>beta(a, b)</code>
+     */
     template<typename T>
     void grad_reg_inc_beta(T& g1, T& g2, T a, T b, T z,
                            T digammaA, T digammaB, T digammaSum, T betaAB) {
