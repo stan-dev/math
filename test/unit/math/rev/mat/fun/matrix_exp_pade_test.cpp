@@ -83,9 +83,15 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
     		AVEC x = createAVEC(a, b, c);
     		VEC g;
     		m1_exp(k, l).grad(x, g);
-    		EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], 1e-9);
-    		EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], 1e-9);
-    		EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], 1e-9);
+            
+            if (dm1_exp_da(k, l) == 0) EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], 5e-10);
+            else EXPECT_FLOAT_EQ(dm1_exp_da(k, l).val(), g[0]);
+            
+            if (dm1_exp_db(k, l) == 0) EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], 5e-10);
+            else EXPECT_FLOAT_EQ(dm1_exp_db(k, l).val(), g[1]);
+            
+            if (dm1_exp_dc(k, l) == 0) EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], 5e-10);
+            else EXPECT_FLOAT_EQ(dm1_exp_dc(k, l).val(), g[2]);
     	}
     }   					   
 
