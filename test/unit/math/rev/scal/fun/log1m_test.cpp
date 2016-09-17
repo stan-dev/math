@@ -17,7 +17,11 @@ TEST(AgradRev,log1m) {
 TEST(AgradRev,excepts) {
   using stan::math::log1m;
   EXPECT_THROW(log1m(AVAR(10)), std::domain_error);
-  EXPECT_THROW(log1m(AVAR(1)), std::overflow_error);
+}
+
+TEST(MathFunctions, log1m_inf_return) {
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            stan::math::log1m(1));
 }
 
 struct log1m_fun {

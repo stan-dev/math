@@ -29,11 +29,16 @@ TEST(MathFunctions, log1p) {
   x = -0.999;
   EXPECT_FLOAT_EQ(-6.907755, stan::math::log1p(x));
 }
+TEST(MathFunctions, log1pNegInfReturn) {
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            stan::math::log1p(-1.0));
+}
 
 TEST(MathFunctions, log1p_exception) {
   EXPECT_THROW(stan::math::log1p(-10.0), std::domain_error);
-  EXPECT_THROW(stan::math::log1p(-1.0), std::overflow_error);
 }
+
+
 
 TEST(MathFunctions, log1p_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();

@@ -15,10 +15,14 @@ TEST(MathFunctions, acosh) {
 TEST(MathFunctions, acosh_exception) {
   using stan::math::acosh;
   EXPECT_THROW(acosh(0.5), std::domain_error);
-  EXPECT_THROW(acosh(std::numeric_limits<double>::infinity()), std::overflow_error);
 }
 
-TEST(MathFunctions, log1p_nan) {
+TEST(MathFunctions, acosh_inf_return) {
+  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+            stan::math::acosh(std::numeric_limits<double>::infinity()));
+}
+
+TEST(MathFunctions, acosh_nan) {
   using stan::math::acosh;
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::acosh(std::numeric_limits<double>::quiet_NaN()));

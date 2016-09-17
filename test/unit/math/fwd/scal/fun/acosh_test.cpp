@@ -20,9 +20,16 @@ TEST(AgradFwdAcosh, excepts) {
   using stan::math::fvar;
   using stan::math::acosh;
   EXPECT_THROW(acosh(fvar<double>(0.5)), std::domain_error);
-  EXPECT_THROW(acosh(fvar<double>(std::numeric_limits<double>::infinity())), std::overflow_error);
-
 }
+
+TEST(MathFunctions, acosh_inf_return) {
+  using stan::math::fvar;
+  using stan::math::acosh;
+  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+            stan::math::acosh(fvar<double>(std::numeric_limits<double>
+                                           ::infinity())));
+}
+
 
 TEST(AgradFwdAcosh,FvarFvarDouble) {
   using stan::math::fvar;

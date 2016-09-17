@@ -35,8 +35,15 @@ TEST(MathFunctions, acosh_exception) {
   using stan::math::var;
   using stan::math::acosh;
   EXPECT_THROW(acosh(var(0.5)), std::domain_error);
-  EXPECT_THROW(acosh(var(std::numeric_limits<double>::infinity())), std::overflow_error);
 }
+
+TEST(AgradRevAcosh, overflows) {
+  using stan::math::acosh;
+  AVAR b = std::numeric_limits<double>::infinity();
+  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+            stan::math::acosh(b).val());
+}
+
 
 struct acosh_fun {
   template <typename T0>

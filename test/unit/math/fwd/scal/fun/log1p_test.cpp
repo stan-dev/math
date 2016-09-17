@@ -20,10 +20,17 @@ TEST(AgradFwdLog1p, exceps) {
   using stan::math::fvar;
   fvar<double> x = -2;
   EXPECT_THROW(log1p(x), std::domain_error);
-
-  fvar<double> y = -1;
-  EXPECT_THROW(log1p(y), std::overflow_error);
 }
+
+TEST(MathFunctions, log1p_inf_return) {
+  using stan::math::fvar;
+  using stan::math::log1p;
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            log1p(fvar<double>(-1.0)));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            log1p(fvar<double>(-1)));
+}
+
 
 TEST(AgradFwdLog1p,FvarFvarDouble) {
   using stan::math::fvar;
