@@ -58,6 +58,7 @@
 
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
+#include <stan/math/prim/scal/fun/asinh.hpp>
 #include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/prim/scal/fun/as_bool.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
@@ -72,6 +73,7 @@
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
+#include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/fdim.hpp>
