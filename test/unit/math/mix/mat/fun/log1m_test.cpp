@@ -66,7 +66,7 @@ struct log1m_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(2.3).add(1.0).add(0).add(-7.2).build();
+      .add(-21.5).add(0).add(0.9).build();
   }
 
   /**
@@ -81,7 +81,7 @@ struct log1m_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(-12).add(0).add(3).build();
+      .add(-21).add(-1).add(0).build();
   }
 
   /**
