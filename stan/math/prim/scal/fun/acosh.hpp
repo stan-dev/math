@@ -22,7 +22,7 @@ namespace stan {
      * Integer version of acosh.
      *
      * @param[in] x Argument.
-     * @return Natural logarithm of one plus the argument.
+     * @return Inverse hyperbolic cosine of the argument.
      * @throw std::domain_error If argument is less than 1.
      */
     inline double acosh(int x) {

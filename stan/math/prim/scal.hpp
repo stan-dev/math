@@ -58,6 +58,7 @@
 
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
+#include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/prim/scal/fun/as_bool.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
