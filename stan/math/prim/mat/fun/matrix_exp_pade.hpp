@@ -9,7 +9,7 @@
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 // This file was edited for to the Stan math library to create
-// the matrix exponential function (expm), 2016.
+// the matrix exponential function (matrix_exp), 2016.
 
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
