@@ -1,5 +1,5 @@
 #include <stan/math/rev/mat.hpp>
-#include <stan/math/prim/mat/fun/MatrixExponential.h>
+#include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
