@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_OWENS_T_HPP
 #define STAN_MATH_REV_SCAL_FUN_OWENS_T_HPP
 
-#include <math.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
