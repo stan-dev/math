@@ -11,9 +11,8 @@ namespace stan {
          * Return the matrix exponential of a 2x2 matrix. Reference for 
          * algorithm: http://mathworld.wolfram.com/MatrixExponential.html
          *
-         * @tparam T type of scalar of the elements of 
-         * input matrix.
-         * @param[in] A A 2x2 matrix
+         * @tparam T type of scalar of the elements of input matrix.
+         * @param[in] A 2x2 matrix to exponentiate.
          * @return Matrix exponential of A.
          */
         template <typename T>

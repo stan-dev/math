@@ -205,7 +205,6 @@ namespace stan {
             }
         };
 
-
         /**
          * Computes the matrix exponential, using a Pade
          * approximation, coupled with scaling and
@@ -213,8 +212,8 @@ namespace stan {
          *
          * @tparam MatrixType scalar type of the elements
          * in the input matrix.
-         * @param[in] arg input matrix.
-         * @param[out] matrix exponential of input matrix.
+         * @param[in] arg Matrix to exponentiate.
+         * @param[out] Matrix exponential of input matrix.
          */
         template <typename MatrixType>
         MatrixType

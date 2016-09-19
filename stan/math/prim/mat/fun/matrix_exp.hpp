@@ -14,7 +14,7 @@ namespace stan {
          *
          * @tparam T type of scalar of the elements of 
          * input matrix.
-         * @param[in] A A matrix
+         * @param[in] A Matrix to exponentiate.
          * @return Matrix exponential. 
          */
         template <typename T>
