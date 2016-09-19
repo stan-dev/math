@@ -148,6 +148,7 @@
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
+#include <stan/math/prim/scal/fun/round.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
