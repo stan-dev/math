@@ -1,16 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ERF_HPP
 #define STAN_MATH_REV_SCAL_FUN_ERF_HPP
 
-#include <math.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
 #include <cmath>
-#include <valarray>
-
-#ifdef _MSC_VER
-#include <boost/math/special_functions/erf.hpp>
-using boost::math::erf;
-#endif
 
 namespace stan {
   namespace math {
@@ -19,7 +13,7 @@ namespace stan {
       class erf_vari : public op_v_vari {
       public:
         explicit erf_vari(vari* avi) :
-          op_v_vari(::erf(avi->val_), avi) {
+          op_v_vari(erf(avi->val_), avi) {
         }
         void chain() {
           avi_->adj_ += adj_ * TWO_OVER_SQRT_PI
@@ -30,8 +24,6 @@ namespace stan {
 
     /**
      * The error function for variables (C99).
-     *
-     * For non-variable function, see ::erf() from cmath.
      *
      * The derivative is
      *
