@@ -17,12 +17,12 @@
 
 namespace stan {
     namespace math {
-        
+
         using Eigen::NumTraits;
         using Eigen::internal::traits;
         using Eigen::Matrix;
         using Eigen::Dynamic;
-        
+
         template <typename RealScalar>
         struct MatrixExponentialScalingOp
         {
@@ -32,7 +32,7 @@ namespace stan {
              */
             MatrixExponentialScalingOp(int squarings) : m_squarings(squarings) { }
         
-        
+
             /** \brief Scale a matrix coefficient.
              *
              * \param[in,out] x  The scalar to be scaled, becoming \f$ 2^{-s} x \f$.
@@ -204,42 +204,49 @@ namespace stan {
                 }
             }
         };
-    
-    
-        /* Computes the matrix exponential
+
+
+        /**
+         * Computes the matrix exponential, using a Pade
+         * approximation, coupled with scaling and
+         * squaring.
          *
-         * \param arg    argument of matrix exponential (should be plain object)
-         * \param result variable in which result will be stored
+         * @tparam MatrixType scalar type of the elements
+         * in the input matrix.
+         * @param[in] arg input matrix.
+         * @param[out] matrix exponential of input matrix.
          */
         template <typename MatrixType>
-        MatrixType 
-        matrix_exp_pade(const MatrixType& arg)
-        {
-        	MatrixType result;
-        
-        #if LDBL_MANT_DIG > 112 // rarely happens
-            typedef typename traits<MatrixType>::Scalar Scalar;
-            typedef typename NumTraits<Scalar>::Real RealScalar;
-            typedef typename std::complex<RealScalar> ComplexScalar;
-            if (sizeof(RealScalar) > 14) {
-                result = arg.matrixFunction(internal::stem_function_exp<ComplexScalar>);
-                return;
+        MatrixType
+        matrix_exp_pade(const MatrixType& arg) {
+          MatrixType result;
+
+        #if LDBL_MANT_DIG > 112  // rarely happens
+          typedef typename traits<MatrixType>::Scalar Scalar;
+          typedef typename NumTraits<Scalar>::Real RealScalar;
+          typedef typename std::complex<RealScalar> ComplexScalar;
+          if (sizeof(RealScalar) > 14) {
+            result = arg.matrixFunction(
+              internal::stem_function_exp<ComplexScalar>);
+            return;
             }
         #endif
-            MatrixType U, V;
-            int squarings;
-            matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0,0)); // Pade approximant is (U+V) / (-U+V)
-            MatrixType numer = U + V;
-            MatrixType denom = -U + V;
-            result = denom.partialPivLu().solve(numer);
-            for (int i=0; i<squarings; i++)
-                result *= result;   // undo scaling by repeated squaring
-                
-            return result;
+          MatrixType U, V;
+          int squarings;
+          matrix_exp_computeUV<MatrixType>::run(
+            arg, U, V, squarings, arg(0, 0));  // Pade approximant is
+                                               // (U+V) / (-U+V)
+          MatrixType numer = U + V;
+          MatrixType denom = -U + V;
+          result = denom.partialPivLu().solve(numer);
+          for (int i = 0; i < squarings; i++)
+            result *= result;  // undo scaling by repeated squaring
+
+          return result;
         }
-    
-    } // end namespace math
-} // end namespace stan
+
+    }  // end namespace math
+}  // end namespace stan
 
 
 #endif

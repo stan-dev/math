@@ -49,5 +49,5 @@ TEST(MathMatrix, matrix_exp_exceptions) {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0,0), m2(1,2);
     
     EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
-    EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
+    EXPECT_THROW(matrix_exp(m2), std::invalid_argument);   
 }
