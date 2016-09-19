@@ -155,6 +155,7 @@
 #include <stan/math/prim/scal/fun/step.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
+#include <stan/math/prim/scal/fun/trunc.hpp>
 #include <stan/math/prim/scal/fun/ub_constrain.hpp>
 #include <stan/math/prim/scal/fun/ub_free.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
