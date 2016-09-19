@@ -212,7 +212,7 @@ namespace stan {
          *
          * @tparam MatrixType scalar type of the elements
          * in the input matrix.
-         * @param[in] arg Matrix to exponentiate.
+         * @param[in] arg matrix to exponentiate.
          * @param[out] Matrix exponential of input matrix.
          */
         template <typename MatrixType>

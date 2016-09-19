@@ -13,7 +13,7 @@ namespace stan {
      *
      * @tparam T type of scalar of the variable that will be
      * decomposed.
-     * @param[in] a The variable that will be decomposed.
+     * @param[in] x The variable that will be decomposed.
      * @param[out] b Pointer to an integer that will stored the
      * integral power of two.
      * @return Normalized fraction
