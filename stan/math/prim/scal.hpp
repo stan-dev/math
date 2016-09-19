@@ -73,6 +73,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/expm1.hpp>
