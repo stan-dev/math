@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_HPP
 
-#include <unsupported/Eigen/MatrixFunctions>
 #include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
 

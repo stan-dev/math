@@ -19,13 +19,13 @@ TEST(MathMatrix, matrix_exp_pade_1x1) {
 }
 
 TEST(MathMatrix, matrix_exp_pade_2x2) {
-    
+
     using stan::math::matrix_v;
-    
+
     // example from Moler & Van Loan, 2003
     for (size_t k = 0; k < 2; k++) {
     	for (size_t l = 0; l < 2; l++) {
-    
+
     		matrix_v m1(2,2), m2(2,2), m1_exp;
     
     		AVAR a = -1.0, b = -17.0;
