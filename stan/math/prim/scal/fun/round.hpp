@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/special_functions/round.hpp>
+#include <limits>
 
 namespace stan {
   namespace math {
