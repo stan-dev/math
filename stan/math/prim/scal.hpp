@@ -83,6 +83,7 @@
 #include <stan/math/prim/scal/fun/fill.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/fmax.hpp>
+#include <stan/math/prim/scal/fun/fmin.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
