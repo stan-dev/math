@@ -24,8 +24,6 @@ namespace stan {
             check_nonzero_size("matrix_exp", "input matrix", A);
             check_square("matrix_exp", "input matrix", A);
 
-            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B;
-
             return A.cols() == 2 ? matrix_exp_2x2(A) : matrix_exp_pade(A);
        }
 
