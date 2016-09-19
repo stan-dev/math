@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_TGAMMA_HPP
 
 #include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
@@ -11,7 +12,7 @@ namespace stan {
       class tgamma_vari : public op_v_vari {
       public:
         explicit tgamma_vari(vari* avi) :
-          op_v_vari(boost::math::tgamma(avi->val_), avi) {
+          op_v_vari(tgamma(avi->val_), avi) {
         }
         void chain() {
           avi_->adj_ += adj_ * val_ * boost::math::digamma(avi_->val_);
@@ -21,8 +22,6 @@ namespace stan {
 
     /**
      * Return the Gamma function applied to the specified variable (C99).
-     *
-     * See boost::math::tgamma() for the double-based version.
      *
      * The derivative with respect to the argument is
      *
