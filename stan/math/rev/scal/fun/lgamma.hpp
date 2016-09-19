@@ -3,9 +3,9 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <valarray>
 
 namespace stan {
   namespace math {
@@ -33,8 +33,7 @@ namespace stan {
      * @return Log gamma of the variable.
      */
     inline var lgamma(const var& a) {
-      double lgamma_a = boost::math::lgamma(a.val());
-      return var(new lgamma_vari(lgamma_a, a.vi_));
+      return var(new lgamma_vari(lgamma(a.val()), a.vi_));
     }
 
   }

@@ -7,6 +7,8 @@ namespace stan {
   namespace math {
 
     /**
+     * Return the natural logarithm of the gamma function applied to
+     * the specified argument.
      *
        \f[
        \mbox{lgamma}(x) =
@@ -25,7 +27,9 @@ namespace stan {
          \textrm{NaN} & \mbox{if } x = \textrm{NaN}
        \end{cases}
     \f]
-    * @throws domain_error if x is at pole
+    *
+    * @param x Argument.
+    * @return Log of the gamma function applied to argument.
     */
     inline double lgamma(double x) {
       return boost::math::lgamma(x);
