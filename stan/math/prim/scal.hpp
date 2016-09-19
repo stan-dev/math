@@ -91,6 +91,7 @@
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/hypot.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/identity_free.hpp>
