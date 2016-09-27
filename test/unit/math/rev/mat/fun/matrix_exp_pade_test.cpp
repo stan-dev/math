@@ -96,3 +96,63 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
     }   					   
 
 }
+
+TEST(MathMatrix, matrix_exp_10x10) {
+
+	using stan::math::matrix_v;
+	using Eigen::Matrix;
+	using Eigen::Dynamic;
+	using stan::math::var;
+
+	int size = 10;
+	srand(1);
+	Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
+	  I = Eigen::MatrixXd::Identity(size, size);
+	int col1, col2;
+	for(int i = 0; i < 5 * size; i++) {
+		col1 = rand() % size;
+		col2 = rand() % size;
+		while(col1 == col2) col2 = rand() % size;
+		S.col(col1) += S.col(col2) * std::pow(-1, rand());
+	}
+	Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
+	
+	Matrix<double, Dynamic, Dynamic> diag_elements(1, size);
+	diag_elements.setRandom();
+		
+	for (size_t k = 0; k < size; k++) {
+		for (size_t l = 0; l < size; l++) {
+		
+			matrix_v diag_elements_v = diag_elements.cast<var>();
+			matrix_v exp_diag_elements = stan::math::exp(diag_elements_v);
+
+			matrix_v A = S.cast<var>() * diag_elements_v.asDiagonal()
+			  * S_inv.cast<var>(),
+			  exp_A = S.cast<var>() * exp_diag_elements.asDiagonal()
+			    * S_inv.cast<var>(),
+			  expm_A = stan::math::matrix_exp_pade(A);
+
+			if (exp_A(k, l).val() == 0)
+			  EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), 5e-10);
+			else if (stan::math::abs(exp_A(k, l)) < 1e-10)
+			  EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), 1e-11);
+			else EXPECT_FLOAT_EQ(exp_A(k, l).val(), expm_A(k, l).val());
+
+			AVEC x(size, 0);
+			for(int i = 0; i < size; i++) x[i] = diag_elements_v(i);
+			VEC g;
+			expm_A(k, l).grad(x, g);
+			matrix_v dA(size, size), dA_exp(size, size);
+
+			for(int i = 0; i < size; i++) {
+				dA.setZero();
+				dA(i, i) = exp(x[i]);
+				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
+
+				if (dA_exp(k, l) < 1e-10)
+				  EXPECT_NEAR(dA_exp(k, l).val(), g[i], 1e-10);
+				else EXPECT_FLOAT_EQ(dA_exp(k, l).val(), g[i]);
+			}
+		}
+	}		
+}

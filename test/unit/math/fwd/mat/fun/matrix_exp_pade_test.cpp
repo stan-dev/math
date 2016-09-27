@@ -108,3 +108,52 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
 	EXPECT_FLOAT_EQ(-631.90590, output(2,1).d_);
 	EXPECT_FLOAT_EQ(-168.14036, output(2,2).d_);
 }
+
+TEST(MathMatrix, matrix_exp_10x10) {
+
+	using stan::math::matrix_fd;
+    using stan::math::fvar;
+    using Eigen::Matrix;
+    using Eigen::Dynamic;
+    
+    int size = 10;
+    srand(1); // set seed
+    Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
+      I = Eigen::MatrixXd::Identity(size, size);
+    int col1, col2;
+    for(int i = 0; i < 5 * size; i++) {
+    	col1 = rand() % size;
+    	col2 = rand() % size;
+    	while(col1 == col2) col2 = rand() % size;
+    	S.col(col1) += S.col(col2) * std::pow(-1, rand());
+    }
+    Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
+    Matrix<double, 1, Dynamic> diag_elements_d(size);
+    diag_elements_d.setRandom();
+    matrix_fd diag_elements = diag_elements_d.cast<fvar<double> >();
+    for(int i = 0; i < size; i++) diag_elements(i).d_ = 1.0;
+
+    Matrix<double, Dynamic, Dynamic> exp_diag_elements_d =
+      stan::math::exp(diag_elements_d),
+      exp_A = S * exp_diag_elements_d.asDiagonal() * S_inv;
+    
+    matrix_fd A = S.cast<fvar<double> >() * diag_elements.asDiagonal()
+      * S_inv.cast<fvar<double> >(),
+      expm_A = stan::math::matrix_exp_pade(A);
+
+    // Note: because of the way of matrix was constructed, 
+	// derivative should be the same as value (same case
+	// as in the previous test).
+    for(int i = 0; i < size; i++) {
+    	for(int j = 0; j < size; j++) {
+    		if (std::abs(exp_A(i, j)) < 1e-10) {
+    			EXPECT_NEAR(exp_A(i, j), expm_A(i, j).val_, 1e-11);
+    			EXPECT_NEAR(exp_A(i, j), expm_A(i, j).d_, 1e-11);
+    		}
+    		else {
+    			EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j).val_);
+    			EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j).d_);
+    		}
+    	}
+    }
+}
