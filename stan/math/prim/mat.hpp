@@ -108,7 +108,6 @@
 #include <stan/math/prim/mat/fun/erfc.hpp>
 #include <stan/math/prim/mat/fun/exp.hpp>
 #include <stan/math/prim/mat/fun/expm1.hpp>
-#include <stan/math/prim/mat/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/fun/factor_U.hpp>
 #include <stan/math/prim/mat/fun/fill.hpp>
@@ -127,7 +126,7 @@
 #include <stan/math/prim/mat/fun/inv_sqrt.hpp>
 #include <stan/math/prim/mat/fun/inv_square.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/fun/lgamma.hpp>
+//#include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log10.hpp>
 #include <stan/math/prim/mat/fun/log1m.hpp>
