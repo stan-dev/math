@@ -77,7 +77,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
 	for(int i = 0; i < size; i++) {
 		for(int j = 0; j < size; j++) {
 			if (std::abs(exp_A(i, j)) < 1e-10)
-			  EXPECT_NEAR(exp_A(i, j), expm_A(i, j), 1e-10);
+			  EXPECT_NEAR(exp_A(i, j), expm_A(i, j), 1e-11);
 			else EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j));
 		}
 	}

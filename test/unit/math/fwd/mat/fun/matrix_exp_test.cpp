@@ -117,7 +117,7 @@ TEST(MathMatrix, matrix_exp_10x10) {
     using Eigen::Matrix;
     using Eigen::Dynamic;
     
-    int size = 10;
+    int size = 100;
     srand(1); // set seed
     Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
       I = Eigen::MatrixXd::Identity(size, size);

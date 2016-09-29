@@ -90,3 +90,30 @@ TEST(MathMatrix, matrix_exp_exceptions) {
     EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
     EXPECT_THROW(matrix_exp(m2), std::invalid_argument);   
 }
+
+TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
+
+	// Code to showcase how dealing with very small
+	// numbers ( < 1e-10) can increase the relative
+	// error. That is why the conditions for small 
+	// numbers are laxed (results agree within 1e-10,
+	// as oppose to using relative error). 
+
+    using stan::math::mdivide_right;
+
+    Matrix<double, Dynamic, Dynamic> m(2, 2), exp_m(2, 2), D(2, 2),
+      A(2, 2), exp_A(2, 2), D_m(2, 2), D_expm(2, 2);
+    m << 1e-13, 0, 0, 1e-15;
+    D << 1, 2, 3, 4;
+    exp_m << exp(1e-13), 0, 0, exp(1e-15); 
+    D_m = D * m;
+    A = mdivide_right(D_m, D);
+    D_expm = D * exp_m;
+
+    /*     
+    std::cout << std::endl;
+    std::cout << mdivide_right(D_expm, D) << std::endl << std::endl;
+    std::cout << stan::math::matrix_exp(A) << std::endl << std::endl;
+    std::cout << stan::math::matrix_exp_pade(A) << std::endl << std::endl;
+    */
+}

@@ -150,7 +150,7 @@ TEST(MathMatrix, matrix_exp_10x10) {
 				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
 
 				if (dA_exp(k, l) < 1e-10)
-				  EXPECT_NEAR(dA_exp(k, l).val(), g[i], 1e-10);
+				  EXPECT_NEAR(dA_exp(k, l).val(), g[i], 1e-11);
 				else EXPECT_FLOAT_EQ(dA_exp(k, l).val(), g[i]);
 			}
 		}
