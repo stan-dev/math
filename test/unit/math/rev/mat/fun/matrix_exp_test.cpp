@@ -51,6 +51,24 @@ TEST(MathMatrix, matrix_exp_2x2) {
  
 }
 
+TEST(MathMatrix, matrix_exp_2x2_2) {
+
+	// make sure matrix_exp doesn't use matrix_exp_2x2,
+	// which would return NaN for this matrix
+	// Compare to result from http://comnuan.com/cmnn01015/
+	// Don't test derivatives, since goal is to see that 
+	// matrix_exp picks the right algorithm
+	stan::math::matrix_v m(2, 2), exp_m(2, 2);
+	
+	m << -0.999984, 0.511211,
+	     -0.736924, -0.0826997;
+	
+	exp_m << 0.2746483852, 0.2893267425,
+	         -0.4170720513, 0.7937977746;
+	         
+	expect_matrix_eq(exp_m, stan::math::matrix_exp(m));
+}
+
 TEST(MathMatrix, matrix_exp_3x3) {
 
 	using stan::math::matrix_v;

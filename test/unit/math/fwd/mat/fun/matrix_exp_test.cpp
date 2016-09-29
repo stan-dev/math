@@ -65,6 +65,34 @@ TEST(MathMatrix, matrix_exp_2x2) {
 
 }
 
+TEST(MathMatrix, matrix_exp_2x2_2) {
+
+    using stan::math::matrix_fd;
+    using stan::math::fvar;
+    
+    // make sure matrix_exp doesn't use matrix_exp_2x2,
+	// which would return NaN for this matrix
+	// Compare to result from http://comnuan.com/cmnn01015/
+	// Don't test derivatives, since goal is to see that 
+	// matrix_exp picks the right algorithm
+    fvar<double> a, b, c, d;
+    a.val_ = -0.999984;
+    b.val_ = 0.511211;
+    c.val_ = -0.736924;
+    d.val_ = -0.0826997;
+    
+    matrix_fd input(2, 2);
+    input << a, b, c, d;
+    
+    matrix_fd output;
+    output = matrix_exp(input);
+    
+    EXPECT_FLOAT_EQ(0.2746483852, output(0,0).val_);
+    EXPECT_FLOAT_EQ(0.2893267425, output(0,1).val_);
+    EXPECT_FLOAT_EQ(-0.4170720513, output(1,0).val_);
+    EXPECT_FLOAT_EQ(0.7937977746, output(1,1).val_);
+}
+
 TEST(MathMatrix, matrix_exp_3x3) {
 
 	using stan::math::matrix_fd;
