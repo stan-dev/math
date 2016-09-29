@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ROUND_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <cmath>
+#include <math.h>
 
 namespace stan {
   namespace math {
@@ -16,7 +16,7 @@ namespace stan {
     struct round_fun {
       template <typename T>
       static inline T fun(const T& x) {
-        using std::round;
+        using ::round;
         return round(x);
       }
     };
