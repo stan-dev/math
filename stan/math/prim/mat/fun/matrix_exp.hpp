@@ -25,7 +25,7 @@ namespace stan {
 
             return (A.cols() == 2 &&
               (A(0, 0) - A(1, 1)) * (A(0, 0) - A(1, 1)) + 4 * A(0, 1) *
-                A(1, 0) >= 0)
+                A(1, 0) > 0)
               ? matrix_exp_2x2(A) : matrix_exp_pade(A);
        }
 
