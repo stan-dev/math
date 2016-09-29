@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_TGAMMA_HPP
 #define STAN_MATH_REV_SCAL_FUN_TGAMMA_HPP
 
-#include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/rev/core.hpp>
 
@@ -15,7 +15,7 @@ namespace stan {
           op_v_vari(tgamma(avi->val_), avi) {
         }
         void chain() {
-          avi_->adj_ += adj_ * val_ * boost::math::digamma(avi_->val_);
+          avi_->adj_ += adj_ * val_ * digamma(avi_->val_);
         }
       };
     }
@@ -28,9 +28,6 @@ namespace stan {
      * \f$\frac{d}{dx} \Gamma(x) = \Gamma(x) \Psi^{(0)}(x)\f$
      *
      * where \f$\Psi^{(0)}(x)\f$ is the digamma function.
-     *
-     * See boost::math::digamma() for the double-based version.
-     *
      *
        \f[
        \mbox{tgamma}(x) =

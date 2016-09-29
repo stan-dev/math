@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
@@ -32,7 +33,7 @@ namespace stan {
     * @return Log of the gamma function applied to argument.
     */
     inline double lgamma(double x) {
-      return boost::math::lgamma(x);
+      return boost::math::lgamma(x, boost_policy_t());
     }
 
   }

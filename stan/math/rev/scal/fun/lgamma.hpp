@@ -3,9 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
   namespace math {
@@ -17,7 +16,7 @@ namespace stan {
           op_v_vari(value, avi) {
         }
         void chain() {
-          avi_->adj_ += adj_ * boost::math::digamma(avi_->val_);
+          avi_->adj_ += adj_ * digamma(avi_->val_);
         }
       };
     }
