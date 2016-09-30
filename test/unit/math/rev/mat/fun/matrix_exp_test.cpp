@@ -40,7 +40,7 @@ TEST(MathMatrix, matrix_exp_2x2) {
     		AVAR exp_a = exp(a), exp_b = exp(b);
     		dm1_exp_da << -2 * exp_a, 1.5 * exp_a, -4 * exp_a, 3 * exp_a;
     		dm1_exp_db << 3 * exp_b, -1.5 * exp_b, 4 * exp_b, -2 * exp_b;
-    
+
     		AVEC x = createAVEC(a, b);
     		VEC g;
     		m1_exp(k, l).grad(x, g);
@@ -99,21 +99,24 @@ TEST(MathMatrix, matrix_exp_3x3) {
     		dm1_exp_dc << -15 * exp_c, 12 * exp_c, 3 * exp_c,
     					  -20 * exp_c, 16 * exp_c, 4 * exp_c,
     					  0, 0, 0;
-    		
+
     		AVEC x = createAVEC(a, b, c);
     		VEC g;
     		m1_exp(k, l).grad(x, g);
- 
- 			double rel_err = dm1_exp_da.cwiseAbs().maxCoeff().val();
+
+ 			double rel_err = std::max(dm1_exp_da.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[0])) * 1e-10;
  			EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], rel_err);
- 			
- 			rel_err = dm1_exp_db.cwiseAbs().maxCoeff().val();
+
+ 			rel_err = std::max(dm1_exp_db.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[1])) * 1e-10;
  			EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], rel_err);
- 			
- 			rel_err = dm1_exp_dc.cwiseAbs().maxCoeff().val();
+
+ 			rel_err = std::max(dm1_exp_dc.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[2])) * 1e-10;
  			EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], rel_err);
     	}
-    }   					   
+    }
 
 }
 
@@ -160,15 +163,18 @@ TEST(MathMatrix, matrix_exp_10x10) {
 
 			AVEC x(size, 0);
 			for(int i = 0; i < size; i++) x[i] = diag_elements_v(i);
-			VEC g;
+			VEC g, g_abs;
 			expm_A(k, l).grad(x, g);
+			g_abs.resize(g.size());
+			for(int i = 0; i < g.size(); i++) g_abs[i] = std::abs(g[i]);
 			matrix_v dA(size, size), dA_exp(size, size);
 			
 			for(int i = 0; i < size; i++) {
 				dA.setZero();
 				dA(i, i) = exp(x[i]);
 				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
-				rel_err = dA_exp.cwiseAbs().maxCoeff().val();
+				rel_err = std::max(dA_exp.cwiseAbs().maxCoeff().val(),
+				  stan::math::max(g_abs)) * 1e-10;
 
 				EXPECT_NEAR(dA_exp(k, l).val(), g[i], rel_err);
 			}

@@ -27,9 +27,9 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
     	for (size_t l = 0; l < 2; l++) {
 
     		matrix_v m1(2,2), m2(2,2), m1_exp;
-    
+
     		AVAR a = -1.0, b = -17.0;
-   
+
     		m1 << -2*a + 3*b, 1.5*a - 1.5*b, -4*a + 4*b, 3*a - 2*b;
    			m2 << -.735759, .551819, -1.471518, 1.103638;
     		m1_exp = stan::math::matrix_exp_pade(m1);
@@ -38,7 +38,7 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
 			matrix_v dm1_exp_da(2,2), dm1_exp_db(2,2);
     		dm1_exp_da << -2*exp(a), 1.5*exp(a), -4*exp(a), 3*exp(a);
     		dm1_exp_db << 3*exp(b), -1.5*exp(b), 4*exp(b), -2*exp(b);
-    
+
     		AVEC x = createAVEC(a, b);
     		VEC g;
     		m1_exp(k, l).grad(x, g);
@@ -57,7 +57,7 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
 		for (size_t l = 0; l < 3; l++) {
 
 			AVAR a = -1.0, b = 2.0, c = 1.0;
-			
+
 			matrix_v m1(3,3), m2(3,3), m1_exp;
 			m1 << -24*a +40*b - 15*c, 18*a - 30*b + 12*c, 5*a - 8*b + 3*c,
     		      20*b - 20*c, -15*b + 16*c, -4*b +4*c,
@@ -67,7 +67,7 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
     			  842.54120, -631.90590, -168.14036;
     		m1_exp = stan::math::matrix_exp_pade(m1);
     		expect_matrix_eq(m2, m1_exp);
-    		
+
     		matrix_v dm1_exp_da(3,3), dm1_exp_db(3,3), dm1_exp_dc(3,3);
     		AVAR exp_a = exp(a), exp_b = exp(b), exp_c = exp(c);
     		dm1_exp_da << -24 * exp_a, 18 * exp_a, 5 * exp_a,
@@ -84,14 +84,17 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
     		VEC g;
     		m1_exp(k, l).grad(x, g);
             
-            if (dm1_exp_da(k, l) == 0) EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], 5e-10);
-            else EXPECT_FLOAT_EQ(dm1_exp_da(k, l).val(), g[0]);
-            
-            if (dm1_exp_db(k, l) == 0) EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], 5e-10);
-            else EXPECT_FLOAT_EQ(dm1_exp_db(k, l).val(), g[1]);
-            
-            if (dm1_exp_dc(k, l) == 0) EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], 5e-10);
-            else EXPECT_FLOAT_EQ(dm1_exp_dc(k, l).val(), g[2]);
+ 			double rel_err = std::max(dm1_exp_da.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[0])) * 1e-10;
+ 			EXPECT_NEAR(dm1_exp_da(k, l).val(), g[0], rel_err);
+
+ 			rel_err = std::max(dm1_exp_db.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[1])) * 1e-10;
+ 			EXPECT_NEAR(dm1_exp_db(k, l).val(), g[1], rel_err);
+
+ 			rel_err = std::max(dm1_exp_dc.cwiseAbs().maxCoeff().val(),
+ 			  std::abs(g[2])) * 1e-10;
+ 			EXPECT_NEAR(dm1_exp_dc(k, l).val(), g[2], rel_err);
     	}
     }   					   
 
@@ -140,15 +143,18 @@ TEST(MathMatrix, matrix_exp_10x10) {
 
 			AVEC x(size, 0);
 			for(int i = 0; i < size; i++) x[i] = diag_elements_v(i);
-			VEC g;
+			VEC g, g_abs;
 			expm_A(k, l).grad(x, g);
+			g_abs.resize(g.size());
+			for(int i = 0; i < g.size(); i++) g_abs[i] = std::abs(g[i]);
 			matrix_v dA(size, size), dA_exp(size, size);
 
 			for(int i = 0; i < size; i++) {
 				dA.setZero();
 				dA(i, i) = exp(x[i]);
 				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
-				rel_err = dA_exp.cwiseAbs().maxCoeff().val();
+				rel_err = std::max(dA_exp.cwiseAbs().maxCoeff().val(),
+				  stan::math::max(g_abs)) * 1e-10;
 
 				EXPECT_NEAR(dA_exp(k, l).val(), g[i], rel_err);
 			}
