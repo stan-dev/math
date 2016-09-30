@@ -88,13 +88,12 @@ TEST(MathMatrix, matrix_exp_100x100) {
 	  exp_A = S * exp_diag_elements.asDiagonal() * S_inv,
 	  expm_A = stan::math::matrix_exp(A);
 
-	for(int i = 0; i < size; i++) {
-		for(int j = 0; j < size; j++) {
-			if (std::abs(exp_A(i, j)) < 1e-10)
-			  EXPECT_NEAR(exp_A(i, j), expm_A(i, j), 1e-11);
-			else EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j));
-		}
-	}
+	double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
+	  expm_A.cwiseAbs().maxCoeff());
+
+	for(int i = 0; i < size; i++)
+		for(int j = 0; j < size; j++)
+			EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }
 
 TEST(MathMatrix, matrix_exp_exceptions) {
@@ -121,12 +120,12 @@ TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
       A(2, 2), exp_A(2, 2), D_m(2, 2), D_expm(2, 2);
     m << 1e-13, 0, 0, 1e-15;
     D << 1, 2, 3, 4;
-    exp_m << exp(1e-13), 0, 0, exp(1e-15); 
+    exp_m << exp(1e-13), 0, 0, exp(1e-15);
     D_m = D * m;
     A = mdivide_right(D_m, D);
     D_expm = D * exp_m;
 
-    /*     
+    /*
     std::cout << std::endl;
     std::cout << mdivide_right(D_expm, D) << std::endl << std::endl;
     std::cout << stan::math::matrix_exp(A) << std::endl << std::endl;

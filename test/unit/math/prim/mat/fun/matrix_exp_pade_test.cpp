@@ -74,11 +74,10 @@ TEST(MathMatrix, matrix_exp_100x100) {
 	exp_A = S * exp_diag_elements.asDiagonal() * S_inv;
 	expm_A = stan::math::matrix_exp_pade(A);
 
-	for(int i = 0; i < size; i++) {
-		for(int j = 0; j < size; j++) {
-			if (std::abs(exp_A(i, j)) < 1e-10)
-			  EXPECT_NEAR(exp_A(i, j), expm_A(i, j), 1e-11);
-			else EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j));
-		}
-	}
+	double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
+	  expm_A.cwiseAbs().maxCoeff());
+
+	for(int i = 0; i < size; i++)
+		for(int j = 0; j < size; j++)
+			EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }

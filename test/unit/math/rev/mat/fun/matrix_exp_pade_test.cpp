@@ -132,11 +132,11 @@ TEST(MathMatrix, matrix_exp_10x10) {
 			    * S_inv.cast<var>(),
 			  expm_A = stan::math::matrix_exp_pade(A);
 
-			if (exp_A(k, l).val() == 0)
-			  EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), 5e-10);
-			else if (stan::math::abs(exp_A(k, l)) < 1e-10)
-			  EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), 1e-11);
-			else EXPECT_FLOAT_EQ(exp_A(k, l).val(), expm_A(k, l).val());
+			double rel_err = 1e-10 *
+			  std::max(exp_A.cwiseAbs().maxCoeff().val(),
+			  expm_A.cwiseAbs().maxCoeff().val());
+
+	        EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), rel_err);
 
 			AVEC x(size, 0);
 			for(int i = 0; i < size; i++) x[i] = diag_elements_v(i);
@@ -148,10 +148,9 @@ TEST(MathMatrix, matrix_exp_10x10) {
 				dA.setZero();
 				dA(i, i) = exp(x[i]);
 				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
+				rel_err = dA_exp.cwiseAbs().maxCoeff().val();
 
-				if (dA_exp(k, l) < 1e-10)
-				  EXPECT_NEAR(dA_exp(k, l).val(), g[i], 1e-11);
-				else EXPECT_FLOAT_EQ(dA_exp(k, l).val(), g[i]);
+				EXPECT_NEAR(dA_exp(k, l).val(), g[i], rel_err);
 			}
 		}
 	}		

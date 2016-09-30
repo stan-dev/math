@@ -138,7 +138,7 @@ TEST(MathMatrix, matrix_exp_3x3) {
 	EXPECT_FLOAT_EQ(-168.14036, output(2,2).d_);
 }
 
-TEST(MathMatrix, matrix_exp_10x10) {
+TEST(MathMatrix, matrix_exp_100x100) {
 
 	using stan::math::matrix_fd;
     using stan::math::fvar;
@@ -173,16 +173,15 @@ TEST(MathMatrix, matrix_exp_10x10) {
     // Note: because of the way of matrix was constructed, 
 	// derivative should be the same as value (same case
 	// as in the previous test).
+	double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
+	  expm_A.cwiseAbs().maxCoeff().val_),
+	  rel_err_d = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
+	  expm_A.cwiseAbs().maxCoeff().d_);
+	
     for(int i = 0; i < size; i++) {
     	for(int j = 0; j < size; j++) {
-    		if (std::abs(exp_A(i, j)) < 1e-10) {
-    			EXPECT_NEAR(exp_A(i, j), expm_A(i, j).val_, 1e-11);
-    			EXPECT_NEAR(exp_A(i, j), expm_A(i, j).d_, 1e-11);
-    		}
-    		else {
-    			EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j).val_);
-    			EXPECT_FLOAT_EQ(exp_A(i, j), expm_A(i, j).d_);
-    		}
+    		EXPECT_NEAR(exp_A(i, j), expm_A(i, j).val_, rel_err);
+    		EXPECT_NEAR(exp_A(i, j), expm_A(i, j).d_, rel_err_d);
     	}
     }
 }
