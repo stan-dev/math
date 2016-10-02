@@ -1,26 +1,37 @@
 #include <stan/math/prim/scal.hpp>
+#include <boost/math/special_functions/binomial.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 
-template <typename T_N, typename T_n>
-void test_choose(const T_N& N, const T_n& n) {
-  using stan::math::choose;
-  EXPECT_FLOAT_EQ(std::exp(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1)),
-                  choose(N, n));
+int round_to_int(double x) {
+  return static_cast<int>(x < 0 ? x - 0.5 : x + 0.5);
+}
+
+int finite_choose_test(int N, int n) {
+  using std::exp;
+  return round_to_int(exp(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1)));
 }
 
 
-TEST(MathFunctions, choose) {
+void test_choose_finite(int N, int n) {
   using stan::math::choose;
-  EXPECT_EQ(1, choose(2, 2));
-  EXPECT_EQ(2, choose(2, 1));
-  EXPECT_EQ(3, choose(3, 1));
-  EXPECT_EQ(3, choose(3, 2));
-  EXPECT_EQ(0, choose(2, 3));
-  for (int n = 0; n < 32; ++n) {
-    test_choose(32, n);
-  }
+  if (n > N)
+    EXPECT_EQ(0, choose(N, n));
+  else
+    EXPECT_EQ(finite_choose_test(N, n), choose(N, n));
+}
+
+TEST(MathFunctions, choose) {
+  for (int N = 0; N <= 32; ++N)
+    for (int n = 0; n <= 32; ++n)
+      test_choose_finite(N, n);
+}
+
+TEST(MathFunctions, chooseThrow) {
+  using stan::math::choose;
   EXPECT_THROW(choose(36, 18), std::domain_error);
+  EXPECT_THROW(choose(-2, 1), std::domain_error);
+  EXPECT_THROW(choose(2, -1), std::domain_error);
 }
 
 TEST(MathFunctions, choose_nan) {

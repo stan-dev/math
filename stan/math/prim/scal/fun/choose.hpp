@@ -8,6 +8,7 @@
 
 namespace stan {
   namespace math {
+
     /**
      * Return the binomial coefficient for the specified integer
      * arguments.
@@ -17,12 +18,13 @@ namespace stan {
      *
      * \f${n \choose k} = \frac{n!}{k! (n-k)!}\f$.
      *
-     * @param n total number of objects.
-     * @param k number of objects chosen.
-     * @return n choose k or 0 iff k > n unless it overflows
+     * @param n total number of objects
+     * @param k number of objects chosen
+     * @return n choose k or 0 iff k > n
+     * @throw std::domain_error if either argument is negative or the
+     * result will not fit in an int type
      */
-    inline int
-    choose(const int n, const int k) {
+    inline int choose(int n, int k) {
       using stan::math::check_nonnegative;
       using stan::math::check_less_or_equal;
       check_nonnegative("choose", "n", n);
@@ -31,7 +33,8 @@ namespace stan {
       const double choices = boost::math::binomial_coefficient<double>(n, k);
       check_less_or_equal("choose", "n choose k", choices,
                           std::numeric_limits<int>::max());
-      return std::floor(choices);
+      // won't get proper round until C++11
+      return static_cast<int>(choices < 0 ? choices - 0.5 : choices + 0.5);
     }
 
   }
