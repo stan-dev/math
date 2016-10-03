@@ -9,11 +9,12 @@ TEST(MathFunctions, lgamma) {
 
 TEST(MathFunctions, lgammaStanMathUsing) {
   using stan::math::lgamma;
-  EXPECT_THROW(lgamma(0.0), std::domain_error);
 }  
 
 TEST(MathFunctions, lgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::lgamma(nan));
+  EXPECT_PRED1(boost::math::isnan<double>,
+               stan::math::lgamma(0));
 }

@@ -29,8 +29,9 @@ namespace stan {
        \end{cases}
     \f]
     *
-    * @param x Argument.
-    * @return Log of the gamma function applied to argument.
+    * @param x argument
+    * @return natural logarithm of the gamma function applied to
+    * argument
     */
     inline double lgamma(double x) {
       return boost::math::lgamma(x, boost_policy_t());

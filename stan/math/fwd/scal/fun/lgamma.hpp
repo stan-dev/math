@@ -14,7 +14,7 @@ namespace stan {
      *
      * @tparam T Scalar type of autodiff variable.
      * @param x Argument.
-     * @return Log gamma function of argument.
+     * @return natural logarithm of the gamma function of argument.
      */
     template <typename T>
     inline fvar<T> lgamma(const fvar<T>& x) {
