@@ -120,14 +120,16 @@ TEST(MathMatrix, matrix_exp_3x3) {
 
 }
 
-TEST(MathMatrix, matrix_exp_10x10) {
+TEST(MathMatrix, matrix_exp_25x25) {
 
 	using stan::math::matrix_v;
 	using Eigen::Matrix;
 	using Eigen::Dynamic;
 	using stan::math::var;
 
-	int size = 10;
+	int size = 25;
+	
+	// Randomly construct input matrix
 	srand(1);
 	Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
 	  I = Eigen::MatrixXd::Identity(size, size);
@@ -139,49 +141,51 @@ TEST(MathMatrix, matrix_exp_10x10) {
 		S.col(col1) += S.col(col2) * std::pow(-1, rand());
 	}
 	Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
-	
 	Matrix<double, Dynamic, Dynamic> diag_elements(1, size);
 	diag_elements.setRandom();
-		
-	for (size_t k = 0; k < size; k++) {
-		for (size_t l = 0; l < size; l++) {
+	
+	// Compute matrix exponential (analytically and using function)
+	stan::math::start_nested();
+	matrix_v diag_elements_var = diag_elements.cast<var>();
+	matrix_v A = S.cast<var>() * diag_elements_var.asDiagonal()
+	  * S_inv.cast<var>();
+	matrix_v expm_A = stan::math::matrix_exp(A);
+	Matrix<double, Dynamic, Dynamic> exp_diag_elements =
+	  stan::math::exp(diag_elements);
+	Matrix<double, Dynamic, Dynamic> exp_A = S *
+	  exp_diag_elements.asDiagonal() * S_inv;
+	
+	double rel_err = 1e-10 *
+	  std::max(exp_A.cwiseAbs().maxCoeff(),
+	    expm_A.cwiseAbs().maxCoeff().val());
+	
+	// Test values
+	for (int i = 0; i < size; i++)
+	  for (int j = 0; j < size; j++)
+	    EXPECT_NEAR(exp_A(i, j) , expm_A(i, j).val(), rel_err);
 
-			matrix_v diag_elements_v = diag_elements.cast<var>();
-			matrix_v exp_diag_elements = stan::math::exp(diag_elements_v);
-
-			matrix_v A = S.cast<var>() * diag_elements_v.asDiagonal()
-			  * S_inv.cast<var>(),
-			  exp_A = S.cast<var>() * exp_diag_elements.asDiagonal()
-			    * S_inv.cast<var>(),
-			  expm_A = stan::math::matrix_exp(A);
-
-			double rel_err = 1e-10 *
-			  std::max(exp_A.cwiseAbs().maxCoeff().val(),
-			  expm_A.cwiseAbs().maxCoeff().val());
-
-	        EXPECT_NEAR(exp_A(k, l).val(), expm_A(k, l).val(), rel_err);
-
-			AVEC x(size, 0);
-			for(int i = 0; i < size; i++) x[i] = diag_elements_v(i);
-			VEC g, g_abs;
-			expm_A(k, l).grad(x, g);
-			g_abs.resize(g.size());
-			for(int i = 0; i < g.size(); i++) g_abs[i] = std::abs(g[i]);
-			matrix_v dA(size, size), dA_exp(size, size);
-			
-			for(int i = 0; i < size; i++) {
-				dA.setZero();
-				dA(i, i) = exp(x[i]);
-				dA_exp = S.cast<var>() * dA * S_inv.cast<var>();
-				rel_err = std::max(dA_exp.cwiseAbs().maxCoeff().val(),
-				  stan::math::max(g_abs)) * 1e-10;
-
-				EXPECT_NEAR(dA_exp(k, l).val(), g[i], rel_err);
-			}
-		}
-	}		
+	// Test adjoints
+	for (int i = 0; i < size; i++) {
+	  for (int j = 0; j < size; j++) {
+	    if (i > 0 || j > 0) stan::math::set_zero_all_adjoints_nested();
+	    grad(expm_A(i, j).vi_);
+	    std::vector<double> g_abs(size);
+	    for (int k = 0; k < size; k++)
+	    	g_abs[k] = std::abs(diag_elements_var(k).adj());
+	    Matrix<double, Dynamic, Dynamic> dA(size, size),
+	      dA_exp(size, size);
+	    for (int k = 0; k < size; k++) {
+          dA.setZero();
+          dA(k, k) = exp(diag_elements(k));
+          dA_exp = S * dA * S_inv;
+          rel_err = std::max(dA_exp.cwiseAbs().maxCoeff(),
+            stan::math::max(g_abs)) * 1e-10;
+	      EXPECT_NEAR(dA_exp(i, j), diag_elements_var(k).adj(), rel_err);
+        }
+      }		
+	}
 }
-		
+
 
 TEST(MathMatrix, matrix_exp_exceptions) {
     stan::math::matrix_v m1(0,0), m2(1,2);
