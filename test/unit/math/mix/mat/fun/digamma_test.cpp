@@ -73,7 +73,7 @@ struct digamma_test {
    */
   static std::vector<double> invalid_inputs() {
     return test::math::vector_builder<double>()
-      .add(-1).add(-12).add(-25).add(0).build();
+      .build();
   }
 
   /**
@@ -81,7 +81,7 @@ struct digamma_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(12).add(20).add(3).build();
+      .build();
   }
 
   /**
@@ -89,7 +89,8 @@ struct digamma_test {
    */
   static std::vector<int> int_invalid_inputs() {
     return test::math::vector_builder<int>()
-      .add(-1).add(-12).add(-25).add(0).build();
+      .add(-1).add(-12).add(-25)
+      .build();
   }
 };
 

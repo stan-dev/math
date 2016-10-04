@@ -39,15 +39,9 @@ TEST(AgradRev,atanh_neg_1) {
 }
 
 TEST(AgradRev,atanh_out_of_bounds) {
-  double inf = std::numeric_limits<double>::infinity();
-  AVAR a =  1.0 + stan::math::EPSILON;
-  AVAR b = -1.0 - stan::math::EPSILON;
-  AVAR c =  inf;
-  AVAR d = -inf;
-  EXPECT_TRUE(boost::math::isnan(atanh(a).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(b).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(c).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(d).val()));
+  using stan::math::atanh;
+  EXPECT_THROW(atanh(AVAR(-2)), std::domain_error);
+  EXPECT_THROW(atanh(AVAR(1001.2)), std::domain_error);
 }
 
 struct atanh_fun {

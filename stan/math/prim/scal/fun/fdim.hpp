@@ -3,35 +3,32 @@
 
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <math.h>
-#include <cmath>
 #include <limits>
 
 namespace stan {
   namespace math {
 
     /**
-     * The positive difference function (C99).
+     * Return the positive difference of the specified values (C++11).
      *
      * The function is defined by
      *
-     * <code>fdim(a, b) = (a > b) ? (a - b) : 0.0</code>.
+     * <code>fdim(x, y) = (x > y) ? (x - y) : 0</code>.
      *
-     * @param a First value.
-     * @param b Second value.
-     * @return Returns min(a - b, 0.0).
+     * @param x First value.
+     * @param y Second value.
+     * @return max(x- y, 0)
      */
     template <typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
-    fdim(T1 a, T2 b) {
-      using ::fdim;
+    fdim(T1 x, T2 y) {
+      typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
       using std::numeric_limits;
-      using boost::math::tools::promote_args;
-      if (is_nan(a) || is_nan(b))
-        return numeric_limits<typename promote_args<T1, T2>::type>::quiet_NaN();
-      return fdim(a, b);
+      if (is_nan(x) || is_nan(y))
+        return numeric_limits<return_t>::quiet_NaN();
+      return (x <= y) ? 0 : x - y;
     }
+
   }
 }
-
 #endif

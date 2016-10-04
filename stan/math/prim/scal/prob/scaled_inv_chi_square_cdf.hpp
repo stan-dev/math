@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
@@ -80,7 +81,6 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      using boost::math::tgamma;
       using std::exp;
       using std::pow;
 
