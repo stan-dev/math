@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_SCAL_FUN_LOG_FALLING_FACTORIAL_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
 #include <limits>
 
 namespace stan {
@@ -25,10 +25,10 @@ namespace stan {
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
             avi_->adj_ += adj_
-              * (boost::math::digamma(avi_->val_ + 1)
-                 - boost::math::digamma(avi_->val_ - bvi_->val_ + 1));
+              * (digamma(avi_->val_ + 1)
+                 - digamma(avi_->val_ - bvi_->val_ + 1));
             bvi_->adj_ += adj_
-              * boost::math::digamma(avi_->val_ - bvi_->val_ + 1);
+              * digamma(avi_->val_ - bvi_->val_ + 1);
           }
         }
       };
@@ -44,8 +44,8 @@ namespace stan {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_
-              * (boost::math::digamma(avi_->val_ + 1)
-                 - boost::math::digamma(avi_->val_ - bd_ + 1));
+              * (digamma(avi_->val_ + 1)
+                 - digamma(avi_->val_ - bd_ + 1));
         }
       };
 
@@ -60,7 +60,7 @@ namespace stan {
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             bvi_->adj_ += adj_
-              * boost::math::digamma(ad_ - bvi_->val_ + 1);
+              * digamma(ad_ - bvi_->val_ + 1);
         }
       };
     }

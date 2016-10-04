@@ -20,7 +20,7 @@ namespace stan {
      */
     template <typename T>
     inline typename boost::math::tools::promote_args<T>::type
-    exp2(const T y) {
+    exp2(const T& y) {
       using std::pow;
       return pow(2.0, y);
     }

@@ -3,8 +3,7 @@
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <math.h>
-#include <stdexcept>
+#include <cmath>
 
 namespace stan {
   namespace math {
