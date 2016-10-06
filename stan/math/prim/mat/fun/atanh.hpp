@@ -12,10 +12,10 @@ namespace stan {
      */
     struct atanh_fun {
       /**
-       * Return the inverse hypberbolic cosine of the specified argument.
+       * Return the inverse hypberbolic tangent of the specified argument.
        *
        * @param x Argument.
-       * @return Inverse hyperbolic cosine of the argument.
+       * @return Inverse hyperbolic tangent of the argument.
        * @tparam T Argument type.
        */
       template <typename T>

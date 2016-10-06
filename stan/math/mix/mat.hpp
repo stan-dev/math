@@ -19,6 +19,7 @@
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/atanh.hpp>
 #include <stan/math/prim/mat/fun/exp2.hpp>
+#include <stan/math/prim/mat/fun/log1m_inv_logit.hpp>
 
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 
