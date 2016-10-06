@@ -13,13 +13,14 @@
 #include <stan/math/fwd/mat.hpp>
 #include <stan/math/rev/mat.hpp>
 
-// FIXME(carpenter): include these in stan.hpp, too, for reverse?
-// these are here because they have to come after the general defs
+// FIXME(carpenter): sort out ordering to include in rev, etc.
+// have to come after scalar (fwd, rev) defs
 #include <stan/math/prim/mat/fun/acosh.hpp>
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/atanh.hpp>
 #include <stan/math/prim/mat/fun/exp2.hpp>
 #include <stan/math/prim/mat/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/mat/fun/log2.hpp>
 
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 
