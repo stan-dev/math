@@ -1,5 +1,4 @@
 #include <stan/math/mix/mat.hpp>
-#include <stan/math/prim/mat/fun/acosh.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>

@@ -13,6 +13,11 @@
 #include <stan/math/fwd/mat.hpp>
 #include <stan/math/rev/mat.hpp>
 
+// FIXME(carpenter): include these in stan.hpp, too, for reverse?
+#include <stan/math/prim/mat/fun/acosh.hpp>
+#include <stan/math/prim/mat/fun/asinh.hpp>
+#include <stan/math/prim/mat/fun/atanh.hpp>
+
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 
 #include <stan/math/mix/mat/functor/derivative.hpp>
