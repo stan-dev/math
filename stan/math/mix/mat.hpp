@@ -14,9 +14,11 @@
 #include <stan/math/rev/mat.hpp>
 
 // FIXME(carpenter): include these in stan.hpp, too, for reverse?
+// these are here because they have to come after the general defs
 #include <stan/math/prim/mat/fun/acosh.hpp>
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/atanh.hpp>
+#include <stan/math/prim/mat/fun/exp2.hpp>
 
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 
