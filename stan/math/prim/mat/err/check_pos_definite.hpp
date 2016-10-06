@@ -12,80 +12,63 @@
 #include <stan/math/prim/scal/err/check_positive_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+
 namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the specified square, symmetric
+     * Check if the specified square, symmetric
      * matrix is positive definite.
      *
      * @tparam T_y Type of scalar of the matrix
-     *
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
      * @param y Matrix to test
-     *
-     * @return <code>true</code> if the matrix is positive definite
      * @throw <code>std::invalid_argument</code> if the matrix is not square
-     *   or if the matrix has 0 size.
+     * or if the matrix has 0 size.
      * @throw <code>std::domain_error</code> if the matrix is not symmetric,
-     *   if it is not positive definite, or if any element is <code>NaN</code>.
+     * if it is not positive definite, or if any element is <code>NaN</code>.
      */
     template <typename T_y>
-    inline bool
-    check_pos_definite(
-      const char* function,
-      const char* name,
-      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
-    ) {
+    inline void check_pos_definite(const char* function, const char* name,
+                                   const Eigen::Matrix<T_y, -1, -1>& y) {
       check_symmetric(function, name, y);
       check_positive_size(function, name, "rows", y.rows());
-
       if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
-        domain_error(function, name, y, "is not positive definite: ");
+        domain_error(function, name, "is not positive definite.", "");
 
-      using Eigen::LDLT;
-      using Eigen::Matrix;
-      using Eigen::Dynamic;
-      LDLT< Matrix<double, Dynamic, Dynamic> > cholesky
-        = value_of_rec(y).ldlt();
+      Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
       if (cholesky.info() != Eigen::Success
           || !cholesky.isPositive()
           || (cholesky.vectorD().array() <= 0.0).any())
-        domain_error(function, name, y, "is not positive definite:\n");
+        domain_error(function, name, "is not positive definite.", "");
       check_not_nan(function, name, y);
-      return true;
     }
 
     /**
-     * Return <code>true</code> if the specified LDLT transform of a matrix
+     * Check if the specified LDLT transform of a matrix
      * is positive definite.
      *
      * @tparam Derived Derived type of the Eigen::LDLT transform.
-     *
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
      * @param cholesky Eigen::LDLT to test, whose progenitor 
      * must not have any NaN elements
-     *
-     * @return <code>true</code> if the matrix is positive definite
-     * @throw <code>std::domain_error</code> if the matrix is not positive definite.
+     * @throw <code>std::domain_error</code> if the matrix is not
+     * positive definite.
      */
     template <typename Derived>
-    inline bool
-    check_pos_definite(const char* function,
-                       const char* name,
-                       const Eigen::LDLT<Derived>& cholesky) {
+    inline void check_pos_definite(const char* function, const char* name,
+                                   const Eigen::LDLT<Derived>& cholesky) {
       if (cholesky.info() != Eigen::Success
           || !cholesky.isPositive()
           || !(cholesky.vectorD().array() > 0.0).all())
         domain_error(function, "LDLT decomposition of", " failed", name);
-      return true;
     }
 
     /**
-     * Return <code>true</code> if the specified LLT transform of a matrix
-     * is positive definite.
+     * Check if the specified LLT decomposition 
+     * transform resulted in <code>Eigen::Success</code>
      *
      * @tparam Derived Derived type of the Eigen::LLT transform.
      *
@@ -94,18 +77,15 @@ namespace stan {
      * @param cholesky Eigen::LLT to test, whose progenitor 
      * must not have any NaN elements
      *
-     * @return <code>true</code> if the matrix is positive definite
-     * @throw <code>std::domain_error</code> if the diagonal of the L matrix is not positive.
+     * @throw <code>std::domain_error</code> if the diagonal of the
+     * L matrix is not positive.
      */
     template <typename Derived>
-    inline bool
-    check_pos_definite(const char* function,
-                       const char* name,
-                       const Eigen::LLT<Derived>& cholesky) {
+    inline void check_pos_definite(const char* function, const char* name,
+                                   const Eigen::LLT<Derived>& cholesky) {
       if (cholesky.info() != Eigen::Success
           || !(cholesky.matrixLLT().diagonal().array() > 0.0).all())
-        domain_error(function, "Cholesky decomposition of", " failed", name);
-      return true;
+        domain_error(function, "Matrix", " is not positive definite", name);
     }
 
   }

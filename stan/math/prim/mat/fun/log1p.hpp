@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
-#include <boost/math/special_functions/log1p.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
-// #include <math.h>
 
 namespace stan {
   namespace math {
@@ -16,16 +12,15 @@ namespace stan {
      */
     struct log1p_fun {
       /**
-       * Return the natural log of one plus the specified argument.
+       * Return the inverse hypberbolic cosine of the specified argument.
        *
        * @param x Argument.
-       * @return Natural log of one plus the argument.
+       * @return Inverse hyperbolic cosine of the argument.
        * @tparam T Argument type.
        */
       template <typename T>
       static inline T fun(const T& x) {
-        using stan::math::log1p;
-        return log1p(x);
+        return stan::math::log1p(x);
       }
     };
 
@@ -40,9 +35,7 @@ namespace stan {
      * @return Elementwise log1p of members of container.
      */
     template <typename T>
-    inline typename 
-    boost::disable_if<boost::is_arithmetic<T>,
-                      typename apply_scalar_unary<log1p_fun, T>::return_t>::type
+    inline typename apply_scalar_unary<log1p_fun, T>::return_t
     log1p(const T& x) {
       return apply_scalar_unary<log1p_fun, T>::apply(x);
     }

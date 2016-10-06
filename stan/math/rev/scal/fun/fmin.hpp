@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_SCAL_FUN_FMIN_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>

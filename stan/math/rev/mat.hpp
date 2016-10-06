@@ -12,6 +12,7 @@
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
+#include <stan/math/rev/mat/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>
@@ -38,8 +39,6 @@
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
-#include <stan/math/rev/mat/fun/sort_asc.hpp>
-#include <stan/math/rev/mat/fun/sort_desc.hpp>
 #include <stan/math/rev/mat/fun/squared_distance.hpp>
 #include <stan/math/rev/mat/fun/stan_print.hpp>
 #include <stan/math/rev/mat/fun/sum.hpp>

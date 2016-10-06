@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/acosh.hpp>
+#include <stan/math/prim/scal/fun/acosh.hpp>
 
 namespace stan {
   namespace math {
@@ -20,8 +20,7 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
-        using boost::math::acosh;
-        return acosh(x);
+        return stan::math::acosh(x);
       }
     };
 

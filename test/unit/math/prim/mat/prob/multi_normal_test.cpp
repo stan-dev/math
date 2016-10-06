@@ -313,3 +313,13 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+TEST(multiNormalRng, nonPosDefErrorTest) {
+  using stan::math::multi_normal_rng;
+  Eigen::MatrixXd S(2,2);
+  S << 0, 1, 1, 0;  // not pos definite
+  Eigen::VectorXd mu(2);
+  mu << 1, 2;
+  boost::random::mt19937 rng;
+  EXPECT_THROW(multi_normal_rng(mu, S, rng), std::domain_error);
+}

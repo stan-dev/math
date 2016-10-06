@@ -9,23 +9,23 @@ TEST(AgradRevErrorHandlingScalar,CheckNotNan) {
   var x = 0;
   double x_d = 0;
  
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with finite x: " << x;
-  EXPECT_TRUE(check_not_nan(function, "x", x_d))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x_d))
     << "check_not_nan should be true with finite x: " << x_d;
   
   x = std::numeric_limits<var>::infinity();
   x_d = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with x = Inf: " << x;
-  EXPECT_TRUE(check_not_nan(function, "x", x_d))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x_d))
     << "check_not_nan should be true with x = Inf: " << x_d;
 
   x = -std::numeric_limits<var>::infinity();
   x_d = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_not_nan(function, "x", x))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with x = -Inf: " << x;
-  EXPECT_TRUE(check_not_nan(function, "x", x_d))
+  EXPECT_NO_THROW(check_not_nan(function, "x", x_d))
     << "check_not_nan should be true with x = -Inf: " << x_d;
 
   x = std::numeric_limits<var>::quiet_NaN();
@@ -47,7 +47,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(1U,stack_size);
-  EXPECT_TRUE(check_not_nan(function,"a",a));
+  EXPECT_NO_THROW(check_not_nan(function,"a",a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);
@@ -65,7 +65,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_TRUE(1U == stack_size);
-  EXPECT_TRUE(check_not_nan(function,"a",a));
+  EXPECT_NO_THROW(check_not_nan(function,"a",a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_TRUE(1U == stack_size_after_call);

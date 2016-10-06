@@ -9,7 +9,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the dimension of x1 is consistent
+     * Check if the dimension of x1 is consistent
      * with x2.
      *
      * Consistent size is defined as having the same size if vector-like or
@@ -24,11 +24,10 @@ namespace stan {
      * @param name2 Variable name (for error messages)
      * @param x2 Variable to check for consistent size
      *
-     * @return <code>true</code> if x1 and x2 have consistent sizes
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2>
-    inline bool check_consistent_sizes(const char* function,
+    inline void check_consistent_sizes(const char* function,
                                        const char* name1,
                                        const T1& x1,
                                        const char* name2,
@@ -36,12 +35,12 @@ namespace stan {
       using stan::is_vector;
       size_t max_size = std::max(is_vector<T1>::value * size_of(x1),
                                  is_vector<T2>::value * size_of(x2));
-      return check_consistent_size(function, name1, x1, max_size)
-        && check_consistent_size(function, name2, x2, max_size);
+      check_consistent_size(function, name1, x1, max_size);
+      check_consistent_size(function, name2, x2, max_size);
     }
 
     /**
-     * Return <code>true</code> if the dimension of x1, x2, and x3 are
+     * Check if the dimension of x1, x2, and x3 are
      * consistent.
      *
      * Consistent size is defined as having the same size if vector-like or
@@ -59,11 +58,10 @@ namespace stan {
      * @param name3 Variable name (for error messages)
      * @param x3 Variable to check for consistent size
      *
-     * @return <code>true</code> if x1, x2, and x3 have consistent sizes
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2, typename T3>
-    inline bool check_consistent_sizes(const char* function,
+    inline void check_consistent_sizes(const char* function,
                                        const char* name1,
                                        const T1& x1,
                                        const char* name2,
@@ -73,13 +71,13 @@ namespace stan {
       size_t max_size = std::max(is_vector<T1>::value * size_of(x1),
                                  std::max(is_vector<T2>::value * size_of(x2),
                                           is_vector<T3>::value * size_of(x3)));
-      return check_consistent_size(function, name1, x1, max_size)
-        && check_consistent_size(function, name2, x2, max_size)
-        && check_consistent_size(function, name3, x3, max_size);
+      check_consistent_size(function, name1, x1, max_size);
+      check_consistent_size(function, name2, x2, max_size);
+      check_consistent_size(function, name3, x3, max_size);
     }
 
     /**
-     * Return <code>true</code> if the dimension of x1, x2, x3, and x4
+     * Check if the dimension of x1, x2, x3, and x4
      * are consistent.
      *
      * Consistent size is defined as having the same size if
@@ -100,11 +98,10 @@ namespace stan {
      * @param name4 Variable name (for error messages)
      * @param x4 Variable to check for consistent size
      *
-     * @return <code>true</code> if x1, x2, x3, and x4 have consistent sizes
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2, typename T3, typename T4>
-    inline bool check_consistent_sizes(const char* function,
+    inline void check_consistent_sizes(const char* function,
                                        const char* name1,
                                        const T1& x1,
                                        const char* name2,
@@ -118,14 +115,14 @@ namespace stan {
                    std::max(is_vector<T2>::value * size_of(x2),
                             std::max(is_vector<T3>::value * size_of(x3),
                                      is_vector<T4>::value * size_of(x4))));
-      return check_consistent_size(function, name1, x1, max_size)
-        && check_consistent_size(function, name2, x2, max_size)
-        && check_consistent_size(function, name3, x3, max_size)
-        && check_consistent_size(function, name4, x4, max_size);
+      check_consistent_size(function, name1, x1, max_size);
+      check_consistent_size(function, name2, x2, max_size);
+      check_consistent_size(function, name3, x3, max_size);
+      check_consistent_size(function, name4, x4, max_size);
     }
     template <typename T1, typename T2, typename T3, typename T4,
               typename T5>
-    inline bool check_consistent_sizes(const char* function,
+    inline void check_consistent_sizes(const char* function,
                                        const char* name1,
                                        const T1& x1,
                                        const char* name2,
@@ -141,11 +138,11 @@ namespace stan {
                                           std::max(size_of(x3),
                                             std::max(size_of(x4),
                                                      size_of(x5)))));
-      return check_consistent_size(function, name1, x1, max_size)
-        && check_consistent_size(function, name2, x2, max_size)
-        && check_consistent_size(function, name3, x3, max_size)
-        && check_consistent_size(function, name4, x4, max_size)
-        && check_consistent_size(function, name5, x5, max_size);
+      check_consistent_size(function, name1, x1, max_size);
+      check_consistent_size(function, name2, x2, max_size);
+      check_consistent_size(function, name3, x3, max_size);
+      check_consistent_size(function, name4, x4, max_size);
+      check_consistent_size(function, name5, x5, max_size);
     }
 
   }

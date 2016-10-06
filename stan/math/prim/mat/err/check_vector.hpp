@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -12,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the matrix is either a
+     * Check if the matrix is either a
      * row vector or column vector.
      *
      * This function checks the runtime size of the matrix to check
@@ -26,20 +25,19 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param x Matrix
      *
-     * @return <code>true</code> if x either has 1 columns or 1 rows
      * @throw <code>std::invalid_argument</code> if x is not a row or column
      *   vector.
      */
     template <typename T, int R, int C>
-    inline bool check_vector(const char* function,
+    inline void check_vector(const char* function,
                              const char* name,
                              const Eigen::Matrix<T, R, C>& x) {
       if (R == 1)
-        return true;
+        return;
       if (C == 1)
-        return true;
+        return;
       if (x.rows() == 1 || x.cols() == 1)
-        return true;
+        return;
 
       std::ostringstream msg;
       msg << ") has " << x.rows() << " rows and "
@@ -50,7 +48,6 @@ namespace stan {
                        name,
                        typename scalar_type<T>::type(),
                        "(", msg_str.c_str());
-      return false;
     }
 
   }

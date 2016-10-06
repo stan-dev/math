@@ -26,7 +26,6 @@ TEST(AgradRev, rising_factorial_exceptions) {
   double a(1);
   AVAR b(-3.0);
   EXPECT_THROW(stan::math::rising_factorial(b,a), std::domain_error);
-  EXPECT_THROW(stan::math::rising_factorial(a,b), std::domain_error);
   EXPECT_THROW(stan::math::rising_factorial(b,b), std::domain_error);
 }
 

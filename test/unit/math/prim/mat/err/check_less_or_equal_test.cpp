@@ -16,15 +16,15 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual_Matrix) {
   // x_vec, high
   x_vec << -5, 0, 5;
   high = 10;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
   x_vec << -5, 0, 5;
   high = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
   x_vec << -5, 0, 5;
   high = 5;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
   
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = 5;
@@ -33,20 +33,20 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual_Matrix) {
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
   
   // x_vec, high_vec
   x_vec << -5, 0, 5;
   high_vec << 0, 5, 10;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
   x_vec << -5, 0, 5;
   high_vec << std::numeric_limits<double>::infinity(), 10, 10;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
   x_vec << -5, 0, 5;
   high_vec << 10, 10, 5;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
   
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, 10;
@@ -55,21 +55,21 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual_Matrix) {
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less_or_equal(function, "x", x_vec, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
   
   // x, high_vec
   x = -100;
   high_vec << 0, 5, 10;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
 
   x = 10;
   high_vec << 100, 200, std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less_or_equal(function, "x", x, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
 
   x = 5;
   high_vec << 100, 200, 5;
-  EXPECT_TRUE(check_less_or_equal(function, "x", x, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
   
   x = std::numeric_limits<double>::infinity();
   high_vec << 10, 20, 30;
@@ -80,7 +80,7 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual_Matrix) {
   high_vec << std::numeric_limits<double>::infinity(), 
     std::numeric_limits<double>::infinity(), 
     std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_less_or_equal(function, "x", x, high_vec));
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
 }
 
 TEST(ErrorHandlingScalar,CheckLessOrEqual_Matrix_one_indexed_message) {

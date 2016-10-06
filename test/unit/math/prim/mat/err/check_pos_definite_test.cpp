@@ -17,26 +17,26 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite) {
 
   y.resize(1,1);
   y << 1;
-  EXPECT_TRUE(check_pos_definite(function, "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", y));
 
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_1(y); 
-  EXPECT_TRUE(check_pos_definite(function, "y", llt_1));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", llt_1));
 
   Eigen::LDLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > ldlt_1 = y.ldlt(); 
-  EXPECT_TRUE(check_pos_definite(function, "y", ldlt_1));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_1));
 
   y.resize(3,3);
   y << 
     1, 0, 0,
     0, 1, 0,
     0, 0, 1;
-  EXPECT_TRUE(check_pos_definite(function, "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", y));
 
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_2(y); 
-  EXPECT_TRUE(check_pos_definite(function, "y", llt_2));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", llt_2));
 
   Eigen::LDLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > ldlt_2 = y.ldlt(); 
-  EXPECT_TRUE(check_pos_definite(function, "y", ldlt_2));
+  EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_2));
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
@@ -114,14 +114,13 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
     -1, 0, 0,
     0, -1, 0,
     0, 0, -1;
-  
-  expected_msg1_mat << "function: y is not positive definite:\n" << 
-    "-1  0  0\n 0 -1  0\n 0  0 -1";
+
+  expected_msg1_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg1_mat.str());
 
-  expected_msg1_llt << "function: Cholesky decomposition of y failed";
+  expected_msg1_llt << "function: Matrix y is not positive definite";
   Eigen::LLT<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> > llt_err1(y); 
   EXPECT_THROW_MSG(check_pos_definite(function, "y", llt_err1),
                    std::domain_error,
@@ -135,8 +134,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
   y <<
     1, 2, 
     2, 1; 
-  expected_msg2_mat << "function: y is not positive definite:\n" <<
-    "1 2\n2 1";
+  expected_msg2_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg2_mat.str());
@@ -152,8 +150,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
   y <<
     1, 1, 
     1, 1; 
-  expected_msg3_mat << "function: y is not positive definite:\n" <<
-    "1 1\n1 1";
+  expected_msg3_mat << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::domain_error,
                    expected_msg3_mat.str());
@@ -176,8 +173,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   y << nan;
 
   std::stringstream expected_msg;
-  expected_msg << "function: y is not positive definite: "
-               << nan;
+  expected_msg << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), 
                    std::domain_error,
                    expected_msg.str());
@@ -192,8 +188,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   y << 2, -1, 0,
     -1, 2, -1,
     0, -1, 2;
-  EXPECT_TRUE(check_pos_definite(function, 
-                                 "y", y));
+  EXPECT_NO_THROW(check_pos_definite(function, 
+                                     "y", y));
   for (int i = 0; i < y.rows(); i++)
     for (int j = 0; j < y.cols(); j++) {
       y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
@@ -226,8 +222,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
 
   y << 0, 0, 0, 0, 0, 0, 0, 0, 0;
   expected_msg.str("");
-  expected_msg << "function: y is not positive definite:\n"
-               << y;
+  expected_msg << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), 
                    std::domain_error,
                    expected_msg.str());

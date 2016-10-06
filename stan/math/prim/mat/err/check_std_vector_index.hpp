@@ -11,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the specified index is valid in std vector
+     * Check if the specified index is valid in std vector
      *
      * This check is 1-indexed by default. This behavior can be changed
      * by setting <code>stan::error_index::value</code>.
@@ -23,23 +23,21 @@ namespace stan {
      * @param y <code>std::vector</code> to test
      * @param i Index
      *
-     * @return <code>true</code> if the index is a valid in std vector.
      * @throw <code>std::out_of_range</code> if the index is out of range.
      */
     template <typename T>
-    inline bool check_std_vector_index(const char* function,
+    inline void check_std_vector_index(const char* function,
                                        const char* name,
                                        const std::vector<T>& y,
                                        int i) {
       if (i >= static_cast<int>(stan::error_index::value)
           && i < static_cast<int>(y.size() + stan::error_index::value))
-        return true;
+        return;
 
       std::stringstream msg;
       msg << " for " << name;
       std::string msg_str(msg.str());
       out_of_range(function, y.size(), i, msg_str.c_str());
-      return false;
     }
 
   }

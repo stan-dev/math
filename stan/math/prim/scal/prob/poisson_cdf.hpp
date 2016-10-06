@@ -11,8 +11,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -44,7 +44,6 @@ namespace stan {
       VectorView<const T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
-      using boost::math::tgamma;
       using std::exp;
       using std::pow;
       using std::exp;

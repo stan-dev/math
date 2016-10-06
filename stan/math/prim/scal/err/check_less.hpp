@@ -15,7 +15,7 @@ namespace stan {
     namespace {
       template <typename T_y, typename T_high, bool is_vec>
       struct less {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_high& high) {
@@ -31,13 +31,12 @@ namespace stan {
                            "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
 
       template <typename T_y, typename T_high>
       struct less<T_y, T_high, true> {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_high& high) {
@@ -53,13 +52,12 @@ namespace stan {
                                "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
     }
 
     /**
-     * Return <code>true</code> if <code>y</code> is strictly less
+     * Check if <code>y</code> is strictly less
      * than <code>high</code>.
      *
      * This function is vectorized and will check each element of
@@ -73,16 +71,15 @@ namespace stan {
      * @param y Variable to check
      * @param high Upper bound
      *
-     * @return <code>true</code> if y is strictly less than low.
      * @throw <code>domain_error</code> if y is not less than low
      *   or if any element of y or high is NaN.
      */
     template <typename T_y, typename T_high>
-    inline bool check_less(const char* function,
+    inline void check_less(const char* function,
                            const char* name,
                            const T_y& y,
                            const T_high& high) {
-      return less<T_y, T_high, is_vector_like<T_y>::value>
+      less<T_y, T_high, is_vector_like<T_y>::value>
         ::check(function, name, y, high);
     }
   }

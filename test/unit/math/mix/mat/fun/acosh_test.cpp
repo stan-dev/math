@@ -6,7 +6,6 @@
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <math.h>
 #include <vector>
 
 /**
@@ -30,7 +29,6 @@ struct acosh_test {
   template <typename R, typename T>
   static R apply(const T& x) {
     using stan::math::acosh;
-    using ::acosh;
     return acosh(x);
   }
 
