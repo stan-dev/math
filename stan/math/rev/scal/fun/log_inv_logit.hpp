@@ -16,13 +16,8 @@ namespace stan {
      * @return log inverse logit of the argument
      */
     inline var log_inv_logit(const var& u) {
-      using std::exp;
-      if (u < 0.0)
-        return u - log1p(exp(u));  // prevent underflow
-      return -log1p(exp(-u));
-
-      // return var(new precomp_v_vari(log_inv_logit(u.val()),
-      //                               u.vi_, inv_logit(-u.val())));
+      return var(new precomp_v_vari(log_inv_logit(u.val()),
+                                    u.vi_, inv_logit(-u.val())));
     }
 
   }

@@ -63,6 +63,7 @@
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/rev/scal/fun/logit.hpp>
 #include <stan/math/rev/scal/fun/log10.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/log1m_exp.hpp>
