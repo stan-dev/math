@@ -66,11 +66,13 @@
 #include <stan/math/rev/scal/fun/log10.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/log1m_exp.hpp>
+#include <stan/math/rev/scal/fun/log1m_inv_logit.hpp>
 #include <stan/math/rev/scal/fun/log1p.hpp>
 #include <stan/math/rev/scal/fun/log1p_exp.hpp>
 #include <stan/math/rev/scal/fun/log2.hpp>
 #include <stan/math/rev/scal/fun/log_diff_exp.hpp>
 #include <stan/math/rev/scal/fun/log_falling_factorial.hpp>
+#include <stan/math/rev/scal/fun/log_inv_logit.hpp>
 #include <stan/math/rev/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/scal/fun/log_sum_exp.hpp>

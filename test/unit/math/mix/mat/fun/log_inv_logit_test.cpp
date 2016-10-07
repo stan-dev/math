@@ -93,8 +93,6 @@ struct log_inv_logit_test {
   }
 };
 
-
-
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, log_inv_logit_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, log_inv_logit_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, log_inv_logit_test);
