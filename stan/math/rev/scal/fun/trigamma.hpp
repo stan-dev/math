@@ -3,6 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
+#include <stan/math/rev/scal/fun/floor.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 
 namespace stan {
   namespace math {
