@@ -17,7 +17,7 @@ namespace stan {
      * @param[in] u argument
      * @return base two logarithm of argument
      */
-    inline double log2(double u) { 
+    inline double log2(double u) {
       using std::log;
       return log(u) / LOG_2;
     }

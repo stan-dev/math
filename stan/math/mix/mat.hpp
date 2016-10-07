@@ -23,6 +23,8 @@
 #include <stan/math/prim/mat/fun/log2.hpp>
 #include <stan/math/prim/mat/fun/log_inv_logit.hpp>
 #include <stan/math/prim/mat/fun/logit.hpp>
+#include <stan/math/prim/mat/fun/Phi_approx.hpp>
+#include <stan/math/prim/mat/fun/trigamma.hpp>
 
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 

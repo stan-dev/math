@@ -97,6 +97,7 @@
 #include <stan/math/rev/scal/fun/tanh.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
 #include <stan/math/rev/scal/fun/tgamma.hpp>
+#include <stan/math/rev/scal/fun/trigamma.hpp>
 #include <stan/math/rev/scal/fun/trunc.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>

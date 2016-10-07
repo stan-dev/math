@@ -12,7 +12,7 @@ namespace stan {
      */
     struct logit_fun {
       /**
-       * Return the base log odds of the specified argument.
+       * Return the log odds of the specified argument.
        *
        * @tparam T argument type
        * @param x argument
