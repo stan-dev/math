@@ -172,6 +172,7 @@
 #include <stan/math/prim/scal/prob/bernoulli_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_rng.hpp>
+#include <stan/math/prim/scal/prob/bernoulli_logit_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_cdf.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_cdf_log.hpp>
