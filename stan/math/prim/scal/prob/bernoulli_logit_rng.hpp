@@ -16,6 +16,15 @@
 namespace stan {
   namespace math {
 
+    /**
+     * A Bernoulli random number generator which takes as its argument the
+     * often more convenient logit-parametrization.
+     * 
+     * @param t logit-transformed probability parameter.
+     * @param rng pseudorandom number generator.
+     * @tparam RNG Random number generator type.
+     * @return Bernoulli(logit^{-1}(t)) generated random number, either 0 or 1.
+     */
     template <class RNG>
     inline int
     bernoulli_logit_rng(const double t,
