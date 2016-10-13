@@ -11,7 +11,7 @@ namespace stan {
     double
     finite_diff_hess_helper(const F& f,
                             const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-                            const int lambda,
+                            int lambda,
                             double epsilon = 1e-03) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
