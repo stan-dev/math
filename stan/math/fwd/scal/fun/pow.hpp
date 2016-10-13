@@ -26,7 +26,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    pow(const double x1, const fvar<T>& x2) {
+    pow(double x1, const fvar<T>& x2) {
       using std::pow;
       using std::log;
       T u = pow(x1, x2.val_);
@@ -36,7 +36,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    pow(const fvar<T>& x1, const double x2) {
+    pow(const fvar<T>& x1, double x2) {
       using std::pow;
       using std::sqrt;
 

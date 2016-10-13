@@ -17,7 +17,7 @@ namespace stan {
      * @param x Input to square.
      * @return Square of input.
      */
-    inline double square(const double x) {
+    inline double square(double x) {
       return x * x;
     }
 

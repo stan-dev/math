@@ -18,9 +18,9 @@ namespace stan {
 
     template <class RNG>
     inline double
-    skew_normal_rng(const double mu,
-                    const double sigma,
-                    const double alpha,
+    skew_normal_rng(double mu,
+                    double sigma,
+                    double alpha,
                     RNG& rng) {
       boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 

@@ -117,7 +117,7 @@ namespace stan {
      * @return Floating pointer remainder of dividing the first variable by
      * the second scalar.
      */
-    inline var fmod(const var& a, const double b) {
+    inline var fmod(const var& a, double b) {
       return var(new fmod_vd_vari(a.vi_, b));
     }
 
@@ -134,7 +134,7 @@ namespace stan {
      * @return Floating pointer remainder of dividing first scalar by
      * the second variable.
      */
-    inline var fmod(const double a, const var& b) {
+    inline var fmod(double a, const var& b) {
       return var(new fmod_dv_vari(a, b.vi_));
     }
 

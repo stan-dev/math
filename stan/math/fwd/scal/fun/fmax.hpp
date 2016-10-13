@@ -46,7 +46,7 @@ namespace stan {
      * @return maximum of arguments, and if one is NaN return the other
      */
     template <typename T>
-    inline fvar<T> fmax(const double x1, const fvar<T>& x2) {
+    inline fvar<T> fmax(double x1, const fvar<T>& x2) {
       if (unlikely(is_nan(x1))) {
         if (is_nan(x2.val_))
           return fvar<T>(fmax(x1, x2.val_), NOT_A_NUMBER);
@@ -72,7 +72,7 @@ namespace stan {
      * @return maximum of arguments, and if one is NaN return the other
      */
     template <typename T>
-    inline fvar<T> fmax(const fvar<T>& x1, const double x2) {
+    inline fvar<T> fmax(const fvar<T>& x1, double x2) {
       if (unlikely(is_nan(x1.val_))) {
         if (is_nan(x2))
           return fvar<T>(fmax(x1.val_, x2), NOT_A_NUMBER);

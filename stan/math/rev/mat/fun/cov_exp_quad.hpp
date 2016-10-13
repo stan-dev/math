@@ -155,7 +155,7 @@ namespace stan {
        * @param l length scale
        */
       cov_exp_quad_vari(const std::vector<T_x>& x,
-                        const double sigma,
+                        double sigma,
                         const T_l& l)
         : vari(0.0),
           size_(x.size()),

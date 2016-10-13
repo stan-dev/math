@@ -48,7 +48,7 @@ namespace stan {
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
        */
-      inline void operator()(const double t, const std::vector<double>& y,
+      inline void operator()(double t, const std::vector<double>& y,
                              std::vector<double>& dy_dt) const {
         dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
       }
@@ -64,7 +64,7 @@ namespace stan {
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        */
       template <typename Derived1, typename Derived2>
-      void jacobian(const double t, const std::vector<double>& y,
+      void jacobian(double t, const std::vector<double>& y,
                     Eigen::MatrixBase<Derived1>& dy_dt,
                     Eigen::MatrixBase<Derived2>& Jy) const {
         using Eigen::Matrix;
@@ -103,7 +103,7 @@ namespace stan {
        * @param[out] Jtheta Jacobian of ODE RHS wrt to theta.
        */
       template <typename Derived1, typename Derived2>
-      void jacobian(const double t, const std::vector<double>& y,
+      void jacobian(double t, const std::vector<double>& y,
                     Eigen::MatrixBase<Derived1>& dy_dt,
                     Eigen::MatrixBase<Derived2>& Jy,
                     Eigen::MatrixBase<Derived2>& Jtheta) const {

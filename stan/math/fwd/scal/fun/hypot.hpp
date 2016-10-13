@@ -42,7 +42,7 @@ namespace stan {
      * and adjacent side lengths x1 and x2.
      */
     template <typename T>
-    inline fvar<T> hypot(const fvar<T>& x1, const double x2) {
+    inline fvar<T> hypot(const fvar<T>& x1, double x2) {
       using std::sqrt;
       T u = hypot(x1.val_, x2);
       return fvar<T>(u, (x1.d_ * x1.val_) / u);
@@ -62,7 +62,7 @@ namespace stan {
      * and adjacent side lengths x1 and x2.
      */
     template <typename T>
-    inline fvar<T> hypot(const double x1, const fvar<T>& x2) {
+    inline fvar<T> hypot(double x1, const fvar<T>& x2) {
       using std::sqrt;
       T u = hypot(x1, x2.val_);
       return fvar<T>(u, (x2.d_ * x2.val_) / u);

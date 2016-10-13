@@ -21,9 +21,9 @@ namespace stan {
 
     template <class RNG>
     inline int
-    beta_binomial_rng(const int N,
-                      const double alpha,
-                      const double beta,
+    beta_binomial_rng(int N,
+                      double alpha,
+                      double beta,
                       RNG& rng) {
       static const char* function("beta_binomial_rng");
 

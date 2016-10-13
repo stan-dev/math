@@ -22,7 +22,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    fmod(const fvar<T>& x1, const double x2) {
+    fmod(const fvar<T>& x1, double x2) {
       using std::fmod;
       if (unlikely(is_nan(value_of(x1.val_))
                    || is_nan(x2)))
@@ -34,7 +34,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    fmod(const double x1, const fvar<T>& x2) {
+    fmod(double x1, const fvar<T>& x2) {
       using std::fmod;
       using std::floor;
       return fvar<T>(fmod(x1, x2.val_), -x2.d_ * floor(x1 / x2.val_));
