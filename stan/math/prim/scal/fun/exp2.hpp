@@ -18,7 +18,7 @@ namespace stan {
      * @param y argument.
      * @return exponent base 2 of argument.
      */
-    double exp2(double y) {
+    inline double exp2(double y) {
       using std::pow;
       return pow(2.0, y);
     }
@@ -30,7 +30,7 @@ namespace stan {
      * @param y argument
      * @return exponent base 2 of argument
      */
-    double exp2(int y) {
+    inline double exp2(int y) {
       return exp2(static_cast<double>(y));
     }
 
