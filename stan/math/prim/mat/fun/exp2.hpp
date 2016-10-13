@@ -20,7 +20,7 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
-        return stan::math::exp2(x);
+        return exp2(x);
       }
     };
 

@@ -21,7 +21,7 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
-        return stan::math::Phi_approx(x);
+        return Phi_approx(x);
       }
     };
 

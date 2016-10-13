@@ -21,7 +21,7 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
-        return stan::math::trunc(x);
+        return trunc(x);
       }
     };
 

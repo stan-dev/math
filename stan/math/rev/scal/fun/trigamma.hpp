@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_SCAL_FUN_TRIGAMMA_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/trigamma.hpp>
 #include <stan/math/rev/scal/fun/floor.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
+#include <stan/math/prim/scal/fun/trigamma.hpp>
 
 namespace stan {
   namespace math {

@@ -18,19 +18,4 @@
 
 #include <stan/math/prim/mat.hpp>
 
-// FIXME(carpenter): sort out ordering to include in rev, etc.
-// currently have to come after scalar (fwd, rev) defs
-// probably due to overincludes in some of the headers
-#include <stan/math/prim/mat/fun/acosh.hpp>
-#include <stan/math/prim/mat/fun/asinh.hpp>
-#include <stan/math/prim/mat/fun/atanh.hpp>
-#include <stan/math/prim/mat/fun/exp2.hpp>
-#include <stan/math/prim/mat/fun/log1m_inv_logit.hpp>
-#include <stan/math/prim/mat/fun/log2.hpp>
-#include <stan/math/prim/mat/fun/log_inv_logit.hpp>
-#include <stan/math/prim/mat/fun/logit.hpp>
-#include <stan/math/prim/mat/fun/Phi_approx.hpp>
-#include <stan/math/prim/mat/fun/trigamma.hpp>
-#include <stan/math/prim/mat/fun/trunc.hpp>
-
 #endif

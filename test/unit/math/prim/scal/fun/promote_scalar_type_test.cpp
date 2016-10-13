@@ -8,6 +8,4 @@ TEST(MathFunctionsPromoteScalarType,primitive) {
                       double, double>();
   expect_promote_type<double,
                       double, int>();
-  expect_promote_type<vector<double>,
-                      double, vector<int> >();
 }
