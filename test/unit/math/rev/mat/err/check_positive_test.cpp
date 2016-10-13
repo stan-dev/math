@@ -10,7 +10,7 @@ TEST(AgradRevErrorHandlingScalar,CheckPositive) {
   Eigen::Matrix<var,Eigen::Dynamic,1> x_mat(3);
   x_mat   << 1, 2, 3;
   for (int i = 0; i < x_mat.size(); i++) {
-    EXPECT_TRUE(check_positive(function, "x", x_mat));
+    EXPECT_NO_THROW(check_positive(function, "x", x_mat));
   }
 
   x_mat(0) = 0;

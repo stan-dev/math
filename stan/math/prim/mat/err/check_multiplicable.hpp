@@ -9,7 +9,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the matrices can be multiplied.
+     * Check if the matrices can be multiplied.
      *
      * This checks the runtime sizes to determine whether the two
      * matrices are multiplicable. This allows Eigen matrices,
@@ -24,12 +24,11 @@ namespace stan {
      * @param name2 Variable name for the second matrix (for error messages)
      * @param y2 Second matrix
      *
-     * @return <code>true</code> if the two matrices are multiplicable
      * @throw <code>std::invalid_argument</code> if the matrices are not
      *   multiplicable or if either matrix is size 0 for either rows or columns
      */
     template <typename T1, typename T2>
-    inline bool check_multiplicable(const char* function,
+    inline void check_multiplicable(const char* function,
                                     const char* name1,
                                     const T1& y1,
                                     const char* name2,
@@ -40,7 +39,6 @@ namespace stan {
                        "Columns of ", name1, y1.cols(),
                        "Rows of ", name2, y2.rows());
       check_positive_size(function, name1, "cols()", y1.cols());
-      return true;
     }
   }
 }

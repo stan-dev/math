@@ -2,10 +2,11 @@
 #define STAN_MATH_REV_SCAL_FUN_GAMMA_Q_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 #include <valarray>
 
 namespace stan {
@@ -21,8 +22,8 @@ namespace stan {
         void chain() {
           avi_->adj_ += adj_
             * grad_reg_inc_gamma(avi_->val_, bvi_->val_,
-                                 boost::math::tgamma(avi_->val_),
-                                 boost::math::digamma(avi_->val_));
+                                 tgamma(avi_->val_),
+                                 digamma(avi_->val_));
           bvi_->adj_ -= adj_
             * boost::math::gamma_p_derivative(avi_->val_, bvi_->val_);
         }
@@ -37,8 +38,8 @@ namespace stan {
         void chain() {
           avi_->adj_ += adj_
             * grad_reg_inc_gamma(avi_->val_, bd_,
-                                 boost::math::tgamma(avi_->val_),
-                                 boost::math::digamma(avi_->val_));
+                                 tgamma(avi_->val_),
+                                 digamma(avi_->val_));
         }
       };
 

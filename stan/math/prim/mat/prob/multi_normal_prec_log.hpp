@@ -24,6 +24,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
   namespace math {

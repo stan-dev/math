@@ -8,7 +8,7 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
   double x = 10.0;
   double lb = 0.0;
  
-  EXPECT_TRUE(check_greater_or_equal(function, "x", x, lb)) 
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb)) 
     << "check_greater_or_equal should be true with x > lb";
   
   x = -1.0;
@@ -21,7 +21,7 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
     << "check_greater_or_equal should not throw an exception with x == lb";
 
   x = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_greater_or_equal(function, "x", x, lb))
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb))
     << "check_greater should be true with x == Inf and lb = 0.0";
 
   x = 10.0;

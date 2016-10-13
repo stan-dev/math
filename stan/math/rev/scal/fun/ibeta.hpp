@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 
 namespace stan {
   namespace math {
@@ -27,7 +27,7 @@ namespace stan {
           val += diff;
           bprod *= b + k - 1.0;
           diff = a_2 * std::pow(a + k, -2) * bprod * std::pow(z, k)
-            / boost::math::tgamma(k + 1);
+            / tgamma(k + 1);
         }
         return val;
       }
@@ -47,9 +47,6 @@ namespace stan {
           using std::pow;
           using std::log;
           using boost::math::constants::pi;
-          using boost::math::tgamma;
-          using boost::math::digamma;
-          using boost::math::ibeta;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -78,9 +75,6 @@ namespace stan {
           using std::pow;
           using std::log;
           using boost::math::constants::pi;
-          using boost::math::tgamma;
-          using boost::math::digamma;
-          using boost::math::ibeta;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_ -
             tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
