@@ -12,6 +12,8 @@ namespace stan {
      * Return an approximation of the unit normal cumulative
      * distribution function (CDF).
      *
+     * @tparam T scalar type of forward-mode autodiff variable
+     * argument.
      * @param x argument
      * @return approximate probability random sample is less than or
      * equal to argument

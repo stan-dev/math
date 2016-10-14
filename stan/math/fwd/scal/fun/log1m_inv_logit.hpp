@@ -12,6 +12,8 @@ namespace stan {
      * Return the natural logarithm of one minus the inverse logit of
      * the specified argument.
      *
+     * @tparam T scalar type of forward-mode autodiff variable
+     * argument.
      * @param x argument
      * @return log of one minus the inverse logit of the argument
      */

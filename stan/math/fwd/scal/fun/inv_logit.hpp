@@ -8,6 +8,14 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the inverse logit function applied to the argument.
+     *
+     * @tparam T scalar type of forward-mode autodiff variable
+     * argument.
+     * @param x argument
+     * @return inverse logit of argument
+     */
     template <typename T>
     inline fvar<T> inv_logit(const fvar<T>& x) {
       using std::exp;
