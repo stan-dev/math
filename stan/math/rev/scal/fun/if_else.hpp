@@ -41,7 +41,7 @@ namespace stan {
      * @param y_true Variable to return if condition is true.
      * @param y_false Value to promote to variable and return if condition is false.
      */
-    inline var if_else(bool c, const var& y_true, const double y_false) {
+    inline var if_else(bool c, const var& y_true, double y_false) {
       if (c)
         return y_true;
       else

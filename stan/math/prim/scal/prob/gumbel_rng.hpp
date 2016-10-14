@@ -20,8 +20,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    gumbel_rng(const double mu,
-               const double beta,
+    gumbel_rng(double mu,
+               double beta,
                RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;

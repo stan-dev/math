@@ -29,7 +29,7 @@ namespace stan {
     template<typename T, int R2, int C2>
     inline
     Eigen::Matrix<fvar<T>, R2, C2>
-    multiply(const Eigen::Matrix<fvar<T>, R2, C2>& m, const double c) {
+    multiply(const Eigen::Matrix<fvar<T>, R2, C2>& m, double c) {
       Eigen::Matrix<fvar<T>, R2, C2> res(m.rows(), m.cols());
       for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.cols(); j++)
@@ -60,7 +60,7 @@ namespace stan {
     template<typename T, int R1, int C1>
     inline
     Eigen::Matrix<fvar<T>, R1, C1>
-    multiply(const double c, const Eigen::Matrix<fvar<T>, R1, C1>& m) {
+    multiply(double c, const Eigen::Matrix<fvar<T>, R1, C1>& m) {
       return multiply(m, c);
     }
 

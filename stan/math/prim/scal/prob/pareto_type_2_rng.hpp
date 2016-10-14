@@ -18,9 +18,9 @@ namespace stan {
 
     template <class RNG>
     inline double
-    pareto_type_2_rng(const double mu,
-                      const double lambda,
-                      const double alpha,
+    pareto_type_2_rng(double mu,
+                      double lambda,
+                      double alpha,
                       RNG& rng) {
       static const char* function("pareto_type_2_rng");
 

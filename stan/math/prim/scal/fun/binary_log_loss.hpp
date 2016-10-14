@@ -23,7 +23,7 @@ namespace stan {
      */
     template <typename T>
     inline typename boost::math::tools::promote_args<T>::type
-    binary_log_loss(const int y, const T y_hat) {
+    binary_log_loss(int y, const T y_hat) {
       using std::log;
       return -log(y ? y_hat : (1.0 - y_hat));
     }

@@ -137,7 +137,7 @@ namespace stan {
     inline
     fvar<T>
     log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
-            const double lambda2) {
+            double lambda2) {
       if (lambda1.val_ > lambda2) {
         fvar<T> partial_deriv_array[2];
         log_mix_partial_helper(theta, lambda1, lambda2,
@@ -158,7 +158,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    log_mix(const fvar<T>& theta, const double lambda1,
+    log_mix(const fvar<T>& theta, double lambda1,
             const fvar<T>& lambda2) {
       if (lambda1 > lambda2.val_) {
         fvar<T> partial_deriv_array[2];
@@ -180,7 +180,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    log_mix(const double theta, const fvar<T>& lambda1,
+    log_mix(double theta, const fvar<T>& lambda1,
             const fvar<T>& lambda2) {
       if (lambda1.val_ > lambda2.val_) {
         fvar<T> partial_deriv_array[2];
@@ -201,7 +201,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    log_mix(const fvar<T>& theta, const double lambda1, const double lambda2) {
+    log_mix(const fvar<T>& theta, double lambda1, double lambda2) {
       if (lambda1 > lambda2) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -219,7 +219,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    log_mix(const double theta, const fvar<T>& lambda1, const double lambda2) {
+    log_mix(double theta, const fvar<T>& lambda1, double lambda2) {
       if (lambda1.val_ > lambda2) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -237,7 +237,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    log_mix(const double theta, const double lambda1, const fvar<T>& lambda2) {
+    log_mix(double theta, double lambda1, const fvar<T>& lambda2) {
       if (lambda1 > lambda2.val_) {
         fvar<T> partial_deriv_array[1];
         log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);

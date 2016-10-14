@@ -116,7 +116,7 @@ namespace stan {
      * @param exponent Exponent scalar.
      * @return Base raised to the exponent.
      */
-    inline var pow(const var& base, const double exponent) {
+    inline var pow(const var& base, double exponent) {
       if (exponent == 0.5)
         return sqrt(base);
       if (exponent == 1.0)
@@ -138,7 +138,7 @@ namespace stan {
      * @param exponent Exponent variable.
      * @return Base raised to the exponent.
      */
-    inline var pow(const double base, const var& exponent) {
+    inline var pow(double base, const var& exponent) {
       return var(new pow_dv_vari(base, exponent.vi_));
     }
 

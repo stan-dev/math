@@ -94,20 +94,20 @@ namespace stan {
       protected:
         static inline
         void
-        chainA(const double &adj,
+        chainA(double adj,
                trace_inv_quad_form_ldlt_impl<double, R2, C2, T3, R3, C3>
                *impl) {
         }
         static inline
         void
-        chainB(const double &adj,
+        chainB(double adj,
                trace_inv_quad_form_ldlt_impl<T2, R2, C2, double, R3, C3>
                *impl) {
         }
 
         static inline
         void
-        chainA(const double &adj,
+        chainA(double adj,
                trace_inv_quad_form_ldlt_impl<var, R2, C2, T3, R3, C3> *impl) {
           Eigen::Matrix<double, R2, C2> aA;
 
@@ -123,7 +123,7 @@ namespace stan {
         }
         static inline
         void
-        chainB(const double &adj,
+        chainB(double adj,
                trace_inv_quad_form_ldlt_impl<T2, R2, C2, var, R3, C3> *impl) {
           Eigen::Matrix<double, R3, C3> aB;
 

@@ -22,7 +22,7 @@ namespace stan {
     inline void check_positive_size(const char* function,
                                     const char* name,
                                     const char* expr,
-                                    const int size) {
+                                    int size) {
       if (size <= 0) {
         std::stringstream msg;
         msg << "; dimension size expression = " << expr;

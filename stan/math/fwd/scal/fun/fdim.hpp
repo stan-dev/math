@@ -35,7 +35,7 @@ namespace stan {
      * positive and 0 otherwise.
      */
     template <typename T>
-    inline fvar<T> fdim(const fvar<T>& x, const double y) {
+    inline fvar<T> fdim(const fvar<T>& x, double y) {
       if (x.val_ < y)
         return fvar<T>(fdim(x.val_, y), 0);
       else
@@ -52,7 +52,7 @@ namespace stan {
      * positive and 0 otherwise.
      */
     template <typename T>
-    inline fvar<T> fdim(const double x, const fvar<T>& y) {
+    inline fvar<T> fdim(double x, const fvar<T>& y) {
       if (x < y.val_)
         return fvar<T>(fdim(x, y.val_), 0);
       else
