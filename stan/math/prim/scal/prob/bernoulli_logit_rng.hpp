@@ -32,9 +32,7 @@ namespace stan {
       using boost::bernoulli_distribution;
       using stan::math::inv_logit;
 
-      static const char* function("bernoulli_logit_rng");
-
-      check_finite(function, "Logit transformed probability parameter", t);
+      check_finite("bernoulli_logit_rng", "Logit transformed probability parameter", t);
 
       variate_generator<RNG&, bernoulli_distribution<> >
         bernoulli_rng(rng, bernoulli_distribution<>(inv_logit(t)));
