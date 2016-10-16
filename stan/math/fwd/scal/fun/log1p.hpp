@@ -8,10 +8,10 @@ namespace stan {
   namespace math {
 
     template <typename T>
-    inline fvar<T>
-    log1p(const fvar<T>& x) {
+    inline fvar<T> log1p(const fvar<T>& x) {
       return fvar<T>(log1p(x.val_), x.d_ / (1 + x.val_));
     }
+
   }
 }
 #endif

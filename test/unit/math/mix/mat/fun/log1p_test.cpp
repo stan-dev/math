@@ -1,17 +1,20 @@
 #include <stan/math/mix/mat.hpp>
+#include <stan/math/prim/mat/fun/log1p.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
+#include <exception>
 
 /**
- * This is the structure for testing vectorized asinh (defined in the
+ * This is the structure for testing vectorized log1p (defined in the
  * testing framework).
  */
-struct asinh_test {
+struct log1p_test {
+
 
   /**
    * Redefinition of function brought in from stan::math.  The reason
@@ -27,8 +30,7 @@ struct asinh_test {
    */
   template <typename R, typename T>
   static R apply(const T& x) {
-    using stan::math::asinh;
-    return asinh(x);
+    return stan::math::log1p(x);
   }
 
   /**
@@ -64,34 +66,40 @@ struct asinh_test {
    * Return sequence of valid double-valued inputs.
    */
   static std::vector<double> valid_inputs() {
+    // no throw in base implementation (may change in future)
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(-0.2).build();
+      .add(-0.5).add(0).add(7.2).build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs() {
-    return std::vector<double>();
+    return test::math::vector_builder<double>()
+      .build();
   }
 
   /**
    * Return sequence of valid integer inputs.
    */
   static std::vector<int> int_valid_inputs() {
+    // no throw in base implementation (may change in future)
     return test::math::vector_builder<int>()
-      .add(1).add(-2).add(0).add(3).build();
+      .add(0).add(5).add(1000).build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs() {
-    return std::vector<int>();
+    return test::math::vector_builder<int>()
+      .add(-2).build();
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, asinh_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, asinh_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, asinh_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, asinh_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, log1p_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, log1p_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, log1p_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, log1p_test);
+
+
