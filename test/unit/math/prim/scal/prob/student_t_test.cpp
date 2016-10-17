@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 
 TEST(ProbDistributionsStudentT, error_check) {
   boost::random::mt19937 rng;
@@ -25,32 +26,24 @@ TEST(ProbDistributionsStudentT, error_check) {
 
 TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
-  boost::math::students_t_distribution<>dist (3.0);
   int N = 10000;
-  double K = 5;
-  boost::math::chi_squared mydist(K-1);
+  int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  double loc[4];
-  for(int i = 1; i < K; i++)
-    loc[i - 1] = quantile(dist, 0.2 * i);
+	// Generate samples from stan's student t distribution
+	std::vector<double> samples;
+	for (int i=0; i<N; ++i) {
+	  samples.push_back((stan::math::student_t_rng(3.0,2.0,2.0,rng) - 2.0) / 2.0);
+	}
 
-  int count = 0;
-  int bin [5] = {0, 0, 0, 0, 0};
+	//Generate quantiles from boost's student t distribution
+  boost::math::students_t_distribution<>dist (3.0);
+	std::vector<double> quantiles;
+	for (int i=1; i<K; ++i) {
+	  double frac = ((double) i ) / K;
+		quantiles.push_back(quantile(dist, frac));
+	}
+	quantiles.push_back(std::numeric_limits<double>::max());
 
-  while (count < N) {
-    double a = (stan::math::student_t_rng(3.0,2.0,2.0,rng) - 2.0) / 2.0;
-    int i = 0;
-    while (i < K-1 && a > loc[i]) 
-      ++i;
-    ++bin[i];
-    count++;
-   }
-
-  double chi = 0;
-  double expect [5] = {N / K, N / K, N / K, N / K, N / K};
-
-  for(int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
-
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+	//Assert that they match
+	assert_matches_quantiles(samples, quantiles, 1e-6);
 }
