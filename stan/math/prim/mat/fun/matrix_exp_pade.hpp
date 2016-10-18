@@ -19,14 +19,9 @@
 namespace stan {
   namespace math {
 
-    using Eigen::NumTraits;
-    using Eigen::internal::traits;
-    using Eigen::Matrix;
-    using Eigen::Dynamic;
-
         template <typename RealScalar>
         struct MatrixExponentialScalingOp
-        {  // NOLINT
+        {   // NOLINT
             /** \brief Constructor.
              *
              * \param[in] squarings  The integer \f$ s \f$ in this document.
@@ -69,7 +64,8 @@ namespace stan {
         template <typename MatrixType>
         void matrix_exp_pade3(const MatrixType &A, MatrixType &U, MatrixType &V)
         {  // NOLINT
-            typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
+            using Eigen::internal::traits; // NOLINT
+            typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
             const RealScalar b[] = {120.L, 60.L, 12.L, 1.L};
             const MatrixType A2 = A * A;
             const MatrixType tmp = b[3] * A2 + b[1] * MatrixType::Identity(A.rows(), A.cols());  // NOLINT
@@ -85,7 +81,7 @@ namespace stan {
         template <typename MatrixType>
         void matrix_exp_pade5(const MatrixType &A, MatrixType &U, MatrixType &V)
         {  // NOLINT
-            typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
+            typedef typename Eigen::NumTraits<typename Eigen::internal::traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
             const RealScalar b[] = {30240.L, 15120.L, 3360.L, 420.L, 30.L, 1.L};
             const MatrixType A2 = A * A;
             const MatrixType A4 = A2 * A2;
@@ -102,7 +98,8 @@ namespace stan {
         template <typename MatrixType>
         void matrix_exp_pade7(const MatrixType &A, MatrixType &U, MatrixType &V)
         {  // NOLINT
-            typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
+            using Eigen::internal::traits; // NOLINT
+            typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar; // NOLINT
             const RealScalar b[] = {17297280.L, 8648640.L, 1995840.L, 277200.L, 25200.L, 1512.L, 56.L, 1.L};  // NOLINT
             const MatrixType A2 = A * A;
             const MatrixType A4 = A2 * A2;
@@ -121,7 +118,8 @@ namespace stan {
         template <typename MatrixType>
         void matrix_exp_pade9(const MatrixType &A, MatrixType &U, MatrixType &V)
         {  // NOLINT
-            typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
+            using Eigen::internal::traits; // NOLINT
+            typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
             const RealScalar b[] = {17643225600.L, 8821612800.L, 2075673600.L, 302702400.L, 30270240.L,  // NOLINT
             2162160.L, 110880.L, 3960.L, 90.L, 1.L};
             const MatrixType A2 = A * A;
@@ -142,7 +140,8 @@ namespace stan {
         template <typename MatrixType>
         void matrix_exp_pade13(const MatrixType &A, MatrixType &U, MatrixType &V)  // NOLINT
         {  // NOLINT
-            typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
+            using Eigen::internal::traits; // NOLINT
+            typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  // NOLINT
             const RealScalar b[] = {64764752532480000.L, 32382376266240000.L, 7771770303897600.L,  // NOLINT
                 1187353796428800.L, 129060195264000.L, 10559470521600.L, 670442572800.L,  // NOLINT
                 33522128640.L, 1323241920.L, 40840800.L, 960960.L, 16380.L, 182.L, 1.L};  // NOLINT
@@ -158,7 +157,7 @@ namespace stan {
             V += b[6] * A6 + b[4] * A4 + b[2] * A2 + b[0] * MatrixType::Identity(A.rows(), A.cols());  // NOLINT
         }
 
-        template <typename MatrixType, typename RealScalar = typename NumTraits<typename traits<MatrixType>::Scalar>::Real>  // NOLINT
+        template <typename MatrixType, typename RealScalar = typename Eigen:: NumTraits<typename Eigen::internal::traits<MatrixType>::Scalar>::Real>  // NOLINT
         struct matrix_exp_computeUV
         {  // NOLINT
             /** \brief Compute Pad&eacute; approximant to the exponential.
@@ -221,8 +220,8 @@ namespace stan {
           MatrixType result;
 
         #if LDBL_MANT_DIG > 112  // rarely happens
-          typedef typename traits<MatrixType>::Scalar Scalar;
-          typedef typename NumTraits<Scalar>::Real RealScalar;
+          typedef typename Eigen::traits<MatrixType>::Scalar Scalar;
+          typedef typename Eigen::NumTraits<Scalar>::Real RealScalar;
           typedef typename std::complex<RealScalar> ComplexScalar;
           if (sizeof(RealScalar) > 14) {
             result = arg.matrixFunction(
