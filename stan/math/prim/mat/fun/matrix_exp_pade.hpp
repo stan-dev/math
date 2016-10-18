@@ -17,12 +17,12 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-    namespace math {
+  namespace math {
 
-        using Eigen::NumTraits;
-        using Eigen::internal::traits;
-        using Eigen::Matrix;
-        using Eigen::Dynamic;
+    using Eigen::NumTraits;
+    using Eigen::internal::traits;
+    using Eigen::Matrix;
+    using Eigen::Dynamic;
 
         template <typename RealScalar>
         struct MatrixExponentialScalingOp
@@ -168,10 +168,10 @@ namespace stan {
              * denotes the matrix \c arg. The degree of the Pad&eacute; approximant and the value of squarings
              * are chosen such that the approximation error is no more than the round-off error.
              *
-             * <p> Edit for Stan: template ComputeUV::run so that it may used on 
+             * <p> Edit for Stan: template ComputeUV::run so that it may used on
              * autodiff variables (var and fvar). This required adding the scalar_type
-             * argument, which tells the function the type of elements used in the 
-             * matrix. 
+             * argument, which tells the function the type of elements used in the
+             * matrix.
              */
             static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings);  // NOLINT
         };

@@ -8,17 +8,17 @@
 namespace stan {
   namespace math {
 
-	/**
+    /**
 	 * Variable implementation of frexp. The derivative of frexp
-	 * is 0, because frexp returns a discontinuous object. 
+	 * is 0, because frexp returns a discontinuous object.
 	 */
       class frexp_vari : public op_v_vari {
       public:
       /**
        * Construct the variable implementation of frexp.
        */
-        explicit frexp_vari(vari* avi, int* b) :
-        op_v_vari(std::frexp(avi->val_, b), avi) {
+        explicit frexp_vari(vari* avi, int* b)
+          :  op_v_vari(std::frexp(avi->val_, b), avi) {
         }
       /**
        * Assign a quiet_NaN value to the adjoint, because frexp
@@ -32,7 +32,7 @@ namespace stan {
 
 
     /**
-     * Decomposes a float-like variable into a normalized 
+     * Decomposes a float-like variable into a normalized
      * fraction and an integral power of two. (cmath)
      *
      * @param[in] a The variable that will be decomposed.
