@@ -34,7 +34,7 @@ TEST(ProbDistributionsSkewNormal, chiSquareGoodnessFitTest) {
   boost::math::skew_normal_distribution<>dist (3.0,2.0,1.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
-    double frac = ((double) i ) / K;
+    double frac = static_cast<double>(i) / K;
     quantiles.push_back(quantile(dist, frac));
   }
   quantiles.push_back(std::numeric_limits<double>::max());

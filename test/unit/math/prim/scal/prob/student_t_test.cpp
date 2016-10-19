@@ -39,7 +39,7 @@ TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   boost::math::students_t_distribution<>dist (3.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
-    double frac = ((double) i ) / K;
+    double frac = static_cast<double>(i) / K;
     quantiles.push_back(quantile(dist, frac));
   }
   quantiles.push_back(std::numeric_limits<double>::max());

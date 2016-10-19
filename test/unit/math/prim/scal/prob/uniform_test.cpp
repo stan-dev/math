@@ -28,7 +28,7 @@ TEST(ProbDistributionsUniform, chiSquareGoodnessFitTest) {
   // Generate quantiles for the uniform distribution.
   std::vector<double> quantiles;
   for (int i=1; i<=K; ++i) {
-    double frac = ((double) i) / K;
+    double frac = static_cast<double>(i) / K;
     quantiles.push_back(1.0 + frac);
   }
 

@@ -32,7 +32,7 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   boost::math::logistic_distribution<>dist (9.0,4.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
-    double frac = ((double) i ) / K;
+    double frac = static_cast<double>(i) / K;
     quantiles.push_back(quantile(dist, frac));
   }
   quantiles.push_back(std::numeric_limits<double>::max());

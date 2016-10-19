@@ -35,7 +35,7 @@ void assert_matches_quantiles(const std::vector<double>& samples, const std::vec
 	std::sort(mysamples.begin(), mysamples.end());
 
 	int K = quantiles.size();
-	double expected_count = ((double) N) / K;
+	double expected_count = static_cast<double>(N) / K;
 
   std::vector<double> expected;
 	for (int i=0; i<K; i++) {
