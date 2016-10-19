@@ -32,7 +32,7 @@ TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   // Generate samples from stan's student t distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
-    samples.push_back((stan::math::student_t_rng(3.0,2.0,2.0,rng) - 2.0) / 2.0);
+    samples.push_back((stan::math::student_t_rng(3.0,2.0,2.0, rng) - 2.0) / 2.0);
   }
 
   //Generate quantiles from boost's student t distribution

@@ -6,13 +6,13 @@
 
 TEST(ProbDistributionsCauchy, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::cauchy_rng(2.0,1.0,rng));
+  EXPECT_NO_THROW(stan::math::cauchy_rng(2.0,1.0, rng));
 
-  EXPECT_THROW(stan::math::cauchy_rng(2.0,-1.0,rng),std::domain_error);
-  EXPECT_THROW(stan::math::cauchy_rng(-2.0,-1.0,rng),std::domain_error);
-  EXPECT_THROW(stan::math::cauchy_rng(2.0,stan::math::positive_infinity(),rng),
+  EXPECT_THROW(stan::math::cauchy_rng(2.0,-1.0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::cauchy_rng(-2.0,-1.0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::cauchy_rng(2.0,stan::math::positive_infinity(), rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::cauchy_rng(stan::math::positive_infinity(),1,rng),
+  EXPECT_THROW(stan::math::cauchy_rng(stan::math::positive_infinity(),1, rng),
                std::domain_error);
 }
 
@@ -24,7 +24,7 @@ TEST(ProbDistributionsCauchy, chiSquareGoodnessFitTest) {
   // Generate samples from stan's cauchy distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
-    samples.push_back(stan::math::cauchy_rng(2.0,1.0,rng));
+    samples.push_back(stan::math::cauchy_rng(2.0,1.0, rng));
   }
 
   //Generate quantiles from boost's cauchy distribution

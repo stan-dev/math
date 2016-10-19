@@ -6,13 +6,13 @@
 
 TEST(ProbDistributionsNormal, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::normal_rng(10.0,2.0,rng));
+  EXPECT_NO_THROW(stan::math::normal_rng(10.0,2.0, rng));
 
-  EXPECT_THROW(stan::math::normal_rng(10.0,-2.0,rng),std::domain_error);
-  EXPECT_THROW(stan::math::normal_rng(10.0,0,rng),std::domain_error);
-  EXPECT_THROW(stan::math::normal_rng(stan::math::positive_infinity(),-2.0,rng),
+  EXPECT_THROW(stan::math::normal_rng(10.0,-2.0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::normal_rng(10.0, 0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::normal_rng(stan::math::positive_infinity(),-2.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::normal_rng(2,stan::math::negative_infinity(),rng),
+  EXPECT_THROW(stan::math::normal_rng(2,stan::math::negative_infinity(), rng),
                std::domain_error);
 }
 

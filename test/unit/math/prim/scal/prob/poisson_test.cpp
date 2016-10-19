@@ -45,7 +45,7 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::poisson_rng(5,rng);
+    int a = stan::math::poisson_rng(5, rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;
@@ -84,7 +84,7 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::poisson_log_rng(log(5),rng);
+    int a = stan::math::poisson_log_rng(log(5), rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;

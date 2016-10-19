@@ -7,9 +7,9 @@
 
 TEST(ProbDistributionsRayleigh, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::rayleigh_rng(2.0,rng));
+  EXPECT_NO_THROW(stan::math::rayleigh_rng(2.0, rng));
 
-  EXPECT_THROW(stan::math::rayleigh_rng(-2.0,rng),std::domain_error);
+  EXPECT_THROW(stan::math::rayleigh_rng(-2.0, rng),std::domain_error);
 }
 
 TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
@@ -20,7 +20,7 @@ TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   // Generate samples from stan's rayleigh distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
-    samples.push_back(stan::math::rayleigh_rng(2.0,rng));
+    samples.push_back(stan::math::rayleigh_rng(2.0, rng));
   }
 
   //Generate quantiles from boost's rayleigh distribution

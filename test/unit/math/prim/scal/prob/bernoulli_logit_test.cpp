@@ -6,8 +6,8 @@
 TEST(ProbDistributionsBernoulliLogit, error_check) {
   boost::random::mt19937 rng;
 
-  EXPECT_NO_THROW(stan::math::bernoulli_logit_rng(-3.5,rng));
-  EXPECT_THROW(stan::math::bernoulli_logit_rng(stan::math::positive_infinity(),rng),
+  EXPECT_NO_THROW(stan::math::bernoulli_logit_rng(-3.5, rng));
+  EXPECT_THROW(stan::math::bernoulli_logit_rng(stan::math::positive_infinity(), rng),
                std::domain_error);
 }
 
