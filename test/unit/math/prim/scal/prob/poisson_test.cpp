@@ -13,7 +13,7 @@ TEST(ProbDistributionsPoisson, error_check) {
 
   EXPECT_NO_THROW(stan::math::poisson_rng(1e9, rng));
 
-  EXPECT_THROW(stan::math::poisson_rng(pow(2.0,31), rng),std::domain_error);
+  EXPECT_THROW(stan::math::poisson_rng(pow(2.0, 31), rng),std::domain_error);
 
   EXPECT_NO_THROW(stan::math::poisson_log_rng(6, rng));
 
@@ -21,7 +21,7 @@ TEST(ProbDistributionsPoisson, error_check) {
 
   EXPECT_NO_THROW(stan::math::poisson_log_rng(log(1e9), rng));
 
-  EXPECT_THROW(stan::math::poisson_log_rng(log(pow(2.0,31)), rng),std::domain_error);
+  EXPECT_THROW(stan::math::poisson_log_rng(log(pow(2.0, 31)), rng),std::domain_error);
 }
 
 TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {

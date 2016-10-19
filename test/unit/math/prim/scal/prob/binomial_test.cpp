@@ -8,7 +8,7 @@ TEST(ProbDistributionBinomiali, error_check) {
   EXPECT_NO_THROW(stan::math::binomial_rng(4, 0.6, rng));
   EXPECT_THROW(stan::math::binomial_rng(-4, 0.6, rng),std::domain_error);
   EXPECT_THROW(stan::math::binomial_rng(4,-0.6, rng),std::domain_error);
-  EXPECT_THROW(stan::math::binomial_rng(4,2.6, rng),std::domain_error);
+  EXPECT_THROW(stan::math::binomial_rng(4, 2.6, rng),std::domain_error);
   EXPECT_THROW(stan::math::binomial_rng(4,stan::math::positive_infinity(), rng),
                std::domain_error);
 }

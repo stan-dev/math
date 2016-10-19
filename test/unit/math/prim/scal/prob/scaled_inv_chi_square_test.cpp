@@ -5,9 +5,9 @@
 
 TEST(ProbDistributionsScaledInvChiSquare, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::scaled_inv_chi_square_rng(2.0,1.0, rng));
+  EXPECT_NO_THROW(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng));
 
-  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0,1.0, rng),
+  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0, 1.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2.0,-1.0, rng),
                std::domain_error);
@@ -28,7 +28,7 @@ TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
   // Generate samples from stan's inverse chi square distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
-    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0,1.0, rng) / (2.0 * 1.0));
+    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng) / (2.0 * 1.0));
   }
 
   //Generate quantiles from boost's inverse chi square distribution

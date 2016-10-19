@@ -6,13 +6,13 @@
 
 TEST(ProbDistributionsLogistic, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::logistic_rng(4.0,3.0, rng));
+  EXPECT_NO_THROW(stan::math::logistic_rng(4.0, 3.0, rng));
 
   EXPECT_THROW(stan::math::logistic_rng(4.0,-3.0, rng),std::domain_error);
   EXPECT_THROW(stan::math::logistic_rng(4.0,stan::math::positive_infinity(),
                                         rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::logistic_rng(stan::math::positive_infinity(),3,
+  EXPECT_THROW(stan::math::logistic_rng(stan::math::positive_infinity(), 3,
                                         rng),
                std::domain_error);
 }
@@ -25,11 +25,11 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   // Generate samples from stan's logistic distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
-    samples.push_back(stan::math::logistic_rng(9.0,4.0, rng));
+    samples.push_back(stan::math::logistic_rng(9.0, 4.0, rng));
   }
 
   //Generate quantiles from boost's logistic distribution
-  boost::math::logistic_distribution<>dist (9.0,4.0);
+  boost::math::logistic_distribution<>dist (9.0, 4.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
     double frac = static_cast<double>(i) / K;

@@ -6,8 +6,8 @@
 TEST(ProbDistributionsNegBinomial, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_rng(6, 2, rng));
-  EXPECT_NO_THROW(stan::math::neg_binomial_rng(0.5,1, rng));
-  EXPECT_NO_THROW(stan::math::neg_binomial_rng(1e9,1, rng));
+  EXPECT_NO_THROW(stan::math::neg_binomial_rng(0.5, 1, rng));
+  EXPECT_NO_THROW(stan::math::neg_binomial_rng(1e9, 1, rng));
 
   EXPECT_THROW(stan::math::neg_binomial_rng(0, -2, rng),
                  std::domain_error);
@@ -29,7 +29,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   error_msg = "neg_binomial_rng: Random number that "
               "came from gamma distribution is";
   try {
-    stan::math::neg_binomial_rng(1e10,1, rng);
+    stan::math::neg_binomial_rng(1e10, 1, rng);
     FAIL() << "neg_binomial_rng should have thrown" << std::endl;
   } catch (const std::exception& e) {
     if (std::string(e.what()).find(error_msg) == std::string::npos)
