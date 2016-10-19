@@ -29,21 +29,21 @@ TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-	// Generate samples from stan's student t distribution
-	std::vector<double> samples;
-	for (int i=0; i<N; ++i) {
-	  samples.push_back((stan::math::student_t_rng(3.0,2.0,2.0,rng) - 2.0) / 2.0);
-	}
+  // Generate samples from stan's student t distribution
+  std::vector<double> samples;
+  for (int i=0; i<N; ++i) {
+    samples.push_back((stan::math::student_t_rng(3.0,2.0,2.0,rng) - 2.0) / 2.0);
+  }
 
-	//Generate quantiles from boost's student t distribution
+  //Generate quantiles from boost's student t distribution
   boost::math::students_t_distribution<>dist (3.0);
-	std::vector<double> quantiles;
-	for (int i=1; i<K; ++i) {
-	  double frac = ((double) i ) / K;
-		quantiles.push_back(quantile(dist, frac));
-	}
-	quantiles.push_back(std::numeric_limits<double>::max());
+  std::vector<double> quantiles;
+  for (int i=1; i<K; ++i) {
+    double frac = ((double) i ) / K;
+    quantiles.push_back(quantile(dist, frac));
+  }
+  quantiles.push_back(std::numeric_limits<double>::max());
 
-	//Assert that they match
-	assert_matches_quantiles(samples, quantiles, 1e-6);
+  //Assert that they match
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }

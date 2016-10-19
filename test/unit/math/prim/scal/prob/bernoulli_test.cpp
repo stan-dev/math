@@ -17,14 +17,14 @@ TEST(ProbDistributionsBernoulli, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
 
-	std::vector<double> expected;
-	expected.push_back(N * (1 - 0.4));
-	expected.push_back(N * 0.4);
+  std::vector<double> expected;
+  expected.push_back(N * (1 - 0.4));
+  expected.push_back(N * 0.4);
 
   std::vector<int> counts(2);
-	for (int i=0; i<N; ++i) {
+  for (int i=0; i<N; ++i) {
     ++counts[stan::math::bernoulli_rng(0.4, rng)];
   }
 
-	assert_chi_squared(counts, expected, 1e-6);
+  assert_chi_squared(counts, expected, 1e-6);
 }

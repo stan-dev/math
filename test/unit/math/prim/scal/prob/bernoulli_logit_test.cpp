@@ -19,8 +19,8 @@ TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
   double prob = stan::math::inv_logit(-0.5); // actual probability
 
   std::vector<double> expected;
-	expected.push_back(N * (1 - prob));
-	expected.push_back(N * prob);
+  expected.push_back(N * (1 - prob));
+  expected.push_back(N * prob);
 
   std::vector<int> counts(2);
   for (int i=0; i<N; ++i) {

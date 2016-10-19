@@ -17,22 +17,22 @@ TEST(ProbDistributionsUniform, error_check) {
 TEST(ProbDistributionsUniform, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-	int K = boost::math::round(2 * std::pow(N, 0.4));
+  int K = boost::math::round(2 * std::pow(N, 0.4));
 
-	// Generate some samples.
-	std::vector<double> samples;
-	for (int i=0; i<N; ++i) {
-	  samples.push_back(stan::math::uniform_rng(1.0, 2.0, rng));
-	}
+  // Generate some samples.
+  std::vector<double> samples;
+  for (int i=0; i<N; ++i) {
+    samples.push_back(stan::math::uniform_rng(1.0, 2.0, rng));
+  }
 
-	// Generate quantiles for the uniform distribution.
+  // Generate quantiles for the uniform distribution.
   std::vector<double> quantiles;
   for (int i=1; i<=K; ++i) {
     double frac = ((double) i) / K;
     quantiles.push_back(1.0 + frac);
-	}
+  }
 
-	// Assert that they match.
+  // Assert that they match.
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
 

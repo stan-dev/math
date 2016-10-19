@@ -18,21 +18,21 @@ TEST(ProbDistributionsChiSquare, chiSquareGoodnessFitTest) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-	// Generate samples from stan's Chi Square distribution
-	std::vector<double> samples;
-	for (int i=0; i<N; ++i) {
-	  samples.push_back(stan::math::chi_square_rng(2.0,rng));
-	}
+  // Generate samples from stan's Chi Square distribution
+  std::vector<double> samples;
+  for (int i=0; i<N; ++i) {
+    samples.push_back(stan::math::chi_square_rng(2.0,rng));
+  }
 
-	//Generate quantiles from boost's Chi Square distribution
+  //Generate quantiles from boost's Chi Square distribution
   boost::math::chi_squared_distribution<>dist (2.0);
-	std::vector<double> quantiles;
-	for (int i=1; i<K; ++i) {
-	  double frac = ((double) i ) / K;
-		quantiles.push_back(quantile(dist, frac));
-	}
-	quantiles.push_back(std::numeric_limits<double>::max());
+  std::vector<double> quantiles;
+  for (int i=1; i<K; ++i) {
+    double frac = ((double) i ) / K;
+    quantiles.push_back(quantile(dist, frac));
+  }
+  quantiles.push_back(std::numeric_limits<double>::max());
 
-	//Assert that they match
-	assert_matches_quantiles(samples, quantiles, 1e-6);
+  //Assert that they match
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }
