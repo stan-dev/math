@@ -22,7 +22,6 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  // Generate samples from stan's beta distribution
   std::vector<double> samples;
   for (int i=0; i<N; ++i) {
     samples.push_back(stan::math::beta_rng(2.0, 1.0, rng));
