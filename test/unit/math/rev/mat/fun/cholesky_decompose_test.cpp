@@ -217,3 +217,22 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv) {
   test_gradients_simple(10);
   test_gradient(50);
 }
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::matrix_v;
+  using stan::math::transpose;
+  using stan::math::cholesky_decompose;
+  using stan::math::singular_values;
+
+  // symmetric
+  matrix_v X(2,2);
+  AVAR a = 3.0;
+  AVAR b = -1.0;
+  AVAR c = -1.0;
+  AVAR d = 1.0;
+  X << a, b, 
+    c, d;
+
+  matrix_v L = cholesky_decompose(X);
+  test::check_varis_on_stack(L);
+}
