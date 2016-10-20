@@ -91,3 +91,13 @@ TEST(stack_alloc,alloc) {
   allocator.recover_all();
 
 }
+
+TEST(stack_alloc, in_stack) {
+  stan::math::stack_alloc allocator;
+
+  double* x = allocator.alloc_array<double>(10U);
+  double y = 0;
+
+  EXPECT_TRUE(allocator.in_stack(x));
+  EXPECT_FALSE(allocator.in_stack(&y));
+}

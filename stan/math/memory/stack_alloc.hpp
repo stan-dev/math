@@ -247,13 +247,31 @@ namespace stan {
        *
        * @return number of bytes allocated to this instance
        */
-      size_t bytes_allocated() {
+      inline size_t bytes_allocated() const {
         size_t sum = 0;
         for (size_t i = 0; i <= cur_block_; ++i) {
           sum += sizes_[i];
         }
         return sum;
       }
+
+      /**
+       * Indicates whether the memory in the pointer
+       * is in the stack.
+       *
+       * @param[in] ptr memory location
+       * @return true if the pointer is in the stack,
+       *    false otherwise.
+       */
+      inline bool in_stack(const void* ptr) const {
+        for (size_t i = 0; i < cur_block_; ++i)
+          if (ptr >= blocks_[i] && ptr <= blocks_[i] + sizes_[i])
+            return true;
+        if (ptr >= blocks_[cur_block_] && ptr < next_loc_)
+          return true;
+        return false;
+      }
+
     };
 
   }
