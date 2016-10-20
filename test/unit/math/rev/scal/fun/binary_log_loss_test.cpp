@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 double inf = std::numeric_limits<double>::infinity();
 
@@ -94,4 +94,9 @@ struct binary_log_loss_fun {
 TEST(AgradRev,binary_log_loss_NaN) {
   binary_log_loss_fun binary_log_loss_;
   test_nan(binary_log_loss_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR y_hat = 0.0;
+  test::check_varis_on_stack(stan::math::binary_log_loss(0, y_hat));
 }

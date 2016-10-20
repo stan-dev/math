@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 void test_log1m_exp(double val) {
   using stan::math::log1m_exp;
@@ -55,4 +55,9 @@ struct log1m_exp_fun {
 TEST(AgradRev,log1m_exp_NaN) {
   log1m_exp_fun log1m_exp_;
   test_nan(log1m_exp_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var a = -2.0;
+  test::check_varis_on_stack(stan::math::log1m_exp(a));
 }

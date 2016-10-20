@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,abs_var) {
   AVAR a = 0.68;
@@ -73,4 +73,9 @@ struct abs_fun {
 TEST(AgradRev,abs_NaN) {
   abs_fun abs_;
   test_nan(abs_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.68;
+  test::check_varis_on_stack(stan::math::abs(a));
 }

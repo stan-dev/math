@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,asinh_val) {
   AVAR a = 0.2;
@@ -55,4 +55,9 @@ struct asinh_fun {
 TEST(AgradRev,asinh_NaN) {
   asinh_fun asinh_;
   test_nan(asinh_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.2;
+  test::check_varis_on_stack(stan::math::asinh(a));
 }

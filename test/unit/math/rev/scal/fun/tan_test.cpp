@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,tan_var) {
   AVAR a = 0.68;
@@ -47,4 +47,9 @@ struct tan_fun {
 TEST(AgradRev,tan_NaN) {
   tan_fun tan_;
   test_nan(tan_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.68;
+  test::check_varis_on_stack(stan::math::tan(a));
 }

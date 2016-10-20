@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
+#include <boost/math/special_functions/digamma.hpp>
 
 TEST(AgradRev,falling_factorial_var_double) {
   double a(2);
@@ -81,4 +81,12 @@ TEST(AgradRev, falling_factorial_nan) {
   falling_factorial_fun falling_factorial_;
   test_nan(falling_factorial_,4.0,1.0,false,true);
 
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a(2);
+  AVAR b(4.0);
+  test::check_varis_on_stack(stan::math::falling_factorial(b,a));
+  test::check_varis_on_stack(stan::math::falling_factorial(b,2));
+  test::check_varis_on_stack(stan::math::falling_factorial(4,a));
 }

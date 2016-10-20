@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,fma_vvv) {
   AVAR a = 3.0;
@@ -108,4 +108,17 @@ struct fma_fun {
 TEST(AgradRev,fma_NaN) {
   fma_fun fma_;
   test_nan(fma_,0.6,0.3,0.5,false,true);
+}
+
+TEST(, check_varis_on_stack) {
+  AVAR a = 3.0;
+  AVAR b = 5.0;
+  AVAR c = 7.0;
+  test::check_varis_on_stack(stan::math::fma(a, b, c));
+  test::check_varis_on_stack(stan::math::fma(a, b, 7));
+  test::check_varis_on_stack(stan::math::fma(a, 5, c));
+  test::check_varis_on_stack(stan::math::fma(a, 5, 7));
+  test::check_varis_on_stack(stan::math::fma(3, b, c));
+  test::check_varis_on_stack(stan::math::fma(3, b, 7));
+  test::check_varis_on_stack(stan::math::fma(3, 5, c));
 }
