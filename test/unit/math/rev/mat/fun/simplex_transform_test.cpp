@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -41,4 +42,10 @@ TEST(probTransform,simplex_jacobian) {
   double log_det_J = log(det_J);
 
   EXPECT_FLOAT_EQ(log_det_J, lp.val());
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v y(3);
+  y << 2, 3, -1;
+  stan::math::var lp = 0;
+  test::check_varis_on_stack(stan::math::simplex_constrain(y, lp));
 }

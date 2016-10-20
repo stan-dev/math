@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,row_v) {
   using stan::math::row;
@@ -38,4 +39,11 @@ TEST(AgradRevMatrix,row_v_excHigh) {
   y << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(row(y,0),std::out_of_range);
   EXPECT_THROW(row(y,5),std::out_of_range);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v y(2,3);
+  y << 1, 2, 3, 4, 5, 6;
+
+  test::check_varis_on_stack(stan::math::row(y, 1));
 }

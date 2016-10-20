@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,mdivide_left_tri_val) {
   using stan::math::matrix_d;
@@ -355,6 +356,14 @@ TEST(AgradRevMatrix,mdivide_left_tri_upper_grad_vd) {
     }
   }
 }
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v A(2,2);
+  A << 2.0, 0.0,
+    5.0, 7.0;
+  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(A, A));
+}
+
 // // FIXME:  Fails in g++ 4.2 -- can't find agrad version of mdivide_left_tri
 // //         Works in clang++ and later g++
 // // TEST(AgradRevMatrix,mdivide_left_tri2) {
@@ -367,3 +376,4 @@ TEST(AgradRevMatrix,mdivide_left_tri_upper_grad_vd) {
 // //   I.setIdentity();
 // //   L = mdivide_left_tri<Eigen::Lower>(L, I);
 // // }
+

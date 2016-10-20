@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 void 
 test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
@@ -67,4 +68,11 @@ TEST(probTransform,choleskyCorrJacobian) {
   Matrix<var,Dynamic,1> y4(6);
   y4 << 1.0, 2.0, -3.0, 1.5, 0.2, 2.0;
   test_cholesky_correlation_jacobian(y4,4);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v y(3);
+  y << -1.7, 2.9, 0.01;
+  stan::math::var lp(0);
+
+  test::check_varis_on_stack(stan::math::cholesky_corr_constrain(y, 3, lp));
 }

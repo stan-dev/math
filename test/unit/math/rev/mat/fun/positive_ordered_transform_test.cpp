@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(prob_transform,positive_ordered_jacobian_ad) {
   using stan::math::var;
@@ -42,4 +43,11 @@ TEST(prob_transform,positive_ordered_jacobian_ad) {
   
   double log_abs_jacobian_det = log(fabs(determinant(J)));
   EXPECT_FLOAT_EQ(log_abs_jacobian_det, lp);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  Eigen::Matrix<stan::math::var,Eigen::Dynamic,1> x(3);
+  x << -12.0, 3.0, -1.9;
+  stan::math::var lp = 0.0;
+  test::check_varis_on_stack(stan::math::positive_ordered_constrain(x,lp));
 }

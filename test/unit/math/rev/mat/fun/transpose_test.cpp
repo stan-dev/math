@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,transpose_matrix) {
   using stan::math::matrix_d;
@@ -67,4 +68,18 @@ TEST(AgradRevMatrix,transpose_row_vector) {
   EXPECT_FLOAT_EQ(0.0,g[0]);
   EXPECT_FLOAT_EQ(1.0,g[1]);
   EXPECT_FLOAT_EQ(0.0,g[2]);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::row_vector_v a(3);
+  a << 1.0, 2.0, 3.0;
+  stan::math::vector_v b(3);
+  b << 1.0, 2.0, 3.0;
+  stan::math::matrix_v c(2,3);
+  c << -1.0, 2.0, -3.0, 
+    5.0, 10.0, 100.0;
+  
+  test::check_varis_on_stack(stan::math::transpose(a));
+  test::check_varis_on_stack(stan::math::transpose(b));
+  test::check_varis_on_stack(stan::math::transpose(c));
 }

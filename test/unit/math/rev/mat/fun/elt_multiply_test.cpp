@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,elt_multiply_vec_vv) {
   using stan::math::elt_multiply;
@@ -175,4 +176,13 @@ TEST(AgradRevMatrix,elt_multiply_matrix_dv) {
   VEC g = cgradvec(z(0,0),x_ind);
   EXPECT_FLOAT_EQ(2.0,g[0]);
   EXPECT_FLOAT_EQ(0.0,g[1]);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::elt_multiply;
+  using stan::math::vector_v;
+  vector_v x(2);
+  x << 2, 5;
+  vector_v y(2);
+  y << 10, 100;
+  test::check_varis_on_stack(stan::math::elt_multiply(x,y));
 }

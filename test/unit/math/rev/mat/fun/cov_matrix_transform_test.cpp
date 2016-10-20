@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -37,4 +38,15 @@ TEST(prob_transform,cov_matrix_jacobian) {
 
   double log_abs_jacobian_det = log(fabs(determinant(J)));
   EXPECT_FLOAT_EQ(log_abs_jacobian_det,lp.val());
+}
+
+TEST(prob_transform, check_varis_on_stack) {
+  using stan::math::var;
+  int K = 4;
+  unsigned int K_choose_2 = 6;
+  Eigen::Matrix<var,Eigen::Dynamic,1> X(K_choose_2 + K);
+  X << 1.0, 2.0, -3.0, 1.7, 9.8, 
+    -12.2, 0.4, 0.2, 1.2, 2.7;
+  var lp = 0.0;
+  test::check_varis_on_stack(stan::math::cov_matrix_constrain(X,K,lp));
 }

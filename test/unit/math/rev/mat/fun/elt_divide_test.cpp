@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,elt_divide_vec_vv) {
   using stan::math::elt_divide;
@@ -217,4 +218,14 @@ TEST(AgradRevMatrix,elt_divide_row_vec_scal_dv) {
   row_vector_v z = elt_divide(x, y);
   z.sum().grad();
   EXPECT_FLOAT_EQ(x.sum() * (-1.0 / 100),  y.adj());
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::elt_divide;
+  using stan::math::vector_v;
+  vector_v x(2);
+  x << 2, 5;
+  vector_v y(2);
+  y << 10, 100;
+
+  test::check_varis_on_stack(stan::math::elt_divide(x,y));
 }

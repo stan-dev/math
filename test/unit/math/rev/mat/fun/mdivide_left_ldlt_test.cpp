@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 std::vector<double> finite_differences(const size_t row, const size_t col,
                                          const stan::math::matrix_d A,
@@ -373,3 +374,12 @@ TEST(AgradRevMatrix,mdivide_left_ldlt_finite_diff_vd) {
   }
 }
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::LDLT_factor<stan::math::var,-1,-1> ldlt_Av;
+  stan::math::matrix_v Av(2,2);
+  Av << 2.0, 3.0, 
+    3.0, 7.0;
+  ldlt_Av.compute(Av);
+
+  test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Av,Av));
+}

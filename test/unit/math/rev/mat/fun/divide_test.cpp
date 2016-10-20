@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, divide_scalar) {
   using stan::math::divide;
@@ -215,4 +216,18 @@ TEST(AgradRevMatrix, divide_matrix) {
   EXPECT_TRUE (std::isnan(output(0,1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(1,0).val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1,1).val());
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::var x = 10;
+  stan::math::vector_v v(3);
+  v << -100, 0, 1;
+  stan::math::row_vector_v rv(3);
+  rv << -100, 0, 1;
+  stan::math::matrix_v m(2, 3);
+  m << -100, 0, 1, 20, -40, 2;
+  
+  test::check_varis_on_stack(stan::math::divide(v, x));
+  test::check_varis_on_stack(stan::math::divide(rv, x));
+  test::check_varis_on_stack(stan::math::divide(m, x));
 }

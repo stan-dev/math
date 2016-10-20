@@ -1,9 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-
 #include <iostream>
-
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, sd_eq) {
   using stan::math::sd;
@@ -187,4 +186,9 @@ TEST(AgradRevSd, finiteDiffsMatchAnalytic) {
     double finite_diff = (sd_y_plus_epsilon - sd_y) / epsilon;
     EXPECT_FLOAT_EQ(analytic, finite_diff);
   }
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v v(6);
+  v << 1, 2, 3, 4, 5, 6;
+  test::check_varis_on_stack(stan::math::sd(v));
 }

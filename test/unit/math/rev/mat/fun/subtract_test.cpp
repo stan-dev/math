@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,subtract_scalar) {
   using stan::math::subtract;
@@ -198,4 +199,20 @@ TEST(AgradRevMatrix, subtract_matrix_matrix_exception) {
   EXPECT_THROW( subtract(d1, v2), std::invalid_argument);
   EXPECT_THROW( subtract(v1, d2), std::invalid_argument);
   EXPECT_THROW( subtract(v1, v2), std::invalid_argument);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v m(2, 2);
+  m << 1, 2, 3, 4;
+
+  stan::math::vector_v v(3);
+  v << 1, 2, 3;
+
+  stan::math::row_vector_v rv(2);
+  rv << 1, 2;
+
+  test::check_varis_on_stack(stan::math::subtract(m, m));
+  test::check_varis_on_stack(stan::math::subtract(v, v));
+  test::check_varis_on_stack(stan::math::subtract(rv, rv));
+  test::check_varis_on_stack(stan::math::subtract(m, 2.0));
+  test::check_varis_on_stack(stan::math::subtract(1.0, m));
 }

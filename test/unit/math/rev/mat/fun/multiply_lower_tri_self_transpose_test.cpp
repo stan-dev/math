@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 stan::math::matrix_v generate_large_L_tri_mat(){
   using stan::math::matrix_v;
@@ -265,4 +266,14 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
 
   matrix_v K(0,0);
   test_mult_LLT(K);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::matrix_v;
+
+  stan::math::matrix_v L(3, 3);
+  L << 1, 0, 0,   
+    2, 3, 0,   
+    4, 5, 6;
+
+  test::check_varis_on_stack(stan::math::multiply_lower_tri_self_transpose(L));
 }

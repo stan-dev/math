@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, min_vector) {
   using stan::math::min;
@@ -80,4 +81,16 @@ TEST(AgradRevMatrix, min_matrix_exception) {
 
   matrix_v v;
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val());
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v v(3);
+  v << -100, 0, 1;
+  stan::math::row_vector_v rv(3);
+  rv << -100, 0, 1;
+  stan::math::matrix_v m(2, 3);
+  m << -100, 0, 1, 20, -40, 2;
+  
+  test::check_varis_on_stack(stan::math::min(v));
+  test::check_varis_on_stack(stan::math::min(rv));
+  test::check_varis_on_stack(stan::math::min(m));
 }
