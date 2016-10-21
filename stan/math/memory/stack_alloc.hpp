@@ -271,7 +271,6 @@ namespace stan {
           return true;
         return false;
       }
-
     };
 
   }
