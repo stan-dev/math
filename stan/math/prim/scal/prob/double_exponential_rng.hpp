@@ -19,8 +19,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    double_exponential_rng(const double mu,
-                           const double sigma,
+    double_exponential_rng(double mu,
+                           double sigma,
                            RNG& rng) {
       static const char* function("double_exponential_rng");
 

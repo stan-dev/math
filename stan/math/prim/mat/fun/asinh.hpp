@@ -9,9 +9,10 @@ namespace stan {
 
     /**
      * Structure to wrap asinh() so it can be vectorized.
-     * @param x Variable.
-     * @tparam T Variable type.
-     * @return Inverse hyperbolic sine of x in radians. 
+     *
+     * @tparam T argument scalar type
+     * @param x argument
+     * @return inverse hyperbolic sine of argument in radians. 
      */
     struct asinh_fun {
       template <typename T>
@@ -22,10 +23,11 @@ namespace stan {
     };
 
     /**
-     * Vectorized version of acos().
-     * @param x Container.
+     * Vectorized version of asinh().
+     *
      * @tparam T Container type.
-     * @return Inverse hyperbolic sine of each value in x, in radians. 
+     * @param x Container.
+     * @return Inverse hyperbolic sine of each value in the container.
      */
     template <typename T>
     inline typename apply_scalar_unary<asinh_fun, T>::return_t

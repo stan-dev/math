@@ -96,6 +96,7 @@ endif
 	@echo '  Library configuration:'
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
+	@echo '  - CVODES                      ' $(CVODES)
 	@echo '  - GTEST                       ' $(GTEST)
 	@echo ''
 	@echo 'Tests:'

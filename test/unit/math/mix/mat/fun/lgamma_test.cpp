@@ -73,7 +73,7 @@ struct lgamma_test {
    */
   static std::vector<double> invalid_inputs() {
     return test::math::vector_builder<double>()
-      .add(-10.0).add(0.0).add(-2.0).add(-4.0).build();
+      .build();
   }
 
   /**
@@ -89,7 +89,7 @@ struct lgamma_test {
    */
   static std::vector<int> int_invalid_inputs() {
     return test::math::vector_builder<int>()
-      .add(0).add(-25).add(-3).add(-15).build();
+      .build();
   }
 };
 

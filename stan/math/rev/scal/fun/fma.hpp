@@ -1,20 +1,12 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FMA_HPP
 #define STAN_MATH_REV_SCAL_FUN_FMA_HPP
 
-#include <math.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <valarray>
 #include <limits>
-
-#ifdef _MSC_VER
-template<typename T>
-T fma(T x, T y, T z) {
-  return x*y+z;
-}
-#endif
 
 namespace stan {
   namespace math {
@@ -23,8 +15,7 @@ namespace stan {
       class fma_vvv_vari : public op_vvv_vari {
       public:
         fma_vvv_vari(vari* avi, vari* bvi, vari* cvi) :
-          op_vvv_vari(::fma(avi->val_, bvi->val_, cvi->val_),
-                      avi, bvi, cvi) {
+          op_vvv_vari(fma(avi->val_, bvi->val_, cvi->val_), avi, bvi, cvi) {
         }
         void chain() {
           if (unlikely(is_nan(avi_->val_)
@@ -44,8 +35,7 @@ namespace stan {
       class fma_vvd_vari : public op_vvd_vari {
       public:
         fma_vvd_vari(vari* avi, vari* bvi, double c) :
-          op_vvd_vari(::fma(avi->val_, bvi->val_, c),
-                      avi, bvi, c) {
+          op_vvd_vari(fma(avi->val_, bvi->val_, c), avi, bvi, c) {
         }
         void chain() {
           if (unlikely(is_nan(avi_->val_)
@@ -63,8 +53,7 @@ namespace stan {
       class fma_vdv_vari : public op_vdv_vari {
       public:
         fma_vdv_vari(vari* avi, double b, vari* cvi) :
-          op_vdv_vari(::fma(avi->val_ , b, cvi->val_),
-                      avi, b, cvi) {
+          op_vdv_vari(fma(avi->val_ , b, cvi->val_), avi, b, cvi) {
         }
         void chain() {
           if (unlikely(is_nan(avi_->val_)
@@ -82,8 +71,7 @@ namespace stan {
       class fma_vdd_vari : public op_vdd_vari {
       public:
         fma_vdd_vari(vari* avi, double b, double c) :
-          op_vdd_vari(::fma(avi->val_ , b, c),
-                      avi, b, c) {
+          op_vdd_vari(fma(avi->val_ , b, c), avi, b, c) {
         }
         void chain() {
           if (unlikely(is_nan(avi_->val_)
@@ -98,8 +86,7 @@ namespace stan {
       class fma_ddv_vari : public op_ddv_vari {
       public:
         fma_ddv_vari(double a, double b, vari* cvi) :
-          op_ddv_vari(::fma(a, b, cvi->val_),
-                      a, b, cvi) {
+          op_ddv_vari(fma(a, b, cvi->val_), a, b, cvi) {
         }
         void chain() {
           if (unlikely(is_nan(cvi_->val_)
@@ -117,9 +104,6 @@ namespace stan {
      * This function returns the product of the first two arguments
      * plus the third argument.
      *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
-     *
      * The partial derivatives are
      *
      * \f$\frac{\partial}{\partial x} (x * y) + z = y\f$, and
@@ -133,9 +117,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(const var& a,
-                   const var& b,
-                   const var& c) {
+    inline var fma(const var& a, const var& b, const var& c) {
       return var(new fma_vvv_vari(a.vi_, b.vi_, c.vi_));
     }
 
@@ -143,9 +125,6 @@ namespace stan {
      * The fused multiply-add function for two variables and a value
      * (C99).  This function returns the product of the first two
      * arguments plus the third argument.
-     *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
      *
      * The partial derivatives are
      *
@@ -158,9 +137,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(const var& a,
-                   const var& b,
-                   double c) {
+    inline var fma(const var& a, const var& b, double c) {
       return var(new fma_vvd_vari(a.vi_, b.vi_, c));
     }
 
@@ -168,9 +145,6 @@ namespace stan {
      * The fused multiply-add function for a variable, value, and
      * variable (C99).  This function returns the product of the first
      * two arguments plus the third argument.
-     *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
      *
      * The partial derivatives are
      *
@@ -183,9 +157,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(const var& a,
-                   double b,
-                   const var& c) {
+    inline var fma(const var& a, double b, const var& c) {
       return var(new fma_vdv_vari(a.vi_, b, c.vi_));
     }
 
@@ -206,9 +178,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(const var& a,
-                   double b,
-                   double c) {
+    inline var fma(const var& a, double b, double c) {
       return var(new fma_vdd_vari(a.vi_, b, c));
     }
 
@@ -216,9 +186,6 @@ namespace stan {
      * The fused multiply-add function for a value, variable, and
      * value (C99).  This function returns the product of the first
      * two arguments plus the third argument.
-     *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
      *
      * The derivative is
      *
@@ -229,9 +196,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(double a,
-                   const var& b,
-                   double c) {
+    inline var fma(double a, const var& b, double c) {
       return var(new fma_vdd_vari(b.vi_, a, c));
     }
 
@@ -239,9 +204,6 @@ namespace stan {
      * The fused multiply-add function for two values and a variable,
      * and value (C99).  This function returns the product of the
      * first two arguments plus the third argument.
-     *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
      *
      * The derivative is
      *
@@ -252,9 +214,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(double a,
-                   double b,
-                   const var& c) {
+    inline var fma(double a, double b, const var& c) {
       return var(new fma_ddv_vari(a, b, c.vi_));
     }
 
@@ -262,9 +222,6 @@ namespace stan {
      * The fused multiply-add function for a value and two variables
      * (C99).  This function returns the product of the first two
      * arguments plus the third argument.
-     *
-     * The double-based version
-     * <code>::%fma(double, double, double)</code> is defined in <code>&lt;cmath&gt;</code>.
      *
      * The partial derivaties are
      *
@@ -277,9 +234,7 @@ namespace stan {
      * @param c Summand.
      * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
      */
-    inline var fma(double a,
-                   const var& b,
-                   const var& c) {
+    inline var fma(double a, const var& b, const var& c) {
       return var(new fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
     }
 

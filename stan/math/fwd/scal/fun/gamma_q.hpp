@@ -46,7 +46,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    gamma_q(const fvar<T>& x1, const double x2) {
+    gamma_q(const fvar<T>& x1, double x2) {
       using std::log;
       using std::exp;
       using std::pow;
@@ -80,7 +80,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    gamma_q(const double x1, const fvar<T>& x2) {
+    gamma_q(double x1, const fvar<T>& x2) {
       using std::exp;
       using std::pow;
 

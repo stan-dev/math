@@ -96,7 +96,7 @@ namespace stan {
      * @param b Second scalar operand.
      * @return Result of adding variable and scalar.
      */
-    inline var operator+(const var& a, const double b) {
+    inline var operator+(const var& a, double b) {
       if (b == 0.0)
         return a;
       return var(new add_vd_vari(a.vi_, b));
@@ -113,7 +113,7 @@ namespace stan {
      * @param b Second variable operand.
      * @return Result of adding variable and scalar.
      */
-    inline var operator+(const double a, const var& b) {
+    inline var operator+(double a, const var& b) {
       if (a == 0.0)
         return b;
       return var(new add_vd_vari(b.vi_, a));  // by symmetry

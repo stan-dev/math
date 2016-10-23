@@ -9,7 +9,7 @@ namespace stan {
 
     inline void scaled_add(std::vector<double>& x,
                            const std::vector<double>& y,
-                           const double lambda) {
+                           double lambda) {
       for (size_t i = 0; i < x.size(); ++i)
         x[i] += lambda * y[i];
     }

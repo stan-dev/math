@@ -12,7 +12,7 @@ namespace stan {
       return *this;
     }
 
-    inline var& var::operator/=(const double b) {
+    inline var& var::operator/=(double b) {
       if (b == 1.0)
         return *this;
       vi_ = new divide_vd_vari(vi_, b);

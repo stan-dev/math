@@ -125,5 +125,5 @@ struct fdim_fun {
 
 TEST(AgradRev, fdim_nan) {
   fdim_fun fdim_;
-  test_nan(fdim_,3.0,5.0,false, true);
+  test_nan(fdim_, 3.0, 5.0, false, true);
 }

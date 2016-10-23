@@ -18,7 +18,7 @@ namespace stan {
      */
     template<typename T>
     const Eigen::Array<T, Eigen::Dynamic, 1>
-    make_nu(const T eta, const size_t K) {
+    make_nu(const T eta, size_t K) {
       using Eigen::Array;
       using Eigen::Dynamic;
       using Eigen::Matrix;

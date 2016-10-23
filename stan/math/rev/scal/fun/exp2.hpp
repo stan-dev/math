@@ -24,9 +24,7 @@ namespace stan {
     /**
      * Exponentiation base 2 function for variables (C99).
      *
-     * For non-variable function, see boost::math::exp2().
-     *
-     * The derivatie is
+     * The derivative is
      *
      * \f$\frac{d}{dx} 2^x = (\log 2) 2^x\f$.
      *

@@ -8,16 +8,18 @@ TEST(AgradFwdFdim,Fvar) {
   using std::isnan;
   using std::floor;
 
-  fvar<double> x(2.0,1.0);
-  fvar<double> y(-3.0,2.0);
+  // x > y case, value is (x - y)
+  fvar<double> x(2.0, 1.0);
+  fvar<double> y(-3.0, 2.0);
 
   fvar<double> a = fdim(x, y);
   EXPECT_FLOAT_EQ(fdim(2.0, -3.0), a.val_);
-  EXPECT_FLOAT_EQ(1.0 * 1.0 + 2.0 * -floor(2.0 / -3.0), a.d_);
+  EXPECT_FLOAT_EQ(1.0 * 1.0 - 1.0 * 2.0, a.d_);
 
+  // x > y again
   fvar<double> b = fdim(2 * x, y);
   EXPECT_FLOAT_EQ(fdim(2 * 2.0, -3.0), b.val_);
-  EXPECT_FLOAT_EQ(2 * 1.0 * 1.0 + 2.0 * -floor(4.0 / -3.0), b.d_);
+  EXPECT_FLOAT_EQ(1.0 * 2.0 - 1.0 * 2.0, b.d_);
 
   fvar<double> c = fdim(y, x);
   EXPECT_FLOAT_EQ(fdim(-3.0, 2.0), c.val_);
@@ -72,5 +74,5 @@ struct fdim_fun {
 
 TEST(AgradFwdFdim, nan) {
   fdim_fun fdim_;
-  test_nan_fwd(fdim_,3.0,5.0,false);
+  test_nan_fwd(fdim_, 3.0, 5.0, false);
 }

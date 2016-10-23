@@ -20,7 +20,7 @@ namespace stan {
     template <class RNG>
     inline std::vector<int>
     multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta,
-                    const int N,
+                    int N,
                     RNG& rng) {
       static const char* function("multinomial_rng");
 

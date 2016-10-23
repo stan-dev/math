@@ -37,7 +37,7 @@ namespace stan {
     inline void invalid_argument_vec(const char* function,
                                      const char* name,
                                      const T& y,
-                                     const size_t i,
+                                     size_t i,
                                      const char* msg1,
                                      const char* msg2) {
       std::ostringstream vec_name_stream;
@@ -73,7 +73,7 @@ namespace stan {
     inline void invalid_argument_vec(const char* function,
                                      const char* name,
                                      const T& y,
-                                     const size_t i,
+                                     size_t i,
                                      const char* msg) {
       invalid_argument_vec(function, name, y, i, msg, "");
     }

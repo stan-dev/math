@@ -5,7 +5,7 @@ EIGEN ?= $(MATH)lib/eigen_3.2.9
 BOOST ?= $(MATH)lib/boost_1.60.0
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
-CVODES ?= $(MATH)lib/cvodes_2.8.2
+CVODES ?= $(MATH)lib/cvodes_2.9.0
 
 ##
 # Build rules for cvodes

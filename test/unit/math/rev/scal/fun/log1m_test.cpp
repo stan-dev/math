@@ -4,6 +4,7 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
 TEST(AgradRev,log1m) {
+  using stan::math::log1m;
   AVAR a = 0.1;
   AVAR f = log1m(a);
   EXPECT_FLOAT_EQ(log(1 - 0.1), f.val());
@@ -11,12 +12,16 @@ TEST(AgradRev,log1m) {
   AVEC x = createAVEC(a);
   VEC grad_f;
   f.grad(x,grad_f);
-  EXPECT_FLOAT_EQ(-1.0/(1.0 - 0.1), grad_f[0]);
+  EXPECT_FLOAT_EQ(-1 / (1 - 0.1), grad_f[0]);
 }
-TEST(AgradRev,log1mErr) {
-  AVAR a = 10;
-  AVAR f = log1m(a);
-  EXPECT_TRUE(boost::math::isnan(f.val()));
+TEST(AgradRev,excepts) {
+  using stan::math::log1m;
+  EXPECT_THROW(log1m(AVAR(10)), std::domain_error);
+}
+
+TEST(MathFunctions, log1m_inf_return) {
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            stan::math::log1m(1));
 }
 
 struct log1m_fun {

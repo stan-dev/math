@@ -10,7 +10,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    binary_log_loss(const int y, const fvar<T>& y_hat) {
+    binary_log_loss(int y, const fvar<T>& y_hat) {
       if (y)
         return fvar<T>(binary_log_loss(y, y_hat.val_),
                        -y_hat.d_ / y_hat.val_);

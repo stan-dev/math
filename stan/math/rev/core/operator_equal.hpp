@@ -36,7 +36,7 @@ namespace stan {
      * @return True if the first variable's value is the same as the
      * second value.
      */
-    inline bool operator==(const var& a, const double b) {
+    inline bool operator==(const var& a, double b) {
       return a.val() == b;
     }
 
@@ -48,7 +48,7 @@ namespace stan {
      * @param b Second variable.
      * @return True if the variable's value is equal to the scalar.
      */
-    inline bool operator==(const double a, const var& b) {
+    inline bool operator==(double a, const var& b) {
       return a == b.val();
     }
 

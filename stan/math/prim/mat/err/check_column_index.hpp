@@ -35,7 +35,7 @@ namespace stan {
     inline void check_column_index(const char* function,
                                    const char* name,
                                    const Eigen::Matrix<T_y, R, C>& y,
-                                   const size_t i) {
+                                   size_t i) {
       if (i >= stan::error_index::value
           && i < static_cast<size_t>(y.cols()) + stan::error_index::value)
         return;

@@ -20,7 +20,7 @@ namespace stan {
 
     template <class RNG>
     inline double
-    exponential_rng(const double beta,
+    exponential_rng(double beta,
                     RNG& rng) {
       using boost::variate_generator;
       using boost::exponential_distribution;

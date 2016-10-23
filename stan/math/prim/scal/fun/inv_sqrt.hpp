@@ -6,7 +6,7 @@
 namespace stan {
   namespace math {
 
-    inline double inv_sqrt(const double x) {
+    inline double inv_sqrt(double x) {
       using std::sqrt;
       return 1.0 / sqrt(x);
     }

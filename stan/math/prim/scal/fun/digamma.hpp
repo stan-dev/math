@@ -1,12 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_DIGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_DIGAMMA_HPP
 
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
   namespace math {
 
     /**
+     * Return the derivative of the log gamma function
+     * at the specified value.
      *
        \f[
        \mbox{digamma}(x) =
@@ -33,12 +36,18 @@ namespace stan {
        \f[
        \frac{\partial \, \Psi(x)}{\partial x} = \frac{\Gamma''(x)\Gamma(x)-(\Gamma'(x))^2}{\Gamma^2(x)}
        \f]
-    */
+
+     *
+     * The design follows the standard C++ library in returning NaN
+     * rather than throwing exceptions.
+     *
+     * @param[in] x argument
+     * @return derivative of log gamma function at argument
+     */
     inline double digamma(double x) {
-      return boost::math::digamma(x);
+      return boost::math::digamma(x, boost_policy_t());
     }
 
   }
 }
-
 #endif
