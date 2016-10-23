@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_FMIN_HPP
 #define STAN_MATH_FWD_SCAL_FUN_FMIN_HPP
 
-#include <math.h>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/fmin.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 
@@ -12,7 +12,6 @@ namespace stan {
 
     template <typename T>
     inline fvar<T> fmin(const fvar<T>& x1, const fvar<T>& x2) {
-      using ::fmin;
       if (unlikely(is_nan(x1.val_))) {
         if (is_nan(x2.val_))
           return fvar<T>(fmin(x1.val_, x2.val_), NOT_A_NUMBER);
@@ -30,8 +29,7 @@ namespace stan {
     }
 
     template <typename T>
-    inline fvar<T> fmin(const double x1, const fvar<T>& x2) {
-      using ::fmin;
+    inline fvar<T> fmin(double x1, const fvar<T>& x2) {
       if (unlikely(is_nan(x1))) {
         if (is_nan(x2.val_))
           return fvar<T>(fmin(x1, x2.val_), NOT_A_NUMBER);
@@ -49,8 +47,7 @@ namespace stan {
     }
 
     template <typename T>
-    inline fvar<T> fmin(const fvar<T>& x1, const double x2) {
-      using ::fmin;
+    inline fvar<T> fmin(const fvar<T>& x1, double x2) {
       if (unlikely(is_nan(x1.val_))) {
         if (is_nan(x2))
           return fvar<T>(fmin(x1.val_, x2), NOT_A_NUMBER);

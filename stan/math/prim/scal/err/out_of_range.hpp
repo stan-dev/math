@@ -29,8 +29,8 @@ namespace stan {
      * @throw std::out_of_range with message.
      */
     inline void out_of_range(const char* function,
-                             const int max,
-                             const int index,
+                             int max,
+                             int index,
                              const char* msg1 = "",
                              const char* msg2 = "") {
       std::ostringstream message;

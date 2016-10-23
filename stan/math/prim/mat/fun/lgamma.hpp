@@ -29,7 +29,7 @@ namespace stan {
      *         applied to each value in x.
      * @throw std::domain_error if any value is a negative integer or 0. 
      */ 
-   template <typename T>
+    template <typename T>
     inline typename apply_scalar_unary<lgamma_fun, T>::return_t
     lgamma(const T& x) {
       return apply_scalar_unary<lgamma_fun, T>::apply(x);

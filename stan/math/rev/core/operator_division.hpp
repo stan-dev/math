@@ -108,7 +108,7 @@ namespace stan {
      * @param b Scalar operand.
      * @return Variable result of dividing the variable by the scalar.
      */
-    inline var operator/(const var& a, const double b) {
+    inline var operator/(const var& a, double b) {
       if (b == 1.0)
         return a;
       return var(new divide_vd_vari(a.vi_, b));
@@ -125,7 +125,7 @@ namespace stan {
      * @param b Variable operand.
      * @return Variable result of dividing the scalar by the variable.
      */
-    inline var operator/(const double a, const var& b) {
+    inline var operator/(double a, const var& b) {
       return var(new divide_dv_vari(a, b.vi_));
     }
 

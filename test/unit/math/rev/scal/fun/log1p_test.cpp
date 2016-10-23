@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <stdexcept>
 
 TEST(AgradRev,log1p) {
   AVAR a = 0.1;
@@ -12,6 +13,19 @@ TEST(AgradRev,log1p) {
   VEC grad_f;
   f.grad(x,grad_f);
   EXPECT_FLOAT_EQ(1.0 / (1.0 + 0.1), grad_f[0]);
+}
+
+TEST(AgradRevLog1p, excepts) {
+  using stan::math::log1p;
+  AVAR a = -2;
+  EXPECT_THROW(log1p(a), std::domain_error);
+}
+
+TEST(AgradRevLog1p, overflows) {
+  using stan::math::log1p;
+  AVAR b = -1;
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
+            stan::math::log1p(b).val());
 }
 
 struct log1p_fun {

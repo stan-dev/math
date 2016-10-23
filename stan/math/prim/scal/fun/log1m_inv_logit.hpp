@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1M_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_INV_LOGIT_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -27,20 +28,29 @@ namespace stan {
        \end{cases}
        \f]
      *
-     * @tparam T Scalar type
-     * @param u Input.
-     * @return log of 1 minus the inverse logit of the input.
+     * @param u argument
+     * @return log of one minus the inverse logit of the argument
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    log1m_inv_logit(const T u) {
+    inline double log1m_inv_logit(double u) {
       using std::exp;
       if (u > 0.0)
         return -u - log1p(exp(-u));  // prevent underflow
       return -log1p(exp(u));
     }
 
+    /**
+     * Return the natural logarithm of one minus the inverse logit of
+     * the specified argument.
+     *
+     * @param u argument
+     * @return log of one minus the inverse logit of the argument
+     */
+    inline double log1m_inv_logit(int u) {
+      return log1m_inv_logit(static_cast<double>(u));
+    }
+
+
+
   }
 }
-
 #endif

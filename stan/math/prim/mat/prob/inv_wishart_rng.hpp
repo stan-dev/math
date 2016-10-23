@@ -12,7 +12,7 @@ namespace stan {
 
     template <class RNG>
     inline Eigen::MatrixXd
-    inv_wishart_rng(const double nu, const Eigen::MatrixXd& S, RNG& rng) {
+    inv_wishart_rng(double nu, const Eigen::MatrixXd& S, RNG& rng) {
       static const char* function("inv_wishart_rng");
 
       using Eigen::MatrixXd;

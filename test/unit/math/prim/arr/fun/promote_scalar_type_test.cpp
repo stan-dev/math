@@ -4,6 +4,8 @@
 
 TEST(MathFunctionsPromoteScalarType,StdVector) {
   using std::vector;
+  expect_promote_type<vector<double>,
+                      double, vector<int> >();
   expect_promote_type<vector<vector<double> >, 
                     double, vector<vector<int> > >();
   expect_promote_type<vector<vector<double> >, 

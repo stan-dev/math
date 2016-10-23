@@ -44,7 +44,7 @@ namespace stan {
      * @param x Argument.
      * @return Inverse complementary log-log of the argument.
      */
-    inline double inv_cloglog(const double x) {
+    inline double inv_cloglog(double x) {
       using std::exp;
       return 1 - exp(-exp(x));
     }

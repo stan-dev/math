@@ -1,15 +1,9 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ACOSH_HPP
 #define STAN_MATH_REV_SCAL_FUN_ACOSH_HPP
 
-#include <math.h>
+#include <stan/math/prim/scal/fun/acosh.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <cmath>
-
-#ifdef _MSC_VER
-#include <boost/math/special_functions/acosh.hpp>
-using boost::math::acosh;
-#endif
 
 namespace stan {
   namespace math {
@@ -66,9 +60,7 @@ namespace stan {
      * @return Inverse hyperbolic cosine of the variable.
      */
     inline var acosh(const var& a) {
-      if (is_inf(a.val()) && a > 0.0)
-        return var(new acosh_vari(a.val(), a.vi_));
-      return var(new acosh_vari(::acosh(a.val()), a.vi_));
+      return var(new acosh_vari(stan::math::acosh(a.val()), a.vi_));
     }
 
   }

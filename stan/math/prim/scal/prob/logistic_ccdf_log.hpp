@@ -35,7 +35,7 @@ namespace stan {
       if ( !( stan::length(y) && stan::length(mu) && stan::length(sigma) ) )
         return 0.0;
 
-      static const char* function("logistic_cdf_log");
+      static const char* function("logistic_ccdf_log");
 
       using boost::math::tools::promote_args;
       using std::log;

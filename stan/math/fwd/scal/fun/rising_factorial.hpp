@@ -22,7 +22,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    rising_factorial(const fvar<T>& x, const double n) {
+    rising_factorial(const fvar<T>& x, double n) {
       using boost::math::digamma;
 
       T rising_fact(rising_factorial(x.val_, n));
@@ -34,7 +34,7 @@ namespace stan {
     template<typename T>
     inline
     fvar<T>
-    rising_factorial(const double x, const fvar<T>& n) {
+    rising_factorial(double x, const fvar<T>& n) {
       using boost::math::digamma;
 
       T rising_fact(rising_factorial(x, n.val_));

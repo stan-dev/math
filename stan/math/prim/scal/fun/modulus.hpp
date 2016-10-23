@@ -9,7 +9,7 @@
 namespace stan {
   namespace math {
 
-    inline int modulus(const int x, const int y) {
+    inline int modulus(int x, int y) {
       if (unlikely(y == 0))
         domain_error("modulus", "divisor is", 0, "");
       return x % y;

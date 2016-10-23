@@ -22,7 +22,7 @@ namespace stan {
 
     template<typename T>
     inline fvar<T>
-    log_falling_factorial(const double x, const fvar<T>& n) {
+    log_falling_factorial(double x, const fvar<T>& n) {
       using boost::math::digamma;
 
       return fvar<T>(log_falling_factorial(x, n.val_),
@@ -31,7 +31,7 @@ namespace stan {
 
     template<typename T>
     inline fvar<T>
-    log_falling_factorial(const fvar<T>& x, const double n) {
+    log_falling_factorial(const fvar<T>& x, double n) {
       using boost::math::digamma;
 
       return fvar<T>(log_falling_factorial(x.val_, n),

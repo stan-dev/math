@@ -7,6 +7,6 @@ TEST(MathMeta, value_type) {
   using stan::math::fvar;
   using stan::math::var;
 
-  expect_same_type<fvar<var>,child_type<fvar<fvar<var> > >::type>();
-  expect_same_type<var,child_type<fvar<var> >::type>();
+  expect_same_type<fvar<var>, child_type<fvar<fvar<var> > >::type>();
+  expect_same_type<var, child_type<fvar<var> >::type>();
 }

@@ -25,8 +25,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    beta_rng(const double alpha,
-             const double beta,
+    beta_rng(double alpha,
+             double beta,
              RNG& rng) {
       using boost::variate_generator;
       using boost::random::gamma_distribution;

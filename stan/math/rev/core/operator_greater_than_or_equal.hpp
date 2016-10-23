@@ -37,7 +37,7 @@ namespace stan {
      * @return True if first variable's value is greater than or equal
      * to second value.
      */
-    inline bool operator>=(const var& a, const double b) {
+    inline bool operator>=(const var& a, double b) {
       return a.val() >= b;
     }
 
@@ -50,7 +50,7 @@ namespace stan {
      * @return True if the first value is greater than or equal to the
      * second variable's value.
      */
-    inline bool operator>=(const double a, const var& b) {
+    inline bool operator>=(double a, const var& b) {
       return a >= b.val();
     }
 

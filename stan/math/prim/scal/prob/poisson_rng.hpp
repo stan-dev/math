@@ -19,7 +19,7 @@ namespace stan {
 
     template <class RNG>
     inline int
-    poisson_rng(const double lambda,
+    poisson_rng(double lambda,
                 RNG& rng) {
       using boost::variate_generator;
       using boost::random::poisson_distribution;

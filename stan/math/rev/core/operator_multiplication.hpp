@@ -95,7 +95,7 @@ namespace stan {
      * @param b Scalar operand.
      * @return Variable result of multiplying operands.
      */
-    inline var operator*(const var& a, const double b) {
+    inline var operator*(const var& a, double b) {
       if (b == 1.0)
         return a;
       return var(new multiply_vd_vari(a.vi_, b));
@@ -112,7 +112,7 @@ namespace stan {
      * @param b Variable operand.
      * @return Variable result of multiplying the operands.
      */
-    inline var operator*(const double a, const var& b) {
+    inline var operator*(double a, const var& b) {
       if (a == 1.0)
         return b;
       return var(new multiply_vd_vari(b.vi_, a));  // by symmetry

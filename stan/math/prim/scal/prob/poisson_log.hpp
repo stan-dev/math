@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
@@ -30,8 +31,6 @@ namespace stan {
         T_partials_return;
 
       static const char* function("poisson_log");
-
-      using boost::math::lgamma;
 
       if (!(stan::length(n)
             && stan::length(lambda)))

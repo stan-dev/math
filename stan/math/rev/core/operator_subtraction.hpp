@@ -111,7 +111,7 @@ namespace stan {
      * @param b Second scalar operand.
      * @return Result of subtracting the scalar from the variable.
      */
-    inline var operator-(const var& a, const double b) {
+    inline var operator-(const var& a, double b) {
       if (b == 0.0)
         return a;
       return var(new subtract_vd_vari(a.vi_, b));
@@ -128,7 +128,7 @@ namespace stan {
      * @param b Second variable operand.
      * @return Result of sutracting a variable from a scalar.
      */
-    inline var operator-(const double a, const var& b) {
+    inline var operator-(double a, const var& b) {
       return var(new subtract_dv_vari(a, b.vi_));
     }
 

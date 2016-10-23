@@ -86,7 +86,7 @@ public:
                     const T3&, const T4&, const T5&) {
     using std::log;
     using stan::math::log1m;
-    
+
     return (alpha - 1.0) * log(y) + (beta - 1.0) * log1m(y) 
       + lgamma(alpha + beta) - lgamma(alpha) - lgamma(beta);
   }

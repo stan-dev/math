@@ -49,8 +49,8 @@ namespace stan {
 
     template <class RNG>
     inline Eigen::MatrixXd
-    lkj_corr_cholesky_rng(const size_t K,
-                          const double eta,
+    lkj_corr_cholesky_rng(size_t K,
+                          double eta,
                           RNG& rng) {
       static const char* function("lkj_corr_cholesky_rng");
 
