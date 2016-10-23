@@ -14,7 +14,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
 #define STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
 
-// #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 
 namespace Eigen {
 
@@ -183,6 +185,7 @@ namespace Eigen {
     {  // NOLINT
     using std::frexp;
     using std::pow;
+    using stan::math::value_of_rec;
     const T l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
     squarings = 0;
     if (l1norm < 1.495585217958292e-002) {
@@ -195,7 +198,7 @@ namespace Eigen {
       matrix_exp_pade9(arg, U, V);
     } else {
       const double maxnorm = 5.371920351148152;
-      frexp(l1norm / maxnorm, &squarings);
+      frexp(value_of_rec(l1norm) / value_of_rec(maxnorm), &squarings);
       if (squarings < 0) squarings = 0;
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<T>(squarings));  // NOLINT
       matrix_exp_pade13(A, U, V);

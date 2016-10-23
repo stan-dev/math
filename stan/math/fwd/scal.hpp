@@ -39,7 +39,6 @@
 #include <stan/math/fwd/scal/fun/fmax.hpp>
 #include <stan/math/fwd/scal/fun/fmin.hpp>
 #include <stan/math/fwd/scal/fun/fmod.hpp>
-#include <stan/math/fwd/scal/fun/frexp.hpp>
 #include <stan/math/fwd/scal/fun/gamma_p.hpp>
 #include <stan/math/fwd/scal/fun/gamma_q.hpp>
 #include <stan/math/fwd/scal/fun/grad_inc_beta.hpp>
