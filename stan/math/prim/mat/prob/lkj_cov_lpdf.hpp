@@ -6,8 +6,8 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/prob/lognormal_log.hpp>
-#include <stan/math/prim/mat/prob/lkj_corr_log.hpp>
+#include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
+#include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
@@ -46,17 +46,17 @@ namespace stan {
       const Eigen::Array<T_y, Eigen::Dynamic, 1> sds
         = y.diagonal().array().sqrt();
       for (unsigned int k = 0; k < K; k++) {
-        lp += lognormal_log<propto>(sds(k), mu(k), sigma(k));
+        lp += lognormal_lpdf<propto>(sds(k), mu(k), sigma(k));
       }
       if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
           && eta == 1.0) {
         // no need to rescale y into a correlation matrix
-        lp += lkj_corr_log<propto, T_y, T_shape>(y, eta);
+        lp += lkj_corr_lpdf<propto, T_y, T_shape>(y, eta);
         return lp;
       }
       Eigen::DiagonalMatrix<T_y, Eigen::Dynamic> D(K);
       D.diagonal() = sds.inverse();
-      lp += lkj_corr_log<propto, T_y, T_shape>(D * y * D, eta);
+      lp += lkj_corr_lpdf<propto, T_y, T_shape>(D * y * D, eta);
       return lp;
     }
 
@@ -94,17 +94,17 @@ namespace stan {
       const Eigen::Array<T_y, Eigen::Dynamic, 1> sds
         = y.diagonal().array().sqrt();
       for (unsigned int k = 0; k < K; k++) {
-        lp += lognormal_log<propto>(sds(k), mu, sigma);
+        lp += lognormal_lpdf<propto>(sds(k), mu, sigma);
       }
       if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
           && eta == 1.0) {
         // no need to rescale y into a correlation matrix
-        lp += lkj_corr_log<propto>(y, eta);
+        lp += lkj_corr_lpdf<propto>(y, eta);
         return lp;
       }
       Eigen::DiagonalMatrix<T_y, Eigen::Dynamic> D(K);
       D.diagonal() = sds.inverse();
-      lp += lkj_corr_log<propto, T_y, T_shape>(D * y * D, eta);
+      lp += lkj_corr_lpdf<propto, T_y, T_shape>(D * y * D, eta);
       return lp;
     }
 
