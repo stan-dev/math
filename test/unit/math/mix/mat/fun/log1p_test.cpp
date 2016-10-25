@@ -1,5 +1,4 @@
 #include <stan/math/mix/mat.hpp>
-#include <stan/math/prim/mat/fun/log1p.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>

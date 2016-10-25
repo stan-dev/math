@@ -20,7 +20,8 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
-        return stan::math::log1p(x);
+        using stan::math::log1p;
+        return log1p(x);
       }
     };
 
