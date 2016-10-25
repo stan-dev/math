@@ -265,7 +265,7 @@ namespace stan {
        */
       inline bool in_stack(const void* ptr) const {
         for (size_t i = 0; i < cur_block_; ++i)
-          if (ptr >= blocks_[i] && ptr <= blocks_[i] + sizes_[i])
+          if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i])
             return true;
         if (ptr >= blocks_[cur_block_] && ptr < next_loc_)
           return true;
