@@ -39,5 +39,5 @@ TEST(AgradRev,modified_bessel_second_kind_NaN) {
 TEST(AgradRev, check_varis_on_stack) {
   int a(1);
   AVAR b(4.0);
-  test::check_varis_on_stack(stan::math::modified_bessel_second_kind(a,b));
+  test::check_varis_on_stack(stan::math::modified_bessel_second_kind(a, b));
 }

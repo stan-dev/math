@@ -31,11 +31,20 @@ TEST(AgradRev, check_varis_on_stack) {
     -3.0,  4.0, 0.0,
     0.0, 0.0, 5.0;
   Matrix<double,Dynamic,Dynamic> L = Sigma.inverse();
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(to_var(y), to_var(mu), to_var(L)));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(to_var(y), to_var(mu), L));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(to_var(y), mu, to_var(L)));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(to_var(y), mu, L));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(y, to_var(mu), to_var(L)));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(y, to_var(mu), L));
-  test::check_varis_on_stack(stan::math::multi_normal_prec_log(y, mu, to_var(L)));
+  
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(to_var(y), to_var(mu), to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(to_var(y), to_var(mu), L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(to_var(y), mu, to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(to_var(y), mu, L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(y, to_var(mu), to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(y, to_var(mu), L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<true>(y, mu, to_var(L)));
+
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(to_var(y), to_var(mu), to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(to_var(y), to_var(mu), L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(to_var(y), mu, to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(to_var(y), mu, L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(y, to_var(mu), to_var(L)));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(y, to_var(mu), L));
+  test::check_varis_on_stack(stan::math::multi_normal_prec_log<false>(y, mu, to_var(L)));
 }

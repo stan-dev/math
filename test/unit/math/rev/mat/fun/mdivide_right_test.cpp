@@ -37,8 +37,12 @@ TEST(AgradRevMatrix,mdivide_right_val) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::matrix_v m(2,2);
   m << 2.0, 3.0, 
     5.0, 7.0;
+
   test::check_varis_on_stack(stan::math::mdivide_right(m, m));
+  test::check_varis_on_stack(stan::math::mdivide_right(m, value_of(m)));
+  test::check_varis_on_stack(stan::math::mdivide_right(value_of(m), m));
 }

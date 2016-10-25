@@ -224,11 +224,20 @@ TEST(ProbDistributionsMultiGPCholesky, check_varis_on_stack) {
           -3.0,  4.0, 0.0,
            0.0, 0.0, 5.0;
   Matrix<double,Dynamic,Dynamic> L = Sigma.llt().matrixL();
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(to_var(y), to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(to_var(y), to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(to_var(y), L, to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(to_var(y), L, w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(y, to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(y, to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log(y, L, to_var(w)));
+
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), L, to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), L, w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, to_var(L), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, to_var(L), w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, L, to_var(w)));
+
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), L, to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), L, w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, to_var(L), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, to_var(L), w));
+  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, L, to_var(w)));
 }

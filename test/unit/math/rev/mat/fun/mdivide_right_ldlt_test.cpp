@@ -254,6 +254,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
 
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::row_vector_v b(5);
   b << 62, 84, 84, 76, 108;
   stan::math::matrix_v A(5, 5);
@@ -267,4 +268,6 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   ldlt_A.compute(A);
   
   test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, ldlt_A));
+  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, value_of(ldlt_A)));
+  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(value_of(b), ldlt_A));
 }

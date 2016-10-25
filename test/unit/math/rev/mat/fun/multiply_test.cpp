@@ -1671,6 +1671,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_vd) {
   }
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::matrix_v m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   stan::math::vector_v v(3);
@@ -1678,15 +1679,48 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::row_vector_v rv(3);
   rv << 100, 200, 300;
   stan::math::var s = 1;
+
   test::check_varis_on_stack(stan::math::multiply(m, m));
+  test::check_varis_on_stack(stan::math::multiply(m, value_of(m)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(m), m));
+
   test::check_varis_on_stack(stan::math::multiply(m, v));
+  test::check_varis_on_stack(stan::math::multiply(m, value_of(v)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(m), v));
+
   test::check_varis_on_stack(stan::math::multiply(rv, m));
+  test::check_varis_on_stack(stan::math::multiply(rv, value_of(m)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(rv), m));
+
   test::check_varis_on_stack(stan::math::multiply(rv, v));
+  test::check_varis_on_stack(stan::math::multiply(rv, value_of(v)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(rv), v));
+
   test::check_varis_on_stack(stan::math::multiply(s, m));
+  test::check_varis_on_stack(stan::math::multiply(s, value_of(m)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(s), m));
+
   test::check_varis_on_stack(stan::math::multiply(s, rv));
+  test::check_varis_on_stack(stan::math::multiply(s, value_of(rv)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(s), rv));
+
   test::check_varis_on_stack(stan::math::multiply(s, v));
+  test::check_varis_on_stack(stan::math::multiply(s, value_of(v)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(s), v));
+
   test::check_varis_on_stack(stan::math::multiply(m, s));
+  test::check_varis_on_stack(stan::math::multiply(m, value_of(s)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(m), s));
+
   test::check_varis_on_stack(stan::math::multiply(rv, s));
+  test::check_varis_on_stack(stan::math::multiply(rv, value_of(s)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(rv), s));
+
   test::check_varis_on_stack(stan::math::multiply(v, s));
+  test::check_varis_on_stack(stan::math::multiply(v, value_of(s)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(v), s));
+
   test::check_varis_on_stack(stan::math::multiply(s, s));
+  test::check_varis_on_stack(stan::math::multiply(s, value_of(s)));
+  test::check_varis_on_stack(stan::math::multiply(value_of(s), s));
 }

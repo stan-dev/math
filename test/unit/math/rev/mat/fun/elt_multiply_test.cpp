@@ -178,11 +178,15 @@ TEST(AgradRevMatrix,elt_multiply_matrix_dv) {
   EXPECT_FLOAT_EQ(0.0,g[1]);
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   using stan::math::elt_multiply;
   using stan::math::vector_v;
   vector_v x(2);
   x << 2, 5;
   vector_v y(2);
   y << 10, 100;
-  test::check_varis_on_stack(stan::math::elt_multiply(x,y));
+
+  test::check_varis_on_stack(stan::math::elt_multiply(x, y));
+  test::check_varis_on_stack(stan::math::elt_multiply(x, value_of(y)));
+  test::check_varis_on_stack(stan::math::elt_multiply(value_of(x), y));
 }

@@ -7,24 +7,13 @@
 
 namespace test {
 
-  void check_varis_on_stack(const stan::math::matrix_v& x) {
+  template <int R, int C>
+  void check_varis_on_stack(const Eigen::Matrix<stan::math::var, R, C>& x) {
     for (int j = 0; j < x.cols(); ++j)
       for (int i = 0; i < x.rows(); ++i) 
         EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x(i, j).vi_))
           << i << ", " << j << " is not on the stack";
   }
 
-  void check_varis_on_stack(const stan::math::vector_v& x) {
-    for (int i = 0; i < x.rows(); ++i)
-      EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x(i).vi_))
-        << i << " is not on the stack";
-  }
-
-  void check_varis_on_stack(const stan::math::row_vector_v& x) {
-    for (int j = 0; j < x.cols(); ++j)
-      EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x(j).vi_))
-        << j << ", " << j << " is not on the stack";
-  }
-  
 }
 #endif

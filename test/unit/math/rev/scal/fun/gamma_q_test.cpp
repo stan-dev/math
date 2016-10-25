@@ -95,7 +95,7 @@ TEST(AgradRev, gamma_q_nan) {
 TEST(AgradRev, check_varis_on_stack) {
   AVAR a = 0.5;
   AVAR b = 1.0;
-  test::check_varis_on_stack(stan::math::gamma_q(a,b));
-  test::check_varis_on_stack(stan::math::gamma_q(a,1.0));
-  test::check_varis_on_stack(stan::math::gamma_q(0.5,b));
+  test::check_varis_on_stack(stan::math::gamma_q(a, b));
+  test::check_varis_on_stack(stan::math::gamma_q(a, 1.0));
+  test::check_varis_on_stack(stan::math::gamma_q(0.5, b));
 }

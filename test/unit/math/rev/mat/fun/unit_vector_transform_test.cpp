@@ -51,11 +51,11 @@ TEST(probTransform,unit_vector_jacobian) {
 }
 
 TEST(probTransform, check_varis_on_stack) {
-  using stan::math::to_var;
   using stan::math::var;
   Matrix<var,Dynamic,1> y(3);
   y << 2, 3, -1;
   
   var lp(0);
   test::check_varis_on_stack(stan::math::unit_vector_constrain(y, lp));
+  test::check_varis_on_stack(stan::math::unit_vector_constrain(y));
 }

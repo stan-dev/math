@@ -48,5 +48,7 @@ TEST(prob_transform, check_varis_on_stack) {
   X << 1.0, 2.0, -3.0, 1.7, 9.8, 
     -12.2, 0.4, 0.2, 1.2, 2.7;
   var lp = 0.0;
-  test::check_varis_on_stack(stan::math::cov_matrix_constrain(X,K,lp));
+
+  test::check_varis_on_stack(stan::math::cov_matrix_constrain(X, K, lp));
+  test::check_varis_on_stack(stan::math::cov_matrix_constrain(X, K));
 }

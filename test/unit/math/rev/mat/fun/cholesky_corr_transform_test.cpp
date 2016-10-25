@@ -75,4 +75,5 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::var lp(0);
 
   test::check_varis_on_stack(stan::math::cholesky_corr_constrain(y, 3, lp));
+  test::check_varis_on_stack(stan::math::cholesky_corr_constrain(y, 3));
 }

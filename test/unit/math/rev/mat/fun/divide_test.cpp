@@ -219,6 +219,7 @@ TEST(AgradRevMatrix, divide_matrix) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::var x = 10;
   stan::math::vector_v v(3);
   v << -100, 0, 1;
@@ -228,6 +229,14 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   m << -100, 0, 1, 20, -40, 2;
   
   test::check_varis_on_stack(stan::math::divide(v, x));
+  test::check_varis_on_stack(stan::math::divide(v, value_of(x)));
+  test::check_varis_on_stack(stan::math::divide(value_of(v), x));
+
   test::check_varis_on_stack(stan::math::divide(rv, x));
+  test::check_varis_on_stack(stan::math::divide(rv, value_of(x)));
+  test::check_varis_on_stack(stan::math::divide(value_of(rv), x));
+
   test::check_varis_on_stack(stan::math::divide(m, x));
+  test::check_varis_on_stack(stan::math::divide(m, value_of(x)));
+  test::check_varis_on_stack(stan::math::divide(value_of(m), x));
 }

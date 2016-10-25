@@ -48,4 +48,5 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   y << 2, 3, -1;
   stan::math::var lp = 0;
   test::check_varis_on_stack(stan::math::simplex_constrain(y, lp));
+  test::check_varis_on_stack(stan::math::simplex_constrain(y));
 }

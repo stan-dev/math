@@ -201,6 +201,7 @@ TEST(AgradRevMatrix, subtract_matrix_matrix_exception) {
   EXPECT_THROW( subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;
 
@@ -210,9 +211,41 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::row_vector_v rv(2);
   rv << 1, 2;
 
+  stan::math::var s(2);
+
   test::check_varis_on_stack(stan::math::subtract(m, m));
+  test::check_varis_on_stack(stan::math::subtract(m, value_of(m)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(m), m));
+
   test::check_varis_on_stack(stan::math::subtract(v, v));
+  test::check_varis_on_stack(stan::math::subtract(v, value_of(v)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(v), v));
+
   test::check_varis_on_stack(stan::math::subtract(rv, rv));
-  test::check_varis_on_stack(stan::math::subtract(m, 2.0));
-  test::check_varis_on_stack(stan::math::subtract(1.0, m));
+  test::check_varis_on_stack(stan::math::subtract(rv, value_of(rv)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(rv), rv));
+
+  test::check_varis_on_stack(stan::math::subtract(m, s));
+  test::check_varis_on_stack(stan::math::subtract(m, value_of(s)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(m), s));
+
+  test::check_varis_on_stack(stan::math::subtract(v, s));
+  test::check_varis_on_stack(stan::math::subtract(v, value_of(s)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(v), s));
+
+  test::check_varis_on_stack(stan::math::subtract(rv, s));
+  test::check_varis_on_stack(stan::math::subtract(rv, value_of(s)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(rv), s));
+
+  test::check_varis_on_stack(stan::math::subtract(s, m));
+  test::check_varis_on_stack(stan::math::subtract(s, value_of(m)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(s), m));
+
+  test::check_varis_on_stack(stan::math::subtract(s, v));
+  test::check_varis_on_stack(stan::math::subtract(s, value_of(v)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(s), v));
+
+  test::check_varis_on_stack(stan::math::subtract(s, rv));
+  test::check_varis_on_stack(stan::math::subtract(s, value_of(rv)));
+  test::check_varis_on_stack(stan::math::subtract(value_of(s), rv));
 }

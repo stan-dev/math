@@ -44,5 +44,6 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   Eigen::Matrix<stan::math::var,Eigen::Dynamic,1> X(K_choose_2);
   X << 1.0, 2.0, -3.0, 1.7, 9.8, -1.2;
   stan::math::var lp = 0.0;
-  test::check_varis_on_stack(stan::math::corr_matrix_constrain(X,K,lp));
+  test::check_varis_on_stack(stan::math::corr_matrix_constrain(X, K, lp));
+  test::check_varis_on_stack(stan::math::corr_matrix_constrain(X, K));
 }

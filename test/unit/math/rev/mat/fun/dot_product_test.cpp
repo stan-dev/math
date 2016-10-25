@@ -242,9 +242,12 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::vector_v v1(3), v2(3);
   v1 << 1, 3, -5;
   v2 << 4, -2, -1;
   
   test::check_varis_on_stack(stan::math::dot_product(v1, v2));
+  test::check_varis_on_stack(stan::math::dot_product(v1, value_of(v2)));
+  test::check_varis_on_stack(stan::math::dot_product(value_of(v1), v2));
 }

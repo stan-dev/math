@@ -65,6 +65,8 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);
   y << 0.0, 3.0, -1.0;
-
+  var lp(0);
+  
+  test::check_varis_on_stack(stan::math::unit_vector_constrain(y, lp));
   test::check_varis_on_stack(stan::math::unit_vector_constrain(y));
 }

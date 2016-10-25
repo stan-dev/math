@@ -175,8 +175,12 @@ TEST(AgradRevMatrix,mdivide_left_grad_vd) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::matrix_v A(2,2);
   A << 2.0, 3.0, 
     5.0, 7.0;
+
   test::check_varis_on_stack(stan::math::mdivide_left(A, A));
+  test::check_varis_on_stack(stan::math::mdivide_left(A, value_of(A)));
+  test::check_varis_on_stack(stan::math::mdivide_left(value_of(A), A));
 }

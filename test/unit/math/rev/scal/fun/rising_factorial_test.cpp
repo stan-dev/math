@@ -84,7 +84,11 @@ TEST(AgradRev, rising_factorial_nan) {
 }
 
 TEST(AgradRev, check_varis_on_stack) {
-  double a(1);
-  AVAR b(4.0);
-  test::check_varis_on_stack(stan::math::rising_factorial(b,a));
+  using stan::math::value_of;
+  stan::math::var a(1);
+  stan::math::var b(4.0);
+  
+  test::check_varis_on_stack(stan::math::rising_factorial(b, a));
+  test::check_varis_on_stack(stan::math::rising_factorial(b, value_of(a)));
+  test::check_varis_on_stack(stan::math::rising_factorial(value_of(b), a));
 }

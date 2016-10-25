@@ -375,11 +375,20 @@ TEST(AgradRevMatrix,mdivide_left_ldlt_finite_diff_vd) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   stan::math::LDLT_factor<stan::math::var,-1,-1> ldlt_Av;
   stan::math::matrix_v Av(2,2);
   Av << 2.0, 3.0, 
     3.0, 7.0;
   ldlt_Av.compute(Av);
 
-  test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Av,Av));
+  stan::math::LDLT_factor<double,-1,-1> ldlt_Ad;
+  stan::math::matrix_d Ad(2,2);
+  Ad << 2.0, 3.0, 
+    3.0, 7.0;
+  ldlt_Ad.compute(Ad);
+  
+  test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Av, Av));
+  test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Av, Ad));
+  test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Ad, Av));
 }

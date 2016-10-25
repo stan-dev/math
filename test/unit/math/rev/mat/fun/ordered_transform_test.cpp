@@ -47,7 +47,10 @@ TEST(prob_transform,ordered_jacobian_ad) {
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
   Eigen::Matrix<stan::math::var,Eigen::Dynamic,1> x(3);
+
   x << -12.0, 3.0, -1.9;
   stan::math::var lp = 0.0;
-  test::check_varis_on_stack(stan::math::ordered_constrain(x,lp));
+
+  test::check_varis_on_stack(stan::math::ordered_constrain(x, lp));
+  test::check_varis_on_stack(stan::math::ordered_constrain(x));
 }

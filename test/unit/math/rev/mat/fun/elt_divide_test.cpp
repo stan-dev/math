@@ -220,6 +220,7 @@ TEST(AgradRevMatrix,elt_divide_row_vec_scal_dv) {
   EXPECT_FLOAT_EQ(x.sum() * (-1.0 / 100),  y.adj());
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
   using stan::math::elt_divide;
   using stan::math::vector_v;
   vector_v x(2);
@@ -227,5 +228,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   vector_v y(2);
   y << 10, 100;
 
-  test::check_varis_on_stack(stan::math::elt_divide(x,y));
+  test::check_varis_on_stack(stan::math::elt_divide(x, y));
+  test::check_varis_on_stack(stan::math::elt_divide(x, value_of(y)));
+  test::check_varis_on_stack(stan::math::elt_divide(value_of(x), y));
 }
