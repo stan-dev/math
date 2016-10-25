@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 
 TEST(ProbDistributionsInvGamma, error_check) {
   boost::random::mt19937 rng;

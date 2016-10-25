@@ -15,7 +15,7 @@ SUFIXES:
 # - OS_TYPE: {mac, win, linux}
 # - C++11: Compile with C++11 extensions, Valid values: {true, false}.
 ##
-CC = g++
+CC = clang++
 O = 3
 O_STANC = 0
 AR = ar
