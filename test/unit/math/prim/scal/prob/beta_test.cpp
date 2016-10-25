@@ -14,6 +14,7 @@ TEST(ProbDistributionsBeta, error_check) {
                std::domain_error);
   EXPECT_THROW(stan::math::beta_rng(2,stan::math::positive_infinity(),rng),
                std::domain_error);
+  EXPECT_FALSE(std::isnan(stan::math::beta_rng(1e-7, 1e-7, rng)));
 }
 
 TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {

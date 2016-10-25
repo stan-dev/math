@@ -32,7 +32,7 @@ namespace stan {
       using Eigen::Dynamic;
       using Eigen::Matrix;
       using stan::math::dirichlet_rng;
-      
+
       static const char* function("beta_rng");
 
       check_positive_finite(function, "shape parameter", alpha);
