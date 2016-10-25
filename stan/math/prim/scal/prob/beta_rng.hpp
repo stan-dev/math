@@ -19,6 +19,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
+#include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 
 namespace stan {
   namespace math {
@@ -28,19 +29,18 @@ namespace stan {
     beta_rng(double alpha,
              double beta,
              RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::gamma_distribution;
+      using Eigen::Dynamic;
+      using Eigen::Matrix;
+      using stan::math::dirichlet_rng;
+      
       static const char* function("beta_rng");
-      check_positive_finite(function, "First shape parameter", alpha);
-      check_positive_finite(function, "Second shape parameter", beta);
 
-      variate_generator<RNG&, gamma_distribution<> >
-        rng_gamma_alpha(rng, gamma_distribution<>(alpha, 1.0));
-      variate_generator<RNG&, gamma_distribution<> >
-        rng_gamma_beta(rng, gamma_distribution<>(beta, 1.0));
-      double a = rng_gamma_alpha();
-      double b = rng_gamma_beta();
-      return a / (a + b);
+      check_positive_finite(function, "shape parameter", alpha);
+      check_positive_finite(function, "shape parameter", beta);
+
+      Matrix<double, Dynamic, 1> dirichlet_params(2, 1);
+      dirichlet_params << alpha, beta;
+      return dirichlet_rng(dirichlet_params, rng)[0];
     }
 
   }
