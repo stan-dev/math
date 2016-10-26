@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,log_falling_factorial_var_double) {
   double a(2);
@@ -80,4 +80,12 @@ struct log_falling_factorial_fun {
 TEST(AgradRev, log_falling_factorial_nan) {
   log_falling_factorial_fun log_falling_factorial_;
   test_nan(log_falling_factorial_,4.0,4.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a(2.0);
+  AVAR b(4.0);
+  test::check_varis_on_stack(stan::math::log_falling_factorial(b, a));
+  test::check_varis_on_stack(stan::math::log_falling_factorial(b, 2.0));
+  test::check_varis_on_stack(stan::math::log_falling_factorial(4.0, a));
 }

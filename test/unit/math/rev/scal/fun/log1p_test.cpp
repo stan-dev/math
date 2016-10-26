@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <stdexcept>
 
 TEST(AgradRev,log1p) {
@@ -39,4 +39,9 @@ struct log1p_fun {
 TEST(AgradRev,log1p_NaN) {
   log1p_fun log1p_;
   test_nan(log1p_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.1;
+  test::check_varis_on_stack(stan::math::log1p(a));
 }

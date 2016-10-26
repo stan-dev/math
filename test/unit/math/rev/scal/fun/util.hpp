@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_REV_SCAL_FUN_UTIL_HPP
 
 #include <stan/math/rev/scal.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 typedef stan::math::var AVAR;
 typedef std::vector<AVAR> AVEC;
