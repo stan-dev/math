@@ -21,6 +21,7 @@ namespace stan {
        */
       template <typename T>
       static inline T fun(const T& x) {
+        using stan::math::log1m_inv_logit;
         return log1m_inv_logit(x);
       }
     };
