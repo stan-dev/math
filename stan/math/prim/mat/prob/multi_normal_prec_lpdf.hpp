@@ -126,7 +126,8 @@ namespace stan {
     template <typename T_y, typename T_loc, typename T_covar>
     inline
     typename return_type<T_y, T_loc, T_covar>::type
-    multi_normal_prec_lpdf(const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+    multi_normal_prec_lpdf(const T_y& y, const T_loc& mu,
+                           const T_covar& Sigma) {
       return multi_normal_prec_lpdf<false>(y, mu, Sigma);
     }
 

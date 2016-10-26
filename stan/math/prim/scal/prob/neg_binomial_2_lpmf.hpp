@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPDF_HPP
+#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
+#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/random/negative_binomial_distribution.hpp>
@@ -33,14 +33,14 @@ namespace stan {
               typename T_n,
               typename T_location, typename T_precision>
     typename return_type<T_location, T_precision>::type
-    neg_binomial_2_lpdf(const T_n& n,
+    neg_binomial_2_lpmf(const T_n& n,
                        const T_location& mu,
                        const T_precision& phi) {
       typedef typename stan::partials_return_type<T_n, T_location,
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("neg_binomial_2_lpdf");
+      static const char* function("neg_binomial_2_lpmf");
 
       if (!(stan::length(n)
             && stan::length(mu)
@@ -125,10 +125,10 @@ namespace stan {
               typename T_location, typename T_precision>
     inline
     typename return_type<T_location, T_precision>::type
-    neg_binomial_2_lpdf(const T_n& n,
+    neg_binomial_2_lpmf(const T_n& n,
                        const T_location& mu,
                        const T_precision& phi) {
-      return neg_binomial_2_lpdf<false>(n, mu, phi);
+      return neg_binomial_2_lpmf<false>(n, mu, phi);
     }
 
   }

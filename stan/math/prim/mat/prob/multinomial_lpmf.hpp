@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPDF_HPP
-#define STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPDF_HPP
+#ifndef STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
+#define STAN_MATH_PRIM_MAT_PROB_MULTINOMIAL_LPMF_HPP
 
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/uniform_01.hpp>
@@ -20,9 +20,9 @@ namespace stan {
     template <bool propto,
               typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type
-    multinomial_lpdf(const std::vector<int>& ns,
+    multinomial_lpmf(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      static const char* function("multinomial_lpdf");
+      static const char* function("multinomial_lpmf");
 
       using boost::math::tools::promote_args;
       using boost::math::lgamma;
@@ -51,9 +51,9 @@ namespace stan {
 
     template <typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type
-    multinomial_lpdf(const std::vector<int>& ns,
+    multinomial_lpmf(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      return multinomial_lpdf<false>(ns, theta);
+      return multinomial_lpmf<false>(ns, theta);
     }
 
   }

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPDF_HPP
+#ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
+#define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -25,9 +25,9 @@ namespace stan {
               typename T_n, typename T_N,
               typename T_a, typename T_b>
     double
-    hypergeometric_lpdf(const T_n& n, const T_N& N,
+    hypergeometric_lpmf(const T_n& n, const T_N& N,
                        const T_a& a, const T_b& b) {
-      static const char* function("hypergeometric_lpdf");
+      static const char* function("hypergeometric_lpmf");
 
       if (!(stan::length(n)
             && stan::length(N)
@@ -72,11 +72,11 @@ namespace stan {
               typename T_b>
     inline
     double
-    hypergeometric_lpdf(const T_n& n,
+    hypergeometric_lpmf(const T_n& n,
                        const T_N& N,
                        const T_a& a,
                        const T_b& b) {
-      return hypergeometric_lpdf<false>(n, N, a, b);
+      return hypergeometric_lpmf<false>(n, N, a, b);
     }
 
   }

@@ -45,10 +45,11 @@ namespace stan {
     template <bool propto,
               typename T_y, typename T_dof, typename T_scale>
     typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-    inv_wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-                    const T_dof& nu,
-                    const Eigen::Matrix
-                    <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+    inv_wishart_lpdf(const
+                     Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+                     const T_dof& nu,
+                     const Eigen::Matrix
+                     <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
       static const char* function("inv_wishart_lpdf");
 
       using boost::math::tools::promote_args;
@@ -105,10 +106,11 @@ namespace stan {
     template <typename T_y, typename T_dof, typename T_scale>
     inline
     typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-    inv_wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-                    const T_dof& nu,
-                    const Eigen::Matrix
-                    <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+    inv_wishart_lpdf(const
+                     Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+                     const T_dof& nu,
+                     const Eigen::Matrix
+                     <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
       return inv_wishart_lpdf<false>(W, nu, S);
     }
 

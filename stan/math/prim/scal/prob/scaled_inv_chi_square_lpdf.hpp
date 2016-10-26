@@ -48,7 +48,8 @@ namespace stan {
     template <bool propto,
               typename T_y, typename T_dof, typename T_scale>
     typename return_type<T_y, T_dof, T_scale>::type
-    scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu, const T_scale& s) {
+    scaled_inv_chi_square_lpdf(const T_y& y,
+                               const T_dof& nu, const T_scale& s) {
       static const char* function("scaled_inv_chi_square_lpdf");
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
@@ -160,7 +161,8 @@ namespace stan {
     template <typename T_y, typename T_dof, typename T_scale>
     inline
     typename return_type<T_y, T_dof, T_scale>::type
-    scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu, const T_scale& s) {
+    scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
+                               const T_scale& s) {
       return scaled_inv_chi_square_lpdf<false>(y, nu, s);
     }
 

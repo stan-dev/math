@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPDF_HPP
+#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPMF_HPP
+#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LOG_LPMF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
@@ -31,14 +31,14 @@ namespace stan {
               typename T_n,
               typename T_log_location, typename T_precision>
     typename return_type<T_log_location, T_precision>::type
-    neg_binomial_2_log_lpdf(const T_n& n,
+    neg_binomial_2_log_lpmf(const T_n& n,
                            const T_log_location& eta,
                            const T_precision& phi) {
       typedef typename stan::partials_return_type<T_n, T_log_location,
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("neg_binomial_2_log_lpdf");
+      static const char* function("neg_binomial_2_log_lpmf");
 
       if (!(stan::length(n)
             && stan::length(eta)
@@ -123,10 +123,10 @@ namespace stan {
               typename T_log_location, typename T_precision>
     inline
     typename return_type<T_log_location, T_precision>::type
-    neg_binomial_2_log_lpdf(const T_n& n,
+    neg_binomial_2_log_lpmf(const T_n& n,
                            const T_log_location& eta,
                            const T_precision& phi) {
-      return neg_binomial_2_log_lpdf<false>(n, eta, phi);
+      return neg_binomial_2_log_lpmf<false>(n, eta, phi);
     }
   }
 }

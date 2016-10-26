@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPDF_HPP
+#ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
+#define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
@@ -35,14 +35,14 @@ namespace stan {
               typename T_n,
               typename T_shape, typename T_inv_scale>
     typename return_type<T_shape, T_inv_scale>::type
-    neg_binomial_lpdf(const T_n& n,
+    neg_binomial_lpmf(const T_n& n,
                      const T_shape& alpha,
                      const T_inv_scale& beta) {
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("neg_binomial_lpdf");
+      static const char* function("neg_binomial_lpmf");
 
       if (!(stan::length(n)
             && stan::length(alpha)
@@ -166,10 +166,10 @@ namespace stan {
               typename T_shape, typename T_inv_scale>
     inline
     typename return_type<T_shape, T_inv_scale>::type
-    neg_binomial_lpdf(const T_n& n,
+    neg_binomial_lpmf(const T_n& n,
                      const T_shape& alpha,
                      const T_inv_scale& beta) {
-      return neg_binomial_lpdf<false>(n, alpha, beta);
+      return neg_binomial_lpmf<false>(n, alpha, beta);
     }
 
   }
