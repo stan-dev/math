@@ -1,42 +1,30 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 
 TEST(ProbDistributionsBernoulli, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::bernoulli_rng(0.6,rng));
+  EXPECT_NO_THROW(stan::math::bernoulli_rng(0.6, rng));
 
-  EXPECT_THROW(stan::math::bernoulli_rng(1.6,rng),std::domain_error);
-  EXPECT_THROW(stan::math::bernoulli_rng(-0.6,rng),std::domain_error);
-  EXPECT_THROW(stan::math::bernoulli_rng(stan::math::positive_infinity(),rng),
+  EXPECT_THROW(stan::math::bernoulli_rng(1.6, rng),std::domain_error);
+  EXPECT_THROW(stan::math::bernoulli_rng(-0.6, rng),std::domain_error);
+  EXPECT_THROW(stan::math::bernoulli_rng(stan::math::positive_infinity(), rng),
                std::domain_error);
 }
 
 TEST(ProbDistributionsBernoulli, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-  boost::math::bernoulli_distribution<>dist (0.4);
-  boost::math::chi_squared mydist(1);
- 
-  int bin[2] = {0, 0};
-  double expect [2] = {N * (1 - 0.4), N * (0.4)};
 
-  int count = 0;
+  std::vector<double> expected;
+  expected.push_back(N * (1 - 0.4));
+  expected.push_back(N * 0.4);
 
-  while (count < N) {
-    int a = stan::math::bernoulli_rng(0.4,rng);
-    if(a == 1)
-      ++bin[1];
-    else
-      ++bin[0];
-    count++;
-   }
+  std::vector<int> counts(2);
+  for (int i=0; i<N; ++i) {
+    ++counts[stan::math::bernoulli_rng(0.4, rng)];
+  }
 
-  double chi = 0;
-
-  for(int j = 0; j < 2; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
-
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  assert_chi_squared(counts, expected, 1e-6);
 }
