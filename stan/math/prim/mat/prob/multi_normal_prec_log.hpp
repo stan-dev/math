@@ -1,0 +1,28 @@
+#ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_LOG_HPP
+#define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_LOG_HPP
+
+#include <stan/math/prim/mat/prob/multi_normal_prec_lpdf.hpp>
+
+namespace stan {
+  namespace math {
+
+    template <bool propto,
+              typename T_y, typename T_loc, typename T_covar>
+    typename return_type<T_y, T_loc, T_covar>::type
+    multi_normal_prec_log(const T_y& y,
+                          const T_loc& mu,
+                          const T_covar& Sigma) {
+      return multi_normal_prec_lpdf<propto, T_y, T_loc, T_covar>(y, mu, Sigma);
+    }
+
+    template <typename T_y, typename T_loc, typename T_covar>
+    inline
+    typename return_type<T_y, T_loc, T_covar>::type
+    multi_normal_prec_log(const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+      return multi_normal_prec_lpdf<T_y, T_loc, T_covar>(y, mu, Sigma);
+    }
+
+  }
+}
+#endif
+
