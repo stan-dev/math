@@ -36,7 +36,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
     ordered_logistic_log(int y, const T_lambda& lambda,
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      return ordered_logistic_lpmf<propto, T_lambda, T_cut>(lambda, c);
+      return ordered_logistic_lpmf<propto, T_lambda, T_cut>(y, lambda, c);
     }
 
     /**
@@ -46,7 +46,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
     ordered_logistic_log(int y, const T_lambda& lambda,
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      return ordered_logistic_lpmf<T_lambda, T_cut>(lambda, c);
+      return ordered_logistic_lpmf<T_lambda, T_cut>(y, lambda, c);
     }
 
   }
