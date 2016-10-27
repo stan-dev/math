@@ -169,7 +169,7 @@ namespace stan {
       // Memory allocated in arena.
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A, L_A);
-      vari dummy(0.0, false);
+      vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       size_t pos = 0;
       for (size_type j = 0; j < L.cols(); ++j) {
@@ -177,7 +177,7 @@ namespace stan {
           L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
         }
         for (size_type k = 0; k < j; ++k)
-          L.coeffRef(k, j).vi_ = &dummy;
+          L.coeffRef(k, j).vi_ = dummy;
       }
       return L;
     }
