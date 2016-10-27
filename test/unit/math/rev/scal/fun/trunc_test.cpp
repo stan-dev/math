@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,trunc) {
   AVAR a = 1.2;
@@ -36,4 +36,9 @@ struct trunc_fun {
 TEST(AgradRev,trunc_NaN) {
   trunc_fun trunc_;
   test_nan(trunc_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = -1.2;
+  test::check_varis_on_stack(stan::math::trunc(a));
 }

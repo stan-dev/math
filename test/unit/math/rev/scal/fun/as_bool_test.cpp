@@ -1,6 +1,6 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradRev,asBool) {
   using stan::math::as_bool;
@@ -21,5 +21,5 @@ TEST(AgradRev,asBool) {
 }
 TEST(AgradRev,as_bool_nan) {
   stan::math::var nan = std::numeric_limits<double>::quiet_NaN();
-EXPECT_TRUE(stan::math::as_bool(nan));
+  EXPECT_TRUE(stan::math::as_bool(nan));
 }

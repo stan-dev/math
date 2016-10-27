@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,log_sum_exp_vv) {
   AVAR a = 5.0;
@@ -179,4 +180,12 @@ struct log_sum_exp_fun {
 TEST(AgradRev, log_sum_exp_nan) {
   log_sum_exp_fun log_sum_exp_;
   test_nan(log_sum_exp_,3.0,5.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 5.0;
+  AVAR b = 2.0;
+  test::check_varis_on_stack(log_sum_exp(a, b));
+  test::check_varis_on_stack(log_sum_exp(5.0, b));
+  test::check_varis_on_stack(log_sum_exp(a, 2.0));
 }

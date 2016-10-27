@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,lmgamma) {
   using stan::math::lmgamma;
@@ -26,4 +26,9 @@ struct lmgamma_fun {
 TEST(AgradRev,lmgamma_NaN) {
   lmgamma_fun lmgamma_;
   test_nan(lmgamma_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var a = 3.2;
+  test::check_varis_on_stack(stan::math::lmgamma(3, a));
 }

@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
 
 TEST(MathFunctions, inv_Phi) {
@@ -75,3 +75,8 @@ TEST(AgradRev,inv_Phi_NaN) {
   test_nan(foo,true,false);
 }
 
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var p = 0.5;
+  test::check_varis_on_stack(stan::math::inv_Phi(p));
+}

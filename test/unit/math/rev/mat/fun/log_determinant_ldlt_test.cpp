@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,log_determinant_ldlt_diff) {
   using stan::math::matrix_v;
@@ -55,4 +56,12 @@ TEST(AgradRevMatrix,log_determinant_ldlt) {
   EXPECT_FLOAT_EQ(0, grad[1]);
   EXPECT_FLOAT_EQ(0, grad[2]);
   EXPECT_FLOAT_EQ(1.0/3.0, grad[3]);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v v2(2,2);
+  v2 << 2, 1, 1, 3;
+  stan::math::LDLT_factor<stan::math::var,-1,-1> ldlt_v;
+  ldlt_v.compute(v2);
+  test::check_varis_on_stack(stan::math::log_determinant_ldlt(ldlt_v));
 }
