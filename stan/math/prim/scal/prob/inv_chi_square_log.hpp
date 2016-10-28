@@ -32,7 +32,7 @@ namespace stan {
               typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     inv_chi_square_log(const T_y& y, const T_dof& nu) {
-      return inv_chi_square_lpdf<T_y, T_dof>(y, nu);
+      return inv_chi_square_lpdf<propto, T_y, T_dof>(y, nu);
     }
 
     /**
@@ -42,7 +42,7 @@ namespace stan {
     inline
     typename return_type<T_y, T_dof>::type
     inv_chi_square_log(const T_y& y, const T_dof& nu) {
-      return inv_chi_square_lpdf<false, T_y, T_dof>(y, nu);
+      return inv_chi_square_lpdf<T_y, T_dof>(y, nu);
     }
 
   }
