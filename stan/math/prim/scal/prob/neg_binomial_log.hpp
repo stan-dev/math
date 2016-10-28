@@ -16,7 +16,7 @@ namespace stan {
     neg_binomial_log(const T_n& n,
                      const T_shape& alpha,
                      const T_inv_scale& beta) {
-      return neg_binomial_lpdf<propto, T_n,
+      return neg_binomial_lpmf<propto, T_n,
                                T_shape, T_inv_scale>(n, alpha, beta);
     }
 
@@ -30,7 +30,7 @@ namespace stan {
     neg_binomial_log(const T_n& n,
                      const T_shape& alpha,
                      const T_inv_scale& beta) {
-      return neg_binomial_lpdf<T_n, T_shape, T_inv_scale>(n, alpha, beta);
+      return neg_binomial_lpmf<T_n, T_shape, T_inv_scale>(n, alpha, beta);
     }
 
   }
