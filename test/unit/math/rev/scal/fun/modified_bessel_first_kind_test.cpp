@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,modified_bessel_first_kind_int_var) {
   int a(1);
@@ -39,4 +39,11 @@ struct modified_bessel_first_kind_fun {
 TEST(AgradRev,modified_bessel_first_kind_NaN) {
   modified_bessel_first_kind_fun modified_bessel_first_kind_;
   test_nan(modified_bessel_first_kind_,true,false);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  int a(1);
+  AVAR b(4.0);
+
+  test::check_varis_on_stack(stan::math::modified_bessel_first_kind(a,b));
 }

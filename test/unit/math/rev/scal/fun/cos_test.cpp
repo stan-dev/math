@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,cos_var) {
   AVAR a = 0.49;
@@ -45,4 +45,9 @@ struct cos_fun {
 TEST(AgradRev,cos_NaN) {
   cos_fun cos_;
   test_nan(cos_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.49;
+  test::check_varis_on_stack(stan::math::cos(a));
 }

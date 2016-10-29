@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(MathMatrix, qr_R) {
   stan::math::matrix_v m0(0,0);
@@ -21,4 +22,9 @@ TEST(MathMatrix, qr_R) {
     }
   }
   EXPECT_THROW(qr_R(transpose(m1)),std::domain_error);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v m1(3,2);
+  m1 << 1, 2, 3, 4, 5, 6;
+  test::check_varis_on_stack(stan::math::qr_R(m1));
 }

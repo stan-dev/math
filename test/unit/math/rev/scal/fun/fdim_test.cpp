@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,fdim_vv) {
   using stan::math::fdim;
@@ -126,4 +126,12 @@ struct fdim_fun {
 TEST(AgradRev, fdim_nan) {
   fdim_fun fdim_;
   test_nan(fdim_, 3.0, 5.0, false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 3.0;
+  AVAR b = 4.0;
+  test::check_varis_on_stack(stan::math::fdim(a, b));
+  test::check_varis_on_stack(stan::math::fdim(a, 4.0));
+  test::check_varis_on_stack(stan::math::fdim(3.0, b));
 }

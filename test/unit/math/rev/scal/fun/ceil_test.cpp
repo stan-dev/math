@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,ceil_var) {
   AVAR a = 1.9;
@@ -25,4 +25,9 @@ struct ceil_fun {
 TEST(AgradRev,ceil_NaN) {
   ceil_fun ceil_;
   test_nan(ceil_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 1.9;
+  test::check_varis_on_stack(stan::math::ceil(a));
 }
