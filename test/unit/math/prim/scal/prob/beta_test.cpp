@@ -7,6 +7,7 @@
 TEST(ProbDistributionsBeta, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::beta_rng(2.0, 1.0, rng));
+  EXPECT_NO_THROW(stan::math::beta_rng(1e-10, 1e-10, rng));
 
   EXPECT_THROW(stan::math::beta_rng(2.0,-1.0, rng),std::domain_error);
   EXPECT_THROW(stan::math::beta_rng(-2.0, 1.0, rng),std::domain_error);
