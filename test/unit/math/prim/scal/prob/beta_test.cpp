@@ -40,3 +40,26 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
   //Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+TEST(ProbDistributionsBeta, chiSquareGoodnessFitTestSmallParameters) {
+  boost::random::mt19937 rng;
+  int N = 10000;
+  int K = boost::math::round(2 * std::pow(N, 0.4));
+
+  std::vector<double> samples;
+  for (int i=0; i<N; ++i) {
+    samples.push_back(stan::math::beta_rng(0.2, 0.3, rng));
+  }
+
+  //Generate quantiles from boost's beta distribution
+  boost::math::beta_distribution<>dist (0.2, 0.3);
+  std::vector<double> quantiles;
+  for (int i=1; i<K; ++i) {
+    double frac = static_cast<double>(i) / K;
+    quantiles.push_back(quantile(dist, frac));
+  }
+  quantiles.push_back(std::numeric_limits<double>::max());
+
+  //Assert that they match
+  assert_matches_quantiles(samples, quantiles, 1e-6);
+}
