@@ -20,17 +20,6 @@ namespace stan {
         MatrixType
         matrix_exp_pade(const MatrixType& arg) {
           MatrixType result;
-
-        #if LDBL_MANT_DIG > 112  // rarely happens
-          typedef typename Eigen::traits<MatrixType>::Scalar Scalar;
-          typedef typename Eigen::NumTraits<Scalar>::Real RealScalar;
-          typedef typename std::complex<RealScalar> ComplexScalar;
-          if (sizeof(RealScalar) > 14) {
-            result = arg.matrixFunction(
-              internal::stem_function_exp<ComplexScalar>);
-            return;
-            }
-        #endif
           MatrixType U, V;
           int squarings;
           Eigen:: matrix_exp_computeUV<MatrixType>::run(
@@ -44,7 +33,6 @@ namespace stan {
 
           return result;
         }
-
     }
 }
 

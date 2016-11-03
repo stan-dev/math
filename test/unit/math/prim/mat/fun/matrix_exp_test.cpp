@@ -3,24 +3,19 @@
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <cstdlib>
 #include <ctime>
-
-using Eigen::Matrix;
-using Eigen::Dynamic;
-using std::rand;
+#include <algorithm>
 
 TEST(MathMatrix, matrix_exp_1x1) {
-
-   Matrix<double, Dynamic, Dynamic> m1(1,1), m2(1,1);
-   m1 << 0;
-   m2 << 1;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
+  m1 << 0;
+  m2 << 1;
 
    expect_matrix_eq(m2, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrix, matrix_exp_2x2) {
-
   // example from Moler & Van Loan, 2003
-  Matrix<double, Dynamic, Dynamic> m1(2,2), m2(2,2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(2, 2), m2(2, 2);
   m1 << -49, 24, -64, 31;
   m2 << -.735759, .551819, -1.471518, 1.103638;
 
@@ -28,11 +23,10 @@ TEST(MathMatrix, matrix_exp_2x2) {
 }
 
 TEST(MathMatrix, matrix_exp_2x2_2) {
-
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
   // Compare to result from http://comnuan.com/cmnn01015/
-  Matrix<double, Dynamic, Dynamic> m(2, 2), exp_m(2, 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 2), exp_m(2, 2);
 
   m << -0.999984, 0.511211,
        -0.736924, -0.0826997;
@@ -44,9 +38,8 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
 }
 
 TEST(MathMatrix, matrix_exp_3x3) {
-
   // example from http://www.sosmath.com/matrix/expo/expo.html
-  Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
   m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
 
@@ -54,8 +47,7 @@ TEST(MathMatrix, matrix_exp_3x3) {
 }
 
 TEST(MathMatrix, matrix_exp_3x3_2) {
-
-  Matrix<double, Dynamic, Dynamic> m1(3,3), m2(3,3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 89, -66, -18, 20, -14, -4, 360, -270, -73;
   m2 << 245.95891, -182.43047, -49.11821,
         93.41549, -67.3433, -18.68310,
@@ -65,25 +57,28 @@ TEST(MathMatrix, matrix_exp_3x3_2) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
+  using std::rand;
 
   int size = 100;
-  srand(1); // set seed
-  Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
+  srand(1);  // set seed
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S =
+    Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
-  for(int i = 0; i < 5 * size; i++) {
+  for (int i = 0; i < 5 * size; i++) {
      col1 = rand() % size;
      col2 = rand() % size;
-     while(col1 == col2) col2 = rand() % size;
+     while (col1 == col2) col2 = rand() % size;
      S.col(col1) += S.col(col2) * std::pow(-1, rand());
   }
-  Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
-  Matrix<double, 1, Dynamic> diag_elements(size);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S_inv =
+    stan::math::mdivide_right(I, S);
+  Eigen::Matrix<double, 1, Eigen::Dynamic> diag_elements(size);
   diag_elements.setRandom();
-  Matrix<double, 1, Dynamic> exp_diag_elements =
+  Eigen::Matrix<double, 1, Eigen::Dynamic> exp_diag_elements =
     stan::math::exp(diag_elements);
 
-  Matrix<double, Dynamic, Dynamic> A =
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> A =
     S * diag_elements.asDiagonal() * S_inv,
     exp_A = S * exp_diag_elements.asDiagonal() * S_inv,
     expm_A = stan::math::matrix_exp(A);
@@ -91,23 +86,21 @@ TEST(MathMatrix, matrix_exp_100x100) {
   double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
     expm_A.cwiseAbs().maxCoeff());
 
-  for(int i = 0; i < size; i++)
-    for(int j = 0; j < size; j++)
+  for (int i = 0; i < size; i++)
+    for (int j = 0; j < size; j++)
        EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }
 
 TEST(MathMatrix, matrix_exp_exceptions) {
-
   using stan::math::matrix_exp;
 
-  Matrix<double, Dynamic, Dynamic> m1(0,0), m2(1,2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0,0), m2(1,2);
 
   EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
   EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
 }
 
 TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
-
   // Code to showcase how dealing with very small
   // numbers ( < 1e-10) can increase the relative
   // error. That is why the conditions for small
@@ -116,8 +109,8 @@ TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
 
   using stan::math::mdivide_right;
 
-  Matrix<double, Dynamic, Dynamic> m(2, 2), exp_m(2, 2), D(2, 2),
-    A(2, 2), exp_A(2, 2), D_m(2, 2), D_expm(2, 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 2), exp_m(2, 2),
+    D(2, 2), A(2, 2), exp_A(2, 2), D_m(2, 2), D_expm(2, 2);
   m << 1e-13, 0, 0, 1e-15;
   D << 1, 2, 3, 4;
   exp_m << exp(1e-13), 0, 0, exp(1e-15);
