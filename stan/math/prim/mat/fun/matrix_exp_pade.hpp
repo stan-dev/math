@@ -22,7 +22,7 @@ namespace stan {
           MatrixType result;
           MatrixType U, V;
           int squarings;
-          Eigen:: matrix_exp_computeUV<MatrixType>::run(
+          Eigen::matrix_exp_computeUV<MatrixType>::run(
             arg, U, V, squarings, arg(0, 0));  // Pade approximant is
                                                // (U+V) / (-U+V)
           MatrixType numer = U + V;

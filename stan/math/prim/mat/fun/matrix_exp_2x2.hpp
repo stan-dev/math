@@ -21,7 +21,7 @@ namespace stan {
         matrix_exp_2x2(
           const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& A) {
             T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
-            delta = sqrt((a - d) * (a - d) + 4 * b * c);
+            delta = sqrt(square(a - d) + 4 * b * c);
 
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B(2, 2);
             T half_delta = 0.5 * delta;
@@ -39,7 +39,6 @@ namespace stan {
 
             return B / delta;
         }
-
     }
 }
 #endif

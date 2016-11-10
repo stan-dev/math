@@ -17,7 +17,8 @@ namespace stan {
       */
     template <typename T>
     inline T ldexp(const T& a, int b) {
-      return a * std::pow(2.0, b);
+      return a * exp2(b);
+        // std::pow(2.0, b);
     }
   }
 }
