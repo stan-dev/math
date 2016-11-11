@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 
-#include <cmath>
+#include <stan/math/prim/scal/fun/exp2.hpp>
 
 namespace stan {
   namespace math {

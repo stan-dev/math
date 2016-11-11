@@ -28,7 +28,7 @@ namespace stan {
           MatrixType numer = U + V;
           MatrixType denom = -U + V;
           result = denom.partialPivLu().solve(numer);
-          for (int i = 0; i < squarings; i++)
+          for (int i = 0; i < squarings; ++i)
             result *= result;  // undo scaling by repeated squaring
 
           return result;
