@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(ProbBetaBinomial, log_matches_lpmf) {
-  double n = 2;
-  double N = 5.5;
+  int n = 2;
+  int N = 6;
   double alpha = 1.1;
   double beta = 0.3;
 

@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbCauchy, log_matches_lpmf) {
+TEST(ProbCauchy, log_matches_lpdf) {
   double y = 2;
   double mu = 1.5;
   double sigma = 0.5;

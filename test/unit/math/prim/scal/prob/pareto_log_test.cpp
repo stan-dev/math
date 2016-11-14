@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbScaledInvChiSquare, log_matches_lpdf) {
+TEST(ProbPareto, log_matches_lpdf) {
   double y = 2.0;
   double y_min = 1.1;
   double alpha = 2.3;

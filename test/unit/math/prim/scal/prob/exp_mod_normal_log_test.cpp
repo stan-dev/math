@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbFoo, log_matches_lpmf) {
+TEST(ProbExpModNormal, log_matches_lpmf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;

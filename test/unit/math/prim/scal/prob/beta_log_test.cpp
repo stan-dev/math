@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbBeta, log_matches_lpmf) {
+TEST(ProbBeta, log_matches_lpdf) {
   double y = 0.8;
   double alpha = 1.1;
   double beta = 2.3;

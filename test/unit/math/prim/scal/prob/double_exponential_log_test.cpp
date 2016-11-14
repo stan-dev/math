@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDouble_Exponential, log_matches_lpmf) {
+TEST(ProbDouble_Exponential, log_matches_lpdf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;
