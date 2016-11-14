@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDouble_Exponential, cdf_log_matches_lcdf) {
+TEST(ProbDoubleExponential, cdf_log_matches_lcdf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;

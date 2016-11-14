@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbLogNormal, log_matches_lpdf) {
+TEST(ProbLognormal, log_matches_lpdf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;

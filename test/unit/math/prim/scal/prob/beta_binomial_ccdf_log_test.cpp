@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbBetaBinomialCcdf, ccdf_log_matches_lccdf) {
+TEST(ProbBetaBinomial, ccdf_log_matches_lccdf) {
   int n = 2;
   int N = 6;
   double alpha = 1.1;

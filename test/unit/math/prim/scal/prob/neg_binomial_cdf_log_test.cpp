@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbNegBinomial, cdf_log_matches_lpmf) {
+TEST(ProbNegBinomial, cdf_log_matches_lcdf) {
   int y = 3;
   double alpha = 1.1;
   double beta = 2.3;

@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbBernoulliLcdf, cdf_log_matches_lcdf) {
+TEST(ProbBernoulli, cdf_log_matches_lcdf) {
   int n = 1;
   double theta = 0.3;
 

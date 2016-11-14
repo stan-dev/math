@@ -3,7 +3,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
- TEST(ProbNegBinomial2, ccdf_log_matches_lpmf) {
+ TEST(ProbNegBinomial2, ccdf_log_matches_lccdf) {
   double y = 0.8;
   double mu = 1.1;
   double phi = 2.3;

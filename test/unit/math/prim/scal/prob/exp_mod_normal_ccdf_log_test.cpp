@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbExpModNormal, ccdf_log_matches_lpmf) {
+TEST(ProbExpModNormal, ccdf_log_matches_lccdf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;
