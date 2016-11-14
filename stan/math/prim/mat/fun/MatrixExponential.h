@@ -15,8 +15,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
 
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 
 namespace Eigen {
 
@@ -179,7 +177,7 @@ namespace Eigen {
   template <typename MatrixType>
   struct matrix_exp_computeUV<MatrixType>
   {  
-  	template <typename T>  
+    template <typename T>  
     static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings,  
     				T scalar_type)  
     {  
