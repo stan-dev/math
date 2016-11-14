@@ -10,8 +10,9 @@ Stan Math depends on two libraries:
 
 - Boost (version 1.60.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.2.9): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+- Cvodes (version 2.8.2): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
-These are distributed under the `lib/` subdirectory. Only these two versions of the dependent libraries have been tested with Stan Math.
+These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
 
 Installation
 ------------
@@ -34,24 +35,25 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp
+> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp  -I /path/to/cvodes
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
 
-The `-I` includes provide paths pointing to the three necessary includes:
+The `-I` includes provide paths pointing to the four necessary includes:
 
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
 * Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
+* Cvodes: path to source directory that contains `cvodes` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.9/ -I ~/stan-dev/math/lib/boost_1.60.0/ foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.9/ -I ~/stan-dev/math/lib/boost_1.60.0/ -I ~/stan-dev/math/lib/cvodes_2.8.2./include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.9/Eigen` and `~stan-dev/math/lib/boost_1.60.0/boost`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.9/Eigen` and `~stan-dev/math/lib/boost_1.60.0/boost` and `~stan-dev/math/lib/cvodes_2.8.2/include`.
 
 Other Compilers
 ---------------

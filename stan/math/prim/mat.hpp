@@ -134,6 +134,7 @@
 #include <stan/math/prim/mat/fun/log1m.hpp>
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
 #include <stan/math/prim/mat/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/mat/fun/log1p.hpp>
 #include <stan/math/prim/mat/fun/log1p_exp.hpp>
 #include <stan/math/prim/mat/fun/log2.hpp>
 #include <stan/math/prim/mat/fun/log_determinant.hpp>
