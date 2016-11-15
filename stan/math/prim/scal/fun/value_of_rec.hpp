@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_REC_HPP
 
-#include <Eigen/Dense>
-
 namespace stan {
   namespace math {
 
