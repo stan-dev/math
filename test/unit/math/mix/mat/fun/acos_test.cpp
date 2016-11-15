@@ -91,6 +91,22 @@ struct acos_test {
   }
 };
 
+template <typename V, typename T>
+void expect_promotable() {
+  bool val = stan::math::ad_promotable<V, T>::value;
+  EXPECT_TRUE(val);
+}
+
+TEST(foo, bar) {
+  using stan::math::fvar;
+  using stan::math::var;
+  expect_promotable<double, fvar<double> >();
+  expect_promotable<double, fvar<fvar<double> > >();
+  expect_promotable<double, fvar<var> >();
+  expect_promotable<double, fvar<fvar<var> > >();
+  
+}
+
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, acos_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, acos_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, acos_test);

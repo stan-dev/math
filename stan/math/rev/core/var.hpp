@@ -149,7 +149,8 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      var(unsigned char x) : vi_(new vari(static_cast<double>(x))) { }  // NOLINT
+      var(unsigned char x)  // NOLINT(runtime/explicit)
+      : vi_(new vari(static_cast<double>(x))) { }
 
       /**
        * Construct a variable from the specified arithmetic argument
