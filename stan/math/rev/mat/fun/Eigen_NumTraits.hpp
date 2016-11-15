@@ -83,7 +83,7 @@ namespace Eigen {
 
   namespace internal {
 
-#if EIGEN_VERSION_AT_LEAST(3,3,0)
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
     /**
      * Scalar product traits specialization for Eigen for reverse-mode
      * autodiff variables.

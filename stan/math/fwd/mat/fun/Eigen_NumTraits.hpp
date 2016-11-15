@@ -57,7 +57,7 @@ namespace Eigen {
   };
 
   namespace internal {
-#if EIGEN_VERSION_AT_LEAST(3,3,0)
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
 #else
     /**
      * Implemented this for printing to stream.

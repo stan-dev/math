@@ -81,7 +81,7 @@ namespace stan {
        * @param b The right handside.  Note that this is templated such that
        * Eigen's expression-templating magic can work properly here.
        */
-#if EIGEN_VERSION_AT_LEAST(3,3,0)
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
       template <typename Rhs>
       inline const
       Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
