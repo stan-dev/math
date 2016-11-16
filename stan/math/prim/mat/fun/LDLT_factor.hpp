@@ -90,7 +90,7 @@ namespace stan {
         ldltP_->solveInPlace(invA);
       }
 
-#if EIGEN_VERSION_AT_LEAST(3,3,0)
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
       template <typename Rhs>
       inline const
       Eigen::Solve<Eigen::LDLT<Eigen::Matrix<T, R, C> >, Rhs>
