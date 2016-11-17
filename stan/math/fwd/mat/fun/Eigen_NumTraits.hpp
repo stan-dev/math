@@ -17,22 +17,48 @@ namespace Eigen {
     : GenericNumTraits<stan::math::fvar<T> > {
 
     enum {
+      /**
+       * stan::math::fvar requires initialization
+       */
       RequireInitialization = 1,
-      /**< stan::math::fvar requires initialization */
+
+      /**
+       * twice the cost to copy a double
+       */
       ReadCost = 2 * NumTraits<double>::ReadCost,
-      /**< twice the cost to copy a double */
+
+      /**
+       * 2 * AddCost
+       * <br>
+       * (a + b) = a + b
+       * <br>
+       * (a + b)' = a' + b'
+       */
       AddCost = 2 * NumTraits<T>::AddCost,
-      /**< 2 * AddCost <br>
-         (a + b) = a + b <br>
-         (a + b)' = a' + b' */
+
+      /**
+       * 3 * MulCost + AddCost
+       * <br>
+       * (a * b) = a * b
+       * <br>
+       * (a * b)' = a' * b + a * b'
+       */
       MulCost = 3 * NumTraits<T>::MulCost + NumTraits<T>::AddCost
-      /**< 3 * MulCost + AddCost <br>
-         (a * b) = a * b <br>
-         (a * b)' = a' * b + a * b' */
     };
+
+    /**
+     * Return the number of decimal digits that can be represented
+     * without change.  Delegates to
+     * <code>std::numeric_limits<double>::digits10()</code>.
+     */
+    static int digits10() {
+      return std::numeric_limits<double>::digits10;
+    }
   };
 
   namespace internal {
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
+#else
     /**
      * Implemented this for printing to stream.
      */
@@ -46,7 +72,9 @@ namespace Eigen {
                 / log(10.0)));
       }
     };
-
+#endif
   }
+
+
 }
 #endif
