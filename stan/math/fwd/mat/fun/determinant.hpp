@@ -30,7 +30,7 @@ namespace stan {
         }
       }
 
-      Eigen::Matrix<T, R, C> m_inv = inverse<T>(m_val);
+      Eigen::Matrix<T, R, C> m_inv = inverse(m_val);
       m_deriv = multiply(m_inv, m_deriv);
 
       fvar<T> result;
