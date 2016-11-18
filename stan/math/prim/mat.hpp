@@ -245,9 +245,9 @@
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
+#include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
-#include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_log.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
