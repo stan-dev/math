@@ -6,6 +6,9 @@
 namespace stan {
   namespace math {
 
+    /**
+     * @deprecated use <code>multi_normal_prec_lpdf</code>
+     */
     template <bool propto,
               typename T_y, typename T_loc, typename T_covar>
     typename return_type<T_y, T_loc, T_covar>::type
@@ -15,6 +18,9 @@ namespace stan {
       return multi_normal_prec_lpdf<propto, T_y, T_loc, T_covar>(y, mu, Sigma);
     }
 
+    /**
+     * @deprecated use <code>multi_normal_prec_lpdf</code>
+     */
     template <typename T_y, typename T_loc, typename T_covar>
     inline
     typename return_type<T_y, T_loc, T_covar>::type

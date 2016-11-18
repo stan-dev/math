@@ -16,6 +16,9 @@ namespace stan {
       return rayleigh_lpdf<propto, T_y, T_scale>(y, sigma);
     }
 
+    /**
+     * @deprecated use <code>rayleigh_lpdf</code>
+     */
     template <typename T_y, typename T_scale>
     inline
     typename return_type<T_y, T_scale>::type

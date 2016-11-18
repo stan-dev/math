@@ -16,6 +16,9 @@ namespace stan {
       return poisson_log_lpmf<propto, T_n, T_log_rate>(n, alpha);
     }
 
+    /**
+     * @deprecated use <code>poisson_log_lpmf</code>
+     */
     template <typename T_n,
               typename T_log_rate>
     inline
