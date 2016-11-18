@@ -25,7 +25,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_prob>::type
     multinomial_log(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      return multinomial_lpmf<T_prob>(ns, theta);
+      return multinomial_lpmf<false>(ns, theta);
     }
 
   }
