@@ -8,7 +8,7 @@ Required Libraries
 ------------------
 Stan Math depends on two libraries:
 
-- Boost (version 1.60.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.62.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.2.9): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - Cvodes (version 2.8.2): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
@@ -53,7 +53,7 @@ Note that the paths should *not* include the final directories `stan`, `Eigen`, 
 clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.2.9/ -I ~/stan-dev/math/lib/boost_1.60.0/ -I ~/stan-dev/math/lib/cvodes_2.8.2./include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.9/Eigen` and `~stan-dev/math/lib/boost_1.60.0/boost` and `~stan-dev/math/lib/cvodes_2.8.2/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.2.9/Eigen` and `~stan-dev/math/lib/boost_1.62.0/boost` and `~stan-dev/math/lib/cvodes_2.8.2/include`.
 
 Other Compilers
 ---------------
