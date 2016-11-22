@@ -1,6 +1,7 @@
 # check the nngp loglikehood #
+# set the working directory to test folder "nngp" #
+setwd("./nngp")
 rm(list=ls())
-setwd("/Users/luzhang/Documents/Biostats/research/bitbucket/stan_math/nngp_dev")
 load("./data/nngp.RData")
 
 nngp_log <- function(y, X, beta, sigmasq, tausq, phi, neardist, 
@@ -36,8 +37,8 @@ nngp_log <- function(y, X, beta, sigmasq, tausq, phi, neardist,
 }
 
 beta = c(1.0, 5.0)
-sigmasq = 1
-tausq = 0.1
+sigma = 1
+tau = sqrt(0.1)
 phi = 12
 nngp_log(y, X, beta, sigmasq, tausq, phi, neardist, neardistM, nearind, m)
 

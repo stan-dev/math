@@ -1,5 +1,5 @@
-# set wokring directory #
-setwd("/Users/luzhang/Documents/Biostats/research/bitbucket/stan_math/nngp_dev/data")
+# set working directory into the data folder #
+setwd("./data")
 rm(list=ls())
 
 #----------------------------    Get Data    ----------------------------------#
