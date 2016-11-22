@@ -58,15 +58,15 @@ namespace stan {
         // C++ integer division is appropriate in this block
         Eigen::VectorXd numerator(Km1 / 2);
         for (int k = 1; k <= numerator.rows(); k++)
-          numerator(k-1) = lgamma(2 * k);
+          numerator(k - 1) = lgamma(2.0 * k);
         constant = sum(numerator);
-        if ( (K % 2) == 1 )
+        if ((K % 2) == 1)
           constant += 0.25 * (K * K - 1) * LOG_PI
-            - 0.25 * (Km1 * Km1) * LOG_TWO - Km1 * lgamma((K + 1) / 2);
+            - 0.25 * (Km1 * Km1) * LOG_TWO - Km1 * lgamma(0.5 * (K + 1));
         else
           constant += 0.25 * K * (K - 2) * LOG_PI
             + 0.25 * (3 * K * K - 4 * K) * LOG_TWO
-            + K * lgamma(K / 2) - Km1 * lgamma(K);
+            + K * lgamma(0.5 * K) - Km1 * lgamma(static_cast<double>(K));
       } else {
         constant = -Km1 * lgamma(eta + 0.5 * Km1);
         for (int k = 1; k <= Km1; k++)
