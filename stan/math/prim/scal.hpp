@@ -251,7 +251,10 @@
 #include <stan/math/prim/scal/prob/lognormal_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/lognormal_cdf.hpp>
 #include <stan/math/prim/scal/prob/lognormal_cdf_log.hpp>
+#include <stan/math/prim/scal/prob/lognormal_lccdf.hpp>
+#include <stan/math/prim/scal/prob/lognormal_lcdf.hpp>
 #include <stan/math/prim/scal/prob/lognormal_log.hpp>
+#include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/lognormal_rng.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_cdf.hpp>
