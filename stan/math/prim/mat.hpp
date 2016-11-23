@@ -45,7 +45,6 @@
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
-#include <stan/math/prim/mat/fun/abs.hpp>
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/acos.hpp>
 #include <stan/math/prim/mat/fun/acosh.hpp>
@@ -111,6 +110,7 @@
 #include <stan/math/prim/mat/fun/exp.hpp>
 #include <stan/math/prim/mat/fun/exp2.hpp>
 #include <stan/math/prim/mat/fun/expm1.hpp>
+#include <stan/math/prim/mat/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/fun/factor_U.hpp>
 #include <stan/math/prim/mat/fun/fill.hpp>
@@ -129,6 +129,7 @@
 #include <stan/math/prim/mat/fun/inv_sqrt.hpp>
 #include <stan/math/prim/mat/fun/inv_square.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log10.hpp>
 #include <stan/math/prim/mat/fun/log1m.hpp>
