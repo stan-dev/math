@@ -305,21 +305,32 @@
 #include <stan/math/prim/scal/prob/student_t_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf_log.hpp>
+#include <stan/math/prim/scal/prob/student_t_lccdf.hpp>
+#include <stan/math/prim/scal/prob/student_t_lcdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_log.hpp>
+#include <stan/math/prim/scal/prob/student_t_lpdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_rng.hpp>
 #include <stan/math/prim/scal/prob/uniform_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/uniform_cdf.hpp>
 #include <stan/math/prim/scal/prob/uniform_cdf_log.hpp>
+#include <stan/math/prim/scal/prob/uniform_lccdf.hpp>
+#include <stan/math/prim/scal/prob/uniform_lcdf.hpp>
 #include <stan/math/prim/scal/prob/uniform_log.hpp>
+#include <stan/math/prim/scal/prob/uniform_lpdf.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 #include <stan/math/prim/scal/prob/von_mises_log.hpp>
+#include <stan/math/prim/scal/prob/von_mises_lpdf.hpp>
 #include <stan/math/prim/scal/prob/von_mises_rng.hpp>
 #include <stan/math/prim/scal/prob/weibull_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/weibull_cdf.hpp>
 #include <stan/math/prim/scal/prob/weibull_cdf_log.hpp>
+#include <stan/math/prim/scal/prob/weibull_lccdf.hpp>
+#include <stan/math/prim/scal/prob/weibull_lcdf.hpp>
 #include <stan/math/prim/scal/prob/weibull_log.hpp>
+#include <stan/math/prim/scal/prob/weibull_lpdf.hpp>
 #include <stan/math/prim/scal/prob/weibull_rng.hpp>
 #include <stan/math/prim/scal/prob/wiener_log.hpp>
+#include <stan/math/prim/scal/prob/wiener_lpdf.hpp>
 
 #include <cmath>
 
