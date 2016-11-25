@@ -1,6 +1,35 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v2.13.0 (25 November 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* vectorization of unary functions (#347)
+* specialized gradients for cove_exp_quad for amplitude and/or length-scale
+  parameters and input data (#353)
+* math library is consistent with Eigen 3.2.9 and 3.3.0 (#432, #429)
+* added choose(n, k) function (#400)
+* added bernoulli_logit_rng function (#258)
+
+Bug Fixes
+--------------------------------------------------
+* beta_rng no longer returns NaN
+* fixed memory issue with cholesky_decompose in reverse-mode (#415)
+* no more mulitple definitions when including Stan headers in
+  multiple source files (#394)
+* fixed broken _MSC_VER conditionals and remove math.h includes (#370)
+
+Other
+--------------------------------------------------
+* chi-square test in RNG testing pulled into utility function (#412)
+* error check functions are now all void functions (#382)
+* remove math.h includes (#277)
+* update to Boost 1.62.0 (#435)
+
+
+
 v2.12.0 (6 September 2016)
 ======================================================================
 
