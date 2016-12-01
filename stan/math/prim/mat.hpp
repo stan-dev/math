@@ -168,6 +168,7 @@
 #include <stan/math/prim/mat/fun/ordered_free.hpp>
 #include <stan/math/prim/mat/fun/Phi.hpp>
 #include <stan/math/prim/mat/fun/Phi_approx.hpp>
+#include <stan/math/prim/mat/fun/plus_plus_pre.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>

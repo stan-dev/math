@@ -147,6 +147,7 @@
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/Phi_approx.hpp>
+#include <stan/math/prim/scal/fun/plus_plus_pre.hpp>
 #include <stan/math/prim/scal/fun/positive_constrain.hpp>
 #include <stan/math/prim/scal/fun/positive_free.hpp>
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
