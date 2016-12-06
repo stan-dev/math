@@ -9,8 +9,9 @@ namespace stan {
 
     /**
      * Structure to wrap erf() so it can be vectorized.
-     * @param x Variable.
+     *
      * @tparam T Variable type.
+     * @param x Variable.
      * @return Error function of x. 
      */
     struct erf_fun {
@@ -23,8 +24,9 @@ namespace stan {
 
     /**
      * Vectorized version of erf().
-     * @param x Container.
+     *
      * @tparam T Container type.
+     * @param x Container.
      * @return Error function applied to each value in x. 
      */
     template <typename T>

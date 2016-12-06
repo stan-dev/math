@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,atan2_var_var) {
   AVAR a = 1.2;
@@ -86,4 +86,12 @@ TEST(AgradRev, atan2_nan) {
   atan2_fun atan2_;
   test_nan(atan2_,3.0,5.0,false,true);
 
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 1.2;
+  AVAR b = 3.9;
+  test::check_varis_on_stack(stan::math::atan2(a, b));
+  test::check_varis_on_stack(stan::math::atan2(a, 3.9));
+  test::check_varis_on_stack(stan::math::atan2(1.2, b));
 }

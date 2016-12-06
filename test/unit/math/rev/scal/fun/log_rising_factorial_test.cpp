@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,log_rising_factorial_var_double) {
   double a(1);
@@ -79,4 +79,12 @@ struct log_rising_factorial_fun {
 TEST(AgradRev, log_rising_factorial_nan) {
   log_rising_factorial_fun log_rising_factorial_;
   test_nan(log_rising_factorial_,3.0,5.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a(1.0);
+  AVAR b(4.0);
+  test::check_varis_on_stack(stan::math::log_rising_factorial(b, a));
+  test::check_varis_on_stack(stan::math::log_rising_factorial(b, 1.0));
+  test::check_varis_on_stack(stan::math::log_rising_factorial(4.0, a));
 }

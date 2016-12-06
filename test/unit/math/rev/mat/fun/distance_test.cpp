@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, distance_vector_vector) {
   using stan::math::vector_d;
@@ -200,4 +201,12 @@ TEST(AgradRevMatrix, distance_vd) {
   EXPECT_FLOAT_EQ((a(0).val() - b(0)) / 3.464102, grad[0]);
   EXPECT_FLOAT_EQ((a(1).val() - b(1)) / 3.464102, grad[1]);
   EXPECT_FLOAT_EQ((a(2).val() - b(2)) / 3.464102, grad[2]);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v v1(3), v2(3);
+  v1 << 1, 3, -5;
+  v2 << 4, -2, -1;
+
+  test::check_varis_on_stack(stan::math::distance(v1, v2));
 }

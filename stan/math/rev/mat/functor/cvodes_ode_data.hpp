@@ -139,7 +139,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<var>& initial,
                     const std::vector<var>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -162,7 +162,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<double>& initial,
                     const std::vector<var>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -184,7 +184,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<var>& initial,
                     const std::vector<double>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -205,7 +205,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<double>& initial,
                     const std::vector<double>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
       }
     };

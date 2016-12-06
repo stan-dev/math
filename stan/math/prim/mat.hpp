@@ -45,9 +45,9 @@
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
-#include <stan/math/prim/mat/fun/abs.hpp>
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/acos.hpp>
+#include <stan/math/prim/mat/fun/acosh.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
@@ -56,6 +56,7 @@
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
 #include <stan/math/prim/mat/fun/atan.hpp>
+#include <stan/math/prim/mat/fun/atanh.hpp>
 #include <stan/math/prim/mat/fun/autocorrelation.hpp>
 #include <stan/math/prim/mat/fun/autocovariance.hpp>
 #include <stan/math/prim/mat/fun/block.hpp>
@@ -107,7 +108,9 @@
 #include <stan/math/prim/mat/fun/erf.hpp>
 #include <stan/math/prim/mat/fun/erfc.hpp>
 #include <stan/math/prim/mat/fun/exp.hpp>
+#include <stan/math/prim/mat/fun/exp2.hpp>
 #include <stan/math/prim/mat/fun/expm1.hpp>
+#include <stan/math/prim/mat/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/fun/factor_U.hpp>
 #include <stan/math/prim/mat/fun/fill.hpp>
@@ -126,17 +129,24 @@
 #include <stan/math/prim/mat/fun/inv_sqrt.hpp>
 #include <stan/math/prim/mat/fun/inv_square.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log10.hpp>
 #include <stan/math/prim/mat/fun/log1m.hpp>
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
+#include <stan/math/prim/mat/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/mat/fun/log1p.hpp>
 #include <stan/math/prim/mat/fun/log1p_exp.hpp>
+#include <stan/math/prim/mat/fun/log2.hpp>
 #include <stan/math/prim/mat/fun/log_determinant.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_spd.hpp>
+#include <stan/math/prim/mat/fun/log_inv_logit.hpp>
 #include <stan/math/prim/mat/fun/log_softmax.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/logit.hpp>
 #include <stan/math/prim/mat/fun/make_nu.hpp>
+#include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/max.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
@@ -157,6 +167,7 @@
 #include <stan/math/prim/mat/fun/ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/ordered_free.hpp>
 #include <stan/math/prim/mat/fun/Phi.hpp>
+#include <stan/math/prim/mat/fun/Phi_approx.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>
@@ -221,6 +232,8 @@
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/mat/fun/trigamma.hpp>
+#include <stan/math/prim/mat/fun/trunc.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_free.hpp>
@@ -266,5 +279,6 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
+
 
 #endif

@@ -5,6 +5,7 @@
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/rev/mat/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(ProbDistributionsLkjCorr,var) {
   using stan::math::var;
@@ -105,3 +106,4 @@ TEST(ProbDistributionsLkjCorrCholesky,gradients) {
   test_grad_eq(grad_1, grad_ad_1);
   EXPECT_FLOAT_EQ(fx, fx_ad);
 }
+

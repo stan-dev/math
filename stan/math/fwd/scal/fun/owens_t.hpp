@@ -41,7 +41,7 @@ namespace stan {
      * @return Owen's T function applied to the specified arguments.
      */
     template <typename T>
-    inline fvar<T> owens_t(const double x1, const fvar<T>& x2) {
+    inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
       using std::exp;
 
       T neg_x1_sq_div_2 = -square(x1) * 0.5;
@@ -59,7 +59,7 @@ namespace stan {
      * @return Owen's T function applied to the specified arguments.
      */
     template <typename T>
-    inline fvar<T> owens_t(const fvar<T>& x1, const double x2) {
+    inline fvar<T> owens_t(const fvar<T>& x1, double x2) {
       using std::exp;
 
       T neg_x1_sq_div_2 = -square(x1.val_) * 0.5;

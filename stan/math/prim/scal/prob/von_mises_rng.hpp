@@ -27,8 +27,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    von_mises_rng(const double mu,
-                  const double kappa,
+    von_mises_rng(double mu,
+                  double kappa,
                   RNG& rng) {
       using boost::variate_generator;
       using std::fmod;

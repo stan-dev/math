@@ -24,8 +24,8 @@ namespace stan {
 
     template <class RNG>
     inline int
-    neg_binomial_2_log_rng(const double eta,
-                           const double phi,
+    neg_binomial_2_log_rng(double eta,
+                           double phi,
                            RNG& rng) {
       using boost::variate_generator;
       using boost::random::negative_binomial_distribution;

@@ -24,7 +24,7 @@ namespace stan {
 
     template <class RNG>
     inline Eigen::VectorXd
-    multi_student_t_rng(const double nu,
+    multi_student_t_rng(double nu,
           const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
           const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
           RNG& rng) {

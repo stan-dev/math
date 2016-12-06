@@ -27,9 +27,9 @@ namespace stan {
      */
     inline void check_range(const char* function,
                             const char* name,
-                            const int max,
-                            const int index,
-                            const int nested_level,
+                            int max,
+                            int index,
+                            int nested_level,
                             const char* error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
@@ -58,8 +58,8 @@ namespace stan {
      */
     inline void check_range(const char* function,
                             const char* name,
-                            const int max,
-                            const int index,
+                            int max,
+                            int index,
                             const char* error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
@@ -83,8 +83,8 @@ namespace stan {
      */
     inline void check_range(const char* function,
                             const char* name,
-                            const int max,
-                            const int index) {
+                            int max,
+                            int index) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
         return;

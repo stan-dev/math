@@ -4,6 +4,7 @@
 #include <vector>
 #include <test/unit/math/rev/arr/fun/util.hpp>
 #include <stan/math/rev/mat.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 typedef stan::math::index_type<Eigen::Matrix<double,-1,-1> >::type size_type;
 

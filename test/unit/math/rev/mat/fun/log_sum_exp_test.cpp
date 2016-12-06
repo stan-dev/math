@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -57,7 +58,10 @@ TEST(AgradRev,logSumExpMatrix) {
   Matrix<double,Dynamic,Dynamic> d(3,2);
   d << -1, -2, -4, 5, 6, 4;
   test_log_sum_exp_matrix(d);
-  
+}
 
-  
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v a(2);
+  a << 5, 2;
+  test::check_varis_on_stack(stan::math::log_sum_exp(a));
 }

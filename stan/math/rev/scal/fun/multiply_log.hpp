@@ -83,7 +83,7 @@ namespace stan {
      * @param b Second scalar.
      * @return Value of a*log(b)
      */
-    inline var multiply_log(const var& a, const double b) {
+    inline var multiply_log(const var& a, double b) {
       return var(new multiply_log_vd_vari(a.vi_, b));
     }
     /**
@@ -97,7 +97,7 @@ namespace stan {
      * @param b Second variable.
      * @return Value of a*log(b)
      */
-    inline var multiply_log(const double a, const var& b) {
+    inline var multiply_log(double a, const var& b) {
       if (a == 1.0)
         return log(b);
       return var(new multiply_log_dv_vari(a, b.vi_));

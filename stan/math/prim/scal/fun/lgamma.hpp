@@ -37,6 +37,18 @@ namespace stan {
       return boost::math::lgamma(x, boost_policy_t());
     }
 
+    /**
+     * Return the natural logarithm of the gamma function applied
+     * to the specified argument.
+     *
+     * @param x argument
+     * @return natural logarithm of the gamma function applied to
+     * argument
+     */
+    inline double lgamma(int x) {
+      return boost::math::lgamma(x, boost_policy_t());
+    }
+
   }
 }
 #endif

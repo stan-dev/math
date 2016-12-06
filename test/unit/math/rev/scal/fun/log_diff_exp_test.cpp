@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev, log_diff_exp_vv) {
   AVAR a = 5.0;
@@ -190,4 +190,12 @@ struct log_diff_exp_fun {
 TEST(AgradRev, log_diff_exp_nan) {
   log_diff_exp_fun log_diff_exp_;
   test_nan(log_diff_exp_,3.0,5.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var a = 5.0;
+  stan::math::var b = 2.0;
+  test::check_varis_on_stack(stan::math::log_diff_exp(a, b));
+  test::check_varis_on_stack(stan::math::log_diff_exp(a, 2.0));
+  test::check_varis_on_stack(stan::math::log_diff_exp(5.0, b));
 }

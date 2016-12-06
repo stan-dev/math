@@ -1,5 +1,6 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(MathRev, squared_distance) {
   double x1 = 1;
@@ -102,3 +103,8 @@ TEST(MathRev, squared_distance_inf) {
                std::domain_error);
 }
 
+TEST(MathRev, check_varis_on_stack) {
+  stan::math::var v1 = 1;
+  stan::math::var v2 = 4;
+  test::check_varis_on_stack(stan::math::squared_distance(v1, v2));
+}

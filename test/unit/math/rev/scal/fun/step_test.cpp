@@ -1,6 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,step) {
   AVAR a = 3.5;
@@ -38,4 +39,9 @@ TEST(AgradRev,step_nan) {
   stan::math::var nan = std::numeric_limits<double>::quiet_NaN();
   
   EXPECT_EQ(1U, stan::math::step(nan).val());
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 3.5;
+  test::check_varis_on_stack(stan::math::step(a));
 }

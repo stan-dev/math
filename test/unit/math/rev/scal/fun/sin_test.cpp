@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,sin_var) {
   AVAR a = 0.49;
@@ -45,4 +45,9 @@ struct sin_fun {
 TEST(AgradRev,sin_NaN) {
   sin_fun sin_;
   test_nan(sin_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.49;
+  test::check_varis_on_stack(stan::math::sin(a));
 }

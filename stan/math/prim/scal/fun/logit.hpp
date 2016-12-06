@@ -7,8 +7,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the logit function applied to the
-     * argument.
+     * Return the log odds of the argument.
      *
      * The logit function is defined as for \f$x \in [0, 1]\f$ by
      * returning the log odds of \f$x\f$ treated as a probability,
@@ -36,14 +35,22 @@ namespace stan {
      \end{cases}
      \f]
      *
-     * @param a Argument.
-     * @return Logit of the argument.
+     * @param u argument
+     * @return log odds of argument
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    logit(const T a) {
+    inline double logit(double u) {
       using std::log;
-      return log(a / (1.0 - a));
+      return log(u / (1 - u));
+    }
+
+    /**
+     * Return the log odds of the argument.
+     *
+     * @param u argument
+     * @return log odds of argument
+     */
+    inline double logit(int u) {
+      return logit(static_cast<double>(u));
     }
 
   }

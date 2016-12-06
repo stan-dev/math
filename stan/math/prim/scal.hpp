@@ -3,6 +3,7 @@
 
 #include <stan/math/version.hpp>
 
+#include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/container_view.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
@@ -111,6 +112,7 @@
 #include <stan/math/prim/scal/fun/lb_constrain.hpp>
 #include <stan/math/prim/scal/fun/lb_free.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/scal/fun/log.hpp>
@@ -172,6 +174,7 @@
 #include <stan/math/prim/scal/prob/bernoulli_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_rng.hpp>
+#include <stan/math/prim/scal/prob/bernoulli_logit_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_cdf.hpp>
 #include <stan/math/prim/scal/prob/beta_binomial_cdf_log.hpp>

@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, trace_inv_quad_form_ldlt_mat) {
   using stan::math::matrix_v;
@@ -426,3 +427,27 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_dv_basic) {
     EXPECT_FLOAT_EQ(grad_basic[n], grad[n]);
 }
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::to_var;
+
+  stan::math::matrix_d a(4,4);
+  stan::math::matrix_d b(4,2);
+  
+  b << 100, 10,
+          0,  1,
+         -3, -3,
+          5,  2;
+  a << 9.0,  3.0, 3.0,   3.0, 
+        3.0, 10.0, 2.0,   2.0,
+        3.0,  2.0, 7.0,   1.0,
+        3.0,  2.0, 1.0, 112.0;
+
+  stan::math::LDLT_factor<double,-1,-1> ldlt_a;
+  stan::math::LDLT_factor<stan::math::var,-1,-1> ldlt_av;
+  ldlt_av.compute(to_var(a));
+  ldlt_a.compute(a);
+  
+  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_av, to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_av, b));
+  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_a, to_var(b)));
+}
