@@ -1,22 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_WISHART_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_WISHART_LOG_HPP
 
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/prim/mat/fun/crossprod.hpp>
-#include <stan/math/prim/mat/fun/columns_dot_product.hpp>
-#include <stan/math/prim/mat/fun/trace.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/mat/prob/wishart_lpdf.hpp>
 
 namespace stan {
   namespace math {
@@ -38,6 +23,8 @@ namespace stan {
      -\frac{\nu}{2} \log(\det(S)) + \frac{\nu-k-1}{2}\log (\det(W)) - \frac{1}{2} \mbox{tr} (S^{-1}W)
      \f}
      *
+     * @deprecated use <code>wishart_lpdf</code>
+     *
      * @param W A scalar matrix
      * @param nu Degrees of freedom
      * @param S The scale matrix
@@ -55,54 +42,12 @@ namespace stan {
                 const T_dof& nu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>&
                 S) {
-      static const char* function("wishart_log");
-
-      using boost::math::tools::promote_args;
-      using Eigen::Dynamic;
-      using Eigen::Lower;
-      using Eigen::Matrix;
-
-      typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
-        = W.rows();
-      typename promote_args<T_y, T_dof, T_scale>::type lp(0.0);
-      check_greater(function, "Degrees of freedom parameter", nu, k-1);
-      check_square(function, "random variable", W);
-      check_square(function, "scale parameter", S);
-      check_size_match(function,
-                       "Rows of random variable", W.rows(),
-                       "columns of scale parameter", S.rows());
-
-      LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
-      check_ldlt_factor(function, "LDLT_Factor of random variable",
-                        ldlt_W);
-
-      LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
-      check_ldlt_factor(function, "LDLT_Factor of scale parameter",
-                        ldlt_S);
-
-      if (include_summand<propto, T_dof>::value)
-        lp += nu * k * NEG_LOG_TWO_OVER_TWO;
-
-      if (include_summand<propto, T_dof>::value)
-        lp -= lmgamma(k, 0.5 * nu);
-
-      if (include_summand<propto, T_dof, T_scale>::value)
-        lp -= 0.5 * nu * log_determinant_ldlt(ldlt_S);
-
-      if (include_summand<propto, T_scale, T_y>::value) {
-        Matrix<typename promote_args<T_y, T_scale>::type, Dynamic, Dynamic>
-          Sinv_W(mdivide_left_ldlt
-                 (ldlt_S,
-                  static_cast<Matrix<T_y, Dynamic, Dynamic> >
-                  (W.template selfadjointView<Lower>())));
-        lp -= 0.5 * trace(Sinv_W);
-      }
-
-      if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1))
-        lp += 0.5 * (nu - k - 1.0) * log_determinant_ldlt(ldlt_W);
-      return lp;
+      return wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
     }
 
+    /**
+     * @deprecated use <code>wishart_lpdf</code>
+     */
     template <typename T_y, typename T_dof, typename T_scale>
     inline
     typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
@@ -110,7 +55,7 @@ namespace stan {
                 const T_dof& nu,
                 const Eigen::Matrix
                 <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-      return wishart_log<false>(W, nu, S);
+      return wishart_lpdf<T_y, T_dof, T_scale>(W, nu, S);
     }
 
   }
