@@ -39,7 +39,6 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_equal.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>

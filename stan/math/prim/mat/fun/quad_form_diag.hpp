@@ -5,7 +5,7 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/scal/err/check_equal.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 
 namespace stan {
   namespace math {
@@ -20,8 +20,8 @@ namespace stan {
       check_vector("quad_form_diag", "vec", vec);
       check_square("quad_form_diag", "mat", mat);
       int size = vec.size();
-      check_equal("quad_form_diag", "matrix size", mat.rows(),
-                  size);
+      check_size_match("quad_form_diag", "rows of mat", mat.rows(),
+                       "size of vec", size);
       Eigen::Matrix<typename promote_args<T1, T2>::type,
                     Eigen::Dynamic, Eigen::Dynamic> result(size, size);
       for (int i = 0; i < size; i++) {
