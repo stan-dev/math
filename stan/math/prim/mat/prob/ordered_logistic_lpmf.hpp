@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
+#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
+#define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -17,10 +17,16 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 
 namespace stan {
   namespace math {
+
+    template <typename T>
+    inline T log_inv_logit_diff(const T& alpha, const T& beta) {
+      using std::exp;
+      return beta + log1m_exp(alpha - beta) - log1p_exp(alpha)
+        - log1p_exp(beta);
+    }
 
     /**
      * Returns the (natural) log probability of the specified integer
@@ -48,7 +54,7 @@ namespace stan {
      */
     template <bool propto, typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_log(int y, const T_lambda& lambda,
+    ordered_logistic_lpmf(int y, const T_lambda& lambda,
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       using std::exp;
       using std::log;
@@ -83,9 +89,9 @@ namespace stan {
 
     template <typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_log(int y, const T_lambda& lambda,
+    ordered_logistic_lpmf(int y, const T_lambda& lambda,
                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      return ordered_logistic_log<false>(y, lambda, c);
+      return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
   }

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LOG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LOG_HPP
+#ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
+#define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
 
 #include <stan/math/prim/mat/err/check_corr_matrix.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -45,19 +45,44 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 
 namespace stan {
   namespace math {
+
+    template <typename T_shape>
+    T_shape do_lkj_constant(const T_shape& eta, const unsigned int& K) {
+      // Lewandowski, Kurowicka, and Joe (2009) theorem 5
+      T_shape constant;
+      const int Km1 = K - 1;
+      if (eta == 1.0) {
+        // C++ integer division is appropriate in this block
+        Eigen::VectorXd numerator(Km1 / 2);
+        for (int k = 1; k <= numerator.rows(); k++)
+          numerator(k - 1) = lgamma(2.0 * k);
+        constant = sum(numerator);
+        if ((K % 2) == 1)
+          constant += 0.25 * (K * K - 1) * LOG_PI
+            - 0.25 * (Km1 * Km1) * LOG_TWO - Km1 * lgamma(0.5 * (K + 1));
+        else
+          constant += 0.25 * K * (K - 2) * LOG_PI
+            + 0.25 * (3 * K * K - 4 * K) * LOG_TWO
+            + K * lgamma(0.5 * K) - Km1 * lgamma(static_cast<double>(K));
+      } else {
+        constant = -Km1 * lgamma(eta + 0.5 * Km1);
+        for (int k = 1; k <= Km1; k++)
+          constant += 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
+      }
+      return constant;
+    }
 
     // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
     //                  eta > 0; eta == 1 <-> uniform]
     template <bool propto,
               typename T_y, typename T_shape>
     typename boost::math::tools::promote_args<T_y, T_shape>::type
-    lkj_corr_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                  const T_shape& eta) {
-      static const char* function("lkj_corr_log");
+      static const char* function("lkj_corr_lpdf");
 
       using boost::math::tools::promote_args;
 
@@ -88,9 +113,9 @@ namespace stan {
     template <typename T_y, typename T_shape>
     inline
     typename boost::math::tools::promote_args<T_y, T_shape>::type
-    lkj_corr_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                  const T_shape& eta) {
-      return lkj_corr_log<false>(y, eta);
+      return lkj_corr_lpdf<false>(y, eta);
     }
 
   }
