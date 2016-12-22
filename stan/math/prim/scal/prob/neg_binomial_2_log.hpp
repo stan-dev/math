@@ -96,7 +96,6 @@ namespace stan {
       for (size_t i = 0; i < len_np; ++i)
         n_plus_phi[i] = n_vec[i] + phi__[i];
 
-      using std::cout;
       for (size_t i = 0; i < size; i++) {
         if (include_summand<propto>::value)
           logp -= lgamma(n_vec[i] + 1.0);
@@ -109,7 +108,7 @@ namespace stan {
         if (include_summand<propto, T_precision>::value)
           logp += lgamma(n_plus_phi[i]);
 
-        // if phi is large we probably overflow, defer to Poisson:
+        // if phi is large we probably overflow, delegate to Poisson:
         if (phi__[i] > 1e12) {
           logp = poisson_log(n_vec[i], mu__[i]);
         }
