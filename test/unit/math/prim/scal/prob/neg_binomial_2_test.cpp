@@ -202,3 +202,14 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+TEST(ProbDistributionsNegBinomial, extreme_values) {
+  int N = 100;
+  double mu = 8;
+  double phi = 1e12;
+  for (int n = 0; n < 10; ++n) {
+    phi *= 10;
+    double logp = stan::math::neg_binomial_2_log<false>(N, mu, phi);
+    EXPECT_TRUE(logp < 0);
+  }
+}
