@@ -96,7 +96,6 @@ namespace stan {
       for (size_t i = 0; i < len_np; ++i)
         n_plus_phi[i] = n_vec[i] + phi__[i];
 
-      using std::cout;
       for (size_t i = 0; i < size; i++) {
         if (include_summand<propto>::value)
           logp -= lgamma(n_vec[i] + 1.0);
