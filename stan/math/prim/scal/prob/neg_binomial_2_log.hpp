@@ -110,7 +110,7 @@ namespace stan {
           logp += lgamma(n_plus_phi[i]);
 
         // if phi is large we probably overflow, defer to Poisson:
-        if (phi__[i] > 1e12) {
+        if (phi__[i] > 1e5) {
           logp = poisson_log(n_vec[i], mu__[i]);
         }
 
