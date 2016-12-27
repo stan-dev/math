@@ -353,6 +353,7 @@
 #include <stan/math/prim/scal/prob/poisson_lcdf.hpp>
 #include <stan/math/prim/scal/prob/poisson_log.hpp>
 #include <stan/math/prim/scal/prob/poisson_log_cdf.hpp>
+#include <stan/math/prim/scal/prob/poisson_log_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/poisson_log_cdf_log.hpp>
 #include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
 #include <stan/math/prim/scal/prob/poisson_rng.hpp>
