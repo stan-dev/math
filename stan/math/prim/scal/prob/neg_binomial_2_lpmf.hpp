@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
@@ -22,7 +23,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -106,6 +107,11 @@ namespace stan {
           logp += multiply_log(n_vec[i], mu__[i]);
         if (include_summand<propto, T_precision>::value)
           logp += lgamma(n_plus_phi[i]);
+
+        // if phi is large we probably overflow, defer to Poisson:
+        if (phi__[i] > 1e5) {
+          logp = poisson_lpmf(n_vec[i], mu__[i]);
+        }
 
         if (!is_constant_struct<T_location>::value)
           operands_and_partials.d_x1[i]
