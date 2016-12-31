@@ -22,7 +22,7 @@ namespace stan {
      */
     template <typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type
-    categorical_log(const Eigen::Index n,
+    categorical_log(const typename math::index_type<Eigen::VectorXd>::type n,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       return categorical_lpmf<T_prob>(n, theta);
     }
