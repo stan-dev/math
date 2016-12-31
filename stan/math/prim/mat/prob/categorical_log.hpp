@@ -10,8 +10,7 @@ namespace stan {
     /**
      * @deprecated use <code>categorical_lpmf</code>
      */
-    template <bool propto,
-              typename T_prob>
+    template <bool propto, typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type
     categorical_log(int n,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
@@ -22,11 +21,8 @@ namespace stan {
      * @deprecated use <code>categorical_lpmf</code>
      */
     template <typename T_prob>
-    inline
     typename boost::math::tools::promote_args<T_prob>::type
-    categorical_log(const typename
-                    math::index_type<Eigen::Matrix<T_prob,
-                    Eigen::Dynamic, 1> >::type n,
+    categorical_log(const Eigen::Index n,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
       return categorical_lpmf<T_prob>(n, theta);
     }
@@ -34,8 +30,7 @@ namespace stan {
     /**
      * @deprecated use <code>categorical_lpmf</code>
      */
-    template <bool propto,
-              typename T_prob>
+    template <bool propto, typename T_prob>
     typename boost::math::tools::promote_args<T_prob>::type
     categorical_log(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
