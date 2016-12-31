@@ -6,7 +6,7 @@ The Stan Math Library is licensed under the [new BSD license](https://raw.github
 
 Required Libraries
 ------------------
-Stan Math depends on two libraries:
+Stan Math depends on three libraries:
 
 - Boost (version 1.62.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.2.9): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
