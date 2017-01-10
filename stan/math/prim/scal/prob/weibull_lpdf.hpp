@@ -23,7 +23,18 @@
 namespace stan {
   namespace math {
 
-    // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]
+    /**
+     * Calculates the Weibull log probability density function 
+     *
+     * @param y A scalar variate.
+     * @param alpha shape parameter.
+     * @param sigma scale parameter.
+     * @return Weibull log pdf evaluated at the specified arguments.
+     * @tparam T_y Type of y.
+     * @tparam T_shape Type of shape parameter.
+     * @tparam T_scale Type of scale paramater.
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive. 
+     */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type

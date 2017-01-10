@@ -27,7 +27,19 @@
 namespace stan {
   namespace math {
 
-    // Binomial(n|N, theta)  [N >= 0;  0 <= n <= N;  0 <= theta <= 1]
+    /**
+     * Binomial log PMF. If given vectors of matching lengths, returns
+     * the log sum of probabilities.
+     *
+     * @param n successes variable
+     * @param N population size parameter
+     * @param theta probability parameter
+     *
+     * @return log probability or log sum of probabilities
+     *
+     * @throw std::domain_error if N is negative or probability parameter is invalid
+     * @throw std::invalid_argument if vector sizes do not match
+     */
     template <bool propto,
               typename T_n,
               typename T_N,

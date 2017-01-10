@@ -19,7 +19,21 @@
 namespace stan {
   namespace math {
 
-    // Bernoulli CDF
+    /**
+     * CDF of the Bernoulli distribution. If vectors of matching lengths
+     * are supplied, returns the product of the probabilities.
+     *
+     * @param n (sequence of) integers, must be 0 or 1
+     * @param theta (sequence of) probability parameters
+     *
+     * @tparam T_n type of integers
+     * @tparam T_prob type of probability parameters
+     *
+     * @return product of the probabilities
+     *
+     * @throw std::domain_error if probability parameters fall outside of [0,1].
+     * @throw std::invalid_argument if vector parameters have non-matching sizes.
+     */
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_cdf(const T_n& n, const T_prob& theta) {

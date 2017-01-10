@@ -31,8 +31,13 @@ namespace stan {
      * @param y A scalar variate.
      * @param mu The location parameter.
      * @param sigma The scale parameter.
+     * @tparam T_y type of scalar parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
      *
      * @return The cumulative density function.
+     *
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

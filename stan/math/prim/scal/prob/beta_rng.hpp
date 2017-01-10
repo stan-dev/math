@@ -25,6 +25,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Beta distribution random number generator with parameters alpha, beta.
+     *
+     * @param alpha positive finite success parameter.
+     * @param beta positive finite failure parameter.
+     * @param rng random number generator.
+     * @tparam RNG class of random number generator.
+     * @return sample from Beta(alpha,beta) distribution.
+     * @throw std::domain_error if alpha or beta is nonpositive.
+     */
     template <class RNG>
     inline double
     beta_rng(double alpha,

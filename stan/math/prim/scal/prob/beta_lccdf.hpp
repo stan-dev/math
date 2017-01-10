@@ -30,6 +30,18 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Calculates the beta log complementary cumulative distribution function 
+     * for the given variate and scale variables.
+     *
+     * @param y A scalar variate.
+     * @param alpha Prior sample size.
+     * @param beta Prior sample size.
+     * @return The beta log cumulative cdf evaluated at the specified arguments.
+     * @tparam T_y Type of y.
+     * @tparam T_scale_succ Type of alpha.
+     * @tparam T_scale_fail Type of beta.
+     */
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lccdf(const T_y& y, const T_scale_succ& alpha,

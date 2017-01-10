@@ -22,6 +22,23 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Gumbel(mu, beta) cumulative density function.
+     * Given vector parameters of matching sizes,
+     * returns the product of probabilities.
+     *
+     * @param y A scalar variate.
+     * @param mu location parameter.
+     * @param beta scale parameter.
+     * @tparam T_y type of scalar parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     *
+     * @return The cumulative density function.
+     *
+     * @throw std::domain_error if y is nan, mu is infinite, or beta is nonpositive
+     * @throw std::invalid_argument if vector sizes mismatch.
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_cdf(const T_y& y, const T_loc& mu, const T_scale& beta) {

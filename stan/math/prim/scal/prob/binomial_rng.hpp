@@ -23,6 +23,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Binomial random number generator.
+     *
+     * @param N population size parameter
+     * @param theta probability parameter
+     * @param rng random number generator
+     * @tparam RNG class of rng
+     * @return sample from Binomial(N,theta)
+     * @throw std::domain_error if N is negative or theta is outside [0,1]
+     */
     template <class RNG>
     inline int
     binomial_rng(int N,

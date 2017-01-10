@@ -18,6 +18,15 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Chi squared distribution random number generator with nu degrees of freedom.
+     *
+     * @param nu positive degrees of freedom parameter.
+     * @param rng random number generator.
+     * @tparam RNG class of random number generator.
+     * @return sample from chi_squared(nu) distribution.
+     * @throw std::domain_error if nu is nonpositive.
+     */
     template <class RNG>
     inline double
     chi_square_rng(double nu,

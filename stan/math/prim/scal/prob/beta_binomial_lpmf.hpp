@@ -23,7 +23,23 @@
 namespace stan {
   namespace math {
 
-    // BetaBinomial(n|alpha, beta) [alpha > 0;  beta > 0;  n >= 0]
+    /**
+     * Log probability mass function for Beta-Binomial distribution.
+     *
+     * <p>Equivalent to a Binomial(N,p) with a Beta(alpha, beta)
+     * prior on p. If given vector parameters of matching size, will return the log sum of
+     * probabilities.</p>
+     *
+     * @param n (vector of) non-negative integer successes variable count(s)
+     * @param N (vector of) positive integer size parameter(s)
+     * @param alpha (vector of) prior success parameter(s)
+     * @param beta (vector of) prior failure parameter(s)
+     *
+     * @return log sum of probabilities.
+     *
+     * @throw std::domain_error if N, alpha, or beta fails to be positive.
+     * @throw std::invalid_argument if vector parameters have non-matching sizes.
+     */
     template <bool propto,
               typename T_n, typename T_N,
               typename T_size1, typename T_size2>

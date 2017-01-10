@@ -22,8 +22,22 @@
 namespace stan {
   namespace math {
 
-    // DoubleExponential(y|mu, sigma)  [sigma > 0]
-    // FIXME: add documentation
+    /**
+     * Calculates the double exponential log PDF function for the given
+     * variable, location, and scale. If given vectors of matching sizes, returns
+     * the log sum of probabilities.
+     *
+     * @param y A scalar variate.
+     * @param mu Location parameter.
+     * @param sigma Scale parameter.
+     * @tparam T_y type of scalar variate, y.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     *
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive.
+     * @throw std::invalid_argument if given vectors of mismatched size
+     */
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

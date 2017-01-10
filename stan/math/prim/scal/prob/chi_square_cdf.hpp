@@ -26,12 +26,17 @@ namespace stan {
 
     /**
      * Calculates the chi square cumulative distribution function for the given
-     * variate and degrees of freedom.
+     * variate and degrees of freedom. If given vectors of matching sizes, returns
+     * the product of probabilities.
      *
-     * y A scalar variate.
-     * nu Degrees of freedom.
+     * @param y A scalar variate.
+     * @param nu Degrees of freedom.
+     * @tparam T_y type of scalar variate, y.
+     * @tparam T_dof type of degrees of freedom parameter
      *
-     * @return The cdf of the chi square distribution
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is negative or nu is nonpositive
+     * @throw std::invalid_argument if given vectors of mismatched size
      */
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type

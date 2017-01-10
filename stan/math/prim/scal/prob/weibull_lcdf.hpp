@@ -23,6 +23,19 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Calculates the Weibull log cumulative distribution function 
+     * for the given variate, location, and scale.
+     *
+     * @param y A scalar variate.
+     * @param alpha shape parameter.
+     * @param sigma scale parameter.
+     * @return Weibull log cdf evaluated at the specified arguments.
+     * @tparam T_y Type of y.
+     * @tparam T_shape Type of shape parameter.
+     * @tparam T_scale Type of scale paramater.
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive. 
+     */
     template <typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     weibull_lcdf(const T_y& y, const T_shape& alpha, const T_scale& sigma) {

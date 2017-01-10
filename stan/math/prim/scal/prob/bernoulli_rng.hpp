@@ -16,6 +16,14 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Bernoulli random number generator (biased coin).
+     *
+     * @param theta probability parameter
+     * @tparam RNG type of random number generator
+     * @return 0 or 1.
+     * @throw std::domain_error if probability parameter is invalid.
+     */
     template <class RNG>
     inline int
     bernoulli_rng(double theta,

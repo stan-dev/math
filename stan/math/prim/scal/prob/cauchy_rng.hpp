@@ -16,6 +16,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Cauchy random number generator.
+     *
+     * @param mu location parameter
+     * @param sigma positive scale parameter
+     * @param rng random number generator
+     * @tparam RNG type of random number generator
+     * @return sample from Cauchy(mu, sigma)
+     * @throw std::domain_error if mu is infinite or sigma is nonpositive.
+     */
     template <class RNG>
     inline double
     cauchy_rng(double mu,

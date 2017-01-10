@@ -27,6 +27,19 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Binomial log CDF. If given vectors of matching lengths, returns
+     * the log sum of probabilities.
+     *
+     * @param n successes variable
+     * @param N population size parameter
+     * @param theta probability parameter
+     *
+     * @return log probability or log sum of probabilities
+     *
+     * @throw std::domain_error if N is negative or probability parameter is invalid
+     * @throw std::invalid_argument if vector sizes do not match
+     */
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_lcdf(const T_n& n, const T_N& N, const T_prob& theta) {

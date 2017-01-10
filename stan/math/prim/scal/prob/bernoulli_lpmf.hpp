@@ -20,8 +20,21 @@
 namespace stan {
   namespace math {
 
-    // Bernoulli(n|theta)   [0 <= n <= 1;   0 <= theta <= 1]
-    // FIXME: documentation
+    /**
+     * Log PMF of the Bernoulli distribution. If vectors of matching lengths
+     * are supplied, returns the log sum of the probabilities.
+     *
+     * @param n (sequence of) integers, must be 0 or 1
+     * @param theta (sequence of) probability parameters
+     *
+     * @tparam T_n type of integers
+     * @tparam T_prob type of probability parameters
+     *
+     * @return log sum of the probabilities
+     *
+     * @throw std::domain_error if probability parameters fall outside of [0,1].
+     * @throw std::invalid_argument if vector parameters have non-matching sizes.
+     */
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_lpmf(const T_n& n,

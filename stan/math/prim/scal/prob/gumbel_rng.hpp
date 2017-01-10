@@ -18,6 +18,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Gumbel(mu, beta) random number generator.
+     *
+     * @param mu location parameter
+     * @param beta positive scale parameter
+     * @param rng random number generator
+     * @tparam RNG type of random number generator
+     * @return sample from Gumbel(mu, beta)
+     * @throw std::domain_error if mu is infinite or beta is nonpositive.
+     */
     template <class RNG>
     inline double
     gumbel_rng(double mu,
