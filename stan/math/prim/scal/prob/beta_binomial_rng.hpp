@@ -33,7 +33,7 @@ namespace stan {
     inline double safe_beta_rng(double alpha, double beta, RNG& rng) {
       double p = beta_rng(alpha, beta, rng);
       while (p < 0 || p > 1) {
-        p = beta_rng(alpha, beta, rng)
+        p = beta_rng(alpha, beta, rng);
       }
       return p;
     }
