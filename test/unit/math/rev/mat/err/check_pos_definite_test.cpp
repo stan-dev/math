@@ -19,7 +19,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   y << 2, -1, 0,
     -1, 2, -1,
     0, -1, 2;
-  EXPECT_TRUE(check_pos_definite("checkPosDefiniteMatrix", "y", y));
+  EXPECT_NO_THROW(check_pos_definite("checkPosDefiniteMatrix", "y", y));
                                  
   for (int i = 0; i < y.rows(); i++)
     for (int j = 0; j < y.cols(); j++) {

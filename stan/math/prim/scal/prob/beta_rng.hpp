@@ -3,6 +3,7 @@
 
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
@@ -25,22 +27,41 @@ namespace stan {
 
     template <class RNG>
     inline double
-    beta_rng(const double alpha,
-             const double beta,
+    beta_rng(double alpha,
+             double beta,
              RNG& rng) {
       using boost::variate_generator;
       using boost::random::gamma_distribution;
+      using boost::random::uniform_real_distribution;
+      using std::log;
+      using std::exp;
       static const char* function("beta_rng");
       check_positive_finite(function, "First shape parameter", alpha);
       check_positive_finite(function, "Second shape parameter", beta);
 
-      variate_generator<RNG&, gamma_distribution<> >
-        rng_gamma_alpha(rng, gamma_distribution<>(alpha, 1.0));
-      variate_generator<RNG&, gamma_distribution<> >
-        rng_gamma_beta(rng, gamma_distribution<>(beta, 1.0));
-      double a = rng_gamma_alpha();
-      double b = rng_gamma_beta();
-      return a / (a + b);
+      // If alpha and beta are large, trust the usual ratio of gammas
+      // method for generating beta random variables. If any parameter
+      // is small, work in log space and use Marsaglia and Tsang's trick
+      if (alpha > 1.0 && beta > 1.0) {
+        variate_generator<RNG&, gamma_distribution<> >
+          rng_gamma_alpha(rng, gamma_distribution<>(alpha, 1.0));
+        variate_generator<RNG&, gamma_distribution<> >
+          rng_gamma_beta(rng, gamma_distribution<>(beta, 1.0));
+        double a = rng_gamma_alpha();
+        double b = rng_gamma_beta();
+        return a / (a + b);
+      } else {
+        variate_generator<RNG&, uniform_real_distribution<> >
+          uniform_rng(rng, uniform_real_distribution<>(0.0, 1.0));
+        variate_generator<RNG&, gamma_distribution<> >
+          rng_gamma_alpha(rng, gamma_distribution<>(alpha + 1, 1.0));
+        variate_generator<RNG&, gamma_distribution<> >
+          rng_gamma_beta(rng, gamma_distribution<>(beta + 1, 1.0));
+        double log_a = log(uniform_rng()) / alpha + log(rng_gamma_alpha());
+        double log_b = log(uniform_rng()) / beta + log(rng_gamma_beta());
+        double log_sum = log_sum_exp(log_a, log_b);
+        return exp(log_a - log_sum);
+      }
     }
 
   }

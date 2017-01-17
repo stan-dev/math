@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(RevMath, cov_exp_quad_vvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
@@ -1223,4 +1224,21 @@ TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
 
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_2, x_vec_2, sigma, l), std::invalid_argument);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_2, x_rvec_2, sigma, l), std::invalid_argument);
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::to_var;
+  std::vector<double> x(3);
+  double sigma = 0.2;
+  double l = 5;
+  x[0] = -2;
+  x[1] = -1;
+  x[2] = -0.5;
+
+  test::check_varis_on_stack(stan::math::cov_exp_quad(to_var(x), to_var(sigma), to_var(l)));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(to_var(x), to_var(sigma), l));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(to_var(x), sigma, to_var(l)));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(to_var(x), sigma, l));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(x, to_var(sigma), to_var(l)));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(x, to_var(sigma), l));
+  test::check_varis_on_stack(stan::math::cov_exp_quad(x, sigma, to_var(l)));
 }

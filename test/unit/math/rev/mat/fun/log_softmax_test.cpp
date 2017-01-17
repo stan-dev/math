@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,logSoftmaxLeak) {
   // FIXME: very brittle test depending on unrelated constants of 
@@ -104,4 +105,10 @@ TEST(AgradRevLogSoftmax, Grad) {
     for (size_t i = 0; i < grad_expected.size(); ++i)
       EXPECT_FLOAT_EQ(grad_expected[i], grad[i]);
   }
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v x(2);
+  x << -1.0, 1.0;
+  test::check_varis_on_stack(stan::math::log_softmax(x));
 }

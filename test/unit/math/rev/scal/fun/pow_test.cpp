@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,pow_var_var) {
   AVAR a(3.0);
@@ -75,4 +75,12 @@ TEST(AgradRev, pow_nan) {
   pow_fun pow_;
   test_nan(pow_,3.0,5.0,false, true);
   test_nan(pow_,0.0,5.0,false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a(3.0);
+  AVAR b(4.0);
+  test::check_varis_on_stack(stan::math::pow(a, b));
+  test::check_varis_on_stack(stan::math::pow(3.0, b));
+  test::check_varis_on_stack(stan::math::pow(a, 4.0));
 }

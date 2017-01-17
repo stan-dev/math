@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/rev/arr/util.hpp>
 
 typedef std::vector<AVAR> AVEC;
 typedef std::vector<double> VEC;

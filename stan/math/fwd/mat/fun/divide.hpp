@@ -24,7 +24,7 @@ namespace stan {
 
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
-    divide(const Eigen::Matrix<fvar<T>, R, C>& v, const double c) {
+    divide(const Eigen::Matrix<fvar<T>, R, C>& v, double c) {
       Eigen::Matrix<fvar<T>, R, C>
         res(v.rows(), v.cols());
       for (int i = 0; i < v.rows(); i++) {
@@ -54,7 +54,7 @@ namespace stan {
 
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
-    operator/(const Eigen::Matrix<fvar<T>, R, C>& v, const double c) {
+    operator/(const Eigen::Matrix<fvar<T>, R, C>& v, double c) {
       return divide(v, c);
     }
 

@@ -7,12 +7,12 @@ TEST(ErrorHandlingMatrix, checkSimplex) {
   y.setZero();
   y << 0.5, 0.5;
   
-  EXPECT_TRUE(stan::math::check_simplex("checkSimplex",
-                                                  "y", y));
+  EXPECT_NO_THROW(stan::math::check_simplex("checkSimplex",
+                                            "y", y));
                   
   y[1] = 0.55;
   EXPECT_THROW(stan::math::check_simplex("checkSimplex", 
-                                                   "y", y), 
+                                         "y", y), 
                std::domain_error);
 }
 
@@ -26,7 +26,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
   y[1] = 1.1;
   try {
     stan::math::check_simplex("checkSimplex",
-                                        "y", y);
+                              "y", y);
     FAIL() << "should have thrown";
   } catch (std::domain_error& e) {
     message = e.what();
@@ -48,7 +48,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_negative_value) {
   y[2] = 1.0;
   try {
     stan::math::check_simplex("checkSimplex",
-                                        "y", y);
+                              "y", y);
     FAIL() << "should have thrown";
   } catch (std::domain_error& e) {
     message = e.what();
@@ -72,7 +72,7 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_sum) {
 
   try {
     stan::math::check_simplex("checkSimplex",
-                                        "y", y);
+                              "y", y);
     FAIL() << "should have thrown";
   } catch (std::domain_error& e) {
     message = e.what();
@@ -108,22 +108,22 @@ TEST(ErrorHandlingMatrix, checkSimplex_nan) {
   y << nan, 0.5;
   
   EXPECT_THROW(stan::math::check_simplex("checkSimplex",
-                                                   "y", y),
+                                         "y", y),
                std::domain_error);
                   
   y[1] = 0.55;
   EXPECT_THROW(stan::math::check_simplex("checkSimplex", 
-                                                   "y", y), 
+                                         "y", y), 
                std::domain_error);
 
   y[0] = 0.5;
   y[1] = nan;
   EXPECT_THROW(stan::math::check_simplex("checkSimplex", 
-                                                   "y", y), 
+                                         "y", y), 
                std::domain_error);
 
   y[0] = nan;
   EXPECT_THROW(stan::math::check_simplex("checkSimplex", 
-                                                   "y", y), 
+                                         "y", y), 
                std::domain_error);
 }

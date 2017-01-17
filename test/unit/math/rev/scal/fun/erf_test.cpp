@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <boost/math/special_functions/erf.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
+#include <boost/math/special_functions/erf.hpp>
 
 TEST(AgradRev,erf) {
   AVAR a = 1.3;
@@ -25,4 +25,9 @@ struct erf_fun {
 TEST(AgradRev,erf_NaN) {
   erf_fun erf_;
   test_nan(erf_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 1.3;
+  test::check_varis_on_stack(stan::math::erf(a));
 }

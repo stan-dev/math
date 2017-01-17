@@ -36,7 +36,7 @@ namespace stan {
      * @return True if first variable's value is less than or equal to
      * the second value.
      */
-    inline bool operator<=(const var& a, const double b) {
+    inline bool operator<=(const var& a, double b) {
       return a.val() <= b;
     }
 
@@ -49,7 +49,7 @@ namespace stan {
      * @return True if first value is less than or equal to the second
      * variable's value.
      */
-    inline bool operator<=(const double a, const var& b) {
+    inline bool operator<=(double a, const var& b) {
       return a <= b.val();
     }
 

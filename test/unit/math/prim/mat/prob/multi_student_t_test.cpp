@@ -224,27 +224,27 @@ TEST(ProbDistributionsMultiStudentT, error_check) {
     3.0,
     11.0;
 
-Matrix<double,Dynamic,Dynamic> s(3,3);
- s << 2.0, 3.0, 11.0,
-   3.0, 9.0, 1.2,
-   11.0, 1.2, 16.0;
+  Matrix<double,Dynamic,Dynamic> s(3,3);
+  s << 10.0, 3.0, 11.0,
+    3.0, 9.0, 1.2,
+    11.0, 1.2, 16.0;
 
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(2.0,mu,s,rng));
   EXPECT_THROW(stan::math::multi_student_t_rng(-2.0,mu,s,rng),
                std::domain_error);
 
- s << 2.0, 3.0, 11.0,
-   3.0, 9.0, 1.2,
-   11.0, -1.2, 16.0;
+  s << 10.0, 3.0, 11.0,
+    3.0, 9.0, 1.2,
+    11.0, -1.2, 16.0;
   EXPECT_THROW(stan::math::multi_student_t_rng(2.0,mu,s,rng),
                std::domain_error);
 
   mu << stan::math::positive_infinity(), 
     3.0,
     11.0;
- s << 2.0, 3.0, 11.0,
-   3.0, 9.0, 1.2,
-   11.0, 1.2, 16.0;
+  s << 10.0, 3.0, 11.0,
+    3.0, 9.0, 1.2,
+    11.0, 1.2, 16.0;
   EXPECT_THROW(stan::math::multi_student_t_rng(2.0,mu,s,rng),
                std::domain_error);
 }
@@ -256,10 +256,10 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     3.0,
     11.0;
 
-Matrix<double,Dynamic,Dynamic> s(3,3);
- s << 2.0, 3.0, 11.0,
-   3.0, 9.0, 1.2,
-   11.0, 1.2, 16.0;
+  Matrix<double,Dynamic,Dynamic> s(3,3);
+  s << 10.0, 3.0, 11.0,
+    3.0, 9.0, 1.2,
+    11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::students_t_distribution<>dist (3.0);
@@ -286,7 +286,7 @@ Matrix<double,Dynamic,Dynamic> s(3,3);
       ++i;
     ++bin[i];
     count++;
-   }
+  }
 
   double chi = 0;
   for(int j = 0; j < K; j++)
@@ -302,10 +302,10 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     3.0,
     11.0;
 
-Matrix<double,Dynamic,Dynamic> s(3,3);
- s << 2.0, 3.0, 11.0,
-   3.0, 9.0, 1.2,
-   11.0, 1.2, 16.0;
+  Matrix<double,Dynamic,Dynamic> s(3,3);
+  s << 10.0, 3.0, 11.0,
+    3.0, 9.0, 1.2,
+    11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::students_t_distribution<>dist (3.0);
@@ -332,7 +332,7 @@ Matrix<double,Dynamic,Dynamic> s(3,3);
       ++i;
     ++bin[i];
     count++;
-   }
+  }
 
   double chi = 0;
   for(int j = 0; j < K; j++)

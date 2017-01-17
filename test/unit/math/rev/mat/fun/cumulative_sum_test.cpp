@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 template <typename T>
 void test_cumulative_sum() {
@@ -57,3 +58,8 @@ TEST(AgradRevMatrix, cumulative_sum) {
   test_cumulative_sum<Eigen::Matrix<var,1,Eigen::Dynamic> >();
 }
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v x(2);
+  x << 1, 2;
+  test::check_varis_on_stack(stan::math::cumulative_sum(x));
+}

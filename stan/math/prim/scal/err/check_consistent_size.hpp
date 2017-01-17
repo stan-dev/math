@@ -10,7 +10,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the dimension of x is consistent, which
+     * Check if the dimension of x is consistent, which
      * is defined to be <code>expected_size</code> if x is a vector or 1 if x
      * is not a vector.
      *
@@ -21,19 +21,17 @@ namespace stan {
      * @param x Variable to check for consistent size
      * @param expected_size Expected size if x is a vector
      *
-     * @return <code>true</code> if x is scalar or if x is vector-like and
-     *   has size of <code>expected_size</code>
      * @throw <code>invalid_argument</code> if the size is inconsistent
      */
     template <typename T>
-    inline bool check_consistent_size(const char* function,
+    inline void check_consistent_size(const char* function,
                                       const char* name,
                                       const T& x,
                                       size_t expected_size) {
       if (!is_vector<T>::value)
-        return true;
+        return;
       if (is_vector<T>::value && expected_size == stan::size_of(x))
-        return true;
+        return;
 
       std::stringstream msg;
       msg << ", expecting dimension = "
@@ -47,7 +45,6 @@ namespace stan {
       invalid_argument(function, name, stan::size_of(x),
                        "has dimension = ",
                        msg_str.c_str());
-      return false;
     }
 
   }

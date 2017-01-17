@@ -45,35 +45,10 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 
 namespace stan {
   namespace math {
-
-    template <typename T_shape>
-    T_shape do_lkj_constant(const T_shape& eta, const unsigned int& K) {
-      // Lewandowski, Kurowicka, and Joe (2009) theorem 5
-      T_shape constant;
-      const int Km1 = K - 1;
-      if (eta == 1.0) {
-        // C++ integer division is appropriate in this block
-        Eigen::VectorXd numerator(Km1 / 2);
-        for (int k = 1; k <= numerator.rows(); k++)
-          numerator(k-1) = lgamma(2 * k);
-        constant = sum(numerator);
-        if ( (K % 2) == 1 )
-          constant += 0.25 * (K * K - 1) * LOG_PI
-            - 0.25 * (Km1 * Km1) * LOG_TWO - Km1 * lgamma((K + 1) / 2);
-        else
-          constant += 0.25 * K * (K - 2) * LOG_PI
-            + 0.25 * (3 * K * K - 4 * K) * LOG_TWO
-            + K * lgamma(K / 2) - Km1 * lgamma(K);
-      } else {
-        constant = -Km1 * lgamma(eta + 0.5 * Km1);
-        for (int k = 1; k <= Km1; k++)
-          constant += 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
-      }
-      return constant;
-    }
 
     // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
     //                  eta > 0; eta == 1 <-> uniform]

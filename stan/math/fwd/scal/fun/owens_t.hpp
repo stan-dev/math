@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
@@ -10,10 +11,17 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return Owen's T function applied to the specified
+     * arguments. 
+     *
+     * @param x1 First argument.
+     * @param x2 Second argument.
+     * @return Owen's T function applied to the specified arguments.
+     */
     template <typename T>
     inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
       using std::exp;
-      using ::erf;
 
       T neg_x1_sq_div_2 = -square(x1.val_) * 0.5;
       T one_p_x2_sq = 1.0 + square(x2.val_);
@@ -25,8 +33,15 @@ namespace stan {
                      / (one_p_x2_sq * 2.0 * pi()));
     }
 
+    /**
+     * Return Owen's T function applied to the specified arguments.
+     *
+     * @param x1 First argument.
+     * @param x2 Second argument.
+     * @return Owen's T function applied to the specified arguments.
+     */
     template <typename T>
-    inline fvar<T> owens_t(const double x1, const fvar<T>& x2) {
+    inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
       using std::exp;
 
       T neg_x1_sq_div_2 = -square(x1) * 0.5;
@@ -36,10 +51,16 @@ namespace stan {
                      / (one_p_x2_sq * 2.0 * pi()));
     }
 
+    /**
+     * Return Owen's T function applied to the specified arguments.
+     *
+     * @param x1 First argument.
+     * @param x2 Second argument.
+     * @return Owen's T function applied to the specified arguments.
+     */
     template <typename T>
-    inline fvar<T> owens_t(const fvar<T>& x1, const double x2) {
+    inline fvar<T> owens_t(const fvar<T>& x1, double x2) {
       using std::exp;
-      using ::erf;
 
       T neg_x1_sq_div_2 = -square(x1.val_) * 0.5;
       return fvar<T>(owens_t(x1.val_, x2),

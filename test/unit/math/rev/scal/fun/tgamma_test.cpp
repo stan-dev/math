@@ -1,11 +1,11 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,tgamma) {
   AVAR a = 3.5;
-  AVAR f = tgamma(a);
+  AVAR f = stan::math::tgamma(a);
   EXPECT_FLOAT_EQ(boost::math::tgamma(3.5),f.val());
 
   AVEC x = createAVEC(a);
@@ -25,4 +25,9 @@ struct tgamma_fun {
 TEST(AgradRev,tgamma_NaN) {
   tgamma_fun tgamma_;
   test_nan(tgamma_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 3.5;
+  test::check_varis_on_stack(stan::math::tgamma(a));
 }

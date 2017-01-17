@@ -39,7 +39,7 @@ namespace stan {
        \f]
      *
      */
-    inline double log1p_exp(const double a) {
+    inline double log1p_exp(double a) {
       using std::exp;
       // like log_sum_exp below with b=0.0; prevents underflow
       if (a > 0.0)

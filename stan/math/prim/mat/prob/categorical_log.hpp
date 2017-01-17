@@ -30,16 +30,8 @@ namespace stan {
 
       int lb = 1;
 
-      T_prob lp = 0.0;
       check_bounded(function, "Number of categories", n, lb, theta.size());
-
-      if (!stan::is_constant_struct<T_prob>::value) {
-        if (!check_simplex(function, "Probabilities parameter", theta))
-          return lp;
-      } else {
-        if (!check_simplex(function, "Probabilities parameter", theta))
-          return lp;
-      }
+      check_simplex(function, "Probabilities parameter", theta);
 
       if (include_summand<propto, T_prob>::value)
         return log(theta(n-1));
@@ -68,18 +60,11 @@ namespace stan {
 
       int lb = 1;
 
-      T_prob lp = 0.0;
       for (size_t i = 0; i < ns.size(); ++i)
         check_bounded(function, "element of outcome array", ns[i],
                       lb, theta.size());
 
-      if (!stan::is_constant_struct<T_prob>::value) {
-        if (!check_simplex(function, "Probabilities parameter", theta))
-          return lp;
-      } else {
-        if (!check_simplex(function, "Probabilities parameter", theta))
-          return lp;
-      }
+      check_simplex(function, "Probabilities parameter", theta);
 
       if (!include_summand<propto, T_prob>::value)
         return 0.0;

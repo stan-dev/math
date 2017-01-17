@@ -33,7 +33,7 @@ namespace stan {
        * @param t time of solution.
        */
       void operator()(const std::vector<double>& coupled_state,
-                      const double t) {
+                      double t) {
         y_coupled_[n_] = coupled_state;
         n_++;
       }

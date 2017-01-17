@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,bessel_second_kind_int_var) {
   int a(0);
@@ -43,4 +43,9 @@ struct bessel_second_kind_fun {
 TEST(AgradRev,bessel_second_kind_NaN) {
   bessel_second_kind_fun bessel_second_kind_;
   test_nan(bessel_second_kind_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR b = 4.0;
+  test::check_varis_on_stack(stan::math::bessel_second_kind(0, b));
 }

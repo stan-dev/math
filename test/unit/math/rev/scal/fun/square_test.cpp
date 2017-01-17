@@ -1,6 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,square) {
   AVAR a = 7.0;
@@ -25,4 +26,9 @@ struct square_fun {
 TEST(AgradRev,square_NaN) {
   square_fun square_;
   test_nan(square_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 7.0;
+  test::check_varis_on_stack(stan::math::square(a));
 }

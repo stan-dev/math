@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,mdivide_left_tri_val) {
   using stan::math::matrix_d;
@@ -355,15 +356,15 @@ TEST(AgradRevMatrix,mdivide_left_tri_upper_grad_vd) {
     }
   }
 }
-// // FIXME:  Fails in g++ 4.2 -- can't find agrad version of mdivide_left_tri
-// //         Works in clang++ and later g++
-// // TEST(AgradRevMatrix,mdivide_left_tri2) {
-// //   using stan::math::mdivide_left_tri;
-// //   using stan::math::mdivide_left_tri;
-// //   int k = 3;
-// //   Eigen::Matrix<stan::math::var,Eigen::Dynamic,Eigen::Dynamic> L(k,k);
-// //   L << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-// //   Eigen::Matrix<stan::math::var,Eigen::Dynamic,Eigen::Dynamic> I(k,k);
-// //   I.setIdentity();
-// //   L = mdivide_left_tri<Eigen::Lower>(L, I);
-// // }
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
+  stan::math::matrix_v A(2,2);
+  A << 2.0, 0.0,
+    5.0, 7.0;
+
+  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(A, A));
+  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(A, value_of(A)));
+  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(value_of(A), A));
+}
+

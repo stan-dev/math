@@ -11,7 +11,7 @@ TEST(ErrorHandlingScalar,CheckPositive) {
   x.push_back(3.0);
 
   for (size_t i = 0; i < x.size(); i++) {
-    EXPECT_TRUE(check_positive(function, "x", x));
+    EXPECT_NO_THROW(check_positive(function, "x", x));
   }
 
 }

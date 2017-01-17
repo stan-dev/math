@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/normal_distribution.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
@@ -22,9 +21,9 @@ namespace stan {
 
     template <class RNG>
     inline double
-    exp_mod_normal_rng(const double mu,
-                       const double sigma,
-                       const double lambda,
+    exp_mod_normal_rng(double mu,
+                       double sigma,
+                       double lambda,
                        RNG& rng) {
       static const char* function("exp_mod_normal_rng");
 

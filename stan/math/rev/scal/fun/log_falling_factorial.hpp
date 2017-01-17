@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_SCAL_FUN_LOG_FALLING_FACTORIAL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 namespace stan {
@@ -19,16 +19,16 @@ namespace stan {
                      avi, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
             avi_->adj_ += adj_
-              * (boost::math::digamma(avi_->val_ + 1)
-                 - boost::math::digamma(avi_->val_ - bvi_->val_ + 1));
+              * (digamma(avi_->val_ + 1)
+                 - digamma(avi_->val_ - bvi_->val_ + 1));
             bvi_->adj_ += adj_
-              * boost::math::digamma(avi_->val_ - bvi_->val_ + 1);
+              * digamma(avi_->val_ - bvi_->val_ + 1);
           }
         }
       };
@@ -39,13 +39,13 @@ namespace stan {
           op_vd_vari(log_falling_factorial(avi->val_, b), avi, b) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_
-              * (boost::math::digamma(avi_->val_ + 1)
-                 - boost::math::digamma(avi_->val_ - bd_ + 1));
+              * (digamma(avi_->val_ + 1)
+                 - digamma(avi_->val_ - bd_ + 1));
         }
       };
 
@@ -55,12 +55,12 @@ namespace stan {
           op_dv_vari(log_falling_factorial(a, bvi->val_), a, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(ad_)
-                       || boost::math::isnan(bvi_->val_)))
+          if (unlikely(is_nan(ad_)
+                       || is_nan(bvi_->val_)))
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             bvi_->adj_ += adj_
-              * boost::math::digamma(ad_ - bvi_->val_ + 1);
+              * digamma(ad_ - bvi_->val_ + 1);
         }
       };
     }

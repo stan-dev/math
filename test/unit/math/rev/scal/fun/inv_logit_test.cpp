@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,inv_logit) {
   AVAR a = 2.0;
@@ -26,4 +26,9 @@ struct inv_logit_fun {
 TEST(AgradRev,inv_logit_NaN) {
   inv_logit_fun inv_logit_;
   test_nan(inv_logit_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 2.0;
+  test::check_varis_on_stack(stan::math::inv_logit(a));
 }

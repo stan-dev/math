@@ -36,7 +36,7 @@ namespace stan {
      * @return Specified value.
      */
     template <>
-    inline double value_of_rec<double>(const double x) {
+    inline double value_of_rec<double>(double x) {
       return x;
     }
 

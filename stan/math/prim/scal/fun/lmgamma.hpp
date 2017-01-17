@@ -53,7 +53,7 @@ namespace stan {
      */
     template <typename T>
     inline typename boost::math::tools::promote_args<T>::type
-    lmgamma(const int k, T x) {
+    lmgamma(int k, T x) {
       using boost::math::lgamma;
       typename boost::math::tools::promote_args<T>::type result
         = k * (k - 1) * LOG_PI_OVER_FOUR;

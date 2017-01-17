@@ -45,6 +45,20 @@ test/%_test.d : test/%_test.cpp
 	rm -f $@.$$$$
 
 
+##
+# Adding a test for multiple translation units. If this fails,
+# a new function is probably missing an inline
+##
+
+test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
+	$(COMPILE.c) -O$O $< $(OUTPUT_OPTION)
+
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
+	$(CC) -shared $(OUTPUT_OPTION) $^
+
+test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
+
+
 
 ############################################################
 ##

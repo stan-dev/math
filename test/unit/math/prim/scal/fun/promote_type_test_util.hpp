@@ -1,7 +1,7 @@
 #ifndef TEST_MATH_UNIT_FUNCTIONS_PROMOTE_TYPE_TEST_UTIL_HPP
 #define TEST_MATH_UNIT_FUNCTIONS_PROMOTE_TYPE_TEST_UTIL_HPP
 
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/is_same.hpp>

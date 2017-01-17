@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/scal/err/check_equal.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
@@ -127,8 +127,8 @@ namespace stan {
 
         vector<double> y(z.begin(), z.begin() + N_);
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_equal("coupled_ode_system",
-                    "dz_dt", dz_dt.size(), N_);
+        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
+                         "states", N_);
 
         vector<double> coupled_sys(N_ * M_);
         vector<double> grad(N_ + M_);
@@ -327,8 +327,8 @@ namespace stan {
           y[n] += y0_dbl_[n];
 
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_equal("coupled_ode_system",
-                    "dz_dt", dz_dt.size(), N_);
+        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
+                         "states", N_);
 
         std::vector<double> coupled_sys(N_ * N_);
         std::vector<double> grad(N_);
@@ -541,8 +541,8 @@ namespace stan {
           y[n] += y0_dbl_[n];
 
         dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_equal("coupled_ode_system",
-                    "dz_dt", dz_dt.size(), N_);
+        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
+                         "states", N_);
 
         vector<double> coupled_sys(N_ * (N_ + M_));
         vector<double> grad(N_ + M_);

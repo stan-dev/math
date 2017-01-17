@@ -7,20 +7,20 @@ TEST(ErrorHandlingMatrix, checkColumnIndexMatrix) {
   
   i=2;
   y.resize(3,3);
-  EXPECT_TRUE(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                       "i", y, i));
+  EXPECT_NO_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
+                                                 "i", y, i));
   i=3;
-  EXPECT_TRUE(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                       "i", y, i));
+  EXPECT_NO_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
+                                                 "i", y, i));
 
   y.resize(3, 2);
   EXPECT_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                        "i", y, i), 
+                                              "i", y, i), 
                std::out_of_range);
 
   i=0;
   EXPECT_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                        "i", y, i), 
+                                              "i", y, i), 
                std::out_of_range);
 }
 
@@ -32,20 +32,20 @@ TEST(ErrorHandlingMatrix, checkColumnIndexMatrix_nan) {
   i=2;
   y.resize(3,3);
   y << nan, nan, nan, nan, nan, nan, nan, nan, nan;
-  EXPECT_TRUE(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                       "i", y, i));
+  EXPECT_NO_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
+                                                 "i", y, i));
   i=3;
-  EXPECT_TRUE(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                       "i", y, i));
+  EXPECT_NO_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
+                                                 "i", y, i));
 
   y.resize(3, 2);
   y << nan, nan, nan, nan, nan, nan;
   EXPECT_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                        "i", y, i), 
+                                              "i", y, i), 
                std::out_of_range);
 
   i=0;
   EXPECT_THROW(stan::math::check_column_index("checkColumnIndexMatrix",
-                                                        "i", y, i), 
+                                              "i", y, i), 
                std::out_of_range);
 }

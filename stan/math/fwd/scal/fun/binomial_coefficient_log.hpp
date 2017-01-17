@@ -41,7 +41,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    binomial_coefficient_log(const fvar<T>& x1, const double x2) {
+    binomial_coefficient_log(const fvar<T>& x1, double x2) {
       using boost::math::digamma;
       using std::log;
       const double cutoff = 1000;
@@ -64,7 +64,7 @@ namespace stan {
     template <typename T>
     inline
     fvar<T>
-    binomial_coefficient_log(const double x1, const fvar<T>& x2) {
+    binomial_coefficient_log(double x1, const fvar<T>& x2) {
       using boost::math::digamma;
       using std::log;
       const double cutoff = 1000;

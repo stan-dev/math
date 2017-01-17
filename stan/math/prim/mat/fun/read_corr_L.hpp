@@ -35,7 +35,7 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
-                const size_t K) {
+                size_t K) {
       Eigen::Array<T, Eigen::Dynamic, 1> temp;
       Eigen::Array<T, Eigen::Dynamic, 1> acc(K-1);
       acc.setOnes();
@@ -88,7 +88,7 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-                const size_t K,
+                size_t K,
                 T& log_prob) {
       Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
       size_t pos = 0;

@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_SCAL_FUN_GAMMA_P_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <valarray>
 
 namespace stan {
@@ -27,8 +27,8 @@ namespace stan {
           double S = 0.0;
           double s = 1.0;
           double l = std::log(bvi_->val_);
-          double g = boost::math::tgamma(avi_->val_);
-          double dig = boost::math::digamma(avi_->val_);
+          double g = tgamma(avi_->val_);
+          double dig = digamma(avi_->val_);
 
           int k = 0;
           double delta = s / (avi_->val_ * avi_->val_);
@@ -64,8 +64,8 @@ namespace stan {
           double S = 0.0;
           double s = 1.0;
           double l = std::log(bd_);
-          double g = boost::math::tgamma(avi_->val_);
-          double dig = boost::math::digamma(avi_->val_);
+          double g = tgamma(avi_->val_);
+          double dig = digamma(avi_->val_);
 
           int k = 0;
           double delta = s / (avi_->val_ * avi_->val_);
@@ -95,7 +95,7 @@ namespace stan {
             return;
           bvi_->adj_ += adj_
             * (std::exp(-bvi_->val_) * std::pow(bvi_->val_, ad_ - 1.0)
-               / boost::math::tgamma(ad_));
+               / tgamma(ad_));
         }
       };
     }

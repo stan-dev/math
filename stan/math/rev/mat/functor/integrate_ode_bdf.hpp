@@ -82,7 +82,7 @@ namespace stan {
                                                        T_param>::type> >
     integrate_ode_bdf(const F& f,
                       const std::vector<T_initial>& y0,
-                      const double t0,
+                      double t0,
                       const std::vector<double>& ts,
                       const std::vector<T_param>& theta,
                       const std::vector<double>& x,

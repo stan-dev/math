@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_SCAL_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/fwd/scal/meta/partials_type.hpp>
 #include <stan/math/fwd/scal/meta/OperandsAndPartials.hpp>
@@ -74,6 +75,7 @@
 #include <stan/math/fwd/scal/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/fwd/scal/fun/multiply_log.hpp>
 #include <stan/math/fwd/scal/fun/owens_t.hpp>
+#include <stan/math/fwd/scal/fun/Phi_approx.hpp>
 #include <stan/math/fwd/scal/fun/pow.hpp>
 #include <stan/math/fwd/scal/fun/primitive_value.hpp>
 #include <stan/math/fwd/scal/fun/rising_factorial.hpp>
@@ -86,6 +88,7 @@
 #include <stan/math/fwd/scal/fun/tanh.hpp>
 #include <stan/math/fwd/scal/fun/tgamma.hpp>
 #include <stan/math/fwd/scal/fun/to_fvar.hpp>
+#include <stan/math/fwd/scal/fun/trigamma.hpp>
 #include <stan/math/fwd/scal/fun/trunc.hpp>
 #include <stan/math/fwd/scal/fun/value_of.hpp>
 #include <stan/math/fwd/scal/fun/value_of_rec.hpp>

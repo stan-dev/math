@@ -46,7 +46,7 @@ namespace stan {
      * @param a Argument.
      * @return Inverse logit of argument.
      */
-    inline double inv_logit(const double a) {
+    inline double inv_logit(double a) {
       using std::exp;
       return 1.0 / (1.0 + exp(-a));
     }

@@ -23,9 +23,9 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   ASSERT_EQ(4U, size_of(v2));
   ASSERT_EQ(4U, size_of(v3));
   ASSERT_EQ(4U, size_of(v4));
-  EXPECT_TRUE(check_consistent_sizes(function, name1, v1, name2, v2));
-  EXPECT_TRUE(check_consistent_sizes(function, name1, v1, name2, v2, name3, v3));
-  EXPECT_TRUE(check_consistent_sizes(function, name1, v1, name2, v2, name3, v3, name4, v4));
+  EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2));
+  EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2, name3, v3));
+  EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2, name3, v3, name4, v4));
   
   Matrix<var,Dynamic,1> v(3);
   

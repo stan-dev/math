@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,inv_cloglog) {
   using std::exp;
@@ -35,4 +35,9 @@ struct inv_cloglog_fun {
 TEST(AgradRev,inv_cloglog_NaN) {
   inv_cloglog_fun inv_cloglog_;
   test_nan(inv_cloglog_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 2.7;
+  test::check_varis_on_stack(stan::math::inv_cloglog(a));
 }

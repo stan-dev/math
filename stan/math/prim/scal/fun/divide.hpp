@@ -23,7 +23,7 @@ namespace stan {
       return x / y;
     }
 
-    inline int divide(const int x, const int y) {
+    inline int divide(int x, int y) {
       if (unlikely(y == 0))
         domain_error("divide", "denominator is", y, "");
       return x / y;

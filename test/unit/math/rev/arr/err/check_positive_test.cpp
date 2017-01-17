@@ -12,7 +12,7 @@ TEST(AgradRevErrorHandlingScalar,CheckPositive) {
   x.push_back(var(2.0));
   x.push_back(var(3.0));
 
-  EXPECT_TRUE(check_positive(function, "x", x));
+  EXPECT_NO_THROW(check_positive(function, "x", x));
 
   stan::math::recover_memory();
 }
