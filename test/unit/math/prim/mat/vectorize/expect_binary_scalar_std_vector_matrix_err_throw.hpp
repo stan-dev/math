@@ -1,8 +1,6 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_BINARY_SCALAR_STD_VECTOR_MATRIX_ERR_THROW_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_BINARY_SCALAR_STD_VECTOR_MATRIX_ERR_THROW_HPP
 
-#include <test/unit/math/prim/mat/vectorize/build_binary_vector.hpp>
-#include <test/unit/math/prim/mat/vectorize/build_prim_binary_matrix.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
@@ -20,8 +18,8 @@ const Eigen::Matrix<matrix_t, R, C>& template_m) {
   typedef typename Eigen::Matrix<result_t, R, C> result_mt;
  
   for (size_t i = 0; i < input_v.size(); ++i) {
-    matrix_t val = F::invalid_inputs2()[i];
-    input_mt input_m = build_prim_binary_matrix(val, template_m);
+    input_mt input_m = input_mt::Constant(template_m.rows(), 
+    template_m.cols(), F::invalid_inputs2()[i]);
     vector<input_mt> input_mv;
     input_mv.push_back(input_m);
     input_mv.push_back(input_m);

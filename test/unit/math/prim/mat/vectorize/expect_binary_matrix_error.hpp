@@ -5,7 +5,6 @@
 #include <test/unit/math/prim/mat/vectorize/expect_binary_matrix_scalar_err_throw.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_scalar_std_vector_matrix_err_throw.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_std_vector_matrix_scalar_err_throw.hpp>
-#include <test/unit/math/prim/mat/vectorize/build_prim_binary_matrix.hpp>
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include <stdexcept>
@@ -17,30 +16,15 @@ void expect_binary_matrix_size_error() {
   using Eigen::MatrixXd;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
 
-  matrix_t badsize_tm1(4, 5);
-  matrix_t badsize_tm2(4, 9);
-  matrix_t badsize_tm3(7, 5);
-  matrix_t badsize_tm4(3, 6);
-  matrix_t badsize_tm5(5, 4);
-  MatrixXd badsize_dm1(6, 13);
-  MatrixXd badsize_dm2(4, 8);
-  MatrixXd badsize_dm3(12, 5);
-  MatrixXd badsize_dm4(5, 4);
-  T test_val = F::valid_inputs1()[0];
-
-  badsize_tm1 = build_prim_binary_matrix(test_val, badsize_tm1);
-  badsize_tm2 = build_prim_binary_matrix(test_val, badsize_tm2);
-  badsize_tm3 = build_prim_binary_matrix(test_val, badsize_tm3);
-  badsize_tm4 = build_prim_binary_matrix(test_val, badsize_tm4);
-  badsize_tm5 = build_prim_binary_matrix(test_val, badsize_tm5);
-  badsize_dm1 = build_prim_binary_matrix(F::valid_inputs1()[0],
-  badsize_dm1);
-  badsize_dm2 = build_prim_binary_matrix(F::valid_inputs1()[0],
-  badsize_dm2);
-  badsize_dm3 = build_prim_binary_matrix(F::valid_inputs1()[0],
-  badsize_dm3);
-  badsize_dm4 = build_prim_binary_matrix(F::valid_inputs1()[0],
-  badsize_dm4);
+  matrix_t badsize_tm1 = matrix_t::Constant(4, 5, F::valid_inputs1()[0]);
+  matrix_t badsize_tm2 = matrix_t::Constant(4, 9, F::valid_inputs1()[0]);
+  matrix_t badsize_tm3 = matrix_t::Constant(7, 5, F::valid_inputs1()[0]);
+  matrix_t badsize_tm4 = matrix_t::Constant(3, 6, F::valid_inputs1()[0]);
+  matrix_t badsize_tm5 = matrix_t::Constant(5, 4, F::valid_inputs1()[0]);
+  MatrixXd badsize_dm1 = MatrixXd::Constant(6, 13, F::valid_inputs1()[0]);
+  MatrixXd badsize_dm2 = MatrixXd::Constant(4, 8, F::valid_inputs1()[0]);
+  MatrixXd badsize_dm3 = MatrixXd::Constant(12, 5, F::valid_inputs1()[0]);
+  MatrixXd badsize_dm4 = MatrixXd::Constant(5, 4, F::valid_inputs1()[0]);
 
   EXPECT_THROW(F::template apply<matrix_t>(badsize_tm1, badsize_dm1),
   std::invalid_argument);

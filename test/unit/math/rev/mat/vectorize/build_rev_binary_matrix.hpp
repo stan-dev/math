@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_BUILD_REV_BINARY_MATRIX_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <test/unit/math/prim/mat/vectorize/build_prim_binary_matrix.hpp>
 #include <vector>
 #include <Eigen/Dense>
 
@@ -35,6 +34,6 @@ static inline matrix_t build_rev_binary_matrix2(const matrix_t& x) {
 template <typename T, int R, int C>
 static inline Eigen::Matrix<T, R, C>
 build_rev_binary_matrix(T val, const Eigen::Matrix<T, R, C>& x) {
-  return build_prim_binary_matrix(val, x);
+  return Eigen::Matrix<T, R, C>::Constant(x.rows(), x.cols(), val);
 }
 #endif
