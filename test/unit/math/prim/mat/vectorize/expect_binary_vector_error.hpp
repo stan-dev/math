@@ -9,7 +9,7 @@
 #include <vector>
 
 template <typename F, typename T, typename VT>
-void expect_vector_error() {
+void expect_binary_vector_size_error() {
   using std::vector;
   using Eigen::VectorXd;
   typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime> 
@@ -19,13 +19,21 @@ void expect_vector_error() {
   VT badsize_dm(11);
 
   EXPECT_THROW(F::template apply<vector_t>(badsize_tm1, badsize_dm),
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector_t>(badsize_dm, badsize_tm1),
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector_t>(badsize_tm1, badsize_tm2),
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector_t>(badsize_tm2, badsize_tm1),
-  std::domain_error);
+  std::invalid_argument);
+}
+
+template <typename F, typename T, typename VT>
+void expect_binary_vector_value_error() {
+  using std::vector;
+  using Eigen::VectorXd;
+  typedef Eigen::Matrix<T, VT::RowsAtCompileTime, VT::ColsAtCompileTime> 
+  vector_t;
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
   if (invalid_inputs1.size() == 0) return;
@@ -104,4 +112,9 @@ void expect_vector_error() {
   std::domain_error);
 }
 
+template <typename F, typename T, typename VT>
+void expect_binary_vector_error() {
+  expect_binary_vector_size_error<F, T, VT>();
+  expect_binary_vector_value_error<F, T, VT>();
+}
 #endif

@@ -28,8 +28,8 @@ void expect_prim_binary_errors() {
   expect_binary_scalar_error<F, double>();
   expect_binary_std_vector_error<F, double>();
   expect_binary_matrix_error<F, double>();
-  expect_vector_error<F, double, Eigen::VectorXd>();
-  expect_vector_error<F, double, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, double, Eigen::VectorXd>();
+  expect_binary_vector_error<F, double, Eigen::RowVectorXd>();
 }
 
 #endif

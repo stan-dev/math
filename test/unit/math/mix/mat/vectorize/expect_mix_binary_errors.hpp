@@ -28,13 +28,13 @@ void expect_mix_binary_errors() {
   expect_binary_scalar_error<F, fvar<var> >();
   expect_binary_std_vector_error<F, fvar<var> >();
   expect_binary_matrix_error<F, fvar<var> >();
-  expect_vector_error<F, fvar<var>, Eigen::VectorXd>();
-  expect_vector_error<F, fvar<var>, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, fvar<var>, Eigen::VectorXd>();
+  expect_binary_vector_error<F, fvar<var>, Eigen::RowVectorXd>();
   expect_binary_scalar_error<F, fvar<fvar<var> > >();
   expect_binary_std_vector_error<F, fvar<fvar<var> > >();
   expect_binary_matrix_error<F, fvar<fvar<var> > >();
-  expect_vector_error<F, fvar<fvar<var> >, Eigen::VectorXd>();
-  expect_vector_error<F, fvar<fvar<var> >, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, fvar<fvar<var> >, Eigen::VectorXd>();
+  expect_binary_vector_error<F, fvar<fvar<var> >, Eigen::RowVectorXd>();
 }
 
 #endif

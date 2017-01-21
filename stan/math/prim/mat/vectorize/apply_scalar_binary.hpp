@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_BINARY_SCALAR_HPP
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_BINARY_SCALAR_HPP
 
-#include <stan/math/prim/scal/err/check_equal.hpp>
+#include <stan/math/prim/mat/err/check_matching_dims.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <Eigen/Dense>
 #include <vector>
 
@@ -58,9 +59,10 @@ namespace stan {
        * by F to the specified matrix.
        */
       static inline return_t apply(const T1& x, const T2& y) {
-        using stan::math::check_equal;
-        check_equal("binary vectorization", "rows", x.rows(), y.rows()); 
-        check_equal("binary vectorization", "cols", x.cols(), y.cols()); 
+        check_matching_dims<scalar_t1, scalar_t2, 
+        T1::RowsAtCompileTime, T1::ColsAtCompileTime, 
+        T2::RowsAtCompileTime, T2::ColsAtCompileTime>(
+        "binary vectorization", "x", x, "y", y);
         return_t result(x.rows(), x.cols());
         for (int j = 0; j < x.cols(); ++j)
           for (int i = 0; i < x.rows(); ++i)
@@ -587,8 +589,10 @@ namespace stan {
        */
       static inline return_t apply(const std::vector<T1>& x,
                                    const std::vector<T2>& y) {
-        stan::math::check_equal("apply_scalar_binary", "vector size", 
-                                x.size(), y.size());
+        using stan::math::check_size_match;
+
+        check_size_match("binary vectorization", "x", x.size(), 
+        "y", y.size());
         return_t fx(x.size());
         for (size_t i = 0; i < x.size(); ++i)
           fx[i] = apply_scalar_binary<F, T1, T2>::apply(x[i], y[i]);

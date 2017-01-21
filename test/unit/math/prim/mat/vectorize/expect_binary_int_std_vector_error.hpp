@@ -12,7 +12,7 @@ void expect_binary_int_std_vector_error() {
   vector<int> a1(5);
   vector<int> a2(9);
   EXPECT_THROW(F::template apply<vector<double> >(a1, a2), 
-  std::domain_error);
+  std::invalid_argument);
 
   vector<int> invalid_inputs1 = F::int_invalid_inputs1();
   vector<int> invalid_inputs2 = F::int_invalid_inputs2();

@@ -59,15 +59,15 @@ void expect_binary_std_vector_error() {
   vector<int> badsize_iv(7);
   vector<double> badsize_dv(5);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_tv1, badsize_iv), 
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_iv, badsize_tv2), 
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_tv1, badsize_dv), 
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_dv, badsize_tv2), 
-  std::domain_error);
+  std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_tv1, badsize_tv2), 
-  std::domain_error);
+  std::invalid_argument);
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
   if (invalid_inputs1.size() == 0) return;

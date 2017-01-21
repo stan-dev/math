@@ -26,13 +26,13 @@ void expect_fwd_binary_errors() {
   expect_binary_scalar_error<F, fvar<double> >();
   expect_binary_std_vector_error<F, fvar<double> >();
   expect_binary_matrix_error<F, fvar<double> >();
-  expect_vector_error<F, fvar<double>, Eigen::VectorXd>();
-  expect_vector_error<F, fvar<double>, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, fvar<double>, Eigen::VectorXd>();
+  expect_binary_vector_error<F, fvar<double>, Eigen::RowVectorXd>();
   expect_binary_scalar_error<F, fvar<fvar<double> > >();
   expect_binary_std_vector_error<F, fvar<fvar<double> > >();
   expect_binary_matrix_error<F, fvar<fvar<double> > >();
-  expect_vector_error<F, fvar<fvar<double> >, Eigen::VectorXd>();
-  expect_vector_error<F, fvar<fvar<double> >, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, fvar<fvar<double> >, Eigen::VectorXd>();
+  expect_binary_vector_error<F, fvar<fvar<double> >, Eigen::RowVectorXd>();
 }
 
 #endif

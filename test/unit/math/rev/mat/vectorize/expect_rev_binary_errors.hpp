@@ -26,8 +26,8 @@ void expect_rev_binary_errors() {
   expect_binary_scalar_error<F, var>();
   expect_binary_std_vector_error<F, var>();
   expect_binary_matrix_error<F, var>();
-  expect_vector_error<F, var, Eigen::VectorXd>();
-  expect_vector_error<F, var, Eigen::RowVectorXd>();
+  expect_binary_vector_error<F, var, Eigen::VectorXd>();
+  expect_binary_vector_error<F, var, Eigen::RowVectorXd>();
 }
 
 #endif
