@@ -21,21 +21,19 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the cauchy log cumulative distribution function for
-     * the given variate, location, and scale.
+     * Returns the cauchy log cumulative distribution function for the given 
+     * location, and scale. If given containers of matching sizes
+     * returns the log sum of probabilities.
      *
-     * \f$\frac{1}{\pi}\arctan\left(\frac{y-\mu}{\sigma}\right) + \frac{1}{2}\f$
-     *
-     * @param y A scalar variate.
-     * @param mu The location parameter.
-     * @param sigma The scale parameter.
-     * @tparam T_y type of variable, y
-     * @tparam T_loc type of location parameter, mu
-     * @tparam T_scale type of scale parameter, sigma
-     *
+     * @tparam T_y type of real parameter
+     * @tparam T_loc type of location parameter
+     * @tparam T_scale type of scale parameter
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
      * @return log probability or log sum of probabilities
      * @throw std::domain_error if sigma is nonpositive or y, mu are nan
-     * @throw std::invalid_argument if given vectors of mismatched sizes.
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

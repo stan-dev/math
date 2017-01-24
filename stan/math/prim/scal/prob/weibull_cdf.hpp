@@ -24,17 +24,18 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the Weibull cumulative distribution function 
-     * for the given variate, location, and scale.
+     * Returns the Weibull cumulative distribution function for the given 
+     * location and scale. Given containers of matching sizes, returns the
+     * product of probabilities.
      *
-     * @param y A scalar variate.
-     * @param alpha shape parameter.
-     * @param sigma scale parameter.
-     * @return Weibull cdf evaluated at the specified arguments.
-     * @tparam T_y Type of y.
-     * @tparam T_shape Type of shape parameter.
-     * @tparam T_scale Type of scale paramater.
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive. 
+     * @tparam T_y type of real parameter
+     * @tparam T_shape type of shape parameter
+     * @tparam T_scale type of scale paramater
+     * @param y real parameter
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
      */
     template <typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type

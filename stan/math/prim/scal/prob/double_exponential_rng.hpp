@@ -18,15 +18,15 @@ namespace stan {
   namespace math {
 
     /**
-     * Double exponential distribution random number generator with 
-     * location and scale parameters mu, sigma. 
+     * Return a pseudorandom double exponential variate with the given location
+     * and scale using the specified random number generator.
      *
-     * @param mu location parameter.
-     * @param sigma positive scale parameter.
-     * @param rng random number generator.
-     * @tparam RNG class of random number generator.
-     * @return sample from DoubleExponential(mu, sigma) distribution.
-     * @throw std::domain_error if mu is infinite or sigma is nonpositive.
+     * @tparam RNG class of random number generator
+     * @param mu location parameter
+     * @param sigma positive scale parameter
+     * @param rng random number generator
+     * @return double exponential random variate
+     * @throw std::domain_error if mu is infinite or sigma is nonpositive
      */
     template <class RNG>
     inline double

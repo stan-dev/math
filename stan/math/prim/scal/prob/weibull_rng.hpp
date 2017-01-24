@@ -18,14 +18,15 @@ namespace stan {
   namespace math {
 
     /**
-     * Weibull distribution random number generator with parameters alpha, sigma.
+     * Return a pseudorandom Weibull variate with given shape and scale using
+     * the specified random number generator.
      *
-     * @param alpha positive finite shape parameter.
-     * @param sigma positive finite scale parameter.
-     * @param rng random number generator.
-     * @tparam RNG class of random number generator.
-     * @return sample from Weibull(alpha, sigma)  distribution.
-     * @throw std::domain_error if alpha or sigma is nonpositive.
+     * @tparam RNG class of random number generator
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @param rng random number generator
+     * @return Weibull random variate
+     * @throw std::domain_error if alpha or sigma is nonpositive
      */
     template <class RNG>
     inline double

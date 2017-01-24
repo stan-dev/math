@@ -24,21 +24,21 @@ namespace stan {
   namespace math {
 
     /**
-     * Log CDF for Beta-Binomial distribution.
+     * Returns the log CDF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the log sum of probabilities.
      *
-     * <p>Equivalent to a Binomial(N,p) with a Beta(alpha, beta)
-     * prior on p. If given vector parameters of matching size, will return the log sum of
-     * probabilities.</p>
-     *
-     * @param n (vector of) non-negative integer successes variable count(s)
-     * @param N (vector of) positive integer size parameter(s)
-     * @param alpha (vector of) prior success parameter(s)
-     * @param beta (vector of) prior failure parameter(s)
-     *
-     * @return log sum of probabilities.
-     *
-     * @throw std::domain_error if N, alpha, or beta fails to be positive.
-     * @throw std::invalid_argument if vector parameters have non-matching sizes.
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_n, typename T_N,
               typename T_size1, typename T_size2>

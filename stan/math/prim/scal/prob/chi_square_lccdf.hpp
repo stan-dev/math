@@ -25,18 +25,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the chi square log complementary cumulative distribution function for 
-     * the given variate and degrees of freedom. If given vectors of matching sizes, 
-     * returns the log sum of probabilities.
+     * Returns the chi square log complementary cumulative distribution 
+     * function for the given variate and degrees of freedom. If given 
+     * containers of matching sizes, returns the log sum of probabilities.
      *
-     * @param y A scalar variate.
-     * @param nu Degrees of freedom.
-     * @tparam T_y type of scalar variate, y.
+     * @tparam T_y type of scalar parameter
      * @tparam T_dof type of degrees of freedom parameter
-     *
+     * @param y scalar parameter
+     * @param nu degrees of freedom parameter
      * @return log probability or log sum of probabilities
      * @throw std::domain_error if y is negative or nu is nonpositive
-     * @throw std::invalid_argument if given vectors of mismatched size
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type

@@ -30,16 +30,20 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the beta log cumulative distribution function for the given
-     * variate and scale variables.
+     * Returns the beta log cumulative distribution function for the given
+     * probability, success, and failure parameters. Given matching containers
+     * returns the log sum of probabilities.
      *
-     * @param y A scalar variate.
-     * @param alpha Prior sample size.
-     * @param beta Prior sample size.
-     * @return The beta log cdf evaluated at the specified arguments.
-     * @tparam T_y Type of y.
-     * @tparam T_scale_succ Type of alpha.
-     * @tparam T_scale_fail Type of beta.
+     * @tparam T_y type of probability parameter
+     * @tparam T_scale_succ type of success parameter
+     * @tparam T_scale_fail type of failure parameter
+     * @param y probability parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if alpha or beta is negative
+     * @throw std::domain_error if y is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type

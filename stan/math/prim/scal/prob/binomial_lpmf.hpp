@@ -28,17 +28,21 @@ namespace stan {
   namespace math {
 
     /**
-     * Binomial log PMF. If given vectors of matching lengths, returns
-     * the log sum of probabilities.
+     * Returns the log PMF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
+     * containers of matching lengths, returns the log sum of probabilities.
      *
-     * @param n successes variable
+     * @tparam T_n type of successes parameter
+     * @tparam T_N type of population size parameter
+     * @tparam theta type of chance of success parameter
+     * @param n successes parameter
      * @param N population size parameter
-     * @param theta probability parameter
-     *
+     * @param theta chance of success parameter
      * @return log probability or log sum of probabilities
-     *
-     * @throw std::domain_error if N is negative or probability parameter is invalid
-     * @throw std::invalid_argument if vector sizes do not match
+     * @throw std::domain_error if n is negative or greater than N
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <bool propto,
               typename T_n,

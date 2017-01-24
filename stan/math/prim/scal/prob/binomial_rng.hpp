@@ -24,14 +24,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Binomial random number generator.
+     * Return a pseudorandom Binomial random variable for the given population
+     * size and chance of success parameters using the specified random number
+     * generator.
      *
-     * @param N population size parameter
-     * @param theta probability parameter
-     * @param rng random number generator
      * @tparam RNG class of rng
-     * @return sample from Binomial(N,theta)
-     * @throw std::domain_error if N is negative or theta is outside [0,1]
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @param rng random number generator
+     * @return Binomial random variate
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
      */
     template <class RNG>
     inline int
