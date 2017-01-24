@@ -19,7 +19,7 @@
 
 namespace stan {
   namespace math {
-    
+
     /**
      * Returns the cauchy log complementary cumulative distribution function
      * for the given location, and scale. If given containers of matching sizes
