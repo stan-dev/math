@@ -28,6 +28,7 @@ namespace stan {
      * @param N population size parameter
      * @param alpha success parameter
      * @param beta failure parameter
+     * @param rng random number generator
      * @return Beta-Binomial random variate
      * @throw std::domain_error if N, alpha, or beta is negative.
      */
