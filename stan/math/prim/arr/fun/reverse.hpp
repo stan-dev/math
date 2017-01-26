@@ -8,16 +8,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Return the specified vector in reversed order.
+     * Return a copy of the specified vector in reversed order.
      *
      * @tparam T type of elements in vector
      * @param xs vector to order
      * @return vector in reversed order.
      */
     template <typename T>
-    inline std::vector<T> reverse(std::vector<T>& xs) {
-      std::reverse(xs.begin(), xs.end());
-      return xs;
+    inline std::vector<T> reverse(const std::vector<T>& xs) {
+      std::vector<T> reversed(xs.size());
+      std::reverse_copy(xs.begin(), xs.end(), std::begin(reversed));
+      return reversed;
     }
   }
 }
