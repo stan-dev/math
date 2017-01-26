@@ -7,16 +7,19 @@
 namespace stan {
   namespace math {
     /**
-     * Returns the matrix itself.
+     * Returns a matrix with dynamic dimensions constructed from the data passed
+     * in. This could be a row vector, column vector, or matrix. The runtime
+     * dimensions will be the same as the input.
      *
      * @tparam T type of the scalar
      * @tparam R number of rows
      * @tparam C number of columns
      * @param matrix matrix
+     * @return the data copied into a matrix
      */
     template <typename T, int R, int C>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(Eigen::Matrix<T, R, C> matrix) {
+    to_matrix(const Eigen::Matrix<T, R, C> matrix) {
       return matrix;
     }
 
@@ -28,6 +31,7 @@ namespace stan {
      * @param vec vector of values
      * @param m rows
      * @param n columns
+     * @return the data copied into a matrix
      * @throw <code>std::invalid_argument</code> if the sizes do not match
      */
     template <typename T>
@@ -40,11 +44,12 @@ namespace stan {
     }
 
     /**
-     * Returns a matrix representation of the 2d vector with the same dimensions
-     * and indexing order.
+     * Returns a matrix representation of the standard vector of standard vectors
+     * with the same dimensions and indexing order.
      *
      * @tparam T type of the scalar
      * @param vec vector of vectors of scalar values
+     * @return the data copied into a matrix
      */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
@@ -65,10 +70,11 @@ namespace stan {
 
 
     /**
-     * Returns a matrix representation of the 2d vector of ints with the same
-     * dimensions and indexing order.
+     * Returns a matrix representation of the standard vector of standard vectors
+     * of ints with the same dimensions and indexing order.
      *
      * @param vec vector of vectors of int values
+     * @return the data copied into a matrix
      */
     inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector< std::vector<int> >& vec) {
