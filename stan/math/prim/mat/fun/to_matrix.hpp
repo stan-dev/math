@@ -15,11 +15,11 @@ namespace stan {
      * @tparam R number of rows
      * @tparam C number of columns
      * @param matrix matrix
-     * @return the data copied into a matrix
+     * @return the matrix representation of the input
      */
     template <typename T, int R, int C>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const Eigen::Matrix<T, R, C> matrix) {
+    to_matrix(const Eigen::Matrix<T, R, C>& matrix) {
       return matrix;
     }
 
@@ -31,7 +31,7 @@ namespace stan {
      * @param vec vector of values
      * @param m rows
      * @param n columns
-     * @return the data copied into a matrix
+     * @return the matrix representation of the input
      * @throw <code>std::invalid_argument</code> if the sizes do not match
      */
     template <typename T>
@@ -49,7 +49,7 @@ namespace stan {
      *
      * @tparam T type of the scalar
      * @param vec vector of vectors of scalar values
-     * @return the data copied into a matrix
+     * @return the matrix representation of the input
      */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
@@ -71,10 +71,10 @@ namespace stan {
 
     /**
      * Returns a matrix representation of the standard vector of standard vectors
-     * of ints with the same dimensions and indexing order.
+     * of integers with the same dimensions and indexing order.
      *
-     * @param vec vector of vectors of int values
-     * @return the data copied into a matrix
+     * @param vec vector of vectors of integer values
+     * @return the matrix representation of the input
      */
     inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector< std::vector<int> >& vec) {
