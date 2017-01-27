@@ -17,7 +17,7 @@ namespace stan {
     template <typename T>
     inline std::vector<T> reverse(const std::vector<T>& xs) {
       std::vector<T> reversed(xs.size());
-      std::reverse_copy(xs.begin(), xs.end(), std::begin(reversed));
+      std::reverse_copy(xs.begin(), xs.end(), reversed.begin());
       return reversed;
     }
   }
