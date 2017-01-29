@@ -23,7 +23,23 @@
 namespace stan {
   namespace math {
 
-    // BetaBinomial(n|alpha, beta) [alpha > 0;  beta > 0;  n >= 0]
+    /**
+     * Returns the log PMF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <bool propto,
               typename T_n, typename T_N,
               typename T_size1, typename T_size2>

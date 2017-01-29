@@ -20,8 +20,18 @@
 namespace stan {
   namespace math {
 
-    // Bernoulli(n|inv_logit(theta))   [0 <= n <= 1;   -inf <= theta <= inf]
-    // FIXME: documentation
+    /**
+     * Returns the log PMF of the logit-parametrized Bernoulli distribution. If 
+     * containers are supplied, returns the log sum of the probabilities.
+     *
+     * @tparam T_n type of integer parameter
+     * @tparam T_prob type of chance of success parameter
+     * @param n integer parameter
+     * @param theta logit-transformed chance of success parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if theta is infinite.
+     * @throw std::invalid_argument if container sizes mismatch.
+     */
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {

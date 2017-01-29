@@ -27,6 +27,22 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the log CDF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
+     * containers of matching lengths, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of successes parameter
+     * @tparam T_N type of population size parameter
+     * @tparam theta type of chance of success parameter
+     * @param n successes parameter
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_lcdf(const T_n& n, const T_N& N, const T_prob& theta) {

@@ -20,6 +20,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the cauchy log complementary cumulative distribution function
+     * for the given location, and scale. If given containers of matching sizes
+     * returns the log sum of probabilities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_loc type of location parameter
+     * @tparam T_scale type of scale parameter
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if sigma is nonpositive or y, mu are nan
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     cauchy_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {

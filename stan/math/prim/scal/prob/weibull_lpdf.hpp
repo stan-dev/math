@@ -23,7 +23,20 @@
 namespace stan {
   namespace math {
 
-    // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]
+    /**
+     * Returns the Weibull log probability density for the given 
+     * location and scale. Given containers of matching sizes, returns the
+     * log sum of probability densities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_shape type of shape parameter
+     * @tparam T_scale type of scale paramater
+     * @param y real parameter
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @return log probability density or log sum of probability densities
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type

@@ -30,6 +30,22 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the beta log complementary cumulative distribution function for 
+     * the given probability, success, and failure parameters. Given matching 
+     * containers returns the log sum of probabilities.
+     *
+     * @tparam T_y type of probability parameter
+     * @tparam T_scale_succ type of success parameter
+     * @tparam T_scale_fail type of failure parameter
+     * @param y probability parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @return log probability or log sum of proabbilities
+     * @throw std::domain_error if alpha or beta is negative
+     * @throw std::domain_error if y is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lccdf(const T_y& y, const T_scale_succ& alpha,

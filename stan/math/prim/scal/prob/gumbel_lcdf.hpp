@@ -22,6 +22,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the Gumbel log cumulative distribution for the given 
+     * location and scale. Given containers of matching sizes, returns the 
+     * log sum of probabilities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_loc type of location parameter
+     * @tparam T_scale type of scale parameter
+     * @param y real parameter
+     * @param mu location parameter
+     * @param beta scale parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or beta is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_lcdf(const T_y& y, const T_loc& mu, const T_scale& beta) {

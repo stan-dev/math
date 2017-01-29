@@ -19,7 +19,18 @@
 namespace stan {
   namespace math {
 
-    // Bernoulli CDF
+    /**
+     * Returns the CDF of the Bernoulli distribution. If containers are 
+     * supplied, returns the product of the probabilities.
+     *
+     * @tparam T_n type of integer parameter
+     * @tparam T_prob type of chance of success parameter
+     * @param n integer parameter
+     * @param theta chance of success parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch.
+     */
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_cdf(const T_n& n, const T_prob& theta) {

@@ -22,8 +22,20 @@
 namespace stan {
   namespace math {
 
-    // DoubleExponential(y|mu, sigma)  [sigma > 0]
-    // FIXME: add documentation
+    /**
+     * Returns the double exponential log probability density function. Given
+     * containers of matching sizes, returns the log sum of densities.
+     *
+     * @tparam T_y type of real parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return log probability density or log sum of probability densities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

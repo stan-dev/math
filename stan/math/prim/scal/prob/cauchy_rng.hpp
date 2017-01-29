@@ -16,6 +16,17 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Cauchy variate for the given location and scale
+     * using the specified random number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param mu location parameter
+     * @param sigma positive scale parameter
+     * @param rng random number generator
+     * @return Cauchy random variate
+     * @throw std::domain_error if mu is infinite or sigma is nonpositive
+     */
     template <class RNG>
     inline double
     cauchy_rng(double mu,

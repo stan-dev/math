@@ -25,6 +25,17 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Beta variate with the supplied success and failure
+     * parameters and specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param alpha positive finite success parameter
+     * @param beta positive finite failure parameter
+     * @param rng random number generator
+     * @return Beta random variate
+     * @throw std::domain_error if alpha or beta is nonpositive
+     */
     template <class RNG>
     inline double
     beta_rng(double alpha,
