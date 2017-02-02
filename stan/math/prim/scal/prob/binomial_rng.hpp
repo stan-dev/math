@@ -23,10 +23,23 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Binomial random variable for the given population
+     * size and chance of success parameters using the specified random number
+     * generator.
+     *
+     * @tparam RNG class of rng
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @param rng random number generator
+     * @return Binomial random variate
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     */
     template <class RNG>
     inline int
-    binomial_rng(const int N,
-                 const double theta,
+    binomial_rng(int N,
+                 double theta,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::binomial_distribution;

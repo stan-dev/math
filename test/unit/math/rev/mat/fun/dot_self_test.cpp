@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 template <int R, int C>
 void assert_val_grad(Eigen::Matrix<stan::math::var,R,C>& v) {
@@ -65,4 +66,10 @@ TEST(AgradRevMatrix,columns_dot_self) {
 
   Eigen::Matrix<AVAR,Eigen::Dynamic,Eigen::Dynamic> vvvv(1,3);
   assert_val_grad(vvvv);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  Eigen::Matrix<AVAR,Eigen::Dynamic,1> v2(2);
+  v2 << 2.0, 3.0;
+  test::check_varis_on_stack(stan::math::dot_self(v2));
 }

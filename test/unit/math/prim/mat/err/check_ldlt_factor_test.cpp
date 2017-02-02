@@ -17,7 +17,7 @@ TEST(ErrorHandlingMatrix, CheckLDLTFactor_nan) {
 
   x << 3, nan, 1, 3;
   ldlt_x.compute(x);
-  ASSERT_TRUE(ldlt_x.success());
+  ASSERT_NO_THROW(ldlt_x.success());
   EXPECT_NO_THROW(check_ldlt_factor("checkLDLTFactorMatrix", 
                                     "ldlt_x", ldlt_x));
 

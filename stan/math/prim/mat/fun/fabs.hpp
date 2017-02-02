@@ -9,6 +9,7 @@ namespace stan {
 
     /**
      * Structure to wrap fabs() so that it can be vectorized.
+     *
      * @param x Variable.
      * @tparam T Variable type.
      * @return Absolute value of x. 
@@ -23,6 +24,7 @@ namespace stan {
 
     /**
      * Vectorized version of fabs().
+     *
      * @param x Container.
      * @tparam T Container type.
      * @return Absolute value of each value in x. 

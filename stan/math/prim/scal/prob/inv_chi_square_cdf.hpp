@@ -27,6 +27,19 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the inverse chi square cumulative distribution function for the
+     * given variate and degrees of freedom. If given containers of matching 
+     * sizes, returns the product of probabilities.
+     *
+     * @tparam T_y type of scalar parameter
+     * @tparam T_dof type of degrees of freedom parameter
+     * @param y scalar parameter
+     * @param nu degrees of freedom parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is negative or nu is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     inv_chi_square_cdf(const T_y& y, const T_dof& nu) {

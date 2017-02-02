@@ -1,11 +1,10 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-
-// UTILITY FUNCTIONS FOR TESTING
 #include <vector>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/prim/mat/prob/agrad_distributions_multi_gp.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -207,4 +206,34 @@ TEST(MultiGP, TestGradFunctional) {
   u[2] = 2.7;
   
   test_grad(multi_gp_fun(1,1), u);
+}
+
+TEST(MultiGP, check_varis_on_stack) {
+  using stan::math::to_var;
+  Matrix<double,Dynamic,Dynamic> y(3,3);
+  y <<  2.0, -2.0, 11.0,
+       -4.0, 0.0, 2.0,
+        1.0, 5.0, 3.3;
+  Matrix<double,Dynamic,1> w(3,1);
+  w << 1.0, 0.5, 3.0;
+  Matrix<double,Dynamic,Dynamic> Sigma(3,3);
+  Sigma << 9.0, -3.0, 0.0,
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
+
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(to_var(y), to_var(Sigma), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(to_var(y), to_var(Sigma), w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(to_var(y), Sigma, to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(to_var(y), Sigma, w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(y, to_var(Sigma), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(y, to_var(Sigma), w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<true>(y, Sigma, to_var(w)));
+
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(to_var(y), to_var(Sigma), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(to_var(y), to_var(Sigma), w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(to_var(y), Sigma, to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(to_var(y), Sigma, w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(y, to_var(Sigma), to_var(w)));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(y, to_var(Sigma), w));
+  test::check_varis_on_stack(stan::math::multi_gp_log<false>(y, Sigma, to_var(w)));
 }

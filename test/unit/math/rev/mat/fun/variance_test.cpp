@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, varianceZeroBoundaryCase) {
   using stan::math::variance;
@@ -157,4 +157,14 @@ TEST(AgradRevMatrix, varianceStdVector) {
   for (size_t i = 0; i < 3; ++i) {
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
   }
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v v1(6);
+  v1 << 1, 2, 3, 4, 5, 6;
+  stan::math::row_vector_v v2(6);
+  v2 << 1, 2, 3, 4, 5, 6;
+
+  test::check_varis_on_stack(stan::math::variance(v1));
+  test::check_varis_on_stack(stan::math::variance(v2));
 }

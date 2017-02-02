@@ -73,7 +73,6 @@ public:
   cdf_function(const T_y& y, const T_dof& nu, const T_scale& s,
                const T3&, const T4&, const T5&) {
     using stan::math::gamma_q;
-    using stan::math::gamma_q;
 
     return (gamma_q(nu * 0.5, 0.5 * nu * s * s / y));  
   }

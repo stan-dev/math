@@ -55,13 +55,13 @@ namespace stan {
        *
        * @param x Value of the constructed variable.
        */
-      explicit vari(const double x):
+      explicit vari(double x):
         val_(x),
         adj_(0.0) {
         ChainableStack::var_stack_.push_back(this);
       }
 
-      vari(const double x, bool stacked):
+      vari(double x, bool stacked):
         val_(x),
         adj_(0.0) {
         if (stacked)

@@ -26,7 +26,7 @@ namespace stan {
     neg_binomial_2_cdf(const T_n& n,
                        const T_location& mu,
                        const T_precision& phi) {
-      static const char* function("stan::prob::neg_binomial_2_cdf");
+      static const char* function("neg_binomial_2_cdf");
       typedef typename stan::partials_return_type<T_n, T_location,
                                                   T_precision>::type
         T_partials_return;

@@ -39,7 +39,7 @@ namespace stan {
      */
     template<typename T2>
     inline T2
-    modified_bessel_second_kind(const int v, const T2 z) {
+    modified_bessel_second_kind(int v, const T2 z) {
       return boost::math::cyl_bessel_k(v, z);
     }
 

@@ -185,10 +185,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_fv_exception) {
   row_vector_fv rv1(3);
   row_vector_fv rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);
@@ -338,10 +338,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_fv_exception) {
   row_vector_fv rv1(3);
   row_vector_fv rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);
@@ -512,10 +512,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_d_exception) {
   row_vector_d rv1(3);
   row_vector_d rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);
@@ -904,10 +904,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_ffv_exception) {
   row_vector_ffv rv1(3);
   row_vector_ffv rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);
@@ -1177,10 +1177,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_ffv_exception) {
   row_vector_ffv rv1(3);
   row_vector_ffv rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);
@@ -1506,10 +1506,10 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_d_exception) {
   row_vector_d rv1(3);
   row_vector_d rv2(4);
 
-  EXPECT_THROW(quad_form_diag(m1, v1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, v2), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv1), std::domain_error);
-  EXPECT_THROW(quad_form_diag(m1, rv2), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m1, v1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, v2), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv1), std::invalid_argument);
+  EXPECT_THROW(quad_form_diag(m1, rv2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v1), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, rv1), std::invalid_argument);

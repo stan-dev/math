@@ -8,11 +8,15 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return the base two logarithm of the specified argument.
+     *
+     * @tparam T scalar type
+     * @param x argument
+     * @return base two logarithm of argument
+     */
     template <typename T>
-    inline
-    fvar<T>
-    log2(const fvar<T>& x) {
-      using std::log;
+    inline fvar<T> log2(const fvar<T>& x) {
       if (x.val_ < 0.0)
         return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
       else

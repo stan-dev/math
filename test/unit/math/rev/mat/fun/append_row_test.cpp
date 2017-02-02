@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using stan::math::sum;
 using stan::math::append_row;
@@ -218,4 +219,19 @@ TEST(MathMatrix, append_row_different_types) {
   correct_type_matrix(append_row(vrv3b, vrv3));
   correct_type_vector(append_row(vv3, vv3b));
   correct_type_vector(append_row(vv3b, vv3));
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::to_var;
+  stan::math::matrix_d a(2,2);
+  stan::math::matrix_d b(2,2);
+
+  a << 2.0, 3.0,
+       9.0, -1.0;
+
+  b << 4.0, 3.0,
+       0.0, 1.0;
+  
+  test::check_varis_on_stack(stan::math::append_row(to_var(a), to_var(b)));
+  test::check_varis_on_stack(stan::math::append_row(to_var(a), b));
+  test::check_varis_on_stack(stan::math::append_row(a, to_var(b)));
 }

@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,inv_sqrt) {
   AVAR a = 49.0;
@@ -42,4 +42,9 @@ struct inv_sqrt_fun {
 TEST(AgradRev,inv_sqrt_NaN) {
   inv_sqrt_fun inv_sqrt_;
   test_nan(inv_sqrt_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 49.0;
+  test::check_varis_on_stack(stan::math::inv_sqrt(a));
 }

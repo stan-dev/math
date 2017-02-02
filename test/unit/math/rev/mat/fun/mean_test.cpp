@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, mean_vector) {
   using stan::math::mean;
@@ -101,4 +102,15 @@ TEST(AgradRevMatrix, meanStdVector) {
   EXPECT_FLOAT_EQ(0.5, grad[0]);
   EXPECT_FLOAT_EQ(0.5, grad[1]);
   EXPECT_EQ(2U, grad.size());
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::vector_v v(3);
+  v << -100, 0, 1;
+  stan::math::row_vector_v rv(3);
+  rv << -100, 0, 1;
+  stan::math::matrix_v m(2, 3);
+  m << -100, 0, 1, 20, -40, 2;
+  test::check_varis_on_stack(stan::math::mean(v));
+  test::check_varis_on_stack(stan::math::mean(rv));
+  test::check_varis_on_stack(stan::math::mean(m));
 }

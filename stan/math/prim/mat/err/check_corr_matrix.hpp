@@ -17,7 +17,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the specified matrix is a valid
+     * Check if the specified matrix is a valid
      * correlation matrix.
      *
      * A valid correlation matrix is symmetric, has a unit diagonal
@@ -33,8 +33,6 @@ namespace stan {
      * @param name Name of the variable
      * @param y Matrix to test
      *
-     * @return <code>true</code> if the specified matrix is a valid
-     * correlation matrix
      * @throw <code>std::invalid_argument</code> if the matrix is not square
      *   or if the matrix is 0x0
      * @throw <code>std::domain_error</code> if the matrix is non-symmetric,
@@ -42,9 +40,9 @@ namespace stan {
      *   elements nan.
      */
     template <typename T_y>
-    inline bool
+    inline void
     check_corr_matrix(const char* function,
-        const char* name,
+                      const char* name,
         const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using Eigen::Matrix;
 
@@ -68,11 +66,9 @@ namespace stan {
           domain_error(function, name, y(k, k),
                        msg_str.c_str(),
                        ", but should be near 1.0");
-          return false;
         }
       }
       check_pos_definite(function, "y", y);
-      return true;
     }
 
   }

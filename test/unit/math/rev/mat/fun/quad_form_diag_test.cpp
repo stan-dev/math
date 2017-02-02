@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -220,5 +221,17 @@ TEST(MathMatrix,quadFormDiagException) {
 
   Matrix<var,Dynamic,1> v(3);
   v << 1, 2, 3;
-  EXPECT_THROW(quad_form_diag(m,v), std::domain_error);
+  EXPECT_THROW(quad_form_diag(m,v), std::invalid_argument);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::to_var;
+  stan::math::matrix_d m(3,3);
+  m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+
+  stan::math::vector_d v(3);
+  v << 1, 2, 3;
+  test::check_varis_on_stack(stan::math::quad_form_diag(to_var(m), to_var(v)));
+  test::check_varis_on_stack(stan::math::quad_form_diag(to_var(m), v));
+  test::check_varis_on_stack(stan::math::quad_form_diag(m, to_var(v)));
 }

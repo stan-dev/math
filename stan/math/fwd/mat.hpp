@@ -34,8 +34,6 @@
 #include <stan/math/fwd/mat/fun/rows_dot_product.hpp>
 #include <stan/math/fwd/mat/fun/rows_dot_self.hpp>
 #include <stan/math/fwd/mat/fun/softmax.hpp>
-#include <stan/math/fwd/mat/fun/sort_asc.hpp>
-#include <stan/math/fwd/mat/fun/sort_desc.hpp>
 #include <stan/math/fwd/mat/fun/squared_distance.hpp>
 #include <stan/math/fwd/mat/fun/sum.hpp>
 #include <stan/math/fwd/mat/fun/tcrossprod.hpp>

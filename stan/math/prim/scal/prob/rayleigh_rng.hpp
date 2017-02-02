@@ -20,7 +20,7 @@ namespace stan {
 
     template <class RNG>
     inline double
-    rayleigh_rng(const double sigma,
+    rayleigh_rng(double sigma,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;

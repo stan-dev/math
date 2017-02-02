@@ -5,6 +5,8 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 
+#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
+
 #include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
@@ -12,12 +14,12 @@
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
+#include <stan/math/rev/mat/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
@@ -38,8 +40,6 @@
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
-#include <stan/math/rev/mat/fun/sort_asc.hpp>
-#include <stan/math/rev/mat/fun/sort_desc.hpp>
 #include <stan/math/rev/mat/fun/squared_distance.hpp>
 #include <stan/math/rev/mat/fun/stan_print.hpp>
 #include <stan/math/rev/mat/fun/sum.hpp>

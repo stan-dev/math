@@ -42,7 +42,7 @@ TEST(ProbDistributions,ordered_logistic_vals) {
 
 
   for (int k = 0; k < K; ++k) 
-    EXPECT_FLOAT_EQ(log(theta(k)),ordered_logistic_log(k+1,lambda,c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k+1,lambda,c));
 
   EXPECT_THROW(ordered_logistic_log(0,lambda,c),std::domain_error);
   EXPECT_THROW(ordered_logistic_log(6,lambda,c),std::domain_error);
@@ -200,4 +200,3 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
-

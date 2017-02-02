@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, dot_product_vector_vector) {
   using stan::math::vector_d;
@@ -240,3 +241,13 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
   EXPECT_EQ(grad[2], 3);
 }
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::value_of;
+  stan::math::vector_v v1(3), v2(3);
+  v1 << 1, 3, -5;
+  v2 << 4, -2, -1;
+  
+  test::check_varis_on_stack(stan::math::dot_product(v1, v2));
+  test::check_varis_on_stack(stan::math::dot_product(v1, value_of(v2)));
+  test::check_varis_on_stack(stan::math::dot_product(value_of(v1), v2));
+}

@@ -38,7 +38,7 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("stan::prob::neg_binomial_2_log_log");
+      static const char* function("neg_binomial_2_log_log");
 
       if (!(stan::length(n)
             && stan::length(eta)

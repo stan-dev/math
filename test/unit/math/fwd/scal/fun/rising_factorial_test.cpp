@@ -22,7 +22,6 @@ TEST(AgradFwdRisingFactorial, Fvar) {
   fvar<double> c(-3.0, 2.0);
 
   EXPECT_THROW(rising_factorial(c, 2), std::domain_error);
-  EXPECT_THROW(rising_factorial(2, c), std::domain_error);
   EXPECT_THROW(rising_factorial(c, c), std::domain_error);
 
   x = rising_factorial(a,a);

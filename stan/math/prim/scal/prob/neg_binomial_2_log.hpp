@@ -23,6 +23,7 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/scal/prob/poisson_log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -106,6 +107,11 @@ namespace stan {
           logp += multiply_log(n_vec[i], mu__[i]);
         if (include_summand<propto, T_precision>::value)
           logp += lgamma(n_plus_phi[i]);
+
+        // if phi is large we probably overflow, defer to Poisson:
+        if (phi__[i] > 1e5) {
+          logp = poisson_log(n_vec[i], mu__[i]);
+        }
 
         if (!is_constant_struct<T_location>::value)
           operands_and_partials.d_x1[i]

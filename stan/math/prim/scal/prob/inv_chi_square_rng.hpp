@@ -22,9 +22,19 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Inverse chi squared variate with the nu degrees of
+     * freedom using the specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param nu positive degrees of freedom parameter
+     * @param rng random number generator
+     * @return inverse chi squared random variate
+     * @throw std::domain_error if nu is nonpositive
+     */
     template <class RNG>
     inline double
-    inv_chi_square_rng(const double nu,
+    inv_chi_square_rng(double nu,
                        RNG& rng) {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;

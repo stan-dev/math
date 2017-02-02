@@ -4,7 +4,7 @@
 namespace stan {
   namespace math {
 
-    inline double inv_square(const double x) {
+    inline double inv_square(double x) {
       return 1.0 / (x * x);
     }
   }

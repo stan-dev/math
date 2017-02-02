@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat) {
   using stan::math::trace_gen_quad_form;
@@ -475,3 +476,27 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
 }
 
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_d a(4,4);
+  stan::math::matrix_d b(4,2);
+  stan::math::matrix_d c(2,2);
+
+  b << 100, 10,
+    0,  1,
+    -3, -3,
+    5,  2;
+  a << 2.0,  3.0, 4.0,   5.0, 
+    6.0, 10.0, 2.0,   2.0,
+    7.0,  2.0, 7.0,   1.0,
+    8.0,  2.0, 1.0, 112.0;
+  c.setIdentity(2,2);  
+
+  using stan::math::to_var;
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), to_var(a), to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), to_var(a), b));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a, to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a, b));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a), to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a), b));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, a, to_var(b)));
+}

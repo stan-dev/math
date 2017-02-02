@@ -41,7 +41,7 @@ namespace stan {
               && stan::length(beta) ) )
         return 0.0;
 
-      static const char* function("beta_cdf");
+      static const char* function("beta_cdf_log");
 
       using boost::math::tools::promote_args;
 

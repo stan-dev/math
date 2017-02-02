@@ -41,15 +41,15 @@ namespace stan {
      * d2 = log_determinant_ldlt(ldlt_A2);
      * ~~~
      *
-     **/
-    template<int R, int C>
+     */
+    template <int R, int C>
     class LDLT_factor<var, R, C> {
     public:
       /**
        * Default constructor.  The caller *MUST* call compute() after this.  Any
        * calls which use the LDLT_factor without calling compute() run the risk
        * of crashing Stan from within Eigen.
-       **/
+       */
       LDLT_factor() : alloc_(new LDLT_alloc<R, C>()) {}
 
       explicit LDLT_factor(const Eigen::Matrix<var, R, C> &A)
@@ -64,7 +64,7 @@ namespace stan {
        * the LDLT_factor is not valid and other functions should not be used.
        *
        * @param A A symmetric positive definite matrix to factorize
-       **/
+       */
       inline void compute(const Eigen::Matrix<var, R, C> &A) {
         check_square("comute", "A", A);
         alloc_->compute(A);
@@ -80,20 +80,29 @@ namespace stan {
        *
        * @param b The right handside.  Note that this is templated such that
        * Eigen's expression-templating magic can work properly here.
-       **/
-      template<typename Rhs>
+       */
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
+      template <typename Rhs>
+      inline const
+      Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
+      solve(const Eigen::MatrixBase<Rhs>& b) const {
+        return alloc_->ldlt_.solve(b);
+      }
+#else
+      template <typename Rhs>
       inline const
       Eigen::internal::solve_retval<Eigen::LDLT<Eigen::Matrix<double, R, C> >,
                                     Rhs>
       solve(const Eigen::MatrixBase<Rhs>& b) const {
         return alloc_->ldlt_.solve(b);
       }
+#endif
 
       /**
        * Determine whether the most recent factorization succeeded.  This should
        * always be called after the object is constructed (with a matrix) or
        * after compute() is called.
-       **/
+       */
       inline bool success() const {
         bool ret;
         ret = alloc_->N_ != 0;
@@ -109,7 +118,7 @@ namespace stan {
        *
        * Precondition: success() must return true. If success() returns false,
        *    this function runs the risk of crashing Stan from within Eigen.
-       **/
+       */
       inline Eigen::VectorXd vectorD() const {
         return alloc_->ldlt_.vectorD();
       }
@@ -127,7 +136,7 @@ namespace stan {
        * LDLT_factor object which created it.  This is needed because the
        * factorization is required during the chain() calls which happen
        * after an LDLT_factor object will most likely have been destroyed.
-       **/
+       */
       LDLT_alloc<R, C> *alloc_;
     };
 

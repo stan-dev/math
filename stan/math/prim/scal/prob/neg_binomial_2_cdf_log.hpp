@@ -26,7 +26,7 @@ namespace stan {
             && stan::length(phi)))
         return 0.0;
 
-      static const char* function("neg_binomial_2_cdf");
+      static const char* function("neg_binomial_2_cdf_log");
       check_positive_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Precision parameter", phi);
       check_not_nan(function, "Random variable", n);

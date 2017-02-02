@@ -1,6 +1,86 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v.2.14.0 (26 December 2016)
+======================================================================
+
+Bug Fixes
+--------------------------------------------------
+* neg_binomial_2_log problem with large values of phi (#463)
+
+Other
+--------------------------------------------------
+* Remove check_equal() function (#398)
+
+v2.13.0 (25 November 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* vectorization of unary functions (#347)
+* specialized gradients for cove_exp_quad for amplitude and/or length-scale
+  parameters and input data (#353)
+* math library is consistent with Eigen 3.2.9 and 3.3.0 (#432, #429)
+* added choose(n, k) function (#400)
+* added bernoulli_logit_rng function (#258)
+
+Bug Fixes
+--------------------------------------------------
+* beta_rng no longer returns NaN
+* fixed memory issue with cholesky_decompose in reverse-mode (#415)
+* no more mulitple definitions when including Stan headers in
+  multiple source files (#394)
+* fixed broken _MSC_VER conditionals and remove math.h includes (#370)
+
+Other
+--------------------------------------------------
+* chi-square test in RNG testing pulled into utility function (#412)
+* error check functions are now all void functions (#382)
+* remove math.h includes (#277)
+* update to Boost 1.62.0 (#435)
+
+
+
+v2.12.0 (6 September 2016)
+======================================================================
+
+New Features
+--------------------------------------------------
+* update to Eigen 3.2.9 (#362)
+* lots of unary functions vectorized (#202)
+* reverse-mode gradients for matrix/matrix multiply,
+  matrix/vector multiply, and vector/vector multiply
+  received rewrites and significant speed ups for
+  large matrices/vectors (#323)
+
+Bug Fixes
+--------------------------------------------------
+* fixed exception handling with CVODES for g++6 (#348)
+* squashed warnings with g++6 (#345)
+* enforce symmetry on cov_matrix parameter inverse transform (#342)
+* added int overload for log(), exp(), log2(), and log1p() to resolve
+  ambiguity with g++6 (#327)
+* sort_asc and sort_desc check for NaN (#253)
+* wiener_log: raise exception for tau >= y (#150)
+* stopped printing matrices in check functions (#146)
+* added check for positive definiteness in multi_normal_rng (#44)
+
+
+Other
+--------------------------------------------------
+* added multi-core to travis builds (#373)
+* fixed makefile to recognize N_TESTS (#367)
+* updated error message for check_bounded() (#332)
+* made the use of stan::math namespace within the math library
+  more consistent (#331)
+* reimplemented integer division (#329)
+* added test for multiple translation units (#328)
+* updated costs for Eigen::NumTraits (#233)
+* worked on getting the Math library working with Eigen 3.3-beta (#187)
+
+
+
+
 v2.11.0 (27 July 2016)
 ======================================================================
 

@@ -17,10 +17,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Weibull variate with given shape and scale using
+     * the specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @param rng random number generator
+     * @return Weibull random variate
+     * @throw std::domain_error if alpha or sigma is nonpositive
+     */
     template <class RNG>
     inline double
-    weibull_rng(const double alpha,
-                const double sigma,
+    weibull_rng(double alpha,
+                double sigma,
                 RNG& rng) {
       using boost::variate_generator;
       using boost::random::weibull_distribution;

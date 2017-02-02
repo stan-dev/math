@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_FMOD_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 #include <limits>
 
@@ -16,8 +16,8 @@ namespace stan {
           op_vv_vari(std::fmod(avi->val_, bvi->val_), avi, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -33,8 +33,8 @@ namespace stan {
           op_vd_vari(std::fmod(avi->val_, b), avi, b) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_;
@@ -47,8 +47,8 @@ namespace stan {
           op_dv_vari(std::fmod(a, bvi->val_), a, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(bvi_->val_)
-                       || boost::math::isnan(ad_))) {
+          if (unlikely(is_nan(bvi_->val_)
+                       || is_nan(ad_))) {
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
             int d = static_cast<int>(ad_ / bvi_->val_);
@@ -117,7 +117,7 @@ namespace stan {
      * @return Floating pointer remainder of dividing the first variable by
      * the second scalar.
      */
-    inline var fmod(const var& a, const double b) {
+    inline var fmod(const var& a, double b) {
       return var(new fmod_vd_vari(a.vi_, b));
     }
 
@@ -134,7 +134,7 @@ namespace stan {
      * @return Floating pointer remainder of dividing first scalar by
      * the second variable.
      */
-    inline var fmod(const double a, const var& b) {
+    inline var fmod(double a, const var& b) {
       return var(new fmod_dv_vari(a, b.vi_));
     }
 

@@ -2,17 +2,18 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 
 TEST(ProbDistributionsScaledInvChiSquare, error_check) {
   boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::scaled_inv_chi_square_rng(2.0,1.0,rng));
+  EXPECT_NO_THROW(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng));
 
-  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0,1.0,rng),
+  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0, 1.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2.0,-1.0,rng),
+  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2.0,-1.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(stan::math::positive_infinity(),
-                                                     1.0,rng),
+                                                     1.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2,
                                                      stan::math::positive_infinity(),
@@ -23,31 +24,22 @@ TEST(ProbDistributionsScaledInvChiSquare, error_check) {
 TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
-  double K = 5;
+  int K = boost::math::round(2 * std::pow(N, 0.4));
+
+  std::vector<double> samples;
+  for (int i=0; i<N; ++i) {
+    samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng) / (2.0 * 1.0));
+  }
+
+  //Generate quantiles from boost's inverse chi square distribution
   boost::math::inverse_chi_squared_distribution<>dist (2.0);
-  boost::math::chi_squared mydist(K-1);
+  std::vector<double> quantiles;
+  for (int i=1; i<K; ++i) {
+    double frac = static_cast<double>(i) / K;
+    quantiles.push_back(quantile(dist, frac));
+  }
+  quantiles.push_back(std::numeric_limits<double>::max());
 
-  double loc[4];
-  for(int i = 1; i < K; i++)
-    loc[i - 1] = quantile(dist, 0.2 * i);
-
-  int count = 0;
-  int bin [5] = {0, 0, 0, 0, 0};
-
-  while (count < N) {
-    double a = stan::math::scaled_inv_chi_square_rng(2.0,1.0,rng) / (2.0 * 1.0);
-    int i = 0;
-    while (i < K-1 && a > loc[i]) 
-      ++i;
-    ++bin[i];
-    count++;
-   }
-
-  double chi = 0;
-  double expect [5] = {N / K, N / K, N / K, N / K, N / K};
-
-  for(int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
-
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  //Assert that they match
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }

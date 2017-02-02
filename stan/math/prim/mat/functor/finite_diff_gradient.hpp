@@ -39,7 +39,7 @@ namespace stan {
                          const Eigen::Matrix<double, -1, 1>& x,
                          double& fx,
                          Eigen::Matrix<double, -1, 1>& grad_fx,
-                         const double epsilon = 1e-03) {
+                         double epsilon = 1e-03) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
       Matrix<double, Dynamic, 1> x_temp(x);
