@@ -31,9 +31,6 @@ namespace stan {
 
       int inputs() const { return m_inputs; }
       int values() const { return m_values; }
-      
-      // int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
-      // int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) const;
     };
 
     template <typename F1, typename F2>
@@ -64,21 +61,14 @@ namespace stan {
      * @param F2 Functor that evaluates the Jacobian matrix
      * @return Vector that solves the system of equations
      */
-    // template <typename F1, typename F2>
     template <typename F1, typename F2>
     inline
     Eigen::VectorXd
     dogleg(const Eigen::VectorXd& x, const F1 f1, const F2 f2) {
 
       stan::math::hybrj_functor<F1, F2> functor(f1, f2);
-      Eigen::HybridNonLinearSolver<NLOFunctor<double> > solver(functor);
-      Eigen::VectorXd theta = x, fvec;
-      functor(x, fvec);
-      /*std::cout << x << std::endl;
-      std::cout << fvec << std::endl;
-      Eigen::MatrixXd fjac;
-      functor.df(x, fjac);
-      std::cout << fjac << std::endl; */
+      Eigen::HybridNonLinearSolver<hybrj_functor<F1, F2> > solver(functor);
+      Eigen::VectorXd theta = x;
       solver.solve(theta);
       return theta;
     }

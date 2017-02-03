@@ -89,21 +89,74 @@ TEST(MathMatrix, hybrid_eigen) {
   // do the computation
   hybrj_functor functor;
   Eigen::HybridNonLinearSolver<hybrj_functor> solver(functor);
-  Eigen::VectorXd theta = x;
+  Eigen::VectorXd theta = x, fvec;
+  // solver(x, fvec);
+  // std::cout << fvec << std::endl;
   solver.solve(theta);
   
   EXPECT_EQ(36, theta(0));
   EXPECT_EQ(6, theta(1));
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 /*
  * Test dogleg function.
- */ /*
-TEST(MathMatrix, dogleg) {
+ */
+TEST(MathMatrix, dogleg_eq1) {
   Eigen::VectorXd x(2);
   x << 32, 5;
 
   Eigen::VectorXd theta;
   theta = stan::math::dogleg(x, algebraEq_functor(), jacobian_functor());
-} */
 
+  EXPECT_EQ(36, theta(0));
+  EXPECT_EQ(6, theta(1));
+}
+
+
+inline Eigen::VectorXd
+algebraEq2(const Eigen::VectorXd x) {
+  Eigen::VectorXd y(3);
+  y(0) = x(0) - 36;
+  y(1) = x(1) - 6;
+  y(2) = x(2) * 42;
+  return y;
+}
+
+struct algebraEq_functor2 {
+  inline Eigen::VectorXd
+  operator()(const Eigen::VectorXd x) const {
+    return algebraEq2(x);
+  }
+};
+
+inline Eigen::MatrixXd
+jacobian2(const Eigen::VectorXd x) {
+  Eigen::MatrixXd y(3, 3);
+  y << 1, 0, 0,
+       0, 1, 0,
+       0, 0, 1;
+
+  return y;
+}
+
+struct jacobian_functor2 {
+  inline Eigen::MatrixXd
+  operator()(const Eigen::VectorXd x) const {
+    return jacobian2(x);
+  }
+};
+
+
+TEST(MathMatrix, dogleg_eq2) {
+  Eigen::VectorXd x(3);
+  x << 32, 5, 10;
+
+  Eigen::VectorXd theta;
+  theta = stan::math::dogleg(x, algebraEq_functor2(), jacobian_functor2());
+
+  EXPECT_EQ(36, theta(0));
+  EXPECT_EQ(6, theta(1));
+  EXPECT_NEAR(0, theta(2), 1e-30);  // obtained result is not exactly 0
+}
