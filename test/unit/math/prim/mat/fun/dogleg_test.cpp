@@ -1,5 +1,4 @@
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/mat/fun/dogleg.hpp>
 #include <gtest/gtest.h>
 
 
