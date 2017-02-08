@@ -17,7 +17,7 @@ namespace stan {
    * used to construct the view.
    *
    * For a container, the index returns a reference to the position in
-   * the underlying container used to construct the view.  WARNING: 
+   * the underlying container used to construct the view.  WARNING:
    * There is no bounds checking for container indices and they will
    * segfault if accessed beyond their boundaries.
    *
