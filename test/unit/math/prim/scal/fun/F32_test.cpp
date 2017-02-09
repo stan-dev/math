@@ -11,6 +11,9 @@ TEST(MathPrimScalFun, F32) {
   EXPECT_NEAR(-0.2,
               stan::math::F32(1.0, 12.0, -1.0, 10.0, 1.0, 1.0),
               1e-6);
+  EXPECT_NEAR(2.2,
+              stan::math::F32(1.0, 12.0, -1.0, 10.0, -1.0, 1.0),
+              1e-6);
 //  EXPECT_NEAR(0.4,
 //              stan::math::F32(1.0, 3.0, -1.0, 10.0, 0.5, 1.0),
 //              1e-6);

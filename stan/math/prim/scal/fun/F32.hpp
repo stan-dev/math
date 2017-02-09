@@ -16,7 +16,7 @@ namespace stan {
      * <code>max_steps</code>.
      *
      * Although some convergence conditions and divergent conditions are known,
-     * this function does not check the inputs for known converent conditions.
+     * this function does not check the inputs for known convergent conditions.
      *
      * This function will converge if:
      *   - <code>a1</code>, <code>a2</code>, or <code>a3</code> is a
@@ -39,10 +39,11 @@ namespace stan {
      */
     template<typename T>
     T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
-          const T& z, double precision = 1e-6, int max_steps = 10000) {
+          const T& z, double precision = 1e-16, int max_steps = 10000) {
       using std::exp;
       using std::log;
       using std::fabs;
+      using std::isnan;
 
       T F = 1.0;
       T tNew = 0.0;
@@ -54,13 +55,18 @@ namespace stan {
       do {
         p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
 
-        if (p == 0)
+        if (isnan(p) || p == 0)
           break;
 
-        logT += sign(p) * log(fabs(p)) + logZ;
-        tNew = exp(logT);
+        logT += log(fabs(p)) + logZ;
+        tNew = sign(p) * exp(logT);
         F += tNew;
         ++k;
+
+        if (k >= max_steps) {
+          domain_error("F32", "k (internal counter)", max_steps, 
+            "exceeded ", " iterations, internal function did not converge.");
+        }
       } while (tNew > precision && k < max_steps);
       return F;
     }
