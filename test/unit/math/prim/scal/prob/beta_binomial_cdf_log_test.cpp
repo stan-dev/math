@@ -12,3 +12,16 @@ TEST(ProbBetaBinomial, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::beta_binomial_lcdf<int, int, double, double>(n, N, alpha, beta)),
                   (stan::math::beta_binomial_cdf_log<int, int, double, double>(n, N, alpha, beta)));
 }
+
+
+TEST(ProbBetaBinomial, lcdf_matches_emdbook_lcdf) {
+  int n = 8;
+  int N = 10;
+  double alpha = 3.0;
+  double beta = 1.0;
+
+  EXPECT_FLOAT_EQ(-1.849329, (stan::math::beta_binomial_lcdf(n, N, alpha, beta)));
+}
+
+
+
