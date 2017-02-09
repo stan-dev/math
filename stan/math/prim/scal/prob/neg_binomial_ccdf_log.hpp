@@ -15,6 +15,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
@@ -49,9 +50,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
       using std::exp;

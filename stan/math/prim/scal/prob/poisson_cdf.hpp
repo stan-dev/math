@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -40,8 +41,8 @@ namespace stan {
                              "Random variable", n,
                              "Rate parameter", lambda);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
       using std::exp;

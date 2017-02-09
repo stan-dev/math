@@ -17,7 +17,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -73,9 +73,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_scale> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_scale> beta_vec(beta);
 
       for (size_t n = 0; n < length(y); n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);

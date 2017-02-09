@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -44,9 +45,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
       OperandsAndPartials<T_shape, T_inv_scale>

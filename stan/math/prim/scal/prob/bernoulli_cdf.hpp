@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -49,8 +50,8 @@ namespace stan {
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_prob> theta_vec(theta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_prob> theta_vec(theta);
       size_t size = max_size(n, theta);
 
       OperandsAndPartials<T_prob> operands_and_partials(theta);

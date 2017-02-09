@@ -14,7 +14,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -70,9 +70,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_dof, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_dof> nu_vec(nu);
-      VectorView<const T_scale> s_vec(s);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_dof> nu_vec(nu);
+      scalar_seq_view<const T_scale> s_vec(s);
       size_t N = max_size(y, nu, s);
 
       for (size_t n = 0; n < N; n++) {

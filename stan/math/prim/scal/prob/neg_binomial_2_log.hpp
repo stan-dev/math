@@ -17,7 +17,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -63,9 +63,9 @@ namespace stan {
       using std::log;
       using std::log;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_location> mu_vec(mu);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_location> mu_vec(mu);
+      scalar_seq_view<const T_precision> phi_vec(phi);
       size_t size = max_size(n, mu, phi);
 
       OperandsAndPartials<T_location, T_precision>

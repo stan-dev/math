@@ -19,6 +19,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/math/special_functions/gamma.hpp>
@@ -83,9 +84,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale_succ> alpha_vec(alpha);
-      VectorView<const T_scale_fail> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale_succ> alpha_vec(alpha);
+      scalar_seq_view<const T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       for (size_t n = 0; n < N; n++) {
