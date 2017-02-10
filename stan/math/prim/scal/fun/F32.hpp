@@ -69,17 +69,17 @@ namespace stan {
         }
         if (T_is_negative)
           tNew = -1 * exp(logT);
-        else 
+        else
           tNew = exp(logT);
         F += tNew;
 
         ++k;
         if (k >= max_steps) {
-          domain_error("F32", "k (internal counter)", max_steps, 
-            "exceeded ", " iterations, hypergeometric function did not converge.");
+          domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
+            " iterations, hypergeometric function did not converge.");
         }
         if (is_inf(F)) {
-          domain_error("F32", "F (output)", F, 
+          domain_error("F32", "F (output)", F,
             "overflow ", " hypergeometric function did not converge.");
         }
       } while (fabs(tNew) > precision);

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_F32_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_F32_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -27,16 +27,17 @@ namespace stan {
      * @param[out] g g pointer to array of six values of type T, result.
      * @param[in] a1 a1 see generalized hypergeometric function definition.
      * @param[in] a2 a2 see generalized hypergeometric function definition.
-     * @param[in] a3 a3 see generalized hypergeometric function definition. 
-     * @param[in] b1 b1 see generalized hypergeometric function definition. 
-     * @param[in] b2 b2 see generalized hypergeometric function definition. 
-     * @param[in] z z see generalized hypergeometric function definition. 
+     * @param[in] a3 a3 see generalized hypergeometric function definition.
+     * @param[in] b1 b1 see generalized hypergeometric function definition.
+     * @param[in] b2 b2 see generalized hypergeometric function definition.
+     * @param[in] z z see generalized hypergeometric function definition.
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
      * @param[in] max_steps number of steps to take. defaults to 10000
      */
     template<typename T>
-    void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1, 
-        const T& b2, const T& z, const T& precision = 1e-6, int max_steps=1e5) {
+    void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
+        const T& b2, const T& z, const T& precision = 1e-6,
+        int max_steps = 1e5) {
       using std::log;
       using std::fabs;
       using std::exp;
@@ -59,7 +60,7 @@ namespace stan {
       do {
         p = (a1 + k) / (b1 + k) * (a2 + k) / (b2 + k) * (a3 + k) / (1 + k);
 
-        if (is_nan(p) || p == 0) 
+        if (is_nan(p) || p == 0)
           break;
 
         logT += log(fabs(p)) + logZ;
@@ -70,7 +71,7 @@ namespace stan {
         }
         if (T_is_negative)
           tNew = -1 * exp(logT);
-        else 
+        else
           tNew = exp(logT);
 
         gOld[0] = tNew * (gOld[0] / tOld + 1.0 / (a1 + k));
@@ -88,8 +89,8 @@ namespace stan {
 
         ++k;
         if (k >= max_steps) {
-          domain_error("grad_F32", "k (internal counter)", max_steps, 
-            "exceeded ", " iterations, hypergeometric function gradient " 
+          domain_error("grad_F32", "k (internal counter)", max_steps,
+            "exceeded ", " iterations, hypergeometric function gradient "
             "did not converge.");
         }
       } while (tNew > precision);

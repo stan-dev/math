@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
-#include <cmath>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -15,11 +15,11 @@ namespace stan {
      * with respect to a1 and b1 only.
      *
      * The generalized hypergeometric function is a power series. This
-     * implementation computes gradient by computing the power series 
-     * directly stopping when the series converges to within 
+     * implementation computes gradient by computing the power series
+     * directly stopping when the series converges to within
      * <code>precision</code> or takes <code>max_steps</code>.
      *
-     * If more than </code>max_steps</code> are taken without 
+     * If more than </code>max_steps</code> are taken without
      * converging, the function will throw a domain_error.
      *
      * @tparam T type of arguments and result
@@ -32,10 +32,10 @@ namespace stan {
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
      * @param[in] max_steps number of steps to take. defaults to 10000
      * @throw @throws std::domain_error if not converged after max_steps
-     * 
+     *
      */
     template<typename T>
-    void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2, 
+    void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2,
       const T& b1, const T& z, T precision = 1e-6, int max_steps = 1e5) {
       using std::fabs;
 
@@ -52,7 +52,7 @@ namespace stan {
         const T r = ( (a1 + k) / (b1 + k) ) * ( (a2 + k) / (k + 1) ) * z;
         tDak = r * tDak * (a1 + (k - 1)) / (a1 + k);
 
-        if (is_nan(r) || r == 0) 
+        if (is_nan(r) || r == 0)
           break;
 
         gradA1old = r * gradA1old + tDak;
@@ -63,11 +63,10 @@ namespace stan {
 
         ++k;
         if (k >= max_steps) {
-          domain_error("grad_2F1", "k (internal counter)", max_steps, 
-            "exceeded ", 
+          domain_error("grad_2F1", "k (internal counter)", max_steps,
+            "exceeded ",
             " iterations, hypergeometric function did not converge.");
         }
-
       } while (fabs(tDak * (a1 + (k - 1)) ) > precision);
     }
 
