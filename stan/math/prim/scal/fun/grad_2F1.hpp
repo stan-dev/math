@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
 #include <cmath>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
   namespace math {
@@ -36,7 +38,6 @@ namespace stan {
     void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2, 
       const T& b1, const T& z, T precision = 1e-6, int max_steps = 1e5) {
       using std::fabs;
-      using std::isnan;
 
       gradA1 = 0;
       gradB1 = 0;
@@ -51,7 +52,7 @@ namespace stan {
         const T r = ( (a1 + k) / (b1 + k) ) * ( (a2 + k) / (k + 1) ) * z;
         tDak = r * tDak * (a1 + (k - 1)) / (a1 + k);
 
-        if (isnan(r) || r == 0) 
+        if (is_nan(r) || r == 0) 
           break;
 
         gradA1old = r * gradA1old + tDak;
@@ -67,7 +68,7 @@ namespace stan {
             " iterations, hypergeometric function did not converge.");
         }
 
-      } while (fabs(tDak * (a1 + (k - 1)) ) > precision) 
+      } while (fabs(tDak * (a1 + (k - 1)) ) > precision);
     }
 
   }

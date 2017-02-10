@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_F32_HPP
 
 #include <stan/math/prim/scal/fun/sign.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 
 namespace stan {
@@ -43,7 +45,6 @@ namespace stan {
       using std::exp;
       using std::log;
       using std::fabs;
-      using std::isnan;
 
       T F = 1.0;
       T tNew = 0.0;
@@ -55,7 +56,7 @@ namespace stan {
       do {
         p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
 
-        if (isnan(p) || p == 0)
+        if (is_nan(p) || p == 0)
           break;
 
         logT += log(fabs(p)) + logZ;
