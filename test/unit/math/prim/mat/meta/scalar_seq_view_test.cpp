@@ -15,9 +15,18 @@ void expect_scalar_seq_view_values(C v) {
   EXPECT_EQ(v.size(), sv.size());
 }
 
-TEST(MetaTraits, ScalarSeqViewMatrix) {
+TEST(MetaTraits, ScalarSeqViewVector) {
   expect_scalar_seq_view_values(Eigen::VectorXd(4));
+}
+
+TEST(MetaTraits, ScalarSeqViewRowVector) {
   expect_scalar_seq_view_values(Eigen::RowVectorXd(4));
-  expect_scalar_seq_view_values(Eigen::MatrixXd(2, 2));
+}
+
+TEST(MetaTraits, ScalarSeqViewMatrix) {
   expect_scalar_seq_view_values(Eigen::MatrixXd(4, 1));
+}
+
+TEST(MetaTraits, ScalarSeqViewMatrixSquare) {
+  expect_scalar_seq_view_values(Eigen::MatrixXd(2, 2));
 }
