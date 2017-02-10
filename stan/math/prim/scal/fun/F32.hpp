@@ -8,7 +8,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Generalized hypergeometric function, 3F2.
+     * Hypergeometric function, 3F2.
      *
      * The generalized hypergeometric function is a power series. This
      * implementation computes the power series directly stopping when
@@ -39,7 +39,7 @@ namespace stan {
      */
     template<typename T>
     T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
-          const T& z, double precision = 1e-16, int max_steps = 10000) {
+          const T& z, double precision = 1e-6, int max_steps = 1e5) {
       using std::exp;
       using std::log;
       using std::fabs;
@@ -51,7 +51,7 @@ namespace stan {
       T logZ = log(z);
 
       int k = 0;
-      T p = 0;
+      T p = 0.0;
       do {
         p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
 
@@ -65,9 +65,9 @@ namespace stan {
 
         if (k >= max_steps) {
           domain_error("F32", "k (internal counter)", max_steps, 
-            "exceeded ", " iterations, internal function did not converge.");
+            "exceeded ", " iterations, hypergeometric function did not converge.");
         }
-      } while (tNew > precision && k < max_steps);
+      } while (tNew > precision);
       return F;
     }
 
