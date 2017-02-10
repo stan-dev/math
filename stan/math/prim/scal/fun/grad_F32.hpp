@@ -54,6 +54,7 @@ namespace stan {
       T logZ = log(z);
 
       int k = 0;
+      bool T_is_negative = false;
       T p = 0.0;
       do {
         p = (a1 + k) / (b1 + k) * (a2 + k) / (b2 + k) * (a3 + k) / (1 + k);
@@ -62,7 +63,15 @@ namespace stan {
           break;
 
         logT += log(fabs(p)) + logZ;
-        tNew = sign(p) * exp(logT);
+        if (p < 0 && T_is_negative) {
+          T_is_negative = false;
+        } else if (p < 0 && !T_is_negative) {
+          T_is_negative = true;
+        }
+        if (T_is_negative)
+          tNew = -1 * exp(logT);
+        else 
+          tNew = exp(logT);
 
         gOld[0] = tNew * (gOld[0] / tOld + 1.0 / (a1 + k));
         gOld[1] = tNew * (gOld[1] / tOld + 1.0 / (a2 + k));

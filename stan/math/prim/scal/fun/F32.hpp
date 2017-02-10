@@ -58,7 +58,7 @@ namespace stan {
       do {
         p = (a1 + k) / (b1 + k) * (a2 + k) / (b2 + k) * (a3 + k) / (k + 1);
 
-        if (is_nan(p) || is_inf(F) || p == 0)
+        if (is_nan(p) || p == 0)
           break;
 
         logT += log(fabs(p)) + logZ;
