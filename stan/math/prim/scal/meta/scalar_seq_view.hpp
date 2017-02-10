@@ -4,7 +4,13 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 
 namespace stan {
-
+  /**
+   * scalar_seq_view provides a uniform sequence-like wrapper around either a
+   * scalar or a sequence of scalars.
+   *
+   * @tparam C the container type; will be the scalar type if wrapping a scalar
+   * @tparam T the scalar type
+   */
   template <typename C, typename T = typename scalar_type<C>::type>
   class scalar_seq_view {
   public:
@@ -27,6 +33,11 @@ namespace stan {
     const C& c_;
   };
 
+  /**
+   * This specialization handles wrapping a scalar as if it were a sequence.
+   *
+   * @tparam T the scalar type
+   */
   template <typename T>
   class scalar_seq_view<T, T> {
   public:

@@ -5,6 +5,12 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
+  /**
+   * This specialization allows scalar_seq_view to wrap matrices; required
+   * because matrices are indexed by () instead of [].
+   *
+   * @tparam T scalar type inside the Matrix.
+   */
   template <typename T>
   class scalar_seq_view<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T> {
     typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
