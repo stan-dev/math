@@ -21,18 +21,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the double exponential cumulative density function.
+     * Returns the double exponential cumulative density function. Given
+     * containers of matching sizes, returns the product of probabilities.
      *
-     * \f$ f(y|\mu, \sigma) = \begin{cases} \
-     \frac{1}{2} \exp\left(\frac{y-\mu}{\sigma}\right), \mbox{if } y < \mu \\
-     1 - \frac{1}{2} \exp\left(-\frac{y-\mu}{\sigma}\right), \mbox{if } y \ge \mu \
-     \end{cases}\f$
-     *
-     * @param y A scalar variate.
-     * @param mu The location parameter.
-     * @param sigma The scale parameter.
-     *
-     * @return The cumulative density function.
+     * @tparam T_y type of real parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type

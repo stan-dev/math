@@ -16,6 +16,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return pseudorandom Bernoulli draw with specified chance of success 
+     * using the specified random number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param theta chance of success parameter
+     * @param rng random number generator
+     * @return Bernoulli random variate 
+     * @throw std::domain_error if probability parameter is invalid.
+     */
     template <class RNG>
     inline int
     bernoulli_rng(double theta,

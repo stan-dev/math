@@ -17,16 +17,10 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 
 namespace stan {
   namespace math {
-
-    template <typename T>
-    inline T log_inv_logit_diff(const T& alpha, const T& beta) {
-      using std::exp;
-      return beta + log1m_exp(alpha - beta) - log1p_exp(alpha)
-        - log1p_exp(beta);
-    }
 
     /**
      * Returns the (natural) log probability of the specified integer

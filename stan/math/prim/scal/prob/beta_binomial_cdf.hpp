@@ -23,7 +23,23 @@
 namespace stan {
   namespace math {
 
-    // Beta-Binomial CDF
+    /**
+     * Returns the CDF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the product of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N,
               typename T_size1, typename T_size2>
     typename return_type<T_size1, T_size2>::type
