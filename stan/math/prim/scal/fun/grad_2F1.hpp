@@ -19,7 +19,7 @@ namespace stan {
      * directly stopping when the series converges to within
      * <code>precision</code> or takes <code>max_steps</code>.
      *
-     * If more than </code>max_steps</code> are taken without
+     * If more than <code>max_steps</code> are taken without
      * converging, the function will throw a domain_error.
      *
      * @tparam T type of arguments and result
