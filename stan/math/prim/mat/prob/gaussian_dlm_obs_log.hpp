@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LOG_HPP
 
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
   namespace math {
@@ -40,15 +42,11 @@ namespace stan {
      * @tparam T_m0 Type of initial state mean vector.
      * @tparam T_C0 Type of initial state covariance matrix.
      */
-    template <bool propto,
-              typename T_y,
-              typename T_F, typename T_G,
-              typename T_V, typename T_W,
-              typename T_m0, typename T_C0
-              >
-    typename return_type<
-      T_y,
-      typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type >::type
+    template <bool propto,typename T_y, typename T_F, typename T_G,
+              typename T_V, typename T_W, typename T_m0, typename T_C0>
+    typename return_type<T_y,
+                         typename return_type<T_F, T_G, T_V,
+                                              T_W, T_m0, T_C0>::type>::type
     gaussian_dlm_obs_log(const Eigen::Matrix
                          <T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                          const Eigen::Matrix
@@ -69,15 +67,11 @@ namespace stan {
     /**
      * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
      */
-    template <typename T_y,
-              typename T_F, typename T_G,
-              typename T_V, typename T_W,
-              typename T_m0, typename T_C0
-              >
-    inline
-    typename return_type<
-      T_y,
-      typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type >::type
+    template <typename T_y, typename T_F, typename T_G, typename T_V,
+              typename T_W, typename T_m0, typename T_C0>
+    inline typename
+    return_type<T_y, typename return_type<T_F, T_G, T_V,
+                                          T_W, T_m0, T_C0>::type>::type
     gaussian_dlm_obs_log(const Eigen::Matrix
                          <T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                          const Eigen::Matrix
@@ -132,15 +126,10 @@ namespace stan {
      * @tparam T_m0 Type of initial state mean vector.
      * @tparam T_C0 Type of initial state covariance matrix.
      */
-    template <bool propto,
-              typename T_y,
-              typename T_F, typename T_G,
-              typename T_V, typename T_W,
-              typename T_m0, typename T_C0
-              >
-    typename return_type<
-      T_y,
-      typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type >::type
+    template <bool propto, typename T_y, typename T_F, typename T_G,
+              typename T_V, typename T_W, typename T_m0, typename T_C0>
+    typename return_type<T_y, typename return_type<T_F, T_G, T_V, T_W,
+                                                   T_m0, T_C0>::type >::type
     gaussian_dlm_obs_log(const Eigen::Matrix
                          <T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                          const Eigen::Matrix
@@ -160,13 +149,11 @@ namespace stan {
     /**
      * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
      */
-    template <typename T_y,
-              typename T_F, typename T_G,
-              typename T_V, typename T_W,
-              typename T_m0, typename T_C0>
+    template <typename T_y, typename T_F, typename T_G, typename T_V,
+              typename T_W, typename T_m0, typename T_C0>
     inline
-    typename return_type
-    <T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+    typename return_type<T_y, typename return_type<T_F, T_G, T_V,
+                                                   T_W, T_m0, T_C0>::type>::type
     gaussian_dlm_obs_log
     (const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
      const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,

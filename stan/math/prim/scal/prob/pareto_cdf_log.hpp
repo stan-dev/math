@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_CDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_CDF_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/pareto_lcdf.hpp>
 
 namespace stan {

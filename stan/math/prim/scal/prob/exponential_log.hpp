@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/exponential_lpdf.hpp>
 
 namespace stan {
@@ -25,7 +26,7 @@ namespace stan {
      \mathrm{where} \; y > 0
      \f}
      *
-     * @deprecated use <code>exponential_lpdf</code>     
+     * @deprecated use <code>exponential_lpdf</code>
      *
      * @param y A scalar variable.
      * @param beta Inverse scale parameter.

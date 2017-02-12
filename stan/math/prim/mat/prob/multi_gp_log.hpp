@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LOG_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_lpdf.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
   namespace math {

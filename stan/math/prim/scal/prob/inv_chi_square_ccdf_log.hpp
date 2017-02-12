@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_CCDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_CCDF_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/inv_chi_square_lccdf.hpp>
 
 namespace stan {

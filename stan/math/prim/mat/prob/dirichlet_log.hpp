@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LOG_HPP
 
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
+#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
   namespace math {
@@ -29,8 +31,7 @@ namespace stan {
               typename T_prob, typename T_prior_sample_size>
     typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix
-                  <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
+                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
       return dirichlet_lpmf<propto, T_prob, T_prior_sample_size>(theta, alpha);
     }
 
@@ -41,8 +42,7 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix
-                  <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
+                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
       return dirichlet_lpmf<T_prob, T_prior_sample_size>(theta, alpha);
     }
 

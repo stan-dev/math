@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_CDF_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_CDF_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_lcdf.hpp>
 
 namespace stan {

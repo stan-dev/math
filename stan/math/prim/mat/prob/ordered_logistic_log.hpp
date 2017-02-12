@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
   namespace math {

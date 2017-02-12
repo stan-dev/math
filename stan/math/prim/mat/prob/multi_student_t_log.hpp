@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LOG_HPP
 
 #include <stan/math/prim/mat/prob/multi_student_t_lpdf.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
   namespace math {

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LOGIT_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LOGIT_LOG_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_lpmf.hpp>
 
 namespace stan {
