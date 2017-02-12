@@ -9,7 +9,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -68,8 +68,8 @@ namespace stan {
                              "Random variable", y,
                              "Inverse scale parameter", beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_inv_scale> beta_vec(beta);
       size_t N = max_size(y, beta);
 
       VectorBuilder<include_summand<propto, T_inv_scale>::value,

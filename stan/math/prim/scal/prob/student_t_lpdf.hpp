@@ -18,6 +18,7 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -82,10 +83,10 @@ namespace stan {
       if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_dof> nu_vec(nu);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_dof> nu_vec(nu);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, nu, mu, sigma);
 
       using std::log;

@@ -15,7 +15,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
@@ -48,8 +48,8 @@ namespace stan {
       if (!include_summand<propto, T_rate>::value)
         return 0.0;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
       for (size_t i = 0; i < size; i++)

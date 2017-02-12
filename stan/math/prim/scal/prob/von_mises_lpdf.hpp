@@ -12,7 +12,7 @@
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
@@ -58,9 +58,9 @@ namespace stan {
       const bool compute_bessel1 = !kappa_const;
       const double TWO_PI = 2.0 * pi();
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> kappa_vec(kappa);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> kappa_vec(kappa);
 
       VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(length(kappa));
       VectorBuilder<include_summand<propto, T_scale>::value,

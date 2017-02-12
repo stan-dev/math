@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -56,8 +57,8 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_dof> nu_vec(nu);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
       OperandsAndPartials<T_y, T_dof>

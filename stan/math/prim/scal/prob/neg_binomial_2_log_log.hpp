@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/math/special_functions/digamma.hpp>
@@ -60,9 +61,9 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_log_location> eta_vec(eta);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_log_location> eta_vec(eta);
+      scalar_seq_view<const T_precision> phi_vec(phi);
       size_t size = max_size(n, eta, phi);
 
       OperandsAndPartials<T_log_location, T_precision>

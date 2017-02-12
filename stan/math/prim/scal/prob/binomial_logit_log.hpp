@@ -20,6 +20,7 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -59,9 +60,9 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_prob> alpha_vec(alpha);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_prob> alpha_vec(alpha);
       size_t size = max_size(n, N, alpha);
 
       OperandsAndPartials<T_prob> operands_and_partials(alpha);
