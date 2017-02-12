@@ -23,6 +23,9 @@ namespace stan {
      * @param g   boost::math::tgamma(a) (precomputed value)
      * @param dig boost::math::digamma(a) (precomputed value)
      * @param precision required precision; applies to series expansion only
+     * @param max_steps number of steps to take. defaults to 10000
+     * @throw throws std::domain_error if not converged after max_steps
+     *   or increment overflows to inf.
      *
      * For the asymptotic expansion, the gradient is given by:
        \f[
