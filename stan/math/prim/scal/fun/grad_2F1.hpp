@@ -8,8 +8,6 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the hypergeometric function 2F1(a, b | c | z)
-    // with respect to a and c
     /**
      * Gradient of the hypergeometric function, 2F1(a1, a2, b1, z)
      * with respect to a1 and b1 only.
@@ -23,7 +21,7 @@ namespace stan {
      * converging, the function will throw a domain_error.
      *
      * @tparam T type of arguments and result
-     * @param[out] gradA11 output argument for partial w.r.t. a1
+     * @param[out] gradA1 output argument for partial w.r.t. a1
      * @param[out] gradB1 output argument for partial w.r.t. b1
      * @param[in] a1 a1, see generalized hypergeometric function definition.
      * @param[in] a2 a2, see generalized hypergeometric function definition.
@@ -31,7 +29,7 @@ namespace stan {
      * @param[in] z z, see generalized hypergeometric function definition.
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
      * @param[in] max_steps number of steps to take. defaults to 10000
-     * @throw @throws std::domain_error if not converged after max_steps
+     * @throw throws std::domain_error if not converged after max_steps
      *
      */
     template<typename T>
