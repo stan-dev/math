@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/rev/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 
 namespace stan {
