@@ -41,6 +41,7 @@ namespace stan {
       using std::log;
       using std::fabs;
       using std::exp;
+      using stan::math::is_nan;
 
       T gOld[6];
 

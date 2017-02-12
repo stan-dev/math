@@ -46,6 +46,7 @@ namespace stan {
       using std::exp;
       using std::log;
       using std::fabs;
+      using stan::math::is_nan;
 
       T F = 1.0;
       T tNew = 0.0;

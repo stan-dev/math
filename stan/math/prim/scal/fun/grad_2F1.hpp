@@ -36,6 +36,7 @@ namespace stan {
     void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2,
       const T& b1, const T& z, T precision = 1e-6, int max_steps = 1e5) {
       using std::fabs;
+      using stan::math::is_nan;
 
       gradA1 = 0;
       gradB1 = 0;
