@@ -85,11 +85,11 @@ namespace stan {
           ++k;
           s *= - z / k;
           delta = s / square(k + a);
-          if (k >= max_steps) {
-            stan::math::domain_error("grad_reg_inc_gamma", "k (internal counter)", 
+          if (k >= max_steps)
+            stan::math::domain_error("grad_reg_inc_gamma",
+              "k (internal counter)",
               max_steps, "exceeded ",
               " iterations, gamma function gradient did not converge.");
-          }
           if (is_inf(delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
