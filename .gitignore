@@ -44,6 +44,9 @@
 *~
 \#*#
 
+# temporary vim files
+.*.swp
+
 # depedencies files
 *.d
 *.d.*
