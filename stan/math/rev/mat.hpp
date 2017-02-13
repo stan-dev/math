@@ -18,6 +18,7 @@
 #include <stan/math/rev/mat/fun/crossprod.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>
+#include <stan/math/rev/mat/fun/dogleg.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
