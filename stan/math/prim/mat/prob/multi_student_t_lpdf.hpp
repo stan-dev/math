@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/scal/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -54,8 +54,8 @@ namespace stan {
 
       using Eigen::Matrix;
       using std::vector;
-      VectorViewMvt<const T_y> y_vec(y);
-      VectorViewMvt<const T_loc> mu_vec(mu);
+      vector_seq_view<T_y> y_vec(y);
+      vector_seq_view<T_loc> mu_vec(mu);
       size_t size_vec = max_size_mvt(y, mu);
 
       int size_y = y_vec[0].size();
