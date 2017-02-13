@@ -29,8 +29,8 @@ namespace stan {
                           const T_high& high) {
           using stan::max_size;
 
-          scalar_seq_view<const T_low> low_vec(low);
-          scalar_seq_view<const T_high> high_vec(high);
+          scalar_seq_view<T_low> low_vec(low);
+          scalar_seq_view<T_high> high_vec(high);
           for (size_t n = 0; n < max_size(low, high); n++) {
             if (!(low_vec[n] <= y && y <= high_vec[n])) {
               std::stringstream msg;
@@ -54,8 +54,8 @@ namespace stan {
           using stan::length;
           using stan::get;
 
-          scalar_seq_view<const T_low> low_vec(low);
-          scalar_seq_view<const T_high> high_vec(high);
+          scalar_seq_view<T_low> low_vec(low);
+          scalar_seq_view<T_high> high_vec(high);
           for (size_t n = 0; n < length(y); n++) {
             if (!(low_vec[n] <= get(y, n) && get(y, n) <= high_vec[n])) {
               std::stringstream msg;
