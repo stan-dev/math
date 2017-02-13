@@ -29,6 +29,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>

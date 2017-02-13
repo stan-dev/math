@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -20,6 +21,18 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the log CDF of the Bernoulli distribution. If containers are 
+     * supplied, returns the log sum of the probabilities.
+     *
+     * @tparam T_n type of integer parameter
+     * @tparam T_prob type of chance of success parameter
+     * @param n integer parameter
+     * @param theta chance of success parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch.
+     */
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_lcdf(const T_n& n, const T_prob& theta) {
@@ -38,8 +51,8 @@ namespace stan {
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_prob> theta_vec(theta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_prob> theta_vec(theta);
       size_t size = max_size(n, theta);
 
       using std::log;

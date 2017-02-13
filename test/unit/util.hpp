@@ -1,6 +1,8 @@
 #ifndef TEST__UNIT__UTIL_HPP
 #define TEST__UNIT__UTIL_HPP
 
+#include <boost/type_traits.hpp>
+#include <gtest/gtest.h>
 #include <string>
 
 #define EXPECT_THROW_MSG(expr, T_e, msg)                \
@@ -20,6 +22,13 @@ int count_matches(const std::string& target,
   for (size_t pos = 0; (pos = s.find(target,pos)) != std::string::npos; pos += target.size())
     ++count;
   return count;
+}
+namespace test {
+  template <typename T1, typename T2>
+  void expect_same_type() {
+    bool b = boost::is_same<T1, T2>::value;
+    EXPECT_TRUE(b);
+  }
 }
 
 #endif

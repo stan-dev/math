@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -23,7 +24,23 @@
 namespace stan {
   namespace math {
 
-    // BetaBinomial(n|alpha, beta) [alpha > 0;  beta > 0;  n >= 0]
+    /**
+     * Returns the log PMF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <bool propto,
               typename T_n, typename T_N,
               typename T_size1, typename T_size2>
@@ -60,10 +77,10 @@ namespace stan {
       OperandsAndPartials<T_size1, T_size2>
         operands_and_partials(alpha, beta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_size1> alpha_vec(alpha);
-      VectorView<const T_size2> beta_vec(beta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_size1> alpha_vec(alpha);
+      scalar_seq_view<const T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
       for (size_t i = 0; i < size; i++) {

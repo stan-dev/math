@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -25,13 +26,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Calculates the chi square cumulative distribution function for the given
-     * variate and degrees of freedom.
+     * Returns the chi square cumulative distribution function for the given
+     * variate and degrees of freedom. If given containers of matching sizes, 
+     * returns the product of probabilities.
      *
-     * y A scalar variate.
-     * nu Degrees of freedom.
-     *
-     * @return The cdf of the chi square distribution
+     * @tparam T_y type of scalar parameter
+     * @tparam T_dof type of degrees of freedom parameter
+     * @param y scalar parameter
+     * @param nu degrees of freedom parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is negative or nu is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
@@ -52,8 +57,8 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_dof> nu_vec(nu);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
       OperandsAndPartials<T_y, T_dof>

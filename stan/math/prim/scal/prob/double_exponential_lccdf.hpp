@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -20,6 +21,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the double exponential log complementary cumulative density 
+     * function. Given containers of matching sizes, returns the log sum of 
+     * probabilities.
+     *
+     * @tparam T_y type of real parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_lccdf(const T_y& y, const T_loc& mu,
@@ -50,9 +66,9 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       const double log_half = std::log(0.5);
       size_t N = max_size(y, mu, sigma);
 

@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -40,9 +41,9 @@ namespace stan {
                              "Lower bound parameter", alpha,
                              "Upper bound parameter", beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_low> alpha_vec(alpha);
-      VectorView<const T_high> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_low> alpha_vec(alpha);
+      scalar_seq_view<const T_high> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       for (size_t n = 0; n < N; n++) {

@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -22,6 +22,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the Gumbel log cumulative distribution for the given 
+     * location and scale. Given containers of matching sizes, returns the 
+     * log sum of probabilities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_loc type of location parameter
+     * @tparam T_scale type of scale parameter
+     * @param y real parameter
+     * @param mu location parameter
+     * @param beta scale parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or beta is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_lcdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
@@ -49,9 +64,9 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> beta_vec(beta);
       size_t N = max_size(y, mu, beta);
 
       for (size_t n = 0; n < N; n++) {

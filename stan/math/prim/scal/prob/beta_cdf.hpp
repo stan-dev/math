@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -70,9 +71,9 @@ namespace stan {
       check_nonnegative(function, "Random variable", y);
       check_less_or_equal(function, "Random variable", y, 1);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale_succ> alpha_vec(alpha);
-      VectorView<const T_scale_fail> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale_succ> alpha_vec(alpha);
+      scalar_seq_view<const T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>

@@ -18,6 +18,7 @@
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
@@ -29,6 +30,22 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the beta log cumulative distribution function for the given
+     * probability, success, and failure parameters. Given matching containers
+     * returns the log sum of probabilities.
+     *
+     * @tparam T_y type of probability parameter
+     * @tparam T_scale_succ type of success parameter
+     * @tparam T_scale_fail type of failure parameter
+     * @param y probability parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if alpha or beta is negative
+     * @throw std::domain_error if y is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lcdf(const T_y& y, const T_scale_succ& alpha,
@@ -57,9 +74,9 @@ namespace stan {
                              "First shape parameter", alpha,
                              "Second shape parameter", beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale_succ> alpha_vec(alpha);
-      VectorView<const T_scale_fail> beta_vec(beta);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale_succ> alpha_vec(alpha);
+      scalar_seq_view<const T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>

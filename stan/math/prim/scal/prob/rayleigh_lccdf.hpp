@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -45,8 +46,8 @@ namespace stan {
 
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, sigma);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));

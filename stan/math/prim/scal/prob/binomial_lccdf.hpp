@@ -19,6 +19,7 @@
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -27,6 +28,22 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the log CCDF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
+     * containers of matching lengths, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of successes parameter
+     * @tparam T_N type of population size parameter
+     * @tparam theta type of chance of success parameter
+     * @param n successes parameter
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_lccdf(const T_n& n, const T_N& N, const T_prob& theta) {
@@ -47,9 +64,9 @@ namespace stan {
                              "Population size parameter", N,
                              "Probability parameter", theta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_prob> theta_vec(theta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_prob> theta_vec(theta);
       size_t size = max_size(n, N, theta);
 
       using std::exp;

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_PROB_CAUCHY_LOG_HPP
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/cauchy_lpdf.hpp>
 
 namespace stan {

@@ -15,7 +15,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -23,7 +23,20 @@
 namespace stan {
   namespace math {
 
-    // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]
+    /**
+     * Returns the Weibull log probability density for the given 
+     * location and scale. Given containers of matching sizes, returns the
+     * log sum of probability densities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_shape type of shape parameter
+     * @tparam T_scale type of scale paramater
+     * @param y real parameter
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @return log probability density or log sum of probability densities
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -51,9 +64,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, alpha, sigma);
 
       for (size_t n = 0; n < N; n++) {

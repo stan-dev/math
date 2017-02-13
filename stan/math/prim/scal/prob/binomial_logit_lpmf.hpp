@@ -20,6 +20,7 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -27,8 +28,21 @@
 namespace stan {
   namespace math {
 
-    // BinomialLogit(n|N, alpha)  [N >= 0;  0 <= n <= N]
-    // BinomialLogit(n|N, alpha) = Binomial(n|N, inv_logit(alpha))
+    /**
+     * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha)) 
+     *
+     * If given vectors of matching lengths, returns
+     * the log sum of probabilities.
+     *
+     * @param n successes variable
+     * @param N population size parameter
+     * @param alpha logit transformed probability parameter
+     *
+     * @return log probability or log sum of probabilities
+     *
+     * @throw std::domain_error if N is negative or probability parameter is invalid
+     * @throw std::invalid_argument if vector sizes do not match
+     */
     template <bool propto,
               typename T_n,
               typename T_N,
@@ -59,9 +73,9 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_prob> alpha_vec(alpha);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_prob> alpha_vec(alpha);
       size_t size = max_size(n, N, alpha);
 
       OperandsAndPartials<T_prob> operands_and_partials(alpha);
