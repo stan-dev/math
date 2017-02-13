@@ -8,6 +8,7 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
+#include <stan/math/prim/arr/meta/vector_seq_view.hpp>
 #include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>
 #include <stan/math/prim/arr/meta/VectorView.hpp>
 
