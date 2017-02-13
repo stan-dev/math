@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/prob/multi_normal_prec_lpdf.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
-
 namespace stan {
   namespace math {
 

@@ -38,7 +38,7 @@ namespace stan {
     }
 
     /**
-     * @deprecated use <code>lkj_corr_cholesky_lpdf</code>
+     * @deprecated use <code>lkj_cov_lpdf</code>
      */
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale, typename T_shape>
@@ -53,7 +53,7 @@ namespace stan {
     }
 
     /**
-     * @deprecated use <code>lkj_corr_cholesky_lpdf</code>
+     * @deprecated use <code>lkj_cov_lpdf</code>
      */
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
     inline

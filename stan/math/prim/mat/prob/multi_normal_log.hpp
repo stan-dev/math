@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_LOG_HPP
 
 #include <stan/math/prim/mat/prob/multi_normal_lpdf.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
   namespace math {
