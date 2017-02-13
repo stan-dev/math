@@ -52,23 +52,23 @@ struct Functor {
     InputsAtCompileTime = NX,
     ValuesAtCompileTime = NY
   };
-  
+
   typedef Matrix<Scalar, InputsAtCompileTime, 1> InputType;
   typedef Matrix<Scalar, ValuesAtCompileTime, 1> ValueType;
   typedef Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
-  
+
   const int m_inputs, m_values;
-  
+
   Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime) {}
   Functor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
-  
+
   int inputs() const { return m_inputs; }
   int values() const { return m_values; }
 };
 
 struct hybrj_functor : Functor<double> {
   hybrj_functor(void) : Functor<double>(9, 9) { }
-  
+
   int operator()(const VectorXd& x, VectorXd& fvec) {
     fvec = algebraEq(x);
     return 0;
@@ -84,7 +84,7 @@ TEST(MathMatrix, hybrid_eigen) {
 
   const int n = 2;
   VectorXd x(n);
-  x << 32, 5;
+  x << 6, 6;
 
   // do the computation
   hybrj_functor functor;
@@ -93,7 +93,7 @@ TEST(MathMatrix, hybrid_eigen) {
   // solver(x, fvec);
   // std::cout << fvec << std::endl;
   solver.solve(theta);
-  
+
   EXPECT_EQ(36, theta(0));
   EXPECT_EQ(6, theta(1));
 }
@@ -159,4 +159,51 @@ TEST(MathMatrix, dogleg_eq2) {
   EXPECT_EQ(36, theta(0));
   EXPECT_EQ(6, theta(1));
   EXPECT_NEAR(0, theta(2), 1e-30);  // obtained result is not exactly 0
+}
+
+
+inline Eigen::VectorXd
+nonLinEq(const Eigen::VectorXd x) {
+  Eigen::VectorXd y(1);
+  y(0) = (x(0) - 2) * (x(1) + 4);
+  // y(1) = 0;
+  return y;
+}
+
+struct nonLinEq_functor {
+  inline Eigen::VectorXd
+  operator()(const Eigen::VectorXd x) const {
+    return nonLinEq(x);
+  }
+};
+
+inline Eigen::MatrixXd
+nonLinEqJacobian(const Eigen::VectorXd x) {
+  Eigen::MatrixXd y(1, 2);  // check dimensions
+  y(0, 0) = x(1) + 4;
+  y(0, 1) = x(0) - 2;
+  // y(1, 0) = 0;
+  // y(1, 1) = 0;
+  return y;
+}
+
+struct nonLinEqJacobian_functor {
+  inline Eigen::MatrixXd
+  operator()(const Eigen::VectorXd x) const {
+    return nonLinEqJacobian(x);
+  }
+};
+
+TEST(MathMatrix, doglegTest) {
+  Eigen::VectorXd x(2);
+  x << 2, -4;
+
+  // std::cout << "nonLinEq: " << nonLinEq(x) << std::endl;
+  // std::cout << "jacob: " << nonLinEqJacobian(x) << std::endl;
+
+  Eigen::VectorXd theta;
+  theta = stan::math::dogleg(x, nonLinEq_functor(), nonLinEqJacobian_functor());
+
+  EXPECT_EQ(2, theta(0));
+  EXPECT_EQ(-4, theta(1));
 }
