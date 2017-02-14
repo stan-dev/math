@@ -31,7 +31,8 @@ namespace stan {
               typename T_prob, typename T_prior_sample_size>
     typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
+                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>&
+                  alpha) {
       return dirichlet_lpmf<propto, T_prob, T_prior_sample_size>(theta, alpha);
     }
 
@@ -42,7 +43,8 @@ namespace stan {
     inline
     typename boost::math::tools::promote_args<T_prob, T_prior_sample_size>::type
     dirichlet_log(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
+                  const Eigen::Matrix<T_prior_sample_size, Eigen::Dynamic, 1>&
+                  alpha) {
       return dirichlet_lpmf<T_prob, T_prior_sample_size>(theta, alpha);
     }
 

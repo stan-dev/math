@@ -42,7 +42,7 @@ namespace stan {
      * @tparam T_m0 Type of initial state mean vector.
      * @tparam T_C0 Type of initial state covariance matrix.
      */
-    template <bool propto,typename T_y, typename T_F, typename T_G,
+    template <bool propto, typename T_y, typename T_F, typename T_G,
               typename T_V, typename T_W, typename T_m0, typename T_C0>
     typename return_type<T_y,
                          typename return_type<T_F, T_G, T_V,
