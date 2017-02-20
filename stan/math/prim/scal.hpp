@@ -154,6 +154,7 @@
 #include <stan/math/prim/scal/fun/prob_free.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/scal/fun/promoter.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>

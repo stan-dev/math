@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_ARRAY_BUILDER_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ARRAY_BUILDER_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUN_ARRAY_BUILDER_HPP
+#define STAN_MATH_PRIM_ARR_FUN_ARRAY_BUILDER_HPP
 
-#include <stan/math/prim/mat/fun/promoter.hpp>
+#include <stan/math/prim/arr/fun/promoter.hpp>
 #include <vector>
 
 namespace stan {
@@ -23,6 +23,7 @@ namespace stan {
         x_.push_back(t);
         return *this;
       }
+      
       std::vector<T> array() {
         return x_;
       }

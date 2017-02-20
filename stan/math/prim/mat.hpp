@@ -52,7 +52,6 @@
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
-#include <stan/math/prim/mat/fun/array_builder.hpp>
 #include <stan/math/prim/mat/fun/asin.hpp>
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
