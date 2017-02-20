@@ -17,6 +17,7 @@
 #include <stan/math/prim/mat/meta/seq_view.hpp>
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/meta/VectorView.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
