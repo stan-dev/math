@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
-
 namespace stan {
   namespace math {
 
@@ -48,8 +47,6 @@ namespace stan {
      * @return Absolute value of variable.
      */
     inline var fabs(const var& a) {
-      using stan::math::NOT_A_NUMBER;
-      // cut-and-paste from abs()
       if (a.val() > 0.0)
         return a;
       else if (a.val() < 0.0)

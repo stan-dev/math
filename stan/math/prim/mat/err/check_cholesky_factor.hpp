@@ -6,11 +6,10 @@
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 
-
 namespace stan {
   namespace math {
     /**
-     * Return <code>true</code> if the specified matrix is a valid
+     * Check if the specified matrix is a valid
      * Cholesky factor.
      *
      * A Cholesky factor is a lower triangular matrix whose diagonal
@@ -24,19 +23,15 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param y Matrix to test
      *
-     * @return <code>true</code> if the matrix is a valid Cholesky factor
-     * @throw <code>std::domain_error</code> if y is not a valid Choleksy factor,
-     *   if number of rows is less than the number of columns,
-     *   if there are 0 columns,
-     *   or if any element in matrix is NaN
+     * @throw <code>std::domain_error</code> if y is not a valid Choleksy
+     *   factor, if number of rows is less than the number of columns,
+     *   if there are 0 columns, or if any element in matrix is NaN
      */
     template <typename T_y>
-    inline bool
-    check_cholesky_factor(
-      const char* function,
-      const char* name,
-      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
-    ) {
+    inline void
+    check_cholesky_factor(const char* function,
+                          const char* name,
+                  const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_less_or_equal(function, "columns and rows of Cholesky factor",
                           y.cols(), y.rows());
       check_positive(function, "columns of Cholesky factor", y.cols());
@@ -44,7 +39,6 @@ namespace stan {
       for (int i = 0; i < y.cols(); ++i)
         // FIXME:  should report row
         check_positive(function, name, y(i, i));
-      return true;
     }
 
   }

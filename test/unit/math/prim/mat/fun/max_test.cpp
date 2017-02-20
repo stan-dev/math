@@ -4,7 +4,7 @@
 TEST(MathMatrix, max) {
   using stan::math::max;
   std::vector<int> n;
-  EXPECT_THROW(max(n),std::domain_error);
+  EXPECT_THROW(max(n),std::invalid_argument);
   n.push_back(1);
   EXPECT_EQ(1,max(n));
   n.push_back(2);

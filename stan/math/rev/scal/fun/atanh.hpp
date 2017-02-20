@@ -1,15 +1,9 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ATANH_HPP
 #define STAN_MATH_REV_SCAL_FUN_ATANH_HPP
 
-#include <math.h>
+#include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/rev/core.hpp>
-#include <cmath>
 #include <limits>
-
-#ifdef _MSC_VER
-#include <boost/math/special_functions/atanh.hpp>
-using boost::math::atanh;
-#endif
 
 namespace stan {
   namespace math {
@@ -28,8 +22,6 @@ namespace stan {
 
     /**
      * The inverse hyperbolic tangent function for variables (C99).
-     *
-     * For non-variable function, see ::atanh().
      *
      * The derivative is defined by
      *
@@ -55,7 +47,6 @@ namespace stan {
        \end{cases}
        \f]
 
-
        \f[
        \tanh^{-1}(x)=\frac{1}{2}\ln\left(\frac{1+x}{1-x}\right)
        \f]
@@ -63,18 +54,13 @@ namespace stan {
        \f[
        \frac{\partial \, \tanh^{-1}(x)}{\partial x} = \frac{1}{1-x^2}
        \f]
-    *
-     * @param a The variable.
-     * @return Inverse hyperbolic tangent of the variable.
-     */
+       *
+       * @param a The variable.
+       * @return Inverse hyperbolic tangent of the variable.
+       * @throw std::domain_error if a < -1 or a > 1
+       */
     inline var atanh(const var& a) {
-      if (a == 1.0)
-        return var(new atanh_vari(std::numeric_limits<double>::infinity(),
-                                  a.vi_));
-      if (a == -1.0)
-        return var(new atanh_vari(-std::numeric_limits<double>::infinity(),
-                                  a.vi_));
-      return var(new atanh_vari(::atanh(a.val()), a.vi_));
+      return var(new atanh_vari(atanh(a.val()), a.vi_));
     }
 
   }

@@ -13,25 +13,28 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/cauchy_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     /**
-     * Calculates the cauchy cumulative distribution function for
-     * the given variate, location, and scale.
+     * Returns the cauchy cumulative distribution function for the given 
+     * location, and scale. If given containers of matching sizes
+     * returns the product of probabilities.
      *
-     * \f$\frac{1}{\pi}\arctan\left(\frac{y-\mu}{\sigma}\right) + \frac{1}{2}\f$
-     *
-     * @param y A scalar variate.
-     * @param mu The location parameter.
-     * @param sigma The scale parameter.
-     *
-     * @return
+     * @tparam T_y type of real parameter
+     * @tparam T_loc type of location parameter
+     * @tparam T_scale type of scale parameter
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if sigma is nonpositive or y, mu are nan
+     * @throw std::invalid_argument if container sizes mismatch
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
@@ -39,19 +42,13 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(mu)
               && stan::length(sigma) ) )
         return 1.0;
 
-      static const char* function("stan::math::cauchy_cdf");
+      static const char* function("cauchy_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
 
       T_partials_return P(1.0);
 
@@ -63,10 +60,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale Parameter", sigma);
 
-      // Wrap arguments in vectors
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
       OperandsAndPartials<T_y, T_loc, T_scale>
@@ -79,11 +75,8 @@ namespace stan {
           return operands_and_partials.value(0.0);
       }
 
-      // Compute CDF and its gradients
       using std::atan;
-      using stan::math::pi;
 
-      // Compute vectorized CDF and gradient
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
@@ -91,14 +84,12 @@ namespace stan {
           continue;
         }
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
 
         const T_partials_return z = (y_dbl - mu_dbl) * sigma_inv_dbl;
 
-        // Compute
         const T_partials_return Pn = atan(z) / pi() + 0.5;
 
         P *= Pn;
@@ -126,9 +117,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= P;
       }
-
       return operands_and_partials.value(P);
     }
+
   }
 }
 #endif

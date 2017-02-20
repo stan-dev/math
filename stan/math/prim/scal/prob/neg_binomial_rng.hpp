@@ -21,20 +21,19 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline int
-    neg_binomial_rng(const double alpha,
-                     const double beta,
+    neg_binomial_rng(double alpha,
+                     double beta,
                      RNG& rng) {
       using boost::variate_generator;
       using boost::random::negative_binomial_distribution;
       using boost::random::poisson_distribution;
       using boost::gamma_distribution;
 
-      static const char* function("stan::math::neg_binomial_rng");
+      static const char* function("neg_binomial_rng");
 
       // gamma_rng params must be positive and finite
       check_positive_finite(function, "Shape parameter", alpha);
@@ -46,18 +45,19 @@ namespace stan {
 
       // same as the constraints for poisson_rng
       check_less(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma, POISSON_MAX_RATE);
+                 "Random number that came from gamma distribution",
+                 rng_from_gamma, POISSON_MAX_RATE);
       check_not_nan(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma);
+                    "Random number that came from gamma distribution",
+                    rng_from_gamma);
       check_nonnegative(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma);
+                        "Random number that came from gamma distribution",
+                        rng_from_gamma);
 
       return variate_generator<RNG&, poisson_distribution<> >
         (rng, poisson_distribution<>(rng_from_gamma))();
     }
+
   }
 }
 #endif

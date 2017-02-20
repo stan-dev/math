@@ -26,10 +26,11 @@ namespace stan {
      * @param index Index
      * @param msg1 Message to print. Default is "".
      * @param msg2 Message to print. Default is "".
+     * @throw std::out_of_range with message.
      */
     inline void out_of_range(const char* function,
-                             const int max,
-                             const int index,
+                             int max,
+                             int index,
                              const char* msg1 = "",
                              const char* msg2 = "") {
       std::ostringstream message;

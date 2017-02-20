@@ -19,10 +19,7 @@ namespace stan {
     inline
     fvar<T>
     determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
-      using stan::math::multiply;
-      using stan::math::inverse;
-
-      stan::math::check_square("determinant", "m", m);
+      check_square("determinant", "m", m);
       Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
       Eigen::Matrix<T, R, C> m_val(m.rows(), m.cols());
 
@@ -33,7 +30,7 @@ namespace stan {
         }
       }
 
-      Eigen::Matrix<T, R, C> m_inv = inverse<T>(m_val);
+      Eigen::Matrix<T, R, C> m_inv = inverse(m_val);
       m_deriv = multiply(m_inv, m_deriv);
 
       fvar<T> result;
@@ -43,6 +40,7 @@ namespace stan {
       // FIXME:  I think this will overcopy compared to retur fvar<T>(...);
       return result;
     }
+
   }
 }
 #endif

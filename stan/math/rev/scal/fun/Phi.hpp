@@ -11,12 +11,12 @@ namespace stan {
       class Phi_vari : public op_v_vari {
       public:
         explicit Phi_vari(vari* avi) :
-          op_v_vari(stan::math::Phi(avi->val_), avi) {
+          op_v_vari(Phi(avi->val_), avi) {
         }
         void chain() {
           static const double NEG_HALF = -0.5;
           avi_->adj_ += adj_
-            * stan::math::INV_SQRT_TWO_PI
+            * INV_SQRT_TWO_PI
             * std::exp(NEG_HALF * avi_->val_ * avi_->val_);
         }
       };
@@ -25,7 +25,7 @@ namespace stan {
     /**
      * The unit normal cumulative density function for variables (stan).
      *
-     * See stan::math::Phi() for the double-based version.
+     * See Phi() for the double-based version.
      *
      * The derivative is the unit normal density function,
      *
@@ -63,7 +63,7 @@ namespace stan {
      * @param a Variable argument.
      * @return The unit normal cdf evaluated at the specified argument.
      */
-    inline var Phi(const stan::math::var& a) {
+    inline var Phi(const var& a) {
       return var(new Phi_vari(a.vi_));
     }
 

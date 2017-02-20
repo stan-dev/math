@@ -13,34 +13,25 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("stan::math::skew_normal_cdf");
+      static const char* function("skew_normal_cdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_shape>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_consistent_sizes;
-      using stan::math::owens_t;
-      using stan::math::value_of;
-
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
@@ -62,16 +53,14 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
         operands_and_partials(y, mu, sigma, alpha);
 
-      using stan::math::SQRT_2;
-      using stan::math::pi;
       using std::exp;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, sigma, alpha);
-      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / stan::math::pi());
+      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -86,10 +75,8 @@ namespace stan {
         const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff) - 2
           * owens_t(diff, alpha_dbl);
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         const T_partials_return deriv_erfc = SQRT_TWO_OVER_PI * 0.5
           * exp(-scaled_diff_sq)
           / sigma_dbl;
@@ -126,9 +113,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(alpha); ++n)
           operands_and_partials.d_x4[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

@@ -14,8 +14,6 @@ namespace stan {
     inline
     Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>
     log_softmax(const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
-      using stan::math::softmax;
-      using stan::math::log_softmax;
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
@@ -32,13 +30,10 @@ namespace stan {
         log_softmax_alpha(k).d_ = 0;
       }
 
-      // for each input position
       for (int m = 0; m < alpha.size(); ++m) {
         T negative_alpha_m_d_times_softmax_alpha_t_m
           = - alpha(m).d_ * softmax_alpha_t(m);
-        // for each output position
         for (int k = 0; k < alpha.size(); ++k) {
-          // chain from input to output
           if (m == k)
             log_softmax_alpha(k).d_
               += alpha(m).d_
@@ -52,8 +47,6 @@ namespace stan {
       return log_softmax_alpha;
     }
 
-
   }
 }
-
 #endif

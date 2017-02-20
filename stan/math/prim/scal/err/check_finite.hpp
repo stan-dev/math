@@ -14,36 +14,32 @@ namespace stan {
     namespace {
       template <typename T_y, bool is_vec>
       struct finite {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           if (!(boost::math::isfinite)(value_of_rec(y)))
             domain_error(function, name, y,
                          "is ", ", but must be finite!");
-          return true;
         }
       };
 
       template <typename T_y>
       struct finite<T_y, true> {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y) {
-          using stan::math::value_of_rec;
           using stan::length;
           for (size_t n = 0; n < length(y); n++) {
             if (!(boost::math::isfinite)(value_of_rec(stan::get(y, n))))
               domain_error_vec(function, name, y, n,
                                "is ", ", but must be finite!");
           }
-          return true;
         }
       };
     }
 
     /**
-     * Return <code>true</code> if <code>y</code> is finite.
+     * Check if <code>y</code> is finite.
      *
      * This function is vectorized and will check each element of
      * <code>y</code>.
@@ -54,15 +50,14 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param y Variable to check
      *
-     * @return <code>true</code> if y is finite.
      * @throw <code>domain_error</code> if y is infinity, -infinity, or
      *   NaN.
      */
     template <typename T_y>
-    inline bool check_finite(const char* function,
+    inline void check_finite(const char* function,
                              const char* name,
                              const T_y& y) {
-      return finite<T_y, is_vector_like<T_y>::value>
+      finite<T_y, is_vector_like<T_y>::value>
         ::check(function, name, y);
     }
   }

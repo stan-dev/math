@@ -4,12 +4,11 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
-#include <algorithm>    // std::sort
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -48,7 +47,6 @@ namespace stan {
              return xs_[i-1] > xs_[j-1];
          }
       };
-
 
       /**
        * Return an integer array of indices of the specified container

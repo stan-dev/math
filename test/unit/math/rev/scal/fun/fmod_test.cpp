@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,fmod_var_var) {
   AVAR a = 2.7;
@@ -53,4 +53,12 @@ struct fmod_fun {
 TEST(AgradRev, fmod_nan) {
   fmod_fun fmod_;
   test_nan(fmod_,3.0,5.0,false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 2.7;
+  AVAR b = 1.3;
+  test::check_varis_on_stack(stan::math::fmod(a, b));
+  test::check_varis_on_stack(stan::math::fmod(a, 1.3));
+  test::check_varis_on_stack(stan::math::fmod(2.7, b));
 }

@@ -4,7 +4,6 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -16,7 +15,7 @@ namespace stan {
      * @return <code>1</code> if the value is infinite.
      */
     inline int
-    is_inf(const double x) {
+    is_inf(double x) {
       return boost::math::isinf(x);
     }
 

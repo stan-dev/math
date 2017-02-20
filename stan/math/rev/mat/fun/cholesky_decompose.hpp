@@ -27,12 +27,12 @@ namespace stan {
        * Instantiates and stores varis for L
        * Instantiates and stores dummy vari for
        * upper triangular part of var result returned
-       * in cholesky_decompose function call 
+       * in cholesky_decompose function call
        *
        * variRefL aren't on the chainable
        * autodiff stack, only used for storage
        * and computation. Note that varis for
-       * L are constructed externally in 
+       * L are constructed externally in
        * cholesky_decompose.
        *
        * @param matrix A
@@ -60,18 +60,18 @@ namespace stan {
         }
       }
 
-      /* Reverse mode differentiation 
-       * algorithm refernce: 
+      /* Reverse mode differentiation
+       * algorithm refernce:
        *
-       * Mike Giles. An extended collection of matrix 
-       * derivative results for forward and reverse mode AD. 
+       * Mike Giles. An extended collection of matrix
+       * derivative results for forward and reverse mode AD.
        * Jan. 2008.
        *
-       * Note algorithm  as laid out in Giles is 
+       * Note algorithm  as laid out in Giles is
        * row-major, so Eigen::Matrices are explicitly storage
-       * order RowMajor, whereas Eigen defaults to 
-       * ColumnMajor. Also note algorithm 
-       * starts by calculating the adjoint for 
+       * order RowMajor, whereas Eigen defaults to
+       * ColumnMajor. Also note algorithm
+       * starts by calculating the adjoint for
        * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented
        * to start at pos = M_ * (M_ + 1) / 2.
        * */
@@ -117,8 +117,8 @@ namespace stan {
     /* Reverse mode specialization of
      * cholesky decomposition
      *
-     * Internally calls llt rather than using 
-     * stan::math::cholesky_decompose in order
+     * Internally calls llt rather than using
+     * cholesky_decompose in order
      * to use selfadjointView<Lower> optimization.
      *
      * Note chainable stack varis are created
@@ -127,10 +127,10 @@ namespace stan {
      * @param Matrix A
      * @return L cholesky factor of A
      */
-    Eigen::Matrix<var, -1, -1>
-    cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
-      stan::math::check_square("cholesky_decompose", "A", A);
-      stan::math::check_symmetric("cholesky_decompose", "A", A);
+    inline Eigen::Matrix<var, -1, -1>
+      cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
+      check_square("cholesky_decompose", "A", A);
+      check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       Eigen::LLT<Eigen::MatrixXd> L_factor
@@ -144,7 +144,7 @@ namespace stan {
       // arena allocator.
       cholesky_decompose_v_vari *baseVari
         = new cholesky_decompose_v_vari(A, L_A);
-      stan::math::vari dummy(0.0, false);
+      vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       size_t accum = 0;
       size_t accum_i = accum;
@@ -155,12 +155,13 @@ namespace stan {
           L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos];
         }
         for (size_type k = 0; k < j; ++k)
-          L.coeffRef(k, j).vi_ = &dummy;
+          L.coeffRef(k, j).vi_ = dummy;
         accum += j;
         accum_i = accum;
       }
       return L;
     }
+
   }
 }
 #endif

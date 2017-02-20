@@ -13,7 +13,7 @@ TEST(ErrorHandlingScalar,CheckFinite_Vector) {
   x.push_back (-1);
   x.push_back (0);
   x.push_back (1);
-  ASSERT_TRUE(check_finite(function, "x", x)) 
+  ASSERT_NO_THROW(check_finite(function, "x", x)) 
     << "check_finite should be true with finite x";
 
   x.clear();

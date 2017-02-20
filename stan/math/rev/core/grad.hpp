@@ -45,7 +45,6 @@ namespace stan {
       }
     }
 
-
   }
 }
 

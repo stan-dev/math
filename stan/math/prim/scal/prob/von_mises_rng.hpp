@@ -13,7 +13,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     // The algorithm used in von_mises_rng is a modified version of the
@@ -28,19 +27,18 @@ namespace stan {
 
     template <class RNG>
     inline double
-    von_mises_rng(const double mu,
-                  const double kappa,
+    von_mises_rng(double mu,
+                  double kappa,
                   RNG& rng) {
       using boost::variate_generator;
-      using stan::math::uniform_rng;
       using std::fmod;
       using std::log;
       using std::pow;
 
-      static const char* function("stan::math::von_mises_rng");
+      static const char* function("von_mises_rng");
 
-      stan::math::check_finite(function, "mean", mu);
-      stan::math::check_positive_finite(function, "inverse of variance", kappa);
+      check_finite(function, "mean", mu);
+      check_positive_finite(function, "inverse of variance", kappa);
 
       double r = 1 + pow((1 + 4 * kappa * kappa), 0.5);
       double rho = 0.5 * (r - pow(2 * r, 0.5)) / kappa;
@@ -49,7 +47,7 @@ namespace stan {
       bool done = 0;
       double W;
       while (!done) {
-        double Z = std::cos(stan::math::pi() * uniform_rng(0.0, 1.0, rng));
+        double Z = std::cos(pi() * uniform_rng(0.0, 1.0, rng));
         W = (1 + s * Z) / (s + Z);
         double Y = kappa * (s - W);
         double U2 = uniform_rng(0.0, 1.0, rng);
@@ -64,8 +62,8 @@ namespace stan {
 
       //  it's really an fmod() with a positivity constraint
       return sign * std::acos(W)
-        + fmod(fmod(mu, 2*stan::math::pi())+2*stan::math::pi(),
-               2*stan::math::pi());
+        + fmod(fmod(mu, 2*pi())+2*stan::math::pi(),
+               2*pi());
     }
 
   }

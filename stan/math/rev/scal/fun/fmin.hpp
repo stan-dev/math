@@ -2,14 +2,12 @@
 #define STAN_MATH_REV_SCAL_FUN_FMIN_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -56,9 +54,8 @@ namespace stan {
      * @return If the first variable's value is smaller than the
      * second's, the first variable, otherwise the second variable.
      */
-    inline var fmin(const stan::math::var& a,
-                    const stan::math::var& b) {
-      using stan::math::NOT_A_NUMBER;
+    inline var fmin(const var& a,
+                    const var& b) {
       if (unlikely(is_nan(a))) {
         if (unlikely(is_nan(b)))
           return var(new precomp_vv_vari(NOT_A_NUMBER,
@@ -66,10 +63,8 @@ namespace stan {
                                          NOT_A_NUMBER, NOT_A_NUMBER));
         return b;
       }
-
       if (unlikely(is_nan(b)))
         return a;
-
       return a < b ? a : b;
     }
 
@@ -86,9 +81,8 @@ namespace stan {
      * @return If the first variable's value is less than or equal to the second value,
      * the first variable, otherwise the second value promoted to a fresh variable.
      */
-    inline var fmin(const stan::math::var& a,
+    inline var fmin(const var& a,
                     double b) {
-      using stan::math::NOT_A_NUMBER;
       if (unlikely(is_nan(a))) {
         if (unlikely(is_nan(b)))
           return var(new precomp_v_vari(NOT_A_NUMBER,
@@ -96,10 +90,8 @@ namespace stan {
                                         NOT_A_NUMBER));
         return var(b);
       }
-
       if (unlikely(is_nan(b)))
         return a;
-
       return a <= b ? a : var(b);
     }
 
@@ -118,20 +110,16 @@ namespace stan {
      * second variable.
      */
     inline var fmin(double a,
-                    const stan::math::var& b) {
-      using stan::math::NOT_A_NUMBER;
+                    const var& b) {
       if (unlikely(is_nan(b))) {
         if (unlikely(is_nan(a)))
           return var(new precomp_v_vari(NOT_A_NUMBER,
                                         b.vi_,
                                         NOT_A_NUMBER));
-
         return var(a);
       }
-
       if (unlikely(is_nan(a)))
         return b;
-
       return b <= a ? b : var(a);
     }
 

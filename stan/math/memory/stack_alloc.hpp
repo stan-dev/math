@@ -12,7 +12,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -31,10 +30,8 @@ namespace stan {
       return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
     }
 
-
     namespace {
       const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
-
 
       // FIXME: enforce alignment
       // big fun to inline, but only called twice
@@ -84,7 +81,6 @@ namespace stan {
       std::vector<size_t> nested_cur_blocks_;
       std::vector<char*> nested_next_locs_;
       std::vector<char*> nested_cur_block_ends_;
-
 
       /**
        * Moves us to the next block of memory, allocating that block
@@ -187,7 +183,6 @@ namespace stan {
         return static_cast<T*>(alloc(n * sizeof(T)));
       }
 
-
       /**
        * Recover all the memory used by the stack allocator.  The stack
        * of memory blocks allocated so far will be available for further
@@ -252,12 +247,29 @@ namespace stan {
        *
        * @return number of bytes allocated to this instance
        */
-      size_t bytes_allocated() {
+      inline size_t bytes_allocated() const {
         size_t sum = 0;
         for (size_t i = 0; i <= cur_block_; ++i) {
           sum += sizes_[i];
         }
         return sum;
+      }
+
+      /**
+       * Indicates whether the memory in the pointer
+       * is in the stack.
+       *
+       * @param[in] ptr memory location
+       * @return true if the pointer is in the stack,
+       *    false otherwise.
+       */
+      inline bool in_stack(const void* ptr) const {
+        for (size_t i = 0; i < cur_block_; ++i)
+          if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i])
+            return true;
+        if (ptr >= blocks_[cur_block_] && ptr < next_loc_)
+          return true;
+        return false;
       }
     };
 

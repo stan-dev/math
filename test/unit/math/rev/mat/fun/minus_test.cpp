@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, minus_scalar) {
   using stan::math::minus;
@@ -82,4 +83,18 @@ TEST(AgradRevMatrix, minus_matrix) {
   EXPECT_FLOAT_EQ(-20, output(1,0).val());
   EXPECT_FLOAT_EQ( 40, output(1,1).val());
   EXPECT_FLOAT_EQ( -2, output(1,2).val());
+}
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::var x = 10;
+  stan::math::vector_v v(3);
+  v << -100, 0, 1;
+  stan::math::row_vector_v rv(3);
+  rv << -100, 0, 1;
+  stan::math::matrix_v m(2, 3);
+  m << -100, 0, 1, 20, -40, 2;
+  
+  test::check_varis_on_stack(stan::math::minus(x));
+  test::check_varis_on_stack(stan::math::minus(v));
+  test::check_varis_on_stack(stan::math::minus(rv));
+  test::check_varis_on_stack(stan::math::minus(m));
 }

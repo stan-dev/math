@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,multiplyLogChainVV) {
   AVAR a = 19.7;
@@ -117,4 +117,12 @@ struct multiply_log_fun {
 TEST(AgradRev, multiply_log_nan) {
   multiply_log_fun multiply_log_;
   test_nan(multiply_log_,3.0,5.0,false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 19.7;
+  AVAR b = 1299.1;
+  test::check_varis_on_stack(multiply_log(a, b));
+  test::check_varis_on_stack(multiply_log(2.0, b));
+  test::check_varis_on_stack(multiply_log(a, 3.0));
 }

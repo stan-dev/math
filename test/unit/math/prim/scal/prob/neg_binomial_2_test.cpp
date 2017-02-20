@@ -6,8 +6,8 @@
 TEST(ProbDistributionsNegBinomial, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(6, 2, rng));
-  EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(0.5,1,rng));
-  EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(1e8,1,rng));
+  EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(0.5, 1, rng));
+  EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(1e8, 1, rng));
 
   EXPECT_THROW(stan::math::neg_binomial_2_rng(0, -2, rng),
                  std::domain_error);
@@ -27,7 +27,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
 
   std::string error_msg;
 
-  error_msg = "stan::math::neg_binomial_2_rng: Location parameter "
+  error_msg = "neg_binomial_2_rng: Location parameter "
               "divided by the precision parameter is "
               "inf, but must be finite!";
   try {
@@ -41,7 +41,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
     SUCCEED();
   }
 
-  error_msg = "stan::math::neg_binomial_2_rng: Random number that "
+  error_msg = "neg_binomial_2_rng: Random number that "
               "came from gamma distribution is";
   try {
     stan::math::neg_binomial_2_rng(1e10, 1e20, rng);
@@ -59,7 +59,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (1.1,1.1/(1.1+2.4));
+  boost::math::negative_binomial_distribution<>dist (1.1, 1.1/(1.1+2.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -76,7 +76,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::neg_binomial_2_rng(2.4,1.1,rng);
+    int a = stan::math::neg_binomial_2_rng(2.4, 1.1, rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;
@@ -96,7 +96,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (0.6,0.6/(0.6+2.4));
+  boost::math::negative_binomial_distribution<>dist (0.6, 0.6/(0.6+2.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -113,7 +113,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::neg_binomial_2_rng(2.4,0.6,rng);
+    int a = stan::math::neg_binomial_2_rng(2.4, 0.6, rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;
@@ -133,7 +133,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (30,30/(30+60.4));
+  boost::math::negative_binomial_distribution<>dist (30, 30/(30+60.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -150,7 +150,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::neg_binomial_2_rng(60.4,30,rng);
+    int a = stan::math::neg_binomial_2_rng(60.4, 30, rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;
@@ -170,7 +170,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (80,80/(80+30.4));
+  boost::math::negative_binomial_distribution<>dist (80, 80/(80+30.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -187,7 +187,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
   expect[K-1] = N * (1 - cdf(dist, K - 1));
 
   while (count < N) {
-    int a = stan::math::neg_binomial_2_rng(30.4,80,rng);
+    int a = stan::math::neg_binomial_2_rng(30.4, 80, rng);
     int i = 0;
     while (i < K-1 && a > loc[i])
       ++i;
@@ -201,4 +201,15 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsNegBinomial, extreme_values) {
+  int N = 100;
+  double mu = 8;
+  double phi = 1e12;
+  for (int n = 0; n < 10; ++n) {
+    phi *= 10;
+    double logp = stan::math::neg_binomial_2_log<false>(N, mu, phi);
+    EXPECT_TRUE(logp < 0);
+  }
 }

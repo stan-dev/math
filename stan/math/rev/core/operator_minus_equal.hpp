@@ -12,7 +12,7 @@ namespace stan {
       return *this;
     }
 
-    inline var& var::operator-=(const double b) {
+    inline var& var::operator-=(double b) {
       if (b == 0.0)
         return *this;
       vi_ = new subtract_vd_vari(vi_, b);

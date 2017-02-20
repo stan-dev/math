@@ -37,14 +37,11 @@ namespace stan {
      */
     template<typename T2>
     inline T2
-    bessel_first_kind(const int v, const T2 z) {
-      using stan::math::check_not_nan;
-
+    bessel_first_kind(int v, const T2 z) {
       check_not_nan("bessel_first_kind", "z", z);
       return boost::math::cyl_bessel_j(v, z);
     }
 
   }
 }
-
 #endif

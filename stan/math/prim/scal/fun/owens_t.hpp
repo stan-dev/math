@@ -6,13 +6,12 @@
 namespace stan {
   namespace math {
 
-
     /**
-     * The Owen's T function of h and a.
+     * Return the result of applying Owen's T function to the
+     * specified arguments.
      *
      * Used to compute the cumulative density function for the skew normal
      * distribution.
-     *
      *
        \f[
        \mbox{owens\_t}(h, a) =
@@ -52,14 +51,12 @@ namespace stan {
        \frac{\partial \, \mbox{owens\_t}(h, a)}{\partial a} = \frac{\exp\left(-\frac{1}{2}h^2(1+a^2)\right)}{2\pi (1+a^2)}
        \f]
      *
-     * @tparam T1 Type of first argument.
-     * @tparam T2 Type of second argument.
      * @param h First argument
      * @param a Second argument
-     * @return The Owen's T function.
+     * @return Owen's T function applied to the arguments.
      */
     inline
-    double owens_t(const double h, const double a) {
+    double owens_t(double h, double a) {
       return boost::math::owens_t(h, a);
     }
   }

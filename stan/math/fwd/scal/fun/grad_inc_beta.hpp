@@ -16,33 +16,39 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the incomplete beta function beta(a, b, z)
-    // with respect to the first two arguments, using the
-    // equivalence to a hypergeometric function.
-    // See http://dlmf.nist.gov/8.17#ii
+    /**
+     * Gradient of the incomplete beta function beta(a, b, z) with
+     * respect to the first two arguments.
+     *
+     * Uses the equivalence to a hypergeometric function. See
+     * http://dlmf.nist.gov/8.17#ii
+     *
+     * @tparam T type of fvar
+     * @param[out] g1 d/da
+     * @param[out] g2 d/db
+     * @param[in] a a
+     * @param[in] b b
+     * @param[in] z z
+     */
     template<typename T>
-    void grad_inc_beta(stan::math::fvar<T>& g1,
-                       stan::math::fvar<T>& g2,
-                       stan::math::fvar<T> a,
-                       stan::math::fvar<T> b,
-                       stan::math::fvar<T> z) {
-      using stan::math::value_of;
-      using stan::math::value_of;
-      using stan::math::log1m;
+    void grad_inc_beta(fvar<T>& g1,
+                       fvar<T>& g2,
+                       fvar<T> a,
+                       fvar<T> b,
+                       fvar<T> z) {
+      fvar<T> c1 = log(z);
+      fvar<T> c2 = log1m(z);
+      fvar<T> c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);
 
-      stan::math::fvar<T> c1 = log(z);
-      stan::math::fvar<T> c2 = log1m(z);
-      stan::math::fvar<T> c3 = exp(lbeta(a, b)) * inc_beta(a, b, z);
+      fvar<T> C = exp(a * c1 + b * c2) / a;
 
-      stan::math::fvar<T> C = exp(a * c1 + b * c2) / a;
-
-      stan::math::fvar<T> dF1 = 0;
-      stan::math::fvar<T> dF2 = 0;
+      fvar<T> dF1 = 0;
+      fvar<T> dF2 = 0;
 
       if (value_of(value_of(C)))
-        stan::math::grad_2F1(dF1, dF2, a + b,
-                             stan::math::fvar<T>(1.0),
-                             a + 1, z);
+        grad_2F1(dF1, dF2, a + b,
+                 fvar<T>(1.0),
+                 a + 1, z);
 
       g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF2);
       g2 = c2 * c3 + C * dF1;

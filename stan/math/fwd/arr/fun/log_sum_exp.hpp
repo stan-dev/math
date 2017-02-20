@@ -6,13 +6,11 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
     fvar<T>
     log_sum_exp(const std::vector<fvar<T> >& v) {
-      using stan::math::log_sum_exp;
       using std::exp;
       std::vector<T> vals(v.size());
       for (size_t i = 0; i < v.size(); ++i)

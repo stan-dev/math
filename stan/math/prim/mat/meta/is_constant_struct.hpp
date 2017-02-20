@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 
-
 namespace stan {
 
   template <typename T, int R, int C>

@@ -15,7 +15,12 @@ public:
     param[1] = 13.0;         // lambda
     parameters.push_back(param);
     ccdf_log.push_back(std::log(1.0 - 0.8904649795242025600572)); // expected ccdf_log
-    
+
+    param[0] = 82;           // n
+    param[1] = 42.0;         // lambda
+    parameters.push_back(param);
+    ccdf_log.push_back(std::log(1.0 - 0.9999999845303266798879)); // expected ccdf_log
+
     param[0] = 0.0;          // n
     param[1] = 3.0;          // lambda
     parameters.push_back(param);

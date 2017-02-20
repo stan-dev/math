@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <stdexcept>
 
 namespace stan {
   namespace math {
@@ -28,9 +27,6 @@ namespace stan {
       return c * m;
     }
 
-    // FIXME:  apply above pattern everywhere below to remove
-    //         extra defs, etc.
-
     /**
      * Return specified scalar multiplied by specified matrix.
      * @tparam R Row type for matrix.
@@ -45,7 +41,7 @@ namespace stan {
                                 Eigen::Matrix<double, R, C> >::type
     multiply(T c,
              const Eigen::Matrix<double, R, C>& m) {
-         return c * m;
+      return c * m;
     }
 
     /**
@@ -62,9 +58,9 @@ namespace stan {
     inline Eigen::Matrix<double, R1, C2>
     multiply(const Eigen::Matrix<double, R1, C1>& m1,
              const Eigen::Matrix<double, R2, C2>& m2) {
-      stan::math::check_multiplicable("multiply",
-                                                "m1", m1,
-                                                "m2", m2);
+      check_multiplicable("multiply",
+                          "m1", m1,
+                          "m2", m2);
       return m1*m2;
     }
 
@@ -80,11 +76,9 @@ namespace stan {
     template<int C1, int R2>
     inline double multiply(const Eigen::Matrix<double, 1, C1>& rv,
                            const Eigen::Matrix<double, R2, 1>& v) {
-      stan::math::check_matching_sizes("multiply",
-                                                 "rv", rv,
-                                                 "v", v);
-      if (rv.size() != v.size())
-        throw std::domain_error("rv.size() != v.size()");
+      check_matching_sizes("multiply",
+                           "rv", rv,
+                           "v", v);
       return rv.dot(v);
     }
 

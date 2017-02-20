@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
 
 void test_log_inv_logit(const double x) {
@@ -48,4 +48,9 @@ struct log_inv_logit_fun {
 TEST(AgradRev,log_inv_logit_NaN) {
   log_inv_logit_fun log_inv_logit_;
   test_nan(log_inv_logit_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var x = 0;
+  test::check_varis_on_stack(stan::math::log_inv_logit(x));
 }

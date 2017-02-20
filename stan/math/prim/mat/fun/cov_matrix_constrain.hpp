@@ -2,17 +2,15 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/mat/meta/index_type.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <stdexcept>
 
 namespace stan {
 
   namespace math {
-
-    // COVARIANCE MATRIX
 
     /**
      * Return the symmetric, positive-definite matrix of dimensions K
@@ -24,35 +22,32 @@ namespace stan {
      * @param x The vector to convert to a covariance matrix.
      * @param K The number of rows and columns of the resulting
      * covariance matrix.
-     * @throws std::domain_error if (x.size() != K + (K choose 2)).
+     * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
      */
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     cov_matrix_constrain(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
                          typename math::index_type
                          <Eigen::Matrix<T, Eigen::Dynamic, 1> >::type K) {
-      using std::exp;
-
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      using stan::math::multiply_lower_tri_self_transpose;
-      typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
+      using std::exp;
+      typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type index_t;
 
       Matrix<T, Dynamic, Dynamic> L(K, K);
-      if (x.size() != (K * (K + 1)) / 2)
-        throw std::domain_error("x.size() != K + (K choose 2)");
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "K + (K choose 2)", (K * (K + 1)) / 2);
       int i = 0;
-      for (size_type m = 0; m < K; ++m) {
+      for (index_t m = 0; m < K; ++m) {
         for (int n = 0; n < m; ++n)
           L(m, n) = x(i++);
         L(m, m) = exp(x(i++));
-        for (size_type n = m + 1; n < K; ++n)
+        for (index_t n = m + 1; n < K; ++n)
           L(m, n) = 0.0;
       }
       return multiply_lower_tri_self_transpose(L);
     }
-
 
     /**
      * Return the symmetric, positive-definite matrix of dimensions K
@@ -73,35 +68,30 @@ namespace stan {
                                                  Eigen::Dynamic,
                                                  Eigen::Dynamic> >::type K,
          T& lp) {
-      using std::exp;
-      using std::log;
-
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
-      typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type size_type;
-
-      if (x.size() != (K * (K + 1)) / 2)
-        throw std::domain_error("x.size() != K + (K choose 2)");
+      using std::exp;
+      using std::log;
+      typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type index_t;
+      check_size_match("cov_matrix_constrain",
+                       "x.size()", x.size(),
+                       "K + (K choose 2)", (K * (K + 1)) / 2);
       Matrix<T, Dynamic, Dynamic> L(K, K);
       int i = 0;
-      for (size_type m = 0; m < K; ++m) {
-        for (size_type n = 0; n < m; ++n)
+      for (index_t m = 0; m < K; ++m) {
+        for (index_t n = 0; n < m; ++n)
           L(m, n) = x(i++);
         L(m, m) = exp(x(i++));
-        for (size_type n = m + 1; n < K; ++n)
+        for (index_t n = m + 1; n < K; ++n)
           L(m, n) = 0.0;
       }
       // Jacobian for complete transform, including exp() above
-      lp += (K * stan::math::LOG_2);  // needless constant; want propto
-      for (int k = 0; k < K; ++k)
+      lp += (K * LOG_2);  // needless constant; want propto
+      for (index_t k = 0; k < K; ++k)
         lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
-      return L * L.transpose();
-      // return tri_multiply_transpose(L);
+      return multiply_lower_tri_self_transpose(L);
     }
 
   }
-
 }
-
 #endif

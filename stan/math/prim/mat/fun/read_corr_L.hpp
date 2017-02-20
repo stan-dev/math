@@ -9,11 +9,7 @@
 #include <iostream>
 
 namespace stan {
-
   namespace math {
-
-
-    // MATRIX TRANSFORMS +/- JACOBIANS
 
     /**
      * Return the Cholesky factor of the correlation matrix of the
@@ -39,7 +35,7 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
-                const size_t K) {
+                size_t K) {
       Eigen::Array<T, Eigen::Dynamic, 1> temp;
       Eigen::Array<T, Eigen::Dynamic, 1> acc(K-1);
       acc.setOnes();
@@ -64,7 +60,6 @@ namespace stan {
       L(K-1, K-1) = sqrt(acc(K-2));
       return L.matrix();
     }
-
 
     /**
      * Return the Cholesky factor of the correlation matrix of the
@@ -93,12 +88,8 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-                const size_t K,
+                size_t K,
                 T& log_prob) {
-      using stan::math::log1m;
-      using stan::math::square;
-      using stan::math::sum;
-
       Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
       size_t pos = 0;
       // no need to abs() because this Jacobian determinant
@@ -115,7 +106,5 @@ namespace stan {
     }
 
   }
-
 }
-
 #endif

@@ -12,46 +12,40 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
-     * Calculates the double exponential cumulative density function.
+     * Returns the double exponential cumulative density function. Given
+     * containers of matching sizes, returns the product of probabilities.
      *
-     * \f$ f(y|\mu, \sigma) = \begin{cases} \
-     \frac{1}{2} \exp\left(\frac{y-\mu}{\sigma}\right), \mbox{if } y < \mu \\
-     1 - \frac{1}{2} \exp\left(-\frac{y-\mu}{\sigma}\right), \mbox{if } y \ge \mu \
-     \end{cases}\f$
-     *
-     * @param y A scalar variate.
-     * @param mu The location parameter.
-     * @param sigma The scale parameter.
-     *
-     * @return The cumulative density function.
+     * @tparam T_y type of real parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_cdf(const T_y& y,
                            const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::double_exponential_cdf");
+      static const char* function("double_exponential_cdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(mu)
               && stan::length(sigma) ) )
         return 1.0;
 
-      using stan::math::value_of;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::check_not_nan;
       using boost::math::tools::promote_args;
       using std::exp;
 
@@ -64,12 +58,11 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      // cdf
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -83,7 +76,6 @@ namespace stan {
           cdf *= 1.0 - 0.5 / exp_scaled_diff;
       }
 
-      // gradients
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -112,6 +104,7 @@ namespace stan {
       }
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

@@ -9,10 +9,9 @@
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
 
 namespace stan {
-
   namespace math {
     /**
-     * Return <code>true</code> if the specified matrix is a valid
+     * Check if the specified matrix is a valid
      * Cholesky factor of a correlation matrix.
      *
      * A Cholesky factor is a lower triangular matrix whose diagonal
@@ -27,20 +26,15 @@ namespace stan {
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
      * @param y Matrix to test
-     * @return <code>true</code> if the matrix is a valid Cholesky factor
-     *   of a correlation matrix
-     * @throw <code>std::domain_error</code> if y is not a valid Choleksy factor,
-     *   if number of rows is less than the number of columns,
-     *   if there are 0 columns,
-     *   or if any element in matrix is NaN
+     * @throw <code>std::domain_error</code> if y is not a valid Choleksy
+     *   factor, if number of rows is less than the number of columns,
+     *   if there are 0 columns, or if any element in matrix is NaN
      */
     template <typename T_y>
-    bool
-    check_cholesky_factor_corr(
-      const char* function,
-      const char* name,
-      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
-    ) {
+    void
+    check_cholesky_factor_corr(const char* function,
+                               const char* name,
+                  const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using Eigen::Dynamic;
       check_square(function, name, y);
       check_lower_triangular(function, name, y);
@@ -51,7 +45,6 @@ namespace stan {
           y_i = y.row(i).transpose();
         check_unit_vector(function, name, y_i);
       }
-      return true;
     }
 
   }

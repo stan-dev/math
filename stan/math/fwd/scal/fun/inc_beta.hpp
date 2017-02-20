@@ -13,20 +13,12 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template<typename T>
     inline fvar<T> inc_beta(const fvar<T>& a,
                             const fvar<T>& b,
                             const fvar<T>& x) {
-      using stan::math::digamma;
-      using stan::math::grad_reg_inc_beta;
-      using stan::math::inc_beta;
-      using stan::math::lbeta;
-      using stan::math::digamma;
-      using stan::math::lbeta;
-      using stan::math::pow;
       using std::exp;
       using std::pow;
 

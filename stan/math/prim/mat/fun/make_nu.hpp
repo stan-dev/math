@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -19,11 +18,10 @@ namespace stan {
      */
     template<typename T>
     const Eigen::Array<T, Eigen::Dynamic, 1>
-    make_nu(const T eta, const size_t K) {
+    make_nu(const T eta, size_t K) {
       using Eigen::Array;
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::index_type;
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       Array<T, Dynamic, 1> nu(K * (K - 1) / 2);

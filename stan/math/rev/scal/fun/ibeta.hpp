@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_IBETA_HPP
 #define STAN_MATH_REV_SCAL_FUN_IBETA_HPP
 
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/ibeta.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 
 namespace stan {
   namespace math {
@@ -21,15 +21,13 @@ namespace stan {
         double val = 0;
         double diff = 1;
         double k = 0;
-        double a_2 = a*a;
+        double a_2 = a * a;
         double bprod = 1;
-        while (std::abs(diff) > precision
-               && ++k < max_steps
-               && !std::isnan(diff)) {
+        while (std::abs(diff) > precision && ++k < max_steps) {
           val += diff;
-          bprod *= b+k-1.0;
-          diff = a_2 * std::pow(a+k, -2) * bprod * std::pow(z, k)
-            / boost::math::tgamma(k+1);
+          bprod *= b + k - 1.0;
+          diff = a_2 * std::pow(a + k, -2) * bprod * std::pow(z, k)
+            / tgamma(k + 1);
         }
         return val;
       }
@@ -37,7 +35,7 @@ namespace stan {
       class ibeta_vvv_vari : public op_vvv_vari {
       public:
         ibeta_vvv_vari(vari* avi, vari* bvi, vari* xvi) :
-          op_vvv_vari(stan::math::ibeta(avi->val_, bvi->val_, xvi->val_),
+          op_vvv_vari(ibeta(avi->val_, bvi->val_, xvi->val_),
                       avi, bvi, xvi) {
         }
         void chain() {
@@ -49,10 +47,6 @@ namespace stan {
           using std::pow;
           using std::log;
           using boost::math::constants::pi;
-          using boost::math::tgamma;
-          using boost::math::digamma;
-          using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -70,7 +64,7 @@ namespace stan {
       class ibeta_vvd_vari : public op_vvd_vari {
       public:
         ibeta_vvd_vari(vari* avi, vari* bvi, double x) :
-          op_vvd_vari(stan::math::ibeta(avi->val_, bvi->val_, x), avi, bvi, x) {
+          op_vvd_vari(ibeta(avi->val_, bvi->val_, x), avi, bvi, x) {
         }
         void chain() {
           double a = avi_->val_;
@@ -81,10 +75,6 @@ namespace stan {
           using std::pow;
           using std::log;
           using boost::math::constants::pi;
-          using boost::math::tgamma;
-          using boost::math::digamma;
-          using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_ -
             tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -100,7 +90,7 @@ namespace stan {
       class ibeta_vdv_vari : public op_vdv_vari {
       public:
         ibeta_vdv_vari(vari* avi, double b, vari* xvi) :
-          op_vdv_vari(stan::math::ibeta(avi->val_, b, xvi->val_), avi, b, xvi) {
+          op_vdv_vari(ibeta(avi->val_, b, xvi->val_), avi, b, xvi) {
         }
         void chain() {
           double a = avi_->val_;
@@ -114,7 +104,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -127,7 +116,7 @@ namespace stan {
       class ibeta_vdd_vari : public op_vdd_vari {
       public:
         ibeta_vdd_vari(vari* avi, double b, double x) :
-          op_vdd_vari(stan::math::ibeta(avi->val_, b, x), avi, b, x) {
+          op_vdd_vari(ibeta(avi->val_, b, x), avi, b, x) {
         }
         void chain() {
           double a = avi_->val_;
@@ -141,7 +130,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           avi_->adj_ += adj_ *
             (log(c) - digamma(a) + digamma(a+b)) * val_
             - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
@@ -152,7 +140,7 @@ namespace stan {
       class ibeta_dvv_vari : public op_dvv_vari {
       public:
         ibeta_dvv_vari(double a, vari* bvi, vari* xvi) :
-          op_dvv_vari(stan::math::ibeta(a, bvi->val_, xvi->val_), a, bvi, xvi) {
+          op_dvv_vari(ibeta(a, bvi->val_, xvi->val_), a, bvi, xvi) {
         }
         void chain() {
           double a = ad_;
@@ -166,7 +154,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           bvi_->adj_ += adj_ *
             (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
              * ibeta_hypergeometric_helper(b, 1-a, 1-c)
@@ -179,7 +166,7 @@ namespace stan {
       class ibeta_dvd_vari : public op_dvd_vari {
       public:
         ibeta_dvd_vari(double a, vari* bvi, double x) :
-          op_dvd_vari(stan::math::ibeta(a, bvi->val_, x), a, bvi, x) {
+          op_dvd_vari(ibeta(a, bvi->val_, x), a, bvi, x) {
         }
         void chain() {
           double a = ad_;
@@ -193,7 +180,6 @@ namespace stan {
           using boost::math::tgamma;
           using boost::math::digamma;
           using boost::math::ibeta;
-          using stan::math::ibeta_hypergeometric_helper;
           bvi_->adj_ += adj_ *
             (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
              * ibeta_hypergeometric_helper(b, 1-a, 1-c)
@@ -204,7 +190,7 @@ namespace stan {
       class ibeta_ddv_vari : public op_ddv_vari {
       public:
         ibeta_ddv_vari(double a, double b, vari* xvi) :
-          op_ddv_vari(stan::math::ibeta(a, b, xvi->val_), a, b, xvi) {
+          op_ddv_vari(ibeta(a, b, xvi->val_), a, b, xvi) {
         }
         void chain() {
           double a = ad_;

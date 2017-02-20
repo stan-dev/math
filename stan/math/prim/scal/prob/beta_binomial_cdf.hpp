@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
@@ -21,34 +22,41 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
-    // Beta-Binomial CDF
+    /**
+     * Returns the CDF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the product of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N,
               typename T_size1, typename T_size2>
     typename return_type<T_size1, T_size2>::type
     beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
                       const T_size2& beta) {
-      static const char* function("stan::math::beta_binomial_cdf");
+      static const char* function("beta_binomial_cdf");
       typedef typename stan::partials_return_type<T_n, T_N, T_size1,
                                                   T_size2>::type
         T_partials_return;
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_nonnegative;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::include_summand;
-
-      // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 1.0;
 
       T_partials_return P(1.0);
 
-      // Validate arguments
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,
                             "First prior sample size parameter", alpha);
@@ -60,17 +68,12 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      // Wrap arguments in vector views
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_size1> alpha_vec(alpha);
-      VectorView<const T_size2> beta_vec(beta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_size1> alpha_vec(alpha);
+      scalar_seq_view<const T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
-      // Compute vectorized CDF and gradient
-      using stan::math::lgamma;
-      using stan::math::lbeta;
-      using stan::math::digamma;
       using std::exp;
       using std::exp;
 
@@ -99,10 +102,10 @@ namespace stan {
         const T_partials_return mu = alpha_dbl + n_dbl + 1;
         const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
 
-        const T_partials_return F = stan::math::F32((T_partials_return)1, mu,
-                                                    -N_dbl + n_dbl + 1,
-                                                    n_dbl + 2, 1 - nu,
-                                                    (T_partials_return)1);
+        const T_partials_return F = F32((T_partials_return)1, mu,
+                                        -N_dbl + n_dbl + 1,
+                                        n_dbl + 2, 1 - nu,
+                                        (T_partials_return)1);
 
         T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
         C += lgamma(mu) - lgamma(n_dbl + 2);
@@ -123,9 +126,9 @@ namespace stan {
         if (contains_nonconstant_struct<T_size1, T_size2>::value) {
           digammaOne = digamma(mu + nu);
           digammaTwo = digamma(alpha_dbl + beta_dbl);
-          stan::math::grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
-                               n_dbl + 2,
-                               1 - nu, (T_partials_return)1);
+          grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1,
+                   n_dbl + 2,
+                   1 - nu, (T_partials_return)1);
         }
         if (!is_constant_struct<T_size1>::value) {
           const T_partials_return g

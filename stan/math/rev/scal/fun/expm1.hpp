@@ -1,16 +1,8 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_EXPM1_HPP
 #define STAN_MATH_REV_SCAL_FUN_EXPM1_HPP
 
-#include <math.h>
+#include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <cmath>
-#include <valarray>
-
-#ifdef _MSC_VER
-#include <boost/math/special_functions/expm1.hpp>
-using boost::math::expm1;
-#endif
 
 namespace stan {
   namespace math {
@@ -19,10 +11,10 @@ namespace stan {
       class expm1_vari : public op_v_vari {
       public:
         explicit expm1_vari(vari* avi) :
-          op_v_vari(::expm1(avi->val_), avi) {
+          op_v_vari(expm1(avi->val_), avi) {
         }
         void chain() {
-          avi_->adj_ += adj_ * (val_ + 1.0);
+          avi_->adj_ += adj_ * (val_ + 1);
         }
       };
     }
@@ -54,7 +46,7 @@ namespace stan {
      * @param a The variable.
      * @return Two to the power of the specified variable.
      */
-    inline var expm1(const stan::math::var& a) {
+    inline var expm1(const var& a) {
       return var(new expm1_vari(a.vi_));
     }
 

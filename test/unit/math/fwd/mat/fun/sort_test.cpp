@@ -1,7 +1,6 @@
 #include <stan/math/fwd/mat.hpp>
+#include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <gtest/gtest.h>
-
-
 
 typedef stan::math::fvar<double> AVAR;
 typedef std::vector<AVAR> AVEC;
@@ -324,4 +323,32 @@ TEST(AgradFwdSort, ffd_no_thrown) {
   EXPECT_EQ(0, vec2.size());
   EXPECT_NO_THROW(sort_asc(vec2));
   EXPECT_NO_THROW(sort_desc(vec2));
+}
+
+TEST(MathMatrix, sortAscStdVecNan) {
+  test_sort_asc_throws<std::vector<stan::math::fvar<double> > >();
+  test_sort_asc_throws<std::vector<stan::math::fvar<fvar<double> > > >();
+}
+
+TEST(MathMatrix, sortDescStdVecNan) {
+  test_sort_desc_throws<std::vector<stan::math::fvar<double> > >();
+  test_sort_desc_throws<std::vector<stan::math::fvar<fvar<double> > > >();
+}
+
+TEST(MathMatrix, sortAscEigenVecNan) {
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >, -1, 1> >();
+}
+TEST(MathMatrix, sortAscEigenRowVecNan) {
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >, 1, -1> >();
+}
+
+TEST(MathMatrix, sortDescEigenVecNan) {
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >, -1, 1> >();
+}
+TEST(MathMatrix, sortDescEigenRowVecNan) {
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >, 1, -1> >();
 }

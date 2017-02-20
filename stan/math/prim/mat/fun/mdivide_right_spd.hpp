@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_SPD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_SPD_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
@@ -9,6 +8,7 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
   namespace math {
@@ -28,13 +28,10 @@ namespace stan {
                   R1, C2>
     mdivide_right_spd(const Eigen::Matrix<T1, R1, C1> &b,
                       const Eigen::Matrix<T2, R2, C2> &A) {
-      stan::math::check_square("mdivide_right_spd", "A", A);
-      stan::math::check_multiplicable("mdivide_right_spd",
-                                                "b", b,
-                                                "A", A);
-      stan::math::check_symmetric("mdivide_right_spd", "A", A);
-      stan::math::check_pos_definite("mdivide_right_spd", "A", A);
-      // FIXME: This is nice and general but likely slow.
+      check_square("mdivide_right_spd", "A", A);
+      check_multiplicable("mdivide_right_spd", "b", b, "A", A);
+      check_symmetric("mdivide_right_spd", "A", A);
+      check_pos_definite("mdivide_right_spd", "A", A);
       // FIXME: After allowing for general MatrixBase in mdivide_left_spd,
       //        change to b.transpose()
       return mdivide_left_spd(A, transpose(b)).transpose();

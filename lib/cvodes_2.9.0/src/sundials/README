@@ -1,0 +1,75 @@
+                          SUNDIALS 
+                        Shared Module
+                 Release 2.7.0, Sep 2016
+
+
+The family of solvers referred to as SUNDIALS consists of solvers 
+ARKODE (ODE), CVODE (ODE), CVODES (ODE with sensitivity analysis 
+capabilities), IDA (DAE), IDAS (DAE with sensitivity analysis 
+capabilities), and KINSOL (for nonlinear algebraic systems).
+
+The various solvers of this family share many subordinate modules contained
+in this module:
+- generic NVECTOR module
+- generic linear solver modules (band, dense, lapack, sparse, pcg, spfgmr, spgmr, spbcg, sptfqmr)
+- definitions of SUNDIALS types (realtype, booleantype)
+- common math functions (RpowerI, SUNRpowerR, SUNRsqrt, SUNRabs,...)
+
+
+A. Documentation
+----------------
+All shared submodules are fully described in the user documentation for any of 
+the SUNDIALS solvers [1-6]. A PDF file for the user guide for a particular solver
+is available in the solver's subdirectory under doc/.
+
+
+B. Installation
+---------------
+
+For basic installation instructions see the file /sundials/INSTALL_NOTES. 
+For complete installation instructions see any of the user guides.
+
+
+C. References
+-------------
+
+[1] A. C. Hindmarsh and R. Serban, "User Documentation for CVODE v2.8.2," 
+    LLNL technical report UCRL-MA-208108, Aug 2015.
+
+[2] A. C. Hindmarsh and R. Serban, "User Documentation for CVODES v2.8.2," 
+    LLNL technical report UCRL-MA-208111, Aug 2015.
+
+[3] A. C. Hindmarsh, R. Serban,and A. Collier, "User Documentation for IDA v2.8.2," 
+    LLNL technical report UCRL-MA-208112, Aug 2015.
+
+[4] R. Serban, C. Petra, and A. C. Hindmarsh  "User Documentation for IDAS v1.2.2," 
+    LLNL technical report UCRL-SM-234051, Aug 2015.
+
+[5] A. M. Collier, A. C. Hindmarsh, R. Serban,and C. S. Woodward, "User 
+    Documentation for KINSOL v2.8.2," LLNL technical report UCRL-MA-208116, 
+    Aug 2015.
+
+[6] D. R. Reynolds, "User Documentation for ARKode v1.0.2," LLNL technical report
+    LLNL-SM-668082, Aug 2015.
+
+
+D. Releases
+-----------
+
+v. 2.7.0 - Sep. 2016
+v. 2.6.2 - Aug. 2015
+v. 2.6.1 - Mar. 2015
+v. 2.6.0 - Mar. 2015
+v. 2.5.0 - Mar. 2012
+v. 2.4.0 - May  2009
+v. 2.3.0 - Nov. 2006
+v. 2.2.0 - Mar. 2006
+v. 2.1.1 - May. 2005
+v. 2.1.0 - Apr. 2005
+v. 2.0.2 - Mar. 2005
+v. 2.0.1 - Jan. 2005
+v. 2.0   - Dec. 2004
+v. 1.0   - Jul. 2002 (first SUNDIALS release)
+v. 0.0   - Mar. 2002
+
+

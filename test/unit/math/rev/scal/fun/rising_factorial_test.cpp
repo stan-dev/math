@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,rising_factorial_var_double) {
   using boost::math::digamma;
@@ -26,7 +26,6 @@ TEST(AgradRev, rising_factorial_exceptions) {
   double a(1);
   AVAR b(-3.0);
   EXPECT_THROW(stan::math::rising_factorial(b,a), std::domain_error);
-  EXPECT_THROW(stan::math::rising_factorial(a,b), std::domain_error);
   EXPECT_THROW(stan::math::rising_factorial(b,b), std::domain_error);
 }
 
@@ -82,4 +81,14 @@ struct rising_factorial_fun {
 TEST(AgradRev, rising_factorial_nan) {
   rising_factorial_fun rising_factorial_;
   test_nan(rising_factorial_,3.0,5.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  using stan::math::value_of;
+  stan::math::var a(1);
+  stan::math::var b(4.0);
+  
+  test::check_varis_on_stack(stan::math::rising_factorial(b, a));
+  test::check_varis_on_stack(stan::math::rising_factorial(b, value_of(a)));
+  test::check_varis_on_stack(stan::math::rising_factorial(value_of(b), a));
 }

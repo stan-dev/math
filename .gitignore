@@ -20,9 +20,11 @@
 /test/**/*_generated_*_test.cpp
 /test/**/*.xml
 /test/dummy.cpp
+/test/**/*.so
 
 # other binary
 *.o
+*.o-*
 *.exe
 *.a
 
@@ -41,6 +43,9 @@
 # temporary emacs files
 *~
 \#*#
+
+# temporary vim files
+.*.swp
 
 # depedencies files
 *.d

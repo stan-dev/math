@@ -5,7 +5,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
     // from input type F to output type T
 
@@ -90,6 +89,5 @@ namespace stan {
 
   }
 }
-
 
 #endif

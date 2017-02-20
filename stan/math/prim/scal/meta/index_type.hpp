@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_META_INDEX_TYPE_HPP
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -19,7 +18,6 @@ namespace stan {
     struct index_type {
     };
 
-
     /**
      * Template class for metaprogram to compute the type of indexes
      * used in a constant container type.
@@ -33,6 +31,5 @@ namespace stan {
 
   }
 }
-
 
 #endif

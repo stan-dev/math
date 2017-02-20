@@ -9,15 +9,30 @@
 namespace stan {
   namespace math {
 
-    // Gradient of the regularized incomplete beta function ibeta(a, b, z)
-    template<typename T>
-    void grad_reg_inc_beta(T& g1, T& g2, T a, T b, T z,
-                           T digammaA, T digammaB, T digammaSum, T betaAB) {
-      using stan::math::inc_beta;
-      using stan::math::grad_inc_beta;
+    /**
+     * Computes the gradients of the regularized incomplete beta
+     * function.  Specifically, this function computes gradients of
+     * <code>ibeta(a, b, z)</code>, with respect to the arguments
+     * <code>a</code> and <code>b</code>.
+     *
+     * @tparam T type of arguments
+     * @param[out] g1 partial derivative of <code>ibeta(a, b, z)</code>
+     * with respect to <code>a</code>
+     * @param[out] g2 partial derivative of <code>ibeta(a, b,
+     * z)</code> with respect to <code>b</code>
+     * @param[in] a a
+     * @param[in] b b
+     * @param[in] z z
+     * @param[in] digammaA the value of <code>digamma(a)</code>
+     * @param[in] digammaB the value of <code>digamma(b)</code>
+     * @param[in] digammaSum the value of <code>digamma(a + b)</code>
+     * @param[in] betaAB the value of <code>beta(a, b)</code>
+     */
+    template <typename T>
+    void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b,
+                           const T& z, const T& digammaA, const T& digammaB,
+                           const T& digammaSum, const T& betaAB) {
       using std::exp;
-      using stan::math::lbeta;
-
       T dBda = 0;
       T dBdb = 0;
       grad_inc_beta(dBda, dBdb, a, b, z);

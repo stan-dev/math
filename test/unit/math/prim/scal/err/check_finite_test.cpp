@@ -7,7 +7,7 @@ TEST(ErrorHandlingScalar,CheckFinite) {
   const char* function = "check_finite";
   double x = 0;
  
-  EXPECT_TRUE(check_finite(function, "x", x))
+  EXPECT_NO_THROW(check_finite(function, "x", x))
     << "check_finite should be true with finite x: " << x;
   x = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error)

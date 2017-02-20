@@ -1,6 +1,6 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 
@@ -176,7 +176,7 @@ TEST(AgradFwdFdim,Double_FvarFvarVar_1stDeriv) {
   using stan::math::var;
   using stan::math::fdim;
   using std::floor;
-
+  
   double x(2.5);
 
   fvar<fvar<var> > y;
@@ -374,5 +374,5 @@ struct fdim_fun {
 
 TEST(AgradFwdFdim, nan) {
   fdim_fun fdim_;
-  test_nan_mix(fdim_,3.0,5.0,false);
+  test_nan_mix(fdim_, 3.0, 5.0, false);
 }

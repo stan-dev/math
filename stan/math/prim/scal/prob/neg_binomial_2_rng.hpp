@@ -20,20 +20,19 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline int
-    neg_binomial_2_rng(const double mu,
-                       const double phi,
+    neg_binomial_2_rng(double mu,
+                       double phi,
                        RNG& rng) {
       using boost::variate_generator;
       using boost::random::negative_binomial_distribution;
       using boost::random::poisson_distribution;
       using boost::gamma_distribution;
 
-      static const char* function("stan::math::neg_binomial_2_rng");
+      static const char* function("neg_binomial_2_rng");
 
       check_positive_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Precision parameter", phi);
@@ -42,8 +41,9 @@ namespace stan {
 
       // gamma_rng params must be positive and finite
       check_positive_finite(function,
-        "Location parameter divided by the precision parameter",
-        mu_div_phi);
+                            "Location parameter divided by the "
+                            "precision parameter",
+                            mu_div_phi);
 
       double rng_from_gamma =
         variate_generator<RNG&, gamma_distribution<> >
@@ -51,18 +51,19 @@ namespace stan {
 
       // same as the constraints for poisson_rng
       check_less(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma, POISSON_MAX_RATE);
+                 "Random number that came from gamma distribution",
+                 rng_from_gamma, POISSON_MAX_RATE);
       check_not_nan(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma);
+                    "Random number that came from gamma distribution",
+                    rng_from_gamma);
       check_nonnegative(function,
-        "Random number that came from gamma distribution",
-        rng_from_gamma);
+                        "Random number that came from gamma distribution",
+                        rng_from_gamma);
 
       return variate_generator<RNG&, poisson_distribution<> >
         (rng, poisson_distribution<>(rng_from_gamma))();
     }
+
   }
 }
 #endif

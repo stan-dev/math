@@ -23,7 +23,7 @@ namespace stan {
       class binary_log_loss_0_vari : public op_v_vari {
       public:
         explicit binary_log_loss_0_vari(vari* avi) :
-          op_v_vari(-stan::math::log1p(-avi->val_), avi) {
+          op_v_vari(-log1p(-avi->val_), avi) {
         }
         void chain() {
           avi_->adj_ += adj_ / (1.0 - avi_->val_);
@@ -34,7 +34,7 @@ namespace stan {
     /**
      * The log loss function for variables (stan).
      *
-     * See stan::math::binary_log_loss() for the double-based version.
+     * See binary_log_loss() for the double-based version.
      *
      * The derivative with respect to the variable \f$\hat{y}\f$ is
      *
@@ -65,7 +65,7 @@ namespace stan {
      * @param y_hat Response variable.
      * @return Log loss of response versus reference value.
      */
-    inline var binary_log_loss(const int y, const stan::math::var& y_hat) {
+    inline var binary_log_loss(int y, const var& y_hat) {
       if (y == 0)
         return var(new binary_log_loss_0_vari(y_hat.vi_));
       else

@@ -16,7 +16,7 @@ namespace stan {
           op_v_vari(std::pow(2.0, avi->val_), avi) {
         }
         void chain() {
-          avi_->adj_ += adj_ * val_ * stan::math::LOG_2;
+          avi_->adj_ += adj_ * val_ * LOG_2;
         }
       };
     }
@@ -24,9 +24,7 @@ namespace stan {
     /**
      * Exponentiation base 2 function for variables (C99).
      *
-     * For non-variable function, see boost::math::exp2().
-     *
-     * The derivatie is
+     * The derivative is
      *
      * \f$\frac{d}{dx} 2^x = (\log 2) 2^x\f$.
      *

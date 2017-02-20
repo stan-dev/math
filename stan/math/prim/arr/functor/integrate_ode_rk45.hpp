@@ -15,7 +15,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -66,7 +65,7 @@ namespace stan {
     std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
     integrate_ode_rk45(const F& f,
                        const std::vector<T1> y0,
-                       const double t0,
+                       double t0,
                        const std::vector<double>& ts,
                        const std::vector<T2>& theta,
                        const std::vector<double>& x,

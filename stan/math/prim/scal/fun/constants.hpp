@@ -5,7 +5,6 @@
 #include <limits>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -105,7 +104,6 @@ namespace stan {
       return SQRT_2;
     }
 
-
     /**
      * Return natural logarithm of ten.
      *
@@ -164,7 +162,6 @@ namespace stan {
 
     const double INV_SQRT_TWO_PI
     = 1.0 / std::sqrt(2.0 * boost::math::constants::pi<double>());
-
 
     const double LOG_PI
     = std::log(boost::math::constants::pi<double>());

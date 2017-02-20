@@ -5,25 +5,25 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/scal/err/check_equal.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 
 namespace stan {
   namespace math {
 
     template <typename T1, typename T2, int R, int C>
     inline Eigen::Matrix <
-    typename boost::math::tools::promote_args<T1, T2>::type,
+      typename boost::math::tools::promote_args<T1, T2>::type,
       Eigen::Dynamic, Eigen::Dynamic>
     quad_form_diag(const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& mat,
                    const Eigen::Matrix<T2, R, C>& vec) {
       using boost::math::tools::promote_args;
-      stan::math::check_vector("quad_form_diag", "vec", vec);
-      stan::math::check_square("quad_form_diag", "mat", mat);
+      check_vector("quad_form_diag", "vec", vec);
+      check_square("quad_form_diag", "mat", mat);
       int size = vec.size();
-      stan::math::check_equal("quad_form_diag", "matrix size", mat.rows(),
-                              size);
+      check_size_match("quad_form_diag", "rows of mat", mat.rows(),
+                       "size of vec", size);
       Eigen::Matrix<typename promote_args<T1, T2>::type,
-        Eigen::Dynamic, Eigen::Dynamic> result(size, size);
+                    Eigen::Dynamic, Eigen::Dynamic> result(size, size);
       for (int i = 0; i < size; i++) {
         result(i, i) = vec(i)*vec(i)*mat(i, i);
         for (int j = i+1; j < size; ++j) {

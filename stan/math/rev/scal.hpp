@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/meta/ad_promotable.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 #include <stan/math/rev/scal/meta/OperandsAndPartials.hpp>
@@ -63,14 +64,17 @@
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/rev/scal/fun/logit.hpp>
 #include <stan/math/rev/scal/fun/log10.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/log1m_exp.hpp>
+#include <stan/math/rev/scal/fun/log1m_inv_logit.hpp>
 #include <stan/math/rev/scal/fun/log1p.hpp>
 #include <stan/math/rev/scal/fun/log1p_exp.hpp>
 #include <stan/math/rev/scal/fun/log2.hpp>
 #include <stan/math/rev/scal/fun/log_diff_exp.hpp>
 #include <stan/math/rev/scal/fun/log_falling_factorial.hpp>
+#include <stan/math/rev/scal/fun/log_inv_logit.hpp>
 #include <stan/math/rev/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/scal/fun/log_sum_exp.hpp>
@@ -88,11 +92,13 @@
 #include <stan/math/rev/scal/fun/sinh.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
+#include <stan/math/rev/scal/fun/squared_distance.hpp>
 #include <stan/math/rev/scal/fun/step.hpp>
 #include <stan/math/rev/scal/fun/tan.hpp>
 #include <stan/math/rev/scal/fun/tanh.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
 #include <stan/math/rev/scal/fun/tgamma.hpp>
+#include <stan/math/rev/scal/fun/trigamma.hpp>
 #include <stan/math/rev/scal/fun/trunc.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>

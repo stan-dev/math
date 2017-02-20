@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/beta.hpp>
 
 TEST(AgradRev,ibeta_vvv) {
@@ -218,4 +218,17 @@ struct ibeta_fun {
 TEST(AgradRev,ibeta_NaN) {
   ibeta_fun ibeta_;
   test_nan(ibeta_,0.6,0.3,0.5,true,false);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.6;
+  AVAR b = 0.3;
+  AVAR c = 0.5;
+  test::check_varis_on_stack(stan::math::ibeta(a, b, c));
+  test::check_varis_on_stack(stan::math::ibeta(a, b, 0.5));
+  test::check_varis_on_stack(stan::math::ibeta(a, 0.3, c));
+  test::check_varis_on_stack(stan::math::ibeta(a, 0.3, 0.5));
+  test::check_varis_on_stack(stan::math::ibeta(0.6, b, c));
+  test::check_varis_on_stack(stan::math::ibeta(0.6, b, 0.5));
+  test::check_varis_on_stack(stan::math::ibeta(0.6, 0.3, c));
 }

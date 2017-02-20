@@ -5,15 +5,14 @@
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <typename F>
     double
     finite_diff_hess_helper(const F& f,
                             const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-                            const int lambda,
-                            const double epsilon = 1e-03) {
+                            int lambda,
+                            double epsilon = 1e-03) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 
@@ -69,7 +68,7 @@ namespace stan {
                         double& fx,
                         Eigen::Matrix<double, -1, 1>& grad_fx,
                         Eigen::Matrix<double, -1, -1>& hess_fx,
-                        const double epsilon = 1e-03) {
+                        double epsilon = 1e-03) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 

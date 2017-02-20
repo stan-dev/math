@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/gamma.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,gamma_q_var_var) {
   AVAR a = 0.5;
@@ -23,24 +23,24 @@ TEST(AgradRev,gamma_q_var_var) {
   EXPECT_THROW(gamma_q(a,b), std::domain_error);
 }
 TEST(AgradRevGammaQ,infLoopInVersion2_0_1_var_var) {
-  // FIXME: causes infinite loop in 2.0.1 gradient calcs
   AVAR a = 8.01006;
   AVAR b = 2.47579e+215;
   AVEC x = createAVEC(a,b);
 
   AVAR f = gamma_q(a,b);
   VEC g;
-  EXPECT_THROW(f.grad(x,g), std::domain_error);
+  f.grad(x,g);
+  EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradRevGammaQ,infLoopInVersion2_0_1_var_double) {
-  // FIXME: causes infinite loop in 2.0.1 gradient calcs
   AVAR a = 8.01006;
   double b = 2.47579e+215;
   AVEC x = createAVEC(a);
 
   AVAR f = gamma_q(a,b);
   VEC g;
-  EXPECT_THROW(f.grad(x,g), std::domain_error);
+  f.grad(x,g);
+  EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradRev,gamma_q_double_var) {
   double a = 0.5;
@@ -90,4 +90,12 @@ struct gamma_q_fun {
 TEST(AgradRev, gamma_q_nan) {
   gamma_q_fun gamma_q_;
   test_nan(gamma_q_,3.0,5.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.5;
+  AVAR b = 1.0;
+  test::check_varis_on_stack(stan::math::gamma_q(a, b));
+  test::check_varis_on_stack(stan::math::gamma_q(a, 1.0));
+  test::check_varis_on_stack(stan::math::gamma_q(0.5, b));
 }

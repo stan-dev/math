@@ -20,11 +20,9 @@ namespace stan {
      *
      * @return The normalized incomplete beta function.
      */
-    inline double ibeta(const double a,
-                        const double b,
-                        const double x) {
-      using stan::math::check_not_nan;
-
+    inline double ibeta(double a,
+                        double b,
+                        double x) {
       check_not_nan("ibeta", "a", a);
       check_not_nan("ibeta", "b", b);
       check_not_nan("ibeta", "x", x);
@@ -33,5 +31,4 @@ namespace stan {
 
   }
 }
-
 #endif

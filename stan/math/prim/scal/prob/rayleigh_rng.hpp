@@ -16,19 +16,16 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline double
-    rayleigh_rng(const double sigma,
+    rayleigh_rng(double sigma,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
 
-      static const char* function("stan::math::rayleigh_rng");
-
-      using stan::math::check_positive;
+      static const char* function("rayleigh_rng");
 
       check_positive(function, "Scale parameter", sigma);
 
@@ -36,6 +33,7 @@ namespace stan {
         uniform_rng(rng, uniform_real_distribution<>(0.0, 1.0));
       return sigma * std::sqrt(-2.0 * std::log(uniform_rng()));
     }
+
   }
 }
 #endif

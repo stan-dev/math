@@ -6,23 +6,21 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
      * Returns 1 if the input's value is NaN and 0 otherwise.
      *
-     * Delegates to <code>stan::math::is_nan(double)</code>.
+     * Delegates to <code>is_nan(double)</code>.
      *
      * @param v Value to test.
      *
      * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
      */
     inline bool is_nan(const var& v) {
-      return stan::math::is_nan(v.val());
+      return is_nan(v.val());
     }
 
   }
 }
-
 #endif

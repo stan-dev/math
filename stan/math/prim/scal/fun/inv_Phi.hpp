@@ -24,8 +24,7 @@ namespace stan {
      * @return Real number
      */
     inline double inv_Phi(double p) {
-      stan::math::check_bounded<double, double, double>("inv_Phi",
-                                        "Probability variable", p, 0, 1);
+      check_bounded("inv_Phi", "Probability variable", p, 0, 1);
 
       if (p < 8e-311)
         return NEGATIVE_INFTY;
@@ -66,13 +65,13 @@ namespace stan {
         x = (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5])
           / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
       } else {
-        double q = std::sqrt(-2.0 * stan::math::log1m(p));
+        double q = std::sqrt(-2.0 * log1m(p));
         x = -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5])
           / ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0);
       }
 
       if (x < 37.6) {  // gradient blows up past here
-        double e = stan::math::Phi(x) - p;
+        double e = Phi(x) - p;
         double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * x * x);
         x -= u / (1.0 + 0.5 * x * u);
       }

@@ -20,20 +20,17 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline double
-    scaled_inv_chi_square_rng(const double nu,
-                              const double s,
+    scaled_inv_chi_square_rng(double nu,
+                              double s,
                               RNG& rng) {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;
 
-      static const char* function("stan::math::scaled_inv_chi_square_rng");
-
-      using stan::math::check_positive_finite;
+      static const char* function("scaled_inv_chi_square_rng");
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_positive_finite(function, "Scale parameter", s);
@@ -42,6 +39,7 @@ namespace stan {
         chi_square_rng(rng, chi_squared_distribution<>(nu));
       return nu * s / chi_square_rng();
     }
+
   }
 }
 #endif

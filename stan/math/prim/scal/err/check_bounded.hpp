@@ -19,10 +19,9 @@ namespace stan {
       // be either scalar or vector
       //
       // throws if y, low, or high is nan
-      template <typename T_y, typename T_low, typename T_high,
-                bool y_is_vec>
+      template <typename T_y, typename T_low, typename T_high, bool y_is_vec>
       struct bounded {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_low& low,
@@ -34,20 +33,19 @@ namespace stan {
           for (size_t n = 0; n < max_size(low, high); n++) {
             if (!(low_vec[n] <= y && y <= high_vec[n])) {
               std::stringstream msg;
-              msg << ", but must be between ";
-              msg << "(" << low_vec[n] << ", " << high_vec[n] << ")";
+              msg << ", but must be in the interval ";
+              msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
               std::string msg_str(msg.str());
               domain_error(function, name, y,
                            "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
 
       template <typename T_y, typename T_low, typename T_high>
       struct bounded<T_y, T_low, T_high, true> {
-        static bool check(const char* function,
+        static void check(const char* function,
                           const char* name,
                           const T_y& y,
                           const T_low& low,
@@ -60,20 +58,19 @@ namespace stan {
           for (size_t n = 0; n < length(y); n++) {
             if (!(low_vec[n] <= get(y, n) && get(y, n) <= high_vec[n])) {
               std::stringstream msg;
-              msg << ", but must be between ";
-              msg << "(" << low_vec[n] << ", " << high_vec[n] << ")";
+              msg << ", but must be in the interval ";
+              msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
               std::string msg_str(msg.str());
               domain_error_vec(function, name, y, n,
                                "is ", msg_str.c_str());
             }
           }
-          return true;
         }
       };
     }
 
     /**
-     * Return <code>true</code> if the value is between the low and high
+     * Check if the value is between the low and high
      * values, inclusively.
      *
      * @tparam T_y Type of value
@@ -86,19 +83,16 @@ namespace stan {
      * @param low Low bound
      * @param high High bound
      *
-     * @return <code>true</code> if the value is between low and high,
-     *   inclusively.
      * @throw <code>std::domain_error</code> otherwise. This also throws
      *   if any of the arguments are NaN.
      */
     template <typename T_y, typename T_low, typename T_high>
-    inline bool check_bounded(const char* function,
+    inline void check_bounded(const char* function,
                               const char* name,
                               const T_y& y,
                               const T_low& low,
                               const T_high& high) {
-      return detail::bounded<T_y, T_low, T_high,
-                             is_vector_like<T_y>::value>
+      detail::bounded<T_y, T_low, T_high, is_vector_like<T_y>::value>
         ::check(function, name, y, low, high);
     }
 

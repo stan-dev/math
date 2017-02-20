@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,inverse_spd_val) {
   using stan::math::inverse_spd;
@@ -89,4 +90,15 @@ TEST(AgradRevMatrix,inverse_spd_inverse_spd_sum) {
       k++;
     }
   }
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::inverse_spd;
+  using stan::math::matrix_v;
+
+  matrix_v a(2,2);
+  a << 2.0, 3.0, 
+    3.0, 7.0;
+
+  test::check_varis_on_stack(stan::math::inverse_spd(a));
 }

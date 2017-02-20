@@ -21,12 +21,8 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C1>
     mdivide_left_tri_low(const Eigen::Matrix<fvar<T>, R1, C1>& A,
                          const Eigen::Matrix<fvar<T>, R2, C2>& b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_left;
-      stan::math::check_square("mdivide_left_tri_low", "A", A);
-      stan::math::check_multiplicable("mdivide_left_tri_low",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_tri_low", "A", A);
+      check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
       Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
       Eigen::Matrix<T, R1, C2> inv_A_mult_deriv_b(A.rows(), b.cols());
@@ -59,7 +55,7 @@ namespace stan {
       Eigen::Matrix<T, R1, C2> deriv(A.rows(), b.cols());
       deriv = inv_A_mult_deriv_b - multiply(inv_A_mult_deriv_A, inv_A_mult_b);
 
-      return stan::math::to_fvar(inv_A_mult_b, deriv);
+      return to_fvar(inv_A_mult_b, deriv);
     }
 
     template<typename T, int R1, int C1, int R2, int C2>
@@ -67,12 +63,8 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C1>
     mdivide_left_tri_low(const Eigen::Matrix<double, R1, C1>& A,
                          const Eigen::Matrix<fvar<T>, R2, C2>& b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_left;
-      stan::math::check_square("mdivide_left_tri_low", "A", A);
-      stan::math::check_multiplicable("mdivide_left_tri_low",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_tri_low", "A", A);
+      check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
       Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
       Eigen::Matrix<T, R1, C2> inv_A_mult_deriv_b(A.rows(), b.cols());
@@ -100,7 +92,7 @@ namespace stan {
       Eigen::Matrix<T, R1, C2> deriv(A.rows(), b.cols());
       deriv = inv_A_mult_deriv_b;
 
-      return stan::math::to_fvar(inv_A_mult_b, deriv);
+      return to_fvar(inv_A_mult_b, deriv);
     }
 
     template<typename T, int R1, int C1, int R2, int C2>
@@ -108,12 +100,8 @@ namespace stan {
     Eigen::Matrix<fvar<T>, R1, C1>
     mdivide_left_tri_low(const Eigen::Matrix<fvar<T>, R1, C1>& A,
                          const Eigen::Matrix<double, R2, C2>& b) {
-      using stan::math::multiply;
-      using stan::math::mdivide_left;
-      stan::math::check_square("mdivide_left_tri_low", "A", A);
-      stan::math::check_multiplicable("mdivide_left_tri_low",
-                                                "A", A,
-                                                "b", b);
+      check_square("mdivide_left_tri_low", "A", A);
+      check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
       Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
       Eigen::Matrix<T, R1, C1> inv_A_mult_deriv_A(A.rows(), A.cols());
@@ -135,8 +123,9 @@ namespace stan {
       Eigen::Matrix<T, R1, C2> deriv(A.rows(), b.cols());
       deriv = -multiply(inv_A_mult_deriv_A, inv_A_mult_b);
 
-      return stan::math::to_fvar(inv_A_mult_b, deriv);
+      return to_fvar(inv_A_mult_b, deriv);
     }
+
   }
 }
 #endif

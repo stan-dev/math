@@ -14,27 +14,27 @@ namespace stan {
     namespace {
       template<int R, int C>
       class determinant_vari : public vari {
-        int _rows;
-        int _cols;
+        int rows_;
+        int cols_;
         double* A_;
-        vari** _adjARef;
+        vari** adjARef_;
 
       public:
         explicit determinant_vari(const Eigen::Matrix<var, R, C> &A)
           : vari(determinant_vari_calc(A)),
-            _rows(A.rows()),
-            _cols(A.cols()),
+            rows_(A.rows()),
+            cols_(A.cols()),
             A_(reinterpret_cast<double*>
-               (stan::math::ChainableStack::memalloc_
+               (ChainableStack::memalloc_
                 .alloc(sizeof(double) * A.rows() * A.cols()))),
-            _adjARef(reinterpret_cast<vari**>
-                     (stan::math::ChainableStack::memalloc_
+            adjARef_(reinterpret_cast<vari**>
+                     (ChainableStack::memalloc_
                       .alloc(sizeof(vari*) * A.rows() * A.cols()))) {
           size_t pos = 0;
-          for (size_type j = 0; j < _cols; j++) {
-            for (size_type i = 0; i < _rows; i++) {
+          for (size_type j = 0; j < cols_; j++) {
+            for (size_type i = 0; i < rows_; i++) {
               A_[pos] = A(i, j).val();
-              _adjARef[pos++] = A(i, j).vi_;
+              adjARef_[pos++] = A(i, j).vi_;
             }
           }
         }
@@ -49,13 +49,13 @@ namespace stan {
         virtual void chain() {
           using Eigen::Matrix;
           using Eigen::Map;
-          Matrix<double, R, C> adjA(_rows, _cols);
+          Matrix<double, R, C> adjA(rows_, cols_);
           adjA = (adj_ * val_) *
-            Map<Matrix<double, R, C> >(A_, _rows, _cols).inverse().transpose();
+            Map<Matrix<double, R, C> >(A_, rows_, cols_).inverse().transpose();
           size_t pos = 0;
-          for (size_type j = 0; j < _cols; j++) {
-            for (size_type i = 0; i < _rows; i++) {
-              _adjARef[pos++]->adj_ += adjA(i, j);
+          for (size_type j = 0; j < cols_; j++) {
+            for (size_type i = 0; i < rows_; i++) {
+              adjARef_[pos++]->adj_ += adjA(i, j);
             }
           }
         }
@@ -64,7 +64,7 @@ namespace stan {
 
     template <int R, int C>
     inline var determinant(const Eigen::Matrix<var, R, C>& m) {
-      stan::math::check_square("determinant", "m", m);
+      check_square("determinant", "m", m);
       return var(new determinant_vari<R, C>(m));
     }
 

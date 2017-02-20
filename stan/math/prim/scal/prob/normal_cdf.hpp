@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -16,9 +17,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
-
 namespace stan {
-
   namespace math {
 
     /**
@@ -38,21 +37,14 @@ namespace stan {
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const char* function("stan::math::normal_cdf");
+      static const char* function("normal_cdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      using stan::math::check_positive;
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::value_of;
-      using stan::math::check_consistent_sizes;
-      using stan::math::INV_SQRT_2;
       using std::exp;
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -67,15 +59,14 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
-      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / stan::math::pi());
+      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -93,16 +84,14 @@ namespace stan {
         else
           cdf_ = 0.5 * (1.0 + erf(scaled_diff));
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
           const T_partials_return rep_deriv
-            = scaled_diff < -37.5 * INV_SQRT_2
-                     ? 0.0
-                     : SQRT_TWO_OVER_PI * 0.5
-                     * exp(-scaled_diff * scaled_diff) / cdf_ / sigma_dbl;
+            = (scaled_diff < -37.5 * INV_SQRT_2)
+            ? 0.0
+            : SQRT_TWO_OVER_PI * 0.5
+            * exp(-scaled_diff * scaled_diff) / cdf_ / sigma_dbl;
           if (!is_constant_struct<T_y>::value)
             operands_and_partials.d_x1[n] += rep_deriv;
           if (!is_constant_struct<T_loc>::value)
@@ -124,9 +113,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif

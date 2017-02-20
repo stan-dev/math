@@ -1,6 +1,6 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <cmath>
 
@@ -61,4 +61,9 @@ struct cosh_fun {
 TEST(AgradRev,cosh_NaN) {
   cosh_fun cosh_;
   test_nan(cosh_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.68;
+  test::check_varis_on_stack(stan::math::cosh(a));
 }

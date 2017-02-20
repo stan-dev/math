@@ -2,11 +2,12 @@
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
 #include <stan/math/prim/scal/meta/likely.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <ostream>
 
 namespace stan {
-
   namespace math {
 
     template <typename T>
@@ -21,122 +22,98 @@ namespace stan {
 
       fvar() : val_(0.0), d_(0.0) { }
 
-      fvar(const fvar<T>& x)
-        : val_(x.val_), d_(x.d_) {
+      fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {  }
+
+      fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
+        if (is_nan(v))
+          d_ = v;
+      }
+
+      template <typename V>
+      fvar(const V& v,
+           typename boost::enable_if_c<ad_promotable<V, T>::value>::type*
+           dummy = 0)
+        : val_(v), d_(0.0) {
+        if (is_nan(v))
+          d_ = v;
       }
 
       // TV and TD must be assignable to T
       template <typename TV, typename TD>
       fvar(const TV& val, const TD& deriv) : val_(val), d_(deriv) {
-        if (unlikely(boost::math::isnan(val)))
+        if (unlikely(is_nan(val)))
           d_ = val;
       }
 
-      // TV must be assignable to T
-      template <typename TV>
-      fvar(const TV& val)  // NOLINT
-        : val_(val), d_(0.0) {
-        if (unlikely(boost::math::isnan(val)))
-          d_ = val;
-      }
-
-
-      inline
-      fvar<T>&
-      operator+=(const fvar<T>& x2) {
+      inline fvar<T>& operator+=(const fvar<T>& x2) {
         val_ += x2.val_;
         d_ += x2.d_;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator+=(double x2) {
+      inline fvar<T>& operator+=(double x2) {
         val_ += x2;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator-=(const fvar<T>& x2) {
+      inline fvar<T>& operator-=(const fvar<T>& x2) {
         val_ -= x2.val_;
         d_ -= x2.d_;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator-=(double x2) {
+      inline fvar<T>& operator-=(double x2) {
         val_ -= x2;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator*=(const fvar<T>& x2) {
+      inline fvar<T>& operator*=(const fvar<T>& x2) {
         d_ = d_ * x2.val_ + val_ * x2.d_;
         val_ *= x2.val_;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator*=(double x2) {
+      inline fvar<T>& operator*=(double x2) {
         val_ *= x2;
         d_ *= x2;
         return *this;
       }
 
-      // SPEEDUP: specialize for T2 == var with d_ function
-
-      inline
-      fvar<T>&
-      operator/=(const fvar<T>& x2) {
+      inline fvar<T>& operator/=(const fvar<T>& x2) {
         d_ = (d_ * x2.val_ - val_ * x2.d_) / (x2.val_ * x2.val_);
         val_ /= x2.val_;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator/=(double x2) {
+      inline fvar<T>& operator/=(double x2) {
         val_ /= x2;
         d_ /= x2;
         return *this;
       }
 
-      inline
-      fvar<T>&
-      operator++() {
+      inline fvar<T>& operator++() {
         ++val_;
         return *this;
       }
 
-      inline
-      fvar<T>
-      operator++(int /*dummy*/) {
+      inline fvar<T> operator++(int /*dummy*/) {
         fvar<T> result(val_, d_);
         ++val_;
         return result;
       }
 
-      inline
-      fvar<T>&
-      operator--() {
+      inline fvar<T>& operator--() {
         --val_;
         return *this;
       }
-      inline
-      fvar<T>
-      operator--(int /*dummy*/) {
+
+      inline fvar<T> operator--(int /*dummy*/) {
         fvar<T> result(val_, d_);
         --val_;
         return result;
       }
 
-      friend
-      std::ostream&
-      operator<<(std::ostream& os, const fvar<T>& v) {
+      friend std::ostream& operator<<(std::ostream& os, const fvar<T>& v) {
         return os << v.val_;
       }
     };

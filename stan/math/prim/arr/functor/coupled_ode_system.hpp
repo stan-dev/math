@@ -15,7 +15,7 @@ namespace stan {
      * This template class declaration should not be instantiated
      * directly --- it is just here to serve as a base for its
      * specializations, some of which are defined in namespace
-     * <code>stan::aggrad</code>.
+     * <code>stan::math</code>.
      *
      * @tparam F the functor for the base ode system
      * @tparam T1 type of the initial state
@@ -96,9 +96,9 @@ namespace stan {
                       std::vector<double>& dy_dt,
                       double t) {
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        stan::math::check_size_match("coupled_ode_system",
-                                     "y", y.size(),
-                                     "dy_dt", dy_dt.size());
+        check_size_match("coupled_ode_system",
+                         "y", y.size(),
+                         "dy_dt", dy_dt.size());
       }
 
       /**
@@ -144,7 +144,7 @@ namespace stan {
         return y;
       }
     };
-  }  // math
-}  // stan
 
+  }
+}
 #endif

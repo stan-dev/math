@@ -20,25 +20,31 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 
-
 namespace stan {
-
   namespace math {
 
+    /**
+     * Return a pseudorandom Binomial random variable for the given population
+     * size and chance of success parameters using the specified random number
+     * generator.
+     *
+     * @tparam RNG class of rng
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @param rng random number generator
+     * @return Binomial random variate
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     */
     template <class RNG>
     inline int
-    binomial_rng(const int N,
-                 const double theta,
+    binomial_rng(int N,
+                 double theta,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::binomial_distribution;
 
-      static const char* function("stan::math::binomial_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_less_or_equal;
-      using stan::math::check_greater_or_equal;
-      using stan::math::check_nonnegative;
+      static const char* function("binomial_rng");
 
       check_nonnegative(function, "Population size parameter", N);
       check_finite(function, "Probability parameter", theta);

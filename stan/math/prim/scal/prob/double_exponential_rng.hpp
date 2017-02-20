@@ -15,23 +15,30 @@
 #include <stan/math/prim/scal/fun/sign.hpp>
 
 namespace stan {
-
   namespace math {
 
+    /**
+     * Return a pseudorandom double exponential variate with the given location
+     * and scale using the specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param mu location parameter
+     * @param sigma positive scale parameter
+     * @param rng random number generator
+     * @return double exponential random variate
+     * @throw std::domain_error if mu is infinite or sigma is nonpositive
+     */
     template <class RNG>
     inline double
-    double_exponential_rng(const double mu,
-                           const double sigma,
+    double_exponential_rng(double mu,
+                           double sigma,
                            RNG& rng) {
-      static const char* function("stan::math::double_exponential_rng");
+      static const char* function("double_exponential_rng");
 
       using boost::variate_generator;
       using boost::random::uniform_01;
       using std::log;
       using std::abs;
-      using stan::math::check_finite;
-      using stan::math::check_positive_finite;
-      using stan::math::log1m;
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

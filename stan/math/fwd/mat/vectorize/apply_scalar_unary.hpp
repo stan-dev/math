@@ -1,11 +1,10 @@
-#ifndef STAN_MATH_FWD_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
-#define STAN_MATH_FWD_MAT_VECTORIZE_APPLY_UNARY_SCALAR_HPP
+#ifndef STAN_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -19,12 +18,12 @@ namespace stan {
      * autodiff variable.
      */
     template <typename F, typename T>
-    struct apply_scalar_unary<F, stan::math::fvar<T> > {
+    struct apply_scalar_unary<F, fvar<T> > {
       /**
        * Function return type, which is same as the argument type for
        * the function, <code>fvar&lt;T&gt;</code>.
        */
-      typedef stan::math::fvar<T> return_t;
+      typedef fvar<T> return_t;
 
       /**
        * Apply the function specified by F to the specified argument.
@@ -32,7 +31,7 @@ namespace stan {
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
-      static inline return_t apply(const stan::math::fvar<T>& x) {
+      static inline return_t apply(const fvar<T>& x) {
         return F::fun(x);
       }
     };

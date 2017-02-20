@@ -8,10 +8,9 @@
 #include <string>
 
 namespace stan {
-
   namespace math {
     /**
-     * Return <code>true</code> if the specified matrix is lower
+     * Check if the specified matrix is lower
      * triangular.
      *
      * A matrix x is not lower triangular if there is a non-zero entry
@@ -24,18 +23,15 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param y Matrix to test
      *
-     * @return <code>true</code> if the matrix is lower triangular.
      * @throw <code>std::domain_error</code> if the matrix is not
      *   lower triangular or if any element in the upper triangular
      *   portion is NaN
      */
     template <typename T_y>
-    inline bool
-    check_lower_triangular(
-      const char* function,
-      const char* name,
-      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y
-    ) {
+    inline void
+    check_lower_triangular(const char* function,
+                           const char* name,
+                  const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       for (int n = 1; n < y.cols(); ++n) {
         for (int m = 0; m < n && m < y.rows(); ++m) {
           if (y(m, n) != 0) {
@@ -46,11 +42,9 @@ namespace stan {
             std::string msg_str(msg.str());
             domain_error(function, name, y(m, n),
                          msg_str.c_str());
-            return false;
           }
         }
       }
-      return true;
     }
 
   }

@@ -12,8 +12,8 @@ namespace stan {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     eigenvectors_sym(const Eigen::Matrix
                      <T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-      stan::math::check_nonzero_size("eigenvectors_sym", "m", m);
-      stan::math::check_symmetric("eigenvalues_sym", "m", m);
+      check_nonzero_size("eigenvectors_sym", "m", m);
+      check_symmetric("eigenvalues_sym", "m", m);
 
       Eigen::SelfAdjointEigenSolver
         <Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >

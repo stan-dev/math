@@ -12,21 +12,18 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
-
 namespace stan {
   namespace math {
 
     template <class RNG>
     inline double
-    pareto_rng(const double y_min,
-               const double alpha,
+    pareto_rng(double y_min,
+               double alpha,
                RNG& rng) {
       using boost::variate_generator;
       using boost::exponential_distribution;
 
-      static const char* function("stan::math::pareto_rng");
-
-      using stan::math::check_positive_finite;
+      static const char* function("pareto_rng");
 
       check_positive_finite(function, "Scale parameter", y_min);
       check_positive_finite(function, "Shape parameter", alpha);
@@ -35,6 +32,7 @@ namespace stan {
         exp_rng(rng, exponential_distribution<>(alpha));
       return y_min * std::exp(exp_rng());
     }
+
   }
 }
 #endif

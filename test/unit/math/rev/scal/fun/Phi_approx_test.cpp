@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
 
 TEST(AgradRev, Phi_approx) {
@@ -53,4 +53,9 @@ struct Phi_approx_fun {
 TEST(AgradRev,Phi_approx_NaN) {
   Phi_approx_fun Phi_approx_;
   test_nan(Phi_approx_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var y(0);
+  test::check_varis_on_stack(stan::math::Phi_approx(y));
 }

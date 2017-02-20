@@ -14,29 +14,25 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline double
-    skew_normal_rng(const double mu,
-                    const double sigma,
-                    const double alpha,
+    skew_normal_rng(double mu,
+                    double sigma,
+                    double alpha,
                     RNG& rng) {
       boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 
-      static const char* function("stan::math::skew_normal_rng");
-
-      using stan::math::check_positive;
-      using stan::math::check_finite;
+      static const char* function("skew_normal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Scale parameter", sigma);
 
-      return quantile(dist, stan::math::uniform_rng(0.0, 1.0, rng));
+      return quantile(dist, uniform_rng(0.0, 1.0, rng));
     }
+
   }
 }
 #endif
-

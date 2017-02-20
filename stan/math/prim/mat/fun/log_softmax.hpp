@@ -11,7 +11,7 @@
 namespace stan {
   namespace math {
 
-   /**
+    /**
      * Return the natural logarithm of the softmax of the specified
      * vector.
      *
@@ -44,21 +44,12 @@ namespace stan {
     log_softmax(const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
       using std::exp;
       using std::log;
-      using stan::math::log_sum_exp;
-      stan::math::check_nonzero_size("log_softmax", "v", v);
+      check_nonzero_size("log_softmax", "v", v);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
       T z = log_sum_exp(v);
       for (int i = 0; i < v.size(); ++i)
         theta(i) = v(i) - z;
       return theta;
-      // T sum(0.0);
-      // T max_v = v.maxCoeff();
-      // for (int i = 0; i < v.size(); ++i)
-      //   sum += exp(v(i) - max_v); // log_sum_exp trick
-      // T log_sum = log(sum);
-      // for (int i = 0; i < v.size(); ++i)
-      //   theta(i) = (v(i) - max_v) - log_sum;
-      // return theta;
     }
 
   }

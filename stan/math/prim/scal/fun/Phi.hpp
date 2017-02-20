@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <boost/math/special_functions/erf.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -26,13 +25,7 @@ namespace stan {
      * @param x Argument.
      * @return Probability random sample is less than or equal to argument.
      */
-    template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    Phi(const T x) {
-      // overridden in fvar and var, so can hard-code boost versions
-      // here for scalars only
-      using stan::math::check_not_nan;
-
+    inline double Phi(double x) {
       check_not_nan("Phi",  "x", x);
       if (x < -37.5)
         return 0;
@@ -46,5 +39,4 @@ namespace stan {
 
   }
 }
-
 #endif

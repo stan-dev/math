@@ -21,16 +21,13 @@ namespace stan {
 
     template <class RNG>
     inline double
-    logistic_rng(const double mu,
-                 const double sigma,
+    logistic_rng(double mu,
+                 double sigma,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::random::exponential_distribution;
 
-      static const char* function("stan::math::logistic_rng");
-
-      using stan::math::check_positive_finite;
-      using stan::math::check_finite;
+      static const char* function("logistic_rng");
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -39,6 +36,7 @@ namespace stan {
         exp_rng(rng, exponential_distribution<>(1));
       return mu - sigma * std::log(exp_rng() / exp_rng());
     }
+
   }
 }
 #endif

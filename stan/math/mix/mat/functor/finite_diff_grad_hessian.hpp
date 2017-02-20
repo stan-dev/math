@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -46,7 +45,7 @@ namespace stan {
                              Eigen::Matrix<double, -1, -1>& hess,
                              std::vector<Eigen::Matrix<double, -1, -1> >&
                              grad_hess_fx,
-                             const double epsilon = 1e-04) {
+                             double epsilon = 1e-04) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
 

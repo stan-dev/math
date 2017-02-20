@@ -5,9 +5,7 @@
 #include <stdexcept>
 
 namespace stan {
-
   namespace math {
-
 
     /**
      * Primary template class for container view of
@@ -17,31 +15,30 @@ namespace stan {
      * @tparam T1 type of view.
      * @tparam T2 type of scalar returned by view.
      */
-
     template <typename T1, typename T2>
     class container_view {
-      public:
+    public:
       /**
        * Constructor
        *
        * @param x object from which size is to be inferred
        * @param y underlying array 
        */
-        container_view(const T1& x, T2* y) : y_(y) { }
+      container_view(const T1& x, T2* y) : y_(y) { }
 
-        /**
-         * operator[](int i) returns reference to view, 
-         * indexed by i
-         * Specialization handle appropriate broadcasting
-         * if size of x is 1
-         *
-         * @param i index
-         */
-        T2& operator[](int i) {
-          return y_[0];
-        }
-      private:
-        T2* y_;
+      /**
+       * operator[](int i) returns reference to view, 
+       * indexed by i
+       * Specialization handle appropriate broadcasting
+       * if size of x is 1
+       *
+       * @param i index
+       */
+      T2& operator[](int i) {
+        return y_[0];
+      }
+    private:
+      T2* y_;
     };
 
     /**
@@ -61,27 +58,27 @@ namespace stan {
      */
     template <typename T2>
     class container_view<dummy, T2> {
-      public:
-        typedef typename stan::scalar_type<T2>::type scalar_t;
-        template <typename T1>
+    public:
+      typedef typename stan::scalar_type<T2>::type scalar_t;
+      template <typename T1>
 
-        /**
-         * Nothing initialized
-         *
-         * @param x input object
-         * @param y underlying array 
-         */
-        container_view(const T1& x, scalar_t* y) { }
+      /**
+       * Nothing initialized
+       *
+       * @param x input object
+       * @param y underlying array 
+       */
+      container_view(const T1& x, scalar_t* y) { }
 
-        /**
-         * operator[](int i) 
-         * throws exception
-         *
-         * @param n index
-         */
-        scalar_t operator[](int n) const {
-          throw std::out_of_range("can't access dummy elements.");
-        }
+      /**
+       * operator[](int i)
+       *
+       * @param n index
+       * @throw std::out_of_range regardless of the input.
+       */
+      scalar_t operator[](int n) const {
+        throw std::out_of_range("can't access dummy elements.");
+      }
     };
   }
 }

@@ -4,7 +4,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -18,8 +17,8 @@ namespace stan {
      * @return Input transformed to be positive.
      */
     template <typename T>
-    inline
-    T positive_constrain(const T x) {
+    inline T positive_constrain(const T x) {
+      using std::exp;
       return exp(x);
     }
 
@@ -40,12 +39,11 @@ namespace stan {
      * @tparam T Type of scalar.
      */
     template <typename T>
-    inline
-    T positive_constrain(const T x, T& lp) {
+    inline T positive_constrain(const T x, T& lp) {
+      using std::exp;
       lp += x;
       return exp(x);
     }
-
 
   }
 

@@ -17,7 +17,7 @@ namespace stan {
           exp_val_(avi->val_) {
         }
         void chain() {
-          avi_->adj_ += adj_ / (stan::math::LOG_10 * exp_val_);
+          avi_->adj_ += adj_ / (LOG_10 * exp_val_);
         }
       };
     }

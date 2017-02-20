@@ -16,7 +16,7 @@ namespace stan {
     inline
     Eigen::Matrix<T, R, C>
     inverse(const Eigen::Matrix<T, R, C>& m) {
-      stan::math::check_square("inverse", "m", m);
+      check_square("inverse", "m", m);
       return m.inverse();
     }
 

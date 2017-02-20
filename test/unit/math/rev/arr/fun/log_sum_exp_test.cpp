@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/arr/fun/util.hpp>
+#include <test/unit/math/rev/arr/util.hpp>
 
 TEST(AgradRev,log_sum_exp_vector) {
   // simple test
@@ -141,4 +142,11 @@ TEST(AgradRev, log_sum_exp_vec_3) {
   EXPECT_FLOAT_EQ(g[0],g2[0]);
   EXPECT_FLOAT_EQ(g[1],g2[1]);
   EXPECT_FLOAT_EQ(g[2],g2[2]);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  std::vector<stan::math::var> x;
+  x.push_back(5.0);
+  x.push_back(2.0);
+  test::check_varis_on_stack(stan::math::log_sum_exp(x));
 }

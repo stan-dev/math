@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 
 #include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -21,23 +20,15 @@
 #include <cstdlib>
 
 namespace stan {
-
   namespace math {
 
     template <class RNG>
     inline Eigen::VectorXd
-    multi_student_t_rng(
-      const double nu,
-      const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
-      RNG& rng
-    ) {
-      static const char* function("stan::math::multi_student_t_rng");
-
-      using stan::math::check_finite;
-      using stan::math::check_not_nan;
-      using stan::math::check_symmetric;
-      using stan::math::check_positive;
+    multi_student_t_rng(double nu,
+          const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+          const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
+          RNG& rng) {
+      static const char* function("multi_student_t_rng");
 
       check_finite(function, "Location parameter", mu);
       check_symmetric(function, "Scale parameter", s);
@@ -47,9 +38,10 @@ namespace stan {
       Eigen::VectorXd z(s.cols());
       z.setZero();
 
-      double w = stan::math::inv_gamma_rng(nu / 2, nu / 2, rng);
-      return mu + std::sqrt(w) * stan::math::multi_normal_rng(z, s, rng);
+      double w = inv_gamma_rng(nu / 2, nu / 2, rng);
+      return mu + std::sqrt(w) * multi_normal_rng(z, s, rng);
     }
+
   }
 }
 #endif

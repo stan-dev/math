@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace stan {
-
   namespace math {
 
     /**
@@ -40,7 +39,6 @@ namespace stan {
                const Eigen::Matrix<T2, R2, C2>& B) {
       using Eigen::Dynamic;
       using Eigen::Matrix;
-      using stan::math::check_size_match;
 
       int Arows = A.rows();
       int Brows = B.rows();
@@ -97,7 +95,6 @@ namespace stan {
         result(j) = B(i);
       return result;
     }
-
 
     /**
      * Return the result of appending the second argument matrix after the
@@ -167,7 +164,6 @@ namespace stan {
       return result;
     }
 
-
     /**
      * Return the result of stacking an scalar on top of the
      * a row vector, with the result being a row vector.
@@ -196,7 +192,6 @@ namespace stan {
       result << A, B.template cast<return_type>();
       return result;
     }
-
 
     /**
      * Return the result of stacking a row vector on top of the

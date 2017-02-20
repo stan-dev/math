@@ -1,4 +1,4 @@
-N_TESTS = 100 # override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
+N_TESTS ?= 100 # override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
 
 ##
 # LIBGTEST is the google test library
@@ -43,6 +43,20 @@ test/%_test.d : test/%_test.cpp
 	$(CC) $(CFLAGS) -O$O $(CFLAGS_GTEST) $(TARGET_ARCH) -MM $< > $@.$$$$; \
 	sed -e 's,\($(notdir $*)\)\(_test\)\.o[ :]*,$(dir $@)\1_test\$(EXE) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
+
+
+##
+# Adding a test for multiple translation units. If this fails,
+# a new function is probably missing an inline
+##
+
+test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
+	$(COMPILE.c) -O$O $< $(OUTPUT_OPTION)
+
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
+	$(CC) -shared $(OUTPUT_OPTION) $^
+
+test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
 
 

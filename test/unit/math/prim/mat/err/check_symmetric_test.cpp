@@ -6,8 +6,8 @@ TEST(ErrorHandlingMatrix, checkSymmetric) {
   
   y.resize(2,2);
   y << 1, 3, 3, 1;
-  EXPECT_TRUE(stan::math::check_symmetric("checkSymmetric",
-                                                    "y", y));
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric",
+                                              "y", y));
 
   y(0,1) = 3.5;
   EXPECT_THROW(stan::math::check_symmetric("checkSymmetric", "y", y),
@@ -42,16 +42,16 @@ TEST(ErrorHandlingMatrix, checkSymmetric_nan) {
   y.resize(2,2);
   y << 1, nan, 3, 1;
   EXPECT_THROW(stan::math::check_symmetric("checkSymmetric",
-                                                     "y", y),
+                                           "y", y),
                std::domain_error);
   y << nan, 3, 3, 1;
-  EXPECT_TRUE(stan::math::check_symmetric("checkSymmetric",
-                                                    "y", y));
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric",
+                                              "y", y));
 
   y.resize(1,1);
   y << nan;
-  EXPECT_TRUE(stan::math::check_symmetric("checkSymmetric",
-                                                    "y", y));
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric",
+                                              "y", y));
 }
 
 TEST(ErrorHandlingMatrix, checkSymmetric_non_square) {
@@ -59,7 +59,7 @@ TEST(ErrorHandlingMatrix, checkSymmetric_non_square) {
   
   y.resize(2,3);
   EXPECT_THROW(stan::math::check_symmetric("checkSymmetric",
-                                                     "y", y),
+                                           "y", y),
                std::invalid_argument);
 
 }

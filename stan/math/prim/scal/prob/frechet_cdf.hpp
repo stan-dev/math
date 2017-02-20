@@ -14,7 +14,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -23,7 +23,6 @@
 #include <cmath>
 
 namespace stan {
-
   namespace math {
 
     template <typename T_y, typename T_shape, typename T_scale>
@@ -32,17 +31,12 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("stan::math::frechet_cdf");
+      static const char* function("frechet_cdf");
 
-      using stan::math::check_positive_finite;
-      using stan::math::check_positive;
-      using stan::math::check_nonnegative;
       using boost::math::tools::promote_args;
-      using stan::math::value_of;
       using std::log;
       using std::exp;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(alpha)
             && stan::length(sigma)))
@@ -56,9 +50,9 @@ namespace stan {
       OperandsAndPartials<T_y, T_shape, T_scale>
         operands_and_partials(y, alpha, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
       size_t N = max_size(y, sigma, alpha);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -67,10 +61,8 @@ namespace stan {
         const T_partials_return pow_ = pow(sigma_dbl / y_dbl, alpha_dbl);
         const T_partials_return cdf_ = exp(-pow_);
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += pow_ * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)
@@ -91,9 +83,9 @@ namespace stan {
         for (size_t n = 0; n < stan::length(sigma); ++n)
           operands_and_partials.d_x3[n] *= cdf;
       }
-
       return operands_and_partials.value(cdf);
     }
+
   }
 }
 #endif
