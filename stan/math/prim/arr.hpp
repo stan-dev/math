@@ -16,6 +16,7 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 
 #include <stan/math/prim/arr/fun/array_builder.hpp>
+#include <stan/math/prim/arr/fun/common_type.hpp>
 #include <stan/math/prim/arr/fun/dot.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
 #include <stan/math/prim/arr/fun/fill.hpp>

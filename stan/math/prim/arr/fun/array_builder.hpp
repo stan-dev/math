@@ -11,6 +11,8 @@ namespace stan {
      * Structure for building up arrays in an expression (rather than
      * in statements) using an argumentchaining add() method and
      * a getter method array() to return the result.
+     *
+     * @tparam T1 type of arg1
      */
     template <typename T>
     struct array_builder {

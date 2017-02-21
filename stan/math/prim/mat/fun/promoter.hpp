@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_PROMOTER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_PROMOTER_HPP
 
+#include <stan/math/prim/arr/fun/promoter.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
