@@ -1,7 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat.hpp>  // probably don't need this include
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/fun/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver.hpp>
 
 // will want to remove these eventually
 using Eigen::VectorXd;

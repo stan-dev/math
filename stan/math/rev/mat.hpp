@@ -18,7 +18,7 @@
 #include <stan/math/rev/mat/fun/crossprod.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>
-#include <stan/math/rev/mat/fun/dogleg.hpp>
+// #include <stan/math/rev/mat/fun/dogleg.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
@@ -52,6 +52,7 @@
 #include <stan/math/rev/mat/fun/trace_quad_form.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/variance.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
