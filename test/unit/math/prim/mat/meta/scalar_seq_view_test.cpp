@@ -22,11 +22,3 @@ TEST(MetaTraits, ScalarSeqViewVector) {
 TEST(MetaTraits, ScalarSeqViewRowVector) {
   expect_scalar_seq_view_values(Eigen::RowVectorXd(4));
 }
-
-TEST(MetaTraits, ScalarSeqViewMatrix) {
-  expect_scalar_seq_view_values(Eigen::MatrixXd(4, 1));
-}
-
-TEST(MetaTraits, ScalarSeqViewMatrixSquare) {
-  expect_scalar_seq_view_values(Eigen::MatrixXd(2, 2));
-}
