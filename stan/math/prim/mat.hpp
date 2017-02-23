@@ -52,6 +52,7 @@
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
+#include <stan/math/prim/mat/fun/array_builder.hpp>
 #include <stan/math/prim/mat/fun/asin.hpp>
 #include <stan/math/prim/mat/fun/asinh.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
@@ -171,10 +172,10 @@
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>
-#include <stan/math/prim/mat/fun/promoter.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/promote_scalar.hpp>
 #include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
+#include <stan/math/prim/mat/fun/promoter.hpp>
 #include <stan/math/prim/mat/fun/qr_Q.hpp>
 #include <stan/math/prim/mat/fun/qr_R.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>

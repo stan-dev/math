@@ -69,6 +69,36 @@ namespace stan {
     }
 
 
+    // input is Eigen Row vector - Eigen::Matrix<T, 1, Eigen::Dynamic>
+    // T is double, fvar, or var
+    /**
+     * Returns a matrix representation of the Eigen vector of standard vectors
+     * with the same dimensions and indexing order.
+     *
+     * @tparam T type of the scalar
+     * @param vec Eigen vector of vectors of scalar values
+     * @return the matrix representation of the input
+     */
+    template <typename T>
+    inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+    to_matrix(const std::vector< Eigen::Matrix<T, 1, Eigen::Dynamic> >& vec) {
+      size_t R = vec.size();
+      if (R != 0) {
+        size_t C = vec[0].size();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(R, C);
+        T* datap = result.data();
+        for (size_t i=0, ij=0; i < C; i++)
+          for (size_t j=0; j < R; j++, ij++)
+            datap[ij] = vec[j][i];
+        return result;
+      } else {
+        return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> (0, 0);
+      }
+    }
+
+
+
+    
     /**
      * Returns a matrix representation of the standard vector of standard vectors
      * of integers with the same dimensions and indexing order.

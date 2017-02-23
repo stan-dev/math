@@ -1,6 +1,7 @@
 #ifndef TEST__UNIT__UTIL_HPP
 #define TEST__UNIT__UTIL_HPP
 
+#include <boost/typeof/typeof.hpp>
 #include <boost/type_traits.hpp>
 #include <gtest/gtest.h>
 #include <string>
