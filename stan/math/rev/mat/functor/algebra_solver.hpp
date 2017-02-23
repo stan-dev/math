@@ -9,7 +9,6 @@
 #include <stan/math/rev/core.hpp>
 #include <iostream>
 
-
 namespace stan {
   namespace math {
 
@@ -84,7 +83,7 @@ namespace stan {
           solver.solve(theta_d);
 
           for (int i = 0; i < theta_d.rows(); i++)
-            theta_(i) = var(new vari(theta_d(i)));
+            theta_(i) = var(new vari(theta_d(i), false));  // change
         }
 
       public:
@@ -189,7 +188,6 @@ namespace stan {
                    const std::vector<int>& dat_int) {
       algebra_solver_vari<F1, var> *baseVari
         = new algebra_solver_vari<F1, var>(f1, x, parms, dat, dat_int);
-
       return baseVari->impl_->theta_;
     }
   }
