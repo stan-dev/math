@@ -46,7 +46,6 @@ namespace stan {
         return u;
       }
     };
-
       
   }
 }

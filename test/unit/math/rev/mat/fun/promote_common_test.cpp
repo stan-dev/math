@@ -2,8 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-TEST(AgradRevMatrix, promoter) {
-  using stan::math::promoter;
+TEST(AgradRevMatrix, promote_common) {
   using stan::math::promote_common;
 
   using stan::math::var;
