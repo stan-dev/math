@@ -32,12 +32,11 @@ namespace stan {
         x_.push_back(t);
         return *this;
       }
-      
+
       std::vector<Eigen::Matrix<T, R, C> > array() {
         return x_;
       }
     };
-
 
   }
 }

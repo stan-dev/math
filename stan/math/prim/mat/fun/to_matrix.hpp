@@ -96,9 +96,6 @@ namespace stan {
       }
     }
 
-
-
-    
     /**
      * Returns a matrix representation of the standard vector of standard vectors
      * of integers with the same dimensions and indexing order.

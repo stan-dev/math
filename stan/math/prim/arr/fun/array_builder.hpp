@@ -25,7 +25,7 @@ namespace stan {
         x_.push_back(t);
         return *this;
       }
-      
+
       std::vector<T> array() {
         return x_;
       }
