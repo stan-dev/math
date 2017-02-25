@@ -69,8 +69,6 @@ namespace stan {
     }
 
 
-    // input is Eigen Row vector - Eigen::Matrix<T, 1, Eigen::Dynamic>
-    // T is double, fvar, or var
     /**
      * Returns a matrix representation of the Eigen vector of standard vectors
      * with the same dimensions and indexing order.
