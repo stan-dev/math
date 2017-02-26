@@ -15,25 +15,25 @@ namespace stan {
      * a getter method array() to return the result.
      *
      * @tparam T type of matrix element
-     * @tparam R number of rows
-     * @tparam C number of columns
      * @tparam F type of element added
      */
-    template <typename T, int R, int C>
-    struct array_builder<Eigen::Matrix<T, R, C> >{
-      std::vector<Eigen::Matrix<T, R, C> >  x_;
+    template <typename T>
+    struct array_builder<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >{
+      std::vector<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >  x_;
       array_builder() : x_() { }
 
       template <typename F>
-      array_builder& add(const Eigen::Matrix<F, R, C>& u) {
-        Eigen::Matrix<T, R, C> t;
-        promoter<Eigen::Matrix<F, R, C>,
-                 Eigen::Matrix<T, R, C> >::promote(u, t);
+      array_builder& add(const Eigen::Matrix<F,
+                         Eigen::Dynamic, Eigen::Dynamic>& u) {
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t;
+        promoter<Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>,
+                 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+                 >::promote(u, t);
         x_.push_back(t);
         return *this;
       }
 
-      std::vector<Eigen::Matrix<T, R, C> > array() {
+      std::vector<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > array() {
         return x_;
       }
     };

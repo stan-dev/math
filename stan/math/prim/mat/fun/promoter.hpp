@@ -12,22 +12,24 @@ namespace stan {
      *
      * @tparam F type of input element
      * @tparam T type of output element
-     * @tparam R number of rows
-     * @tparam C number of columns
      */
-    template <typename F, typename T, int R, int C>
-    struct promoter<Eigen::Matrix<F, R, C>, Eigen::Matrix<T, R, C> > {
-      inline static void promote(const Eigen::Matrix<F, R, C>& u,
-                          Eigen::Matrix<T, R, C>& t) {
+    template <typename F, typename T>
+    struct promoter<Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>,
+                    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
+      inline static void promote(const Eigen::Matrix<F,
+                                 Eigen::Dynamic, Eigen::Dynamic>& u,
+                                 Eigen::Matrix<T,
+                                 Eigen::Dynamic, Eigen::Dynamic>& t) {
         t.resize(u.rows(), u.cols());
         for (int i = 0; i < u.size(); ++i)
           promoter<F, T>::promote(u(i), t(i));
       }
-      inline static Eigen::Matrix<T, R, C>
-      promote_to(const Eigen::Matrix<F, R, C>& u) {
-        Eigen::Matrix<T, R, C> t;
-        promoter<Eigen::Matrix<F, R, C>,
-                 Eigen::Matrix<T, R, C> >::promote(u, t);
+      inline static Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+      promote_to(const Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>& u) {
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t;
+        promoter<Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>,
+                 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+                 >::promote(u, t);
         return t;
       }
     };
@@ -37,17 +39,18 @@ namespace stan {
      * This specialization promotes Eigen matrix elements of same type.
      *
      * @tparam T type of matrix element
-     * @tparam R number of rows
-     * @tparam C number of columns
      */
-    template <typename T, int R, int C>
-    struct promoter<Eigen::Matrix<T, R, C>, Eigen::Matrix<T, R, C> > {
-      inline static void promote(const Eigen::Matrix<T, R, C>& u,
-                          Eigen::Matrix<T, R, C>& t) {
+    template <typename T>
+    struct promoter<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>,
+                    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
+      inline static void promote(const Eigen::Matrix<T,
+                                 Eigen::Dynamic, Eigen::Dynamic>& u,
+                          Eigen::Matrix<T,
+                                 Eigen::Dynamic, Eigen::Dynamic>& t) {
         t = u;
       }
-      inline static Eigen::Matrix<T, R, C>
-      promote_to(const Eigen::Matrix<T, R, C>& u) {
+      inline static Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+      promote_to(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& u) {
         return u;
       }
     };
