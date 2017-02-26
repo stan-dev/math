@@ -15,7 +15,7 @@ namespace stan {
      * @tparam R number of rows
      * @tparam C number of columns
      */
-    template <typename F, typename T, int R, int C> 
+    template <typename F, typename T, int R, int C>
     struct promoter<Eigen::Matrix<F, R, C>,
                     Eigen::Matrix<T, R, C> > {
       inline static void promote(const Eigen::Matrix<F,
@@ -44,7 +44,7 @@ namespace stan {
      * @tparam R number of rows
      * @tparam C number of columns
      */
-    template <typename T, int R, int C> 
+    template <typename T, int R, int C>
     struct promoter<Eigen::Matrix<T, R, C>,
                     Eigen::Matrix<T, R, C> > {
       inline static void promote(const Eigen::Matrix<T,
