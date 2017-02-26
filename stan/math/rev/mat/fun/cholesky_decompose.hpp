@@ -11,6 +11,7 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <algorithm>
 
 namespace stan {
   namespace math {
