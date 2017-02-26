@@ -23,8 +23,8 @@ namespace stan {
       array_builder() : x_() { }
 
       template <typename F>
-      array_builder& add(const Eigen::Matrix<F,
-                         Eigen::Dynamic, Eigen::Dynamic>& u) {
+      array_builder& add(const Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>&
+                         u) {
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t;
         promoter<Eigen::Matrix<F, Eigen::Dynamic, Eigen::Dynamic>,
                  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
