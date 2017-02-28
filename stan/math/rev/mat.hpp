@@ -29,6 +29,7 @@
 #include <stan/math/rev/mat/fun/log_determinant_spd.hpp>
 #include <stan/math/rev/mat/fun/log_softmax.hpp>
 #include <stan/math/rev/mat/fun/log_sum_exp.hpp>
+#include <stan/math/rev/mat/fun/logistic_regression.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_spd.hpp>
