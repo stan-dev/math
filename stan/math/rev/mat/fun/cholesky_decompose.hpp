@@ -121,7 +121,7 @@ namespace stan {
             Bbar.noalias() -= Cbar * R;
             Dbar.noalias() -= Cbar.transpose() * C;
           }
-          symbolic_rev(D, Dbar, D.rows());
+          symbolic_rev(D, Dbar);
           Rbar.noalias() -= Cbar.transpose() * B;
           Rbar.noalias() -= Dbar.selfadjointView<Lower>() * R;
           Dbar.diagonal() *= 0.5;
