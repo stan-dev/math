@@ -37,8 +37,8 @@ namespace stan {
        *
        * block_size_ determined using the same calculation Eigen/LLT.h
        *
-       * @param matrix A
-       * @param matrix L, cholesky factor of A
+       * @param A matrix
+       * @param L matrix, cholesky factor of A
        */
       cholesky_block(const Eigen::Matrix<var, -1, -1>& A,
                                 const Eigen::Matrix<double, -1, -1>& L_A)
@@ -146,8 +146,8 @@ namespace stan {
        * and computation. Note that varis for L are constructed externally in
        * cholesky_decompose.
        *
-       * @param matrix A
-       * @param matrix L, cholesky factor of A
+       * @param A matrix
+       * @param L matrix, cholesky factor of A
        */
       cholesky_scalar(const Eigen::Matrix<var, -1, -1>& A,
                       const Eigen::Matrix<double, -1, -1>& L_A)
