@@ -38,10 +38,10 @@ namespace stan {
        * block_size_ determined using the same calculation Eigen/LLT.h
        *
        * @param A matrix
-       * @param L matrix, cholesky factor of A
+       * @param L_A matrix, cholesky factor of A
        */
       cholesky_block(const Eigen::Matrix<var, -1, -1>& A,
-                                const Eigen::Matrix<double, -1, -1>& L_A)
+                     const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
           variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
@@ -59,9 +59,14 @@ namespace stan {
             }
           }
 
+      /**
+       * Symbolic adjoint calculation for cholesky factor A
+       *
+       * @param L cholesky factor
+       * @param Lbar matrix of adjoints of L
+       */
       inline void symbolic_rev(Block_& L,
-                               Block_& Lbar,
-                               int size) {
+                               Block_& Lbar) {
         using Eigen::Lower;
         using Eigen::Upper;
         using Eigen::StrictlyUpper;
@@ -147,7 +152,7 @@ namespace stan {
        * cholesky_decompose.
        *
        * @param A matrix
-       * @param L matrix, cholesky factor of A
+       * @param L_A matrix, cholesky factor of A
        */
       cholesky_scalar(const Eigen::Matrix<var, -1, -1>& A,
                       const Eigen::Matrix<double, -1, -1>& L_A)
