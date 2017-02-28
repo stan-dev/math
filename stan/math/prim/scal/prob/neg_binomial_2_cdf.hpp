@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
 
@@ -45,9 +46,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision Parameter", phi);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_location> mu_vec(mu);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_location> mu_vec(mu);
+      scalar_seq_view<const T_precision> phi_vec(phi);
       size_t size = max_size(n, mu, phi);
 
       OperandsAndPartials<T_location, T_precision>

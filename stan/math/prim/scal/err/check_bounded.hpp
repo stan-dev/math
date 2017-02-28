@@ -4,7 +4,8 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <string>
 
 namespace stan {
@@ -28,8 +29,8 @@ namespace stan {
                           const T_high& high) {
           using stan::max_size;
 
-          VectorView<const T_low> low_vec(low);
-          VectorView<const T_high> high_vec(high);
+          scalar_seq_view<T_low> low_vec(low);
+          scalar_seq_view<T_high> high_vec(high);
           for (size_t n = 0; n < max_size(low, high); n++) {
             if (!(low_vec[n] <= y && y <= high_vec[n])) {
               std::stringstream msg;
@@ -53,8 +54,8 @@ namespace stan {
           using stan::length;
           using stan::get;
 
-          VectorView<const T_low> low_vec(low);
-          VectorView<const T_high> high_vec(high);
+          scalar_seq_view<T_low> low_vec(low);
+          scalar_seq_view<T_high> high_vec(high);
           for (size_t n = 0; n < length(y); n++) {
             if (!(low_vec[n] <= get(y, n) && get(y, n) <= high_vec[n])) {
               std::stringstream msg;

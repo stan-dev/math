@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_GREATER_OR_EQUAL_HPP
 
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -19,7 +19,7 @@ namespace stan {
                           const T_y& y,
                           const T_low& low) {
           using stan::length;
-          VectorView<const T_low> low_vec(low);
+          scalar_seq_view<T_low> low_vec(low);
           for (size_t n = 0; n < length(low); n++) {
             if (!(y >= low_vec[n])) {
               std::stringstream msg;
@@ -41,7 +41,7 @@ namespace stan {
                           const T_low& low) {
           using stan::length;
           using stan::get;
-          VectorView<const T_low> low_vec(low);
+          scalar_seq_view<T_low> low_vec(low);
           for (size_t n = 0; n < length(y); n++) {
             if (!(get(y, n) >= low_vec[n])) {
               std::stringstream msg;

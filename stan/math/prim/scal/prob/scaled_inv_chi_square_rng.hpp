@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
