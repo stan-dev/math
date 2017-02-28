@@ -16,9 +16,9 @@
 namespace stan {
   namespace math {
 
-    class cholesky_decompose_v_vari : public vari {
+    class cholesky_block : public vari {
     public:
-      int M_;  // A.rows() = A.cols()
+      int M_;
       int block_size_;
       typedef Eigen::Block<Eigen::MatrixXd> Block_;
       vari** variRefA_;
@@ -27,25 +27,20 @@ namespace stan {
       /**
        * Constructor for cholesky function.
        *
-       * Stores varis for A.
-       * Instantiates and stores varis for L.
-       * Instantiates and stores dummy vari for
-       * upper triangular part of var result returned
-       * in cholesky_decompose function call
+       * Stores varis for A.  Instantiates and stores varis for L.
+       * Instantiates and stores dummy vari for upper triangular part of var
+       * result returned in cholesky_decompose function call
        *
-       * variRefL aren't on the chainable
-       * autodiff stack, only used for storage
-       * and computation. Note that varis for
-       * L are constructed externally in
+       * variRefL aren't on the chainable autodiff stack, only used for storage
+       * and computation. Note that varis for L are constructed externally in
        * cholesky_decompose.
        *
-       * block_size_ determined using the same
-       * calculation Eigen/LLT.h
+       * block_size_ determined using the same calculation Eigen/LLT.h
        *
        * @param matrix A
        * @param matrix L, cholesky factor of A
        */
-      cholesky_decompose_v_vari(const Eigen::Matrix<var, -1, -1>& A,
+      cholesky_block(const Eigen::Matrix<var, -1, -1>& A,
                                 const Eigen::Matrix<double, -1, -1>& L_A)
         : vari(0.0),
           M_(A.rows()),
@@ -54,14 +49,12 @@ namespace stan {
           variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
                     (A.rows() * (A.rows() + 1) / 2)) {
             size_t pos = 0;
-            block_size_ = M_/8;
-            block_size_ = (block_size_/16)*16;
-            block_size_ = (std::min)((std::max)(block_size_, 8), 128);
+            block_size_ = std::max((M_ / 8 / 16) * 16, 8);
+            block_size_ = std::min(block_size_, 128);
             for (size_type j = 0; j < M_; ++j) {
               for (size_type i = j; i < M_; ++i) {
                 variRefA_[pos] = A.coeffRef(i, j).vi_;
-                variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
-                ++pos;
+                variRefL_[pos] = new vari(L_A.coeffRef(i, j), false); ++pos;
               }
             }
           }
@@ -81,11 +74,9 @@ namespace stan {
       }
 
       /**
-       * Reverse mode differentiation
-       * algorithm refernce:
+       * Reverse mode differentiation algorithm refernce:
        *
-       * Iain Murray: Differentiation of
-       * the Cholesky decomposition, 2016.
+       * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
        */
       virtual void chain() {
@@ -128,7 +119,7 @@ namespace stan {
           symbolic_rev(D, Dbar, D.rows());
           Rbar.noalias() -= Cbar.transpose() * B;
           Rbar.noalias() -= Dbar.selfadjointView<Lower>() * R;
-          Dbar.diagonal().array() *= 0.5;
+          Dbar.diagonal() *= 0.5;
           Dbar.triangularView<StrictlyUpper>().setZero();
         }
         pos = 0;
@@ -138,21 +129,110 @@ namespace stan {
       }
     };
 
+    class cholesky_scalar : public vari {
+    public:
+      int M_;
+      vari** variRefA_;
+      vari** variRefL_;
+
+      /** 
+       * Constructor for cholesky function.
+       *
+       * Stores varis for A Instantiates and stores varis for L Instantiates
+       * and stores dummy vari for upper triangular part of var result returned
+       * in cholesky_decompose function call
+       *
+       * variRefL aren't on the chainable autodiff stack, only used for storage
+       * and computation. Note that varis for L are constructed externally in
+       * cholesky_decompose.
+       *
+       * @param matrix A
+       * @param matrix L, cholesky factor of A
+       */
+      cholesky_scalar(const Eigen::Matrix<var, -1, -1>& A,
+                      const Eigen::Matrix<double, -1, -1>& L_A)
+        : vari(0.0),
+          M_(A.rows()),
+          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)),
+          variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)) {
+        size_t accum = 0;
+        size_t accum_i = accum;
+        for (size_type j = 0; j < M_; ++j) {
+          for (size_type i = j; i < M_; ++i) {
+            accum_i += i;
+            size_t pos = j + accum_i;
+            variRefA_[pos] = A.coeffRef(i, j).vi_;
+            variRefL_[pos] = new vari(L_A.coeffRef(i, j), false);
+          }
+          accum += j;
+          accum_i = accum;
+        }
+      }
+
+      /** 
+       * Reverse mode differentiation algorithm refernce:
+       *
+       * Mike Giles. An extended collection of matrix derivative results for
+       * forward and reverse mode AD.  Jan. 2008.
+       *
+       * Note algorithm  as laid out in Giles is row-major, so Eigen::Matrices
+       * are explicitly storage order RowMajor, whereas Eigen defaults to
+       * ColumnMajor. Also note algorithm starts by calculating the adjoint for
+       * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented to start at pos
+       * = M_ * (M_ + 1) / 2.
+       */
+      virtual void chain() {
+        using Eigen::Matrix;
+        using Eigen::RowMajor;
+        Matrix<double, -1, -1, RowMajor> adjL(M_, M_);
+        Matrix<double, -1, -1, RowMajor> LA(M_, M_);
+        Matrix<double, -1, -1, RowMajor> adjA(M_, M_);
+        size_t pos = 0;
+        for (size_type i = 0; i < M_; ++i) {
+          for (size_type j = 0; j <= i; ++j) {
+            adjL.coeffRef(i, j) = variRefL_[pos]->adj_;
+            LA.coeffRef(i, j) = variRefL_[pos]->val_;
+            ++pos;
+          }
+        }
+
+        --pos;
+        for (int i = M_ - 1; i >= 0; --i) {
+          for (int j = i; j >= 0; --j) {
+            if (i == j) {
+              adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j)
+                / LA.coeff(i, j);
+            } else {
+              adjA.coeffRef(i, j) = adjL.coeff(i, j)
+                / LA.coeff(j, j);
+              adjL.coeffRef(j, j) -= adjL.coeff(i, j)
+                * LA.coeff(i, j) / LA.coeff(j, j);
+            }
+            for (int k = j - 1; k >=0; --k) {
+              adjL.coeffRef(i, k) -= adjA.coeff(i, j)
+                * LA.coeff(j, k);
+              adjL.coeffRef(j, k) -= adjA.coeff(i, j)
+                * LA.coeff(i, k);
+            }
+            variRefA_[pos--]->adj_ += adjA.coeffRef(i, j);
+          }
+        }
+      }
+    };
+
     /**
-     * Reverse mode specialization of
-     * cholesky decomposition
+     * Reverse mode specialization of cholesky decomposition
      *
-     * Internally calls llt rather than using
-     * cholesky_decompose in order
-     * to use selfadjointView<Lower> optimization.
+     * Internally calls llt rather than using cholesky_decompose in order to
+     * use selfadjointView<Lower> optimization.
      *
-     * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky
-     * when possible
+     * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky when possible
      *
-     * Note chainable stack varis are created
-     * below in Matrix<var, -1, -1>
+     * Note chainable stack varis are created below in Matrix<var, -1, -1>
      *
-     * @param Matrix A
+     * @param A Matrix
      * @return L cholesky factor of A
      */
     inline Eigen::Matrix<var, -1, -1>
@@ -167,17 +247,37 @@ namespace stan {
       L_A = L_factor.matrixL();
 
       // Memory allocated in arena.
-      cholesky_decompose_v_vari *baseVari
-        = new cholesky_decompose_v_vari(A, L_A);
+      // cholesky_scalar gradient faster for small matrices compared to
+      // cholesky_block
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
-      size_t pos = 0;
-      for (size_type j = 0; j < L.cols(); ++j) {
-        for (size_type i = j; i < L.cols(); ++i) {
-          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+      if (L_A.rows() <= 35) {
+        cholesky_scalar *baseVari
+          = new cholesky_scalar(A, L_A);
+        size_t accum = 0;
+        size_t accum_i = accum;
+        for (size_type j = 0; j < L.cols(); ++j) {
+          for (size_type i = j; i < L.cols(); ++i) {
+            accum_i += i;
+            size_t pos = j + accum_i;
+            L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos];
+          }
+          for (size_type k = 0; k < j; ++k)
+            L.coeffRef(k, j).vi_ = dummy;
+          accum += j;
+          accum_i = accum;
         }
-        for (size_type k = 0; k < j; ++k)
-          L.coeffRef(k, j).vi_ = dummy;
+      } else {
+        cholesky_block *baseVari
+          = new cholesky_block(A, L_A);
+        size_t pos = 0;
+        for (size_type j = 0; j < L.cols(); ++j) {
+          for (size_type i = j; i < L.cols(); ++i) {
+            L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+          }
+          for (size_type k = 0; k < j; ++k)
+            L.coeffRef(k, j).vi_ = dummy;
+        }
       }
       return L;
     }
