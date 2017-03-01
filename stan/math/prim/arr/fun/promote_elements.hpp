@@ -18,7 +18,6 @@ namespace stan {
      */
     template <typename T, typename S>
     struct promote_elements<std::vector<T>, std::vector<S> > {
-
       /**
        * Return input vector of type S as vector of type T.
        *
@@ -43,7 +42,6 @@ namespace stan {
      */
     template <typename T>
     struct promote_elements<std::vector<T>, std::vector<T> > {
-
       /**
        * Return input vector.
        *

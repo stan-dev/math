@@ -19,7 +19,6 @@ namespace stan {
     template <typename T, typename S>
     struct promote_elements<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>,
                             Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic> > {
-
       /**
        * Return input matrix of type S as matrix of type T.
        *
@@ -50,7 +49,6 @@ namespace stan {
     template <typename T>
     struct promote_elements<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>,
                             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
-
       /**
        * Return input matrix.
        *

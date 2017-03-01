@@ -14,7 +14,6 @@ namespace stan {
      */
     template <typename T, typename S>
     struct promote_elements {
-
       /**
        * Return input element.
        *
@@ -35,7 +34,6 @@ namespace stan {
      */
     template <typename T>
     struct promote_elements<T, T> {
-
       /**
        * Return input element.
        *
