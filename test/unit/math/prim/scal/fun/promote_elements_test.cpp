@@ -4,29 +4,29 @@
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/is_same.hpp>
 
-using stan::math::promoter;
+using stan::math::promote_elements;
 using stan::math::var;
 
-TEST(MathFunctionsScalPromoter,int2double) {
+TEST(MathFunctionsScalPromote_Elements,int2double) {
   int from;
-  promoter<int,double> p;
-  typedef BOOST_TYPEOF(p.promote_to(from)) result_t;
+  promote_elements<double,int> p;
+  typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<double, result_t>::value;
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsScalPromoter,double2double) {
+TEST(MathFunctionsScalPromote_Elements,double2double) {
   double from;
-  promoter<double,double> p;
-  typedef BOOST_TYPEOF(p.promote_to(from)) result_t;
+  promote_elements<double,double> p;
+  typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<double, result_t>::value;
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsScalPromoter,double2var) {
+TEST(MathFunctionsScalPromote_Elements,double2var) {
   double from;
-  promoter<double,var> p;
-  typedef BOOST_TYPEOF(p.promote_to(from)) result_t;
+  promote_elements<var,double> p;
+  typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<var, result_t>::value;
   EXPECT_TRUE(same);
 }

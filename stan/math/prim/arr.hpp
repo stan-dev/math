@@ -22,9 +22,9 @@
 #include <stan/math/prim/arr/fun/fill.hpp>
 #include <stan/math/prim/arr/fun/inverse_softmax.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/arr/fun/promote_elements.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar.hpp>
 #include <stan/math/prim/arr/fun/promote_scalar_type.hpp>
-#include <stan/math/prim/arr/fun/promoter.hpp>
 #include <stan/math/prim/arr/fun/rep_array.hpp>
 #include <stan/math/prim/arr/fun/scaled_add.hpp>
 #include <stan/math/prim/arr/fun/sort_asc.hpp>

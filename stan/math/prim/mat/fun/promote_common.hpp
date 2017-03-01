@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_PROMOTE_COMMON_HPP
 
 #include <stan/math/prim/mat/fun/common_type.hpp>
-#include <stan/math/prim/mat/fun/promoter.hpp>
+#include <stan/math/prim/mat/fun/promote_elements.hpp>
 
 namespace stan {
   namespace math {
@@ -11,8 +11,8 @@ namespace stan {
     inline
     typename common_type<T1, T2>::type
     promote_common(const F& u) {
-      return promoter<F, typename common_type<T1, T2>::type>
-        ::promote_to(u);
+      return promote_elements<typename common_type<T1, T2>::type, F>
+        ::promote(u);
     }
 
   }
