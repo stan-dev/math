@@ -16,25 +16,20 @@ namespace stan {
      * @tparam T type of promoted elements
      * @tparam S type of input elements, must be assignable to T
      */
-    template <typename T, typename S>
-    struct promote_elements<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>,
-                            Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic> > {
+    template <typename T, typename S, int R, int C>
+    struct promote_elements<Eigen::Matrix<T, R, C>,
+                            Eigen::Matrix<S, R, C> > {
       /**
        * Return input matrix of type S as matrix of type T.
        *
        * @param u matrix of type S, assignable to type T
        * @returns matrix of type T
        */
-      inline static Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-      promote(const Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic>& u) {
-        const T* udatap = u.data();
-        int C = u.cols();
-        int R = u.rows();
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t(R, C);
-        const T* tdatap = t.data();
-        for (int i=0, ij=0; i < C; i++)
-          for (int j=0; j < R; j++, ij++)
-            tdatap[ij] = promote_elements<T, S>::promote(udatap[ij]);
+      inline static Eigen::Matrix<T, R, C>
+      promote(const Eigen::Matrix<S, R, C>& u) {
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t(u.rows(),u.cols());
+        for (int i = 0; i < u.size(); ++i)
+          t(i) = promote_elements<T, S>::promote(u(i));
         return t;
       }
     };
@@ -46,17 +41,17 @@ namespace stan {
      *
      * @tparam T type of elements
      */
-    template <typename T>
-    struct promote_elements<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>,
-                            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
+    template <typename T, int R, int C>
+    struct promote_elements<Eigen::Matrix<T, R, C>,
+                            Eigen::Matrix<T, R, C> > {
       /**
        * Return input matrix.
        *
        * @param u matrix of type T
        * @returns matrix of type T
        */
-      inline static Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-      promote(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& u) {
+      inline static Eigen::Matrix<T, R, C>
+      promote(const Eigen::Matrix<T, R, C>& u) {
         return u;
       }
     };
