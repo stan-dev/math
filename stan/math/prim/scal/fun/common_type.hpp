@@ -7,6 +7,9 @@ namespace stan {
   namespace math {
     /**
      * Struct which calculates wider type given two types.
+     * See <a
+     * href="http://boost.org/doc/libs/1_63_0/boost/math/tools/promotion.hpp">
+     * Boost/math/tools/promotion.hpp</a> for definition of "wider".
      *
      * <p>This is the base implementation for scalar types.
      *

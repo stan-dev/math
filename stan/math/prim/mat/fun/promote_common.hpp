@@ -8,12 +8,14 @@ namespace stan {
   namespace math {
 
     /**
-     * Return the result of promoting elements of a comtainer
-     * to the wider of a pair of specified types.
+     * Return the result of promoting either a scalar or the scalar elements
+     * of a container to either of two specified types, as determined
+     * by stan::math::common_type.
      *
      * @tparam T1 first type
      * @tparam T2 second type
-     * @tparam F container type (deduced from function arg u)
+     * @tparam F type of container elements as deducuded from function argument,
+     * must be either T1 or T2
      * @param u elements to promote
      * @return the result of promoting elements
      */
