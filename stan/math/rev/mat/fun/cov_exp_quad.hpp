@@ -259,8 +259,8 @@ namespace stan {
       cov_exp_quad(const std::vector<T_x>& x,
                    double sigma,
                    const var& l) {
-      check_positive("cov_exp_quad", "sigma", sigma);
-      check_positive("cov_exp_quad", "l", l);
+      check_positive("cov_exp_quad", "marginal variance", sigma);
+      check_positive("cov_exp_quad", "length-scale", l);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
         check_not_nan("cov_exp_quad", "x", x[i]);
