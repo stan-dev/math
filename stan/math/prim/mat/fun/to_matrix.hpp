@@ -14,13 +14,13 @@ namespace stan {
      * @tparam T type of the scalar
      * @tparam R number of rows
      * @tparam C number of columns
-     * @param matrix matrix
+     * @param x matrix
      * @return the matrix representation of the input
      */
     template <typename T, int R, int C>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const Eigen::Matrix<T, R, C>& matrix) {
-      return matrix;
+    to_matrix(const Eigen::Matrix<T, R, C>& x) {
+      return x;
     }
 
     /**
@@ -28,7 +28,7 @@ namespace stan {
      * with the specified number of rows and columns.
      *
      * @tparam T type of the scalar
-     * @param vec vector of values
+     * @param x vector of values
      * @param m rows
      * @param n columns
      * @return the matrix representation of the input
@@ -36,11 +36,11 @@ namespace stan {
      */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const std::vector<T>& vec, int m, int n) {
+    to_matrix(const std::vector<T>& x, int m, int n) {
       static const char* fun = "to_matrix(array)";
-      check_size_match(fun, "rows * columns", m * n, "vector size", vec.size());
+      check_size_match(fun, "rows * columns", m * n, "vector size", x.size());
       return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic,
-                                            Eigen::Dynamic> >(&vec[0], m, n);
+                                            Eigen::Dynamic> >(&x[0], m, n);
     }
 
     /**
@@ -48,20 +48,19 @@ namespace stan {
      * with the same dimensions and indexing order.
      *
      * @tparam T type of the scalar
-     * @param vec vector of vectors of scalar values
+     * @param x vector of vectors of scalar values
      * @return the matrix representation of the input
      */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const std::vector< std::vector<T> >& vec) {
-      size_t R = vec.size();
-      if (R != 0) {
-        size_t C = vec[0].size();
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(R, C);
-        T* datap = result.data();
-        for (size_t i=0, ij=0; i < C; i++)
-          for (size_t j=0; j < R; j++, ij++)
-            datap[ij] = vec[j][i];
+    to_matrix(const std::vector< std::vector<T> >& x) {
+      size_t rows = x.size();
+      if (rows != 0) {
+        size_t cols = x[0].size();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
+        for (size_t i=0, ij=0; i < cols; i++)
+          for (size_t j=0; j < rows; j++, ij++)
+            result(ij) = x[j][i];
         return result;
       } else {
         return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> (0, 0);
@@ -70,24 +69,23 @@ namespace stan {
 
 
     /**
-     * Returns a matrix representation of the Eigen vector of standard vectors
+     * Returns a matrix representation of a standard vector of Eigen row vectors
      * with the same dimensions and indexing order.
      *
      * @tparam T type of the scalar
-     * @param vec Eigen vector of vectors of scalar values
+     * @param x Eigen vector of vectors of scalar values
      * @return the matrix representation of the input
      */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const std::vector< Eigen::Matrix<T, 1, Eigen::Dynamic> >& vec) {
-      size_t R = vec.size();
-      if (R != 0) {
-        size_t C = vec[0].size();
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(R, C);
-        T* datap = result.data();
-        for (size_t i=0, ij=0; i < C; i++)
-          for (size_t j=0; j < R; j++, ij++)
-            datap[ij] = vec[j][i];
+    to_matrix(const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic> >& x) {
+      size_t rows = x.size();
+      if (rows != 0) {
+        size_t cols = x[0].size();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
+        for (size_t i=0, ij=0; i < cols; i++)
+          for (size_t j=0; j < rows; j++, ij++)
+            result(ij) = x[j][i];
         return result;
       } else {
         return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> (0, 0);
@@ -95,22 +93,22 @@ namespace stan {
     }
 
     /**
-     * Returns a matrix representation of the standard vector of standard vectors
+     * Returns a matrix representation of a standard vector of standard vectors
      * of integers with the same dimensions and indexing order.
      *
-     * @param vec vector of vectors of integer values
-     * @return the matrix representation of the input
+     * @param x vector of vectors of integer values
+     * @return the matrix representation of the input, ints promoted to doubles
      */
     inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const std::vector< std::vector<int> >& vec) {
-      size_t R = vec.size();
-      if (R != 0) {
-        size_t C = vec[0].size();
-        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(R, C);
-        double* datap = result.data();
-        for (size_t i=0, ij=0; i < C; i++)
-          for (size_t j=0; j < R; j++, ij++)
-            datap[ij] = vec[j][i];
+    to_matrix(const std::vector< std::vector<int> >& x) {
+      size_t rows = x.size();
+      if (rows != 0) {
+        size_t cols = x[0].size();
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+          result(rows, cols);
+        for (size_t i=0, ij=0; i < cols; i++)
+          for (size_t j=0; j < rows; j++, ij++)
+            result(ij) = x[j][i];
         return result;
       } else {
         return Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> (0, 0);
