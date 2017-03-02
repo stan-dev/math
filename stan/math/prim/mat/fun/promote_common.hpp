@@ -13,7 +13,7 @@ namespace stan {
      *
      * @tparam T1 first type
      * @tparam T2 second type
-     * @tparam F type of elements
+     * @tparam F container type (deduced from param u)
      * @param u elements to promote
      * @return the result of promoting elements
      */
