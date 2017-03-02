@@ -8,11 +8,12 @@
 namespace stan {
   namespace math {
     /**
-     * Struct carries out type promotion.
-     * This specialization is for vectors of differing types.
+     * Struct which calculates wider type given two types.
      *
-     * @tparam T1 type of arg1
-     * @tparam T2 type of arg2
+     * <p>This specialization is for vector types.
+     *
+     * @tparam T1 element type of std::vector<T1>
+     * @tparam T2 element type of std::vector<T2>
      */
     template <typename T1, typename T2>
     struct common_type<std::vector<T1>, std::vector<T2> > {

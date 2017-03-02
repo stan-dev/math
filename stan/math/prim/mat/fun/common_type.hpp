@@ -8,11 +8,12 @@
 namespace stan {
   namespace math {
     /**
-     * Struct to hold static function for type promotion.
-     * This specialization is for matrices of differing types.
+     * Struct which calculates wider type given two types.
      *
-     * @tparam T1 type of arg1
-     * @tparam T2 type of arg2
+     * <p>This specialization is for matrix types.
+     *
+     * @tparam T1 element type of Eigen::Matrix
+     * @tparam T2 element type of Eigen::Matrix
      * @tparam R number of rows
      * @tparam C number of columns
      */

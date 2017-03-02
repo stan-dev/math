@@ -6,10 +6,10 @@
 namespace stan {
   namespace math {
     /**
-     * Struct carries out type promotion.
+     * Struct which calculates wider type given two types.
      *
-     * @tparam T1 type of arg1
-     * @tparam T2 type of arg2
+     * <p>This is the base implementation for scalar types.
+     *
      */
     template <typename T1, typename T2>
     struct common_type {

@@ -7,6 +7,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return the result of promoting elements of a comtainer
+     * to the wider of a pair of specified types.
+     *
+     * @tparam T1 first type
+     * @tparam T2 second type
+     * @tparam F type of elements
+     * @param u elements to promote
+     * @return the result of promoting elements
+     */
     template <typename T1, typename T2, typename F>
     inline
     typename common_type<T1, T2>::type
