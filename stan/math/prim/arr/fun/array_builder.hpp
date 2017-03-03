@@ -16,8 +16,14 @@ namespace stan {
      * @tparam T type of array elements
      */
     template <typename T>
-    struct array_builder {
+    class array_builder {
+    private:
       std::vector<T> x_;
+
+    public:
+      /**
+       * Construct an array_builder.
+       */
       array_builder() : x_() { }
 
       /**
