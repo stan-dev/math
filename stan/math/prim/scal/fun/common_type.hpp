@@ -6,13 +6,12 @@
 namespace stan {
   namespace math {
     /**
-     * Struct which calculates wider type given two types.
-     * See <a
-     * href="http://boost.org/doc/libs/1_63_0/boost/math/tools/promotion.hpp">
-     * Boost/math/tools/promotion.hpp</a> for definition of "wider".
+     * Struct which calculates type promotion given two types.
      *
      * <p>This is the base implementation for scalar types.
      *
+     * @tparam T1 scalar type, either int, double, or stan::math::var
+     * @tparam T2 scalar type, either int, double, or stan::math::var
      */
     template <typename T1, typename T2>
     struct common_type {
