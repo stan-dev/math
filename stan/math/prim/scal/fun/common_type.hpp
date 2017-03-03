@@ -9,9 +9,16 @@ namespace stan {
      * Struct which calculates type promotion given two types.
      *
      * <p>This is the base implementation for scalar types.
+     * Allowed promotions are:
+     * - int to double
+     * - int to var
+     * - double to var
      *
-     * @tparam T1 scalar type, either int, double, or stan::math::var
-     * @tparam T2 scalar type, either int, double, or stan::math::var
+     * <p>Promotion between differing var types is not allowed, i.e.,
+     * cannot promote `stan::math::fvar` to `stan::math::var` or vice versa.
+     *
+     * @tparam T1 scalar type
+     * @tparam T2 scalar type
      */
     template <typename T1, typename T2>
     struct common_type {

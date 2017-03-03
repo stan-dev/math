@@ -48,7 +48,7 @@ namespace stan {
        * @param u vector of type T
        * @returns vector of type T
        */
-      inline static std::vector<T> promote(const std::vector<T>& u) {
+      inline static const std::vector<T>& promote(const std::vector<T>& u) {
         return u;
       }
     };

@@ -50,7 +50,7 @@ namespace stan {
        * @param u matrix of type T
        * @returns matrix of type T
        */
-      inline static Eigen::Matrix<T, R, C>
+      inline static const Eigen::Matrix<T, R, C>&
       promote(const Eigen::Matrix<T, R, C>& u) {
         return u;
       }

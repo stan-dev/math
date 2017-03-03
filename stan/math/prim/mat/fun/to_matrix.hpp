@@ -7,9 +7,9 @@
 namespace stan {
   namespace math {
     /**
-     * Returns a matrix with dynamic dimensions constructed from the data passed
-     * in. This could be a row vector, column vector, or matrix. The runtime
-     * dimensions will be the same as the input.
+     * Returns a matrix with dynamic dimensions constructed from
+     * an Eigen matrix which is either a row vector, column vector, or matrix.
+     * The runtime dimensions will be the same as the input.
      *
      * @tparam T type of the scalar
      * @tparam R number of rows

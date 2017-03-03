@@ -40,7 +40,7 @@ namespace stan {
        * @param u input of type T
        * @returns input as type T
        */
-      inline static T promote(const T& u) {
+      inline static const T& promote(const T& u) {
         return u;
       }
     };
