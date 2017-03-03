@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/mat/meta/VectorViewMvt.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -40,8 +40,8 @@ namespace stan {
       check_ldlt_factor(function,
                         "LDLT_Factor of covariance parameter", ldlt_Sigma);
 
-      VectorViewMvt<const T_y> y_vec(y);
-      VectorViewMvt<const T_loc> mu_vec(mu);
+      vector_seq_view<T_y> y_vec(y);
+      vector_seq_view<T_loc> mu_vec(mu);
       size_t size_vec = max_size_mvt(y, mu);
 
       int size_y = y_vec[0].size();
