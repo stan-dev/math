@@ -15,7 +15,7 @@ namespace stan {
      * - double to var
      *
      * <p>Promotion between differing var types is not allowed, i.e.,
-     * cannot promote `stan::math::fvar` to `stan::math::var` or vice versa.
+     * cannot promote fvar to var or vice versa.
      *
      * @tparam T1 scalar type
      * @tparam T2 scalar type
