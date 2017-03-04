@@ -2,6 +2,38 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
 
+template<typename T_x1, typename T_x2, typename T_sigma, typename T_l>
+std::string pull_msg(std::vector<T_x1> x1,
+                     std::vector<T_x2> x2,
+                     T_sigma sigma,
+                     T_l l) {
+  std::string message;
+  try {
+    stan::math::cov_exp_quad(x1, x2, sigma, l);
+  } catch (std::domain_error& e) {
+    message = e.what();
+  } catch (...) {
+    message = "Threw the wrong exception";
+  }
+  return message;
+}
+
+template<typename T_x1, typename T_sigma, typename T_l>
+std::string pull_msg(std::vector<T_x1> x1,
+                     T_sigma sigma,
+                     T_l l) {
+  std::string message;
+  try {
+    stan::math::cov_exp_quad(x1, sigma, l);
+  } catch (std::domain_error& e) {
+    message = e.what();
+  } catch (...) {
+    message = "Threw the wrong exception";
+  }
+  return message;
+}
+
+
 TEST(RevMath, cov_exp_quad_vvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -915,6 +947,17 @@ TEST(RevMath, cov_exp_quad_domain_error_training) {
   var sigma_bad = -1;
   var l_bad = -1;
 
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x, sigma, l_bad);
+  msg2 = pull_msg(x, sigma_bad, l);
+  msg3 = pull_msg(x, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad), std::domain_error);
@@ -962,6 +1005,17 @@ TEST(RevMath, cov_exp_quad_nan_error_training) {
   var sigma_bad = std::numeric_limits<var>::quiet_NaN();
   var l_bad = std::numeric_limits<var>::quiet_NaN();
 
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x, sigma, l_bad);
+  msg2 = pull_msg(x, sigma_bad, l);
+  msg3 = pull_msg(x, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad), std::domain_error);
@@ -1005,6 +1059,17 @@ TEST(RevMath, cov_exp_quad_domain_error) {
 
   var sigma_bad = -1;
   var l_bad = -1;
+
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x1, x2, sigma, l_bad);
+  msg2 = pull_msg(x1, x2, sigma_bad, l);
+  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l), std::domain_error);
