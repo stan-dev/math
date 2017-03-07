@@ -69,6 +69,7 @@
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/cbrt.hpp>
 #include <stan/math/prim/scal/fun/choose.hpp>
+#include <stan/math/prim/scal/fun/common_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/scal/fun/corr_free.hpp>
@@ -152,6 +153,7 @@
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 #include <stan/math/prim/scal/fun/prob_constrain.hpp>
 #include <stan/math/prim/scal/fun/prob_free.hpp>
+#include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
