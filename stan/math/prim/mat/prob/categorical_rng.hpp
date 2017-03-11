@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -31,10 +32,7 @@ namespace stan {
       Eigen::VectorXd index(theta.rows());
       index.setZero();
 
-      for (int i = 0; i < theta.rows(); i++) {
-        for (int j = i; j < theta.rows(); j++)
-          index(j) += theta(i, 0);
-      }
+      index = cumulative_sum(theta);
 
       double c = uniform01_rng();
       int b = 0;
