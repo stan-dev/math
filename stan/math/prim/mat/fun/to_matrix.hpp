@@ -135,6 +135,28 @@ namespace stan {
       return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic,
                                             Eigen::Dynamic> >(&x[0], m, n);
     }
+    
+    /**
+     * Returns a matrix representation of the vector in column-major order
+     * with the specified number of rows and columns.
+     *
+     * @param x vector of values
+     * @param m rows
+     * @param n columns
+     * @return the matrix representation of the input
+     * @throw <code>std::invalid_argument</code> if the sizes do not match
+     */
+    inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+    to_matrix(const std::vector<int>& x, int m, int n) {
+      static const char* fun = "to_matrix(array)";
+      int size = x.size();
+      check_size_match(fun, "rows * columns", m * n, "vector size", size);
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
+      double* datap = result.data();
+      for (int i=0; i < size; i++)
+        datap[i] = x[i];
+      return result;
+    }
 
   }
 }

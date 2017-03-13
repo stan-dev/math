@@ -9,12 +9,16 @@ using stan::math::to_matrix;
 // [T] -> Matrix
 void test_to_matrix_array_answers(int m, int n) {
   std::vector<double> vec(m * n);
-  for (int i = 0; i < m * n; ++i)
+  std::vector<int> vec_int(m * n);
+  for (int i = 0; i < m * n; ++i) {
     vec[i] = i;
+    vec_int[i] = i;
+  }
   Eigen::MatrixXd a(m, n); 
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
   expect_matrix_eq(a, to_matrix(vec, m, n));
+  expect_matrix_eq(a, to_matrix(vec_int, m, n));
 }
 
 TEST(ToMatrixArray, answers) {
