@@ -11,7 +11,7 @@ void test_to_matrix_array_answers(int m, int n) {
   std::vector<double> vec(m * n);
   for (int i = 0; i < m * n; ++i)
     vec[i] = i;
-  Eigen::MatrixXd a(m, n);
+  Eigen::MatrixXd a(m, n); 
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
   expect_matrix_eq(a, to_matrix(vec, m, n));
@@ -44,6 +44,93 @@ TEST(ToMatrixMatrix, answers) {
   test_to_matrix_matrix_answers(3, 2);
   test_to_matrix_matrix_answers(3, 0);
   test_to_matrix_matrix_answers(0, 3);
+}
+
+// Matrix -> Matrix (with reshape)
+void test_to_matrix_matrix_reshape_answers(int m1, int n1,
+                                           int m2, int n2) {
+  Eigen::MatrixXd a(m1, n1);
+  Eigen::MatrixXd b(m2, n2);
+  for (int i = 0; i < m1 * n1; ++i) {
+    a(i) = static_cast<double>(i)/1.26;
+    b(i) = static_cast<double>(i)/1.26;
+  }
+  expect_matrix_eq(a, to_matrix(b, m1, n1));
+  expect_matrix_eq(b, to_matrix(a, m2, n2));
+  if (n1 != 0)
+    EXPECT_THROW(to_matrix(a, m1+1, n1), std::invalid_argument);
+  if (m1 !=0)
+    EXPECT_THROW(to_matrix(a, m1, n1+1), std::invalid_argument);
+  if (n2 != 0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
+  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+}
+
+TEST(ToMatrixMatrixReshape, answers) {
+  test_to_matrix_matrix_reshape_answers(0, 0, 0, 0);
+  test_to_matrix_matrix_reshape_answers(3, 2, 2, 3);
+  test_to_matrix_matrix_reshape_answers(3, 2, 6, 1);
+  test_to_matrix_matrix_reshape_answers(3, 0, 0, 3);
+  test_to_matrix_matrix_reshape_answers(8, 2, 4, 4);
+}
+
+// Vector -> Matrix
+void test_to_vector_matrix_answers(int m, int m2, int n2) {
+  Eigen::VectorXd a(m);
+  Eigen::MatrixXd b(m2, n2);
+  Eigen::MatrixXd c(m, 1);
+  for (int i = 0; i < m2 * n2; ++i) {
+    a(i) = static_cast<double>(i)/1.26;
+    b(i) = static_cast<double>(i)/1.26;
+    c(i) = static_cast<double>(i)/1.26;
+  }
+  //without reshape
+  expect_matrix_eq(c, to_matrix(a));
+  
+  //with reshape
+  expect_matrix_eq(b, to_matrix(a, m2, n2));
+  if (n2 != 0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
+  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+}
+
+TEST(ToMatrixVector, answers) {
+  test_to_vector_matrix_answers(0, 0, 0);
+  test_to_vector_matrix_answers(6, 2, 3);
+  test_to_vector_matrix_answers(18, 6, 3);
+  test_to_vector_matrix_answers(0, 0, 3);
+  test_to_vector_matrix_answers(8, 1, 8);
+}
+
+// RowVector -> Matrix
+void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
+  Eigen::RowVectorXd a(n);
+  Eigen::MatrixXd b(m2, n2);
+  Eigen::MatrixXd c(1, n);
+  for (int i = 0; i < m2 * n2; ++i) {
+    a(i) = static_cast<double>(i)/1.26;
+    b(i) = static_cast<double>(i)/1.26;
+    c(i) = static_cast<double>(i)/1.26;
+  }
+  //without reshape
+  expect_matrix_eq(c, to_matrix(a));
+  
+  //with reshape
+  expect_matrix_eq(b, to_matrix(a, m2, n2));
+  if (n2 != 0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
+  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+}
+
+TEST(ToMatrixRowVector, answers) {
+  test_to_row_vector_matrix_answers(0, 0, 0);
+  test_to_row_vector_matrix_answers(6, 2, 3);
+  test_to_row_vector_matrix_answers(18, 6, 3);
+  test_to_row_vector_matrix_answers(0, 3, 0);
+  test_to_row_vector_matrix_answers(8, 1, 8);
 }
 
 // [[T]] -> Matrix
