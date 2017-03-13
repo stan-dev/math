@@ -27,7 +27,7 @@ namespace stan {
                            const std::string variable) :
                            f1(theta, parms, dat, dat_int, variable) { }
 
-      int operator()(const Eigen::VectorXd &x, 
+      int operator()(const Eigen::VectorXd &x,
                      Eigen::VectorXd &fvec) {
         jacobian(f1, x, fvec, J);
         return 0;
@@ -73,6 +73,7 @@ namespace stan {
                               Eigen::Dynamic, 1>& parms,
                             const std::vector<double>& dat,
                             const std::vector<int>& dat_int) {
+          std::cout << "compute alpha" << std::endl;
           Eigen::Matrix<double, Eigen::Dynamic, 1>
             parms_val = value(parms);
           hybrj_functor_solver<F1, double, double>
@@ -83,7 +84,9 @@ namespace stan {
           solver.solve(theta_d);
 
           for (int i = 0; i < theta_d.rows(); i++)
-            theta_(i) = var(new vari(theta_d(i), false));  // change
+            theta_(i) = var(new vari(theta_d(i), false));
+
+          std::cout << "compute beta" << std::endl;
         }
 
       public:
@@ -111,7 +114,7 @@ namespace stan {
       class algebra_solver_vari : public vari {
       protected:
         inline void chain(const F1& f1,
-                          const Eigen::Matrix<double, 
+                          const Eigen::Matrix<double,
                             Eigen::Dynamic, 1>& x,
                           Eigen::Matrix<var, Eigen::Dynamic, 1>& parms,
                           const std::vector<double>& dat,
@@ -137,11 +140,12 @@ namespace stan {
           for (int i = 0; i < adjTheta.rows(); i++)
             for (int j = 0; j < parms.rows(); j++)
               parms(j).vi_->adj_ += adjTheta(i) * Jx_p(i, j);
+
         }
 
       public:
         algebra_solver_vari(const F1& f1,
-                            const Eigen::Matrix<double, 
+                            const Eigen::Matrix<double,
                               Eigen::Dynamic, 1>& x,
                             const Eigen::Matrix<var, Eigen::Dynamic, 1>& parms,
                             const std::vector<double>& dat,
@@ -161,14 +165,15 @@ namespace stan {
             chain(impl_->f1_, impl_->x_, impl_->parms_, impl_->dat_,
                   impl_->dat_int_, adjTheta);
           }
-          
+
           algebra_solver_vari_alloc<F1, T> *impl_;
       };
     }
 
     /**
      * Return the solutions for the specified system of algebraic
-     * equations given an initial guess, and parameters and data.
+     * equations given an initial guess, and parameters and data,
+     * which get passed into the algebraic system.
      *
      * @tparam F1 type of equation system function.
      * @tparam T type of scalars for parms.
