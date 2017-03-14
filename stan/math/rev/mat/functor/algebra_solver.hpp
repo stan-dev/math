@@ -4,9 +4,12 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include<stan/math/prim/mat/fun/dogleg.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
+#include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <iostream>
 
 namespace stan {
@@ -34,7 +37,7 @@ namespace stan {
       }
 
       int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) {
-        fjac = J;  //f2(x);
+        fjac = J;
         return 0;
       }
 
@@ -45,23 +48,6 @@ namespace stan {
       }
     };
 
-    // FIX ME - would rather use value_of
-    // value_of does not convert a var to double, so I created
-    // a value function (and overloaded it for doubles).
-    inline Eigen::Matrix<double, Eigen::Dynamic, 1>
-    value(const Eigen::Matrix<var, Eigen::Dynamic, 1>& M) {
-      Eigen::Matrix<double, Eigen::Dynamic, 1> Md(M.rows(), M.cols());
-      for (int j = 0; j < M.cols(); j++)
-        for (int i = 0; i < M.rows(); i++)
-          Md(i, j) = M(i, j).val();
-      return Md;
-    }
-
-    inline Eigen::Matrix<double, Eigen::Dynamic, 1>
-    value(const Eigen::Matrix<double, Eigen::Dynamic, 1>& M) {
-      return M;
-    }
-
     namespace {
       template <typename F1, typename T>
       class algebra_solver_vari_alloc : public chainable_alloc {
@@ -69,15 +55,12 @@ namespace stan {
         inline void compute(const F1& f1,
                             const Eigen::Matrix<double,
                               Eigen::Dynamic, 1>& x,
-                            const Eigen::Matrix<T,
+                            const Eigen::Matrix<double,
                               Eigen::Dynamic, 1>& parms,
                             const std::vector<double>& dat,
                             const std::vector<int>& dat_int) {
-          std::cout << "compute alpha" << std::endl;
-          Eigen::Matrix<double, Eigen::Dynamic, 1>
-            parms_val = value(parms);
           hybrj_functor_solver<F1, double, double>
-            functor(f1, x, parms_val, dat, dat_int, "theta");
+            functor(f1, x, parms, dat, dat_int, "theta");
           Eigen::HybridNonLinearSolver<hybrj_functor_solver<F1, double, double> >
             solver(functor);
           Eigen::Matrix<double, Eigen::Dynamic, 1> theta_d = x;
@@ -85,8 +68,6 @@ namespace stan {
 
           for (int i = 0; i < theta_d.rows(); i++)
             theta_(i) = var(new vari(theta_d(i), false));
-
-          std::cout << "compute beta" << std::endl;
         }
 
       public:
@@ -99,7 +80,7 @@ namespace stan {
                                   const std::vector<int>& dat_int)
           : f1_(f1), x_(x), parms_(parms), dat_(dat),
             dat_int_(dat_int), theta_(x_.rows()) {
-              compute(f1, x, parms, dat, dat_int);
+          compute(f1, x, value_of(parms), dat, dat_int);
         }
 
         F1 f1_;
@@ -116,14 +97,14 @@ namespace stan {
         inline void chain(const F1& f1,
                           const Eigen::Matrix<double,
                             Eigen::Dynamic, 1>& x,
-                          Eigen::Matrix<var, Eigen::Dynamic, 1>& parms,
+                          Eigen::Matrix<T, Eigen::Dynamic, 1>& parms,
                           const std::vector<double>& dat,
                           const std::vector<int>& dat_int,
                           const Eigen::Matrix<double,
                             Eigen::Dynamic, 1>& adjTheta) {
           // find roots of the equation
           Eigen::Matrix<double, Eigen::Dynamic, 1>
-            parms_val = value(parms);
+            parms_val = value_of(parms);
           hybrj_functor_solver<F1, double, double>
             functor(f1, x, parms_val, dat, dat_int, "theta");
           Eigen::HybridNonLinearSolver<hybrj_functor_solver<F1, double, double> >
@@ -136,21 +117,23 @@ namespace stan {
           stan::math::hybrj_functor_solver<F1, double, double>
             functor_parm(f1, theta, parms_val, dat, dat_int, "parms");
           Eigen::MatrixXd Jf_p = functor_parm.get_jacobian(parms_val);
-          Eigen::MatrixXd Jx_p = - inverse(Jf_x) * Jf_p;
+          Eigen::MatrixXd Jx_p = - stan::math::mdivide_left(Jf_x, Jf_p);
+
+          // std::cout << "Jacobian: " << std::endl << Jx_p << std::endl;
+          // std::cout << "adjTheta: " << std::endl << adjTheta << std::endl << std::endl;
+
           for (int i = 0; i < adjTheta.rows(); i++)
             for (int j = 0; j < parms.rows(); j++)
               parms(j).vi_->adj_ += adjTheta(i) * Jx_p(i, j);
-
         }
 
       public:
         algebra_solver_vari(const F1& f1,
                             const Eigen::Matrix<double,
                               Eigen::Dynamic, 1>& x,
-                            const Eigen::Matrix<var, Eigen::Dynamic, 1>& parms,
+                            const Eigen::Matrix<T, Eigen::Dynamic, 1>& parms,
                             const std::vector<double>& dat,
-                            const std::vector<int>& dat_int)
-          : vari(0.0) {
+                            const std::vector<int>& dat_int) : vari(0.0) {
           impl_
             = new algebra_solver_vari_alloc<F1, T>(f1, x, parms, dat, dat_int);
           }
@@ -164,6 +147,11 @@ namespace stan {
 
             chain(impl_->f1_, impl_->x_, impl_->parms_, impl_->dat_,
                   impl_->dat_int_, adjTheta);
+
+            /* std::cout << "adjoints of parameters: ";
+            for (int i = 0; i < impl_->parms_.rows(); i++)
+              std::cout << impl_->parms_(i).vi_->adj_ << " ";
+              std::cout << std::endl; */
           }
 
           algebra_solver_vari_alloc<F1, T> *impl_;
@@ -184,15 +172,16 @@ namespace stan {
      * @param[in] dat_int integer data vector for the equation system.
      * @return Vector that solves the system of equations.
      */
-    template <typename F1>
+    template <typename T, typename F1>
     inline Eigen::Matrix<var, Eigen::Dynamic, 1>
     algebra_solver(const F1& f1,
                    const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-                   const Eigen::Matrix<var, Eigen::Dynamic, 1>& parms,
+                   const Eigen::Matrix<T, Eigen::Dynamic, 1>& parms,
                    const std::vector<double>& dat,
                    const std::vector<int>& dat_int) {
-      algebra_solver_vari<F1, var> *baseVari
-        = new algebra_solver_vari<F1, var>(f1, x, parms, dat, dat_int);
+      algebra_solver_vari<F1, T> *baseVari
+        = new algebra_solver_vari<F1, T>(f1, x, parms, dat, dat_int);
+
       return baseVari->impl_->theta_;
     }
   }
