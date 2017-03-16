@@ -6,6 +6,20 @@
 
 using stan::math::to_matrix;
 
+template <typename T, int R, int C>
+inline Eigen::Matrix<T, R, C>
+row_major_to_column_major(const Eigen::Matrix<T, R, C>& x) {
+  int rows = x.rows();
+  int cols = x.cols();
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+    result(rows, cols);
+  for (int i=0, ij=0; i < rows; i++)
+    for (int j=0; j < cols; j++, ij++)
+      result(ij) = x(i, j);
+  return result;
+}
+
+
 // [T] -> Matrix
 void test_to_matrix_array_answers(int m, int n) {
   std::vector<double> vec(m * n);
@@ -60,15 +74,38 @@ void test_to_matrix_matrix_reshape_answers(int m1, int n1,
     b(i) = static_cast<double>(i)/1.26;
   }
   expect_matrix_eq(a, to_matrix(b, m1, n1));
+  expect_matrix_eq(a, to_matrix(b, m1, n1, 1));
+  expect_matrix_eq(a,
+                   row_major_to_column_major(to_matrix(b, m1, n1, 0)));
+  
   expect_matrix_eq(b, to_matrix(a, m2, n2));
-  if (n1 != 0)
+  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
+  expect_matrix_eq(b,
+                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  
+  EXPECT_THROW(to_matrix(a, m1, n1, 2), std::invalid_argument);
+  EXPECT_THROW(to_matrix(a, m1, n1, -1), std::invalid_argument);
+  
+  if (n1 != 0) {
     EXPECT_THROW(to_matrix(a, m1+1, n1), std::invalid_argument);
-  if (m1 !=0)
+    EXPECT_THROW(to_matrix(a, m1+1, n1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1+1, n1, 0), std::invalid_argument);
+  }
+  if (m1 !=0) {
     EXPECT_THROW(to_matrix(a, m1, n1+1), std::invalid_argument);
-  if (n2 != 0)
+    EXPECT_THROW(to_matrix(a, m1, n1+1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1, n1+1, 0), std::invalid_argument);
+  }
+  if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+  }
+  if (m2 !=0) {
     EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+  }
 }
 
 TEST(ToMatrixMatrixReshape, answers) {
@@ -94,10 +131,23 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
   
   //with reshape
   expect_matrix_eq(b, to_matrix(a, m2, n2));
-  if (n2 != 0)
+  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
+  expect_matrix_eq(b,
+                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+
+  EXPECT_THROW(to_matrix(a, m2, n2, 2), std::invalid_argument);
+  EXPECT_THROW(to_matrix(a, m2, n2, -1), std::invalid_argument);
+
+  if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+  }
+  if (m2 !=0) {
     EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+  }
 }
 
 TEST(ToMatrixVector, answers) {
@@ -123,10 +173,23 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
   
   //with reshape
   expect_matrix_eq(b, to_matrix(a, m2, n2));
-  if (n2 != 0)
+  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
+  expect_matrix_eq(b,
+                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+
+  EXPECT_THROW(to_matrix(a, m2, n2, 2), std::invalid_argument);
+  EXPECT_THROW(to_matrix(a, m2, n2, -1), std::invalid_argument);
+
+  if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-  if (m2 !=0)
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+  }
+  if (m2 !=0) {
     EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+  }
 }
 
 TEST(ToMatrixRowVector, answers) {
