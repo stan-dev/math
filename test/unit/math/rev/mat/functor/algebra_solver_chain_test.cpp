@@ -1,10 +1,13 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/core.hpp>
+// #include <stan/math/rev/core/chainable_alloc.hpp>
+// #include <stan/math/rev/core/chainablestack.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 
-template <typename T1, typename T2>
+/* template <typename T1, typename T2>
 inline
 Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
               Eigen::Dynamic, 1>
@@ -86,21 +89,6 @@ TEST(MathMatrix, algebra_solver_chain) {
       EXPECT_EQ(J(i, j), baseVari.impl_->parms_(j).vi_->adj_);
     }
   }
-}
-
-
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-algebraEq3(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-           const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
-           const std::vector<double>& dat,
-           const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(2);
-  y(0) = x(0) - parms(0) * parms(1); //  + dat[0];
-  y(1) = x(1) - parms(2); //  + dat_int[0] * dat[1];
-  return y;
 }
 
 template <typename T1, typename T2>
@@ -188,8 +176,21 @@ TEST(MathMatrix, algebra_solver_chain_2) {
       EXPECT_EQ(J(i, j), baseVari.impl_->parms_(j).vi_->adj_);
     }
   }
-}
+  } */
 
+template <typename T1, typename T2>
+inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
+                     Eigen::Dynamic, 1>
+algebraEq3(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+           const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
+           const std::vector<double>& dat,
+           const std::vector<int>& dat_int) {
+  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
+  Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(2);
+  y(0) = x(0) - parms(0) * parms(1); //  + dat[0];
+  y(1) = x(1) - parms(2); //  + dat_int[0] * dat[1];
+  return y;
+}
 
 template <typename T1, typename T2>
 struct algebraEq3_functor {
@@ -229,9 +230,15 @@ public:
 
 TEST(MathMatrix, algebra_solver_chain_3) {
   using stan::math::var;
+  using stan::math::vari;
   using Eigen::Matrix;
   using Eigen::Dynamic;
+  using stan::math::algebra_solver;
   using stan::math::algebra_solver_vari;
+  using stan::math::ChainableStack;
+  using stan::math::empty_nested;
+  using stan::math::nested_size;
+  
 
   int nParms = 3, nSolutions = 2;
   Eigen::VectorXd x(nSolutions);
@@ -241,20 +248,46 @@ TEST(MathMatrix, algebra_solver_chain_3) {
   std::vector<double> dummy_dat(0);
   std::vector<int> dummy_dat_int(0);
 
-  algebra_solver_vari<algebraEq3_functor<double, double>, var>
-   baseVari(algebraEq3_functor<double, double>(),
+/*  algebra_solver_vari<algebraEq3_functor<double, double>, var>
+    baseVari(algebraEq3_functor<double, double>(),
          x, parms, dummy_dat, dummy_dat_int);
+*/
 
   Matrix<double, Dynamic, Dynamic> J(nSolutions, nParms);
   J << 4, 5, 0, 0, 0, 1;
+  
+  Matrix<var, Dynamic, 1> theta
+    = algebra_solver(algebraEq3_functor<double, double>(),
+                     x, parms, dummy_dat, dummy_dat_int);
 
   for (int i = 0; i < nSolutions; i++) {
     stan::math::set_zero_all_adjoints();
-    baseVari.impl_->theta_(i).vi_->adj_ = 1;
-    baseVari.chain();
+
+    // initialize adjoint of final expression
+    // the two lines below are equivalent.
+    // baseVari.impl_->theta_(i).vi_->adj_ = 1;
+    // baseVari.impl_->theta_(i).vi_->init_dependent();
+
+    theta(i).vi_->init_dependent();
+
+    typedef std::vector<vari*>::reverse_iterator it_t;
+    it_t begin = ChainableStack::var_stack_.rbegin();
+    it_t end = empty_nested()
+      ? ChainableStack::var_stack_.rend() : begin + nested_size();  
+
+    for (it_t it = begin; it < end; ++it) {
+      (*it)->chain();
+    }
+
+    // stan::math::grad(baseVari.impl_->theta_(i).vi_);
+    // baseVari.impl_->theta_(i).vi_->adj_ = 1;
+    // baseVari.chain();
 
     for (int j = 0; j < nParms; j++) {
-      EXPECT_EQ(J(i, j), baseVari.impl_->parms_(j).vi_->adj_);
+      EXPECT_EQ(J(i, j), parms(j).vi_->adj_);
+      // EXPECT_EQ(J(i, j), baseVari.impl_->parms_(j).vi_->adj_);
     }
+    std::cout << end[0] << std::endl;
+    
   }
 }

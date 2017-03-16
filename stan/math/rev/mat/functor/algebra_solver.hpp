@@ -2,13 +2,11 @@
 #define STAN_MATH_PRIM_MAT_FUN_ALGEBRA_SOLVER_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include<stan/math/prim/mat/fun/dogleg.hpp>
+#include <stan/math/prim/mat/fun/dogleg.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/prim/mat/fun/inverse.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <iostream>
 
@@ -30,9 +28,8 @@ namespace stan {
                            const std::string variable) :
                            f1(theta, parms, dat, dat_int, variable) { }
 
-      int operator()(const Eigen::VectorXd &x,
-                     Eigen::VectorXd &fvec) {
-        jacobian(f1, x, fvec, J);
+      int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
+        stan::math::jacobian(f1, x, fvec, J);
         return 0;
       }
 
@@ -43,7 +40,7 @@ namespace stan {
 
       Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &parms) {
         Eigen::VectorXd fvec;
-        jacobian(f1, parms, fvec, J);
+        stan::math::jacobian(f1, parms, fvec, J);
         return J;
       }
     };
@@ -102,6 +99,10 @@ namespace stan {
                           const std::vector<int>& dat_int,
                           const Eigen::Matrix<double,
                             Eigen::Dynamic, 1>& adjTheta) {
+          std::cout << "Call to algebra chain" << std::endl;  // TEST
+
+          Eigen::MatrixXd Jx_p;  // CHECK - do I need default values?
+
           // find roots of the equation
           Eigen::Matrix<double, Eigen::Dynamic, 1>
             parms_val = value_of(parms);
@@ -114,17 +115,30 @@ namespace stan {
 
           // compute Jacobian
           Eigen::MatrixXd Jf_x = functor.get_jacobian(theta);
-          stan::math::hybrj_functor_solver<F1, double, double>
-            functor_parm(f1, theta, parms_val, dat, dat_int, "parms");
-          Eigen::MatrixXd Jf_p = functor_parm.get_jacobian(parms_val);
-          Eigen::MatrixXd Jx_p = - stan::math::mdivide_left(Jf_x, Jf_p);
 
-          // std::cout << "Jacobian: " << std::endl << Jx_p << std::endl;
-          // std::cout << "adjTheta: " << std::endl << adjTheta << std::endl << std::endl;
+          Eigen::VectorXd p_dummy(3);
+          p_dummy << 1, 5, 3;
+          Eigen::VectorXd x_dummy(2);
+          x_dummy << 6, 8;
+
+          hybrj_functor_solver<F1, double, double>
+            functor_parm(f1, theta, parms_val, dat, dat_int, "parms");
+
+          // hybrj_functor_solver<F1, double, double>
+            // functor_test(f1, x_dummy, p_dummy, dat, dat_int, "theta");
+            // functor_test(f1, x_dummy, p_dummy, dat, dat_int, "parms");
+
+          // Eigen::MatrixXd Jf_test = functor_test.get_jacobian(x_dummy);
+          // Eigen::MatrixXd Jf_test = functor_test.get_jacobian(p_dummy);
+
+          Eigen::MatrixXd Jf_p = functor_parm.get_jacobian(parms_val);
+          Jx_p = - stan::math::mdivide_left(Jf_x, Jf_p);
 
           for (int i = 0; i < adjTheta.rows(); i++)
             for (int j = 0; j < parms.rows(); j++)
               parms(j).vi_->adj_ += adjTheta(i) * Jx_p(i, j);
+
+          std::cout << "End of algebra chain" << std::endl;  // TEST
         }
 
       public:
@@ -142,16 +156,16 @@ namespace stan {
             Eigen::Matrix<double, Eigen::Dynamic, 1>
               adjTheta(impl_->theta_.rows());
 
-            for (int i = 0; i < impl_->theta_.rows(); i++)
+            std::cout << "theta adjoint: ";
+
+            for (int i = 0; i < impl_->theta_.rows(); i++) {
               adjTheta(i) = impl_->theta_(i).vi_->adj_;
+              std::cout << adjTheta(i) << " ";
+            }
+            std::cout << std::endl;
 
             chain(impl_->f1_, impl_->x_, impl_->parms_, impl_->dat_,
                   impl_->dat_int_, adjTheta);
-
-            /* std::cout << "adjoints of parameters: ";
-            for (int i = 0; i < impl_->parms_.rows(); i++)
-              std::cout << impl_->parms_(i).vi_->adj_ << " ";
-              std::cout << std::endl; */
           }
 
           algebra_solver_vari_alloc<F1, T> *impl_;
