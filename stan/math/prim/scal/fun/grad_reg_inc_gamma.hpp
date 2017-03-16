@@ -23,6 +23,9 @@ namespace stan {
      * @param g   boost::math::tgamma(a) (precomputed value)
      * @param dig boost::math::digamma(a) (precomputed value)
      * @param precision required precision; applies to series expansion only
+     * @param max_steps number of steps to take. defaults to 10000
+     * @throw throws std::domain_error if not converged after max_steps
+     *   or increment overflows to inf.
      *
      * For the asymptotic expansion, the gradient is given by:
        \f[
@@ -37,7 +40,8 @@ namespace stan {
        \f]
      */
     template<typename T>
-    T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6) {
+    T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6,
+        int max_steps = 1e5) {
       using std::domain_error;
       using std::exp;
       using std::fabs;
@@ -81,6 +85,11 @@ namespace stan {
           ++k;
           s *= - z / k;
           delta = s / square(k + a);
+          if (k >= max_steps)
+            stan::math::domain_error("grad_reg_inc_gamma",
+              "k (internal counter)",
+              max_steps, "exceeded ",
+              " iterations, gamma function gradient did not converge.");
           if (is_inf(delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
