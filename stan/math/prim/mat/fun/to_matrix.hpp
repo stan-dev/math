@@ -101,7 +101,7 @@ namespace stan {
                              Eigen::Dynamic> (0, 0);
       }
     }
-    
+
     /**
      * Returns a matrix representation of the vector in column-major
      * order with the specified number of rows and columns.
@@ -147,7 +147,7 @@ namespace stan {
                         Eigen::Matrix<T, Eigen::Dynamic,
                                       Eigen::Dynamic> >(&x[0], m, n);
     }
-   
+
     /**
      * Returns a matrix representation of the vector in column-major
      * order with the specified number of rows and columns.
@@ -192,9 +192,9 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const Eigen::Matrix<T, R, C>& x, int m, int n, int cm) {
-      if (cm == 1)
+      if (cm == 1) {
         return to_matrix(x, m, n);
-      else if (cm == 0) {
+      } else if (cm == 0) {
         check_size_match("to_matrix", "rows * columns", m * n,
                          "matrix size", x.size());
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
@@ -203,8 +203,7 @@ namespace stan {
           for (size_t j=0; j < n; j++, ij++)
             result(i, j) = x(ij);
         return result;
-      }
-      else {
+      } else {
         invalid_argument("to_matrix", "cm", cm,
                          "column-major indicator",
                          "must equal 0 or 1");
@@ -230,13 +229,13 @@ namespace stan {
      */
     template <typename T>
     inline
-    Eigen::Matrix<typename 
+    Eigen::Matrix<typename
       boost::math::tools::promote_args<T, double>::type,
       Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector<T>& x, int m, int n, int cm) {
-      if (cm == 1)
+      if (cm == 1) {
         return to_matrix(x, m, n);
-      else if (cm == 0) {
+      } else if (cm == 0) {
         check_size_match("to_matrix", "rows * columns", m * n,
                          "matrix size", x.size());
         Eigen::Matrix<typename
@@ -247,8 +246,7 @@ namespace stan {
           for (size_t j=0; j < n; j++, ij++)
             result(i, j) = x[ij];
         return result;
-      }
-      else {
+      } else {
         invalid_argument("to_matrix", "cm", cm,
                          "column-major indicator",
                          "must equal 0 or 1");
