@@ -32,7 +32,13 @@ void test_to_matrix_array_answers(int m, int n) {
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
   expect_matrix_eq(a, to_matrix(vec, m, n));
+  expect_matrix_eq(a, to_matrix(vec, m, n, 1));
+  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec,
+                                                          m, n, 0)));
   expect_matrix_eq(a, to_matrix(vec_int, m, n));
+  expect_matrix_eq(a, to_matrix(vec_int, m, n, 1));
+  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec_int,
+                                                          m, n, 0)));
 }
 
 TEST(ToMatrixArray, answers) {
