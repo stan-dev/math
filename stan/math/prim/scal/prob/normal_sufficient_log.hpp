@@ -18,7 +18,7 @@ namespace stan {
     normal_sufficient_log(const T_y& y_bar, const T_s& s_squared,
                           const T_n& n_obs, const T_loc& mu,
                           const T_scale& sigma) {
-      return normal_sufficient_lpdf<propto, T_y, T_s,
+      return normal_sufficient_lpdf<propto, T_y, T_s, T_n,
                                     T_loc, T_scale>(y_bar, s_squared,
                                                     n_obs, mu, sigma);
     }
@@ -33,7 +33,7 @@ namespace stan {
     normal_sufficient_log(const T_y& y_bar, const T_s& s_squared,
                           const T_n& n_obs, const T_loc& mu,
                           const T_scale& sigma) {
-      return normal_sufficient_lpdf<T_y, T_s,
+      return normal_sufficient_lpdf<T_y, T_s, T_n,
                                     T_loc, T_scale>(y_bar, s_squared,
                                                     n_obs, mu, sigma);
     }
