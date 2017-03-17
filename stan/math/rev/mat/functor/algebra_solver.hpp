@@ -117,6 +117,7 @@ namespace stan {
           
           std::cout << "Call to algebra chain" << std::endl;  // TEST
 
+          // OLD CODE
           // Root of equation is stored in impl_->theta_ (need to acces val_)
           /*
           Matrix<double, Dynamic, 1> parms_val = value_of(parms);
@@ -142,33 +143,39 @@ namespace stan {
           int N = x.rows();  // number of states
 
           MatrixXd J_fy(N, M);
-          MatrixXd J_fx(N, N);
+          MatrixXd J_fx(N, N);    
 
+          vector<double> y_dbl(M);
+          for (int i = 0; i < M; i++) y_dbl[i] = value_of(parms(i));
+          VectorXd y_input_dbl(M);
+          for (int i = 0; i < M; i++) y_input_dbl(i) = y_dbl[i];
+          
+          vector<double> x_dbl(N);
+          for (int i = 0; i < N; i++) x_dbl[i] = value_of(impl_->theta_(i));
+          VectorXd x_input_dbl(N);
+          for (int i = 0; i < N; i++) x_input_dbl(i) = x_dbl[i];
+          
+          vector<double> y_grad(M);
+          vector<double> x_grad(N);
+          
           try {
             start_nested();
 
-            vector<var> y_vars(M);
-            // y_vars.reserve(M);
-            for (int i = 0; i < M; i++) y_vars[i] = value_of(parms(i));        
-            VectorXd y_input_dbl(M);
-            for (int i = 0; i < M; i++) y_input_dbl(i) = y_vars[i].val();
+            vector<var> y_vars;
+            y_vars.reserve(M);
+            y_vars.insert(y_vars.end(), y_dbl.begin(), y_dbl.end());
             Matrix<var, Dynamic, 1> y_input_vars(M);
             for (int i = 0; i < M; i++) y_input_vars(i) = y_vars[i];
-            vector<double> y_grad(M);
-
-            vector<var> x_vars(N);
-            // x_vars.reserve(N);
-            for (int i = 0; i < N; i++)
-              x_vars[i] = value_of(impl_->theta_(i));
-            VectorXd x_input_dbl(N);
-            for (int i = 0; i < N; i++) x_input_dbl(i) = x_vars[i].val();
-            Matrix<var, Dynamic, 1> x_input_vars(N);
-            for (int i = 0; i < N; i++) x_input_vars(i) = x_vars[i];
-            vector<double> x_grad(N);
 
             hybrj_functor_solver<F, double, double>
               f_y(f, x_input_dbl, y_input_dbl, dat, dat_int, "parms");
             Matrix<var, Dynamic, 1> z_y = f_y(y_input_vars);
+
+            vector<var> x_vars;
+            x_vars.reserve(N);
+            x_vars.insert(x_vars.end(), x_dbl.begin(), x_dbl.end());
+            Matrix<var, Dynamic, 1> x_input_vars(N);
+            for (int i = 0; i < N; i++) x_input_vars(i) = x_vars[i];
 
             hybrj_functor_solver<F, double, double>
               f_x(f, x_input_dbl, y_input_dbl, dat, dat_int, "theta");
@@ -189,16 +196,12 @@ namespace stan {
           }
 
           recover_memory_nested();
-          
+
           std::cout << "J_fy: " << std::endl << J_fy << std::endl;
           std::cout << "J_fx: " << std::endl << J_fx << std::endl;
 
           Eigen::MatrixXd J_xy(N, M);
           J_xy = - stan::math::mdivide_left(J_fx, J_fy);
-
-          // Eigen::MatrixXd Jx_p(x.rows(), parms_val.rows());
-          J_xy << 4, 5, 0,
-                  0, 0, 1;
 
           std::cout << "algebra chain 1" << std::endl;
 
