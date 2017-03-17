@@ -29,7 +29,7 @@ namespace stan {
     result = result > length(x4) ? result : length(x4);
     return result;
   }
-  
+
   template <typename T1, typename T2, typename T3, typename T4,
             typename T5>
   size_t max_size(const T1& x1, const T2& x2, const T3& x3,
