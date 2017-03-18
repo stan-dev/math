@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 
+#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <Eigen/Dense>
 #include <vector>
@@ -37,13 +40,13 @@ namespace stan {
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const
               std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic> >& x) {
-      size_t rows = x.size();
+      int rows = x.size();
       if (rows != 0) {
-        size_t cols = x[0].size();
+        int cols = x[0].size();
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
           result(rows, cols);
-        for (size_t i=0, ij=0; i < cols; i++)
-          for (size_t j=0; j < rows; j++, ij++)
+        for (int i=0, ij=0; i < cols; i++)
+          for (int j=0; j < rows; j++, ij++)
             result(ij) = x[j][i];
         return result;
       } else {
@@ -199,8 +202,8 @@ namespace stan {
                          "matrix size", x.size());
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
           result(m, n);
-        for (size_t i=0, ij=0; i < m; i++)
-          for (size_t j=0; j < n; j++, ij++)
+        for (int i=0, ij=0; i < m; i++)
+          for (int j=0; j < n; j++, ij++)
             result(i, j) = x(ij);
         return result;
       } else {
@@ -242,8 +245,8 @@ namespace stan {
           boost::math::tools::promote_args<T, double>::type,
           Eigen::Dynamic, Eigen::Dynamic>
           result(m, n);
-        for (size_t i=0, ij=0; i < m; i++)
-          for (size_t j=0; j < n; j++, ij++)
+        for (int i=0, ij=0; i < m; i++)
+          for (int j=0; j < n; j++, ij++)
             result(i, j) = x[ij];
         return result;
       } else {
