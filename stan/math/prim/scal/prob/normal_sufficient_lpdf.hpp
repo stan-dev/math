@@ -30,9 +30,9 @@ namespace stan {
      *
      * <p>The result log probability is defined to be the sum of the
      * log probabilities for each observation/mean/deviation triple.
-     * @param y (Sequence of) scalar(s) (sample average(s)).
+     * @param y_bar (Sequence of) scalar(s) (sample average(s)).
      * @param s_squared (Sequence of) sum(s) of sample squared errors
-     * @param n (Sequence of) sample size(s)
+     * @param n_obs (Sequence of) sample size(s)
      * @param mu (Sequence of) location parameter(s)
      * for the normal distribution.
      * @param sigma (Sequence of) scale parameters for the normal
