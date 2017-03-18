@@ -30,6 +30,11 @@ namespace stan {
      *
      * <p>The result log probability is defined to be the sum of the
      * log probabilities for each observation/mean/deviation triple.
+     * @tparam T_y Type of sample average parameter.
+     * @tparam T_s Type of sample squared errors parameter.
+     * @tparam T_n Type of sample size parameter.
+     * @tparam T_loc Type of location parameter.
+     * @tparam T_scale Type of scale parameter.
      * @param y_bar (Sequence of) scalar(s) (sample average(s)).
      * @param s_squared (Sequence of) sum(s) of sample squared errors
      * @param n_obs (Sequence of) sample size(s)
@@ -38,20 +43,16 @@ namespace stan {
      * @param sigma (Sequence of) scale parameters for the normal
      * distribution.
      * @return The log of the product of the densities.
-     * @throw std::domain_error
-     * if either n or sigma are not positive,
-     * if s_squared is negative or
-     * if any parameter is not finite.
-     * @tparam T_y Underlying type of scalar in sequence.
-     * @tparam T_loc Type of location parameter.
+     * @throw std::domain_error if either n or sigma are not positive,
+     * if s_squared is negative or if any parameter is not finite.
      */
     template <bool propto,
               typename T_y, typename T_s, typename T_n, typename T_loc,
               typename T_scale>
     typename return_type<T_y, T_s, T_loc, T_scale>::type
     normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
-                          const T_n& n_obs, const T_loc& mu,
-                          const T_scale& sigma) {
+                           const T_n& n_obs, const T_loc& mu,
+                           const T_scale& sigma) {
       static const char* function = "stan::math::normal_log(%1%)";
       typedef typename
         stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
@@ -128,8 +129,7 @@ namespace stan {
           logp += NEG_LOG_SQRT_TWO_PI * n_obs_dbl;
 
         if (include_summand<propto, T_scale>::value)
-          logp -= n_obs_dbl*log(sigma_dbl);
-
+          logp -= n_obs_dbl * log(sigma_dbl);
 
         const T_partials_return cons_expr =
           (s_squared_dbl
@@ -137,10 +137,9 @@ namespace stan {
 
         logp -= cons_expr / (2 * sigma_squared);
 
-
         // gradients
         if (!is_constant_struct<T_y>::value ||
-            !is_constant_struct<T_loc>::value) {
+!is_constant_struct<T_loc>::value) {
           const T_partials_return common_derivative =
             n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
           if (!is_constant_struct<T_y>::value)
@@ -150,7 +149,7 @@ namespace stan {
         }
         if (!is_constant_struct<T_s>::value)
           operands_and_partials.d_x2[i] -=
-            1 / (2 * sigma_squared);
+            0.5 / sigma_squared;
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x4[i]
             += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
