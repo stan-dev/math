@@ -11,14 +11,14 @@ public:
                     vector<double>& log_prob) {
     vector<double> param(5);
 
-    //observed values: 0, 0
+    //observed values: -0.1, 0.1
     param[0] = 0;           // y_bar
-    param[1] = 0;           // s_squared
+    param[1] = 0.02;           // s_squared
     param[2] = 2;           // n_obs
-    param[3] = 0;           // mu
-    param[4] = 1;           // sigma
+    param[3] = -2.3;           // mu
+    param[4] = 2.1;           // sigma
     parameters.push_back(param);
-    log_prob.push_back(-1.83787706640935); // expected log_prob
+    log_prob.push_back(-4.52356581482502); // expected log_prob
 
     //observed values: 0, 1
     param[0] = 0.5;           // y_bar
