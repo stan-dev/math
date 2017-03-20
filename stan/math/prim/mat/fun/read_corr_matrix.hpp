@@ -24,7 +24,7 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_matrix(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-                     const size_t K) {
+                     size_t K) {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = read_corr_L(CPCs, K);
       return multiply_lower_tri_self_transpose(L);
@@ -51,7 +51,7 @@ namespace stan {
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     read_corr_matrix(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-                     const size_t K,
+                     size_t K,
                      T& log_prob) {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
         = read_corr_L(CPCs, K, log_prob);

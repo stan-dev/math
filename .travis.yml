@@ -28,4 +28,4 @@ env:
   - TESTFOLDER=test/unit/math/fwd/mat
  # - TESTFOLDER=test/unit/math/mix  ## commenting this out due to segfault on travis
 
-script: ./runTests.py $TESTFOLDER
+script: ./runTests.py -j2 $TESTFOLDER

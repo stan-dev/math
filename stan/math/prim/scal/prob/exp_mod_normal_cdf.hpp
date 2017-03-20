@@ -9,10 +9,11 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/normal_distribution.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 
@@ -30,7 +31,6 @@ namespace stan {
         T_partials_return;
 
       T_partials_return cdf(1.0);
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
@@ -54,14 +54,14 @@ namespace stan {
 
       using std::exp;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_inv_scale> lambda_vec(lambda);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_inv_scale> lambda_vec(lambda);
       size_t N = max_size(y, mu, sigma, lambda);
       const double sqrt_pi = std::sqrt(pi());
       for (size_t n = 0; n < N; n++) {
-        if (boost::math::isinf(y_vec[n])) {
+        if (is_inf(y_vec[n])) {
           if (y_vec[n] < 0.0)
             return operands_and_partials.value(0.0);
         }

@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,fmax_vv) {
   AVAR a = 1.3;
@@ -132,4 +132,12 @@ TEST(AgradRev, fmax_nan) {
   test_nan_vv(fmax_,nan,nan,false, true);
   test_nan_dv(fmax_,nan,nan,false, true);
   test_nan_vd(fmax_,nan,nan,false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 1.3;
+  AVAR b = 2.0;
+  test::check_varis_on_stack(stan::math::fmax(a, b));
+  test::check_varis_on_stack(stan::math::fmax(a, 2.0));
+  test::check_varis_on_stack(stan::math::fmax(1.3, b));
 }

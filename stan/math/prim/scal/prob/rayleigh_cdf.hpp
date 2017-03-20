@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 
@@ -34,7 +35,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y) && stan::length(sigma)))
         return cdf;
 
@@ -46,11 +46,10 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-      // set up template expressions wrapping scalars into vector views
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, sigma);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
@@ -68,7 +67,6 @@ namespace stan {
           cdf *= (1.0 - exp_val);
       }
 
-      // gradients
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return y_sqr = square(y_dbl);

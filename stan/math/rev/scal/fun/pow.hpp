@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 #include <limits>
 
@@ -17,8 +17,8 @@ namespace stan {
           op_vv_vari(std::pow(avi->val_, bvi->val_), avi, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -35,8 +35,8 @@ namespace stan {
           op_vd_vari(std::pow(avi->val_, b), avi, b) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
             if (avi_->val_ == 0.0) return;  // partials zero, avoids 0 & log(0)
@@ -51,8 +51,8 @@ namespace stan {
           op_dv_vari(std::pow(a, bvi->val_), a, bvi) {
         }
         void chain() {
-          if (unlikely(boost::math::isnan(bvi_->val_)
-                       || boost::math::isnan(ad_))) {
+          if (unlikely(is_nan(bvi_->val_)
+                       || is_nan(ad_))) {
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
             if (ad_ == 0.0) return;  // partials zero, avoids 0 & log(0)
@@ -116,7 +116,7 @@ namespace stan {
      * @param exponent Exponent scalar.
      * @return Base raised to the exponent.
      */
-    inline var pow(const var& base, const double exponent) {
+    inline var pow(const var& base, double exponent) {
       if (exponent == 0.5)
         return sqrt(base);
       if (exponent == 1.0)
@@ -138,7 +138,7 @@ namespace stan {
      * @param exponent Exponent variable.
      * @return Base raised to the exponent.
      */
-    inline var pow(const double base, const var& exponent) {
+    inline var pow(double base, const var& exponent) {
       return var(new pow_dv_vari(base, exponent.vi_));
     }
 

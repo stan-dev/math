@@ -12,8 +12,6 @@
 namespace stan {
   namespace math {
 
-    // CHOLESKY FACTOR
-
     /**
      * Return the Cholesky factor of the specified size read from the
      * specified vector.  A total of (N choose 2) + N + (M - N) * N
@@ -41,7 +39,7 @@ namespace stan {
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
       T zero(0);
       int pos = 0;
-      // upper square
+
       for (int m = 0; m < N; ++m) {
         for (int n = 0; n < m; ++n)
           y(m, n) = x(pos++);
@@ -49,7 +47,7 @@ namespace stan {
         for (int n = m + 1; n < N; ++n)
           y(m, n) = zero;
       }
-      // lower rectangle
+
       for (int m = N; m < M; ++m)
         for (int n = 0; n < N; ++n)
           y(m, n) = x(pos++);
@@ -76,7 +74,6 @@ namespace stan {
                               int M,
                               int N,
                               T& lp) {
-      // cut-and-paste from above, so checks twice
       check_size_match("cholesky_factor_constrain",
                        "x.size()", x.size(),
                        "((N * (N + 1)) / 2 + (M - N) * N)",
@@ -87,7 +84,7 @@ namespace stan {
         pos += n;
         log_jacobians[n] = x(pos++);
       }
-      lp += sum(log_jacobians);  // optimized for autodiff vs. direct lp +=
+      lp += sum(log_jacobians);
       return cholesky_factor_constrain(x, M, N);
     }
 

@@ -1,9 +1,9 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/zeta.hpp>
-#include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
 TEST(AgradRev,digamma) {
   AVAR a = 0.5;
@@ -27,4 +27,9 @@ struct digamma_fun {
 TEST(AgradRev,digamma_NaN) {
   digamma_fun digamma_;
   test_nan(digamma_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.5;
+  test::check_varis_on_stack(stan::math::digamma(a));
 }

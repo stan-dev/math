@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -24,8 +23,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    scaled_inv_chi_square_rng(const double nu,
-                              const double s,
+    scaled_inv_chi_square_rng(double nu,
+                              double s,
                               RNG& rng) {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;

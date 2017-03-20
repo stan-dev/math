@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_FMA_HPP
 #define STAN_MATH_FWD_SCAL_FUN_FMA_HPP
 
-#include <math.h>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
@@ -59,7 +59,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const fvar<T1>& x1, const fvar<T2>& x2, const fvar<T3>& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1.val_, x2.val_, x3.val_),
          x1.d_ * x2.val_ + x2.d_ * x1.val_ + x3.d_);
@@ -72,7 +71,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const T1& x1, const fvar<T2>& x2, const fvar<T3>& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1, x2.val_, x3.val_), x2.d_ * x1 + x3.d_);
     }
@@ -84,7 +82,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const fvar<T1>& x1, const T2& x2, const fvar<T3>& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1.val_, x2, x3.val_), x1.d_ * x2 + x3.d_);
     }
@@ -96,7 +93,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const fvar<T1>& x1, const fvar<T2>& x2, const T3& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1.val_, x2.val_, x3), x1.d_ * x2.val_ + x2.d_ * x1.val_);
     }
@@ -108,7 +104,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const T1& x1, const T2& x2, const fvar<T3>& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1, x2, x3.val_), x3.d_);
     }
@@ -120,7 +115,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const fvar<T1>& x1, const T2& x2, const T3& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1.val_, x2, x3), x1.d_ * x2);
     }
@@ -132,7 +126,6 @@ namespace stan {
     inline
     fvar<typename stan::return_type<T1, T2, T3>::type>
     fma(const T1& x1, const fvar<T2>& x2, const T3& x3) {
-      using ::fma;
       return fvar<typename stan::return_type<T1, T2, T3>::type>
         (fma(x1, x2.val_, x3), x2.d_ * x1);
     }

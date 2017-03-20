@@ -4,7 +4,6 @@
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/asinh.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 #include <vector>
 

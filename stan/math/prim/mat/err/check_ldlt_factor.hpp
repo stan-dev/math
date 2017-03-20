@@ -11,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Return <code>true</code> if the argument is a valid
+     * Check if the argument is a valid
      * <code>LDLT_factor</code>.
      *
      * <code>LDLT_factor</code> can be constructed in an invalid
@@ -26,12 +26,11 @@ namespace stan {
      * @param name Variable name (for error messages)
      * @param A <code>LDLT_factor</code> to check for validity.
      *
-     * @return <code>true</code> if the matrix is positive definite.
-     * @return throws <code>std::domain_error</code> the LDLT_factor was
+     * @throws <code>std::domain_error</code> the LDLT_factor was
      *   created improperly (A.success() == false)
      */
     template <typename T, int R, int C>
-    inline bool check_ldlt_factor(const char* function,
+    inline void check_ldlt_factor(const char* function,
                                   const char* name,
                                   LDLT_factor<T, R, C> &A) {
       if (!A.success()) {
@@ -42,9 +41,7 @@ namespace stan {
         const T too_small = A.vectorD().tail(1)(0);
         domain_error(function, name, too_small,
                      msg_str.c_str(), ".");
-        return false;
       }
-      return true;
     }
 
   }

@@ -1,8 +1,8 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/gamma.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,gamma_p_var_var) {
   AVAR a = 0.5;
@@ -70,4 +70,12 @@ struct gamma_p_fun {
 TEST(AgradRev, gamma_p_nan) {
   gamma_p_fun gamma_p_;
   test_nan(gamma_p_,0.5,1.0,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.5;
+  AVAR b = 1.0;
+  test::check_varis_on_stack(stan::math::gamma_p(a, b));
+  test::check_varis_on_stack(stan::math::gamma_p(a, 1.0));
+  test::check_varis_on_stack(stan::math::gamma_p(0.5, b));
 }

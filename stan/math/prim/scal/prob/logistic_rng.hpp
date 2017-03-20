@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -21,8 +20,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    logistic_rng(const double mu,
-                 const double sigma,
+    logistic_rng(double mu,
+                 double sigma,
                  RNG& rng) {
       using boost::variate_generator;
       using boost::random::exponential_distribution;

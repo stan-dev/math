@@ -10,8 +10,6 @@
 namespace stan {
   namespace math {
 
-    // These are helpers to the OperandsAndPartials specialization for
-    // stan::math::var
     namespace {
       class partials_vari : public vari {
       private:

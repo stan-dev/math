@@ -29,8 +29,6 @@ namespace stan {
         o << n;
     }
 
-    // Recursive assignment with size match checking and promotion
-
     /**
      * Copy the right-hand side's value to the left-hand side
      * variable.

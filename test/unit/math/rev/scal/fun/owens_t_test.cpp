@@ -1,8 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-
+#include <test/unit/math/rev/scal/util.hpp>
 TEST(AgradRev,owens_t_vv) {
   using stan::math::var;
   using stan::math::owens_t;
@@ -65,4 +64,12 @@ struct owens_t_fun {
 TEST(AgradRev, owens_t_nan) {
   owens_t_fun owens_t_;
   test_nan(owens_t_,1.0,2.0,false, true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var h = 1.0;
+  stan::math::var a = 2.0;
+  test::check_varis_on_stack(stan::math::owens_t(h, a));
+  test::check_varis_on_stack(stan::math::owens_t(1.0, a));
+  test::check_varis_on_stack(stan::math::owens_t(h, 2.0));
 }

@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
@@ -19,7 +18,7 @@ namespace stan {
 
     template <class RNG>
     inline int
-    poisson_log_rng(const double alpha,
+    poisson_log_rng(double alpha,
                     RNG& rng) {
       using boost::variate_generator;
       using boost::random::poisson_distribution;

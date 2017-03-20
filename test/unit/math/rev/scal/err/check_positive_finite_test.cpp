@@ -8,7 +8,7 @@ TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite) {
   const char* function = "check_positive_finite";
   var x = 1;
  
-  EXPECT_TRUE(check_positive_finite(function, "x", x))
+  EXPECT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x: " << x;
   x = -1;
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
@@ -40,7 +40,7 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(1U,stack_size);
-  EXPECT_TRUE(check_positive_finite(function,"a",a));
+  EXPECT_NO_THROW(check_positive_finite(function,"a",a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);

@@ -75,7 +75,7 @@ namespace stan {
      * @param b Denominator scalar.
      * @return The arc tangent of the fraction, in radians.
      */
-    inline var atan2(const var& a, const double b) {
+    inline var atan2(const var& a, double b) {
       return var(new atan2_vd_vari(a.vi_, b));
     }
 
@@ -116,7 +116,7 @@ namespace stan {
      * @param b Denominator variable.
      * @return The arc tangent of the fraction, in radians.
      */
-    inline var atan2(const double a, const var& b) {
+    inline var atan2(double a, const var& b) {
       return var(new atan2_dv_vari(a, b.vi_));
     }
 

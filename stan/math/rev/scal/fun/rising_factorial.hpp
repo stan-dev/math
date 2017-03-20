@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_SCAL_FUN_RISING_FACTORIAL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
   namespace math {
@@ -19,11 +19,11 @@ namespace stan {
         void chain() {
           avi_->adj_ += adj_
             * rising_factorial(avi_->val_, bvi_->val_)
-            * (boost::math::digamma(avi_->val_ + bvi_->val_)
-               - boost::math::digamma(avi_->val_));
+            * (digamma(avi_->val_ + bvi_->val_)
+               - digamma(avi_->val_));
           bvi_->adj_ += adj_
             * rising_factorial(avi_->val_, bvi_->val_)
-            * boost::math::digamma(bvi_->val_ + avi_->val_);
+            * digamma(bvi_->val_ + avi_->val_);
         }
       };
 
@@ -34,8 +34,8 @@ namespace stan {
         }
         void chain() {
           avi_->adj_ += adj_ * rising_factorial(avi_->val_, bd_)
-            * (boost::math::digamma(avi_->val_ + bd_)
-               - boost::math::digamma(avi_->val_));
+            * (digamma(avi_->val_ + bd_)
+               - digamma(avi_->val_));
         }
       };
 
@@ -46,7 +46,7 @@ namespace stan {
         }
         void chain() {
           bvi_->adj_ += adj_ * rising_factorial(ad_, bvi_->val_)
-            * boost::math::digamma(bvi_->val_ + ad_);
+            * digamma(bvi_->val_ + ad_);
         }
       };
     }

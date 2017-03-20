@@ -7,11 +7,11 @@ TEST(ErrorHandlingScalar,CheckNonnegative) {
   const char* function = "check_nonnegative";
   double x = 0;
 
-  EXPECT_TRUE(check_nonnegative(function, "x", x)) 
+  EXPECT_NO_THROW(check_nonnegative(function, "x", x)) 
     << "check_nonnegative should be true with finite x: " << x;
 
   x = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_nonnegative(function, "x", x)) 
+  EXPECT_NO_THROW(check_nonnegative(function, "x", x)) 
     << "check_nonnegative should be true with x = Inf: " << x;
 
   x = -0.01;

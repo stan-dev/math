@@ -8,16 +8,16 @@ TEST(ErrorHandlingMatrix, checkOrdered) {
   y.resize(3);
 
   y << 0, 1, 2;
-  EXPECT_TRUE(check_ordered("check_ordered", "y", y));
+  EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y << 0, 10, std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_ordered("check_ordered", "y", y));
+  EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y << -10, 10, std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_ordered("check_ordered", "y", y));
+  EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y << -std::numeric_limits<double>::infinity(), 10, std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(check_ordered("check_ordered", "y", y));
+  EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y << 0, 0, 0;
   EXPECT_THROW(check_ordered("check_ordered", "y", y),

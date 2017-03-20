@@ -11,15 +11,15 @@ TEST(AgradRevErrorHandlingScalar,CheckBounded_X) {
   var low = -1;
   var high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
   
   x = low;
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " equal to the lower bound: " << low;
 
   x = high;
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " equal to the lower bound: " << low;
 
   x = low-1;
@@ -56,11 +56,11 @@ TEST(AgradRevErrorHandlingScalar,CheckBounded_Low) {
   var low = -1;
   var high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be true x: " << x << " and bounds: " << low << ", " << high;
   
   low = -std::numeric_limits<var>::infinity();
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
 
   low = std::numeric_limits<var>::quiet_NaN();
@@ -82,11 +82,11 @@ TEST(AgradRevErrorHandlingScalar,CheckBounded_High) {
   var low = -1;
   var high = 1;
  
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be true x: " << x << " and bounds: " << low << ", " << high;
 
   high = std::numeric_limits<var>::infinity();
-  EXPECT_TRUE(check_bounded(function, name, x, low, high)) 
+  EXPECT_NO_THROW(check_bounded(function, name, x, low, high)) 
     << "check_bounded should be TRUE with x: " << x << " and bounds: " << low << ", " << high;
   
   high = std::numeric_limits<var>::quiet_NaN();
@@ -109,7 +109,7 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
   EXPECT_EQ(1U,stack_size);
-  EXPECT_TRUE(check_bounded(function,"a",a,4.0,6.0));
+  EXPECT_NO_THROW(check_bounded(function,"a",a,4.0,6.0));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(1U,stack_size_after_call);

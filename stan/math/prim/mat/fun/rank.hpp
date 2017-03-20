@@ -15,6 +15,7 @@ namespace stan {
      * @param[in] v Input vector.
      * @param[in] s Position in vector.
      * @return Number of components of v less than v[s].
+     * @throw std::out_of_range if s is out of range.
      */
     template <typename T>
     inline int rank(const std::vector<T> & v, int s) {
@@ -36,6 +37,7 @@ namespace stan {
      * @param[in] v Input vector.
      * @param s Index for input vector.
      * @return Number of components of v less than v[s].
+     * @throw std::out_of_range if s is out of range.
      */
     template <typename T, int R, int C>
     inline int rank(const Eigen::Matrix<T, R, C> & v, int s) {

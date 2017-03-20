@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 namespace stan {
@@ -18,8 +17,8 @@ namespace stan {
         }
         void chain() {
           using std::log;
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bvi_->val_))) {
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bvi_->val_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
@@ -38,8 +37,8 @@ namespace stan {
         }
         void chain() {
           using std::log;
-          if (unlikely(boost::math::isnan(avi_->val_)
-                       || boost::math::isnan(bd_)))
+          if (unlikely(is_nan(avi_->val_)
+                       || is_nan(bd_)))
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           else
             avi_->adj_ += adj_ * log(bd_);
@@ -84,7 +83,7 @@ namespace stan {
      * @param b Second scalar.
      * @return Value of a*log(b)
      */
-    inline var multiply_log(const var& a, const double b) {
+    inline var multiply_log(const var& a, double b) {
       return var(new multiply_log_vd_vari(a.vi_, b));
     }
     /**
@@ -98,7 +97,7 @@ namespace stan {
      * @param b Second variable.
      * @return Value of a*log(b)
      */
-    inline var multiply_log(const double a, const var& b) {
+    inline var multiply_log(double a, const var& b) {
       if (a == 1.0)
         return log(b);
       return var(new multiply_log_dv_vari(a, b.vi_));

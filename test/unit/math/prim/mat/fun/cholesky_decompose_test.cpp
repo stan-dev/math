@@ -23,7 +23,7 @@ TEST(MathMatrix, cholesky_decompose_exception) {
     2.0, 3.0;
   EXPECT_THROW_MSG(stan::math::cholesky_decompose(m),
                    std::domain_error,
-                   "Cholesky decomposition of m failed");
+                   "Matrix m is not positive definite");
 
   m.resize(0, 0);
   EXPECT_NO_THROW(stan::math::cholesky_decompose(m));

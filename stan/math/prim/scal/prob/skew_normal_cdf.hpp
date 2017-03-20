@@ -13,7 +13,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
@@ -32,7 +32,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)
@@ -56,10 +55,10 @@ namespace stan {
 
       using std::exp;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, sigma, alpha);
       const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
@@ -76,10 +75,8 @@ namespace stan {
         const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff) - 2
           * owens_t(diff, alpha_dbl);
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         const T_partials_return deriv_erfc = SQRT_TWO_OVER_PI * 0.5
           * exp(-scaled_diff_sq)
           / sigma_dbl;

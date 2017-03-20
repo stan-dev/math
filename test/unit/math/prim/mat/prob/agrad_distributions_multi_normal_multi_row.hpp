@@ -21,8 +21,8 @@ protected:
       0.0, -2.0, 9.0;
   }
   
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y2;
+  Eigen::Matrix<double,1,Eigen::Dynamic> y;
+  Eigen::Matrix<double,1,Eigen::Dynamic> y2;
   Eigen::Matrix<double,Eigen::Dynamic,1> mu;
   Eigen::Matrix<double,Eigen::Dynamic,1> mu2;
   Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> Sigma;

@@ -70,9 +70,9 @@ TEST(ProbDistributionsMultiNormalCholesky,Vectorized) {
 }
 
 TEST(ProbDistributionsMultiNormalCholesky,MultiNormalOneRow) {
-  Matrix<double,Dynamic,Dynamic> y(1,3);
+  Matrix<double, 1, Dynamic> y(3);
   y << 2.0, -2.0, 11.0;
-  Matrix<double,Dynamic,1> mu(3,1);
+  Matrix<double,Dynamic,1> mu(3);
   mu << 1.0, -1.0, 3.0;
   Matrix<double,Dynamic,Dynamic> Sigma(3,3);
   Sigma << 9.0, -3.0, 0.0,

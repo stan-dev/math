@@ -38,7 +38,7 @@ namespace stan {
      * @return Specified value.
      */
     template <>
-    inline double value_of<double>(const double x) {
+    inline double value_of<double>(double x) {
       return x;
     }
 

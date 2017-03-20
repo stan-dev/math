@@ -100,7 +100,6 @@ namespace stan {
       int dense_jacobian(const double* y, DlsMat J, double t) const {
         const std::vector<double> y_vec(y, y + N_);
         Eigen::VectorXd fy(N_);
-        // Eigen and CVODES use column major addressing
         Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
         ode_system_.jacobian(t, y_vec, fy, Jy_map);
         return 0;
@@ -140,7 +139,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<var>& initial,
                     const std::vector<var>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -163,7 +162,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<double>& initial,
                     const std::vector<var>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -185,7 +184,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<var>& initial,
                     const std::vector<double>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
         Eigen::VectorXd dy_dt(N_);
         Eigen::MatrixXd Jy(N_, N_);
@@ -206,7 +205,7 @@ namespace stan {
        */
       void rhs_sens(const std::vector<double>& initial,
                     const std::vector<double>& param,
-                    const double t, const std::vector<double>& y,
+                    double t, const std::vector<double>& y,
                     N_Vector *yS, N_Vector *ySdot) const {
       }
     };

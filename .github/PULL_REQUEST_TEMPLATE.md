@@ -1,4 +1,4 @@
-#### Submisison Checklist
+#### Submission Checklist
 
 - [ ] Run unit tests: `./runTests.py test/unit`
 - [ ] Run cpplint: `make cpplint`

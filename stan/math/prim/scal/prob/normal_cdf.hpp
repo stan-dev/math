@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -44,7 +45,6 @@ namespace stan {
 
       T_partials_return cdf(1.0);
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -62,9 +62,9 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
       const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
@@ -84,10 +84,8 @@ namespace stan {
         else
           cdf_ = 0.5 * (1.0 + erf(scaled_diff));
 
-        // cdf
         cdf *= cdf_;
 
-        // gradients
         if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
           const T_partials_return rep_deriv
             = (scaled_diff < -37.5 * INV_SQRT_2)

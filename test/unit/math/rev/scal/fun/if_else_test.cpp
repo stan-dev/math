@@ -1,6 +1,6 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 TEST(AgradRev,if_else) {
@@ -59,4 +59,15 @@ TEST(AgradRev, if_else_nan) {
                if_else(false, nan_v, nan).val());
   EXPECT_PRED1(boost::math::isnan<double>,
                if_else(false, nan_v, nan_v).val());
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var x = 1.0;
+  stan::math::var y = 2.0;
+  test::check_varis_on_stack(stan::math::if_else(true, x, y));
+  test::check_varis_on_stack(stan::math::if_else(false, x, y));
+  test::check_varis_on_stack(stan::math::if_else(true, x, 2.0));
+  test::check_varis_on_stack(stan::math::if_else(false, x, 2.0));
+  test::check_varis_on_stack(stan::math::if_else(true, 1.0, y));
+  test::check_varis_on_stack(stan::math::if_else(false, 1.0, y));
 }

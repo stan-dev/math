@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -20,7 +19,7 @@ namespace stan {
 
     template <class RNG>
     inline double
-    exponential_rng(const double beta,
+    exponential_rng(double beta,
                     RNG& rng) {
       using boost::variate_generator;
       using boost::exponential_distribution;

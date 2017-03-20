@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, sum_vector) {
   using stan::math::sum;
@@ -79,4 +80,19 @@ TEST(AgradRevMatrix, sum_matrix) {
   v.resize(0, 0);
   EXPECT_FLOAT_EQ(0.0, sum(d));
   EXPECT_FLOAT_EQ(0.0, sum(v).val());
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v m(2, 2);
+  m << 1, 2, 3, 4;
+
+  stan::math::vector_v v(3);
+  v << 1, 2, 3;
+
+  stan::math::row_vector_v rv(2);
+  rv << 1, 2;
+
+  test::check_varis_on_stack(stan::math::sum(m));
+  test::check_varis_on_stack(stan::math::sum(v));
+  test::check_varis_on_stack(stan::math::sum(rv));
 }

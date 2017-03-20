@@ -17,7 +17,7 @@ namespace stan {
    * used to construct the view.
    *
    * For a container, the index returns a reference to the position in
-   * the underlying container used to construct the view.  WARNING: 
+   * the underlying container used to construct the view.  WARNING:
    * There is no bounds checking for container indices and they will
    * segfault if accessed beyond their boundaries.
    *
@@ -39,7 +39,7 @@ namespace stan {
    * @tparam T  Type of scalar or container being wrapped.
    * @tparam is_array True if underlying type T can be indexed with
    * operator[].
-   * @tparam throw_if_accessed True if the behaviro is to throw an
+   * @tparam throw_if_accessed True if the behavior is to throw an
    * exception whenever <code>operator[]</code> is called.
    */
   template <typename T,

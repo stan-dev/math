@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt) {
   using stan::math::matrix_v;
@@ -1017,4 +1018,52 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv_basic) {
   for (size_t n = 0; n < grad_basic.size(); n++) {
     EXPECT_FLOAT_EQ(grad_basic[n], grad[n]);
   }
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  using stan::math::matrix_v;
+  using stan::math::matrix_d;
+  
+  matrix_v av(4,4);
+  matrix_d ad(4,4);
+  matrix_d bd(4,2);
+  matrix_v bv(4,2);
+  matrix_d cd(2,2);
+  matrix_v cv(2,2);
+  AVAR res;
+  AVEC vars;
+  VEC grad;
+  
+  
+  bd << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  bv << 100, 10,
+  0,  1,
+  -3, -3,
+  5,  2;
+  ad << 9.0,  3.0, 3.0,   3.0, 
+        3.0, 10.0, 2.0,   2.0,
+        3.0,  2.0, 7.0,   1.0,
+        3.0,  2.0, 1.0, 112.0;
+  av << 9.0,  3.0, 3.0,   3.0, 
+        3.0, 10.0, 2.0,   2.0,
+        3.0,  2.0, 7.0,   1.0,
+        3.0,  2.0, 1.0, 112.0;
+  cd.setIdentity(2,2);
+  cv.setIdentity(2,2);
+
+  stan::math::LDLT_factor<double,-1,-1> ldlt_ad;
+  stan::math::LDLT_factor<stan::math::var,-1,-1> ldlt_av;
+  ldlt_av.compute(av);
+  ldlt_ad.compute(ad);
+  
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bv));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bd));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bv));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bd));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bv));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bd));
+  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_ad, bv));
 }

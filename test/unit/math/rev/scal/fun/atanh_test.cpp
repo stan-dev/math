@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,atanh) {
   AVAR a = 0.3;
@@ -39,15 +39,9 @@ TEST(AgradRev,atanh_neg_1) {
 }
 
 TEST(AgradRev,atanh_out_of_bounds) {
-  double inf = std::numeric_limits<double>::infinity();
-  AVAR a =  1.0 + stan::math::EPSILON;
-  AVAR b = -1.0 - stan::math::EPSILON;
-  AVAR c =  inf;
-  AVAR d = -inf;
-  EXPECT_TRUE(boost::math::isnan(atanh(a).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(b).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(c).val()));
-  EXPECT_TRUE(boost::math::isnan(atanh(d).val()));
+  using stan::math::atanh;
+  EXPECT_THROW(atanh(AVAR(-2)), std::domain_error);
+  EXPECT_THROW(atanh(AVAR(1001.2)), std::domain_error);
 }
 
 struct atanh_fun {
@@ -61,4 +55,9 @@ struct atanh_fun {
 TEST(AgradRev,atanh_NaN) {
   atanh_fun atanh_;
   test_nan(atanh_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 0.3;
+  test::check_varis_on_stack(stan::math::atanh(a));
 }

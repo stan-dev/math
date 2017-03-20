@@ -17,12 +17,12 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
   y.resize(1, 1);
 
   y << 0.0;
-  EXPECT_TRUE(check_pos_semidefinite(function, "y", y));  
+  EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));  
 
   y << -1.0;
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::domain_error,
-                   "function: y is not positive semi-definite: -1");
+                   "function: y is not positive semi-definite.");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
@@ -45,12 +45,12 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
   y.resize(2, 2);
   
   y << 1, 0, 0, 1;
-  EXPECT_TRUE(check_pos_semidefinite(function, "y", y));  
+  EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));  
 
   y << -1, 0, 0, 1;
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::domain_error,
-                   "function: y is not positive semi-definite:\n-1  0\n 0  1");
+                   "function: y is not positive semi-definite.");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
@@ -61,7 +61,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
   y << 2, -1, 0,
     -1, 2, -1,
     0, -1, 2;
-  EXPECT_TRUE(check_pos_semidefinite(function, "y", y));
+  EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
   for (int i = 0; i < y.rows(); i++)
     for (int j = 0; j < y.cols(); j++) {
       y << 2, -1, 0, -1, 2, -1, 0, -1, 2;

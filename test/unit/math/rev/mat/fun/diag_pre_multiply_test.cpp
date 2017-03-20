@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -221,4 +222,13 @@ TEST(MathMatrix,diagPreMultiplyException) {
   Matrix<var,Dynamic,1> v(3);
   v << 1, 2, 3;
   EXPECT_THROW(diag_pre_multiply(v,m), std::invalid_argument);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v m(3,3);
+  m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::vector_v v(3);
+  v << 1, 2, 3;
+
+  test::check_varis_on_stack(stan::math::diag_pre_multiply(v,m));
 }

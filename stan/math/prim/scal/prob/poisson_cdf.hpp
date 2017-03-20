@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -11,8 +12,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -29,26 +30,21 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-      // Ensure non-zero argument slengths
       if (!(stan::length(n) && stan::length(lambda)))
         return 1.0;
 
       T_partials_return P(1.0);
 
-      // Validate arguments
       check_not_nan(function, "Rate parameter", lambda);
       check_nonnegative(function, "Rate parameter", lambda);
       check_consistent_sizes(function,
                              "Random variable", n,
                              "Rate parameter", lambda);
 
-      // Wrap arguments into vector views
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
-      // Compute vectorized CDF and gradient
-      using boost::math::tgamma;
       using std::exp;
       using std::pow;
       using std::exp;

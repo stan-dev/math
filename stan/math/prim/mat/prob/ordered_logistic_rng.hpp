@@ -20,7 +20,7 @@ namespace stan {
 
     template <class RNG>
     inline int
-    ordered_logistic_rng(const double eta,
+    ordered_logistic_rng(double eta,
                          const Eigen::Matrix<double, Eigen::Dynamic, 1>& c,
                          RNG& rng) {
       using boost::variate_generator;

@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix,to_var_scalar) {
   double d = 5.0;
@@ -74,3 +75,17 @@ TEST(AgradRevMatrix,to_var_rowvector) {
   EXPECT_FLOAT_EQ(5, output(4).val());
 }
 
+TEST(AgradRevMatrix, check_varis_on_stack) {
+  stan::math::matrix_v m(2, 2);
+  m << 1, 2, 3, 4;
+
+  stan::math::vector_v v(3);
+  v << 1, 2, 3;
+
+  stan::math::row_vector_v rv(2);
+  rv << 1, 2;
+  
+  test::check_varis_on_stack(stan::math::to_var(m));
+  test::check_varis_on_stack(stan::math::to_var(v));
+  test::check_varis_on_stack(stan::math::to_var(rv));
+}

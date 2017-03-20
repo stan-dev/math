@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -18,10 +17,21 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Gumbel variate with the given location and scale
+     * using the specified random number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param mu location parameter
+     * @param beta positive scale parameter
+     * @param rng random number generator
+     * @return Gumbel random variate
+     * @throw std::domain_error if mu is infinite or beta is nonpositive.
+     */
     template <class RNG>
     inline double
-    gumbel_rng(const double mu,
-               const double beta,
+    gumbel_rng(double mu,
+               double beta,
                RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;

@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,cbrt) {
   AVAR a = 27.0;
@@ -25,4 +25,9 @@ struct cbrt_fun {
 TEST(AgradRev,cbrt_NaN) {
   cbrt_fun cbrt_;
   test_nan(cbrt_,false,true);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  AVAR a = 27;
+  test::check_varis_on_stack(stan::math::cbrt(a));
 }

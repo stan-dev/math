@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
-#include <algorithm>    // std::sort
+#include <algorithm>
 #include <iostream>
 #include <vector>
 

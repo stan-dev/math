@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
 
 void test_log_mix_vvv(double theta, double lambda1, double lambda2) {
@@ -319,4 +319,17 @@ struct log_mix_fun {
 TEST(AgradRev,log_mix_NaN) {
   log_mix_fun log_mix_;
   test_nan(log_mix_,0.6,0.3,0.5,true,false);
+}
+
+TEST(AgradRev, check_varis_on_stack) {
+  stan::math::var theta = 0.5;
+  stan::math::var x = 10.0;
+  stan::math::var y = 4.0;
+  test::check_varis_on_stack(stan::math::log_mix(theta, x, y));
+  test::check_varis_on_stack(stan::math::log_mix(theta, x, 4.0));
+  test::check_varis_on_stack(stan::math::log_mix(theta, 10.0, y));
+  test::check_varis_on_stack(stan::math::log_mix(theta, 10.0, 4.0));
+  test::check_varis_on_stack(stan::math::log_mix(0.5, x, y));
+  test::check_varis_on_stack(stan::math::log_mix(0.5, x, 4.0));
+  test::check_varis_on_stack(stan::math::log_mix(0.5, 10.0, y));
 }

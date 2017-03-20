@@ -15,9 +15,7 @@ namespace stan {
     /** \addtogroup csr_format
      *  @{
      */
-
     /** 
-     **
      * Construct a dense Eigen matrix from the CSR format components.
      *
      * @tparam T Type of matrix entries.
@@ -28,7 +26,12 @@ namespace stan {
      * @param[in] u Index of where each row starts in w.
      * @return Dense matrix defined by previous arguments.
      * @throw std::domain_error If the arguments do not define a matrix.
-    */
+     * @throw std::invalid_argument if m/n/w/v/u are not internally
+     *   consistent, as defined by the indexing scheme.  Extractors are
+     *   defined in Stan which guarantee a consistent set of m/n/w/v/u
+     *   for a given sparse matrix.
+     * @throw std::out_of_range if any of the indices are out of range.
+     */
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     csr_to_dense_matrix(int m,
@@ -64,7 +67,6 @@ namespace stan {
       }
       return result;
     }
-
     /** @} */   // end of csr_format group
 
   }

@@ -28,7 +28,7 @@ namespace stan {
                              const double* unit_vector_y,
                              int size,
                              int idx,
-                             const double norm)
+                             double norm)
           : vari(val),
             y_(y),
             unit_vector_y_(unit_vector_y),
@@ -47,8 +47,6 @@ namespace stan {
         }
       };
     }
-
-    // Unit vector
 
     /**
      * Return the unit length vector corresponding to the free vector y.

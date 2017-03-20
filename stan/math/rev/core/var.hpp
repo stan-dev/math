@@ -149,7 +149,8 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      var(unsigned char x) : vi_(new vari(static_cast<double>(x))) { }  // NOLINT
+      var(unsigned char x)  // NOLINT(runtime/explicit)
+      : vi_(new vari(static_cast<double>(x))) { }
 
       /**
        * Construct a variable from the specified arithmetic argument
@@ -328,7 +329,7 @@ namespace stan {
        * @param b The scalar to add to this variable.
        * @return The result of adding the specified variable to this variable.
        */
-      inline var& operator+=(const double b);
+      inline var& operator+=(double b);
 
       /**
        * The compound subtract/assignment operator for variables (C++).
@@ -354,7 +355,7 @@ namespace stan {
        * @return The result of subtracting the specified variable from this
        * variable.
        */
-      inline var& operator-=(const double b);
+      inline var& operator-=(double b);
 
       /**
        * The compound multiply/assignment operator for variables (C++).
@@ -380,7 +381,7 @@ namespace stan {
        * @return The result of multplying this variable by the specified
        * variable.
        */
-      inline var& operator*=(const double b);
+      inline var& operator*=(double b);
 
       /**
        * The compound divide/assignment operator for variables (C++).  If this
@@ -405,7 +406,7 @@ namespace stan {
        * @return The result of dividing this variable by the specified
        * variable.
        */
-      inline var& operator/=(const double b);
+      inline var& operator/=(double b);
 
       /**
        * Write the value of this auto-dif variable and its adjoint to

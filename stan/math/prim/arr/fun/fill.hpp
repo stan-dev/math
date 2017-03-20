@@ -15,12 +15,12 @@ namespace stan {
      *
      * @tparam T Type of container in vector.
      * @tparam S Type of value.
-     * @param x Container.
-     * @param y Value.
+     * @param[in] x Container.
+     * @param[in, out] y Value.
      */
     template <typename T, typename S>
     void fill(std::vector<T>& x, const S& y) {
-      for (size_t i = 0; i < x.size(); ++i)
+      for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i)
         fill(x[i], y);
     }
 

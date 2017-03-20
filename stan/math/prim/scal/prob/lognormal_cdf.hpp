@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/lognormal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -34,7 +35,6 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      // check if any vectors are zero length
       if (!(stan::length(y)
             && stan::length(mu)
             && stan::length(sigma)))
@@ -48,9 +48,9 @@ namespace stan {
       OperandsAndPartials<T_y, T_loc, T_scale>
         operands_and_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
       const double sqrt_pi = std::sqrt(pi());
@@ -69,11 +69,9 @@ namespace stan {
         const T_partials_return rep_deriv = SQRT_2 * 0.5 / sqrt_pi
           * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
-        // cdf
         const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
         cdf *= cdf_;
 
-        // gradients
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] += rep_deriv / cdf_ / y_dbl;
         if (!is_constant_struct<T_loc>::value)

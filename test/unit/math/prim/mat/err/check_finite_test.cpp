@@ -10,7 +10,7 @@ TEST(ErrorHandlingScalar,CheckFinite_Matrix) {
   
   x.resize(3);
   x << -1, 0, 1;
-  ASSERT_TRUE(check_finite(function, "x", x))
+  ASSERT_NO_THROW(check_finite(function, "x", x))
     << "check_finite should be true with finite x";
 
   x.resize(3);

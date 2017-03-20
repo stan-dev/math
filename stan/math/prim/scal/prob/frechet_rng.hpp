@@ -10,7 +10,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -23,8 +22,8 @@ namespace stan {
 
     template <class RNG>
     inline double
-    frechet_rng(const double alpha,
-                const double sigma,
+    frechet_rng(double alpha,
+                double sigma,
                 RNG& rng) {
       using boost::variate_generator;
       using boost::random::weibull_distribution;

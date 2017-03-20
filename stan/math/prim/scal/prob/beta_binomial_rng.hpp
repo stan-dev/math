@@ -19,11 +19,24 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Beta-Binomial draw with specified population size,
+     * prior success, and prior failure parameter using the specified random
+     * number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param N population size parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @param rng random number generator
+     * @return Beta-Binomial random variate
+     * @throw std::domain_error if N, alpha, or beta is negative.
+     */
     template <class RNG>
     inline int
-    beta_binomial_rng(const int N,
-                      const double alpha,
-                      const double beta,
+    beta_binomial_rng(int N,
+                      double alpha,
+                      double beta,
                       RNG& rng) {
       static const char* function("beta_binomial_rng");
 
@@ -33,11 +46,10 @@ namespace stan {
       check_positive_finite(function,
                             "Second prior sample size parameter", beta);
 
-      double a = beta_rng(alpha, beta, rng);
-      while (a > 1 || a < 0)
-        a = beta_rng(alpha, beta, rng);
-      return binomial_rng(N, a, rng);
+      double p = beta_rng(alpha, beta, rng);
+      return binomial_rng(N, p, rng);
     }
+
 
   }
 }

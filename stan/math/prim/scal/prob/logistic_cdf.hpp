@@ -14,7 +14,7 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -32,12 +32,10 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      // Size checks
       if ( !( stan::length(y) && stan::length(mu)
               && stan::length(sigma) ) )
         return 1.0;
 
-      // Error checks
       static const char* function("logistic_cdf");
 
       using boost::math::tools::promote_args;
@@ -53,10 +51,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      // Wrap arguments in vectors
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<const T_y> y_vec(y);
+      scalar_seq_view<const T_loc> mu_vec(mu);
+      scalar_seq_view<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
       OperandsAndPartials<T_y, T_loc, T_scale>
@@ -64,13 +61,11 @@ namespace stan {
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
           return operands_and_partials.value(0.0);
       }
 
-      // Compute vectorized CDF and its gradients
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
@@ -78,13 +73,11 @@ namespace stan {
           continue;
         }
 
-        // Pull out values
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-        // Compute
         const T_partials_return Pn = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl)
                                                       * sigma_inv_vec));
 

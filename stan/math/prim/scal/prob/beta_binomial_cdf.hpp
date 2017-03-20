@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
@@ -23,7 +24,23 @@
 namespace stan {
   namespace math {
 
-    // Beta-Binomial CDF
+    /**
+     * Returns the CDF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the product of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return probability or product of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N,
               typename T_size1, typename T_size2>
     typename return_type<T_size1, T_size2>::type
@@ -34,14 +51,12 @@ namespace stan {
                                                   T_size2>::type
         T_partials_return;
 
-      // Ensure non-zero argument lengths
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 1.0;
 
       T_partials_return P(1.0);
 
-      // Validate arguments
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,
                             "First prior sample size parameter", alpha);
@@ -53,14 +68,12 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      // Wrap arguments in vector views
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_size1> alpha_vec(alpha);
-      VectorView<const T_size2> beta_vec(beta);
+      scalar_seq_view<const T_n> n_vec(n);
+      scalar_seq_view<const T_N> N_vec(N);
+      scalar_seq_view<const T_size1> alpha_vec(alpha);
+      scalar_seq_view<const T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
-      // Compute vectorized CDF and gradient
       using std::exp;
       using std::exp;
 
