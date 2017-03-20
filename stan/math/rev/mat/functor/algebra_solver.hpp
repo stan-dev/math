@@ -109,7 +109,9 @@ namespace stan {
 
         hybrj_functor_solver<F, double, double>
           functor(f, x, y_dbl, dat, dat_int, true);
-        // CHECK: should I specify the dimensions of Jf_x ? 
+        // CHECK: should I specify the dimensions of Jf_x ?
+        // CHECK: can I skip this step, since Jf_x gets evaluated in
+        // compute()?
         Eigen::MatrixXd Jf_x = functor.get_jacobian(theta_dbl);
 
         hybrj_functor_solver<F, double, double>
