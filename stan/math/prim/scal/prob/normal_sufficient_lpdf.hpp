@@ -54,7 +54,8 @@ namespace stan {
     normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                            const T_n& n_obs, const T_loc& mu,
                            const T_scale& sigma) {
-      static const char* function = "stan::math::normal_log(%1%)";
+      static const char*
+        function = "stan::math::normal_sufficient_lpdf(%1%)";
       typedef typename
         stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
         T_partials_return;
