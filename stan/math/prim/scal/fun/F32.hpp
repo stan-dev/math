@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
 
 namespace stan {
@@ -40,6 +41,9 @@ namespace stan {
     template<typename T>
     T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
           const T& z, double precision = 1e-6, int max_steps = 1e5) {
+
+      check_3F2_converges("F32", a1, a2, a3, b1, b2, z);
+
       using std::exp;
       using std::log;
       using std::fabs;
@@ -54,8 +58,7 @@ namespace stan {
       bool T_is_negative = false;
       T p = 0.0;
       do {
-        p = (a1 + k) / (b1 + k) * (a2 + k) / (b2 + k) * (a3 + k) / (k + 1);
-
+        p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
         if (is_nan(p) || p == 0)
           break;
 
