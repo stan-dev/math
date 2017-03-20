@@ -60,38 +60,18 @@ namespace stan {
      * @return the matrix representation of the input
      */
     template <typename T>
-    inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+    inline Eigen::Matrix<typename
+      boost::math::tools::promote_args<T, double>::type,
+      Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector< std::vector<T> >& x) {
+      using boost::math::tools::promote_args;
       size_t rows = x.size();
       if (rows == 0)
-        return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> (0, 0);
+        return Eigen::Matrix<typename promote_args<T, double>::type,
+                             Eigen::Dynamic, Eigen::Dynamic> (0, 0);
       size_t cols = x[0].size();
-      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-        result(rows, cols);
-      for (size_t i = 0, ij = 0; i < cols; i++)
-        for (size_t j = 0; j < rows; j++, ij++)
-          result(ij) = x[j][i];
-      return result;
-    }
-
-    /**
-     * Returns a matrix representation of a standard vector of
-     * standard vectors of integers with the same dimensions and
-     * indexing order.
-     *
-     * @param x vector of vectors of integer values
-     * @return the matrix representation of the input,
-     * ints promoted to doubles
-     */
-    inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-    to_matrix(const std::vector< std::vector<int> >& x) {
-      size_t rows = x.size();
-      if (rows == 0)
-        return Eigen::Matrix<double, Eigen::Dynamic,
-                             Eigen::Dynamic> (0, 0);
-      size_t cols = x[0].size();
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
-        result(rows, cols);
+      Eigen::Matrix<typename promote_args<T, double>::type,
+                    Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
       for (size_t i = 0, ij = 0; i < cols; i++)
         for (size_t j = 0; j < rows; j++, ij++)
           result(ij) = x[j][i];

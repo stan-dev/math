@@ -208,16 +208,19 @@ TEST(ToMatrixRowVector, answers) {
 // [[T]] -> Matrix
 void test_to_matrix_2darray_answers(int m, int n) {
   std::vector<std::vector<double> > vec(m, std::vector<double>(n));
+  std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
   if (m == 0) n = 0; // Any vec (0, C) will become (0, 0)
   Eigen::MatrixXd a(m, n);
 
   for (int i = 0; i < m; ++i) {
     for (int j = 0; j < n; ++j) {
       vec[i][j] = i * j;
+      vec_int[i][j] = i * j;
       a(i, j) = i * j;
     }
   }
   expect_matrix_eq(a, to_matrix(vec));
+  expect_matrix_eq(a, to_matrix(vec_int));
 }
 
 TEST(ToMatrix2dArray, answers) {
@@ -225,26 +228,4 @@ TEST(ToMatrix2dArray, answers) {
   test_to_matrix_2darray_answers(3, 2);
   test_to_matrix_2darray_answers(3, 0);
   test_to_matrix_2darray_answers(0, 3);
-}
-
-// [[int]] -> Matrix
-void test_to_matrix_2d_int_array_answers(int m, int n) {
-  std::vector<std::vector<int> > vec(m, std::vector<int>(n));
-  if (m == 0) n = 0; // Any vec (0, C) will become (0, 0)
-  Eigen::MatrixXd a(m, n);
-
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < n; ++j) {
-      vec[i][j] = i * j;
-      a(i, j) = i * j;
-    }
-  }
-  expect_matrix_eq(a, to_matrix(vec));
-}
-
-TEST(ToMatrix2dIntArray, answers) {
-  test_to_matrix_2d_int_array_answers(0, 0);
-  test_to_matrix_2d_int_array_answers(3, 2);
-  test_to_matrix_2d_int_array_answers(3, 0);
-  test_to_matrix_2d_int_array_answers(0, 3);
 }
