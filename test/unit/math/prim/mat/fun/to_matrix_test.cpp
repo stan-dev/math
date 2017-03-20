@@ -13,8 +13,8 @@ row_major_to_column_major(const Eigen::Matrix<T, R, C>& x) {
   int cols = x.cols();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     result(rows, cols);
-  for (int i=0, ij=0; i < rows; i++)
-    for (int j=0; j < cols; j++, ij++)
+  for (int i = 0, ij = 0; i < rows; i++)
+    for (int j = 0; j < cols; j++, ij++)
       result(ij) = x(i, j);
   return result;
 }
@@ -94,24 +94,24 @@ void test_to_matrix_matrix_reshape_answers(int m1, int n1,
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
     
   if (n1 != 0) {
-    EXPECT_THROW(to_matrix(a, m1+1, n1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m1+1, n1, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m1+1, n1, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1 + 1, n1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1 + 1, n1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1 + 1, n1, 0), std::invalid_argument);
   }
-  if (m1 !=0) {
-    EXPECT_THROW(to_matrix(a, m1, n1+1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m1, n1+1, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m1, n1+1, 0), std::invalid_argument);
+  if (m1 != 0) {
+    EXPECT_THROW(to_matrix(a, m1, n1 + 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1, n1 + 1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m1, n1 + 1, 0), std::invalid_argument);
   }
   if (n2 != 0) {
-    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 0), std::invalid_argument);
   }
-  if (m2 !=0) {
-    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+  if (m2 != 0) {
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 0), std::invalid_argument);
   }
 }
 
@@ -145,14 +145,14 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
-    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 0), std::invalid_argument);
   }
   if (m2 !=0) {
-    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 0), std::invalid_argument);
   }
 }
 
@@ -186,14 +186,14 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
-    EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2+1, n2, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2 + 1, n2, 0), std::invalid_argument);
   }
   if (m2 !=0) {
-    EXPECT_THROW(to_matrix(a, m2, n2+1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 1), std::invalid_argument);
-    EXPECT_THROW(to_matrix(a, m2, n2+1, 0), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 1), std::invalid_argument);
+    EXPECT_THROW(to_matrix(a, m2, n2 + 1, 0), std::invalid_argument);
   }
 }
 
