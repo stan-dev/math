@@ -33,6 +33,8 @@ void test_to_matrix_array_answers(int m, int n) {
     a(i) = i;
   expect_matrix_eq(a, to_matrix(vec, m, n));
   expect_matrix_eq(a, to_matrix(vec, m, n, 1));
+  expect_matrix_eq(a, to_matrix(vec, m, n, -1));
+  expect_matrix_eq(a, to_matrix(vec, m, n, 2));
   expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec,
                                                           m, n, 0)));
   expect_matrix_eq(a, to_matrix(vec_int, m, n));
@@ -81,6 +83,8 @@ void test_to_matrix_matrix_reshape_answers(int m1, int n1,
   }
   expect_matrix_eq(a, to_matrix(b, m1, n1));
   expect_matrix_eq(a, to_matrix(b, m1, n1, 1));
+  expect_matrix_eq(a, to_matrix(b, m1, n1, -1));
+  expect_matrix_eq(a, to_matrix(b, m1, n1, 2));
   expect_matrix_eq(a,
                    row_major_to_column_major(to_matrix(b, m1, n1, 0)));
   
@@ -88,10 +92,7 @@ void test_to_matrix_matrix_reshape_answers(int m1, int n1,
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
   expect_matrix_eq(b,
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
-  
-  EXPECT_THROW(to_matrix(a, m1, n1, 2), std::invalid_argument);
-  EXPECT_THROW(to_matrix(a, m1, n1, -1), std::invalid_argument);
-  
+    
   if (n1 != 0) {
     EXPECT_THROW(to_matrix(a, m1+1, n1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m1+1, n1, 1), std::invalid_argument);
@@ -138,11 +139,10 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
   //with reshape
   expect_matrix_eq(b, to_matrix(a, m2, n2));
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
+  expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
+  expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
   expect_matrix_eq(b,
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
-
-  EXPECT_THROW(to_matrix(a, m2, n2, 2), std::invalid_argument);
-  EXPECT_THROW(to_matrix(a, m2, n2, -1), std::invalid_argument);
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
@@ -180,11 +180,10 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
   //with reshape
   expect_matrix_eq(b, to_matrix(a, m2, n2));
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
+  expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
+  expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
   expect_matrix_eq(b,
                    row_major_to_column_major(to_matrix(a, m2, n2, 0)));
-
-  EXPECT_THROW(to_matrix(a, m2, n2, 2), std::invalid_argument);
-  EXPECT_THROW(to_matrix(a, m2, n2, -1), std::invalid_argument);
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2+1, n2), std::invalid_argument);
