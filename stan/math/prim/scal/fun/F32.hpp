@@ -13,22 +13,19 @@ namespace stan {
     /**
      * Hypergeometric function, 3F2.
      *
-     * The generalized hypergeometric function is a power series. This
-     * implementation computes the power series directly stopping when
-     * the series converges to within <code>precision</code> or takes
-     * <code>max_steps</code>.
+     * Calculate the hypergeometric function (3F2) as the power series
+     * directly to within <code>precision</code> or until
+     * <code>max_steps</code> terms.
      *
-     * Although some convergence conditions and divergent conditions are known,
-     * this function does not check the inputs for known convergent conditions.
-     *
-     * This function will converge if:
+     * This function does not have a closed form but will converge if:
+     *   - <code>|z|</code> is less than 1
+     *   - <code>|z|</code> is equal to one and <code>b1 + b2 < a1 + a2 + a3</code>
+     * This function is a rational polynomial if
      *   - <code>a1</code>, <code>a2</code>, or <code>a3</code> is a
      *     non-positive integer
+     * This function can be treated as a rational polynomial if
      *   - <code>b1</code> or <code>b2</code> is a non-positive integer
-     *   - <code>z</code> is less than 1
-     * This function will diverge if <code>z</code> is greater than 1.
-     * When <code>z</code> is 1, which is the case for the beta binomial
-     * cdf, it is hard to determine.
+     *     and the series is terminated prior to the final term.
      *
      * @tparam T type of arguments and result
      * @param[in] a1 a1 (always called with 1 from beta binomial cdfs)
