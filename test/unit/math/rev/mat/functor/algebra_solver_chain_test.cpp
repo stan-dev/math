@@ -188,7 +188,8 @@ algebraEq3(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
   typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
   Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(2);
   y(0) = x(0) - parms(0) * parms(1); //  + dat[0];
-  y(1) = x(1) - parms(2); //  + dat_int[0] * dat[1];
+  // y(1) = x(1) - parms(2); //  + dat_int[0] * dat[1];
+  y(1) = x(1) - parms(1);
   return y;
 }
 
@@ -199,7 +200,7 @@ private:
   Eigen::Matrix<T2, Eigen::Dynamic, 1> parms;
   std::vector<double> dat;
   std::vector<int> dat_int;
-  std::string variable;
+  bool x_is_dv;
 
 public:
   algebraEq3_functor() { };
@@ -208,12 +209,12 @@ public:
                      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms_para,
                      const std::vector<double>& dat_para,
                      const std::vector<int>& dat_int_para,
-                     const std::string& variable_para) {
+                     const bool& x_is_dv_para) {
     theta = theta_para;
     parms = parms_para;
     dat = dat_para;
     dat_int = dat_int_para;
-    variable = variable_para;
+    x_is_dv = x_is_dv_para;
   }
 
   template <typename T>
@@ -221,7 +222,7 @@ public:
   Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
                 Eigen::Dynamic, 1>
   operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (variable == "theta")
+    if (x_is_dv)
       return algebraEq3(x, parms, dat, dat_int);
     else
       return algebraEq3(theta, x, dat, dat_int);
@@ -238,7 +239,6 @@ TEST(MathMatrix, algebra_solver_chain_3) {
   using stan::math::ChainableStack;
   using stan::math::empty_nested;
   using stan::math::nested_size;
-  
 
   int nParms = 3, nSolutions = 2;
   Eigen::VectorXd x(nSolutions);
@@ -248,14 +248,9 @@ TEST(MathMatrix, algebra_solver_chain_3) {
   std::vector<double> dummy_dat(0);
   std::vector<int> dummy_dat_int(0);
 
-/*  algebra_solver_vari<algebraEq3_functor<double, double>, var>
-    baseVari(algebraEq3_functor<double, double>(),
-         x, parms, dummy_dat, dummy_dat_int);
-*/
-
   Matrix<double, Dynamic, Dynamic> J(nSolutions, nParms);
   J << 4, 5, 0, 0, 0, 1;
-  
+
   Matrix<var, Dynamic, 1> theta
     = algebra_solver(algebraEq3_functor<double, double>(),
                      x, parms, dummy_dat, dummy_dat_int);
@@ -264,10 +259,6 @@ TEST(MathMatrix, algebra_solver_chain_3) {
     stan::math::set_zero_all_adjoints();
 
     // initialize adjoint of final expression
-    // the two lines below are equivalent.
-    // baseVari.impl_->theta_(i).vi_->adj_ = 1;
-    // baseVari.impl_->theta_(i).vi_->init_dependent();
-
     theta(i).vi_->init_dependent();
 
     typedef std::vector<vari*>::reverse_iterator it_t;
@@ -275,19 +266,23 @@ TEST(MathMatrix, algebra_solver_chain_3) {
     it_t end = empty_nested()
       ? ChainableStack::var_stack_.rend() : begin + nested_size();  
 
+    std::cout << "Marker A at pass: " << i << std::endl;
     for (it_t it = begin; it < end; ++it) {
+      std::cout << "parms_adj before: " 
+                << parms(0).vi_->adj_ << " "
+                << parms(1).vi_->adj_ << " "
+                << parms(2).vi_->adj_ << std::endl;
       (*it)->chain();
+      std::cout << "parms_adj after_: " 
+                << parms(0).vi_->adj_ << " "
+                << parms(1).vi_->adj_ << " "
+                << parms(2).vi_->adj_ << std::endl;
     }
-
-    // stan::math::grad(baseVari.impl_->theta_(i).vi_);
-    // baseVari.impl_->theta_(i).vi_->adj_ = 1;
-    // baseVari.chain();
+    std::cout << "Marker B at pass: " << i << std::endl;
 
     for (int j = 0; j < nParms; j++) {
       EXPECT_EQ(J(i, j), parms(j).vi_->adj_);
-      // EXPECT_EQ(J(i, j), baseVari.impl_->parms_(j).vi_->adj_);
     }
-    std::cout << end[0] << std::endl;
-    
+
   }
 }

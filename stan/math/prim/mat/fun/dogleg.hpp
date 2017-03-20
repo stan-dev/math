@@ -69,8 +69,6 @@ namespace stan {
       stan::math::hybrj_functor<F1, F2> functor(f1, f2);
       Eigen::HybridNonLinearSolver<hybrj_functor<F1, F2> > solver(functor);
       Eigen::VectorXd fvec;
-      // std::cout << "solver: " << functor(x, fvec) << std::endl;
-      // std::cout << "jacobian: " << functor.df(x, f2) << std::endl;
       Eigen::VectorXd theta = x;
       solver.solve(theta);
       return theta;
