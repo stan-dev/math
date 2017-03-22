@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUN_COS_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat/functor/triple.hpp>  // TEST
 #include <cmath>
 
 namespace stan {
@@ -15,6 +16,14 @@ namespace stan {
         }
         void chain() {
           avi_->adj_ -= adj_ * std::sin(avi_->val_);
+
+          // For testing purposes
+          Eigen::VectorXd x(3);
+          x << 1, 2, 3;
+          Eigen::MatrixXd J;
+          Eigen::VectorXd fvec;
+          triple_functor f;
+          jacobian(f, x, fvec, J);
         }
       };
     }
