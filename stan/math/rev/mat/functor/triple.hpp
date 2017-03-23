@@ -46,7 +46,7 @@ namespace stan {
       public:
         triple_vari_alloc(const Eigen::Matrix<T,
                             Eigen::Dynamic, 1>& x)
-          : x_(x), y_(3) {
+          : x_(x), y_(x.size()) {
           compute(value_of(x));
          }
 
@@ -71,9 +71,8 @@ namespace stan {
          // Compute the adjoints (these three lines are
          // the only ones that should appear in the chain
          // method.
-         x(0).vi_->adj_ += 3 * adjY(0);
-         x(1).vi_->adj_ += 3 * adjY(1);         
-         x(2).vi_->adj_ += 3 * adjY(2);
+         for (int i = 0; i < x.size(); i++)
+           x(i).vi_->adj_ += 3 * adjY(i);
         }
 
       public:
