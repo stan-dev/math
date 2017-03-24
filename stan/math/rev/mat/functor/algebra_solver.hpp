@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dogleg.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/rev/mat/functor/jacobian_test.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
@@ -48,13 +47,9 @@ namespace stan {
 
     template <typename F, typename T, typename FX>
     struct algebra_solver_vari : public vari {
-      //  Eigen::VectorXd theta_dbl_;
-      F f_;
-      Eigen::VectorXd x_;
       vari** y_;
       int y_size_;
-      std::vector<double> dat_;
-      std::vector<int> dat_int_;
+      int x_size_;
       vari** theta_;
       Eigen::MatrixXd Jx_y_;
 
@@ -66,13 +61,10 @@ namespace stan {
                           const Eigen::VectorXd theta_dbl,
                           FX& fx)
         : vari(theta_dbl(0)),  // CHECK - calls chain()
-          f_(f),
-          x_(x),
           y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
           y_size_(y.size()),
-          dat_(dat),
-        dat_int_(dat_int),
-        theta_(ChainableStack::memalloc_.alloc_array<vari*>(x.size())) {
+          x_size_(x.size()),
+          theta_(ChainableStack::memalloc_.alloc_array<vari*>(x.size())) {
         for (int i = 0; i < y.size(); ++i)
           y_[i] = y(i).vi_;
 
@@ -84,14 +76,14 @@ namespace stan {
         Eigen::MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
 
         hybrj_functor_solver<F, double, double>
-          fy(f_, x_, value_of(y), dat_, dat_int_, false);
+          fy(f, x, value_of(y), dat, dat_int, false);
         Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
         Jx_y_ = - stan::math::mdivide_left(Jf_x, Jf_y);
       }
 
       void chain() {
-        for (int i = 0; i < x_.rows(); i++)
+        for (int i = 0; i < x_size_; i++)
           for (int j = 0; j < y_size_; j++)
             y_[j]->adj_ += theta_[i]->adj_ * Jx_y_(i, j);
       }
