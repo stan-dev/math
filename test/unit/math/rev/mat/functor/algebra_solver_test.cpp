@@ -4,44 +4,43 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-/*
 template <typename T1, typename T2>
-inline
-Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-              Eigen::Dynamic, 1>
+inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
+                     Eigen::Dynamic, 1>
 algebraEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-          const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
+          const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
           const std::vector<double>& dat,
           const std::vector<int>& dat_int) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(2);
-  y(0) = x(0) - parms(0);
-  y(1) = x(1) - parms(1);
-  return y;
+  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+  assert(z.rows() == x.rows());
+  z(0) = x(0) - y(0);
+  z(1) = x(1) - y(1);
+  return z;
 }
 
 template <typename T1, typename T2>
 struct algebraEq_functor {
 private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> theta;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> parms;
-  std::vector<double> dat;
-  std::vector<int> dat_int;
-  std::string variable;
+  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
+  std::vector<double> dat_;
+  std::vector<int> dat_int_;
+  bool x_is_dv_;
 
 public:
   algebraEq_functor() { };
 
-  algebraEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_para,
-                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms_para,
-                    const std::vector<double>& dat_para,
-                    const std::vector<int>& dat_int_para,
-                    const std::string& variable_para) {
-    theta = theta_para;
-    parms = parms_para;
-    dat = dat_para;
-    dat_int = dat_int_para;
-    variable = variable_para;
+  algebraEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+                    const std::vector<double>& dat,
+                    const std::vector<int>& dat_int,
+                    const bool& x_is_dv) {
+    x_ = x;
+    y_ = y;
+    dat_ = dat;
+    dat_int_ = dat_int;
+    x_is_dv_ = x_is_dv;
   }
 
   template <typename T>
@@ -49,92 +48,91 @@ public:
   Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
                 Eigen::Dynamic, 1>
   operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (variable == "theta")
-      return algebraEq(x, parms, dat, dat_int);
+    if (x_is_dv_)
+      return algebraEq(x, y_, dat_, dat_int_);
     else
-      return algebraEq(theta, x, dat, dat_int);
+      return algebraEq(x_, x, dat_, dat_int_);
   }
-}; */
+};
 
-/*
+
 TEST(MathMatrix, algebra_solver_eq1) {
   using stan::math::algebra_solver;
   using stan::math::sum;
   using stan::math::var;
+  using std::cout;
+  using std::endl;
 
-  for (size_t k = 0; k < 2; k++) {  // upperbound should be 2
-    Eigen::VectorXd x(2);
+  int n_x = 2, n_y = 2;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::VectorXd x(n_x);
     x << 1, 1;  // initial guess
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> parms(2);
-    parms << 36, 6;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_x);
+    y << 36, 6;
 
     std::vector<double> dummy_dat(0);
     std::vector<int> dummy_dat_int(0);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+  
     theta = algebra_solver(algebraEq_functor<double, double>(),
-                           x, parms, dummy_dat, dummy_dat_int);
+                           x, y, dummy_dat, dummy_dat_int);
+
     EXPECT_EQ(36, theta(0));
     EXPECT_EQ(6, theta(1));
+    
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 1, 0, 0, 1;
 
-    std::vector<double> dtheta_dparms(parms.size());
-    if (k == 0) {
-      dtheta_dparms[0] = 1;
-      dtheta_dparms[1] = 0;
-    }
-    else {
-      dtheta_dparms[0] = 0;
-      dtheta_dparms[1] = 1;
-    }
-
-    AVEC parms_vec = createAVEC(parms(0), parms(1));
+    AVEC y_vec = createAVEC(y(0), y(1));
     VEC g;
-    theta(k).grad(parms_vec, g);
+    theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < parms.size(); i++)
-      EXPECT_EQ(dtheta_dparms[i], g[i]);
+    for (int i = 0; i < n_y; i++)
+      EXPECT_EQ(J(k, i), g[i]);
   }
-} */
+}
 
-/*
+///////////////////////////////////////////////////////////////////////////////
+
 template <typename T1, typename T2>
 inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
                      Eigen::Dynamic, 1>
 algebraEq2(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-           const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
+           const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
            const std::vector<double>& dat,
            const std::vector<int>& dat_int) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(3);
-  y(0) = x(0) * x(1) * x(2) - parms(0);
-  y(1) = x(0) - parms(1);
-  y(2) = x(1) - parms(2);
-  return y;
+  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+  assert(z.rows() == x.rows());
+  z(0) = x(0) - y(0) * y(1);
+  z(1) = x(1) - y(2);
+  return z;
 }
 
 template <typename T1, typename T2>
 struct algebraEq2_functor {
 private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> theta;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> parms;
-  std::vector<double> dat;
-  std::vector<int> dat_int;
-  std::string variable;
+  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
+  std::vector<double> dat_;
+  std::vector<int> dat_int_;
+  bool x_is_dv_;
 
 public:
   algebraEq2_functor() { };
 
-  algebraEq2_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_para,
-                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms_para,
-                     const std::vector<double>& dat_para,
-                     const std::vector<int>& dat_int_para,
-                     const std::string& variable_para) {
-    theta = theta_para;
-    parms = parms_para;
-    dat = dat_para;
-    dat_int = dat_int_para;
-    variable = variable_para;
+  algebraEq2_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+                     const std::vector<double>& dat,
+                     const std::vector<int>& dat_int,
+                     const bool& x_is_dv) {
+    x_ = x;
+    y_ = y;
+    dat_ = dat;
+    dat_int_ = dat_int;
+    x_is_dv_ = x_is_dv;
   }
 
   template <typename T>
@@ -142,10 +140,10 @@ public:
   Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
                 Eigen::Dynamic, 1>
   operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (variable == "theta")
-      return algebraEq2(x, parms, dat, dat_int);
+    if (x_is_dv_)
+      return algebraEq2(x, y_, dat_, dat_int_);
     else
-      return algebraEq2(theta, x, dat, dat_int);
+      return algebraEq2(x_, x, dat_, dat_int_);
   }
 };
 
@@ -153,195 +151,36 @@ TEST(MathMatrix, algebra_solver_eq2) {
   using stan::math::algebra_solver;
   using stan::math::sum;
   using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
+  using std::cout;
+  using std::endl;
 
-  int nParms = 3, nSolutions = 3;
-  for (int k = 0; k < nSolutions; k++) {
-    Eigen::VectorXd x(nSolutions);
-    x << 1, 1, 1;  // initial guess
-
-    Matrix<var, Dynamic, 1> parms(nParms);
-    parms << 5, 4, 2;
-
-    std::vector<double> dummy_dat(0);
-    std::vector<int> dummy_dat_int(0);
-
-    Matrix<var, Dynamic, 1> theta;
-    theta = algebra_solver(algebraEq2_functor<double, double>(),
-                           x, parms, dummy_dat, dummy_dat_int);
-
-    EXPECT_EQ(4, theta(0));
-    EXPECT_EQ(2, theta(1));
-    EXPECT_EQ(0.625, theta(2));
-
-    double J31 = 1 / (parms(1).val() * parms(2).val());
-    double J32 = - parms(0).val() / (parms(1).val() * parms(1).val()
-                                      * parms(2).val());
-    double J33 = - parms(0).val() / (parms(1).val() * parms(2).val()
-                                      * parms(2).val());
-    Matrix<double, Dynamic, Dynamic> dtheta_dparms(nSolutions, nParms);
-    dtheta_dparms << 0, 1, 0,
-                     0, 0, 1,
-                     J31, J32, J33;
-
-    AVEC parms_vec = createAVEC(parms(0), parms(1), parms(2));
-    VEC g;
-    theta(k).grad(parms_vec, g);
-    for (int i = 0; i < nParms; i++)
-      EXPECT_EQ(dtheta_dparms(k, i), g[i]);
-  }
-} */
-
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-algebraEq3(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-           const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
-           const std::vector<double>& dat,
-           const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> y(2);
-  y(0) = x(0) - parms(0) * parms(1); //  + dat[0];
-  y(1) = x(1) - parms(2); //  + dat_int[0] * dat[1];
-  return y;
-}
-
-template <typename T1, typename T2>
-struct algebraEq3_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> theta_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> parms_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  std::string variable_;
-
-public:
-  algebraEq3_functor() { };
-
-  algebraEq3_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& parms,
-                     const std::vector<double>& dat,
-                     const std::vector<int>& dat_int,
-                     const std::string& variable) {
-    theta_ = theta;
-    parms_ = parms;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    variable_ = variable;
-  }
-
-  template <typename T>
-  inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
-                Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (variable_ == "theta")
-      return algebraEq3(x, parms_, dat_, dat_int_);
-    else
-      return algebraEq3(theta_, x, dat_, dat_int_);
-  }
-};
-
-
-TEST(MathMatrix, algebra_solver_eq3) {
-  using stan::math::algebra_solver;
-  using stan::math::sum;
-  using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
-
-  int nParms = 3, nSolutions = 2;
-  for (int k = 0; k < nSolutions; k++) {
-
-    Eigen::VectorXd x(nSolutions);
+  int n_x = 2, n_y = 3;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::VectorXd x(n_x);
     x << 1, 1;  // initial guess
 
-    Matrix<var, Dynamic, 1> parms(nParms);
-    parms << 5, 4, 2;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
+    y << 5, 4, 2;
 
     std::vector<double> dummy_dat(0);
     std::vector<int> dummy_dat_int(0);
 
-    //  std::vector<double> dat(2);
-    // dat[0] = 3.5;
-    // dat[1] = 4.5;
-    // std::vector<int> dat_int(1);
-    // dat_int[0] = 4;
-    
-    Matrix<var, Dynamic, 1> theta;
-    theta = algebra_solver(algebraEq3_functor<double, double>(),
-                           x, parms, dummy_dat, dummy_dat_int);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+  
+    theta = algebra_solver(algebraEq2_functor<double, double>(),
+                           x, y, dummy_dat, dummy_dat_int);
 
     EXPECT_EQ(20, theta(0));
     EXPECT_EQ(2, theta(1));
+    
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 4, 5, 0, 0, 0, 1;
 
-    Matrix<double, Dynamic, Dynamic> dtheta_dparms(nSolutions, nParms);
-    dtheta_dparms << 4, 5, 0,
-                     0, 0, 1;
-
-    AVEC parms_vec = createAVEC(parms(0), parms(1), parms(2));
-    // AVEC parms_vec = createAVEC(parms(0), parms(1));
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
     VEC g;
-    std::cout << "Marker A at pass: " << k << std::endl;
-    theta(k).grad(parms_vec, g);
-    std::cout << "Marker B at pass: " << k <<  std::endl << std::endl;
+    theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < nParms; i++)
-      EXPECT_EQ(dtheta_dparms(k, i), g[i]);
+    for (int i = 0; i < n_y; i++)
+      EXPECT_EQ(J(k, i), g[i]);
   }
-
 }
-
-/*
-TEST(MathMatrix, algebra_solver_eq3_extraneous_parm) {
-  using stan::math::algebra_solver;
-  using stan::math::sum;
-  using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
-
-  int nParms = 4, nSolutions = 2;
-  for (size_t k = 0; k < (size_t) nSolutions; k++) {
-    Eigen::VectorXd x(nSolutions);
-    x << 1, 1;  // initial guess
-
-    Matrix<var, Dynamic, 1> parms(nParms);
-    parms << 5, 4, 2, 0;
-
-    std::vector<double> dat(2);
-    dat[0] = 3.5;
-    dat[1] = 4.5;
-    std::vector<int> dat_int(1);
-    dat_int[0] = 4;
-
-    Matrix<var, Dynamic, 1> theta;
-    std::cout << "Marker A" << std::endl;
-    theta = algebra_solver(algebraEq3_functor<double, double>(),
-                           x, parms, dat, dat_int);
-
-    EXPECT_EQ(16.5, theta(0));
-    EXPECT_EQ(-16, theta(1));
-
-    Matrix<double, Dynamic, Dynamic> dtheta_dparms(nSolutions, nParms);
-    dtheta_dparms << 4, 5, 0, 0,
-                     0, 0, 1, 0;
-
-    std::cout << "Running under regime: " << nParms << std::endl;
-
-    AVEC parms_vec = createAVEC(parms(0), parms(1), parms(2), parms(3));
-    VEC g;
-    for (size_t i = 0; i < parms_vec.size(); i++)
-      std::cout << parms_vec[i] << " ";
-    std::cout << std::endl;
-    std::cout << "Calculating gradients for k: " << k <<  std::endl;
-    theta(k).grad(parms_vec, g);
-    std::cout << "marker B.2" << std::endl;
-
-    for (int i = 0; i < nParms; i++)
-      EXPECT_EQ(dtheta_dparms(k, i), g[i]);
-    }
-
-  std::cout << "marker C" << std::endl;
-
-} */
