@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_ALGEBRA_SOLVER_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ALGEBRA_SOLVER_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dogleg.hpp>
@@ -7,8 +7,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
-#include <stdexcept>  // TEST
-#include <iostream>
 
 namespace stan {
   namespace math {
