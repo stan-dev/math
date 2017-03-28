@@ -12,7 +12,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Check if the hypergeometric function (2F1) called with 
+     * Check if the hypergeometric function (2F1) called with
      * supplied arguments will converge, assuming arguments are
      * finite values.
      *
@@ -21,7 +21,7 @@ namespace stan {
      * @tparam T_b1 Type of b1
      * @tparam T_z Type of z
      *
-     * @param function Name of function ultimately relying on 2F1 (for error 
+     * @param function Name of function ultimately relying on 2F1 (for error
      &   messages)
      * @param a1 Variable to check
      * @param a2 Variable to check
@@ -29,10 +29,10 @@ namespace stan {
      * @param z Variable to check
      *
      * @throw <code>domain_error</code> if 2F1(a1, a2, b1, z)
-     *   does not meet convergence conditions, or if any coefficient is NaN. 
+     *   does not meet convergence conditions, or if any coefficient is NaN.
      */
     template <typename T_a1, typename T_a2, typename T_b1, typename T_z>
-    inline void check_2F1_converges(const char* function, 
+    inline void check_2F1_converges(const char* function,
       const T_a1& a1, const T_a2& a2, const T_b1& b1, const T_z& z
     ) {
       using std::floor;
@@ -43,12 +43,12 @@ namespace stan {
       is_polynomial = (a1 < 0.0 && floor(a1) == a1) ||
                       (a2 < 0.0 && floor(a2) == a2);
       if (is_polynomial) {
-        if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms) 
+        if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms)
           num_terms = floor(fabs(value_of_rec(a1)));
-        if (a2 < 0.0 && floor(a2) == a2 && fabs(a2) > num_terms) 
+        if (a2 < 0.0 && floor(a2) == a2 && fabs(a2) > num_terms)
           num_terms = floor(fabs(value_of_rec(a2)));
-      } 
-      
+      }
+
       bool is_undefined;
       is_undefined = (b1 < 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms);
 
@@ -56,12 +56,12 @@ namespace stan {
       if (fabs(z) < 1.0 && !is_undefined) return;
       if (fabs(z) == 1.0 && !is_undefined) {
         if (b1 > a1 + a2) return;
-      }     
+      }
       std::stringstream msg;
       msg << "called from function '" << function << "', "
-          << "hypergeometric function 2F1 does not meet convergence " 
-          << "conditions with given arguments. " 
-          << "a1: " << a1 << ", a2: " << a2 << ", " 
+          << "hypergeometric function 2F1 does not meet convergence "
+          << "conditions with given arguments. "
+          << "a1: " << a1 << ", a2: " << a2 << ", "
           << "b1: " << b1 << ", z: " << z;
       throw std::domain_error(msg.str());
     }
