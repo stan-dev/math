@@ -51,10 +51,10 @@ namespace stan {
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_dof> nu_vec(nu);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, nu, mu, sigma);
 
       OperandsAndPartials<T_y, T_dof, T_loc, T_scale>

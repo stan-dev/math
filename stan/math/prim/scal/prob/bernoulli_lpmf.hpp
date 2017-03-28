@@ -59,8 +59,8 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_prob> theta_vec(theta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_prob> theta_vec(theta);
       size_t N = max_size(n, theta);
       OperandsAndPartials<T_prob> operands_and_partials(theta);
 

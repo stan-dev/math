@@ -45,9 +45,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
       OperandsAndPartials<T_shape, T_inv_scale>

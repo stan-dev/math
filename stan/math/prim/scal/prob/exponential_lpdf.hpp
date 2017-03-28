@@ -68,8 +68,8 @@ namespace stan {
                              "Random variable", y,
                              "Inverse scale parameter", beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t N = max_size(y, beta);
 
       VectorBuilder<include_summand<propto, T_inv_scale>::value,

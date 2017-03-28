@@ -50,8 +50,8 @@ namespace stan {
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_prob> theta_vec(theta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_prob> theta_vec(theta);
       size_t size = max_size(n, theta);
 
       OperandsAndPartials<T_prob> operands_and_partials(theta);

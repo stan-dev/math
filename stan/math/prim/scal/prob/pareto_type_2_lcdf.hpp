@@ -51,10 +51,10 @@ namespace stan {
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> lambda_vec(lambda);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> lambda_vec(lambda);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, lambda, alpha);
 
       OperandsAndPartials<T_y, T_loc, T_scale, T_shape>

@@ -35,10 +35,10 @@ namespace stan {
             && stan::length(b)))
         return 0.0;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_a> a_vec(a);
-      scalar_seq_view<const T_b> b_vec(b);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_a> a_vec(a);
+      scalar_seq_view<T_b> b_vec(b);
       size_t size = max_size(n, N, a, b);
 
       double logp(0.0);

@@ -77,10 +77,10 @@ namespace stan {
       OperandsAndPartials<T_size1, T_size2>
         operands_and_partials(alpha, beta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_size1> alpha_vec(alpha);
-      scalar_seq_view<const T_size2> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_size1> alpha_vec(alpha);
+      scalar_seq_view<T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
       for (size_t i = 0; i < size; i++) {

@@ -73,9 +73,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> beta_vec(beta);
 
       for (size_t n = 0; n < length(y); n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);

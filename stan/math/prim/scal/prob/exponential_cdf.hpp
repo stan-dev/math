@@ -57,8 +57,8 @@ namespace stan {
       OperandsAndPartials<T_y, T_inv_scale>
         operands_and_partials(y, beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t N = max_size(y, beta);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);

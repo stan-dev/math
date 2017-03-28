@@ -51,8 +51,8 @@ namespace stan {
       if (!include_summand<propto, T_log_rate>::value)
         return 0.0;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_log_rate> alpha_vec(alpha);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_log_rate> alpha_vec(alpha);
       size_t size = max_size(n, alpha);
 
       // FIXME: first loop size of alpha_vec, second loop if-ed for size==1

@@ -71,9 +71,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale Parameter", beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       OperandsAndPartials<T_y, T_shape, T_scale>

@@ -54,10 +54,10 @@ namespace stan {
 
       using std::exp;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
-      scalar_seq_view<const T_inv_scale> lambda_vec(lambda);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_inv_scale> lambda_vec(lambda);
       size_t N = max_size(y, mu, sigma, lambda);
       const double sqrt_pi = std::sqrt(pi());
       for (size_t n = 0; n < N; n++) {

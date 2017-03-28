@@ -53,9 +53,9 @@ namespace stan {
                              "Degrees of freedom parameter", nu,
                              "Scale parameter", s);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_dof> nu_vec(nu);
-      scalar_seq_view<const T_scale> s_vec(s);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
+      scalar_seq_view<T_scale> s_vec(s);
       size_t N = max_size(y, nu, s);
 
       OperandsAndPartials<T_y, T_dof, T_scale>

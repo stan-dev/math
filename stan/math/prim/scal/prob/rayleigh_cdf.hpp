@@ -48,8 +48,8 @@ namespace stan {
 
       OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, sigma);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));

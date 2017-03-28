@@ -71,9 +71,9 @@ namespace stan {
       check_nonnegative(function, "Random variable", y);
       check_less_or_equal(function, "Random variable", y, 1);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_scale_succ> alpha_vec(alpha);
-      scalar_seq_view<const T_scale_fail> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale_succ> alpha_vec(alpha);
+      scalar_seq_view<T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>

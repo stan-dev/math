@@ -57,8 +57,8 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_dof> nu_vec(nu);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
       OperandsAndPartials<T_y, T_dof>

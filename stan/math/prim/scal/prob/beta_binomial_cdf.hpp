@@ -68,10 +68,10 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_size1> alpha_vec(alpha);
-      scalar_seq_view<const T_size2> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_size1> alpha_vec(alpha);
+      scalar_seq_view<T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
       using std::exp;

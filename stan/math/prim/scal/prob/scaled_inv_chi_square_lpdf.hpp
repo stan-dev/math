@@ -71,9 +71,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_dof, T_scale>::value)
         return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_dof> nu_vec(nu);
-      scalar_seq_view<const T_scale> s_vec(s);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
+      scalar_seq_view<T_scale> s_vec(s);
       size_t N = max_size(y, nu, s);
 
       for (size_t n = 0; n < N; n++) {

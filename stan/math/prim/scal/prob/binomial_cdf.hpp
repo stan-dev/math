@@ -64,9 +64,9 @@ namespace stan {
                              "Population size parameter", N,
                              "Probability parameter", theta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_prob> theta_vec(theta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_prob> theta_vec(theta);
       size_t size = max_size(n, N, theta);
 
       using std::exp;

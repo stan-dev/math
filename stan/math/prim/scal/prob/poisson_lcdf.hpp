@@ -40,8 +40,8 @@ namespace stan {
                              "Random variable", n,
                              "Rate parameter", lambda);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
       using std::log;

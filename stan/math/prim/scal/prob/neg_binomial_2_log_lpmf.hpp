@@ -61,9 +61,9 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_log_location> eta_vec(eta);
-      scalar_seq_view<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_log_location> eta_vec(eta);
+      scalar_seq_view<T_precision> phi_vec(phi);
       size_t size = max_size(n, eta, phi);
 
       OperandsAndPartials<T_log_location, T_precision>

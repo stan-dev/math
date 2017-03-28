@@ -64,9 +64,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, alpha, sigma);
 
       for (size_t n = 0; n < N; n++) {

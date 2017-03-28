@@ -48,8 +48,8 @@ namespace stan {
       if (!include_summand<propto, T_rate>::value)
         return 0.0;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
       for (size_t i = 0; i < size; i++)
