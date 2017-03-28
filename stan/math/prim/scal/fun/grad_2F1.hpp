@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
+#include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
@@ -10,65 +11,111 @@ namespace stan {
   namespace math {
 
     /**
-     * Gradient of the hypergeometric function, 2F1(a1, a2, b1, z)
-     * with respect to a1 and b1 only.
+     * Gradients of the hypergeometric function, 2F1.
      *
-     * The generalized hypergeometric function is a power series. This
-     * implementation computes gradient by computing the power series
-     * directly stopping when the series converges to within
-     * <code>precision</code> or takes <code>max_steps</code>.
+     * Calculate the gradients of the hypergeometric function (2F1) 
+     * as the power series stopping when the series converges
+     * to within <code>precision</code> or throwing when the 
+     * function takes <code>max_steps</code> steps.
      *
-     * If more than <code>max_steps</code> are taken without
-     * converging, the function will throw a domain_error.
+     * This power-series representation converges for all gradients
+     * under the same conditions as the 2F1 function itself.
      *
      * @tparam T type of arguments and result
-     * @param[out] gradA1 output argument for partial w.r.t. a1
-     * @param[out] gradB1 output argument for partial w.r.t. b1
-     * @param[in] a1 a1, see generalized hypergeometric function definition.
-     * @param[in] a2 a2, see generalized hypergeometric function definition.
-     * @param[in] b1 b1, see generalized hypergeometric function definition.
-     * @param[in] z z, see generalized hypergeometric function definition.
+     * @param[out] g g pointer to array of six values of type T, result.
+     * @param[in] a1 a1 see generalized hypergeometric function definition.
+     * @param[in] a2 a2 see generalized hypergeometric function definition.
+     * @param[in] b1 b1 see generalized hypergeometric function definition.
+     * @param[in] z z see generalized hypergeometric function definition.
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
-     * @param[in] max_steps number of steps to take. defaults to 10000
-     * @throw throws std::domain_error if not converged after max_steps
-     *
+     * @param[in] max_steps number of steps to take. defaults to 10,000
      */
     template<typename T>
-    void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2,
-      const T& b1, const T& z, T precision = 1e-6, int max_steps = 1e5) {
-      using std::fabs;
+    void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
+        const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
 
       check_2F1_converges("grad_2F1", a1, a2, b1, z); 
 
-      gradA1 = 0;
-      gradB1 = 0;
+      using std::log;
+      using std::fabs;
+      using std::exp;
+      using stan::math::is_nan;
 
-      T gradA1old = 0;
-      T gradB1old = 0;
+      g_a1 = 0.0;
+      g_b1 = 0.0;
+
+      T log_g_old[4];
+      for (T *q = log_g_old; q != log_g_old + 4; ++q) 
+        *q = -1.0 * std::numeric_limits<double>::infinity();
+
+      T log_t_old = 0.0;
+      T log_t_new = 0.0;
+
+      T log_z = log(z);
+
+      T p = 0.0;
+
+      double log_t_new_sign = 1.0;
+      double log_t_old_sign = 1.0;
+      double log_g_old_sign[4];
+      for (double *q = log_g_old_sign; q != log_g_old_sign + 4; ++q) 
+        *q = 1.0;
 
       int k = 0;
-      T tDak = 1.0 / (a1 - 1);
-
-      do {
-        const T r = ( (a1 + k) / (b1 + k) ) * ( (a2 + k) / (k + 1) ) * z;
-        tDak = r * tDak * (a1 + (k - 1)) / (a1 + k);
-
-        if (is_nan(r) || r == 0)
+      T term;
+      while (true) {
+        p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
+        if (p == 0)
           break;
 
-        gradA1old = r * gradA1old + tDak;
-        gradB1old = r * gradB1old - tDak * ((a1 + k) / (b1 + k));
+        log_t_new += log(fabs(p)) + log_z;
+        if (p < 0 && log_t_new_sign < 0.0) {
+          log_t_new_sign = 1.0;
+        } else if (p < 0 && log_t_new_sign > 0.0) {
+          log_t_new_sign = -1.0;
+        }
+//      g_old[0] = t_new * (g_old[0] / t_old + 1.0 / (a1 + k));
+        term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+          + 1/(a1 + k);
+        log_g_old[0] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[0] = log_t_new_sign;
+        else 
+          log_g_old_sign[0] = -1.0 * log_t_new_sign;
+        
+//      g_old[1] = t_new * (g_old[1] / t_old + 1.0 / (a2 + k));
+        term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
+          + 1/(a2 + k);
+        log_g_old[1] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[1] = log_t_new_sign;
+        else 
+          log_g_old_sign[1] = -1.0 * log_t_new_sign;
+//      g_old[3] = t_new * (g_old[3] / t_old - 1.0 / (b1 + k));
+        term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+          - 1/(b1 + k);
+        log_g_old[2] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[2] = log_t_new_sign;
+        else 
+          log_g_old_sign[2] = -1.0 * log_t_new_sign;
+        
+        g_a1 += log_g_old_sign[0] * exp(log_g_old[0]);
+        g_b1 += log_g_old_sign[2] * exp(log_g_old[2]);
 
-        gradA1 += gradA1old;
-        gradB1 += gradB1old;
+        if (exp(log_t_new) <= precision)
+          break;  // implicit abs
 
-        ++k;
         if (k >= max_steps) {
           domain_error("grad_2F1", "k (internal counter)", max_steps,
-            "exceeded ",
-            " iterations, hypergeometric function did not converge.");
+            "exceeded ", " iterations, hypergeometric function gradient "
+            "did not converge.");
         }
-      } while (fabs(tDak * (a1 + (k - 1)) ) > precision);
+
+        log_t_old = log_t_new;
+        log_t_old_sign = log_t_new_sign;
+        ++k;
+      }  
     }
 
   }
