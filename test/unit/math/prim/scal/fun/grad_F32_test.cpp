@@ -81,7 +81,7 @@ TEST(MathPrimScalFun, grad_F32_double_sign_flip_1) { // convergence, double sign
   g[3] = -0.00367744563081578;
   g[4] = -0.0369291473791218;
   g[5] =  0.1224673892640317;
-  stan::math::grad_F32(g_calc, 1.0, -.5, -2.5, 10.0, 1.0, 0.3, 1e-20);
+  stan::math::grad_F32(g_calc, 1.0, -.5, -2.5, 10.0, 1.0, 0.3, 1e-10);
   for (int i=0; i < 6; ++i) 
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
 }
@@ -95,7 +95,7 @@ TEST(MathPrimScalFun, grad_F32_double_sign_flip_2) { // convergence, double sign
   g[3] = -0.00645591019603955;
   g[4] = -0.0651738419665848;
   g[5] =  0.2147503542109778;
-  stan::math::grad_F32(g_calc, 1.0, -.5, -4.5, 10.0, 1.0, 0.3, 1e-20);
+  stan::math::grad_F32(g_calc, 1.0, -.5, -4.5, 10.0, 1.0, 0.3, 1e-10);
   for (int i=0; i < 6; ++i) 
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
 }
