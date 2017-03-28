@@ -6,7 +6,9 @@
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
+#include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
+#include <iostream>
 
 namespace stan {
   namespace math {
@@ -15,6 +17,7 @@ namespace stan {
     struct hybrj_functor_solver : stan::math::NLOFunctor<double> {
     private:
       F f_;
+      int x_size_;
       Eigen::MatrixXd J_;
 
     public:
@@ -23,8 +26,9 @@ namespace stan {
                            const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
                            const std::vector<double> dat,
                            const std::vector<int> dat_int,
-                           const bool x_is_dv) :
-                           f_(x, y, dat, dat_int, x_is_dv) { }
+                           const bool x_is_dv)
+        : f_(x, y, dat, dat_int, x_is_dv),
+          x_size_(x.size()) { }
 
       int operator()(const Eigen::VectorXd &dv, Eigen::VectorXd &fvec) {
         stan::math::jacobian(f_, dv, fvec, J_);
@@ -36,10 +40,14 @@ namespace stan {
         return 0;
       }
 
-      Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &y) {
+      Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &dv) {
         Eigen::VectorXd fvec;
-        stan::math::jacobian(f_, y, fvec, J_);
+        stan::math::jacobian(f_, dv, fvec, J_);
         return J_;
+      }
+
+      Eigen::VectorXd get_value(const Eigen::VectorXd dv) {
+        return f_(dv);
       }
     };
 
@@ -58,7 +66,7 @@ namespace stan {
                           const std::vector<int> dat_int,
                           const Eigen::VectorXd theta_dbl,
                           FX& fx)
-        : vari(theta_dbl(0)),  // CHECK - calls chain()
+        : vari(theta_dbl(0)),
           y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
           y_size_(y.size()),
           x_size_(x.size()),
@@ -112,6 +120,17 @@ namespace stan {
       typedef hybrj_functor_solver<F, double, double> FX;
       FX fx(f, x, value_of(y), dat, dat_int, true);
       Eigen::HybridNonLinearSolver<FX> solver(fx);
+      int z_size = fx.get_value(x).size();
+      if (z_size != x.size()) {  // FIX ME: do this w/o computing fx?
+        std::stringstream msg;
+        msg << ", but should have the same dimension as x "
+            << "(the vector of unknowns), which is: "
+            << x.size();
+        std::string msg_str(msg.str());
+
+        invalid_argument("algebra_solver", "the ouput of the algebraic system",
+                         z_size, "has dimension = ", msg_str.c_str());
+      }
       Eigen::VectorXd theta_dbl = x;
       solver.solve(theta_dbl);
 
