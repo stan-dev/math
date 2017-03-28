@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
 
 namespace stan {
@@ -12,16 +13,13 @@ namespace stan {
     /**
      * Gradients of the hypergeometric function, 3F2.
      *
-     * The generalized hypergeometric function is a power series. This
-     * implementation computes the gradients using derivatives of the
-     * power series directly and stopping when
-     * the series converges to within <code>precision</code> or takes
-     * <code>max_steps</code>.
+     * Calculate the gradients of the hypergeometric function (3F2) 
+     * as the power series stopping when the series converges
+     * to within <code>precision</code> or throwing when the 
+     * function takes <code>max_steps</code> steps.
      *
-     * Although some convergence conditions and divergent conditions are known,
-     * this function does not check the inputs for known convergent conditions.
-     * Some convergence conditions are listed with the Hypergeometric
-     * function itself (F32).
+     * This power-series representation converges for all gradients
+     * under the same conditions as the 3F2 function itself.
      *
      * @tparam T type of arguments and result
      * @param[out] g g pointer to array of six values of type T, result.
@@ -32,61 +30,110 @@ namespace stan {
      * @param[in] b2 b2 see generalized hypergeometric function definition.
      * @param[in] z z see generalized hypergeometric function definition.
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
-     * @param[in] max_steps number of steps to take. defaults to 10000
+     * @param[in] max_steps number of steps to take. defaults to 10,000
      */
     template<typename T>
     void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
         const T& b2, const T& z, const T& precision = 1e-6,
         int max_steps = 1e5) {
+
+      check_3F2_converges("grad_F32", a1, a2, a3, b1, b2, z); 
+
       using std::log;
       using std::fabs;
       using std::exp;
       using stan::math::is_nan;
 
-      T gOld[6];
-
       for (T *q = g; q != g + 6; ++q) *q = 0.0;
-      for (T *q = gOld; q != gOld + 6; ++q) *q = 0.0;
 
-      T tOld = 1.0;
-      T tNew = 0.0;
+      T log_g_old[6];
+      for (T *q = log_g_old; q != log_g_old + 6; ++q) 
+        *q = -1.0 * std::numeric_limits<double>::infinity();
 
-      T logT = 0.0;
+      T log_t_old = 0.0;
+      T log_t_new = 0.0;
 
-      T logZ = log(z);
+      T log_z = log(z);
+
+      T p = 0.0;
+
+      double log_t_new_sign = 1.0;
+      double log_t_old_sign = 1.0;
+      double log_g_old_sign[6];
+      for (T *q = log_g_old_sign; q != log_g_old_sign + 6; ++q) 
+        *q = 1.0;
 
       int k = 0;
-      bool T_is_negative = false;
-      T p = 0.0;
+      double term;
       do {
-        p = (a1 + k) / (b1 + k) * (a2 + k) / (b2 + k) * (a3 + k) / (1 + k);
-
-        if (is_nan(p) || p == 0)
+        p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (1 + k));
+        if (p == 0)
           break;
 
-        logT += log(fabs(p)) + logZ;
-        if (p < 0 && T_is_negative) {
-          T_is_negative = false;
-        } else if (p < 0 && !T_is_negative) {
-          T_is_negative = true;
+        log_t_new += log(fabs(p)) + log_z;
+        if (p < 0 && log_t_new_sign < 0.0) {
+          log_t_new_sign = 1.0;
+        } else if (p < 0 && log_t_new_sign > 0.0) {
+          log_t_new_sign = -1.0;
         }
-        if (T_is_negative)
-          tNew = -1 * exp(logT);
-        else
-          tNew = exp(logT);
+//        g_old[0] = t_new * (g_old[0] / t_old + 1.0 / (a1 + k));
+        term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+          + 1/(a1 + k);
+        log_g_old[0] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[0] = log_t_new_sign;
+        else 
+          log_g_old_sign[0] = -1.0 * log_t_new_sign;
+        
+//        g_old[1] = t_new * (g_old[1] / t_old + 1.0 / (a2 + k));
+        term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
+          + 1/(a2 + k);
+        log_g_old[1] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[1] = log_t_new_sign;
+        else 
+          log_g_old_sign[1] = -1.0 * log_t_new_sign;
+//        g_old[2] = t_new * (g_old[2] / t_old + 1.0 / (a3 + k));
+        term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+          + 1/(a3 + k);
+        log_g_old[2] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[2] = log_t_new_sign;
+        else 
+          log_g_old_sign[2] = -1.0 * log_t_new_sign;
+//
+//        g_old[3] = t_new * (g_old[3] / t_old - 1.0 / (b1 + k));
+        term = log_g_old_sign[3] * log_t_old_sign * exp(log_g_old[3] - log_t_old)
+          - 1/(b1 + k);
+        log_g_old[3] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[3] = log_t_new_sign;
+        else 
+          log_g_old_sign[3] = -1.0 * log_t_new_sign;
+//        g_old[4] = t_new * (g_old[4] / t_old - 1.0 / (b2 + k));
+        term = log_g_old_sign[4] * log_t_old_sign * exp(log_g_old[4] - log_t_old)
+          - 1/(b2 + k);
+        log_g_old[4] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[4] = log_t_new_sign;
+        else 
+          log_g_old_sign[4] = -1.0 * log_t_new_sign;
+//
+//        g_old[5] = t_new * (g_old[5] / t_old + 1.0 / z);
+        term = log_g_old_sign[5] * log_t_old_sign * exp(log_g_old[5] - log_t_old)
+          + 1/z;
+        log_g_old[5] = log_t_new + log(fabs(term));
+        if (term >= 0.0)
+          log_g_old_sign[5] = log_t_new_sign;
+        else 
+          log_g_old_sign[5] = -1.0 * log_t_new_sign;
 
-        gOld[0] = tNew * (gOld[0] / tOld + 1.0 / (a1 + k));
-        gOld[1] = tNew * (gOld[1] / tOld + 1.0 / (a2 + k));
-        gOld[2] = tNew * (gOld[2] / tOld + 1.0 / (a3 + k));
+        for (int i = 0; i < 6; ++i) {
+          g[i] += log_g_old_sign[i] * exp(log_g_old[i]);
+        }
 
-        gOld[3] = tNew * (gOld[3] / tOld - 1.0 / (b1 + k));
-        gOld[4] = tNew * (gOld[4] / tOld - 1.0 / (b2 + k));
-
-        gOld[5] = tNew * (gOld[5] / tOld + 1.0 / z);
-
-        for (int i = 0; i < 6; ++i) g[i] += gOld[i];
-
-        tOld = tNew;
+        log_t_old = log_t_new;
+        log_t_old_sign = log_t_new_sign;
 
         ++k;
         if (k >= max_steps) {
@@ -94,7 +141,7 @@ namespace stan {
             "exceeded ", " iterations, hypergeometric function gradient "
             "did not converge.");
         }
-      } while (tNew > precision);
+      } while (exp(log_t_new) > precision);  // implicit abs
     }
 
   }

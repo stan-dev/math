@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>
 
 namespace stan {
@@ -36,6 +37,8 @@ namespace stan {
     void grad_2F1(T& gradA1, T& gradB1, const T& a1, const T& a2,
       const T& b1, const T& z, T precision = 1e-6, int max_steps = 1e5) {
       using std::fabs;
+
+      check_2F1_converges("grad_2F1", a1, a2, b1, z); 
 
       gradA1 = 0;
       gradB1 = 0;

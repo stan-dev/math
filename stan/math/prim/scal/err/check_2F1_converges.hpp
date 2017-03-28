@@ -4,6 +4,9 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
+#include <limits>
+
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 
 namespace stan {
   namespace math {
@@ -32,16 +35,33 @@ namespace stan {
     inline void check_2F1_converges(const char* function, 
       const T_a1& a1, const T_a2& a2, const T_b1& b1, const T_z& z
     ) {
+      using std::floor;
       using std::fabs;
-      if (fabs(z) < 1.0) return;
-      if (fabs(z) == 1.0) {
+
+      int num_terms = 0;
+      bool is_polynomial;
+      is_polynomial = (a1 < 0.0 && floor(a1) == a1) ||
+                      (a2 < 0.0 && floor(a2) == a2);
+      if (is_polynomial) {
+        if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms) 
+          num_terms = floor(fabs(value_of_rec(a1)));
+        if (a2 < 0.0 && floor(a2) == a2 && fabs(a2) > num_terms) 
+          num_terms = floor(fabs(value_of_rec(a2)));
+      } 
+      
+      bool is_undefined;
+      is_undefined = (b1 < 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms);
+
+      if (is_polynomial && !is_undefined) return;
+      if (fabs(z) < 1.0 && !is_undefined) return;
+      if (fabs(z) == 1.0 && !is_undefined) {
         if (b1 > a1 + a2) return;
       }     
       std::stringstream msg;
       msg << "called from function '" << function << "', "
           << "hypergeometric function 2F1 does not meet convergence " 
           << "conditions with given arguments. " 
-          << "a1: " << a1 << ", a2: " << a2  
+          << "a1: " << a1 << ", a2: " << a2 << ", " 
           << "b1: " << b1 << ", z: " << z;
       throw std::domain_error(msg.str());
     }
