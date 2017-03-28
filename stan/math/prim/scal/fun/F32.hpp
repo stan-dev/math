@@ -41,7 +41,6 @@ namespace stan {
     template<typename T>
     T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
           const T& z, double precision = 1e-6, int max_steps = 1e5) {
-
       check_3F2_converges("F32", a1, a2, a3, b1, b2, z);
 
       using std::exp;

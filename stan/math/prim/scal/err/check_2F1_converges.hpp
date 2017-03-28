@@ -1,12 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_2F1_CONVERGES_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_2F1_CONVERGES_HPP
 
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <cmath>
 #include <stdexcept>
 #include <sstream>
-#include <cmath>
 #include <limits>
-
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 
 namespace stan {
   namespace math {

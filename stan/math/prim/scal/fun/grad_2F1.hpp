@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
   namespace math {
@@ -13,9 +14,9 @@ namespace stan {
     /**
      * Gradients of the hypergeometric function, 2F1.
      *
-     * Calculate the gradients of the hypergeometric function (2F1) 
+     * Calculate the gradients of the hypergeometric function (2F1)
      * as the power series stopping when the series converges
-     * to within <code>precision</code> or throwing when the 
+     * to within <code>precision</code> or throwing when the
      * function takes <code>max_steps</code> steps.
      *
      * This power-series representation converges for all gradients
@@ -33,8 +34,7 @@ namespace stan {
     template<typename T>
     void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
         const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
-
-      check_2F1_converges("grad_2F1", a1, a2, b1, z); 
+      check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
       using std::log;
       using std::fabs;
@@ -45,7 +45,7 @@ namespace stan {
       g_b1 = 0.0;
 
       T log_g_old[4];
-      for (T *q = log_g_old; q != log_g_old + 4; ++q) 
+      for (T *q = log_g_old; q != log_g_old + 4; ++q)
         *q = -1.0 * std::numeric_limits<double>::infinity();
 
       T log_t_old = 0.0;
@@ -58,7 +58,7 @@ namespace stan {
       double log_t_new_sign = 1.0;
       double log_t_old_sign = 1.0;
       double log_g_old_sign[4];
-      for (double *q = log_g_old_sign; q != log_g_old_sign + 4; ++q) 
+      for (double *q = log_g_old_sign; q != log_g_old_sign + 4; ++q)
         *q = 1.0;
 
       int k = 0;
@@ -75,31 +75,31 @@ namespace stan {
           log_t_new_sign = -1.0;
         }
 //      g_old[0] = t_new * (g_old[0] / t_old + 1.0 / (a1 + k));
-        term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-          + 1/(a1 + k);
+        term = log_g_old_sign[0] * log_t_old_sign *
+          exp(log_g_old[0] - log_t_old) + 1/(a1 + k);
         log_g_old[0] = log_t_new + log(fabs(term));
         if (term >= 0.0)
           log_g_old_sign[0] = log_t_new_sign;
-        else 
+        else
           log_g_old_sign[0] = -1.0 * log_t_new_sign;
-        
+
 //      g_old[1] = t_new * (g_old[1] / t_old + 1.0 / (a2 + k));
-        term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-          + 1/(a2 + k);
+        term = log_g_old_sign[1] * log_t_old_sign *
+          exp(log_g_old[1] - log_t_old) + 1/(a2 + k);
         log_g_old[1] = log_t_new + log(fabs(term));
         if (term >= 0.0)
           log_g_old_sign[1] = log_t_new_sign;
-        else 
+        else
           log_g_old_sign[1] = -1.0 * log_t_new_sign;
 //      g_old[3] = t_new * (g_old[3] / t_old - 1.0 / (b1 + k));
-        term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
-          - 1/(b1 + k);
+        term = log_g_old_sign[2] * log_t_old_sign *
+          exp(log_g_old[2] - log_t_old) - 1/(b1 + k);
         log_g_old[2] = log_t_new + log(fabs(term));
         if (term >= 0.0)
           log_g_old_sign[2] = log_t_new_sign;
-        else 
+        else
           log_g_old_sign[2] = -1.0 * log_t_new_sign;
-        
+
         g_a1 += log_g_old_sign[0] * exp(log_g_old[0]);
         g_b1 += log_g_old_sign[2] * exp(log_g_old[2]);
 
@@ -115,7 +115,7 @@ namespace stan {
         log_t_old = log_t_new;
         log_t_old_sign = log_t_new_sign;
         ++k;
-      }  
+      }
     }
 
   }
