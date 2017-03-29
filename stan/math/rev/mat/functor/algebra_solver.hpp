@@ -99,8 +99,11 @@ namespace stan {
 
     /**
      * Return the solutions for the specified system of algebraic
-     * equations given an initial guess, and parameters and data,
+     * equations given an initial guess, and  parameters and data,
      * which get passed into the algebraic system.
+     *
+     * Check if the algebraic solver finds a solution, and return
+     * an exception if the solution is not found.
      *
      * @tparam F1 type of equation system function.
      * @tparam T type of scalars for parms.
@@ -145,6 +148,15 @@ namespace stan {
       }
       Eigen::VectorXd theta_dbl = x;
       solver.solve(theta_dbl);
+
+      // Check solution is a root
+      Eigen::VectorXd system = fx.get_value(theta_dbl);
+      double error = 1e-10;
+      for (int i = 0; i < x.size(); i++)
+        if (!(system(i) < error && system(i) > -error))
+          invalid_argument("algebra_solver", "the output of the algebraic system",
+                           "", "is non-zero.",
+                           " The root of the system was not found.");
 
       // Construct vari
       algebra_solver_vari<F, T, FX>* vi0

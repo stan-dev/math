@@ -299,3 +299,150 @@ TEST(MathMatrix, error_conditions) {
                    "algebra_solver: continuous data is inf, but must be finite!");
 
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Unsolvable equation over the real space
+template <typename T1, typename T2>
+inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
+                     Eigen::Dynamic, 1>
+unsolvableEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int) {
+  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
+  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+  z(0) = x(0) * x(0) + y(0);
+  z(1) = x(1) * x(1) + y(1);
+  return z;
+}
+
+template <typename T1, typename T2>
+struct unsolvableEq_functor {
+private:
+  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
+  std::vector<double> dat_;
+  std::vector<int> dat_int_;
+  bool x_is_dv_;
+
+public:
+  unsolvableEq_functor() { };
+
+  unsolvableEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+                       const std::vector<double>& dat,
+                       const std::vector<int>& dat_int,
+                       const bool& x_is_dv) {
+    x_ = x;
+    y_ = y;
+    dat_ = dat;
+    dat_int_ = dat_int;
+    x_is_dv_ = x_is_dv;
+  }
+
+  template <typename T>
+  inline
+  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+                Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
+    if (x_is_dv_)
+      return unsolvableEq(x, y_, dat_, dat_int_);
+    else
+      return unsolvableEq(x_, x, dat_, dat_int_);
+  }
+};
+
+TEST(MathMatrix, unsolvable) {
+  using stan::math::algebra_solver;
+  using stan::math::sum;
+  using stan::math::var;
+
+  Eigen::VectorXd x(2);
+  x << 1, 1;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << 1, 1;  // these need to be positive for the test.
+  Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+  std::vector<double> dat(0);
+  std::vector<int> dat_int(0);
+
+  std::stringstream err_msg;
+  err_msg << "algebra_solver: the output of the algebraic system is "
+          << "non-zero. The root of the system was not found.";
+  std::string msg = err_msg.str();
+  EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor<double, double>(),
+                                  x, y, dat, dat_int),
+                   std::invalid_argument, msg);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Degenerate equation
+template <typename T1, typename T2>
+inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
+                     Eigen::Dynamic, 1>
+degenerateEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int) {
+  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
+  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+  z(0) = (x(0) - y(0)) * (x(1) - y(1));
+  z(1) = (x(0) - y(1)) * (x(1) - y(0));
+  return z;
+}
+
+template <typename T1, typename T2>
+struct degenerateEq_functor {
+private:
+  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
+  std::vector<double> dat_;
+  std::vector<int> dat_int_;
+  bool x_is_dv_;
+
+public:
+  degenerateEq_functor() { };
+
+  degenerateEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+                       const std::vector<double>& dat,
+                       const std::vector<int>& dat_int,
+                       const bool& x_is_dv) {
+    x_ = x;
+    y_ = y;
+    dat_ = dat;
+    dat_int_ = dat_int;
+    x_is_dv_ = x_is_dv;
+  }
+
+  template <typename T>
+  inline
+  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+                Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
+    if (x_is_dv_)
+      return degenerateEq(x, y_, dat_, dat_int_);
+    else
+      return degenerateEq(x_, x, dat_, dat_int_);
+  }
+};
+
+TEST(MathMatrix, degenerate) {
+  using stan::math::algebra_solver;
+  using stan::math::sum;
+  using stan::math::var;
+
+  Eigen::VectorXd x(2);
+  x << 10, 1;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << 5, 8;  // these need to be positive for the test.
+  Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+  std::vector<double> dat(0);
+  std::vector<int> dat_int(0);
+  theta = algebra_solver(degenerateEq_functor<double, double>(),
+                         x, y, dat, dat_int);
+
+  std::cout << "solution: " << std::endl << theta << std::endl;
+  std::cout << "system: " << std::endl
+            << degenerateEq(theta, y, dat, dat_int) << std::endl;
+
+}
