@@ -6,7 +6,9 @@
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 
@@ -104,7 +106,7 @@ namespace stan {
      * @tparam T type of scalars for parms.
      * @param[in] F1 Functor that evaluates the system of equations.
      * @param[in] x Vector of starting values.
-     * @param[in] parms parameter vector for the equation system.
+     * @param[in] y parameter vector for the equation system.
      * @param[in] dat continuous data vector for the equation system.
      * @param[in] dat_int integer data vector for the equation system.
      * @return Vector that solves the system of equations.
@@ -116,6 +118,16 @@ namespace stan {
                    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                    const std::vector<double>& dat,
                    const std::vector<int>& dat_int) {
+      check_nonzero_size("algebra_solver", "initial guess", x);
+      check_nonzero_size("algebra_solver", "parameter vector", y);
+      // FIX ME - do these w/o for loop?
+      for (int i = 0; i < x.size(); i++)
+        check_finite("algebra_solver", "initial guess", x(i));
+      for (int i = 0; i < y.size(); i++)
+        check_finite("algebra_solver", "parameter vector", y(i));
+      for (size_t i = 0; i < dat.size(); i++)
+        check_finite("algebra_solver", "continuous data", dat[i]);
+
       // Compute theta_dbl
       typedef hybrj_functor_solver<F, double, double> FX;
       FX fx(f, x, value_of(y), dat, dat_int, true);

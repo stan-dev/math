@@ -15,7 +15,6 @@ simpleEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
           const std::vector<int>& dat_int) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
   Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
-  assert(z.rows() == x.rows());
   z(0) = x(0) - y(0) * y(1);
   z(1) = x(1) - y(2);
   return z;
@@ -103,7 +102,6 @@ nonLinearEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
             const std::vector<int>& dat_int) {
   typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
   Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(3);
-  assert(z.rows() == x.rows());
   z(0) = x(2) - y(2);
   z(1) = x(0) * x(1) - y(0) * y(1);
   z(2) = (x(2) / x(0) + y(2) / y(0));
@@ -251,11 +249,53 @@ TEST(MathMatrix, error_conditions) {
   err_msg << "algebra_solver: the ouput of the algebraic system has "
           << "dimension = 2, but should have the same dimension as x "
           << "(the vector of unknowns), which is: 3";
-
   std::string msg = err_msg.str();
-
   EXPECT_THROW_MSG(algebra_solver(nonSquareEq_functor<double, double>(),
                                   x, y, dat, dat_int),
                    std::invalid_argument,
                    msg);
+
+  Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
+  std::stringstream err_msg2;
+  err_msg2 << "algebra_solver: initial guess has size 0, but "
+            << "must have a non-zero size";
+  std::string msg2 = err_msg2.str();
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+                                  x_bad, y, dat, dat_int),
+                   std::invalid_argument,
+                   msg2);
+
+  typedef Eigen::Matrix<var, Eigen::Dynamic, 1> matrix_v;
+  matrix_v y_bad(static_cast<matrix_v::Index>(0));
+  std::stringstream err_msg3;
+  err_msg3 << "algebra_solver: parameter vector has size 0, but "
+           << "must have a non-zero size";
+  std::string msg3 = err_msg3.str();
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+                                  x, y_bad, dat, dat_int),
+                   std::invalid_argument,
+                   msg3);
+
+  double inf = std::numeric_limits<double>::infinity();
+  Eigen::VectorXd x_bad_inf(n_x);
+  x_bad_inf << inf, 1, 1;
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+                                  x_bad_inf, y, dat, dat_int),
+                   std::domain_error,
+                   "algebra_solver: initial guess is inf, but must be finite!");
+
+  matrix_v y_bad_inf(3);
+  y_bad_inf << inf, 1, 1;
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+                                  x, y_bad_inf, dat, dat_int),
+                   std::domain_error,
+                   "algebra_solver: parameter vector is inf, but must be finite!");
+
+  std::vector<double> dat_bad_inf(1);
+  dat_bad_inf[0] = inf;
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+                                  x, y, dat_bad_inf, dat_int),
+                   std::domain_error,
+                   "algebra_solver: continuous data is inf, but must be finite!");
+
 }
