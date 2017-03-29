@@ -120,4 +120,17 @@ TEST(MathPrimScalFun, grad2F1_9) {
   EXPECT_NEAR(-4.19010422485256, grad_b1, 1e-8);
 }
 
+TEST(MathPrimScalFun, grad2F1_10) {
+  double a1 = 2;
+  double a2 = 1.0;
+  double b1 = 2;
+  double z = 0.4;
+
+  double grad_a1;
+  double grad_b1;
+  stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
+  EXPECT_NEAR( 0.4617734323582945, grad_a1, 1e-8);
+  EXPECT_NEAR(-0.4617734323582945, grad_b1, 1e-8);
+}
+
 
