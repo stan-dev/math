@@ -25,6 +25,7 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
