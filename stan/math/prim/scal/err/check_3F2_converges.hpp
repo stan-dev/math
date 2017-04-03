@@ -45,21 +45,21 @@ namespace stan {
 
       int num_terms = 0;
       bool is_polynomial;
-      is_polynomial = (a1 < 0.0 && floor(a1) == a1) ||
-                      (a2 < 0.0 && floor(a2) == a2) ||
-                      (a3 < 0.0 && floor(a3) == a3);
+      is_polynomial = (a1 <= 0.0 && floor(a1) == a1) ||
+                      (a2 <= 0.0 && floor(a2) == a2) ||
+                      (a3 <= 0.0 && floor(a3) == a3);
       if (is_polynomial) {
-        if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms)
+        if (a1 <= 0.0 && floor(a1) == a1 && fabs(a1) > num_terms)
           num_terms = floor(fabs(value_of_rec(a1)));
-        if (a2 < 0.0 && floor(a2) == a2 && fabs(a2) > num_terms)
+        if (a2 <= 0.0 && floor(a2) == a2 && fabs(a2) > num_terms)
           num_terms = floor(fabs(value_of_rec(a2)));
-        if (a3 < 0.0 && floor(a3) == a3 && fabs(a3) > num_terms)
+        if (a3 <= 0.0 && floor(a3) == a3 && fabs(a3) > num_terms)
           num_terms = floor(fabs(value_of_rec(a3)));
       }
 
       bool is_undefined;
-      is_undefined = (b1 < 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms) ||
-                     (b2 < 0.0 && floor(b2) == b2 && fabs(b2) <= num_terms);
+      is_undefined = (b1 <= 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms) ||
+                     (b2 <= 0.0 && floor(b2) == b2 && fabs(b2) <= num_terms);
 
       if (is_polynomial && !is_undefined) return;
       if (fabs(z) < 1.0 && !is_undefined) return;
@@ -71,7 +71,7 @@ namespace stan {
           << "hypergeometric function 3F2 does not meet convergence "
           << "conditions with given arguments. "
           << "a1: " << a1 << ", a2: " << a2 << ", a3: " << a3
-          << "b1: " << b1 << ", b2: " << b2 << ", z: " << z;
+          << ", b1: " << b1 << ", b2: " << b2 << ", z: " << z;
       throw std::domain_error(msg.str());
     }
 

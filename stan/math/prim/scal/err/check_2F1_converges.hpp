@@ -39,8 +39,8 @@ namespace stan {
 
       int num_terms = 0;
       bool is_polynomial;
-      is_polynomial = (a1 < 0.0 && floor(a1) == a1) ||
-                      (a2 < 0.0 && floor(a2) == a2);
+      is_polynomial = (a1 <= 0.0 && floor(a1) == a1) ||
+                      (a2 <= 0.0 && floor(a2) == a2);
       if (is_polynomial) {
         if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms)
           num_terms = floor(fabs(value_of_rec(a1)));
@@ -49,7 +49,7 @@ namespace stan {
       }
 
       bool is_undefined;
-      is_undefined = (b1 < 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms);
+      is_undefined = (b1 <= 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms);
 
       if (is_polynomial && !is_undefined) return;
       if (fabs(z) < 1.0 && !is_undefined) return;
