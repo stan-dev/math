@@ -431,18 +431,61 @@ TEST(MathMatrix, degenerate) {
   using stan::math::sum;
   using stan::math::var;
 
-  Eigen::VectorXd x(2);
-  x << 10, 1;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-  y << 5, 8;  // these need to be positive for the test.
-  Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
-  std::vector<double> dat(0);
-  std::vector<int> dat_int(0);
-  theta = algebra_solver(degenerateEq_functor<double, double>(),
-                         x, y, dat, dat_int);
+  // The considered system has some degeneracy. Each
+  // solution can either be 5 or 8.
 
-  std::cout << "solution: " << std::endl << theta << std::endl;
-  std::cout << "system: " << std::endl
-            << degenerateEq(theta, y, dat, dat_int) << std::endl;
+  int n_x = 2, n_y = 2;
+
+  // This first initial guess produces the
+  // solution x = {8, 8}
+  for (int k = 0; k < 1; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+    y << 5, 8;
+    Eigen::VectorXd x(2);
+    x << 10, 1;  // Initial Guess
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+    std::vector<double> dat(0);
+    std::vector<int> dat_int(0);
+    theta = algebra_solver(degenerateEq_functor<double, double>(),
+                         x, y, dat, dat_int);
+    EXPECT_EQ(8, theta(0));
+    EXPECT_EQ(8, theta(1));
+
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 0, 1, 0, 1;
+
+    AVEC y_vec = createAVEC(y(0), y(1));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int l = 0; l < n_y; l++)
+      EXPECT_EQ(J(k, l), g[l]);
+  }
+
+  // This next initial guess produces the
+  // solution x = {5, 5}
+  for (int k = 0; k < 1; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+    y << 5, 8;
+    Eigen::VectorXd x(2);
+    x << 1, 1;  // Initial Guess
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+    std::vector<double> dat(0);
+    std::vector<int> dat_int(0);
+    theta = algebra_solver(degenerateEq_functor<double, double>(),
+                         x, y, dat, dat_int);
+    EXPECT_FLOAT_EQ(5, theta(0).val());
+    EXPECT_FLOAT_EQ(5, theta(0).val());
+
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 1, 0, 1, 0;
+
+    AVEC y_vec = createAVEC(y(0), y(1));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int l = 0; l < n_y; l++)
+      EXPECT_NEAR(J(k, l), g[l], 1e-13);
+  }
 
 }

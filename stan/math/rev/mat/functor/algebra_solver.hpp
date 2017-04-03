@@ -82,9 +82,8 @@ namespace stan {
 
         // Compute the Jacobian
         Eigen::MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
-
         hybrj_functor_solver<F, double, double>
-          fy(f, x, value_of(y), dat, dat_int, false);
+          fy(f, theta_dbl, value_of(y), dat, dat_int, false);
         Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
         Jx_y_ = - stan::math::mdivide_left(Jf_x, Jf_y);
