@@ -25,7 +25,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   std::vector<double> coupled_y0;
   std::vector<double> y0;
   double t0;
-  std::vector<double> dy_dt;
+  std::vector<double> dy_dt(4, 0);
 
   double gamma(0.15);
   t0 = 0;
@@ -146,7 +146,7 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
     coupled_system_dv(base_ode, y0_d, theta_v, x, x_int, &msgs);
 
   std::vector<double> y(3,0);
-  std::vector<double> dy_dt(3,0);
+  std::vector<double> dy_dt(3 + N * M,0);
   double t = 10;
   
   EXPECT_TRUE(stan::math::empty_nested());
@@ -174,7 +174,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
       coupled_system_dv(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
     
     std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
+    std::vector<double> dy_dt(3 + N * M,0);
     double t = 10;
     
     EXPECT_TRUE(stan::math::empty_nested());
@@ -197,7 +197,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   std::vector<stan::math::var> y0_var;
   std::vector<double> y0_adj;
   double t0;
-  std::vector<double> dy_dt;
+  std::vector<double> dy_dt(6, 0);
 
   double gamma(0.15);
   t0 = 0;
@@ -324,7 +324,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
     coupled_system_vd(base_ode, y0_v, theta_d, x, x_int, &msgs);
 
   std::vector<double> y(3,0);
-  std::vector<double> dy_dt(3,0);
+  std::vector<double> dy_dt(3 + N * N,0);
   double t = 10;
   
   EXPECT_TRUE(stan::math::empty_nested());
@@ -352,7 +352,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
       coupled_system_vd(throwing_ode, y0_v, theta_d, x, x_int, &msgs);
     
     std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
+    std::vector<double> dy_dt(3 + N * N,0);
     double t = 10;
     
     EXPECT_TRUE(stan::math::empty_nested());
@@ -385,7 +385,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   double t0; 
   t0 = 0;
 
-  std::vector<double> dy_dt;
+  std::vector<double> dy_dt(2 + 2 * 2 + 2 * 1);
   system(coupled_y0, dy_dt, t0);
 
   std::vector<double> y0_double(2);
@@ -503,7 +503,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
     coupled_system_vv(base_ode, y0_v, theta_v, x, x_int, &msgs);
 
   std::vector<double> y(3,0);
-  std::vector<double> dy_dt(3,0);
+  std::vector<double> dy_dt(3 + N * N + N * M,0);
   double t = 10;
   
   EXPECT_TRUE(stan::math::empty_nested());
@@ -531,7 +531,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
       coupled_system_vv(throwing_ode, y0_v, theta_v, x, x_int, &msgs);
     
     std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
+    std::vector<double> dy_dt(3 + N * N + N * M,0);
     double t = 10;
     
     EXPECT_TRUE(stan::math::empty_nested());

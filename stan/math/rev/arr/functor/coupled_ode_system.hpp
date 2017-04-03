@@ -4,9 +4,9 @@
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <ostream>
 #include <stdexcept>
@@ -63,7 +63,7 @@ namespace stan {
       const F& f_;
       const std::vector<double>& y0_dbl_;
       const std::vector<var>& theta_;
-      std::vector<double> theta_dbl_;
+      const std::vector<double> theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
       const size_t N_;
@@ -92,16 +92,13 @@ namespace stan {
         : f_(f),
           y0_dbl_(y0),
           theta_(theta),
-          theta_dbl_(theta.size(), 0.0),
+          theta_dbl_(value_of(theta)),
           x_(x),
           x_int_(x_int),
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * M_),
-          msgs_(msgs) {
-        for (size_t m = 0; m < M_; m++)
-          theta_dbl_[m] = value_of(theta[m]);
-      }
+          msgs_(msgs) {}
 
       /**
        * Assign the derivative vector with the system derivatives at
@@ -122,15 +119,9 @@ namespace stan {
        */
       void operator()(const std::vector<double>& z,
                       std::vector<double>& dz_dt,
-                      double t) {
+                      double t) const {
         using std::vector;
 
-        vector<double> y(z.begin(), z.begin() + N_);
-        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
-                         "states", N_);
-
-        vector<double> coupled_sys(N_ * M_);
         vector<double> grad(N_ + M_);
 
         try {
@@ -139,7 +130,7 @@ namespace stan {
           vector<var> z_vars;
           z_vars.reserve(N_ + M_);
 
-          vector<var> y_vars(y.begin(), y.end());
+          vector<var> y_vars(z.begin(), z.begin() + N_);
           z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
 
           vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
@@ -147,7 +138,11 @@ namespace stan {
 
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
 
+          check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                           "states", N_);
+
           for (size_t i = 0; i < N_; i++) {
+            dz_dt[i] = dy_dt_vars[i].val();
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
@@ -159,7 +154,7 @@ namespace stan {
               for (size_t k = 0; k < N_; k++)
                 temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
-              coupled_sys[i + j * N_] = temp_deriv;
+              dz_dt[N_ + i + j * N_] = temp_deriv;
             }
           }
         } catch (const std::exception& e) {
@@ -167,8 +162,6 @@ namespace stan {
           throw;
         }
         recover_memory_nested();
-
-        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -193,7 +186,7 @@ namespace stan {
        *
        * @return the initial condition of the coupled system.
        */
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         std::vector<double> state(size_, 0.0);
         for (size_t n = 0; n < N_; n++)
           state[n] = y0_dbl_[n];
@@ -207,7 +200,7 @@ namespace stan {
        * @param y coupled states after solving the ode
        */
       std::vector<std::vector<var> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
+      decouple_states(const std::vector<std::vector<double> >& y) const {
         std::vector<var> temp_vars(N_);
         std::vector<double> temp_gradients(M_);
         std::vector<std::vector<var> > y_return(y.size());
@@ -259,7 +252,7 @@ namespace stan {
     struct coupled_ode_system <F, var, double> {
       const F& f_;
       const std::vector<var>& y0_;
-      std::vector<double> y0_dbl_;
+      const std::vector<double> y0_dbl_;
       const std::vector<double>& theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
@@ -289,17 +282,14 @@ namespace stan {
                          std::ostream* msgs)
         : f_(f),
           y0_(y0),
-          y0_dbl_(y0.size(), 0.0),
+          y0_dbl_(value_of(y0)),
           theta_dbl_(theta),
           x_(x),
           x_int_(x_int),
           msgs_(msgs),
           N_(y0.size()),
           M_(theta.size()),
-          size_(N_ + N_ * N_) {
-        for (size_t n = 0; n < N_; n++)
-          y0_dbl_[n] = value_of(y0_[n]);
-      }
+          size_(N_ + N_ * N_) {}
 
       /**
        * Calculates the derivative of the coupled ode system
@@ -319,18 +309,13 @@ namespace stan {
        */
       void operator()(const std::vector<double>& z,
                       std::vector<double>& dz_dt,
-                      double t) {
+                      double t) const {
         using std::vector;
 
         std::vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
 
-        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
-                         "states", N_);
-
-        std::vector<double> coupled_sys(N_ * N_);
         std::vector<double> grad(N_);
 
         try {
@@ -344,7 +329,11 @@ namespace stan {
 
           vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
+          check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                           "states", N_);
+
           for (size_t i = 0; i < N_; i++) {
+            dz_dt[i] = dy_dt_vars[i].val();
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
@@ -356,7 +345,7 @@ namespace stan {
               for (size_t k = 0; k < N_; k++)
                 temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
-              coupled_sys[i + j * N_] = temp_deriv;
+              dz_dt[N_ + i + j * N_] = temp_deriv;
             }
           }
         } catch (const std::exception& e) {
@@ -364,8 +353,6 @@ namespace stan {
           throw;
         }
         recover_memory_nested();
-
-        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -391,7 +378,7 @@ namespace stan {
        *   This is a vector of length size() where all elements
        *   are 0.
        */
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         return std::vector<double>(size_, 0.0);
       }
 
@@ -403,7 +390,7 @@ namespace stan {
        * @param y the vector of the coupled states after solving the ode
        */
       std::vector<std::vector<var> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
+      decouple_states(const std::vector<std::vector<double> >& y) const {
         using std::vector;
 
         vector<var> temp_vars(N_);
@@ -468,9 +455,9 @@ namespace stan {
     struct coupled_ode_system <F, var, stan::math::var> {
       const F& f_;
       const std::vector<var>& y0_;
-      std::vector<double> y0_dbl_;
+      const std::vector<double> y0_dbl_;
       const std::vector<var>& theta_;
-      std::vector<double> theta_dbl_;
+      const std::vector<double> theta_dbl_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
       const size_t N_;
@@ -499,21 +486,15 @@ namespace stan {
                          std::ostream* msgs)
         : f_(f),
           y0_(y0),
-          y0_dbl_(y0.size(), 0.0),
+          y0_dbl_(value_of(y0)),
           theta_(theta),
-          theta_dbl_(theta.size(), 0.0),
+          theta_dbl_(value_of(theta)),
           x_(x),
           x_int_(x_int),
           N_(y0.size()),
           M_(theta.size()),
           size_(N_ + N_ * (N_ + M_)),
-          msgs_(msgs) {
-        for (size_t n = 0; n < N_; n++)
-          y0_dbl_[n] = value_of(y0[n]);
-
-        for (size_t m = 0; m < M_; m++)
-          theta_dbl_[m] = value_of(theta[m]);
-      }
+          msgs_(msgs) {}
 
       /**
        * Populates the derivative vector with derivatives of the
@@ -533,18 +514,13 @@ namespace stan {
        */
       void operator()(const std::vector<double>& z,
                       std::vector<double>& dz_dt,
-                      double t) {
+                      double t) const {
         using std::vector;
 
         vector<double> y(z.begin(), z.begin() + N_);
         for (size_t n = 0; n < N_; n++)
           y[n] += y0_dbl_[n];
 
-        dz_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
-        check_size_match("coupled_ode_system", "dz_dt", dz_dt.size(),
-                         "states", N_);
-
-        vector<double> coupled_sys(N_ * (N_ + M_));
         vector<double> grad(N_ + M_);
 
         try {
@@ -561,7 +537,11 @@ namespace stan {
 
           vector<var> dy_dt_vars = f_(t, y_vars, theta_vars, x_, x_int_, msgs_);
 
+          check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                           "states", N_);
+
           for (size_t i = 0; i < N_; i++) {
+            dz_dt[i] = dy_dt_vars[i].val();
             set_zero_all_adjoints_nested();
             dy_dt_vars[i].grad(z_vars, grad);
 
@@ -573,7 +553,7 @@ namespace stan {
               for (size_t k = 0; k < N_; k++)
                 temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
-              coupled_sys[i + j * N_] = temp_deriv;
+              dz_dt[N_ + i + j * N_] = temp_deriv;
             }
           }
         } catch (const std::exception& e) {
@@ -581,8 +561,6 @@ namespace stan {
           throw;
         }
         recover_memory_nested();
-
-        dz_dt.insert(dz_dt.end(), coupled_sys.begin(), coupled_sys.end());
       }
 
       /**
@@ -605,7 +583,7 @@ namespace stan {
        * @return the initial condition of the coupled system.  This is
        * a vector of length size() where all elements are 0.
        */
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         return std::vector<double>(size_, 0.0);
       }
 
@@ -617,7 +595,7 @@ namespace stan {
        * @param y the vector of the coupled states after solving the ode
        */
       std::vector<std::vector<var> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
+      decouple_states(const std::vector<std::vector<double> >& y) const {
         using std::vector;
 
         vector<var> vars = y0_;
