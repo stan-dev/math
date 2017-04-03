@@ -37,6 +37,8 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorView.hpp>
 
+#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
+#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>

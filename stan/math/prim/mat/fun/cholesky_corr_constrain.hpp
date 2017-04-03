@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <cmath>
-#include <iostream>
 
 namespace stan {
   namespace math {
