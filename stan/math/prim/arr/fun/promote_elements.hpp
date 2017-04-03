@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <vector>
+#include <cstddef>
 
 namespace stan {
   namespace math {
