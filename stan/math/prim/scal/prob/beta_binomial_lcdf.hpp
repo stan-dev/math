@@ -104,7 +104,7 @@ namespace stan {
         const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
 
         T_partials_return F;
-        F = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 
+        F = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
           1 - nu, (T_partials_return)1);
 
         T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
