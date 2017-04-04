@@ -15,25 +15,64 @@
 namespace stan {
   namespace math {
 
-    template <typename F, typename T1, typename T2>
-    struct hybrj_functor_solver : stan::math::NLOFunctor<double> {
+    template <typename F, typename T0, typename T1>
+    struct system_functor {
     private:
       F f_;
+      Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;
+      Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
+      std::vector<double> dat_;
+      std::vector<int> dat_int_;
+      bool x_is_dv_;
+
+    public:
+      system_functor() { };
+
+      system_functor(const F f,
+                     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+                     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+                     const std::vector<double>& dat,
+                     const std::vector<int>& dat_int,
+                     const bool& x_is_dv)
+        : f_() {
+        x_ = x;
+        y_ = y;
+        dat_ = dat;
+        dat_int_ = dat_int;
+        x_is_dv_ = x_is_dv;
+      }
+
+      template <typename T>
+      inline
+      Eigen::Matrix<T, Eigen::Dynamic, 1>
+      operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
+        if (x_is_dv_)
+          return f_(x, y_, dat_, dat_int_, 0);
+        else
+          return f_(x_, x, dat_, dat_int_, 0);
+      }
+    };
+
+    template <typename FS, typename F, typename T0, typename T1>
+    struct hybrj_functor_solver : stan::math::NLOFunctor<double> {
+    private:
+      FS fs_;
       int x_size_;
       Eigen::MatrixXd J_;
 
     public:
-      hybrj_functor_solver(const F& f,
-                           const Eigen::Matrix<T1, Eigen::Dynamic, 1> x,
-                           const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
+      hybrj_functor_solver(const FS& fs,
+                           const F& f,
+                           const Eigen::Matrix<T0, Eigen::Dynamic, 1> x,
+                           const Eigen::Matrix<T1, Eigen::Dynamic, 1> y,
                            const std::vector<double> dat,
                            const std::vector<int> dat_int,
                            const bool x_is_dv)
-        : f_(x, y, dat, dat_int, x_is_dv),
+        : fs_(f, x, y, dat, dat_int, x_is_dv),
           x_size_(x.size()) { }
 
       int operator()(const Eigen::VectorXd &dv, Eigen::VectorXd &fvec) {
-        stan::math::jacobian(f_, dv, fvec, J_);
+        stan::math::jacobian(fs_, dv, fvec, J_);
         return 0;
       }
 
@@ -44,16 +83,16 @@ namespace stan {
 
       Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &dv) {
         Eigen::VectorXd fvec;
-        stan::math::jacobian(f_, dv, fvec, J_);
+        stan::math::jacobian(fs_, dv, fvec, J_);
         return J_;
       }
 
       Eigen::VectorXd get_value(const Eigen::VectorXd dv) {
-        return f_(dv);
+        return fs_(dv);
       }
     };
 
-    template <typename F, typename T, typename FX>
+    template <typename FS, typename F, typename T, typename FX>
     struct algebra_solver_vari : public vari {
       vari** y_;
       int y_size_;
@@ -61,7 +100,8 @@ namespace stan {
       vari** theta_;
       Eigen::MatrixXd Jx_y_;
 
-      algebra_solver_vari(const F& f,
+      algebra_solver_vari(const FS& fs,
+                          const F& f,
                           const Eigen::VectorXd x,
                           const Eigen::Matrix<T, Eigen::Dynamic, 1> y,
                           const std::vector<double> dat,
@@ -82,8 +122,8 @@ namespace stan {
 
         // Compute the Jacobian
         Eigen::MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
-        hybrj_functor_solver<F, double, double>
-          fy(f, theta_dbl, value_of(y), dat, dat_int, false);
+        hybrj_functor_solver<FS, F, double, double>
+          fy(fs, f, theta_dbl, value_of(y), dat, dat_int, false);
         Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
         Jx_y_ = - stan::math::mdivide_left(Jf_x, Jf_y);
@@ -101,8 +141,10 @@ namespace stan {
      * equations given an initial guess, and  parameters and data,
      * which get passed into the algebraic system.
      *
-     * Check if the algebraic solver finds a solution, and return
-     * an exception if the solution is not found.
+     * Check if the algebraic solver finds a solution. That is, does
+     * f(theta) = 0? The error around zero is given by an absolute
+     * and a relative tolerance. Either condition needs to be met.
+     * If none is met, return an exception.
      *
      * @tparam F1 type of equation system function.
      * @tparam T type of scalars for parms.
@@ -111,7 +153,8 @@ namespace stan {
      * @param[in] y parameter vector for the equation system.
      * @param[in] dat continuous data vector for the equation system.
      * @param[in] dat_int integer data vector for the equation system.
-     * @return Vector that solves the system of equations.
+     * @param[in] relative tolerance
+     * @return theta Vector that solves the system of equations.
      */
     template <typename F, typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
@@ -119,7 +162,9 @@ namespace stan {
                    const Eigen::VectorXd& x,
                    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                    const std::vector<double>& dat,
-                   const std::vector<int>& dat_int) {
+                   const std::vector<int>& dat_int,
+                   double relative_tolerance = 1e-10,
+                   double absolute_tolerance = 1e-6) {
       check_nonzero_size("algebra_solver", "initial guess", x);
       check_nonzero_size("algebra_solver", "parameter vector", y);
       // FIX ME - do these w/o for loop?
@@ -131,8 +176,9 @@ namespace stan {
         check_finite("algebra_solver", "continuous data", dat[i]);
 
       // Compute theta_dbl
-      typedef hybrj_functor_solver<F, double, double> FX;
-      FX fx(f, x, value_of(y), dat, dat_int, true);
+      typedef system_functor<F, double, double> FS;
+      typedef hybrj_functor_solver<FS, F, double, double> FX;
+      FX fx(FS(), f, x, value_of(y), dat, dat_int, true);
       Eigen::HybridNonLinearSolver<FX> solver(fx);
       int z_size = fx.get_value(x).size();
       if (z_size != x.size()) {  // FIX ME: do this w/o computing fx?
@@ -140,7 +186,7 @@ namespace stan {
         msg << ", but should have the same dimension as x "
             << "(the vector of unknowns), which is: "
             << x.size();
-        std::string msg_str(msg.str());
+            std::string msg_str(msg.str());
 
         invalid_argument("algebra_solver", "the ouput of the algebraic system",
                          z_size, "has dimension = ", msg_str.c_str());
@@ -150,20 +196,25 @@ namespace stan {
 
       // Check solution is a root
       Eigen::VectorXd system = fx.get_value(theta_dbl);
-      double error = 1e-10;
+      Eigen::VectorXd rel_error_x = relative_tolerance * theta_dbl;
+      Eigen::VectorXd rel_error_z = fx.get_value(rel_error_x);
+
       for (int i = 0; i < x.size(); i++)
-        if (!(system(i) < error && system(i) > -error))
+        if (! ((system(i) < absolute_tolerance && system(i) > - absolute_tolerance)
+               || (system(i) < rel_error_z(i) && system(i) > - rel_error_z(i))))
           invalid_argument("algebra_solver", "the output of the algebraic system",
-                           "", "is non-zero.",
-                           " The root of the system was not found.");
+                           "", "is non-zero within absolute or relative tolerance.",
+                           " A root of the system was not found.");
 
       // Construct vari
-      algebra_solver_vari<F, T, FX>* vi0
-        = new algebra_solver_vari<F, T, FX>(f, x, y, dat, dat_int, theta_dbl, fx);
+      algebra_solver_vari<FS, F,  T, FX>* vi0
+        = new algebra_solver_vari<FS, F, T, FX>(FS(), f, x, y, dat,
+                                                dat_int, theta_dbl, fx);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(x.size());
       theta(0) = var(vi0);
       for (int i = 1; i < x.size(); ++i)
-        theta(i) = var(vi0->theta_[i]);
+      theta(i) = var(vi0->theta_[i]);
+
       return theta;
      }
   }

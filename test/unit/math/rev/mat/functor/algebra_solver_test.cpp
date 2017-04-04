@@ -3,56 +3,36 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <fstream>
 #include <test/unit/util.hpp>
 
-
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-simpleEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-          const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-          const std::vector<double>& dat,
-          const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
+template <typename T0, typename T1>
+inline
+Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
+              Eigen::Dynamic, 1>
+simpleEq(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+         const std::vector<double>& dat,
+         const std::vector<int>& dat_int,
+         std::ostream* pstream__) {
+  typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
   Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
   z(0) = x(0) - y(0) * y(1);
   z(1) = x(1) - y(2);
   return z;
 }
 
-template <typename T1, typename T2>
 struct simpleEq_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  bool x_is_dv_;
-
-public:
-  simpleEq_functor() { };
-
-  simpleEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                   const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-                   const std::vector<double>& dat,
-                   const std::vector<int>& dat_int,
-                   const bool& x_is_dv) {
-    x_ = x;
-    y_ = y;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    x_is_dv_ = x_is_dv;
-  }
-
-  template <typename T>
+  template <typename T0, typename T1>
   inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+  Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                 Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (x_is_dv_)
-      return simpleEq(x, y_, dat_, dat_int_);
-    else
-      return simpleEq(x_, x, dat_, dat_int_);
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    return simpleEq(x, y, dat, dat_int, pstream__);
   }
 };
 
@@ -63,6 +43,7 @@ TEST(MathMatrix, simple_Eq) {
 
   int n_x = 2, n_y = 3;
   for (int k = 0; k < n_x; k++) {
+
     Eigen::VectorXd x(n_x);
     x << 1, 1;  // initial guess
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
@@ -72,7 +53,7 @@ TEST(MathMatrix, simple_Eq) {
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
-    theta = algebra_solver(simpleEq_functor<double, double>(),
+    theta = algebra_solver(simpleEq_functor(),
                            x, y, dummy_dat, dummy_dat_int);
 
     EXPECT_EQ(20, theta(0));
@@ -90,57 +71,24 @@ TEST(MathMatrix, simple_Eq) {
   }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-nonLinearEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-            const std::vector<double>& dat,
-            const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(3);
-  z(0) = x(2) - y(2);
-  z(1) = x(0) * x(1) - y(0) * y(1);
-  z(2) = (x(2) / x(0) + y(2) / y(0));
-  return z;
-}
-
-template <typename T1, typename T2>
 struct nonLinearEq_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  bool x_is_dv_;
-
-public:
-  nonLinearEq_functor() { };
-
-  nonLinearEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-                      const std::vector<double>& dat,
-                      const std::vector<int>& dat_int,
-                      const bool& x_is_dv) {
-    x_ = x;
-    y_ = y;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    x_is_dv_ = x_is_dv;
-  }
-
-  template <typename T>
+  template <typename T0, typename T1>
   inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+  Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                 Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (x_is_dv_)
-      return nonLinearEq(x, y_, dat_, dat_int_);
-    else
-      return nonLinearEq(x_, x, dat_, dat_int_);
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(3);
+    z(0) = x(2) - y(2);
+    z(1) = x(0) * x(1) - y(0) * y(1);
+    z(2) = (x(2) / x(0) + y(2) / y(0));
+    return z;
   }
 };
 
@@ -161,7 +109,7 @@ TEST(MathMatrix, nonLinearEq) {
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
-    theta = algebra_solver(nonLinearEq_functor<double, double>(),
+    theta = algebra_solver(nonLinearEq_functor(),
                            x, y, dat, dummy_dat_int);
 
     EXPECT_FLOAT_EQ(- y(0).val(), theta(0).val());
@@ -182,53 +130,21 @@ TEST(MathMatrix, nonLinearEq) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-nonSquareEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-            const std::vector<double>& dat,
-            const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
-  z(0) = x(0) - y(0);
-  z(1) = x(1) * x(2) - y(1);
-  return z;
-}
-
-template <typename T1, typename T2>
 struct nonSquareEq_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  bool x_is_dv_;
-
-public:
-  nonSquareEq_functor() { };
-
-  nonSquareEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-                      const std::vector<double>& dat,
-                      const std::vector<int>& dat_int,
-                      const bool& x_is_dv) {
-    x_ = x;
-    y_ = y;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    x_is_dv_ = x_is_dv;
-  }
-
-  template <typename T>
+  template <typename T0, typename T1>
   inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+  Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                 Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (x_is_dv_)
-      return nonSquareEq(x, y_, dat_, dat_int_);
-    else
-      return nonSquareEq(x_, x, dat_, dat_int_);
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+    z(0) = x(0) - y(0);
+    z(1) = x(1) * x(2) - y(1);
+    return z;
   }
 };
 
@@ -250,7 +166,7 @@ TEST(MathMatrix, error_conditions) {
           << "dimension = 2, but should have the same dimension as x "
           << "(the vector of unknowns), which is: 3";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(algebra_solver(nonSquareEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonSquareEq_functor(),
                                   x, y, dat, dat_int),
                    std::invalid_argument,
                    msg);
@@ -260,7 +176,7 @@ TEST(MathMatrix, error_conditions) {
   err_msg2 << "algebra_solver: initial guess has size 0, but "
             << "must have a non-zero size";
   std::string msg2 = err_msg2.str();
-  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x_bad, y, dat, dat_int),
                    std::invalid_argument,
                    msg2);
@@ -271,7 +187,7 @@ TEST(MathMatrix, error_conditions) {
   err_msg3 << "algebra_solver: parameter vector has size 0, but "
            << "must have a non-zero size";
   std::string msg3 = err_msg3.str();
-  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y_bad, dat, dat_int),
                    std::invalid_argument,
                    msg3);
@@ -279,76 +195,43 @@ TEST(MathMatrix, error_conditions) {
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd x_bad_inf(n_x);
   x_bad_inf << inf, 1, 1;
-  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x_bad_inf, y, dat, dat_int),
                    std::domain_error,
                    "algebra_solver: initial guess is inf, but must be finite!");
 
   matrix_v y_bad_inf(3);
   y_bad_inf << inf, 1, 1;
-  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y_bad_inf, dat, dat_int),
                    std::domain_error,
                    "algebra_solver: parameter vector is inf, but must be finite!");
 
   std::vector<double> dat_bad_inf(1);
   dat_bad_inf[0] = inf;
-  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y, dat_bad_inf, dat_int),
                    std::domain_error,
                    "algebra_solver: continuous data is inf, but must be finite!");
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Unsolvable equation over the real space
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-unsolvableEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat,
-             const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
-  z(0) = x(0) * x(0) + y(0);
-  z(1) = x(1) * x(1) + y(1);
-  return z;
-}
 
-template <typename T1, typename T2>
 struct unsolvableEq_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  bool x_is_dv_;
-
-public:
-  unsolvableEq_functor() { };
-
-  unsolvableEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-                       const std::vector<double>& dat,
-                       const std::vector<int>& dat_int,
-                       const bool& x_is_dv) {
-    x_ = x;
-    y_ = y;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    x_is_dv_ = x_is_dv;
-  }
-
-  template <typename T>
+  template <typename T0, typename T1>
   inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+  Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                 Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (x_is_dv_)
-      return unsolvableEq(x, y_, dat_, dat_int_);
-    else
-      return unsolvableEq(x_, x, dat_, dat_int_);
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+    z(0) = x(0) * x(0) + y(0);
+    z(1) = x(1) * x(1) + y(1);
+    return z;
   }
 };
 
@@ -360,69 +243,41 @@ TEST(MathMatrix, unsolvable) {
   Eigen::VectorXd x(2);
   x << 1, 1;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-  y << 1, 1;  // these need to be positive for the test.
+  y << 1, 1;  // should be positive
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
   std::vector<double> dat(0);
   std::vector<int> dat_int(0);
 
   std::stringstream err_msg;
   err_msg << "algebra_solver: the output of the algebraic system is "
-          << "non-zero. The root of the system was not found.";
+          << "non-zero within absolute or relative tolerance. "
+          << "A root of the system was not found.";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor<double, double>(),
+  EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor(),
                                   x, y, dat, dat_int),
                    std::invalid_argument, msg);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Degenerate equation
-template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
-degenerateEq(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat,
-             const std::vector<int>& dat_int) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type scalar;
-  Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
-  z(0) = (x(0) - y(0)) * (x(1) - y(1));
-  z(1) = (x(0) - y(1)) * (x(1) - y(0));
-  return z;
-}
 
-template <typename T1, typename T2>
+/**
+ * Degenerate roots: each solution can either be y(0) or y(1).
+ */
 struct degenerateEq_functor {
-private:
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> x_;
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> y_;
-  std::vector<double> dat_;
-  std::vector<int> dat_int_;
-  bool x_is_dv_;
-
-public:
-  degenerateEq_functor() { };
-
-  degenerateEq_functor(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-                       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-                       const std::vector<double>& dat,
-                       const std::vector<int>& dat_int,
-                       const bool& x_is_dv) {
-    x_ = x;
-    y_ = y;
-    dat_ = dat;
-    dat_int_ = dat_int;
-    x_is_dv_ = x_is_dv;
-  }
-
-  template <typename T>
+  template <typename T0, typename T1>
   inline
-  Eigen::Matrix<typename boost::math::tools::promote_args<T, T1, T2>::type,
+  Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                 Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
-    if (x_is_dv_)
-      return degenerateEq(x, y_, dat_, dat_int_);
-    else
-      return degenerateEq(x_, x, dat_, dat_int_);
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat,
+             const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
+    z(0) = (x(0) - y(0)) * (x(1) - y(1));
+    z(1) = (x(0) - y(1)) * (x(1) - y(0));
+    return z;
   }
 };
 
@@ -430,9 +285,6 @@ TEST(MathMatrix, degenerate) {
   using stan::math::algebra_solver;
   using stan::math::sum;
   using stan::math::var;
-
-  // The considered system has some degeneracy. Each
-  // solution can either be 5 or 8.
 
   int n_x = 2, n_y = 2;
 
@@ -446,7 +298,7 @@ TEST(MathMatrix, degenerate) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
     std::vector<double> dat(0);
     std::vector<int> dat_int(0);
-    theta = algebra_solver(degenerateEq_functor<double, double>(),
+    theta = algebra_solver(degenerateEq_functor(),
                          x, y, dat, dat_int);
     EXPECT_EQ(8, theta(0));
     EXPECT_EQ(8, theta(1));
@@ -472,7 +324,7 @@ TEST(MathMatrix, degenerate) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
     std::vector<double> dat(0);
     std::vector<int> dat_int(0);
-    theta = algebra_solver(degenerateEq_functor<double, double>(),
+    theta = algebra_solver(degenerateEq_functor(),
                          x, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
@@ -487,5 +339,4 @@ TEST(MathMatrix, degenerate) {
     for (int l = 0; l < n_y; l++)
       EXPECT_NEAR(J(k, l), g[l], 1e-13);
   }
-
 }
