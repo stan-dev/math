@@ -23,7 +23,8 @@ namespace stan {
      * under the same conditions as the 2F1 function itself.
      *
      * @tparam T type of arguments and result
-     * @param[out] g g pointer to array of six values of type T, result.
+     * @param[out] g_a1 g_a1 pointer to array of six values of type T, result.
+     * @param[out] g_b1 g_b1 pointer to array of six values of type T, result.
      * @param[in] a1 a1 see generalized hypergeometric function definition.
      * @param[in] a2 a2 see generalized hypergeometric function definition.
      * @param[in] b1 b1 see generalized hypergeometric function definition.
