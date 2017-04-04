@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/rev/scal/fun/fabs.hpp>
+#include <stan/math/rev/scal/fun/floor.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/lgamma.hpp>
