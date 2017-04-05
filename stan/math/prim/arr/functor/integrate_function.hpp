@@ -1,14 +1,16 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_FUNCTION_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_FUNCTION_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
 
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/scal/fun/to_var.hpp>
+#include <stan/math/rev/mat/fun/to_var.hpp>
+#include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 
 #include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
 #include <boost/bind.hpp>
 #include <cmath>
-#include <boost/lambda/lambda.hpp>
 #include <ostream>
 #include <vector>
 #include <stan/math/prim/arr/functor/DEIntegrator.hpp>
@@ -17,46 +19,118 @@ namespace stan {
 
   namespace math {
 
-    namespace {
+    template <typename T>
+    struct return_type_of_value_of {
+      typedef T type;
+    };
+    
+    template <>
+    struct return_type_of_value_of <var> {
+      typedef double type;
+    };
+    
+    template <>
+    struct return_type_of_value_of <std::vector<var> > {
+      typedef std::vector<double> type;
+    };
+    
+    template <int R, int C>
+    struct return_type_of_value_of <Eigen::Matrix<var, R, C> > {
+      typedef Eigen::Matrix<double, R, C> type;
+    };
 
-      //to_var functions: construct a clean
-      //(vector/matrix of) vars from a (vector/matrix of) doubles
-      template <int R, int C>
-      inline typename Eigen::Matrix<var, R, C>
-      to_var(const Eigen::Matrix<double, R, C>& x) {
-        int S = x.size();
-        Eigen::Matrix<var, R, C> result(x.rows(), x.cols());
-        var* datap = result.data();
-        const double* datax = x.data();
-        for (int i=0; i < S; i++)
-          datap[i] = var(datax[i]);
-        return result;
-      }
-
-      inline
-      std::vector<var> to_var(const std::vector<double>& x) {
-        size_t size = x.size();
-        std::vector<var> result(size);
-        for (int i=0; i < size; i++)
-          result[i] = var(x[i]);
-        return result;
-      }
-
-      inline var to_var(const double x) {
-        return var(x);
-      }
-
-      template <typename G>
-      inline
-      double integrate_definite_1d(const G& g,
-                                   const double a,
-                                   const double b,
-                                   const double tae) {
-        return DEIntegrator<G>::Integrate(g, a, b, tae);
-      }
-
+    /**
+     * Wrap around function to call static method Integrate from
+     * class DEIntegrator.
+     * 
+     * @tparam T Type of f.
+     * @param f a functor with signature double (double).
+     * @param a lower limit of integration, must be double type.
+     * @param b upper limit of integration, must be double type.
+     * @param tae target absolute error.
+     * @return numeric integral of function f.
+     */
+    template <typename F>
+    inline
+    double call_DEIntegrator(const F& f,
+                             const double a,
+                             const double b,
+                             const double tae) {
+      return DEIntegrator<F>::Integrate(f, a, b, tae);
     }
 
+    /**
+     * Return the numeric integral of a function f given its gradient g.
+     * 
+     * @tparam T Type of f.
+     * @tparam G Type of g.
+     * @param f a functor with signature
+     * double (double, std::vector<T_beta>) or with signature
+     * double (double, T_beta) where the first argument is one being
+     * integrated and the second one is either an extra scalar or vector
+     * being passed to f.
+     * @param g a functor with signature
+     * double (double, std::vector<T_beta>, int) or with signature
+     * double (double, T_beta, int) where the first argument is one
+     * being integrated and the second one is either an extra scalar or
+     * vector being passed to f and third one selects which component of
+     * the gradient vector is to be returned.
+     * @param a lower limit of integration, must be double type.
+     * @param b upper limit of integration, must be double type.
+     * @param msgs stream.
+     * @return numeric integral of function f.
+     */
+    template <typename F, typename G, typename T_beta>
+    inline
+    typename scalar_type<T_beta>::type
+    integrate_1d_grad(const F& f,
+                      const G& g,
+                      const double a,
+                      const double b,
+                      const T_beta& beta,
+                      std::ostream* msgs) {
+
+      check_finite("integrate_1d", "lower limit", a);
+      check_finite("integrate_1d", "upper limit", b);
+
+      //hard case, we want a normalizing factor
+      if (!is_constant_struct<T_beta>::value) {
+        size_t N = length(beta);
+        std::vector<double> grad(N);
+
+        typename return_type_of_value_of<T_beta>::type
+          value_of_beta = value_of(beta);
+         
+        for (size_t n = 0; n < N; n++)
+          grad[n] =
+            call_DEIntegrator(
+              boost::bind<double>(g, _1, value_of_beta,
+                                  static_cast<int>(n+1), msgs),
+                                  a, b, 1e-6);
+
+        double val_ = call_DEIntegrator(boost::bind<double>(f, _1, value_of_beta,
+                                                     msgs),
+                                 a, b, 1e-6);
+
+        OperandsAndPartials<T_beta> operands_and_partials(beta);
+        for (size_t n = 0; n < N; n++)
+          operands_and_partials.d_x1[n] += grad[n];
+
+        return operands_and_partials.value(val_);
+      //easy case, here we are calculating a normalizing constant,
+      //not a normalizing factor, so g doesn't matter at all
+      } else {
+        return call_DEIntegrator(
+          boost::bind<double>(f,
+                              _1, value_of(beta), msgs),
+                              a, b, 1e-6);
+      }
+    }
+
+
+    // ------------------------- integrate_1d ------------------
+    // Only functions related to integrate_1d below this point
+    
     template <class F, class T_to_var_value_of_beta>
     inline
     double
@@ -109,7 +183,7 @@ namespace stan {
     template <typename F, typename T_value_of_beta>
     inline
     void
-    integrate_function_helper(const F& f,
+    integrate_1d_helper(const F& f,
                               const double a,
                               const double b,
                               const T_value_of_beta&
@@ -123,29 +197,44 @@ namespace stan {
 
         for (size_t n = 0; n < N; n++) {
           instance_of_partial_f_beta_n.set_n(n);
-          grad[n] = integrate_definite_1d(instance_of_partial_f_beta_n,
+          grad[n] = call_DEIntegrator(instance_of_partial_f_beta_n,
                                           a, b, 1e-6);
         }
 
     }
 
 
+    /**
+     * Return the numeric integral of a function f with its
+     * gradients being infered automatically (but slowly).
+     * 
+     * @tparam T Type of f.
+     * @param f a functor with signature
+     * double (double, std::vector<T_beta>) or with signature
+     * double (double, T_beta) where the first argument is one being
+     * integrated and the second one is either an extra scalar or vector
+     * being passed to f.
+     * @param a lower limit of integration, must be double type.
+     * @param b upper limit of integration, must be double type.
+     * @param msgs stream.
+     * @return numeric integral of function f.
+     */
     template <typename F, typename T_beta>
     inline
     typename scalar_type<T_beta>::type
-    integrate_function(const F& f,
+    integrate_1d(const F& f,
                        const double a,
                        const double b,
                        const T_beta& beta,
                        std::ostream* msgs) {
 
-      check_finite("integrate_function", "lower limit", a);
-      check_finite("integrate_function", "upper limit", b);
+      check_finite("integrate_1d", "lower limit", a);
+      check_finite("integrate_1d", "upper limit", b);
 
 
       double val_ =
-        integrate_definite_1d(boost::bind<double>(f,
-                                                  boost::lambda::_1,
+        call_DEIntegrator(boost::bind<double>(f,
+                                                  _1,
                                                   value_of(beta),
                                                   msgs),
                               a, b, 1e-6);
@@ -157,7 +246,7 @@ namespace stan {
         //beta can be a std::vector, an Eigen Vector
         //or a single scalar, so, we call a helper function
         //to deduce the type of value_of(beta)
-        integrate_function_helper(f, a, b, value_of(beta),
+        integrate_1d_helper(f, a, b, value_of(beta),
                                   N, grad, msgs);
 
         OperandsAndPartials<T_beta> operands_and_partials(beta);
@@ -166,71 +255,12 @@ namespace stan {
         }
 
         return operands_and_partials.value(val_);
-      } else
+      } else {
         return val_;
+      }
+      
     }
 
-
-
-    template <typename F, typename G, typename T_value_of_beta>
-    inline
-    double integrate_function_grad_helper(const F& f,
-                                          const G& g,
-                                          const double a,
-                                          const double b,
-                                          const T_value_of_beta&
-                                            value_of_beta,
-                                          const size_t N,
-                                          std::vector<double>& grad,
-                                          std::ostream* msgs) {
-
-      for (size_t n = 0; n < N; n++)
-        grad[n] =
-        integrate_definite_1d(
-          boost::bind<double>(g,
-                              boost::lambda::_1, value_of_beta,
-                              static_cast<int>(n+1), msgs),
-                              a, b, 1e-6);
-
-      return integrate_definite_1d(
-               boost::bind<double>(f,
-                                   boost::lambda::_1, value_of_beta, msgs),
-                                   a, b, 1e-6);
-    }
-
-    template <typename F, typename G, typename T_beta>
-    inline
-    typename scalar_type<T_beta>::type
-    integrate_function_grad(const F& f,
-                            const G& g,
-                            const double a,
-                            const double b,
-                            const T_beta& beta,
-                            std::ostream* msgs) {
-
-      check_finite("integrate_function", "lower limit", a);
-      check_finite("integrate_function", "upper limit", b);
-
-      if (!is_constant_struct<T_beta>::value) {
-        size_t N = length(beta);
-        std::vector<double> grad(N);
-
-        double val_ =
-          integrate_function_grad_helper(f, g, a, b, value_of(beta),
-                                         N, grad, msgs);
-
-
-        OperandsAndPartials<T_beta> operands_and_partials(beta);
-        for (size_t n = 0; n < N; n++)
-          operands_and_partials.d_x1[n] += grad[n];
-
-        return operands_and_partials.value(val_);
-      } else
-        return integrate_definite_1d(
-          boost::bind<double>(f,
-                              boost::lambda::_1, value_of(beta), msgs),
-                              a, b, 1e-6);
-    }
 
 
   }
