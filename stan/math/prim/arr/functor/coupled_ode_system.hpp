@@ -94,7 +94,7 @@ namespace stan {
        */
       void operator()(const std::vector<double>& y,
                       std::vector<double>& dy_dt,
-                      double t) {
+                      double t) const {
         dy_dt = f_(t, y, theta_dbl_, x_, x_int_, msgs_);
         check_size_match("coupled_ode_system",
                          "y", y.size(),
@@ -122,7 +122,7 @@ namespace stan {
        *
        * @return initial state of the coupled system
        */
-      std::vector<double> initial_state() {
+      std::vector<double> initial_state() const {
         std::vector<double> state(size_, 0.0);
         for (size_t n = 0; n < N_; n++)
           state[n] = y0_dbl_[n];
@@ -140,7 +140,7 @@ namespace stan {
        * @return the decoupled states
        */
       std::vector<std::vector<double> >
-      decouple_states(const std::vector<std::vector<double> >& y) {
+      decouple_states(const std::vector<std::vector<double> >& y) const {
         return y;
       }
     };
