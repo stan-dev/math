@@ -77,20 +77,23 @@ namespace stan {
         // gradient of series expansion http://dlmf.nist.gov/8.7#E3
 
         T S = 0;
-        T s = 1;
+        T log_s = 0.0;
+        double s_sign = 1.0;
         int k = 0;
-        T delta = s / square(a);
-        while (fabs(delta) > precision) {
-          S += delta;
+        T log_z = log(z);
+        T log_delta = log_s - 2 * log(a);
+        while (exp(log_delta) > precision) {
+          S += s_sign * exp(log_delta);
           ++k;
-          s *= - z / k;
-          delta = s / square(k + a);
+          log_s += log_z - log(k);
+          s_sign = -1.0 * s_sign;
+          log_delta = log_s - 2 * log(k + a);
           if (k >= max_steps)
             stan::math::domain_error("grad_reg_inc_gamma",
               "k (internal counter)",
               max_steps, "exceeded ",
               " iterations, gamma function gradient did not converge.");
-          if (is_inf(delta))
+          if (is_inf(log_delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
         }
