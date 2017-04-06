@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
@@ -46,7 +45,6 @@ namespace stan {
       using std::exp;
       using std::log;
       using std::fabs;
-      using stan::math::is_nan;
 
       T F = 1.0;
       T tNew = 0.0;
@@ -54,23 +52,16 @@ namespace stan {
       T logZ = log(z);
 
       int k = 0;
-      bool T_is_negative = false;
+      double T_sign = 1.0;
       T p = 0.0;
       do {
         p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
-        if (is_nan(p) || p == 0)
+        if (p == 0)
           break;
 
         logT += log(fabs(p)) + logZ;
-        if (p < 0 && T_is_negative) {
-          T_is_negative = false;
-        } else if (p < 0 && !T_is_negative) {
-          T_is_negative = true;
-        }
-        if (T_is_negative)
-          tNew = -1 * exp(logT);
-        else
-          tNew = exp(logT);
+        T_sign *= sign(p);
+        tNew = T_sign * exp(logT);
         F += tNew;
 
         ++k;

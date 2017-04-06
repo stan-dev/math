@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>
 #include <limits>
@@ -40,7 +39,6 @@ namespace stan {
       using std::log;
       using std::fabs;
       using std::exp;
-      using stan::math::is_nan;
 
       g_a1 = 0.0;
       g_b1 = 0.0;
@@ -70,36 +68,25 @@ namespace stan {
           break;
 
         log_t_new += log(fabs(p)) + log_z;
-        if (p < 0 && log_t_new_sign < 0.0) {
-          log_t_new_sign = 1.0;
-        } else if (p < 0 && log_t_new_sign > 0.0) {
-          log_t_new_sign = -1.0;
-        }
+        log_t_new_sign *= sign(p);
+
 //      g_old[0] = t_new * (g_old[0] / t_old + 1.0 / (a1 + k));
         term = log_g_old_sign[0] * log_t_old_sign *
           exp(log_g_old[0] - log_t_old) + 1/(a1 + k);
         log_g_old[0] = log_t_new + log(fabs(term));
-        if (term >= 0.0)
-          log_g_old_sign[0] = log_t_new_sign;
-        else
-          log_g_old_sign[0] = -1.0 * log_t_new_sign;
+        log_g_old_sign[0] = sign(term) * log_t_new_sign;
 
 //      g_old[1] = t_new * (g_old[1] / t_old + 1.0 / (a2 + k));
         term = log_g_old_sign[1] * log_t_old_sign *
           exp(log_g_old[1] - log_t_old) + 1/(a2 + k);
         log_g_old[1] = log_t_new + log(fabs(term));
-        if (term >= 0.0)
-          log_g_old_sign[1] = log_t_new_sign;
-        else
-          log_g_old_sign[1] = -1.0 * log_t_new_sign;
+        log_g_old_sign[1] = sign(term) * log_t_new_sign;
+
 //      g_old[3] = t_new * (g_old[3] / t_old - 1.0 / (b1 + k));
         term = log_g_old_sign[2] * log_t_old_sign *
           exp(log_g_old[2] - log_t_old) - 1/(b1 + k);
         log_g_old[2] = log_t_new + log(fabs(term));
-        if (term >= 0.0)
-          log_g_old_sign[2] = log_t_new_sign;
-        else
-          log_g_old_sign[2] = -1.0 * log_t_new_sign;
+        log_g_old_sign[2] = sign(term) * log_t_new_sign;
 
         g_a1 += log_g_old_sign[0] * exp(log_g_old[0]);
         g_b1 += log_g_old_sign[2] * exp(log_g_old[2]);
