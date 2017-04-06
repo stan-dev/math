@@ -18,25 +18,35 @@
 namespace stan {
 
   namespace math {
-
+    
     template <typename T>
     struct return_type_of_value_of {
-      typedef T type;
-    };
-    
-    template <>
-    struct return_type_of_value_of <var> {
       typedef double type;
     };
     
-    template <>
-    struct return_type_of_value_of <std::vector<var> > {
+    template <typename T>
+    struct return_type_of_value_of <std::vector<T> > {
       typedef std::vector<double> type;
     };
     
-    template <int R, int C>
-    struct return_type_of_value_of <Eigen::Matrix<var, R, C> > {
+    template <typename T, int R, int C>
+    struct return_type_of_value_of <Eigen::Matrix<T, R, C> > {
       typedef Eigen::Matrix<double, R, C> type;
+    };
+    
+    template <typename T>
+    struct return_type_of_to_var {
+      typedef var type;
+    };
+    
+    template <typename T>
+    struct return_type_of_to_var <std::vector<T> > {
+      typedef std::vector<var> type;
+    };
+    
+    template <typename T, int R, int C>
+    struct return_type_of_to_var <Eigen::Matrix<T, R, C> > {
+      typedef Eigen::Matrix<var, R, C> type;
     };
 
     /**
@@ -70,11 +80,12 @@ namespace stan {
      * integrated and the second one is either an extra scalar or vector
      * being passed to f.
      * @param g a functor with signature
-     * double (double, std::vector<T_beta>, int) or with signature
-     * double (double, T_beta, int) where the first argument is one
-     * being integrated and the second one is either an extra scalar or
-     * vector being passed to f and third one selects which component of
-     * the gradient vector is to be returned.
+     * double (double, std::vector<T_beta>, int, std::ostream*) or with
+     * signature double (double, T_beta, int, std::ostream*) where the
+     * first argument is onebeing integrated and the second one is
+     * either an extra scalar or vector being passed to f and the
+     * third one selects which component of the gradient vector
+     * is to be returned.
      * @param a lower limit of integration, must be double type.
      * @param b upper limit of integration, must be double type.
      * @param msgs stream.
@@ -121,88 +132,25 @@ namespace stan {
       //not a normalizing factor, so g doesn't matter at all
       } else {
         return call_DEIntegrator(
-          boost::bind<double>(f,
-                              _1, value_of(beta), msgs),
-                              a, b, 1e-6);
+          boost::bind<double>(f, _1, value_of(beta), msgs), a, b, 1e-6);
       }
     }
 
-
-    // ------------------------- integrate_1d ------------------
-    // Only functions related to integrate_1d below this point
-    
-    template <class F, class T_to_var_value_of_beta>
+    /**
+     * Calculate gradient of f(x, param, std::ostream*)
+     * with respect to param_n (which must be an element of param)
+     */ 
+    template <typename F, typename T_param>
     inline
-    double
-    partial_f_value_of_beta_n_helper(F& f_, double x, size_t n_,
-                                     const T_to_var_value_of_beta
-                                       to_var_value_of_beta,
-                                     std::ostream* msgs_) {
-      f_(x, to_var_value_of_beta, msgs_).grad();
-      VectorView<const T_to_var_value_of_beta>
-        to_var_value_of_beta_vector_view(to_var_value_of_beta);
-      return to_var_value_of_beta_vector_view[n_].adj();
+    double gradient_of_f(const F& f,
+                         const double x,
+                         const T_param& param,
+                         const var& param_n,
+                         std::ostream* msgs) {
+      set_zero_all_adjoints_nested();
+      f(x, param, msgs).grad();
+      return param_n.adj();
     }
-
-    template <class F, class T_value_of_beta>
-    struct partial_f_beta_n {
-      const F& f_;
-      const T_value_of_beta& value_of_beta_;
-      size_t n_;
-      std::ostream* msgs_;
-
-      partial_f_beta_n(const F& f,
-                       const T_value_of_beta& value_of_beta,
-                       std::ostream* msgs)
-        : f_(f), value_of_beta_(value_of_beta), msgs_(msgs) {
-      }
-
-      void set_n(size_t n) { n_ = n; }
-
-      double operator()(const double x) const {
-        start_nested();
-        double d_value_of_betan_f;
-        try {
-          //value_of_beta_ can be a std::vector, an Eigen Vector
-          //or a single scalar, so, we call a helper function
-          //to deduce the type of to_var(value_of_beta_)
-          d_value_of_betan_f = partial_f_value_of_beta_n_helper(f_, x, n_,
-                                               to_var(value_of_beta_),
-                                               msgs_);
-        } catch (const std::exception& /*e*/) {
-          recover_memory_nested();
-          throw;
-        }
-        recover_memory_nested();
-        return d_value_of_betan_f;
-      }
-
-    };
-
-
-    template <typename F, typename T_value_of_beta>
-    inline
-    void
-    integrate_1d_helper(const F& f,
-                              const double a,
-                              const double b,
-                              const T_value_of_beta&
-                                value_of_beta,
-                              size_t N,
-                              std::vector<double>& grad,
-                              std::ostream* msgs) {
-
-        partial_f_beta_n<F, const T_value_of_beta>
-          instance_of_partial_f_beta_n(f, value_of_beta, msgs);
-
-        for (size_t n = 0; n < N; n++) {
-          instance_of_partial_f_beta_n.set_n(n);
-          grad[n] = call_DEIntegrator(instance_of_partial_f_beta_n,
-                                          a, b, 1e-6);
-        }
-
-    }
-
 
     /**
      * Return the numeric integral of a function f with its
@@ -210,58 +158,63 @@ namespace stan {
      * 
      * @tparam T Type of f.
      * @param f a functor with signature
-     * double (double, std::vector<T_beta>) or with signature
-     * double (double, T_beta) where the first argument is one being
-     * integrated and the second one is either an extra scalar or vector
-     * being passed to f.
+     * double (double, std::vector<T_beta>, std::ostream*) or with
+     * signature double (double, T_beta, std::ostream*) where the first
+     * argument is one being integrated and the second one is either
+     * an extra scalar or vector being passed to f.
      * @param a lower limit of integration, must be double type.
      * @param b upper limit of integration, must be double type.
      * @param msgs stream.
      * @return numeric integral of function f.
      */
-    template <typename F, typename T_beta>
+    template <typename F, typename T_param>
     inline
-    typename scalar_type<T_beta>::type
-    integrate_1d(const F& f,
-                       const double a,
-                       const double b,
-                       const T_beta& beta,
-                       std::ostream* msgs) {
+    typename scalar_type<T_param>::type integrate_1d(const F& f,
+                               const double a,
+                               const double b,
+                               const T_param& param,
+                               std::ostream* msgs) {
 
-      check_finite("integrate_1d", "lower limit", a);
-      check_finite("integrate_1d", "upper limit", b);
-
+      stan::math::check_finite("integrate_1d", "lower limit", a);
+      stan::math::check_finite("integrate_1d", "upper limit", b);
 
       double val_ =
-        call_DEIntegrator(boost::bind<double>(f,
-                                                  _1,
-                                                  value_of(beta),
-                                                  msgs),
+        call_DEIntegrator(
+          boost::bind<double>(f,
+                              _1, value_of(param), msgs),
                               a, b, 1e-6);
 
-      if (!is_constant_struct<T_beta>::value) {
-        size_t N = length(beta);
-        std::vector<double> grad(N);
+      if (!is_constant_struct<T_param>::value) {
+        size_t N = stan::length(param);
+        std::vector<double> results(N);
 
-        //beta can be a std::vector, an Eigen Vector
-        //or a single scalar, so, we call a helper function
-        //to deduce the type of value_of(beta)
-        integrate_1d_helper(f, a, b, value_of(beta),
-                                  N, grad, msgs);
+        try {
+          start_nested();
+          typedef typename return_type_of_to_var<T_param>::type
+            clean_T_param;
+          clean_T_param clean_param = to_var(value_of(param));
+          
+          VectorView<const clean_T_param> clean_param_vec(clean_param);
 
-        OperandsAndPartials<T_beta> operands_and_partials(beta);
-        for (size_t n = 0; n < N; n++) {
-          operands_and_partials.d_x1[n] += grad[n];
+          for (size_t n = 0; n < N; n++)
+            results[n] =
+              call_DEIntegrator(boost::bind<double>(gradient_of_f<F, clean_T_param>, f, _1, clean_param, clean_param_vec[n], msgs), a, b, 1e-6);
+            
+        } catch (const std::exception& e) {
+          recover_memory_nested();
+          throw;
         }
+        recover_memory_nested();
+
+        OperandsAndPartials<T_param> operands_and_partials(param);
+        for (size_t n = 0; n < N; n++)
+          operands_and_partials.d_x1[n] += results[n];
 
         return operands_and_partials.value(val_);
       } else {
         return val_;
       }
-      
     }
-
-
 
   }
 
