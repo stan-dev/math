@@ -71,6 +71,44 @@ TEST(MathMatrix, simple_Eq) {
   }
 }
 
+TEST(MathMatrix, simple_Eq_tuned) {
+  using stan::math::algebra_solver;
+  using stan::math::sum;
+  using stan::math::var;
+
+  int n_x = 2, n_y = 3;
+  for (int k = 0; k < n_x; k++) {
+
+    Eigen::VectorXd x(n_x);
+    x << 1, 1;  // initial guess
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
+    y << 5, 4, 2;
+    std::vector<double> dummy_dat(0);
+    std::vector<int> dummy_dat_int(0);
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
+    double xtol = 1e-6, ftol = 1e-6;
+    int maxfev = 1e+4;
+
+    theta = algebra_solver(simpleEq_functor(),
+                           x, y, dummy_dat, dummy_dat_int,
+                           xtol, ftol, maxfev);
+
+    EXPECT_EQ(20, theta(0));
+    EXPECT_EQ(2, theta(1));
+
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 4, 5, 0, 0, 0, 1;
+
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++)
+      EXPECT_EQ(J(k, i), g[i]);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 struct nonLinearEq_functor {
@@ -100,17 +138,16 @@ TEST(MathMatrix, nonLinearEq) {
   int n_x = 3, n_y = 3;
   for (int k = 0; k < n_x; k++) {
     Eigen::VectorXd x(n_x);
-    x << -4, -6, 3;  // initial guess FIX ME: what should these be?
+    x << -3, -3, 3;  // Note: need a pretty good guess to solve this one.
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
     y << 4, 6, 3;
-    std::vector<double> dat(1);
-    dat[0] = 7;
+    std::vector<double> dummy_dat(0);
     std::vector<int> dummy_dat_int(0);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
     theta = algebra_solver(nonLinearEq_functor(),
-                           x, y, dat, dummy_dat_int);
+                           x, y, dummy_dat, dummy_dat_int);
 
     EXPECT_FLOAT_EQ(- y(0).val(), theta(0).val());
     EXPECT_FLOAT_EQ(- y(1).val(), theta(1).val());
@@ -123,10 +160,12 @@ TEST(MathMatrix, nonLinearEq) {
     VEC g;
     theta(k).grad(y_vec, g);
 
+    double err = 1e-11;
     for (int i = 0; i < n_y; i++)
-      EXPECT_EQ(J(k, i), g[i]);
+      EXPECT_NEAR(J(k, i), g[i], err);
   }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -213,6 +252,24 @@ TEST(MathMatrix, error_conditions) {
                                   x, y, dat_bad_inf, dat_int),
                    std::domain_error,
                    "algebra_solver: continuous data is inf, but must be finite!");
+
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
+                                  x, y, dat, dat_int,
+                                  -1, 1e-6, 1e+3),
+                   std::invalid_argument,
+                   "relative_tolerance");
+
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
+                                  x, y, dat, dat_int,
+                                  1e-6, -1, 1e+3),
+                   std::invalid_argument,
+                   "absolute_tolerance");
+
+  EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
+                                  x, y, dat, dat_int,
+                                  1e-6, 1e-6, -1),
+                   std::invalid_argument,
+                   "max_num_steps");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,22 +304,27 @@ TEST(MathMatrix, unsolvable) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
   std::vector<double> dat(0);
   std::vector<int> dat_int(0);
+  double relative_tolerance = 1e-6, absolute_tolerance = 1e-6;
+  int max_num_steps = 1e+3;
 
   std::stringstream err_msg;
-  err_msg << "algebra_solver: the output of the algebraic system is "
-          << "non-zero within absolute or relative tolerance. "
-          << "A root of the system was not found.";
+  err_msg << "algebra_solver: the norm of the algebraic function is: "
+          << 1.41421  // sqrt(2)
+          << " but should be lower than the absolute tolerance: "
+          << absolute_tolerance
+          << ". Consider increasing the relative tolerance and the"
+          << " max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor(),
-                                  x, y, dat, dat_int),
+                                  x, y, dat, dat_int,
+                                  relative_tolerance, absolute_tolerance,
+                                  max_num_steps),
                    std::invalid_argument, msg);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * Degenerate roots: each solution can either be y(0) or y(1).
- */
+// Degenerate roots: each solution can either be y(0) or y(1).
 struct degenerateEq_functor {
   template <typename T0, typename T1>
   inline
@@ -325,7 +387,8 @@ TEST(MathMatrix, degenerate) {
     std::vector<double> dat(0);
     std::vector<int> dat_int(0);
     theta = algebra_solver(degenerateEq_functor(),
-                         x, y, dat, dat_int);
+                           x, y, dat, dat_int,
+                           1e-45, 1e-45);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
