@@ -30,6 +30,7 @@ namespace stan {
       Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
       std::vector<double> dat_;
       std::vector<int> dat_int_;
+      std::ostream* msgs_;
       bool x_is_dv_;
 
     public:
@@ -40,12 +41,14 @@ namespace stan {
                      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                      const std::vector<double>& dat,
                      const std::vector<int>& dat_int,
+                     std::ostream* msgs,
                      const bool& x_is_dv)
         : f_() {
         x_ = x;
         y_ = y;
         dat_ = dat;
         dat_int_ = dat_int;
+        msgs_ = msgs;
         x_is_dv_ = x_is_dv;
       }
 
@@ -54,9 +57,9 @@ namespace stan {
       Eigen::Matrix<T, Eigen::Dynamic, 1>
       operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
         if (x_is_dv_)
-          return f_(x, y_, dat_, dat_int_, 0);
+          return f_(x, y_, dat_, dat_int_, msgs_);
         else
-          return f_(x_, x, dat_, dat_int_, 0);
+          return f_(x_, x, dat_, dat_int_, msgs_);
       }
     };
 
@@ -77,8 +80,9 @@ namespace stan {
                            const Eigen::Matrix<T1, Eigen::Dynamic, 1> y,
                            const std::vector<double> dat,
                            const std::vector<int> dat_int,
+                           std::ostream* msgs,
                            const bool x_is_dv)
-        : fs_(f, x, y, dat, dat_int, x_is_dv),
+        : fs_(f, x, y, dat, dat_int, msgs, x_is_dv),
           x_size_(x.size()) { }
 
       int operator()(const Eigen::VectorXd &dv, Eigen::VectorXd &fvec) {
@@ -129,7 +133,8 @@ namespace stan {
                           const std::vector<double> dat,
                           const std::vector<int> dat_int,
                           const Eigen::VectorXd theta_dbl,
-                          FX& fx)
+                          FX& fx,
+                          std::ostream* msgs)
         : vari(theta_dbl(0)),
           y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
           y_size_(y.size()),
@@ -145,7 +150,7 @@ namespace stan {
         // Compute the Jacobian
         Eigen::MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
         hybrj_functor_solver<FS, F, double, double>
-          fy(fs, f, theta_dbl, value_of(y), dat, dat_int, false);
+          fy(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs, false);
         Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
         Jx_y_ = - stan::math::mdivide_left(Jf_x, Jf_y);
@@ -190,6 +195,7 @@ namespace stan {
                    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                    const std::vector<double>& dat,
                    const std::vector<int>& dat_int,
+                   std::ostream* msgs = 0,
                    double relative_tolerance = 1e-10,
                    double absolute_tolerance = 1e-6,
                    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
@@ -219,7 +225,7 @@ namespace stan {
       // Create functor for algebraic system
       typedef system_functor<F, double, double> FS;
       typedef hybrj_functor_solver<FS, F, double, double> FX;
-      FX fx(FS(), f, x, value_of(y), dat, dat_int, true);
+      FX fx(FS(), f, x, value_of(y), dat, dat_int, msgs, true);
       Eigen::HybridNonLinearSolver<FX> solver(fx);
 
       // Check dimension unknowns equals dimension of system output
@@ -258,8 +264,8 @@ namespace stan {
 
       // Construct vari
       algebra_solver_vari<FS, F,  T, FX>* vi0
-        = new algebra_solver_vari<FS, F, T, FX>(FS(), f, x, y, dat,
-                                                dat_int, theta_dbl, fx);
+        = new algebra_solver_vari<FS, F, T, FX>(FS(), f, x, y, dat, dat_int,
+                                                theta_dbl, fx, msgs);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(x.size());
       theta(0) = var(vi0);
       for (int i = 1; i < x.size(); ++i)

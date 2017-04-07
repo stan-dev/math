@@ -92,7 +92,7 @@ TEST(MathMatrix, simple_Eq_tuned) {
 
     theta = algebra_solver(simpleEq_functor(),
                            x, y, dummy_dat, dummy_dat_int,
-                           xtol, ftol, maxfev);
+                           0, xtol, ftol, maxfev);
 
     EXPECT_EQ(20, theta(0));
     EXPECT_EQ(2, theta(1));
@@ -255,19 +255,19 @@ TEST(MathMatrix, error_conditions) {
 
   EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y, dat, dat_int,
-                                  -1, 1e-6, 1e+3),
+                                  0, -1, 1e-6, 1e+3),
                    std::invalid_argument,
                    "relative_tolerance");
 
   EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y, dat, dat_int,
-                                  1e-6, -1, 1e+3),
+                                  0, 1e-6, -1, 1e+3),
                    std::invalid_argument,
                    "absolute_tolerance");
 
   EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y, dat, dat_int,
-                                  1e-6, 1e-6, -1),
+                                  0, 1e-6, 1e-6, -1),
                    std::invalid_argument,
                    "max_num_steps");
 }
@@ -316,7 +316,7 @@ TEST(MathMatrix, unsolvable) {
           << " max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor(),
-                                  x, y, dat, dat_int,
+                                  x, y, dat, dat_int, 0,
                                   relative_tolerance, absolute_tolerance,
                                   max_num_steps),
                    std::invalid_argument, msg);
@@ -387,8 +387,7 @@ TEST(MathMatrix, degenerate) {
     std::vector<double> dat(0);
     std::vector<int> dat_int(0);
     theta = algebra_solver(degenerateEq_functor(),
-                           x, y, dat, dat_int,
-                           1e-45, 1e-45);
+                           x, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
