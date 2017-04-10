@@ -12,7 +12,8 @@ namespace stan {
       int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) const;
     }; */
 
-    template <typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
+    template <typename _Scalar, int NX = Eigen::Dynamic,
+      int NY = Eigen::Dynamic>
     struct NLOFunctor {
       typedef _Scalar Scalar;
       enum {
@@ -22,11 +23,13 @@ namespace stan {
 
       typedef Eigen::Matrix<Scalar, InputsAtCompileTime, 1> InputType;
       typedef Eigen::Matrix<Scalar, ValuesAtCompileTime, 1> ValueType;
-      typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
+      typedef Eigen::Matrix<Scalar, ValuesAtCompileTime, InputsAtCompileTime>
+        JacobianType;
 
       const int m_inputs, m_values;
 
-      NLOFunctor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime) {}
+      NLOFunctor() : m_inputs(InputsAtCompileTime),
+        m_values(ValuesAtCompileTime) {}
       NLOFunctor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
 
       int inputs() const { return m_inputs; }
@@ -65,7 +68,6 @@ namespace stan {
     inline
     Eigen::VectorXd
     dogleg(const Eigen::VectorXd& x, const F1 f1, const F2 f2) {
-
       stan::math::hybrj_functor<F1, F2> functor(f1, f2);
       Eigen::HybridNonLinearSolver<hybrj_functor<F1, F2> > solver(functor);
       Eigen::VectorXd fvec;
