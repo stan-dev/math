@@ -67,7 +67,7 @@ namespace stan {
     };
 
     /**
-     * Return the solutions for the specified system of algebraic
+     * Return the solution to the specified system of algebraic
      * equations given an initial guess, and parameters and data,
      * which get passed into the algebraic system. The user can
      * also specify the relative tolerance (xtol in Eigen's code),
@@ -77,7 +77,7 @@ namespace stan {
      * Throw an exception if the norm of f(x), where f is the
      * output of the algebraic system and x the proposed solution,
      * is greater than the absolute tolerance. We here use the
-     * norm as a metric of how far we are from the 0.
+     * norm as a metric to measure how far we are from 0.
      *
      * @tparam F1 type of equation system function.
      * @tparam T type of scalars for parms.
