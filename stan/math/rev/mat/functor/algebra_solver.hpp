@@ -104,7 +104,7 @@ namespace stan {
                    double absolute_tolerance = 1e-6,
                    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
       Eigen::VectorXd theta_dbl = algebra_solver(f, x, value_of(y), dat,
-                                                 dat_int, 0
+                                                 dat_int, 0,
                                                  relative_tolerance,
                                                  absolute_tolerance,
                                                  max_num_steps);

@@ -1,7 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-
 inline Eigen::VectorXd
 algebraEq(const Eigen::VectorXd x) {
   Eigen::VectorXd y(2);
@@ -20,10 +19,7 @@ struct algebraEq_functor {
 inline Eigen::MatrixXd
 jacobian(const Eigen::VectorXd x) {
   Eigen::MatrixXd y(2, 2);
-  y(0, 0) = 1;
-  y(0, 1) = 0;
-  y(1, 0) = 0;
-  y(1, 1) = 1;
+  y << 1, 0, 0, 1;
   return y;
 }
 
@@ -33,7 +29,6 @@ struct jacobian_functor {
     return jacobian(x);
   }
 };
-
 
 // will want to remove these eventually
 using Eigen::VectorXd;
@@ -80,7 +75,6 @@ struct hybrj_functor : Functor<double> {
 };
 
 TEST(MathMatrix, hybrid_eigen) {
-
   const int n = 2;
   VectorXd x(n);
   x << 6, 6;
@@ -89,8 +83,6 @@ TEST(MathMatrix, hybrid_eigen) {
   hybrj_functor functor;
   Eigen::HybridNonLinearSolver<hybrj_functor> solver(functor);
   Eigen::VectorXd theta = x, fvec;
-  // solver(x, fvec);
-  // std::cout << fvec << std::endl;
   solver.solve(theta);
 
   EXPECT_EQ(36, theta(0));
@@ -113,40 +105,27 @@ TEST(MathMatrix, dogleg_eq1) {
   EXPECT_EQ(6, theta(1));
 }
 
-
-inline Eigen::VectorXd
-algebraEq2(const Eigen::VectorXd x) {
-  Eigen::VectorXd y(3);
-  y(0) = x(0) - 36;
-  y(1) = x(1) - 6;
-  y(2) = x(2) * 42;
-  return y;
-}
-
 struct algebraEq_functor2 {
   inline Eigen::VectorXd
   operator()(const Eigen::VectorXd x) const {
-    return algebraEq2(x);
+    Eigen::VectorXd y(3);
+    y(0) = x(0) - 36;
+    y(1) = x(1) - 6;
+    y(2) = x(2) * 42;
+    return y;
   }
 };
-
-inline Eigen::MatrixXd
-jacobian2(const Eigen::VectorXd x) {
-  Eigen::MatrixXd y(3, 3);
-  y << 1, 0, 0,
-       0, 1, 0,
-       0, 0, 1;
-
-  return y;
-}
 
 struct jacobian_functor2 {
   inline Eigen::MatrixXd
   operator()(const Eigen::VectorXd x) const {
-    return jacobian2(x);
+    Eigen::MatrixXd y(3, 3);
+    y << 1, 0, 0,
+         0, 1, 0,
+         0, 0, 1;
+    return y;
   }
 };
-
 
 TEST(MathMatrix, dogleg_eq2) {
   Eigen::VectorXd x(3);
@@ -160,36 +139,24 @@ TEST(MathMatrix, dogleg_eq2) {
   EXPECT_NEAR(0, theta(2), 1e-30);  // obtained result is not exactly 0
 }
 
-
-inline Eigen::VectorXd
-nonLinEq(const Eigen::VectorXd x) {
-  Eigen::VectorXd y(1);
-  y(0) = (x(0) - 2) * (x(1) + 4);
-  // y(1) = 0;
-  return y;
-}
-
+// Below test fails because y and x do not have the same dimension.
+/*
 struct nonLinEq_functor {
   inline Eigen::VectorXd
   operator()(const Eigen::VectorXd x) const {
-    return nonLinEq(x);
+    Eigen::VectorXd y(1);
+    y(0) = (x(0) - 2) * (x(1) + 4);
+    return y;
   }
 };
-
-inline Eigen::MatrixXd
-nonLinEqJacobian(const Eigen::VectorXd x) {
-  Eigen::MatrixXd y(1, 2);  // check dimensions
-  y(0, 0) = x(1) + 4;
-  y(0, 1) = x(0) - 2;
-  // y(1, 0) = 0;
-  // y(1, 1) = 0;
-  return y;
-}
 
 struct nonLinEqJacobian_functor {
   inline Eigen::MatrixXd
   operator()(const Eigen::VectorXd x) const {
-    return nonLinEqJacobian(x);
+    Eigen::MatrixXd y(1, 2);  // check dimensions
+    y(0, 0) = x(1) + 4;
+    y(0, 1) = x(0) - 2;
+    return y;
   }
 };
 
@@ -197,12 +164,11 @@ TEST(MathMatrix, doglegTest) {
   Eigen::VectorXd x(2);
   x << 2, -4;
 
-  // std::cout << "nonLinEq: " << nonLinEq(x) << std::endl;
-  // std::cout << "jacob: " << nonLinEqJacobian(x) << std::endl;
-
   Eigen::VectorXd theta;
   theta = stan::math::dogleg(x, nonLinEq_functor(), nonLinEqJacobian_functor());
 
   EXPECT_EQ(2, theta(0));
   EXPECT_EQ(-4, theta(1));
 }
+*/
+
