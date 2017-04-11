@@ -119,7 +119,7 @@ namespace stan {
      * is greater than the absolute tolerance. We here use the
      * norm as a metric of how far we are from the 0.
      *
-     * @tparam F1 type of equation system function.
+     * @tparam F type of equation system function.
      * @tparam T type of scalars for parms.
      * @param[in] F1 Functor that evaluates the system of equations.
      * @param[in] x Vector of starting values.
