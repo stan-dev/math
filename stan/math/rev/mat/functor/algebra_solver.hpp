@@ -71,12 +71,12 @@ namespace stan {
      * equations given an initial guess, and parameters and data,
      * which get passed into the algebraic system. The user can
      * also specify the relative tolerance (xtol in Eigen's code),
-     * the absolute tolerance, and the maximum number of steps
+     * the function tolerance, and the maximum number of steps
      * (maxfev in Eigen's code).
      *
      * Throw an exception if the norm of f(x), where f is the
      * output of the algebraic system and x the proposed solution,
-     * is greater than the absolute tolerance. We here use the
+     * is greater than the function tolerance. We here use the
      * norm as a metric to measure how far we are from 0.
      *
      * @tparam F type of equation system function.
@@ -86,9 +86,9 @@ namespace stan {
      * @param[in] y parameter vector for the equation system.
      * @param[in] dat continuous data vector for the equation system.
      * @param[in] dat_int integer data vector for the equation system.
-     * @param[in] relative_tolerance determines the convergence criteria 
+     * @param[in] relative_tolerance determines the convergence criteria
      *            for the solution.
-     * @param[in] absolute_tolerance determines whether roots are acceptable.
+     * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
      * @return theta Vector of solutions to the system of equations.
      */
@@ -101,12 +101,12 @@ namespace stan {
                    const std::vector<int>& dat_int,
                    std::ostream* msgs = 0,
                    double relative_tolerance = 1e-10,
-                   double absolute_tolerance = 1e-6,
+                   double function_tolerance = 1e-6,
                    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
       Eigen::VectorXd theta_dbl = algebra_solver(f, x, value_of(y), dat,
                                                  dat_int, 0,
                                                  relative_tolerance,
-                                                 absolute_tolerance,
+                                                 function_tolerance,
                                                  max_num_steps);
 
       // FIX ME - the next three lines are redeundant (they occur in the prim

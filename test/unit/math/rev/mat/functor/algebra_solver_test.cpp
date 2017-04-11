@@ -262,7 +262,7 @@ TEST(MathMatrix, error_conditions) {
                                   x, y, dat, dat_int,
                                   0, 1e-6, -1, 1e+3),
                    std::invalid_argument,
-                   "absolute_tolerance");
+                   "function_tolerance");
 
   EXPECT_THROW_MSG(algebra_solver(nonLinearEq_functor(),
                                   x, y, dat, dat_int,
@@ -303,20 +303,20 @@ TEST(MathMatrix, unsolvable) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
   std::vector<double> dat(0);
   std::vector<int> dat_int(0);
-  double relative_tolerance = 1e-6, absolute_tolerance = 1e-6;
+  double relative_tolerance = 1e-6, function_tolerance = 1e-6;
   int max_num_steps = 1e+3;
 
   std::stringstream err_msg;
   err_msg << "algebra_solver: the norm of the algebraic function is: "
           << 1.41421  // sqrt(2)
-          << " but should be lower than the absolute tolerance: "
-          << absolute_tolerance
+          << " but should be lower than the function tolerance: "
+          << function_tolerance
           << ". Consider increasing the relative tolerance and the"
           << " max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor(),
                                   x, y, dat, dat_int, 0,
-                                  relative_tolerance, absolute_tolerance,
+                                  relative_tolerance, function_tolerance,
                                   max_num_steps),
                    std::invalid_argument, msg);
 }

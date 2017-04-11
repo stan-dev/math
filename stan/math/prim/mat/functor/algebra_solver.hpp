@@ -111,13 +111,13 @@ namespace stan {
      * equations given an initial guess, and parameters and data,
      * which get passed into the algebraic system. The user can
      * also specify the relative tolerance (xtol in Eigen's code),
-     * the absolute tolerance, and the maximum number of steps
+     * the function tolerance, and the maximum number of steps
      * (maxfev in Eigen's code).
      *
      * Throw an exception if the norm of f(x), where f is the
      * output of the algebraic system and x the proposed solution,
-     * is greater than the absolute tolerance. We here use the
-     * norm as a metric of how far we are from the 0.
+     * is greater than the function tolerance. We here use the
+     * norm as a metric of how far we are from 0.
      *
      * @tparam F type of equation system function.
      * @tparam T type of scalars for parms.
@@ -127,7 +127,7 @@ namespace stan {
      * @param[in] dat continuous data vector for the equation system.
      * @param[in] dat_int integer data vector for the equation system.
      * @param[in] relative_tolerance determines the convergence criteria for the solution.
-     * @param[in] absolute_tolerance determines whether roots are acceptable.
+     * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
      * @return theta Vector of solutions to the system of equations.
      */
@@ -140,7 +140,7 @@ namespace stan {
                    const std::vector<int>& dat_int,
                    std::ostream* msgs = 0,
                    double relative_tolerance = 1e-10,
-                   double absolute_tolerance = 1e-6,
+                   double function_tolerance = 1e-6,
                    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
       // Check that arguments are valid
       check_nonzero_size("algebra_solver", "initial guess", x);
@@ -156,9 +156,9 @@ namespace stan {
         invalid_argument("algebra_solver",
                          "relative_tolerance,", relative_tolerance,
                          "", ", must be greater than 0");
-      if (absolute_tolerance <= 0)
+      if (function_tolerance <= 0)
         invalid_argument("algebra_solver",
-                         "absolute_tolerance,", absolute_tolerance,
+                         "function_tolerance,", function_tolerance,
                          "", ", must be greater than 0");
       if (max_num_steps <= 0)
         invalid_argument("algebra_solver",
@@ -191,11 +191,11 @@ namespace stan {
 
       // Check solution is a root
       Eigen::VectorXd system = fx.get_value(theta_dbl);
-      if (system.stableNorm() > absolute_tolerance) {
+      if (system.stableNorm() > function_tolerance) {
           std::stringstream msg_index;
           std::stringstream msg_f;
-          msg_f << " but should be lower than the absolute tolerance: "
-                << absolute_tolerance
+          msg_f << " but should be lower than the function tolerance: "
+                << function_tolerance
                 << ". Consider increasing the relative tolerance and the"
                 << " max_num_steps.";
           std::string msg_str_f(msg_f.str());
