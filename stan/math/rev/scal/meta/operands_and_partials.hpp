@@ -13,8 +13,11 @@ namespace stan {
     namespace detail {
       // ViewElt = double, Arg = var d_ holds double
       template <typename ViewElt>
-      class ops_partials_edge<ViewElt, var, vari>
-        : ops_partials_edge_singular<ViewElt, var, vari> {
+      class ops_partials_edge<ViewElt, var>
+        : ops_partials_edge_singular<ViewElt, var> {
+        void dump_partials(ViewElt* partials) {
+          *partials = partial;
+        }
         void dump_operands(vari** varis) {
           *varis = operand.vi_;
         }
@@ -84,10 +87,10 @@ namespace stan {
       private:
         // these are going to be stack local and get collected
         // TODO(sean): should we pass in ViewElt somehow? shape of it?
-        ops_partials_edge<double, Op1, vari> edge1_;
-        ops_partials_edge<double, Op2, vari> edge2_;
-        ops_partials_edge<double, Op3, vari> edge3_;
-        ops_partials_edge<double, Op4, vari> edge4_;
+        ops_partials_edge<double, Op1> edge1_;
+        ops_partials_edge<double, Op2> edge2_;
+        ops_partials_edge<double, Op3> edge3_;
+        ops_partials_edge<double, Op4> edge4_;
       };
     } // end namespace detail
   }

@@ -53,8 +53,9 @@ namespace stan {
         ops_partials_edge() { }
         ops_partials_edge(const Op& /* a */){ }
         void increment_dx(int /* n */, const ViewElt& /* adj */) {}
-        void dump_partials(ViewElt* /* partials */) {}
-        void dump_operands(Var** /* partials */) {}
+        void dump_partials(ViewElt* /* partials */) {} // used for vars
+        void dump_operands(Var** /* partials */) {} // used for vars
+        double dx() const { return 0; } //used for fvars
         int size() {return 0; }
       };
 
@@ -90,95 +91,21 @@ namespace stan {
       // Base class shared between fvar and var specializations of uni- and
       // multivariate edges will be in the prim/scal|arr|mat files.
       // Singular version - underlying Var is the same as Op, so there's just one.
-      template <typename ViewElt, typename Op, typename Var>
-      class ops_partials_edge_singular<ViewElt, Op, Var> {
+      template <typename ViewElt, typename Op>
+      class ops_partials_edge_singular {
       protected:
         const Op& operand;
         ViewElt partial;
 
       public:
-        ops_partials_edge(const Op& a) : operand(a), partial() { }
+        ops_partials_edge_singular(const Op& a) : operand(a), partial() { }
         void increment_dx(int /*n*/, const ViewElt& adj) {
           partial += adj;
-        }
-        void dump_partials(ViewElt* partials) {
-          *partials = partial;
         }
         // dump_operands implemented in specialization
         int size() {
           return 1;
         }
-      };
-
-      // One of these for both vars and fvars
-      template <typename Op1, typename Op2, typename Op3, typename Op4>
-      class operands_and_partials_base<Op1, Op2, Op3, Op4, var> {
-      public:
-        operands_and_partials(const Op1& o1)
-          : edge1_(o1) { }
-        operands_and_partials(const Op1& o1, const Op2& o2)
-          : edge1_(o1), edge2_(o2) { }
-        operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
-          : edge1_(o1), edge2_(o2), edge3_(o3) { }
-        operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3, const Op4& o4)
-          : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) { }
-
-        void increment_dx1(const int n, const double adj) { edge1_.increment_dx(n, adj); }
-        void increment_dx2(const int n, const double adj) { edge2_.increment_dx(n, adj); }
-        void increment_dx3(const int n, const double adj) { edge3_.increment_dx(n, adj); }
-        void increment_dx4(const int n, const double adj) { edge4_.increment_dx(n, adj); }
-
-        template<typename T>
-        typename boost::enable_if_c<is_vector_like<Op1>::value
-                                    && is_vector_like<T>::value, void>::type
-        increment_dx1_vector(const int n, const T& adj) {
-          edge1_.increment_dx_vector(n, adj);
-        }
-        template<typename T>
-        typename boost::enable_if_c<is_vector_like<Op2>::value
-                                    && is_vector_like<T>::value, void>::type
-        increment_dx2_vector(const int n, const T& adj) {
-          edge2_.increment_dx_vector(n, adj);
-        }
-        template<typename T>
-        typename boost::enable_if_c<is_vector_like<Op3>::value
-                                    && is_vector_like<T>::value, void>::type
-        increment_dx3_vector(const int n, const T& adj) {
-          edge3_.increment_dx_vector(n, adj);
-        }
-        template<typename T>
-        typename boost::enable_if_c<is_vector_like<Op4>::value
-                                    && is_vector_like<T>::value, void>::type
-        increment_dx4_vector(const int n, const T& adj) {
-          edge4_.increment_dx_vector(n, adj);
-        }
-
-        // this is what matters in terms of going on autodiff stack
-        var build(double value) {
-          size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size();
-          vari** varis = ChainableStack::memalloc_.alloc_array<vari*>(size);
-          int idx = 0;
-          edge1_.dump_operands(&varis[idx]);
-          edge2_.dump_operands(&varis[idx += edge1_.size()]);
-          edge3_.dump_operands(&varis[idx += edge2_.size()]);
-          edge4_.dump_operands(&varis[idx += edge3_.size()]);
-
-          double* partials = ChainableStack::memalloc_.alloc_array<double>(size);
-          idx = 0;
-          edge1_.dump_partials(&partials[idx]);
-          edge2_.dump_partials(&partials[idx += edge1_.size()]);
-          edge3_.dump_partials(&partials[idx += edge2_.size()]);
-          edge4_.dump_partkals(&partials[idx += edge3_.size()]);
-
-          return var(new precomputed_gradients_vari(value, size, varis, partials));
-        };
-      private:
-        // these are going to be stack local and get collected
-        // TODO(sean): should we pass in ViewElt somehow? shape of it?
-        ops_partials_edge<double, Op1, vari> edge1_;
-        ops_partials_edge<double, Op2, vari> edge2_;
-        ops_partials_edge<double, Op3, vari> edge3_;
-        ops_partials_edge<double, Op4, vari> edge4_;
       };
     } // end namespace detail
   } // end namespace math

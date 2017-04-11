@@ -3,32 +3,16 @@
 
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp> // XXX are both of these includes okay
 #include <vector>
 
 namespace stan {
   namespace math {
     namespace detail {
-      // Handles all the vectorized cases for "views of scalars":
-      // ViewElt = double, Arg = std::vector<var> d_ holds vector<double>
-      // ViewElt = double, Arg = std::vector<double> d_ holds dummy
-      // Op will always be some container of vars
       template <typename ViewElt, typename Op>
-      class ops_partials_edge_vec {
-      protected:
-        const Op& operands;
-        typedef Eigen::Matrix<ViewElt, 1, Eigen::Dynamic> partials_t;
-        partials_t partials;
-
+      class ops_partials_edge_vec
+        : public ops_partials_edge_vec_prim<ViewElt, Op> {
       public:
-        explicit ops_partials_edge_vec(const Op& ops)
-          : operands(ops), partials(partials_t::Zero(ops.size())) {}
-
-        void increment_dx(int n, const ViewElt& adj) {
-          partials[n] += adj;
-        }
-        void increment_dx_vector(int /* n */, const partials_t& adj) {
-          partials += adj;
-        }
         void dump_partials(double* partials) {
           for (int i = 0; i < size(); ++i) {
             partials[i] = this->partials[i];
@@ -38,9 +22,6 @@ namespace stan {
           for (int i = 0; i < size(); ++i) {
             varis[i] = operands[i].vi_;
           }
-        }
-        int size() {
-          return partials.size();
         }
       };
 
@@ -73,27 +54,16 @@ namespace stan {
           : ops_partials_edge_vec<ViewElt, row_vector_v>(ops) {}
       };
 
-      // TODO(Sean): multivariate cases below
       // MULTIVARIATE
       // VIEWS of ROW VECTORS (R = 1, C = -1)
       // =====================
       // ViewElt = RowVectorXd, Arg = row_vector_v, d_ holds RowVectorXd
+      // ViewElt = RowVectorXd, Arg = vector<row_vector_v> d_ holds vector<RowVectorXd>
+
       template <typename ViewElt, typename Op>
-      class ops_partials_edge_multivariate {
-      private:
-        typedef Eigen::Matrix<ViewElt, Eigen::Dynamic, Eigen::Dynamic> partial_t;
-        std::vector<partial_t> partials;
+      class ops_partials_edge_multivariate
+        : public ops_partials_edge_multivariate_prim<ViewElt, Op> {
       public:
-        const std::vector<Op>& operands;
-        explicit ops_partials_edge_multivariate(const std::vector<Op>& ops)
-          : partials(ops.size()), operands(ops) {
-          for (size_t i = 0; i < ops.size(); ++i) {
-            partials[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
-          }
-        }
-        void increment_dx_vector(int n, const partial_t& adj) {
-          partials[n] += adj;
-        }
         void dump_partials(double* partials) {
           int p_i = 0;
           for (size_t r = 0; r < this->partials.size(); ++r) {
@@ -110,12 +80,8 @@ namespace stan {
             }
           }
         }
-        int size() {
-          return this->operands.size() * this->operands[0].size();
-        }
       };
 
-      // ViewElt = RowVectorXd, Arg = vector<row_vector_v> d_ holds vector<RowVectorXd>
       template <typename ViewElt>
       class ops_partials_edge<ViewElt, std::vector<row_vector_v> >
         : public ops_partials_edge_multivariate<ViewElt, row_vector_v> {
