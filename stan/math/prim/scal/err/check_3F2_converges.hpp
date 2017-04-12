@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <sstream>
@@ -43,6 +44,13 @@ namespace stan {
     ) {
       using std::floor;
       using std::fabs;
+
+      check_not_nan("check_3F2_converges", "a1", a1);
+      check_not_nan("check_3F2_converges", "a2", a2);
+      check_not_nan("check_3F2_converges", "a3", a3);
+      check_not_nan("check_3F2_converges", "b1", b1);
+      check_not_nan("check_3F2_converges", "b2", b2);
+      check_not_nan("check_3F2_converges", "z", z);
 
       int num_terms = 0;
       bool is_polynomial = false;
