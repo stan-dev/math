@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 #include <limits>
@@ -49,10 +49,10 @@ namespace stan {
       using std::fabs;
       using std::log;
 
-      check_not_nan("grad_reg_inc_gamma", "a", a);
-      check_not_nan("grad_reg_inc_gamma", "z", z);
-      check_not_nan("grad_reg_inc_gamma", "g", g);
-      check_not_nan("grad_reg_inc_gamma", "dig", dig);
+      if (is_nan(a)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(z)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(g)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(dig)) return std::numeric_limits<T>::quiet_NaN();
 
       T l = log(z);
       if (z >= a && z >= 8) {
