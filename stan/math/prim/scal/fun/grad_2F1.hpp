@@ -45,13 +45,12 @@ namespace stan {
 
       T log_g_old[2];
       for (int i = 0; i < 2; ++i)
-        log_g_old[i] = -std::numeric_limits<double>::infinity();
+        log_g_old[i] = -std::numeric_limits<T>::infinity();
 
       T log_t_old = 0.0;
       T log_t_new = 0.0;
 
       T log_z = log(z);
-      T p;
 
       double log_t_new_sign = 1.0;
       double log_t_old_sign = 1.0;
@@ -59,17 +58,15 @@ namespace stan {
       for (int i = 0; i < 2; ++i)
         log_g_old_sign[i] = 1.0;
 
-      int k = 0;
-      T term;
-      while (true) {
-        p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
+      for (int k = 0; k <= max_steps; ++k) {
+        T p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
         if (p == 0)
-          break;
+          return;
 
         log_t_new += log(fabs(p)) + log_z;
         log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-        term = log_g_old_sign[0] * log_t_old_sign *
+        T term = log_g_old_sign[0] * log_t_old_sign *
           exp(log_g_old[0] - log_t_old) + 1 / (a1 + k);
         log_g_old[0] = log_t_new + log(fabs(term));
         log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -83,18 +80,15 @@ namespace stan {
         g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
         if (log_t_new <= log(precision))
-          break;  // implicit abs
-
-        if (k >= max_steps) {
-          domain_error("grad_2F1", "k (internal counter)", max_steps,
-            "exceeded ", " iterations, hypergeometric function gradient "
-            "did not converge.");
-        }
+          return;  // implicit abs
 
         log_t_old = log_t_new;
         log_t_old_sign = log_t_new_sign;
-        ++k;
       }
+      domain_error("grad_2F1", "k (internal counter)", max_steps,
+        "exceeded ", " iterations, hypergeometric function gradient "
+        "did not converge.");
+      return;
     }
 
   }

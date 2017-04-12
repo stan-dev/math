@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
   namespace math {
@@ -79,25 +80,24 @@ namespace stan {
         T S = 0;
         T log_s = 0.0;
         double s_sign = 1.0;
-        int k = 0;
         T log_z = log(z);
         T log_delta = log_s - 2 * log(a);
-        while (log_delta > log(precision)) {
+        for (int k = 1; k <= max_steps; ++k) {
           S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
-          ++k;
           log_s += log_z - log(k);
           s_sign = -s_sign;
           log_delta = log_s - 2 * log(k + a);
-          if (k >= max_steps)
-            stan::math::domain_error("grad_reg_inc_gamma",
-              "k (internal counter)",
-              max_steps, "exceeded ",
-              " iterations, gamma function gradient did not converge.");
           if (is_inf(log_delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
+          if (log_delta <= log(precision))
+            return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
         }
-        return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
+        stan::math::domain_error("grad_reg_inc_gamma",
+          "k (internal counter)",
+          max_steps, "exceeded ",
+          " iterations, gamma function gradient did not converge.");
+        return std::numeric_limits<T>::infinity();
       }
     }
 

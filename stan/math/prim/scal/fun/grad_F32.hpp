@@ -60,11 +60,10 @@ namespace stan {
       for (int i = 0; i < 6; ++i)
         log_g_old_sign[i] = 1.0;
 
-      int k = 0;
-      while (true) {
+      for (int k = 0; k <= max_steps; ++k) {
         T p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (1 + k));
         if (p == 0)
-          break;
+          return;
 
         log_t_new += log(fabs(p)) + log_z;
         log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -110,18 +109,15 @@ namespace stan {
         }
 
         if (log_t_new <= log(precision))
-          break;  // implicit abs
-
-        if (k >= max_steps) {
-          domain_error("grad_F32", "k (internal counter)", max_steps,
-            "exceeded ", " iterations, hypergeometric function gradient "
-            "did not converge.");
-        }
+          return;  // implicit abs
 
         log_t_old = log_t_new;
         log_t_old_sign = log_t_new_sign;
-        ++k;
       }
+      domain_error("grad_F32", "k (internal counter)", max_steps,
+        "exceeded ", " iterations, hypergeometric function gradient "
+        "did not converge.");
+      return;
     }
 
   }

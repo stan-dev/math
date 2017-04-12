@@ -57,38 +57,31 @@ namespace stan {
       using std::fabs;
 
       T t_acc = 1.0;
-      T t_new;
       T log_t = 0.0;
       T log_z = log(z);
-
-      int k = 0;
       double t_sign = 1.0;
-      T p = 0.0;
 
-      while (true) {
-        p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
-        if (p == 0)
-          break;
+      for (int k=0; k <= max_steps; ++k) {
+        T p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
+        if (p == 0.0)
+          return t_acc;
 
         log_t += log(fabs(p)) + log_z;
         t_sign = p >= 0.0 ? t_sign : -t_sign;
-        t_new = t_sign > 0.0 ? exp(log_t) : -exp(log_t);
+        T t_new = t_sign > 0.0 ? exp(log_t) : -exp(log_t);
         t_acc += t_new;
 
         if (fabs(t_new) <= precision)
-          break;
+          return t_acc;
 
-        if (k >= max_steps) {
-          domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
-            " iterations, hypergeometric function did not converge.");
-        }
         if (is_inf(t_acc)) {
           domain_error("F32", "sum (output)", t_acc,
             "overflow ", " hypergeometric function did not converge.");
         }
-        ++k;
       }
-      return t_acc;
+      domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
+        " iterations, hypergeometric function did not converge.");
+      return t_acc;  // to silence warning.
     }
 
   }
