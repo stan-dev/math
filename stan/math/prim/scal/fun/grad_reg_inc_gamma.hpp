@@ -49,10 +49,10 @@ namespace stan {
       using std::fabs;
       using std::log;
 
-      check_not_nan("grad_reg_inc_gamma", "a", a); 
-      check_not_nan("grad_reg_inc_gamma", "z", z); 
-      check_not_nan("grad_reg_inc_gamma", "g", g); 
-      check_not_nan("grad_reg_inc_gamma", "dig", dig); 
+      check_not_nan("grad_reg_inc_gamma", "a", a);
+      check_not_nan("grad_reg_inc_gamma", "z", z);
+      check_not_nan("grad_reg_inc_gamma", "g", g);
+      check_not_nan("grad_reg_inc_gamma", "dig", dig);
 
       T l = log(z);
       if (z >= a && z >= 8) {
