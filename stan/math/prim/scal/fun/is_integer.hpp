@@ -12,7 +12,7 @@ namespace stan {
      * @param x Value to test.
      * @return <code>true</code> if the value is an integer
      */
-    inline bool 
+    inline bool
     is_integer(T x) {
       return floor(x) == x;
     }

@@ -47,11 +47,11 @@ namespace stan {
       int num_terms = 0;
       bool is_polynomial = false;
 
-      if (is_nonpositive_integer(a1) && fabs(a1) > num_terms) {
+      if (is_nonpositive_integer(a1) && fabs(a1) >= num_terms) {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a1)));
       }
-      if (is_nonpositive_integer(a2) && fabs(a2) > num_terms) {
+      if (is_nonpositive_integer(a2) && fabs(a2) >= num_terms) {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a2)));
       }
@@ -60,8 +60,9 @@ namespace stan {
         num_terms = floor(fabs(value_of_rec(a3)));
       }
 
-      bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms) ||
-                          (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+      bool is_undefined = (is_nonpositive_integer(b1) &&
+        fabs(b1) <= num_terms) || (is_nonpositive_integer(b2) &&
+        fabs(b2) <= num_terms);
 
       if (is_polynomial && !is_undefined) return;
       if (fabs(z) < 1.0 && !is_undefined) return;

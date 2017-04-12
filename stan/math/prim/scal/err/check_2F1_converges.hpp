@@ -41,11 +41,11 @@ namespace stan {
       int num_terms = 0;
       bool is_polynomial = false;
 
-      if (is_nonpositive_integer(a1) && fabs(a1) > num_terms) {
+      if (is_nonpositive_integer(a1) && fabs(a1) >= num_terms) {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a1)));
       }
-      if (is_nonpositive_integer(a2) && fabs(a2) > num_terms) {
+      if (is_nonpositive_integer(a2) && fabs(a2) >= num_terms) {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a2)));
       }

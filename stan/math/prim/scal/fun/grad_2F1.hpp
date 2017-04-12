@@ -28,7 +28,7 @@ namespace stan {
      * @param[in] a2 a2 see generalized hypergeometric function definition.
      * @param[in] b1 b1 see generalized hypergeometric function definition.
      * @param[in] z z see generalized hypergeometric function definition.
-     * @param[in] precision precision of the infinite sum. 
+     * @param[in] precision precision of the infinite sum.
      * @param[in] max_steps number of steps to take.
      */
     template<typename T>
@@ -44,7 +44,7 @@ namespace stan {
       g_b1 = 0.0;
 
       T log_g_old[2];
-      for (int i = 0; i < 2; ++i) 
+      for (int i = 0; i < 2; ++i)
         log_g_old[i] = -std::numeric_limits<double>::infinity();
 
       T log_t_old = 0.0;

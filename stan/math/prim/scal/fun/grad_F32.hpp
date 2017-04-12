@@ -42,7 +42,7 @@ namespace stan {
       using std::fabs;
       using std::exp;
 
-      for (int i = 0; i < 6; ++i) 
+      for (int i = 0; i < 6; ++i)
         g[i] = 0.0;
 
       T log_g_old[6];
