@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_2F1_CONVERGES_HPP
 
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <sstream>
@@ -21,7 +22,7 @@ namespace stan {
      * @tparam T_z Type of z
      *
      * @param function Name of function ultimately relying on 2F1 (for error
-     &   messages)
+     *   messages)
      * @param a1 Variable to check
      * @param a2 Variable to check
      * @param b1 Variable to check
@@ -38,24 +39,23 @@ namespace stan {
       using std::fabs;
 
       int num_terms = 0;
-      bool is_polynomial;
-      is_polynomial = (a1 <= 0.0 && floor(a1) == a1) ||
-                      (a2 <= 0.0 && floor(a2) == a2);
-      if (is_polynomial) {
-        if (a1 < 0.0 && floor(a1) == a1 && fabs(a1) > num_terms)
-          num_terms = floor(fabs(value_of_rec(a1)));
-        if (a2 < 0.0 && floor(a2) == a2 && fabs(a2) > num_terms)
-          num_terms = floor(fabs(value_of_rec(a2)));
+      bool is_polynomial = false;
+
+      if (is_nonpositive_integer(a1) && fabs(a1) > num_terms) {
+        is_polynomial = true;
+        num_terms = floor(fabs(value_of_rec(a1)));
+      }
+      if (is_nonpositive_integer(a2) && fabs(a2) > num_terms) {
+        is_polynomial = true;
+        num_terms = floor(fabs(value_of_rec(a2)));
       }
 
-      bool is_undefined;
-      is_undefined = (b1 <= 0.0 && floor(b1) == b1 && fabs(b1) <= num_terms);
+      bool is_undefined = is_nonpositive_integer(b1) && fabs(b1) <= num_terms;
 
       if (is_polynomial && !is_undefined) return;
       if (fabs(z) < 1.0 && !is_undefined) return;
-      if (fabs(z) == 1.0 && !is_undefined) {
-        if (b1 > a1 + a2) return;
-      }
+      if (fabs(z) == 1.0 && !is_undefined && b1 > a1 + a2) return;
+
       std::stringstream msg;
       msg << "called from function '" << function << "', "
           << "hypergeometric function 2F1 does not meet convergence "

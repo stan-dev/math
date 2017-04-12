@@ -23,7 +23,7 @@ namespace stan {
      * @param g   boost::math::tgamma(a) (precomputed value)
      * @param dig boost::math::digamma(a) (precomputed value)
      * @param precision required precision; applies to series expansion only
-     * @param max_steps number of steps to take. defaults to 10000
+     * @param max_steps number of steps to take.
      * @throw throws std::domain_error if not converged after max_steps
      *   or increment overflows to inf.
      *
@@ -41,7 +41,7 @@ namespace stan {
      */
     template<typename T>
     T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6,
-        int max_steps = 1e5) {
+                         int max_steps = 1e5) {
       using std::domain_error;
       using std::exp;
       using std::fabs;
@@ -82,11 +82,11 @@ namespace stan {
         int k = 0;
         T log_z = log(z);
         T log_delta = log_s - 2 * log(a);
-        while (exp(log_delta) > precision) {
-          S += s_sign * exp(log_delta);
+        while (log_delta > log(precision)) {
+          S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
           ++k;
           log_s += log_z - log(k);
-          s_sign = -1.0 * s_sign;
+          s_sign = -s_sign;
           log_delta = log_s - 2 * log(k + a);
           if (k >= max_steps)
             stan::math::domain_error("grad_reg_inc_gamma",

@@ -11,7 +11,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Hypergeometric function, 3F2.
+     * Hypergeometric function (3F2).
+     *
+     * Function reference: http://dlmf.nist.gov/16.2
+     *
+     * \f[
+     *   _3F_2 \left(
+     *     \begin{matrix}a_1 a_2 a3 \\ b_1 b_2\end{matrix}; z
+     *     \right) = \sum_k=0^\infty \frac{(a_1)_k(a_2)_k(a_3)_k}{(b_1)_k(b_2)_k}\frac{z^k}{k!}
+     * \f]
+     *
+     * Where $(a_1)_k$ is an upper shifted factorial.
      *
      * Calculate the hypergeometric function (3F2) as the power series
      * directly to within <code>precision</code> or until
@@ -35,7 +45,7 @@ namespace stan {
      * @param[in] b2 b2 (always <= 1)
      * @param[in] z z (is always called with 1 from beta binomial cdfs)
      * @param[in] precision precision of the infinite sum. defaults to 1e-6
-     * @param[in] max_steps number of steps to take. defaults to 10000
+     * @param[in] max_steps number of steps to take. defaults to 1e5
      */
     template<typename T>
     T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
@@ -46,35 +56,39 @@ namespace stan {
       using std::log;
       using std::fabs;
 
-      T F = 1.0;
-      T tNew = 0.0;
-      T logT = 0.0;
-      T logZ = log(z);
+      T t_acc = 1.0;
+      T t_new;
+      T log_t = 0.0;
+      T log_z = log(z);
 
       int k = 0;
-      double T_sign = 1.0;
+      double t_sign = 1.0;
       T p = 0.0;
-      do {
+
+      while (true) {
         p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
         if (p == 0)
           break;
 
-        logT += log(fabs(p)) + logZ;
-        T_sign *= sign(p);
-        tNew = T_sign * exp(logT);
-        F += tNew;
+        log_t += log(fabs(p)) + log_z;
+        t_sign = p >= 0.0 ? t_sign : -t_sign;
+        t_new = t_sign > 0.0 ? exp(log_t) : -exp(log_t);
+        t_acc += t_new;
 
-        ++k;
+        if (fabs(t_new) <= precision)
+          break;
+
         if (k >= max_steps) {
           domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
             " iterations, hypergeometric function did not converge.");
         }
-        if (is_inf(F)) {
-          domain_error("F32", "F (output)", F,
+        if (is_inf(t_acc)) {
+          domain_error("F32", "sum (output)", t_acc,
             "overflow ", " hypergeometric function did not converge.");
         }
-      } while (fabs(tNew) > precision);
-      return F;
+        ++k;
+      }
+      return t_acc;
     }
 
   }
