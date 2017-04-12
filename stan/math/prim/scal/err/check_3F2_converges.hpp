@@ -63,7 +63,7 @@ namespace stan {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a2)));
       }
-      if (is_nonpositive_integer(a3) && fabs(a3) > num_terms) {
+      if (is_nonpositive_integer(a3) && fabs(a3) >= num_terms) {
         is_polynomial = true;
         num_terms = floor(fabs(value_of_rec(a3)));
       }
