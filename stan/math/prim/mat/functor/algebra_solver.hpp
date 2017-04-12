@@ -121,7 +121,7 @@ namespace stan {
      *
      * @tparam F type of equation system function.
      * @tparam T type of scalars for parms.
-     * @param[in] F1 Functor that evaluates the system of equations.
+     * @param[in] f Functor that evaluates the system of equations.
      * @param[in] x Vector of starting values.
      * @param[in] y parameter vector for the equation system.
      * @param[in] dat continuous data vector for the equation system.
