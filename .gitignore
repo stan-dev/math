@@ -1,53 +1,62 @@
-# /
-/demo
-/models
-/test
-/*.dSYM
-/bin
+# tests
+/test/*/*/*/*/*/*
+/test/*/*/*/*/*
+/test/*/*/*/*
+/test/*/*/*
+/test/*/*
+/test/*
+!/test/*/*/*/*/*/*/
+!/test/*/*/*/*/*/
+!/test/*/*/*/*/
+!/test/*/*/*/
+!/test/*/*/
+!/test/*/
+!/test/*/*/*/*/*/*.*
+!/test/*/*/*/*/*.*
+!/test/*/*/*/*.*
+!/test/*/*/*.*
+!/test/*/*.*
+!/test/*.*
+/test/**/*_generated_*_test.cpp
+/test/**/*.xml
+/test/dummy.cpp
+/test/**/*.so
 
 # other binary
 *.o
+*.o-*
 *.exe
+*.a
 
 # /doc/
 /doc/api
 /doc/*.pdf
+/doc/*.txt
 
 # temporary latex files
-*~
 *.idx
 *.ilg
 *.ind
+*.fdb_latexmk
+*.fls
+
+# temporary emacs files
+*~
+\#*#
+
+# temporary vim files
+.*.swp
 
 # depedencies files
 *.d
-*.hpp.d.*
+*.d.*
 .Rproj.user
-stan.Rproj
 .kdev4/
-stan.kdev4
 .Rapp.history
 
-# models:
-/src/models/**
-!/src/models/**.stan
-!/src/models/**.R
-!/src/models/**/makefile
-
-# tests: compiled models
-/src/test/test-models/*.cpp
-/src/test/test-models/*/*.cpp
-/src/test/test-models/*/*/*.cpp
-/src/test/test-models/*/*/*/*.cpp
-/src/test/test-models/*/*/*/*/*.cpp
-!/src/test/test-models/**/*.stan
-!/src/test/test-models/**/.gitignore
-
-# tests: generated agrad tests
-/src/test/unit-distribution/*/*/*/*_generated_test.cpp
 
 # For the Mac
 *.DS_Store
 
 # local make include
-make/local
+/make/local

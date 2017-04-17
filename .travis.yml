@@ -1,24 +1,31 @@
 language: cpp
+
+sudo: false
+
+os:
+  - linux
+  - osx
+  
 compiler:
   - clang
-  - gcc
-env:
-  - RUN_TARGET=build TEST_TARGET=test-unit
-#  - RUN_TARGET=docs
-script: make CC="$CXX" ${RUN_TARGET} ${TEST_TARGET}
-branches:
-  only:
-    - develop
-    - master
-#notifications:
-#  recipients:
-#    - mc.stanislaw@gmail.com
-#  email:
-#    on_success: change
-#    on_failure: always
+
+before_script:
+  - echo "CC=$CXX" > make/local
+
 matrix:
-  exclude: # only make docs once:
-    - compiler: clang
- #     env: RUN_TARGET=docs
-      script: make CC="$CXX" "${RUN_TARGET}" "${TEST_TARGET}"
-      
+  fast_finish: true
+
+env:
+  - TESTFOLDER=test/unit/math/memory
+  - TESTFOLDER=test/unit/math/prim/scal
+  - TESTFOLDER=test/unit/math/prim/arr
+  - TESTFOLDER=test/unit/math/prim/mat
+  - TESTFOLDER=test/unit/math/rev/scal
+  - TESTFOLDER=test/unit/math/rev/arr
+  - TESTFOLDER=test/unit/math/rev/mat
+  - TESTFOLDER=test/unit/math/fwd/scal
+  - TESTFOLDER=test/unit/math/fwd/arr
+  - TESTFOLDER=test/unit/math/fwd/mat
+ # - TESTFOLDER=test/unit/math/mix  ## commenting this out due to segfault on travis
+
+script: ./runTests.py -j2 $TESTFOLDER

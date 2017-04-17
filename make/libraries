@@ -1,0 +1,38 @@
+##
+# Library locations
+##
+EIGEN ?= $(MATH)lib/eigen_3.2.9
+BOOST ?= $(MATH)lib/boost_1.62.0
+GTEST ?= $(MATH)lib/gtest_1.7.0
+CPPLINT ?= $(MATH)lib/cpplint_4.45
+CVODES ?= $(MATH)lib/cvodes_2.9.0
+
+##
+# Build rules for cvodes
+##
+
+SUNDIALS_CVODES := $(patsubst %.c,%.o,\
+  $(addprefix $(CVODES)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_band.c cvodes_dense.c cvodes_diag.c cvodes_spils.c cvodes_spbcgs.c cvodes_spgmr.c cvodes_sptfqmr.c cvodes_sparse.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(CVODES)/src/sundials/*.c))
+
+SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
+  $(addprefix $(CVODES)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
+
+
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
+	@mkdir -p $(dir $@)
+	$(COMPILE.c) -x c -O$(O) -isystem $(CVODES)/include $< -o $@
+
+$(CVODES)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
+$(CVODES)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
+LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvodes.a
+
+.PHONY: clean-libraries
+clean-libraries:
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES))
