@@ -46,4 +46,6 @@
 #include <stan/math/fwd/mat/functor/gradient.hpp>
 #include <stan/math/fwd/mat/functor/jacobian.hpp>
 
+#include <stan/math/fwd/mat/meta/operands_and_partials.hpp>
+
 #endif

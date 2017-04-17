@@ -47,14 +47,13 @@ namespace stan {
       // ViewElt = MatrixXd, Arg = MatrixXd d_ holds dummy
       // ViewElt = MatrixXd, Arg = vector<MatrixXd> d_ holds dummy
 
-      template <typename ViewElt, typename Op, typename Var>
+      template <typename ViewElt, typename Op>
       class ops_partials_edge {
       public:
         ops_partials_edge() { }
         ops_partials_edge(const Op& /* a */){ }
         void increment_dx(int /* n */, const ViewElt& /* adj */) {}
         void dump_partials(ViewElt* /* partials */) {} // used for vars
-        void dump_operands(Var** /* partials */) {} // used for vars
         double dx() const { return 0; } //used for fvars
         int size() {return 0; }
       };
@@ -94,10 +93,10 @@ namespace stan {
       template <typename ViewElt, typename Op>
       class ops_partials_edge_singular {
       protected:
-        const Op& operand;
-        ViewElt partial;
 
       public:
+        const Op& operand;
+        ViewElt partial;
         ops_partials_edge_singular(const Op& a) : operand(a), partial() { }
         void increment_dx(int /*n*/, const ViewElt& adj) {
           partial += adj;

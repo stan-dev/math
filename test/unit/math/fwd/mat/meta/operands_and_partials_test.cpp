@@ -14,9 +14,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   x2.d_ = -1.0;
   x3.d_ = 4.0;
 
+  Eigen::VectorXd dx1(2);
+  dx1 << 17.0, 13.0;
+
   operands_and_partials<std::vector<fvar<double> >,fvar<double>,fvar<double> > o(x1, x2, x3);
-  o.increment_dx1(0, 17.0);
-  o.increment_dx1(1, 13.0);
+  o.increment_dx1_vector(0, dx1);
   o.increment_dx2(0, 19.0);
   o.increment_dx2(0, 19.0);
   o.increment_dx3(0, 23.0);

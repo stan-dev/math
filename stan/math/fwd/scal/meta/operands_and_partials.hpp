@@ -9,10 +9,13 @@ namespace stan {
       // For fvars, each of these must implement a dx() method that calculates the
       // contribution to the derivative of the o&p node for the edge.
       template <typename ViewElt, typename Dx>
-      class ops_partials_edge<ViewElt, fvar>
-        : public ops_partials_edge_singular<ViewElt, fvar> {
+      class ops_partials_edge<ViewElt, fvar<Dx> >
+        : public ops_partials_edge_singular<ViewElt, fvar<Dx> > {
+      public:
+        ops_partials_edge(const fvar<Dx>& op)
+          : ops_partials_edge_singular<ViewElt, fvar<Dx> >(op) {}
         Dx dx() {
-          return partial * operand.d_;
+          return this->partial * this->operand.d_;
         }
       };
 

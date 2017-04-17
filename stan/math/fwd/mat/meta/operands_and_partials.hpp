@@ -13,10 +13,12 @@ namespace stan {
       class ops_partials_edge_vec
         : public ops_partials_edge_mat_prim<ViewElt, Op, -1, 1> {
       public:
+        ops_partials_edge_vec(const Op& ops)
+          : ops_partials_edge_mat_prim<ViewElt, Op, -1, 1>(ops) {}
         Dx dx() {
           Dx derivative(0);
-          for (int i = 0; i < size(); ++i) {
-            derivative += partials[n] * operands[n].d_;
+          for (int i = 0; i < this->size(); ++i) {
+            derivative += this->partials[i] * this->operands[i].d_;
           }
           return derivative;
         }
@@ -28,14 +30,14 @@ namespace stan {
         : public ops_partials_edge_vec<ViewElt, std::vector<fvar<Dx> >, Dx> {
       public:
         explicit ops_partials_edge(const std::vector<fvar<Dx> >& ops)
-          : ops_partials_edge_vec<ViewElt, std::vector<fvar<Dx> > >(ops) {}
+          : ops_partials_edge_vec<ViewElt, std::vector<fvar<Dx> >, Dx>(ops) {}
       };
       template <typename ViewElt, typename Dx, int R, int C>
       class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> >
-        : public ops_partials_edge_vec<ViewElt, Eigen::Matrix<fvar<Dx, R, C> >, Dx> {
+        : public ops_partials_edge_vec<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx> {
       public:
-        explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx, R, C> >& ops)
-          : ops_partials_edge_vec<ViewElt, Eigen::Matrix<fvar<Dx, R, C> > >(ops) {}
+        explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx>, R, C>& ops)
+          : ops_partials_edge_vec<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx>(ops) {}
       };
 
       // Multivariate; vectors of eigen types
@@ -44,22 +46,22 @@ namespace stan {
         : public ops_partials_edge_multivariate_prim<ViewElt, Op> {
       public:
         explicit ops_partials_edge_multivariate(const std::vector<Op>& ops)
-          : ops_partials_edge_multivariate_prim(ops) {}
+          : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
         Dx dx() {
           Dx derivative(0);
-          for (int i = 0; i < operands.size(); ++i) {
-            for (int j = 0; j < operands[i].size(); ++j) {
-              derivative += partials[i](j) * operands[i](j);
+          for (int i = 0; i < this->operands.size(); ++i) {
+            for (int j = 0; j < this->operands[i].size(); ++j) {
+              derivative += this->partials[i](j) * this->operands[i](j);
             }
           }
         }
       };
       template <typename ViewElt, typename Dx, int R, int C>
       class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > >
-        : public ops_partials_edge_multivariate<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> > {
+        : public ops_partials_edge_multivariate<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx> {
       public:
         explicit ops_partials_edge(const std::vector<Eigen::Matrix<fvar<Dx>, R, C> >& ops)
-          : ops_partials_edge_multivariate<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> >(ops) {}
+          : ops_partials_edge_multivariate<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx>(ops) {}
       };
     }
   }
