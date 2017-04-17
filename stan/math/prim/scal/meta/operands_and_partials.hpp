@@ -93,10 +93,10 @@ namespace stan {
       template <typename ViewElt, typename Op>
       class ops_partials_edge_singular {
       protected:
-
-      public:
         const Op& operand;
         ViewElt partial;
+
+      public:
         ops_partials_edge_singular(const Op& a) : operand(a), partial() { }
         void increment_dx(int /*n*/, const ViewElt& adj) {
           partial += adj;
