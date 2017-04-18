@@ -11,7 +11,6 @@
 
 namespace stan {
   namespace math {
-
     /**
      * Return a draw from a Categorical distribution given a
      * a vector of unnormalized log probabilities and a psuedo-random
@@ -27,8 +26,8 @@ namespace stan {
      */
     template <class RNG>
     inline int
-    categorical_logit_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1>& beta,
-                    RNG& rng) {
+    categorical_logit_rng(const Eigen::VectorXd& beta,
+                          RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;
 
@@ -38,12 +37,8 @@ namespace stan {
 
       variate_generator<RNG&, uniform_01<> >
         uniform01_rng(rng, uniform_01<>());
-
       Eigen::VectorXd theta = softmax(beta);
-
-      Eigen::VectorXd index(theta.rows());
-
-      index = cumulative_sum(theta);
+      Eigen::VectorXd index = cumulative_sum(theta);
 
       double c = uniform01_rng();
       int b = 0;
