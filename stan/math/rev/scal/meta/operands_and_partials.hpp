@@ -14,12 +14,13 @@ namespace stan {
       // ViewElt = double, Arg = var d_ holds double
       template <typename ViewElt>
       class ops_partials_edge<ViewElt, var>
-        : ops_partials_edge_singular<ViewElt, var> {
+        : public ops_partials_edge_singular<ViewElt, var> {
+      public:
         void dump_partials(ViewElt* partials) {
-          *partials = partial;
+          *partials = this->partial;
         }
         void dump_operands(vari** varis) {
-          *varis = operand.vi_;
+          *varis = this->operand.vi_;
         }
       };
 
@@ -80,7 +81,7 @@ namespace stan {
           edge1_.dump_partials(&partials[idx]);
           edge2_.dump_partials(&partials[idx += edge1_.size()]);
           edge3_.dump_partials(&partials[idx += edge2_.size()]);
-          edge4_.dump_partkals(&partials[idx += edge3_.size()]);
+          edge4_.dump_partials(&partials[idx += edge3_.size()]);
 
           return var(new precomputed_gradients_vari(value, size, varis, partials));
         };

@@ -21,7 +21,9 @@ namespace stan {
       public:
         ops_partials_edge_mat_prim(const Op& ops)
           : operands(ops), partials(partials_t::Zero(ops.size())) {}
-        //: operands(ops), partials(partials_t::Zero(ops.rows(), ops.cols())) {}
+        void increment_dx(int n, const ViewElt& adj) {
+          partials[n] += adj;
+        }
         void increment_dx_vector(int /*n*/, const partials_t& adj) {
           partials += adj;
         }
@@ -30,13 +32,6 @@ namespace stan {
             partials[i] = this->partials(i);
           }
         }
-        /* XXX put this into rev/mat
-        void dump_operands(vari** varis) {
-          for (int i = 0; i < this->operands.size(); ++i) {
-            varis[i] = this->operands(i).vi_;
-          }
-        }
-        */
         int size() {
           return this->operands.size();
         }
@@ -46,7 +41,7 @@ namespace stan {
       class ops_partials_edge_multivariate_prim {
       public:
         typedef Eigen::Matrix<ViewElt, Eigen::Dynamic, Eigen::Dynamic> partial_t;
-        explicit ops_partials_edge_multivariate_prim(const std::vector<Op>& ops)
+        ops_partials_edge_multivariate_prim(const std::vector<Op>& ops)
           : partials(ops.size()), operands(ops) {
           for (size_t i = 0; i < ops.size(); ++i) {
             partials[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());

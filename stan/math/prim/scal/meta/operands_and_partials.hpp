@@ -54,6 +54,7 @@ namespace stan {
         ops_partials_edge(const Op& /* a */){ }
         void increment_dx(int /* n */, const ViewElt& /* adj */) {}
         void dump_partials(ViewElt* /* partials */) {} // used for vars
+        void dump_operands(void* /* operands */) {} // also used for reverse mode
         double dx() const { return 0; } //used for fvars
         int size() {return 0; }
       };

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -68,8 +68,8 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      detail::operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_loc> mu_vec(mu);
@@ -105,14 +105,14 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= scaled_diff;
+          ops_partials.increment_dx1(n, -scaled_diff);
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += scaled_diff;
+          ops_partials.increment_dx2(n, scaled_diff);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
-            += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
+          ops_partials.increment_dx3(n,
+              -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>
