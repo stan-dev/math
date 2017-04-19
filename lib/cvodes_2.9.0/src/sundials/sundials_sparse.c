@@ -736,6 +736,7 @@ void SparsePrintMat(const SlsMat A, FILE* outfile)
   char *matrixtype;
   char *indexname;
 
+#ifndef NO_FPRINTF_OUTPUT
   NNZ = A->NNZ;
 
   switch(A->sparsetype) {
@@ -771,7 +772,7 @@ void SparsePrintMat(const SlsMat A, FILE* outfile)
     fprintf(outfile, "\n");
   }
   fprintf(outfile, "\n");
-    
+#endif   
 }
 
 

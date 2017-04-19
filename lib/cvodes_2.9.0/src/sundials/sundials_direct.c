@@ -309,6 +309,7 @@ void PrintMat(DlsMat A)
   long int i, j, start, finish;
   realtype **a;
 
+#ifndef NO_FPRINTF_OUTPUT
   switch (A->type) {
 
   case SUNDIALS_DENSE:
@@ -354,7 +355,7 @@ void PrintMat(DlsMat A)
     break;
 
   }
-
+#endif
 }
 
 
