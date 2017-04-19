@@ -16,6 +16,8 @@ namespace stan {
       class ops_partials_edge<ViewElt, var>
         : public ops_partials_edge_singular<ViewElt, var> {
       public:
+        ops_partials_edge(const var& op)
+          : ops_partials_edge_singular<ViewElt, var>(op) {}
         void dump_partials(ViewElt* partials) {
           *partials = this->partial;
         }

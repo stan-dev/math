@@ -83,11 +83,10 @@ namespace stan {
         };
       private:
         // these are going to be stack local and get collected
-        // TODO(sean): should we pass in ViewElt somehow? shape of it?
-        ops_partials_edge<double, Op1> edge1_;
-        ops_partials_edge<double, Op2> edge2_;
-        ops_partials_edge<double, Op3> edge3_;
-        ops_partials_edge<double, Op4> edge4_;
+        ops_partials_edge<Dx, Op1> edge1_;
+        ops_partials_edge<Dx, Op2> edge2_;
+        ops_partials_edge<Dx, Op3> edge3_;
+        ops_partials_edge<Dx, Op4> edge4_;
       };
     } // end namespace detail
   }
