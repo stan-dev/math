@@ -98,7 +98,7 @@ namespace stan {
         ViewElt partial;
 
       public:
-        ops_partials_edge_singular(const Op& a) : operand(a), partial() { }
+        ops_partials_edge_singular(const Op& a) : operand(a), partial(0) { }
         void increment_dx(int /*n*/, const ViewElt& adj) {
           partial += adj;
         }
