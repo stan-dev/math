@@ -274,6 +274,31 @@ TEST(MathMatrix, unsolvable) {
                    std::invalid_argument, msg);
 }
 
+TEST(MathMatrix, max_num_steps) {
+  using stan::math::algebra_solver;
+  using stan::math::var;
+
+  Eigen::VectorXd x(2), y(2);
+  x << 1, 1;
+  y << 1, 1;
+  Eigen::VectorXd theta;
+  std::vector<double> dat(0);
+  std::vector<int> dat_int(0);
+  double relative_tolerance = 1e-6, function_tolerance = 1e-6;
+  int max_num_steps = 2;  // very low for test
+
+  std::stringstream err_msg;
+  err_msg << "algebra_solver: max number of iterations: "
+          << max_num_steps
+          << " exceeded.";
+  std::string msg = err_msg.str();
+  EXPECT_THROW_MSG(algebra_solver(unsolvableEq_functor(),
+                                  x, y, dat, dat_int, 0,
+                                  relative_tolerance, function_tolerance,
+                                  max_num_steps),
+                   std::invalid_argument, msg);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Degenerate roots: each solution can either be y(0) or y(1).

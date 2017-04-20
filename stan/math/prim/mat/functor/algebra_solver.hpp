@@ -114,8 +114,10 @@ namespace stan {
      * the function tolerance, and the maximum number of steps
      * (maxfev in Eigen's code).
      *
-     * Throw an exception if the norm of f(x), where f is the
-     * output of the algebraic system and x the proposed solution,
+     * Throw an exception if:
+     *   (1) the solver exceeds the maximum number of steps
+     *   (2)  the norm of f(x), where f is the output of the
+     * algebraic system and x the proposed solution,
      * is greater than the function tolerance. We here use the
      * norm as a metric of how far we are from 0.
      *
@@ -188,6 +190,11 @@ namespace stan {
       solver.parameters.xtol = relative_tolerance;
       solver.parameters.maxfev = max_num_steps;
       solver.solve(theta_dbl);
+
+      // Check if the max number of steps has been exceeded
+      if (solver.nfev >= max_num_steps)
+        invalid_argument("algebra_solver", "max number of iterations:",
+                         max_num_steps, "", " exceeded.");
 
       // Check solution is a root
       Eigen::VectorXd system = fx.get_value(theta_dbl);
