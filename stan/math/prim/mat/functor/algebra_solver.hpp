@@ -128,6 +128,7 @@ namespace stan {
      * @param[in] y parameter vector for the equation system.
      * @param[in] dat continuous data vector for the equation system.
      * @param[in] dat_int integer data vector for the equation system.
+     * @param[in, out] msgs the print stream for warning messages.
      * @param[in] relative_tolerance determines the convergence criteria for the solution.
      * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
