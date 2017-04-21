@@ -6,11 +6,6 @@
 
 namespace stan {
   namespace math {
-/*
-    struct NLOFunctor {
-      int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const;
-      int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) const;
-    }; */
 
     template <typename _Scalar, int NX = Eigen::Dynamic,
       int NY = Eigen::Dynamic>
@@ -59,9 +54,16 @@ namespace stan {
     };
 
     /**
+     * Returns the solution to the specified system of
+     * algebraic system given an initial guess and the
+     * gradient of the system with respect to the unknowns
+     * for which we are trying to solve.
+     *
+     * @tparam F1 type of equation of algebraic system
+     * @tparam F2 type of equation of gradient of algebraic system
      * @param x Vector of starting values
-     * @param F1 Functor that evaluates the system of equations
-     * @param F2 Functor that evaluates the Jacobian matrix
+     * @param f1 Functor that evaluates the system of equations
+     * @param f2 Functor that evaluates the Jacobian matrix
      * @return Vector that solves the system of equations
      */
     template <typename F1, typename F2>
