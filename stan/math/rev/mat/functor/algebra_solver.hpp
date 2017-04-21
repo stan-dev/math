@@ -15,11 +15,12 @@ namespace stan {
      * function theorem. The call to Jacobian() occurs outside the call to
      * chain() -- this prevents malloc issues.
      *
-     * @member y_ the vector of parameters
-     * @member y_size_ the number of parameters
-     * @member x_size_ the number of unknowns
-     * @member theta_ the vector of solution
-     * @member Jx_y_ the Jacobian of the solution with respect to the parameters.
+     * Members:
+     * y_ the vector of parameters
+     * y_size_ the number of parameters
+     * x_size_ the number of unknowns
+     * theta_ the vector of solution
+     * Jx_y_ the Jacobian of the solution with respect to the parameters.
      */
     template <typename FS, typename F, typename T, typename FX>
     struct algebra_solver_vari : public vari {
