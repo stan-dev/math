@@ -2,6 +2,9 @@
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+// NOTE: for GPU
+#include <stan/math/prim/mat/fun/ViennaCL.hpp>
+//
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
@@ -227,6 +230,104 @@ namespace stan {
       }
     };
 
+    class cholesky_gpu : public vari {
+    public:
+      int M_;
+      vari** variRefA_;
+      vari** variRefL_;
+
+      /**
+       * Constructor for GPU cholesky function.
+       *
+       * Stores varis for A.  Instantiates and stores varis for L.
+       * Instantiates and stores dummy vari for upper triangular part of var
+       * result returned in cholesky_decompose function call
+       *
+       * variRefL aren't on the chainable autodiff stack, only used for storage
+       * and computation. Note that varis for L are constructed externally in
+       * cholesky_decompose.
+       *
+       *
+       * @param A matrix
+       * @param L_A matrix, cholesky factor of A
+       */
+      cholesky_gpu(const Eigen::Matrix<var, -1, -1>& A,
+                   const Eigen::Matrix<double, -1, -1>& L_A)
+        : vari(0.0),
+          M_(A.rows()),
+          variRefA_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)),
+          variRefL_(ChainableStack::memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)) {
+            size_t pos = 0;
+            for (size_type j = 0; j < M_; ++j) {
+              for (size_type i = j; i < M_; ++i) {
+                variRefA_[pos] = A.coeffRef(i, j).vi_;
+                variRefL_[pos] = new vari(L_A.coeffRef(i, j), false); ++pos;
+              }
+            }
+          }
+
+      /**
+       * Reverse mode differentiation algorithm refernce:
+       *
+       * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
+       *
+       */
+      virtual void chain() {
+        using Eigen::MatrixXd;
+        using Eigen::Lower;
+        using Eigen::Upper;
+        using Eigen::StrictlyUpper;
+        MatrixXd Lbar(M_, M_);
+        MatrixXd L(M_, M_);
+        viennacl::matrix<double>  vcl_L(M_, M_));
+        viennacl::matrix<double>  vcl_Lbar(M_, M_));
+        viennacl::matrix<double> vcl_Lbar_result(M_, M_);
+  
+        Lbar.setZero();
+        L.setZero();
+        size_t pos = 0;
+        for (size_type j = 0; j < M_; ++j) {
+          for (size_type i = j; i < M_; ++i) {
+            Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
+            L.coeffRef(i, j) = variRefL_[pos]->val_;
+            ++pos;
+          }
+        }
+        viennacl::copy(L, vcl_L);
+        viennacl::copy(Lbar, vcl_Lbar);
+        /* Rob's code
+        vcl_L.transposeInPlace();
+        Lbar = (L * Lbar.triangularView<Lower>()).eval();
+        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
+        L.triangularView<Upper>().solveInPlace(Lbar);
+        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
+        */
+        
+        vcl_L.transposeInPlace();
+        vcl_Lbar_result = 
+          viennacl::linalg::solve(L, Lbar, viennacl::linalg::lower_tag());
+        viennacl::copy(vcl_L, L);
+        viennacl::copy(vcl_Lbar_result, Lbar);
+        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
+        L.triangularView<Upper>().solveInPlace(Lbar);
+        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
+        // Maybe these last two lines in ViennaCL are
+        /*
+        viennacl::linalg::inplace_solve(vcl_Lbar,
+          vcl_L, viennacl::linalg::upper_tag());
+        viennacl::linalg::inplace_solve(vcl_Lbar.transposeInPlace(),
+          vcl_L, viennacl::linalg::upper_tag());
+        */
+        // Lbar is the end-result of the computations
+        pos = 0;
+        for (size_type j = 0; j < M_; ++j)
+          for (size_type i = j; i < M_; ++i)
+            variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
+      }
+    };
+
     /**
      * Reverse mode specialization of cholesky decomposition
      *
@@ -244,9 +345,20 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
-      check_pos_definite("cholesky_decompose", "m", L_factor);
-
+      // NOTE: This should be replaced by some check that comes from a user
+      if (L_A.rows()  > 500) {
+        viennacl::matrix<double>  vcl_A(A.rows(), A.cols());
+        viennacl::copy(A, vcl_A);
+        viennacl::linalg::lu_factorize(vcl_A);
+        viennacl::copy(vcl_A, L_A);
+        L_A = MatrixXd(L_A.triangularView<Upper>()).transpose();
+        for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i,i));
+      } else {
+        Eigen::LLT<Eigen::MatrixXd> L_factor
+          = L_A.selfadjointView<Eigen::Lower>().llt();
+        check_pos_definite("cholesky_decompose", "m", L_factor);
+        L_A = L_factor.matrixL();
+      }
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
       // cholesky_block
@@ -267,6 +379,18 @@ namespace stan {
             L.coeffRef(k, j).vi_ = dummy;
           accum += j;
           accum_i = accum;
+        } 
+      // NOTE: This should be replaced by some check that comes from a user
+      } else if (L_A.rows()  > 500) {
+        cholesky_gpu *baseVari
+          = new cholesky_gpu(A, L_A);
+        size_t pos = 0;
+        for (size_type j = 0; j < L.cols(); ++j) {
+          for (size_type i = j; i < L.cols(); ++i) {
+            L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+          }
+          for (size_type k = 0; k < j; ++k)
+            L.coeffRef(k, j).vi_ = dummy;
         }
       } else {
         cholesky_block *baseVari
