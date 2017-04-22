@@ -284,7 +284,6 @@ namespace stan {
         viennacl::matrix<double>  vcl_L(M_, M_);
         viennacl::matrix<double>  vcl_Lbar(M_, M_);
         viennacl::matrix<double> vcl_Lbar_result(M_, M_);
-  
         Lbar.setZero();
         L.setZero();
         size_t pos = 0;
@@ -303,14 +302,15 @@ namespace stan {
         Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
         L.triangularView<Upper>().solveInPlace(Lbar);
         L.triangularView<Upper>().solveInPlace(Lbar.transpose());
-        */
-        
+        */        
         vcl_L = trans(vcl_L);
-        vcl_Lbar_result = 
-          viennacl::linalg::solve(vcl_L, vcl_Lbar, viennacl::linalg::lower_tag());
+        vcl_Lbar_result =
+          viennacl::linalg::solve(vcl_L,
+           vcl_Lbar, viennacl::linalg::lower_tag());
         viennacl::copy(vcl_L, L);
         viennacl::copy(vcl_Lbar_result, Lbar);
-        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
+        Lbar.triangularView<StrictlyUpper>() =
+          Lbar.adjoint().triangularView<StrictlyUpper>();
         L.triangularView<Upper>().solveInPlace(Lbar);
         L.triangularView<Upper>().solveInPlace(Lbar.transpose());
         // Maybe these last two lines in ViennaCL are
@@ -352,10 +352,10 @@ namespace stan {
         viennacl::linalg::lu_factorize(vcl_A);
         viennacl::copy(vcl_A, L_A);
         L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
-        for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i,i));
+        for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
       } else {
-        Eigen::LLT<Eigen::MatrixXd> L_factor
-          = L_A.selfadjointView<Eigen::Lower>().llt();
+        Eigen::LLT<Eigen::MatrixXd> L_factor =
+         L_A.selfadjointView<Eigen::Lower>().llt();
         check_pos_definite("cholesky_decompose", "m", L_factor);
         L_A = L_factor.matrixL();
       }
@@ -379,7 +379,7 @@ namespace stan {
             L.coeffRef(k, j).vi_ = dummy;
           accum += j;
           accum_i = accum;
-        } 
+        }
       // NOTE: This should be replaced by some check that comes from a user
       } else if (L_A.rows()  > 500) {
         cholesky_gpu *baseVari
