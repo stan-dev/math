@@ -267,10 +267,10 @@ long int N_VGetLength_Serial(N_Vector v)
  
 void N_VPrint_Serial(N_Vector x)
 {
+#ifndef NO_FPRINTF_OUTPUT
   long int i, N;
   realtype *xd;
 
-#ifndef NO_FPRINTF_OUTPUT
   xd = NULL;
 
   N  = NV_LENGTH_S(x);

@@ -306,10 +306,10 @@ void SetToZero(DlsMat A)
 
 void PrintMat(DlsMat A)
 {
+#ifndef NO_FPRINTF_OUTPUT
   long int i, j, start, finish;
   realtype **a;
 
-#ifndef NO_FPRINTF_OUTPUT
   switch (A->type) {
 
   case SUNDIALS_DENSE:
