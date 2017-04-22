@@ -281,8 +281,8 @@ namespace stan {
         using Eigen::StrictlyUpper;
         MatrixXd Lbar(M_, M_);
         MatrixXd L(M_, M_);
-        viennacl::matrix<double>  vcl_L(M_, M_));
-        viennacl::matrix<double>  vcl_Lbar(M_, M_));
+        viennacl::matrix<double>  vcl_L(M_, M_);
+        viennacl::matrix<double>  vcl_Lbar(M_, M_);
         viennacl::matrix<double> vcl_Lbar_result(M_, M_);
   
         Lbar.setZero();
@@ -305,9 +305,9 @@ namespace stan {
         L.triangularView<Upper>().solveInPlace(Lbar.transpose());
         */
         
-        vcl_L.transposeInPlace();
+        vcl_L = trans(vcl_L);
         vcl_Lbar_result = 
-          viennacl::linalg::solve(L, Lbar, viennacl::linalg::lower_tag());
+          viennacl::linalg::solve(vcl_L, vcl_Lbar, viennacl::linalg::lower_tag());
         viennacl::copy(vcl_L, L);
         viennacl::copy(vcl_Lbar_result, Lbar);
         Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
@@ -351,7 +351,7 @@ namespace stan {
         viennacl::copy(A, vcl_A);
         viennacl::linalg::lu_factorize(vcl_A);
         viennacl::copy(vcl_A, L_A);
-        L_A = MatrixXd(L_A.triangularView<Upper>()).transpose();
+        L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
         for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i,i));
       } else {
         Eigen::LLT<Eigen::MatrixXd> L_factor
