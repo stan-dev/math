@@ -347,10 +347,10 @@ namespace stan {
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
       if (L_A.rows()  > 500) {
-        viennacl::matrix<double>  vcl_A(A.rows(), A.cols());
-        viennacl::copy(A, vcl_A);
-        viennacl::linalg::lu_factorize(vcl_A);
-        viennacl::copy(vcl_A, L_A);
+        viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
+        viennacl::copy(L_A, vcl_L_A);
+        viennacl::linalg::lu_factorize(vcl_L_A);
+        viennacl::copy(vcl_L_A, L_A);
         L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
         for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
       } else {
