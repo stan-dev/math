@@ -267,6 +267,7 @@ long int N_VGetLength_Serial(N_Vector v)
  
 void N_VPrint_Serial(N_Vector x)
 {
+#ifndef NO_FPRINTF_OUTPUT
   long int i, N;
   realtype *xd;
 
@@ -285,6 +286,7 @@ void N_VPrint_Serial(N_Vector x)
 #endif
   }
   printf("\n");
+#endif
 
   return;
 }
