@@ -60,13 +60,13 @@ namespace stan {
       T_partials_return P(1.0);
 
       check_positive_finite(function, "Shape parameter", alpha);
-      check_positive_finite(function, "Scale parameter", beta);
+      check_positive_finite(function, "Inverse scale parameter", beta);
       check_not_nan(function, "Random variable", y);
       check_nonnegative(function, "Random variable", y);
       check_consistent_sizes(function,
                              "Random variable", y,
                              "Shape parameter", alpha,
-                             "Scale Parameter", beta);
+                             "Inverse scale parameter", beta);
 
       scalar_seq_view<const T_y> y_vec(y);
       scalar_seq_view<const T_shape> alpha_vec(alpha);
