@@ -5,12 +5,6 @@
   #define VIENNACL_WITH_EIGEN 1
 #endif
 
-// Need to check here if GPU exists or not
-#ifndef VIENNACL_WITH_OPENCL
-  #define VIENNACL_WITH_OPENCL
-#endif
-
-
 #include "viennacl/vector.hpp"
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/direct_solve.hpp"
