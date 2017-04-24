@@ -7,7 +7,6 @@ GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 CVODES ?= $(MATH)lib/cvodes_2.9.0
 VIENNACL ?= $(MATH)lib/viennacl_1.7.1
-
 ##
 # Build rules for cvodes
 ##

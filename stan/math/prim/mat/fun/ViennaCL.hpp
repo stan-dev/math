@@ -10,6 +10,7 @@
   #define VIENNACL_WITH_OPENCL
 #endif
 
+
 #include "viennacl/vector.hpp"
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/direct_solve.hpp"
