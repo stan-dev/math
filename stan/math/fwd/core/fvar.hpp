@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <ostream>
 
@@ -75,7 +74,8 @@ namespace stan {
       // TV and TD must be assignable to T
       template <typename TV, typename TD>
       fvar(const TV& v, const TD& d = 0.0) : val_(v), d_(d) {  // NOLINT
-          d_ = val;
+        if (unlikely(is_nan(v)))
+          d_ = v;
       }
 
       inline fvar<T>& operator+=(const fvar<T>& x2) {
