@@ -24,7 +24,7 @@ namespace stan {
 
           double g = tgamma(avi_->val_);
 
-          avi_->adj_ += adj_ 
+          avi_->adj_ += adj_
             * lower_reg_inc_gamma<>::grad<1>(avi_->val_, bvi_->val_, 1.0e-10);
           bvi_->adj_ += adj_ * (std::exp(-bvi_->val_)
             * std::pow(bvi_->val_, avi_->val_ - 1.0) / g);
@@ -43,7 +43,7 @@ namespace stan {
           if (std::fabs(bd_ / avi_->val_) > 10)
             return;
 
-          avi_->adj_ += adj_ 
+          avi_->adj_ += adj_
             * lower_reg_inc_gamma<>::grad<1>(avi_->val_, bd_, 1.0e-10);
         }
       };
