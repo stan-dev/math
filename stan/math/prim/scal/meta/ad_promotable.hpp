@@ -7,9 +7,9 @@ namespace stan {
     /**
      * Template traits metaprogram to determine if a variable of one
      * template type can be promoted to a second target template
-     * type. All variales are promotable to themselves, and all
+     * type. All variables are promotable to themselves, and all
      * primitive arithmetic types are promotable to double.
-     * 
+     *
      * <p>It will delcare an enum <code>value</code> equal to
      * <code>false</code>.
      *
