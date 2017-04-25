@@ -22,28 +22,12 @@ namespace stan {
           // to machine precision for b / a > 10
           if (std::fabs(bvi_->val_ / avi_->val_) > 10 ) return;
 
-          double u = gamma_p(avi_->val_, bvi_->val_);
-
-          double S = 0.0;
-          double s = 1.0;
-          double l = std::log(bvi_->val_);
           double g = tgamma(avi_->val_);
-          double dig = digamma(avi_->val_);
 
-          int k = 0;
-          double delta = s / (avi_->val_ * avi_->val_);
-
-          while (std::fabs(delta) > 1e-6) {
-            S += delta;
-            ++k;
-            s *= -bvi_->val_ / k;
-            delta = s / ((k + avi_->val_) * (k + avi_->val_));
-          }
-
-          avi_->adj_ -= adj_ * ((u) * (dig - l)
-                                + std::exp(avi_->val_ * l) * S / g);
+          avi_->adj_ += adj_ 
+            * lower_reg_inc_gamma<>::grad<1>(avi_->val_, bvi_->val_, 1.0e-10);
           bvi_->adj_ += adj_ * (std::exp(-bvi_->val_)
-                                * std::pow(bvi_->val_, avi_->val_ - 1.0) / g);
+            * std::pow(bvi_->val_, avi_->val_ - 1.0) / g);
         }
       };
 
@@ -59,26 +43,8 @@ namespace stan {
           if (std::fabs(bd_ / avi_->val_) > 10)
             return;
 
-          double u = gamma_p(avi_->val_, bd_);
-
-          double S = 0.0;
-          double s = 1.0;
-          double l = std::log(bd_);
-          double g = tgamma(avi_->val_);
-          double dig = digamma(avi_->val_);
-
-          int k = 0;
-          double delta = s / (avi_->val_ * avi_->val_);
-
-          while (std::fabs(delta) > 1e-6) {
-            S += delta;
-            ++k;
-            s *= -bd_ / k;
-            delta = s / ((k + avi_->val_) * (k + avi_->val_));
-          }
-
-          avi_->adj_ -= adj_ * ((u) * (dig - l)
-                                + std::exp(avi_->val_ * l) * S / g);
+          avi_->adj_ += adj_ 
+            * lower_reg_inc_gamma<>::grad<1>(avi_->val_, bd_, 1.0e-10);
         }
       };
 
