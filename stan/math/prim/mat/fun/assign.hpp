@@ -120,24 +120,29 @@ namespace stan {
      * Copy the right-hand side's value to the left-hand side
      * variable.
      *
-     * The <code>assign()</code> function is overloaded.  This
+     * <p>The <code>assign()</code> function is overloaded.  This
      * instance will be called for arguments that are both
      * <code>Eigen::Matrix</code> types and whose shapes match.  The
      * shape of the right-hand side matrix is specified in the row and
      * column shape template parameters.
      *
+     * <p>The left-hand side is intentionally not a reference, because
+     * that won't match generally enough;  instead, a non-reference is
+     * used, which still holds onto a reference to the contained
+     * matrix and thus still updates the appropriate values.
+     *
      * @tparam LHS Type of matrix block elements.
-     * @tparam RHS Type of right-hand side matrix elements.
+     * @tparam T Type of right-hand side matrix elements.
      * @tparam R Row shape for right-hand side matrix.
      * @tparam C Column shape for right-hand side matrix.
      * @param x Left-hand side block view of matrix.
      * @param y Right-hand side matrix.
      * @throw std::invalid_argument if sizes do not match.
      */
-    template <typename LHS, typename RHS, int R, int C>
+    template <typename LHS, typename T, int R, int C>
     inline void
     assign(Eigen::Block<LHS> x,
-           const Eigen::Matrix<RHS, R, C>& y) {
+           const Eigen::Matrix<T, R, C>& y) {
       check_size_match("assign",
                        "left-hand side rows", x.rows(),
                        "right-hand side rows", y.rows());
