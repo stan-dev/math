@@ -11,12 +11,14 @@ namespace stan {
      * <p>This method is effectively a no-op and is mainly useful as a
      * placeholder in auto-generated code.
      *
+     * @param x Free scalar.
+     * @return Transformed input.
+     *
      * @tparam T Type of scalar.
-     * @param[in] x free scalar
-     * @return transformed input
      */
     template <typename T>
-    inline T identity_constrain(const T& x) {
+    inline
+    T identity_constrain(T x) {
       return x;
     }
 
@@ -28,13 +30,14 @@ namespace stan {
      * <p>This method is effectively a no-op and mainly useful as a
      * placeholder in auto-generated code.
      *
-     * @tparam T type of scalar.
-     * @param[in] x scalar
-     * @param[in,out] lp reference to log probability.
-     * @return transformed input
+     * @param x Free scalar.
+     * lp Reference to log probability.
+     * @return Transformed input.
+     * @tparam T Type of scalar.
      */
     template <typename T>
-    inline T identity_constrain(const T& x, T& /*lp*/) {
+    inline
+    T identity_constrain(const T x, T& /*lp*/) {
       return x;
     }
 

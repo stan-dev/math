@@ -18,7 +18,7 @@ namespace stan {
      * @tparam C Columns of matrix
      * @param[in] M Matrix to be converted
      * @return Matrix of values
-     */
+     **/
     template <typename T, int R, int C>
     inline Eigen::Matrix<double, R, C>
     value_of_rec(const Eigen::Matrix<T, R, C>& M) {

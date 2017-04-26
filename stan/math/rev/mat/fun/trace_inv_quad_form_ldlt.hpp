@@ -168,7 +168,7 @@ namespace stan {
      * Compute the trace of an inverse quadratic form.  I.E., this computes
      *       trace(B^T A^-1 B)
      * where the LDLT_factor of A is provided.
-     */
+     **/
     template <typename T2, int R2, int C2, typename T3, int R3, int C3>
     inline typename
     boost::enable_if_c<stan::is_var<T2>::value ||

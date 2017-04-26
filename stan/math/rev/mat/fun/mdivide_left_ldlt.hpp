@@ -19,7 +19,7 @@ namespace stan {
          * This share_ptr is used to prevent copying the LDLT factorizations
          * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
          * The pointer is shared with the LDLT_factor<double> class.
-         */
+         **/
         boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
         Eigen::Matrix<double, R2, C2> C_;
       };
@@ -33,7 +33,7 @@ namespace stan {
        * set by the "mater" vari.
        *
        * This class handles the var/var case.
-       */
+       **/
       template <int R1, int C1, int R2, int C2>
       class mdivide_left_ldlt_vv_vari : public vari {
       public:
@@ -110,7 +110,7 @@ namespace stan {
        * set by the "mater" vari.
        *
        * This class handles the double/var case.
-       */
+       **/
       template <int R1, int C1, int R2, int C2>
       class mdivide_left_ldlt_dv_vari : public vari {
       public:
@@ -184,7 +184,7 @@ namespace stan {
        * set by the "mater" vari.
        *
        * This class handles the var/double case.
-       */
+       **/
       template <int R1, int C1, int R2, int C2>
       class mdivide_left_ldlt_vd_vari : public vari {
       public:

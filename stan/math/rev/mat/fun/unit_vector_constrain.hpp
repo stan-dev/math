@@ -23,11 +23,19 @@ namespace stan {
         const double norm_;
 
       public:
-        unit_vector_elt_vari(double val, vari** y, const double* unit_vector_y,
-                             int size, int idx, double norm)
-          : vari(val), y_(y), unit_vector_y_(unit_vector_y),
-            size_(size), idx_(idx), norm_(norm) { }
-
+        unit_vector_elt_vari(double val,
+                             vari** y,
+                             const double* unit_vector_y,
+                             int size,
+                             int idx,
+                             double norm)
+          : vari(val),
+            y_(y),
+            unit_vector_y_(unit_vector_y),
+            size_(size),
+            idx_(idx),
+            norm_(norm) {
+        }
         void chain() {
           const double cubed_norm = norm_ * norm_ * norm_;
           for (int m = 0; m < size_; ++m) {
@@ -47,7 +55,7 @@ namespace stan {
      * @param y vector of K unrestricted variables
      * @return Unit length vector of dimension K
      * @tparam T Scalar type.
-     */
+     **/
     template <int R, int C>
     Eigen::Matrix<var, R, C>
     unit_vector_constrain(const Eigen::Matrix<var, R, C>& y) {
@@ -90,11 +98,11 @@ namespace stan {
      * Return the unit length vector corresponding to the free vector y.
      * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
      *
-     * @tparam T scalar type
-     * @param[in] y vector of K unrestricted variables
-     * @param[in,out] lp log density to increment
-     * @return unit length vector of dimension K
-     */
+     * @param y vector of K unrestricted variables
+     * @return Unit length vector of dimension K
+     * @param lp Log probability reference to increment.
+     * @tparam T Scalar type.
+     **/
     template <int R, int C>
     Eigen::Matrix<var, R, C>
     unit_vector_constrain(const Eigen::Matrix<var, R, C>& y, var &lp) {

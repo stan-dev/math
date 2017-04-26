@@ -15,7 +15,7 @@ namespace stan {
   namespace math {
     /**
      * Compute B^T A B
-     */
+     **/
     template<int RA, int CA, int RB, int CB, typename T>
     inline Eigen::Matrix<T, CB, CB>
     quad_form(const Eigen::Matrix<T, RA, CA>& A,

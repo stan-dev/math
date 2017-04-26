@@ -31,16 +31,17 @@ namespace stan {
       for (int k = 0; k < y.size(); ++k)
         unit_vector_y.coeffRef(k).val_ = unit_vector_y_t.coeff(k);
 
-      T squared_norm = dot_self(y_t);
-      T norm = sqrt(squared_norm);
-      T inv_norm = inv(norm);
+      const T squared_norm = dot_self(y_t);
+      const T norm = sqrt(squared_norm);
+      const T inv_norm = inv(norm);
       Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
         = divide(tcrossprod(y_t),  -norm * squared_norm);
 
       for (int m = 0; m < y.size(); ++m) {
         J.coeffRef(m, m) += inv_norm;
-        for (int k = 0; k < y.size(); ++k)
+        for (int k = 0; k < y.size(); ++k) {
           unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
+        }
       }
       return unit_vector_y;
     }
@@ -48,7 +49,7 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<fvar<T>, R, C>
     unit_vector_constrain(const Eigen::Matrix<fvar<T>, R, C>& y, fvar<T>& lp) {
-      fvar<T> squared_norm = dot_self(y);
+      const fvar<T> squared_norm = dot_self(y);
       lp -= 0.5 * squared_norm;
       return unit_vector_constrain(y);
     }

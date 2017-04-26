@@ -28,19 +28,20 @@ namespace stan {
      * positive infinity and the lower bound negative infinity,
      * this function reduces to <code>identity_constrain(x)</code>.
      *
+     * @param x Free scalar to transform.
+     * @param lb Lower bound.
+     * @param ub Upper bound.
+     * @return Lower- and upper-bounded scalar derived from transforming
+     * the free scalar.
      * @tparam T Type of scalar.
      * @tparam TL Type of lower bound.
      * @tparam TU Type of upper bound.
-     * @param[in] x Free scalar to transform.
-     * @param[in] lb Lower bound.
-     * @param[in] ub Upper bound.
-     * @return Lower- and upper-bounded scalar derived from transforming
-     *   the free scalar.
      * @throw std::domain_error if ub <= lb
      */
     template <typename T, typename TL, typename TU>
-    inline typename boost::math::tools::promote_args<T, TL, TU>::type
-    lub_constrain(const T& x, const TL& lb, const TU& ub) {
+    inline
+    typename boost::math::tools::promote_args<T, TL, TU>::type
+    lub_constrain(const T x, TL lb, TU ub) {
       using std::exp;
       check_less("lub_constrain", "lb", lb, ub);
       if (lb == -std::numeric_limits<double>::infinity())
@@ -97,20 +98,20 @@ namespace stan {
      * positive infinity and the lower bound negative infinity,
      * this function reduces to <code>identity_constrain(x, lp)</code>.
      *
+     * @param x Free scalar to transform.
+     * @param lb Lower bound.
+     * @param ub Upper bound.
+     * @param lp Log probability scalar reference.
+     * @return Lower- and upper-bounded scalar derived from transforming
+     * the free scalar.
      * @tparam T Type of scalar.
      * @tparam TL Type of lower bound.
      * @tparam TU Type of upper bound.
-     * @param[in] x Free scalar to transform.
-     * @param[in] lb Lower bound.
-     * @param[in] ub Upper bound.
-     * @param[in,out] lp Log probability scalar reference.
-     * @return Lower- and upper-bounded scalar derived from transforming
-     *   the free scalar.
      * @throw std::domain_error if ub <= lb
      */
     template <typename T, typename TL, typename TU>
-    inline typename boost::math::tools::promote_args<T, TL, TU>::type
-    lub_constrain(const T& x, const TL& lb, const TU& ub, T& lp) {
+    typename boost::math::tools::promote_args<T, TL, TU>::type
+    lub_constrain(const T x, const TL lb, const TU ub, T& lp) {
       using std::log;
       using std::exp;
       check_less("lub_constrain", "lb", lb, ub);

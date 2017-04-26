@@ -19,14 +19,15 @@ namespace stan {
      *          = \mbox{atanh}\, y
      *          = \frac{1}{2} \log \frac{y + 1}{y - 1}\f$.
      *
-     * @tparam T Type of correlation
-     * @param[in] y correlation
-     * @return free scalar that transforms to the specified input
+     * @param y Correlation scalar input.
+     * @return Free scalar that transforms to the specified input.
+     * @tparam T Type of scalar.
      */
     template <typename T>
     inline
-    T corr_free(const T& y) {
-      check_bounded("lub_free", "Correlation variable", y, -1.0, 1.0);
+    T corr_free(const T y) {
+      check_bounded("lub_free",
+                    "Correlation variable", y, -1.0, 1.0);
       return atanh(y);
     }
 

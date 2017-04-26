@@ -3,7 +3,6 @@
 
 namespace stan {
   namespace math {
-
     /**
      * The integer step, or Heaviside, function.
      *
@@ -18,15 +17,15 @@ namespace stan {
          \end{cases}
          \f]
      *
-     * @tparam T value type
-     * @param[in] y value
+     * @param y Value to test.
      * @return 1 if value is greater than 0 and 0 otherwise
+     * @tparam T Scalar argument type.
      */
     template <typename T>
-    inline int int_step(const T& y) {
+    unsigned int int_step(const T y) {
       return y > 0;
     }
-
   }
 }
+
 #endif

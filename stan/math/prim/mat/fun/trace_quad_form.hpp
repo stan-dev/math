@@ -9,7 +9,7 @@ namespace stan {
   namespace math {
     /**
      * Compute trace(B^T A B).
-     */
+     **/
     template<int RA, int CA, int RB, int CB>
     inline double
     trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
