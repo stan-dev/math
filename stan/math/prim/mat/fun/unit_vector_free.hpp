@@ -17,7 +17,7 @@ namespace stan {
      * @param x unit vector of dimension K
      * @return Unit vector of dimension K considered "free"
      * @tparam T Scalar type.
-     **/
+     */
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     unit_vector_free(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {

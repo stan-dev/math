@@ -15,7 +15,7 @@ namespace stan {
      *
      * This class should only be instantiated as part of an LDLT_factor object
      * and is only used in *ldlt_ functions.
-     **/
+     */
     template<int R, int C>
     class LDLT_alloc : public chainable_alloc {
     public:
@@ -28,7 +28,7 @@ namespace stan {
        * Compute the LDLT factorization and store pointers to the
        * vari's of the matrix entries to be used when chain() is
        * called elsewhere.
-       **/
+       */
       inline void compute(const Eigen::Matrix<var, R, C> &A) {
         Eigen::Matrix<double, R, C> Ad(A.rows(), A.cols());
 

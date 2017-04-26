@@ -17,7 +17,7 @@ namespace stan {
      * @tparam T Scalar type in std::vector
      * @param[in] x std::vector to be converted
      * @return std::vector of values
-     **/
+     */
     template <typename T>
     inline std::vector<double>
     value_of_rec(const std::vector<T>& x) {

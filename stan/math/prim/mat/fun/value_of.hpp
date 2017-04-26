@@ -19,7 +19,7 @@ namespace stan {
      * @tparam C Columns of matrix
      * @param[in] M Matrix to be converted
      * @return Matrix of values
-     **/
+     */
     template <typename T, int R, int C>
     inline Eigen::Matrix<typename child_type<T>::type, R, C>
     value_of(const Eigen::Matrix<T, R, C>& M) {

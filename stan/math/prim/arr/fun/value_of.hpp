@@ -16,7 +16,7 @@ namespace stan {
      * @tparam T Scalar type in std::vector
      * @param[in] x std::vector to be converted
      * @return std::vector of values
-     **/
+     */
     template <typename T>
     inline std::vector<typename child_type<T>::type>
     value_of(const std::vector<T>& x) {

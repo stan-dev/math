@@ -8,16 +8,15 @@ namespace stan {
      * Returns the result of applying the inverse of the identity
      * constraint transform to the input.
      *
-     * <p>This method is effectively a no-op and mainly useful as a
-     * placeholder in auto-generated code.
+     * <p>This function is a no-op and mainly useful as a placeholder
+     * in auto-generated code.
      *
-     * @param y Constrained scalar.
-     * @return The input.
-     * @tparam T Type of scalar.
+     * @tparam T type of value
+     * @param[in] y value
+     * @return value
      */
     template <typename T>
-    inline
-    T identity_free(const T y) {
+    inline identity_free(const T& y) {
       return y;
     }
 

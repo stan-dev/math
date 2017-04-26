@@ -5,13 +5,14 @@ namespace stan {
   namespace math {
 
     /**
-     * Return 1 if the argument is unequal to zero and 0 otherwise.
+     * Return true if the argument is unequal to zero and false otherwise.
      *
-     * @param x Value.
-     * @return 1 if argument is equal to zero (or NaN) and 0 otherwise.
+     * @tparam type of scalar
+     * @param x value
+     * @return true if value is equal to zero or NaN
      */
     template <typename T>
-    inline bool as_bool(const T x) {
+    inline bool as_bool(const T& x) {
       return x != 0;
     }
 

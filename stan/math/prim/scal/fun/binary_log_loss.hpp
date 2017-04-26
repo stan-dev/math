@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_BINARY_LOG_LOSS_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_BINARY_LOG_LOSS_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/fun/log1m.hpp>
 
 namespace stan {
   namespace math {
@@ -17,15 +17,15 @@ namespace stan {
      *
      * \f$\mbox{logloss}(0, \hat{y}) = -\log (1 - \hat{y}) \f$.
      *
-     * @param y Reference value in { 0 , 1 }.
-     * @param y_hat Response value in [0, 1].
-     * @return Log loss for response given reference value.
+     * @tparam T value type
+     * @param[in] y reference value, either 0 or 1
+     * @param[in] y_hat response value in [0, 1]
+     * @return Log loss for response given reference value
      */
     template <typename T>
-    inline typename boost::math::tools::promote_args<T>::type
-    binary_log_loss(int y, const T y_hat) {
+    inline T binary_log_loss(int y, const T& y_hat) {
       using std::log;
-      return -log(y ? y_hat : (1.0 - y_hat));
+      return y ? -log(y_hat) : -log1m(y_hat);
     }
 
   }
