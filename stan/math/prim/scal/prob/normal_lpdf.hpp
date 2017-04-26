@@ -29,6 +29,9 @@ namespace stan {
      *
      * <p>The result log probability is defined to be the sum of the
      * log probabilities for each observation/mean/deviation triple.
+     * @tparam T_y Underlying type of scalar in sequence.
+     * @tparam T_loc Type of location parameter.
+     * @tparam T_scale Type of scale parameter.
      * @param y (Sequence of) scalar(s).
      * @param mu (Sequence of) location parameter(s)
      * for the normal distribution.
@@ -36,8 +39,6 @@ namespace stan {
      * distribution.
      * @return The log of the product of the densities.
      * @throw std::domain_error if the scale is not positive.
-     * @tparam T_y Underlying type of scalar in sequence.
-     * @tparam T_loc Type of location parameter.
      */
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>

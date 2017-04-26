@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/sort_indices.hpp>
 #include <algorithm>    // std::sort
-#include <iostream>
 #include <vector>
 
 namespace stan {

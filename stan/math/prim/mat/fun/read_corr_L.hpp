@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <cstddef>
-#include <iostream>
 
 namespace stan {
   namespace math {

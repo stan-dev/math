@@ -8,12 +8,16 @@ os:
   
 compiler:
   - clang
+  - gcc
 
 before_script:
   - echo "CC=$CXX" > make/local
 
 matrix:
   fast_finish: true
+  exclude:
+    - os: osx
+      compiler: gcc
 
 env:
   - TESTFOLDER=test/unit/math/memory
@@ -26,6 +30,6 @@ env:
   - TESTFOLDER=test/unit/math/fwd/scal
   - TESTFOLDER=test/unit/math/fwd/arr
   - TESTFOLDER=test/unit/math/fwd/mat
- # - TESTFOLDER=test/unit/math/mix  ## commenting this out due to segfault on travis
+    # - TESTFOLDER=test/unit/math/mix # times out on travis
 
 script: ./runTests.py -j2 $TESTFOLDER
