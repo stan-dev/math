@@ -43,6 +43,7 @@ namespace stan {
         f2 = f2_param;
       }
 
+
       int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
         fvec = f1(x);
         return 0;
@@ -72,7 +73,6 @@ namespace stan {
     dogleg(const Eigen::VectorXd& x, const F1 f1, const F2 f2) {
       stan::math::hybrj_functor<F1, F2> functor(f1, f2);
       Eigen::HybridNonLinearSolver<hybrj_functor<F1, F2> > solver(functor);
-      Eigen::VectorXd fvec;
       Eigen::VectorXd theta = x;
       solver.solve(theta);
       return theta;
