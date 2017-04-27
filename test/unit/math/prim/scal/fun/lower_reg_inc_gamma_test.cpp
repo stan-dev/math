@@ -9612,7 +9612,7 @@ TEST(PrimScalFun, lower_reg_inc_gamma_accuarcy) {
     double a = test[i][0];
     double z = test[i][1];
 
-    double result = stan::math::lower_reg_inc_gamma<0>::grad<1>(a, z, 1.0e-10);
+    double result = stan::math::grad_reg_lower_inc_gamma(a, z, 1.0e-10);
     if (i == 0) {
       EXPECT_NEAR(test[i][2], result, 1.5e-5);
     } else {
