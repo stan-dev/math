@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include <stan/math/prim/scal/fun/lower_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 
 
 TEST(PrimScalFun, lower_reg_inc_gamma_accuarcy) {
