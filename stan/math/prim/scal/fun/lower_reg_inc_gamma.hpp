@@ -94,62 +94,64 @@ namespace stan {
      */
     template <typename T1, typename T2>
     typename boost::math::tools::promote_args<T1, T2>::type
-    grad_reg_lower_inc_gamma(T1 a, T2 z, double precision = 1e-10,
-                             int max_steps = 1e5) {
-      typedef typename boost::math::tools::promote_args<T1, T2>::type TP;
+    grad_reg_lower_inc_gamma(const T1& a, const T2& z,
+                             double precision = 1e-10, int max_steps = 1e5) {
       using std::exp;
       using std::log;
       using std::pow;
+      typedef typename boost::math::tools::promote_args<T1, T2>::type TP;
 
       if (is_nan(a)) return std::numeric_limits<TP>::quiet_NaN();
       if (is_nan(z)) return std::numeric_limits<TP>::quiet_NaN();
 
       if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0) ||
           a < sqrt(-756 - z * z + 60 * z)) {
-        double tg = tgamma(a);
-        double dig = digamma(a);
+        T1 tg = tgamma(a);
+        T1 dig = digamma(a);
         return -grad_reg_inc_gamma(a, z, tg, dig, max_steps, precision);
       }
 
       T2 log_z = log(z);
+      T2 emz = exp(-z);
 
-      int k = 0;
+      int n = 0;
       TP sum_a = 0.0;
 
-      TP a_plus_n = a;  // n begins at zero.
-      TP lgamma_a_plus_n_plus_1 = lgamma(a + 1);
+      T1 a_plus_n = a;  // n begins at zero.
+      T1 lgamma_a_plus_1 = lgamma(a + 1);
+      T1 lgamma_a_plus_n_plus_1 = lgamma_a_plus_1;
       TP term;
       while (true) {
         term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1);
         sum_a += term;
         if (term <= precision)
           break;
-        if (k >= max_steps)
-          domain_error("d_lower_reg_inc_gamma_da", "k (internal counter)",
-            max_steps, "exceeded ", " iterations, gamma_p(a,z) gradient (a) "
-            "did not converge.");
-        k++;
-        lgamma_a_plus_n_plus_1 += log(a_plus_n + 1);
-        a_plus_n++;
-      }
-
-      int n = 1;
-      TP sum_b = pow(z, a) * digamma(a + 1) / tgamma(a + 1);
-      a_plus_n = a + 1;  // n begins at one.
-      lgamma_a_plus_n_plus_1 = lgamma(a + 2);
-      while (true) {
-        term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1 +
-          log(digamma(a_plus_n + 1)));
-        sum_b += term;
-        if (term <= precision)
-          return (log_z/exp(z)) * sum_a - inv(exp(z)) * sum_b;
         if (n >= max_steps)
           domain_error("d_lower_reg_inc_gamma_da", "n (internal counter)",
             max_steps, "exceeded ", " iterations, gamma_p(a,z) gradient (a) "
             "did not converge.");
-        n++;
+        ++n;
+        lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
+        ++a_plus_n;
+      }
+
+      n = 1;
+      TP sum_b = digamma(a + 1) * exp(a * log_z - lgamma_a_plus_1);
+      a_plus_n = a + 1;  // n begins at one.
+      lgamma_a_plus_n_plus_1 = lgamma_a_plus_1 + log(a_plus_n);
+      while (true) {
+        term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1) *
+          digamma(a_plus_n + 1);
+        sum_b += term;
+        if (term <= precision)
+          return emz * (log_z * sum_a - sum_b);
+        if (n >= max_steps)
+          domain_error("d_lower_reg_inc_gamma_da", "n (internal counter)",
+            max_steps, "exceeded ", " iterations, gamma_p(a,z) gradient (a) "
+            "did not converge.");
+        ++n;
         lgamma_a_plus_n_plus_1 += log(a_plus_n + 1);
-        a_plus_n++;
+        ++a_plus_n;
       }
     }
 
