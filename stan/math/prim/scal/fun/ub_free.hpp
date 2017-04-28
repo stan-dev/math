@@ -24,23 +24,21 @@ namespace stan {
      * If the upper bound is positive infinity, this function
      * reduces to <code>identity_free(y)</code>.
      *
-     * @param y Upper-bounded scalar.
-     * @param ub Upper bound.
-     * @return Free scalar corresponding to upper-bounded scalar.
-     * @tparam T Type of scalar.
-     * @tparam TU Type of upper bound.
-     * @throw std::invalid_argument if y is greater than the upper
-     * bound.
+     * @tparam T type of scalar
+     * @tparam TU type of upper bound
+     * @param y constrained scalar with specified upper bound
+     * @param ub upper bound
+     * @return unconstrained scalar with respect to upper bound
+     * @throw std::invalid_argument if constrained scalar is greater
+     *   than the upper bound.
      */
     template <typename T, typename TU>
-    inline
-    typename boost::math::tools::promote_args<T, TU>::type
-    ub_free(const T y, const TU ub) {
+    inline typename boost::math::tools::promote_args<T, TU>::type
+    ub_free(const T& y, const TU& ub) {
       using std::log;
       if (ub == std::numeric_limits<double>::infinity())
         return identity_free(y);
-      check_less_or_equal("ub_free",
-                          "Upper bounded variable", y, ub);
+      check_less_or_equal("ub_free", "Upper bounded variable", y, ub);
       return log(ub - y);
     }
 

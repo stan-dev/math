@@ -16,7 +16,7 @@ namespace stan {
      * @return value
      */
     template <typename T>
-    inline identity_free(const T& y) {
+    inline T identity_free(const T& y) {
       return y;
     }
 

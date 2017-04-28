@@ -30,7 +30,6 @@ namespace stan {
      *
      * @tparam T type of scalar.
      * @param[in] x scalar
-     * @param[in,out] lp reference to log probability.
      * @return transformed input
      */
     template <typename T>

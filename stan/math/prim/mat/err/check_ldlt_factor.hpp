@@ -21,7 +21,7 @@ namespace stan {
      * @tparam C columns of the matrix
      * @param[in] function function name for error messages
      * @param[in] name variable name for error messages
-     * @param[in] an LDLT factor to check for validity
+     * @param[in] A LDLT factor to check for validity
      * @throws <code>std::domain_error</code> if the LDLT factor is
      *   invalid.
      */
