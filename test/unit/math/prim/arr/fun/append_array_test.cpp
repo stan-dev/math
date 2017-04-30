@@ -1,6 +1,4 @@
 #include <stan/math/prim/arr.hpp>
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, append_array) {
@@ -58,44 +56,6 @@ TEST(MathFunctions, append_array_int) {
   EXPECT_FLOAT_EQ(6.0, result[2]);
   EXPECT_FLOAT_EQ(7.0, result[3]);
   EXPECT_FLOAT_EQ(8.0, result[4]);
-}
-
-TEST(MathFunctions, append_array_var) {
-  std::vector<double> x(3);
-  std::vector<stan::math::var> y(2), result;
-
-  x[0] = 1.0;
-  x[1] = 2.0;
-  x[2] = 3.0;
-  y[0] = 0.5;
-  y[1] = 4.0;
-
-  EXPECT_NO_THROW(result = stan::math::append_array(x, y));
-  EXPECT_EQ(5, result.size());
-  EXPECT_FLOAT_EQ(1.0, result[0].val());
-  EXPECT_FLOAT_EQ(2.0, result[1].val());
-  EXPECT_FLOAT_EQ(3.0, result[2].val());
-  EXPECT_FLOAT_EQ(0.5, result[3].val());
-  EXPECT_FLOAT_EQ(4.0, result[4].val());
-}
-
-TEST(MathFunctions, append_array_fvar) {
-  std::vector<double> x(3);
-  std::vector<stan::math::fvar<double> > y(2), result;
-
-  x[0] = 1.0;
-  x[1] = 2.0;
-  x[2] = 3.0;
-  y[0] = 0.5;
-  y[1] = 4.0;
-
-  EXPECT_NO_THROW(result = stan::math::append_array(y, x));
-  EXPECT_EQ(5, result.size());
-  EXPECT_FLOAT_EQ(0.5, result[0].val());
-  EXPECT_FLOAT_EQ(4.0, result[1].val());
-  EXPECT_FLOAT_EQ(1.0, result[2].val());
-  EXPECT_FLOAT_EQ(2.0, result[3].val());
-  EXPECT_FLOAT_EQ(3.0, result[4].val());
 }
 
 TEST(MathFunctions, append_array_nan) {
