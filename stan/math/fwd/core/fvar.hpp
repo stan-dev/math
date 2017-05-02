@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <ostream>
 
 namespace stan {
@@ -10,230 +11,141 @@ namespace stan {
 
     template <typename T>
     struct fvar {
-      // typedef fvar value_type;
+      T val_;  // value
+      T d_;    // tangent (aka derivative)
 
-      /**
-       * The value of this variable.
-       */
-      T val_;
-
-      /**
-       * The tangent (derivative) of this variable.
-       */
-      T d_;
-
-      /**
-       * Return the value of this variable.
-       *
-       * @return value of this variable
-       */
       T val() const { return val_; }
-
-      /**
-       * Return the tangent (derivative) of this variable.
-       *
-       * @return tangent of this variable
-       */
       T tangent() const { return d_; }
 
+      typedef fvar value_type;
+
       /**
-       * Construct a forward variable with zero value and tangent.
+       * Construct a forward variable with zero value and zero
+       * tangent.
        */
       fvar() : val_(0), d_(0) { }
 
       /**
-       * Construct a forward variable with value and tangent set to
-       * the value and tangent of the specified variable.
-       *
-       * @param[in] x variable to be copied
-       */
-      fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) { }
-
-      /**
-       * Construct a forward variable with the specified value and
-       * zero tangent.
-       *
-       * @tparam V type of value (must be assignable to the value and
-       *   tangent type T)
-       * @param[in] v value
-       */
-      template <typename V>
-      fvar(const V& v) : val_(v), d_(0) {  // NOLINT(runtime/explicit)
-        if (is_nan(v)) d_ = v;
-      }
-
-      /**
-       * Construct a forward variable with the specified value and
+       * Copy construct a forward variable by copying its value and
        * tangent.
        *
-       * @tparam V type of value (must be assignable to the value and
-       *   tangent type T)
-       * @tparam D type of tangent (must be assignable to the value and
-       *   tangent type T)
-       * @param[in] v value
-       * @param[in] d tangent
+       * @param x forward variable to copy
        */
-      template <typename V, typename D>
-      fvar(const V& v, const D& d) : val_(v), d_(d) {
-        if (is_nan(v)) d_ = v;
+      fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {  }
+
+      /**
+       * Construct a forward variable with specified value and zero
+       * tangent.  If the value is not-a-number, tangent will be set to
+       * not-a-number.
+       *
+       * @param v value of constructed forward variable
+       */
+      fvar(double v) : val_(v), d_(0) {  // NOLINT
+        if (unlikely(is_nan(v)))
+          d_ = v;
       }
 
       /**
-       * Add the specified variable to this variable and return a
-       * reference to this variable.
+       * Construct a forward variable with the specified value and
+       * tangent value.  If the value is not-a-number, tangent will be
+       * set to not-a-number.
        *
-       * @param[in] x2 variable to add
-       * @return reference to this variable after addition
+       * @tparam V type of value, must be assignable to T
+       * @param v value
+       * @param d tangent, defaulting to 0
        */
+      template <typename V>
+      fvar(const V& v, double d = 0) : val_(v), d_(d) {  // NOLINT
+        if (unlikely(is_nan(v)))
+          d_ = v;
+      }
+
+      /**
+       * Construct a forward variable with the specified value and
+       * tangent value.  If the value is not-a-number, tangent will be
+       * set to not-a-number.
+       *
+       * @tparam TV type of value, must be assignable to T
+       * @tparam TD type of tangent, must be assignable to T, defaults
+       * to 0
+       * @param v value
+       * @param d tangent
+       */
+      // TV and TD must be assignable to T
+      template <typename TV, typename TD>
+      fvar(const TV& v, const TD& d = 0.0) : val_(v), d_(d) {  // NOLINT
+        if (unlikely(is_nan(v)))
+          d_ = v;
+      }
+
       inline fvar<T>& operator+=(const fvar<T>& x2) {
         val_ += x2.val_;
         d_ += x2.d_;
         return *this;
       }
 
-      /**
-       * Add the specified value to this variable and return a
-       * reference to this variable.
-       *
-       * @param[in] x2 value to add
-       * @return reference to this variable after addition
-       */
       inline fvar<T>& operator+=(double x2) {
         val_ += x2;
         return *this;
       }
 
-      /**
-       * Subtract the specified variable from this variable and return a
-       * reference to this variable.
-       *
-       * @param[in] x2 variable to subtract
-       * @return reference to this variable after subtraction
-       */
       inline fvar<T>& operator-=(const fvar<T>& x2) {
         val_ -= x2.val_;
         d_ -= x2.d_;
         return *this;
       }
 
-      /**
-       * Subtract the specified value from this variable and return a
-       * reference to this variable.
-       *
-       * @param[in] x2 value to add
-       * @return reference to this variable after subtraction
-       */
       inline fvar<T>& operator-=(double x2) {
         val_ -= x2;
         return *this;
       }
 
-      /**
-       * Multiply this variable by the the specified variable and
-       * return a reference to this variable.
-       *
-       * @param[in] x2 variable to multiply
-       * @return reference to this variable after multiplication
-       */
       inline fvar<T>& operator*=(const fvar<T>& x2) {
         d_ = d_ * x2.val_ + val_ * x2.d_;
         val_ *= x2.val_;
         return *this;
       }
 
-      /**
-       * Multiply this variable by the the specified value and
-       * return a reference to this variable.
-       *
-       * @param[in] x2 value to multiply
-       * @return reference to this variable after multiplication
-       */
       inline fvar<T>& operator*=(double x2) {
         val_ *= x2;
         d_ *= x2;
         return *this;
       }
 
-      /**
-       * Divide this variable by the the specified variable and
-       * return a reference to this variable.
-       *
-       * @param[in] x2 variable to divide this variable by
-       * @return reference to this variable after division
-       */
       inline fvar<T>& operator/=(const fvar<T>& x2) {
         d_ = (d_ * x2.val_ - val_ * x2.d_) / (x2.val_ * x2.val_);
         val_ /= x2.val_;
         return *this;
       }
 
-      /**
-       * Divide this value by the the specified variable and
-       * return a reference to this variable.
-       *
-       * @param[in] x2 value to divide this variable by
-       * @return reference to this variable after division
-       */
       inline fvar<T>& operator/=(double x2) {
         val_ /= x2;
         d_ /= x2;
         return *this;
       }
 
-      /**
-       * Increment this variable by one and return a reference to this
-       * variable after the increment.
-       *
-       * @return reference to this variable after increment
-       */
       inline fvar<T>& operator++() {
         ++val_;
         return *this;
       }
 
-      /**
-       * Increment this variable by one and return a reference to a
-       * copy of this variable before it was incremented.
-       *
-       * @return reference to copy of this variable before increment
-       */
       inline fvar<T> operator++(int /*dummy*/) {
         fvar<T> result(val_, d_);
         ++val_;
         return result;
       }
 
-      /**
-       * Decrement this variable by one and return a reference to this
-       * variable after the decrement.
-       *
-       * @return reference to this variable after decrement
-       */
       inline fvar<T>& operator--() {
         --val_;
         return *this;
       }
 
-      /**
-       * Decrement this variable by one and return a reference to a
-       * copy of this variable before it was decremented.
-       *
-       * @return reference to copy of this variable before decrement
-       */
       inline fvar<T> operator--(int /*dummy*/) {
         fvar<T> result(val_, d_);
         --val_;
         return result;
       }
 
-      /**
-       * Write the value of the specified variable to the specified
-       * output stream, returning a reference to the output stream.
-       *
-       * @param[in,out] os stream for writing value
-       * @param[in] v variable whose value is written
-       * @return reference to the specified output stream
-       */
       friend std::ostream& operator<<(std::ostream& os, const fvar<T>& v) {
         return os << v.val_;
       }
