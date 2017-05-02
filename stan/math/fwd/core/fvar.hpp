@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <ostream>
 
@@ -19,63 +20,29 @@ namespace stan {
 
       typedef fvar value_type;
 
-      /**
-       * Construct a forward variable with zero value and zero
-       * tangent.
-       */
-      fvar() : val_(0), d_(0) { }
+      fvar() : val_(0.0), d_(0.0) { }
 
-      /**
-       * Copy construct a forward variable by copying its value and
-       * tangent.
-       *
-       * @param x forward variable to copy
-       */
       fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {  }
 
-      /**
-       * Construct a forward variable with specified value and zero
-       * tangent.  If the value is not-a-number, tangent will be set to
-       * not-a-number.
-       *
-       * @param v value of constructed forward variable
-       */
-      fvar(double v) : val_(v), d_(0) {  // NOLINT
-        if (unlikely(is_nan(v)))
+      fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
+        if (is_nan(v))
           d_ = v;
       }
 
-      /**
-       * Construct a forward variable with the specified value and
-       * tangent value.  If the value is not-a-number, tangent will be
-       * set to not-a-number.
-       *
-       * @tparam V type of value, must be assignable to T
-       * @param v value
-       * @param d tangent, defaulting to 0
-       */
       template <typename V>
-      fvar(const V& v, double d = 0) : val_(v), d_(d) {  // NOLINT
-        if (unlikely(is_nan(v)))
+      fvar(const V& v,
+           typename boost::enable_if_c<ad_promotable<V, T>::value>::type*
+           dummy = 0)
+        : val_(v), d_(0.0) {
+        if (is_nan(v))
           d_ = v;
       }
 
-      /**
-       * Construct a forward variable with the specified value and
-       * tangent value.  If the value is not-a-number, tangent will be
-       * set to not-a-number.
-       *
-       * @tparam TV type of value, must be assignable to T
-       * @tparam TD type of tangent, must be assignable to T, defaults
-       * to 0
-       * @param v value
-       * @param d tangent
-       */
       // TV and TD must be assignable to T
       template <typename TV, typename TD>
-      fvar(const TV& v, const TD& d = 0.0) : val_(v), d_(d) {  // NOLINT
-        if (unlikely(is_nan(v)))
-          d_ = v;
+      fvar(const TV& val, const TD& deriv) : val_(val), d_(deriv) {
+        if (unlikely(is_nan(val)))
+          d_ = val;
       }
 
       inline fvar<T>& operator+=(const fvar<T>& x2) {
