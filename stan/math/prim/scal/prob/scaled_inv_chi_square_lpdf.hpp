@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -123,8 +123,8 @@ namespace stan {
           digamma_half_nu_over_two[i] = digamma(half_nu[i]) * 0.5;
       }
 
-      OperandsAndPartials<T_y, T_dof, T_scale>
-        operands_and_partials(y, nu, s);
+      operands_and_partials<T_y, T_dof, T_scale>
+        ops_partials(y, nu, s);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return s_dbl = value_of(s_vec[n]);
         const T_partials_return nu_dbl = value_of(nu_vec[n]);
@@ -138,12 +138,12 @@ namespace stan {
           logp -= half_nu[n] * s_dbl*s_dbl * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += -(half_nu[n] + 1.0) * inv_y[n]
             + half_nu[n] * s_dbl*s_dbl * inv_y[n]*inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += 0.5 * log_half_nu[n] + 0.5
             - digamma_half_nu_over_two[n]
             + log_s[n]
@@ -151,11 +151,11 @@ namespace stan {
             - 0.5* s_dbl*s_dbl * inv_y[n];
         }
         if (!is_constant_struct<T_scale>::value) {
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
         }
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_dof, typename T_scale>

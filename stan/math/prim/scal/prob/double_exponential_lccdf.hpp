@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -63,8 +63,8 @@ namespace stan {
       using std::exp;
       using std::exp;
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_loc> mu_vec(mu);
@@ -84,24 +84,24 @@ namespace stan {
           const T_partials_return rep_deriv = 1.0
             / (2.0 * exp(-scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[n] -= rep_deriv * inv_sigma;
+            ops_partials.edge1_.partials[n] -= rep_deriv * inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x2[n] += rep_deriv * inv_sigma;
+            ops_partials.edge2_.partials[n] += rep_deriv * inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            operands_and_partials.d_x3[n] += rep_deriv * scaled_diff
+            ops_partials.edge3_.partials[n] += rep_deriv * scaled_diff
               * inv_sigma;
         } else {
           ccdf_log += log_half - scaled_diff;
 
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[n] -= inv_sigma;
+            ops_partials.edge1_.partials[n] -= inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x2[n] += inv_sigma;
+            ops_partials.edge2_.partials[n] += inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            operands_and_partials.d_x3[n] += scaled_diff * inv_sigma;
+            ops_partials.edge3_.partials[n] += scaled_diff * inv_sigma;
         }
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

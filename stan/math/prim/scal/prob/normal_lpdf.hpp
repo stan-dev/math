@@ -69,7 +69,7 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      detail::operands_and_partials<T_y, T_loc, T_scale>
+      operands_and_partials<T_y, T_loc, T_scale>
         ops_partials(y, mu, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
@@ -106,12 +106,12 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          ops_partials.increment_dx1(n, -scaled_diff);
+          ops_partials.edge1_.partials[n] -= scaled_diff;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.increment_dx2(n, scaled_diff);
+          ops_partials.edge2_.partials[n] += scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.increment_dx3(n,
-              -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared);
+          ops_partials.edge3_.partials[n]
+              -= inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
       return ops_partials.build(logp);
     }

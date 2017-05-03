@@ -4,7 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/rev/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 
 #include <stan/math/prim/scal.hpp>

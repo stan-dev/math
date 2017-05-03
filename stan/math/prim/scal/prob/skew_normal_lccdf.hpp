@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LCCDF_HPP
 
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -50,8 +50,8 @@ namespace stan {
                              "Scale parameter", sigma,
                              "Shape paramter", alpha);
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
-        operands_and_partials(y, mu, sigma, alpha);
+      operands_and_partials<T_y, T_loc, T_scale, T_shape>
+        ops_partials(y, mu, sigma, alpha);
 
       using std::log;
       using std::exp;
@@ -86,17 +86,17 @@ namespace stan {
           / ccdf_log_;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= rep_deriv;
+          ops_partials.edge1_.partials[n] -= rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += rep_deriv;
+          ops_partials.edge2_.partials[n] += rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += rep_deriv * diff;
+          ops_partials.edge3_.partials[n] += rep_deriv * diff;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x4[n] -= -2.0 * exp(-0.5 * diff_sq
+          ops_partials.edge4_.partials[n] -= -2.0 * exp(-0.5 * diff_sq
                                                       * (1.0 + alpha_dbl_sq))
             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / ccdf_log_;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

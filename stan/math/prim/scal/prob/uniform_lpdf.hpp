@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -97,18 +97,18 @@ namespace stan {
           log_beta_minus_alpha[i]
             = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
-      OperandsAndPartials<T_y, T_low, T_high>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_low, T_high>
+        ops_partials(y, alpha, beta);
       for (size_t n = 0; n < N; n++) {
         if (include_summand<propto, T_low, T_high>::value)
           logp -= log_beta_minus_alpha[n];
 
         if (!is_constant_struct<T_low>::value)
-          operands_and_partials.d_x2[n] += inv_beta_minus_alpha[n];
+          ops_partials.edge2_.partials[n] += inv_beta_minus_alpha[n];
         if (!is_constant_struct<T_high>::value)
-          operands_and_partials.d_x3[n] -= inv_beta_minus_alpha[n];
+          ops_partials.edge3_.partials[n] -= inv_beta_minus_alpha[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_low, typename T_high>

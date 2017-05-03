@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -49,8 +49,8 @@ namespace stan {
                              "Scale parameter", sigma,
                              "Inv_scale paramter", lambda);
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_inv_scale>
-        operands_and_partials(y, mu, sigma, lambda);
+      operands_and_partials<T_y, T_loc, T_scale, T_inv_scale>
+        ops_partials(y, mu, sigma, lambda);
 
       using std::log;
       using std::log;
@@ -65,9 +65,9 @@ namespace stan {
       for (size_t n = 0; n < N; n++) {
         if (is_inf(y_vec[n])) {
           if (y_vec[n] < 0.0)
-            return operands_and_partials.value(negative_infinity());
+            return ops_partials.build(negative_infinity());
           else
-            return operands_and_partials.value(0.0);
+            return ops_partials.build(0.0);
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -99,13 +99,13 @@ namespace stan {
         cdf_log += log(cdf_);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += (deriv_1 - deriv_2 + deriv_3)
+          ops_partials.edge1_.partials[n] += (deriv_1 - deriv_2 + deriv_3)
             / denom;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += (-deriv_1 + deriv_2 - deriv_3)
+          ops_partials.edge2_.partials[n] += (-deriv_1 + deriv_2 - deriv_3)
             / denom;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += (-deriv_1 * v - deriv_3 * scaled_diff
                 * SQRT_2 - deriv_2 * sigma_dbl * SQRT_2
                 * (-SQRT_2 * 0.5 * (-lambda_dbl + scaled_diff * SQRT_2
@@ -113,7 +113,7 @@ namespace stan {
                    - SQRT_2 * lambda_dbl))
             / denom;
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x4[n]
+          ops_partials.edge4_.partials[n]
             += exp(0.5 * v_sq - u)
             * (SQRT_2 / sqrt_pi * 0.5 * sigma_dbl
                * exp(-(v / SQRT_2 - scaled_diff)
@@ -121,7 +121,7 @@ namespace stan {
                - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
             / denom;
       }
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
 
   }

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_CDF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -76,14 +76,14 @@ namespace stan {
       scalar_seq_view<T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_scale_succ, T_scale_fail>
+        ops_partials(y, alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) <= 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       VectorBuilder<contains_nonconstant_struct<T_scale_succ,
@@ -126,33 +126,33 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
 
         if (!is_constant_struct<T_scale_succ>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl,
                             digamma_alpha_vec[n], digamma_sum_vec[n]) / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl,
                             digamma_beta_vec[n], digamma_sum_vec[n]) / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= P;
+          ops_partials.edge1_.partials[n] *= P;
       }
       if (!is_constant_struct<T_scale_succ>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          operands_and_partials.d_x2[n] *= P;
+          ops_partials.edge2_.partials[n] *= P;
       }
       if (!is_constant_struct<T_scale_fail>::value) {
         for (size_t n = 0; n < stan::length(beta); ++n)
-          operands_and_partials.d_x3[n] *= P;
+          ops_partials.edge3_.partials[n] *= P;
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

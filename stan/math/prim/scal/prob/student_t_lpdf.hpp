@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -153,8 +153,8 @@ namespace stan {
           log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
         }
 
-      OperandsAndPartials<T_y, T_dof, T_loc, T_scale>
-        operands_and_partials(y, nu, mu, sigma);
+      operands_and_partials<T_y, T_dof, T_loc, T_scale>
+        ops_partials(y, nu, mu, sigma);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -172,14 +172,14 @@ namespace stan {
             * log1p_exp[n];
 
         if (!is_constant_struct<T_y>::value) {
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += -(half_nu[n]+0.5)
             * 1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
             * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
         }
         if (!is_constant_struct<T_dof>::value) {
           const T_partials_return inv_nu = 1.0 / nu_dbl;
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += 0.5*digamma_half_nu_plus_half[n] - 0.5*digamma_half_nu[n]
             - 0.5 * inv_nu
             - 0.5*log1p_exp[n]
@@ -188,20 +188,20 @@ namespace stan {
                * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
         }
         if (!is_constant_struct<T_loc>::value) {
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             -= (half_nu[n] + 0.5)
             / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
             * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl*sigma_dbl*nu_dbl));
         }
         if (!is_constant_struct<T_scale>::value) {
           const T_partials_return inv_sigma = 1.0 / sigma_dbl;
-          operands_and_partials.d_x4[n]
+          ops_partials.edge4_.partials[n]
             += -inv_sigma
             + (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
             * (square_y_minus_mu_over_sigma__over_nu[n] * inv_sigma);
         }
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_dof, typename T_loc, typename T_scale>

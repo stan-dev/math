@@ -3,7 +3,7 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -61,14 +61,14 @@ namespace stan {
       scalar_seq_view<T_scale> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
       }
 
       using std::exp;
@@ -105,22 +105,22 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += beta_dbl * y_inv_dbl * y_inv_dbl
+          ops_partials.edge1_.partials[n] += beta_dbl * y_inv_dbl * y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl) * pow(beta_dbl * y_inv_dbl,
                                                alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                   * y_inv_dbl, gamma_vec[n],
                                   digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += - y_inv_dbl
+          ops_partials.edge3_.partials[n] += - y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
             * pow(beta_dbl * y_inv_dbl, alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

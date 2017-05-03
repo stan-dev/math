@@ -3,7 +3,7 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -40,8 +40,8 @@ namespace stan {
       check_nonnegative(function, "Random variable", y);
       check_positive_finite(function, "Inverse scale parameter", beta);
 
-      OperandsAndPartials<T_y, T_inv_scale>
-        operands_and_partials(y, beta);
+      operands_and_partials<T_y, T_inv_scale>
+        ops_partials(y, beta);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_inv_scale> beta_vec(beta);
@@ -52,11 +52,11 @@ namespace stan {
         ccdf_log += -beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= beta_dbl;
+          ops_partials.edge1_.partials[n] -= beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x2[n] -= y_dbl;
+          ops_partials.edge2_.partials[n] -= y_dbl;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

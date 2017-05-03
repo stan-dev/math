@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -78,21 +78,21 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      OperandsAndPartials<T_size1, T_size2>
-        operands_and_partials(alpha, beta);
+      operands_and_partials<T_size1, T_size2>
+        ops_partials(alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as neg infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) <= 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       for (size_t i = 0; i < size; i++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -134,17 +134,17 @@ namespace stan {
           const T_partials_return g
             = - C * (digamma(mu) - digammaOne + dF[1] / F
                      - digamma(alpha_dbl) + digammaTwo);
-          operands_and_partials.d_x1[i] -= g / Pi;
+          ops_partials.edge1_.partials[i] -= g / Pi;
         }
         if (!is_constant_struct<T_size2>::value) {
           const T_partials_return g
             = - C * (digamma(nu) - digammaOne - dF[4] / F - digamma(beta_dbl)
                      + digammaTwo);
-          operands_and_partials.d_x2[i] -= g / Pi;
+          ops_partials.edge2_.partials[i] -= g / Pi;
         }
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

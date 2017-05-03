@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -58,14 +58,14 @@ namespace stan {
       scalar_seq_view<T_scale> s_vec(s);
       size_t N = max_size(y, nu, s);
 
-      OperandsAndPartials<T_y, T_dof, T_scale>
-        operands_and_partials(y, nu, s);
+      operands_and_partials<T_y, T_dof, T_scale>
+        ops_partials(y, nu, s);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       using std::exp;
@@ -89,7 +89,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -109,10 +109,10 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= half_nu_s2_overx_dbl * y_inv_dbl
+          ops_partials.edge1_.partials[n] -= half_nu_s2_overx_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
         if (!is_constant_struct<T_dof>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             -= (0.5 * grad_reg_inc_gamma(half_nu_dbl,
                                          half_nu_s2_overx_dbl,
                                          gamma_vec[n],
@@ -120,10 +120,10 @@ namespace stan {
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl
+          ops_partials.edge3_.partials[n] += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

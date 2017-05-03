@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -58,8 +58,8 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      OperandsAndPartials<T_y, T_low, T_high>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_low, T_high>
+        ops_partials(y, alpha, beta);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
@@ -70,15 +70,15 @@ namespace stan {
         ccdf_log += log(ccdf_log_);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= 1.0 / b_min_a / ccdf_log_;
+          ops_partials.edge1_.partials[n] -= 1.0 / b_min_a / ccdf_log_;
         if (!is_constant_struct<T_low>::value)
-          operands_and_partials.d_x2[n] -= (y_dbl - beta_dbl) / b_min_a
+          ops_partials.edge2_.partials[n] -= (y_dbl - beta_dbl) / b_min_a
             / b_min_a / ccdf_log_;
         if (!is_constant_struct<T_high>::value)
-          operands_and_partials.d_x3[n] += (y_dbl - alpha_dbl) / b_min_a
+          ops_partials.edge3_.partials[n] += (y_dbl - alpha_dbl) / b_min_a
             / b_min_a / ccdf_log_;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

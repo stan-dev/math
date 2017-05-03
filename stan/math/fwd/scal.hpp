@@ -4,7 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/fwd/scal/meta/partials_type.hpp>
-#include <stan/math/fwd/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/fwd/scal/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/scal/meta/operands_and_partials.hpp>
 
 #include <stan/math/prim/scal.hpp>

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -78,8 +78,8 @@ namespace stan {
         if (include_summand<propto, T_inv_scale>::value)
           log_beta[i] = log(value_of(beta_vec[i]));
 
-      OperandsAndPartials<T_y, T_inv_scale>
-        operands_and_partials(y, beta);
+      operands_and_partials<T_y, T_inv_scale>
+        ops_partials(y, beta);
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -90,11 +90,11 @@ namespace stan {
           logp -= beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= beta_dbl;
+          ops_partials.edge1_.partials[n] -= beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x2[n] += 1 / beta_dbl - y_dbl;
+          ops_partials.edge2_.partials[n] += 1 / beta_dbl - y_dbl;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_inv_scale>

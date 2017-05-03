@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -69,8 +69,8 @@ namespace stan {
       scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
-      OperandsAndPartials<T_shape, T_inv_scale>
-        operands_and_partials(alpha, beta);
+      operands_and_partials<T_shape, T_inv_scale>
+        ops_partials(alpha, beta);
 
       size_t len_ab = max_size(alpha, beta);
       VectorBuilder<true, T_partials_return, T_shape, T_inv_scale>
@@ -130,11 +130,11 @@ namespace stan {
             logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
 
           if (!is_constant_struct<T_shape>::value)
-            operands_and_partials.d_x1[i]
+            ops_partials.edge1_.partials[i]
               += n_vec[i] / value_of(alpha_vec[i])
               - 1.0 / value_of(beta_vec[i]);
           if (!is_constant_struct<T_inv_scale>::value)
-            operands_and_partials.d_x2[i]
+            ops_partials.edge2_.partials[i]
               += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
         } else {  // standard density definition
           if (include_summand<propto, T_shape>::value)
@@ -149,17 +149,17 @@ namespace stan {
               - n_vec[i] * log1p_beta[i];
 
           if (!is_constant_struct<T_shape>::value)
-            operands_and_partials.d_x1[i]
+            ops_partials.edge1_.partials[i]
               += digamma(value_of(alpha_vec[i]) + n_vec[i])
               - digamma_alpha[i]
               + log_beta_m_log1p_beta[i];
           if (!is_constant_struct<T_inv_scale>::value)
-            operands_and_partials.d_x2[i]
+            ops_partials.edge2_.partials[i]
               += lambda_m_alpha_over_1p_beta[i]
               - n_vec[i]  / (value_of(beta_vec[i]) + 1.0);
         }
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

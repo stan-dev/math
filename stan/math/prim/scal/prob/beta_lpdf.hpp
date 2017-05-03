@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -95,8 +95,8 @@ namespace stan {
           return LOG_ZERO;
       }
 
-      OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_scale_succ, T_scale_fail>
+        ops_partials(y, alpha, beta);
 
       VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
                     T_partials_return, T_y>
@@ -174,16 +174,16 @@ namespace stan {
           logp += (beta_dbl-1.0) * log1m_y[n];
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl
+          ops_partials.edge1_.partials[n] += (alpha_dbl-1)/y_dbl
             + (beta_dbl-1)/(y_dbl-1);
         if (!is_constant_struct<T_scale_succ>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
         if (!is_constant_struct<T_scale_fail>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>

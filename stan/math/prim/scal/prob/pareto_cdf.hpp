@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -51,14 +51,14 @@ namespace stan {
       scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, y_min, alpha);
 
-      OperandsAndPartials<T_y, T_scale, T_shape>
-        operands_and_partials(y, y_min, alpha);
+      operands_and_partials<T_y, T_scale, T_shape>
+        ops_partials(y, y_min, alpha);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
 
@@ -79,30 +79,30 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl)
             / Pn;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += - alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += - exp(alpha_dbl * log_dbl) * log_dbl / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= P;
+          ops_partials.edge1_.partials[n] *= P;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(y_min); ++n)
-          operands_and_partials.d_x2[n] *= P;
+          ops_partials.edge2_.partials[n] *= P;
       }
       if (!is_constant_struct<T_shape>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          operands_and_partials.d_x3[n] *= P;
+          ops_partials.edge3_.partials[n] *= P;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

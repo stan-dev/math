@@ -10,7 +10,6 @@
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
 #include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>
-#include <stan/math/prim/arr/meta/VectorView.hpp>
 
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>

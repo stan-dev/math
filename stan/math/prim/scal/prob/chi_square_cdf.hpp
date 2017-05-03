@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -61,14 +61,14 @@ namespace stan {
       scalar_seq_view<T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
-      OperandsAndPartials<T_y, T_dof>
-        operands_and_partials(y, nu);
+      operands_and_partials<T_y, T_dof>
+        ops_partials(y, nu);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       using boost::math::tgamma;
@@ -104,10 +104,10 @@ namespace stan {
         cdf *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+          ops_partials.edge1_.partials[n] += beta_dbl * exp(-beta_dbl * y_dbl)
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                         * y_dbl, gamma_vec[n],
                                         digamma_vec[n]) / Pn;
@@ -115,13 +115,13 @@ namespace stan {
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= cdf;
+          ops_partials.edge1_.partials[n] *= cdf;
       }
       if (!is_constant_struct<T_dof>::value) {
         for (size_t n = 0; n < stan::length(nu); ++n)
-          operands_and_partials.d_x2[n] *= cdf;
+          ops_partials.edge2_.partials[n] *= cdf;
       }
-      return operands_and_partials.value(cdf);
+      return ops_partials.build(cdf);
     }
 
   }

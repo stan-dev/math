@@ -4,7 +4,7 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/normal_lpdf.hpp>
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -108,8 +108,8 @@ namespace stan {
         return 0.0;
 
       // set up template expressions wrapping scalars into vector views
-      OperandsAndPartials<T_y, T_s, T_loc, T_scale>
-        operands_and_partials(y_bar, s_squared, mu, sigma);
+      operands_and_partials<T_y, T_s, T_loc, T_scale>
+        ops_partials(y_bar, s_squared, mu, sigma);
 
       scalar_seq_view<const T_y> y_bar_vec(y_bar);
       scalar_seq_view<const T_s> s_squared_vec(s_squared);
@@ -145,18 +145,18 @@ namespace stan {
           const T_partials_return common_derivative =
             n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[i] += common_derivative;
+            ops_partials.edge1_.partials[i] += common_derivative;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x3[i] -= common_derivative;
+            ops_partials.edge3_.partials[i] -= common_derivative;
         }
         if (!is_constant_struct<T_s>::value)
-          operands_and_partials.d_x2[i] -=
+          ops_partials.edge2_.partials[i] -=
             0.5 / sigma_squared;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x4[i]
+          ops_partials.edge4_.partials[i]
             += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_s, typename T_n,

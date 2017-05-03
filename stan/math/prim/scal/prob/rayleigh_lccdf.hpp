@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -44,7 +44,7 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
+      operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_scale> sigma_vec(sigma);
@@ -64,12 +64,12 @@ namespace stan {
           ccdf_log += -0.5 * y_sqr * inv_sigma_sqr;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= y_dbl * inv_sigma_sqr;
+          ops_partials.edge1_.partials[n] -= y_dbl * inv_sigma_sqr;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x2[n] += y_sqr * inv_sigma_sqr
+          ops_partials.edge2_.partials[n] += y_sqr * inv_sigma_sqr
             * inv_sigma[n];
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

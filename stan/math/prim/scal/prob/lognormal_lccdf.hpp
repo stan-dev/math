@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -44,8 +44,8 @@ namespace stan {
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_loc> mu_vec(mu);
@@ -56,7 +56,7 @@ namespace stan {
 
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0.0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       const double log_half = std::log(0.5);
@@ -74,14 +74,14 @@ namespace stan {
         ccdf_log += log_half + log(erfc_calc);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= rep_deriv / erfc_calc / y_dbl;
+          ops_partials.edge1_.partials[n] -= rep_deriv / erfc_calc / y_dbl;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += rep_deriv / erfc_calc;
+          ops_partials.edge2_.partials[n] += rep_deriv / erfc_calc;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += rep_deriv * scaled_diff * SQRT_2
+          ops_partials.edge3_.partials[n] += rep_deriv * scaled_diff * SQRT_2
             / erfc_calc;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

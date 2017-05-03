@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GAMMA_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GAMMA_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -61,14 +61,14 @@ namespace stan {
       scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_shape, T_inv_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_inv_scale>
+        ops_partials(y, alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       using boost::math::tgamma;
@@ -94,7 +94,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
@@ -105,18 +105,18 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
+          ops_partials.edge1_.partials[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                   * y_dbl, gamma_vec[n],
                                   digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x3[n] -= y_dbl * exp(-beta_dbl * y_dbl)
+          ops_partials.edge3_.partials[n] -= y_dbl * exp(-beta_dbl * y_dbl)
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

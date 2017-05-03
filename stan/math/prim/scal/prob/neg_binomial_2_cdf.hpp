@@ -13,7 +13,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
@@ -51,14 +51,14 @@ namespace stan {
       scalar_seq_view<T_precision> phi_vec(phi);
       size_t size = max_size(n, mu, phi);
 
-      OperandsAndPartials<T_location, T_precision>
-        operands_and_partials(mu, phi);
+      operands_and_partials<T_location, T_precision>
+        ops_partials(mu, phi);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       VectorBuilder<!is_constant_struct<T_precision>::value,
@@ -83,7 +83,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.value(1.0);
+          return ops_partials.build(1.0);
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return mu_dbl = value_of(mu_vec[i]);
@@ -99,11 +99,11 @@ namespace stan {
         P *= P_i;
 
         if (!is_constant_struct<T_location>::value)
-          operands_and_partials.d_x1[i] +=
+          ops_partials.edge1_.partials[i] +=
             - inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * phi_dbl * d_dbl / P_i;
 
         if (!is_constant_struct<T_precision>::value) {
-          operands_and_partials.d_x2[i]
+          ops_partials.edge2_.partials[i]
             += inc_beta_dda(phi_dbl, n_dbl + 1, p_dbl,
                             digamma_phi_vec[i],
                             digamma_sum_vec[i]) / P_i
@@ -114,15 +114,15 @@ namespace stan {
 
       if (!is_constant_struct<T_location>::value) {
         for (size_t i = 0; i < stan::length(mu); ++i)
-          operands_and_partials.d_x1[i] *= P;
+          ops_partials.edge1_.partials[i] *= P;
       }
 
       if (!is_constant_struct<T_precision>::value) {
         for (size_t i = 0; i < stan::length(phi); ++i)
-          operands_and_partials.d_x2[i] *= P;
+          ops_partials.edge2_.partials[i] *= P;
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

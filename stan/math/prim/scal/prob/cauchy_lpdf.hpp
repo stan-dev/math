@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -88,8 +88,8 @@ namespace stan {
         }
       }
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -112,17 +112,17 @@ namespace stan {
           logp -= log1p(y_minus_mu_over_sigma_squared);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= 2 * y_minus_mu
+          ops_partials.edge1_.partials[n] -= 2 * y_minus_mu
             / (sigma_squared[n] + y_minus_mu_squared);
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += 2 * y_minus_mu
+          ops_partials.edge2_.partials[n] += 2 * y_minus_mu
             / (sigma_squared[n] + y_minus_mu_squared);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += (y_minus_mu_squared - sigma_squared[n])
             * inv_sigma[n] / (sigma_squared[n] + y_minus_mu_squared);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

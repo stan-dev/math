@@ -3,7 +3,7 @@
 
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -101,7 +101,7 @@ namespace stan {
           digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
       }
 
-      OperandsAndPartials<T_y, T_dof> operands_and_partials(y, nu);
+      operands_and_partials<T_y, T_dof> ops_partials(y, nu);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return nu_dbl = value_of(nu_vec[n]);
         const T_partials_return half_nu = 0.5 * nu_dbl;
@@ -114,16 +114,16 @@ namespace stan {
           logp -= 0.5 * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += -(half_nu+1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += NEG_LOG_TWO_OVER_TWO - digamma_half_nu_over_two[n]
             - 0.5*log_y[n];
         }
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_dof>

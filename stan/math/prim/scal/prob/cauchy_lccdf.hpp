@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -65,8 +65,8 @@ namespace stan {
       scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       using std::atan;
       using std::log;
@@ -85,13 +85,13 @@ namespace stan {
                                                    * (z * z * sigma_dbl
                                                       + sigma_dbl));
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= rep_deriv;
+          ops_partials.edge1_.partials[n] -= rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += rep_deriv;
+          ops_partials.edge2_.partials[n] += rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += rep_deriv * z;
+          ops_partials.edge3_.partials[n] += rep_deriv * z;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -62,8 +62,8 @@ namespace stan {
       scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, lambda, alpha);
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
-        operands_and_partials(y, mu, lambda, alpha);
+      operands_and_partials<T_y, T_loc, T_scale, T_shape>
+        ops_partials(y, mu, lambda, alpha);
 
       VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>
                     ::value,
@@ -115,16 +115,16 @@ namespace stan {
           logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= deriv_1_2;
+          ops_partials.edge1_.partials[n] -= deriv_1_2;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += deriv_1_2;
+          ops_partials.edge2_.partials[n] += deriv_1_2;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] -= alpha_div_sum * (mu_dbl - y_dbl)
+          ops_partials.edge3_.partials[n] -= alpha_div_sum * (mu_dbl - y_dbl)
             / lambda_dbl + inv_sum;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x4[n] += inv_alpha[n] - log1p_scaled_diff[n];
+          ops_partials.edge4_.partials[n] += inv_alpha[n] - log1p_scaled_diff[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

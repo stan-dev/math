@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -79,8 +79,8 @@ namespace stan {
       scalar_seq_view<T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_scale_succ, T_scale_fail>
+        ops_partials(y, alpha, beta);
 
       using std::pow;
       using std::exp;
@@ -122,7 +122,7 @@ namespace stan {
         ccdf_log += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= pow(1-y_dbl, beta_dbl-1)
+          ops_partials.edge1_.partials[n] -= pow(1-y_dbl, beta_dbl-1)
             * pow(y_dbl, alpha_dbl-1) / betafunc_dbl / Pn;
 
         T_partials_return g1 = 0;
@@ -136,11 +136,11 @@ namespace stan {
                             betafunc_dbl);
         }
         if (!is_constant_struct<T_scale_succ>::value)
-          operands_and_partials.d_x2[n] -= g1 / Pn;
+          ops_partials.edge2_.partials[n] -= g1 / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          operands_and_partials.d_x3[n] -= g2 / Pn;
+          ops_partials.edge3_.partials[n] -= g2 / Pn;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

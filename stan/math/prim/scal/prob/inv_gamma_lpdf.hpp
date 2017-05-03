@@ -3,7 +3,7 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -84,8 +84,8 @@ namespace stan {
       }
 
       size_t N = max_size(y, alpha, beta);
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, beta);
 
       using std::log;
 
@@ -133,15 +133,15 @@ namespace stan {
           logp -= beta_dbl * inv_y[n];
 
         if (!is_constant<typename is_vector<T_y>::type>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += -(alpha_dbl+1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
         if (!is_constant<typename is_vector<T_shape>::type>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += -digamma_alpha[n] + log_beta[n] - log_y[n];
         if (!is_constant<typename is_vector<T_scale>::type>::value)
-          operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - inv_y[n];
+          ops_partials.edge3_.partials[n] += alpha_dbl / beta_dbl - inv_y[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

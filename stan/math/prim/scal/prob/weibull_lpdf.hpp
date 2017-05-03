@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -109,8 +109,8 @@ namespace stan {
           y_div_sigma_pow_alpha[i] = pow(y_dbl * inv_sigma[i], alpha_dbl);
         }
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, sigma);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, sigma);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         if (include_summand<propto, T_shape>::value)
@@ -124,19 +124,19 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value) {
           const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials[n]
             += (alpha_dbl-1.0) * inv_y
             - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
         }
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials[n]
             += 1.0/alpha_dbl
             + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -64,7 +64,7 @@ namespace stan {
             && n_vec[i] != 0)
           return LOG_ZERO;
 
-      OperandsAndPartials<T_log_rate> operands_and_partials(alpha);
+      operands_and_partials<T_log_rate> ops_partials(alpha);
 
       // FIXME: cache value_of for alpha_vec?  faster if only one?
       VectorBuilder<include_summand<propto, T_log_rate>::value,
@@ -84,9 +84,9 @@ namespace stan {
         }
 
         if (!is_constant_struct<T_log_rate>::value)
-          operands_and_partials.d_x1[i] += n_vec[i] - exp_alpha[i];
+          ops_partials.edge1_.partials[i] += n_vec[i] - exp_alpha[i];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -88,8 +88,8 @@ namespace stan {
       }
 
       size_t N = max_size(y, alpha, beta);
-      OperandsAndPartials<T_y, T_shape, T_inv_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_inv_scale>
+        ops_partials(y, alpha, beta);
 
       using boost::math::lgamma;
       using boost::math::digamma;
@@ -137,14 +137,14 @@ namespace stan {
           logp -= beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
+          ops_partials.edge1_.partials[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n] += -digamma_alpha[n] + log_beta[n]
+          ops_partials.edge2_.partials[n] += -digamma_alpha[n] + log_beta[n]
             + log_y[n];
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - y_dbl;
+          ops_partials.edge3_.partials[n] += alpha_dbl / beta_dbl - y_dbl;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_inv_scale>

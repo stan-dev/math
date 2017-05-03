@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -72,8 +72,8 @@ namespace stan {
             = log(modified_bessel_first_kind(0, value_of(kappa_vec[i])));
       }
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, kappa);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, kappa);
 
       size_t N = max_size(y, mu, kappa);
 
@@ -99,14 +99,14 @@ namespace stan {
           logp += kappa_cos;
 
         if (!y_const)
-          operands_and_partials.d_x1[n] += kappa_sin;
+          ops_partials.edge1_.partials[n] += kappa_sin;
         if (!mu_const)
-          operands_and_partials.d_x2[n] -= kappa_sin;
+          ops_partials.edge2_.partials[n] -= kappa_sin;
         if (!kappa_const)
-          operands_and_partials.d_x3[n] += kappa_cos / kappa_dbl[n]
+          ops_partials.edge3_.partials[n] += kappa_cos / kappa_dbl[n]
             - bessel1 / bessel0;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template<typename T_y, typename T_loc, typename T_scale>

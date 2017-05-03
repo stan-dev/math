@@ -3,7 +3,7 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -66,8 +66,8 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, beta);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, beta);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_loc> mu_vec(mu);
@@ -98,15 +98,15 @@ namespace stan {
         T_partials_return scaled_diff = inv_beta[n]
           * exp(-y_minus_mu_over_beta);
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= inv_beta[n] - scaled_diff;
+          ops_partials.edge1_.partials[n] -= inv_beta[n] - scaled_diff;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += inv_beta[n] - scaled_diff;
+          ops_partials.edge2_.partials[n] += inv_beta[n] - scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials[n]
             += -inv_beta[n] + y_minus_mu_over_beta * inv_beta[n]
             - scaled_diff * y_minus_mu_over_beta;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

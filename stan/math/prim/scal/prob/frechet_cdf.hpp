@@ -3,7 +3,7 @@
 
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -47,8 +47,8 @@ namespace stan {
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, sigma);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, sigma);
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_scale> sigma_vec(sigma);
@@ -64,26 +64,26 @@ namespace stan {
         cdf *= cdf_;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += pow_ * alpha_dbl / y_dbl;
+          ops_partials.edge1_.partials[n] += pow_ * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n] += pow_ * log(y_dbl / sigma_dbl);
+          ops_partials.edge2_.partials[n] += pow_ * log(y_dbl / sigma_dbl);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] -= pow_ * alpha_dbl / sigma_dbl;
+          ops_partials.edge3_.partials[n] -= pow_ * alpha_dbl / sigma_dbl;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= cdf;
+          ops_partials.edge1_.partials[n] *= cdf;
       }
       if (!is_constant_struct<T_shape>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          operands_and_partials.d_x2[n] *= cdf;
+          ops_partials.edge2_.partials[n] *= cdf;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(sigma); ++n)
-          operands_and_partials.d_x3[n] *= cdf;
+          ops_partials.edge3_.partials[n] *= cdf;
       }
-      return operands_and_partials.value(cdf);
+      return ops_partials.build(cdf);
     }
 
   }
