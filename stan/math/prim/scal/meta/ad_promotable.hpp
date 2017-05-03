@@ -30,11 +30,11 @@ namespace stan {
      * @tparam T promoted and target type
      */
     template <typename T>
-    struct ad_promotable<typename boost::enable_if<boost::is_arithmetic<T>, T>::type,
-                         T> {
+    struct
+    ad_promotable<typename boost::enable_if<boost::is_arithmetic<T>, T>::type,
+                  T> {
       enum { value = true };
     };
-
     /**
      * A long double may be promoted to a double.
      */
