@@ -120,8 +120,8 @@ namespace stan {
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl
-            * gamma_p_deriv / Pn;
+          ops_partials.edge3_.partials[n]
+            += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
       }
       return ops_partials.build(P);
     }

@@ -21,14 +21,14 @@ namespace stan {
       template <>
       class broadcast_array<void> {
       public:
-        explicit broadcast_array() {}
+        broadcast_array() {}
         double& operator[] (int /*i*/) {
           throw std::logic_error("Don't do this");
         }
         int size() { return 0; }
       };
-    } // end namespace detail
-  } // end namespace math
-} // end namespace stan
+    }  // end namespace detail
+  }  // end namespace math
+}  // end namespace stan
 
 #endif

@@ -3,20 +3,19 @@
 
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp> // XXX are both of these includes okay
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {
   namespace math {
     namespace detail {
       // Vectorized Univariate
-      // ViewElt = double, Arg = std::vector<var> d_ holds vector<double>
       template <typename ViewElt>
       class ops_partials_edge<ViewElt, std::vector<var> >
-        : public ops_partials_edge_mat_prim<ViewElt, std::vector<var>, -1, 1> {
+        : public ops_partials_edge_mat<ViewElt, std::vector<var>, -1, 1> {
       public:
         explicit ops_partials_edge(const std::vector<var>& ops)
-          : ops_partials_edge_mat_prim<ViewElt, std::vector<var>, -1, 1>(ops) {}
+          : ops_partials_edge_mat<ViewElt, std::vector<var>, -1, 1>(ops) {}
         void dump_operands(vari** varis) {
           for (size_t i = 0; i < this->operands.size(); ++i) {
             varis[i] = this->operands[i].vi_;
@@ -25,10 +24,12 @@ namespace stan {
       };
       template <typename ViewElt, int R, int C>
       class ops_partials_edge<ViewElt, Eigen::Matrix<var, R, C> >
-        : public ops_partials_edge_mat_prim<ViewElt, Eigen::Matrix<var, R, C>, R, C> {
+        : public ops_partials_edge_mat<ViewElt,
+                                       Eigen::Matrix<var, R, C>, R, C> {
       public:
         explicit ops_partials_edge(const Eigen::Matrix<var, R, C>& ops)
-          : ops_partials_edge_mat_prim<ViewElt, Eigen::Matrix<var, R, C>, R, C>(ops) {}
+          : ops_partials_edge_mat<ViewElt, Eigen::Matrix<var, R, C>, R, C>(ops)
+        {}
         void dump_operands(vari** varis) {
           for (int i = 0; i < this->operands.size(); ++i) {
             varis[i] = this->operands(i).vi_;
@@ -37,16 +38,11 @@ namespace stan {
       };
 
       // MULTIVARIATE
-      // VIEWS of ROW VECTORS (R = 1, C = -1)
-      // =====================
-      // ViewElt = RowVectorXd, Arg = row_vector_v, d_ holds RowVectorXd
-      // ViewElt = RowVectorXd, Arg = vector<row_vector_v> d_ holds vector<RowVectorXd>
-
       template <typename ViewElt, typename Op>
       class ops_partials_edge_multi_rev
         : public ops_partials_edge_multivariate_prim<ViewElt, Op> {
       public:
-        ops_partials_edge_multi_rev(const std::vector<Op>& ops)
+        explicit ops_partials_edge_multi_rev(const std::vector<Op>& ops)
           : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
         void dump_partials(double* partials) {
           int p_i = 0;
@@ -82,17 +78,15 @@ namespace stan {
           : ops_partials_edge_multi_rev<ViewElt, vector_v>(ops) {}
       };
 
-      // ViewElt = MatrixXd, Arg = vector<matrix_v> d_ holds vector<MatriXd>
-      // ViewElt = MatrixXd, Arg = vector<MatrixXd> d_ holds dummy
       template <typename ViewElt>
       class ops_partials_edge<ViewElt, std::vector<matrix_v> >
         : public ops_partials_edge_multi_rev<ViewElt, matrix_v> {
       public:
-        ops_partials_edge(const std::vector<matrix_v>& ops)
+        explicit ops_partials_edge(const std::vector<matrix_v>& ops)
           : ops_partials_edge_multi_rev<ViewElt, matrix_v>(ops) {}
       };
 
-    } // end namespace detail
-  } // end namespace math
-} // end namespace stan
+    }  // end namespace detail
+  }  // end namespace math
+}  // end namespace stan
 #endif

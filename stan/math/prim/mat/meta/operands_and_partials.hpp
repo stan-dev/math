@@ -36,14 +36,15 @@ namespace stan {
       // ViewElt = double, Arg = std::vector<double> d_ holds dummy
       // Op will always be some container of vars
       template <typename ViewElt, typename Op, int R, int C>
-      class ops_partials_edge_mat_prim {
+      class ops_partials_edge_mat {
       public:
         typedef Eigen::Matrix<ViewElt, R, C> partials_t;
         const Op& operands;
         partials_t partials;
         broadcast_array<partials_t> partials_vec;
-        ops_partials_edge_mat_prim(const Op& ops)
-          : operands(ops), partials(zero_vec_or_mat<ViewElt, Op, R, C>::zero(ops)),
+        explicit ops_partials_edge_mat(const Op& ops)
+          : operands(ops),
+            partials(zero_vec_or_mat<ViewElt, Op, R, C>::zero(ops)),
             partials_vec(partials) {}
         void dump_partials(double* partials) {
           for (int i = 0; i < this->partials.size(); ++i) {
@@ -58,10 +59,10 @@ namespace stan {
       template <typename ViewElt, typename Op>
       class ops_partials_edge_multivariate_prim {
       public:
-        typedef Eigen::Matrix<ViewElt, Eigen::Dynamic, Eigen::Dynamic> partial_t;
+        typedef Eigen::Matrix<ViewElt, -1, -1> partial_t;
         std::vector<partial_t> partials_vec;
         const std::vector<Op>& operands;
-        ops_partials_edge_multivariate_prim(const std::vector<Op>& ops)
+        explicit ops_partials_edge_multivariate_prim(const std::vector<Op>& ops)
           : partials_vec(ops.size()), operands(ops) {
           for (size_t i = 0; i < ops.size(); ++i) {
             partials_vec[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());

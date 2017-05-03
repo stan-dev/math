@@ -68,7 +68,8 @@ namespace stan {
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials[n] -= alpha_dbl / y_dbl * rep_deriv_;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge2_.partials[n] -= log(y_dbl / sigma_dbl) * rep_deriv_;
+          ops_partials.edge2_.partials[n]
+            -= log(y_dbl / sigma_dbl) * rep_deriv_;
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge3_.partials[n] += alpha_dbl / sigma_dbl * rep_deriv_;
       }

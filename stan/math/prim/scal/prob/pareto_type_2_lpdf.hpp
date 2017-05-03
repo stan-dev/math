@@ -122,7 +122,8 @@ namespace stan {
           ops_partials.edge3_.partials[n] -= alpha_div_sum * (mu_dbl - y_dbl)
             / lambda_dbl + inv_sum;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge4_.partials[n] += inv_alpha[n] - log1p_scaled_diff[n];
+          ops_partials.edge4_.partials[n]
+            += inv_alpha[n] - log1p_scaled_diff[n];
       }
       return ops_partials.build(logp);
     }

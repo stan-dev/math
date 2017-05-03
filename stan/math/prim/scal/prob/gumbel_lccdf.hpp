@@ -23,8 +23,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Gumbel log complementary cumulative distribution for the 
-     * given location and scale. Given containers of matching sizes, returns 
+     * Returns the Gumbel log complementary cumulative distribution for the
+     * given location and scale. Given containers of matching sizes, returns
      * the log sum of probabilities.
      *
      * @tparam T_y type of real parameter
@@ -86,7 +86,8 @@ namespace stan {
         if (!is_constant_struct<T_loc>::value)
           ops_partials.edge2_.partials[n] += rep_deriv / ccdf_log_;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += rep_deriv * scaled_diff / ccdf_log_;
+          ops_partials.edge3_.partials[n]
+            += rep_deriv * scaled_diff / ccdf_log_;
       }
 
       return ops_partials.build(ccdf_log);

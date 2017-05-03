@@ -16,7 +16,7 @@ namespace stan {
       class ops_partials_edge<ViewElt, var>
         : public ops_partials_edge_singular<ViewElt, var> {
       public:
-        ops_partials_edge(const var& op)
+        explicit ops_partials_edge(const var& op)
           : ops_partials_edge_singular<ViewElt, var>(op) {}
         void dump_partials(ViewElt* partials) {
           *partials = this->partials[0];
@@ -25,7 +25,7 @@ namespace stan {
           *varis = this->operand.vi_;
         }
       };
-    } // end namespace detail
+    }  // end namespace detail
     template <typename Op1, typename Op2, typename Op3, typename Op4>
     class operands_and_partials<Op1, Op2, Op3, Op4, var> {
     public:
@@ -34,18 +34,20 @@ namespace stan {
       detail::ops_partials_edge<double, Op2> edge2_;
       detail::ops_partials_edge<double, Op3> edge3_;
       detail::ops_partials_edge<double, Op4> edge4_;
-      operands_and_partials(const Op1& o1)
+      explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }
       operands_and_partials(const Op1& o1, const Op2& o2)
         : edge1_(o1), edge2_(o2) { }
       operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
         : edge1_(o1), edge2_(o2), edge3_(o3) { }
-      operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3, const Op4& o4)
+      operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                            const Op4& o4)
         : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) { }
 
       // this is what matters in terms of going on autodiff stack
       var build(double value) {
-        size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size();
+        size_t size = edge1_.size() + edge2_.size() + edge3_.size()
+          + edge4_.size();
         vari** varis = ChainableStack::memalloc_.alloc_array<vari*>(size);
         int idx = 0;
         edge1_.dump_operands(&varis[idx]);
@@ -60,8 +62,9 @@ namespace stan {
         edge3_.dump_partials(&partials[idx += edge2_.size()]);
         edge4_.dump_partials(&partials[idx += edge3_.size()]);
 
-        return var(new precomputed_gradients_vari(value, size, varis, partials));
-      };
+        return var(new
+                   precomputed_gradients_vari(value, size, varis, partials));
+      }
     };
   }
 }
