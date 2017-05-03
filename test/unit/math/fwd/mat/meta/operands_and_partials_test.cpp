@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
-  using stan::math::detail::operands_and_partials;
+  using stan::math::operands_and_partials;
   using stan::math::fvar;
 
   std::vector<fvar<double> > x1;
@@ -18,11 +18,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   dx1 << 17.0, 13.0;
 
   operands_and_partials<std::vector<fvar<double> >,fvar<double>,fvar<double> > o(x1, x2, x3);
-  o.increment_dx1_vector(0, dx1);
-  o.increment_dx2(0, 19.0);
-  o.increment_dx2(0, 19.0);
-  o.increment_dx3(0, 23.0);
-  o.increment_dx3(0, 23.0);
+  o.edge1_.partials_vec[0] += dx1;
+  o.edge2_.partials[0] += 19.0;
+  o.edge2_.partials[0] += 19.0;
+  o.edge3_.partials[0] += 23.0;
+  o.edge3_.partials[0] += 23.0;
   fvar<double> y = o.build(-1.0);
 
   EXPECT_FLOAT_EQ(2*17 + 3*13 - 2*19 + 2*4*23,y.d_);

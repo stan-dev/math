@@ -9,35 +9,34 @@
 namespace stan {
   namespace math {
     namespace detail {
-      template <typename ViewElt, typename Op, typename Dx>
-      class ops_partials_edge_vec_fwd
-        : public ops_partials_edge_mat_prim<ViewElt, Op, -1, 1> {
+      // Vectorized Univariate
+      template <typename ViewElt, typename Dx>
+      class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > >
+        : public ops_partials_edge_mat_prim<ViewElt, std::vector<fvar<Dx> >, -1, 1> {
       public:
-        ops_partials_edge_vec_fwd(const Op& ops)
-          : ops_partials_edge_mat_prim<ViewElt, Op, -1, 1>(ops) {}
+        explicit ops_partials_edge(const std::vector<fvar<Dx> >& ops)
+          : ops_partials_edge_mat_prim<ViewElt, std::vector<fvar<Dx> >, -1, 1>(ops) {}
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {
-            derivative += this->partials[i] * this->operands[i].d_;
+            derivative += this->partials(i) * this->operands[i].d_;
           }
           return derivative;
         }
       };
-
-      // Vectorized Univariate
-      template <typename ViewElt, typename Dx>
-      class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > >
-        : public ops_partials_edge_vec_fwd<ViewElt, std::vector<fvar<Dx> >, Dx> {
-      public:
-        explicit ops_partials_edge(const std::vector<fvar<Dx> >& ops)
-          : ops_partials_edge_vec_fwd<ViewElt, std::vector<fvar<Dx> >, Dx>(ops) {}
-      };
       template <typename ViewElt, typename Dx, int R, int C>
       class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> >
-        : public ops_partials_edge_vec_fwd<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx> {
+        : public ops_partials_edge_mat_prim<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, R, C> {
       public:
         explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx>, R, C>& ops)
-          : ops_partials_edge_vec_fwd<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, Dx>(ops) {}
+          : ops_partials_edge_mat_prim<ViewElt, Eigen::Matrix<fvar<Dx>, R, C>, R, C>(ops) {}
+        Dx dx() {
+          Dx derivative(0);
+          for (int i = 0; i < this->size(); ++i) {
+            derivative += this->partials(i) * this->operands(i).d_;
+          }
+          return derivative;
+        }
       };
 
       // Multivariate; vectors of eigen types
