@@ -233,8 +233,6 @@ namespace stan {
      * Internally calls llt rather than using cholesky_decompose in order to
      * use selfadjointView<Lower> optimization.
      *
-     * TODO(rtrangucci): Use Eigen 3.3 inplace Cholesky when possible
-     *
      * Note chainable stack varis are created below in Matrix<var, -1, -1>
      *
      * @param A Matrix
@@ -246,10 +244,8 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      Eigen::LLT<Eigen::MatrixXd> L_factor
-        = L_A.selfadjointView<Eigen::Lower>().llt();
+      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd> > L_factor(L_A);
       check_pos_definite("cholesky_decompose", "m", L_factor);
-      L_A = L_factor.matrixL();
 
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
