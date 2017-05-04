@@ -5,18 +5,19 @@
 #include <stdexcept>
 #include <vector>
 
-void test_print_mat_size(int n, const std::string& expected) {
+template <int N>
+void test_print_mat_size(const std::string& expected) {
   using stan::math::print_mat_size;
   std::stringstream ss;
-  stan::math::print_mat_size(n, ss);
+  stan::math::print_mat_size<N>(ss);
   EXPECT_EQ(expected, ss.str());
 }
 
 TEST(MathMatrixAssign, print_mat_size) {
-  test_print_mat_size(-1, "dynamically sized");
-  test_print_mat_size(0, "0");
-  test_print_mat_size(1, "1");
-  test_print_mat_size(10, "10");
+  test_print_mat_size<-1>("dynamically sized");
+  test_print_mat_size<0>("0");
+  test_print_mat_size<1>("1");
+  test_print_mat_size<10>("10");
 }
 
 TEST(MathMatrixAssign, realToDouble) {
