@@ -29,7 +29,6 @@ namespace stan {
     template <typename Op1, typename Op2, typename Op3, typename Op4>
     class operands_and_partials<Op1, Op2, Op3, Op4, var> {
     public:
-      // these are going to be stack local and get collected
       detail::ops_partials_edge<double, Op1> edge1_;
       detail::ops_partials_edge<double, Op2> edge2_;
       detail::ops_partials_edge<double, Op3> edge3_;

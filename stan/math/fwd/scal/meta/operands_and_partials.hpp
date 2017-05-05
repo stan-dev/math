@@ -24,7 +24,6 @@ namespace stan {
               typename Dx>
     class operands_and_partials<Op1, Op2, Op3, Op4, fvar<Dx> > {
     public:
-      // these are going to be stack local and get collected
       detail::ops_partials_edge<Dx, Op1> edge1_;
       detail::ops_partials_edge<Dx, Op2> edge2_;
       detail::ops_partials_edge<Dx, Op3> edge3_;
@@ -53,5 +52,4 @@ namespace stan {
     };
   }
 }
-
 #endif

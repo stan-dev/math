@@ -20,11 +20,11 @@ namespace stan {
         int size() { return 1; }
       };
 
-      template <>
-      class broadcast_array<void> {
+      template <typename T>
+      class empty_broadcast_array {
       public:
-        broadcast_array() {}
-        double& operator[] (int /*i*/) {
+        empty_broadcast_array() {}
+        T& operator[] (int /*i*/) {
           throw std::logic_error("Don't do this");
         }
         int size() { return 0; }

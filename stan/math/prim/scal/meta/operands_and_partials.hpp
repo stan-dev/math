@@ -12,6 +12,7 @@ namespace stan {
       public:
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* a */) {}
+        empty_broadcast_array<ViewElt> partials;
         void dump_partials(ViewElt* /* partials */) {}  // used for vars
         void dump_operands(void* /* operands */) {}  // also used for reverse
         double dx() const { return 0; }  // used for fvars
@@ -32,17 +33,6 @@ namespace stan {
           : operand(a), partial(0), partials(partial) {}
         // dump_operands implemented in specialization
         int size() { return 1; }
-      };
-
-      template<>
-      struct ops_partials_edge<double, double> {
-        ops_partials_edge() {}
-        explicit ops_partials_edge(const double& /* a */) {}
-        broadcast_array<void> partials;
-        void dump_operands(void* /*operands*/) {}
-        void dump_partials(void* /*operands*/) {}
-        double dx() { return 0; }
-        int size() { return 0; }
       };
     }  // end namespace detail
     template <typename Op1 = double, typename Op2 = double,

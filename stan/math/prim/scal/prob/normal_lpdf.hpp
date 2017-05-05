@@ -111,7 +111,7 @@ namespace stan {
           ops_partials.edge2_.partials[n] += scaled_diff;
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge3_.partials[n]
-              -= inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
+            += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
       return ops_partials.build(logp);
     }
