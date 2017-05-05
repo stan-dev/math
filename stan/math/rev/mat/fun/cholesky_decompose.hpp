@@ -230,8 +230,8 @@ namespace stan {
     /**
      * Reverse mode specialization of cholesky decomposition
      *
-     * Internally calls llt rather than using cholesky_decompose in order to
-     * use selfadjointView<Lower> optimization.
+     * Internally calls Eigen::LLT rather than using
+     * stan::math::cholesky_decompose in order to use an inplace decomposition.
      *
      * Note chainable stack varis are created below in Matrix<var, -1, -1>
      *
@@ -244,7 +244,7 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd> > L_factor(L_A);
+      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
       check_pos_definite("cholesky_decompose", "m", L_factor);
 
       // Memory allocated in arena.
