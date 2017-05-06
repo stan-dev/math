@@ -347,10 +347,13 @@ namespace stan {
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
       if (L_A.rows()  > 500) {
+        L_A = L_A.selfadjointView<Eigen::Lower>();
         viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
         viennacl::copy(L_A, vcl_L_A);
         viennacl::linalg::lu_factorize(vcl_L_A);
         viennacl::copy(vcl_L_A, L_A);
+        // TODO: Where should this check go?
+        //check_pos_definite("cholesky_decompose", "m", L_A);
         L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
         for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
       } else {
@@ -381,7 +384,7 @@ namespace stan {
           accum_i = accum;
         }
       // NOTE: This should be replaced by some check that comes from a user
-      } else if (L_A.rows()  > 500) {
+     /* } else if (L_A.rows()  > 500) {
         cholesky_gpu *baseVari
           = new cholesky_gpu(A, L_A);
         size_t pos = 0;
@@ -391,7 +394,7 @@ namespace stan {
           }
           for (size_type k = 0; k < j; ++k)
             L.coeffRef(k, j).vi_ = dummy;
-        }
+        }*/
       } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);
