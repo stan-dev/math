@@ -296,31 +296,15 @@ namespace stan {
         }
         viennacl::copy(L, vcl_L);
         viennacl::copy(Lbar, vcl_Lbar);
-        /* Rob's code
-        vcl_L.transposeInPlace();
-        Lbar = (L * Lbar.triangularView<Lower>()).eval();
-        Lbar.triangularView<StrictlyUpper>() = Lbar.adjoint().triangularView<StrictlyUpper>();
-        L.triangularView<Upper>().solveInPlace(Lbar);
-        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
-        */        
-        vcl_L = trans(vcl_L);
-        vcl_Lbar_result =
-          viennacl::linalg::solve(vcl_L,
-           vcl_Lbar, viennacl::linalg::lower_tag());
-        viennacl::copy(vcl_L, L);
-        viennacl::copy(vcl_Lbar_result, Lbar);
-        Lbar.triangularView<StrictlyUpper>() =
-          Lbar.adjoint().triangularView<StrictlyUpper>();
-        L.triangularView<Upper>().solveInPlace(Lbar);
-        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
-        // Maybe these last two lines in ViennaCL are
-        /*
-        viennacl::linalg::inplace_solve(vcl_Lbar,
-          vcl_L, viennacl::linalg::upper_tag());
-        viennacl::linalg::inplace_solve(vcl_Lbar.transposeInPlace(),
-          vcl_L, viennacl::linalg::upper_tag());
-        */
-        // Lbar is the end-result of the computations
+        viennacl::matrix<double>  vcl_LbarT(M_, M_);
+        vcl_L =  viennacl::trans(vcl_L);
+        vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
+        for (int i = 0; i < L.rows() - 1; ++i)
+          for(int j = i + 1; j < L.rows(); ++j)
+            vcl_L(j, i) = vcl_L(i, j);
+        viennacl::linalg::inplace_solve(vcl_L, vcl_Lbar, viennacl::linalg::upper_tag());
+        viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag()); 
+        viennacl::copy(vcl_Lbar, Lbar);
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
@@ -384,7 +368,7 @@ namespace stan {
           accum_i = accum;
         }
       // NOTE: This should be replaced by some check that comes from a user
-     /* } else if (L_A.rows()  > 500) {
+      } else if (L_A.rows()  > 500) {
         cholesky_gpu *baseVari
           = new cholesky_gpu(A, L_A);
         size_t pos = 0;
@@ -394,7 +378,7 @@ namespace stan {
           }
           for (size_type k = 0; k < j; ++k)
             L.coeffRef(k, j).vi_ = dummy;
-        }*/
+        }
       } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);
