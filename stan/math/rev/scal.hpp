@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_SCAL_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/meta/ad_promotable.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
