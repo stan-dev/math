@@ -2,8 +2,6 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <gtest/gtest.h>
 
-#include <iostream>
-
 TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   using stan::math::operands_and_partials;
   using stan::math::var;

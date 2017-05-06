@@ -35,6 +35,27 @@ namespace stan {
         int size() { return 1; }
       };
     }  // end namespace detail
+
+    /**
+     * This class builds partial derivatives with respect to a set of
+     * operands. There are two reason for the generality of this
+     * class. The first is to handle vector and scalar arguments
+     * without needing to write additional code. The second is to use
+     * this class for writing probability distributions that handle
+     * primitives, reverse mode, and forward mode variables
+     * seamlessly.
+     *
+     * This class now supports multivariate use-cases as well by
+     * exposing edge#_.partials_vec
+     *
+     * @tparam Op1 First set of operands.
+     * @tparam Op2 Second set of operands.
+     * @tparam Op3 Third set of operands.
+     * @tparam Op4 Fourth set of operands.
+     * @tparam T_return_type Return type of the expression. This defaults
+     *   to a template metaprogram that calculates the scalar promotion of
+     *   Op1 -- Op4.
+     */
     template <typename Op1 = double, typename Op2 = double,
               typename Op3 = double, typename Op4 = double,
               typename T_return_type
