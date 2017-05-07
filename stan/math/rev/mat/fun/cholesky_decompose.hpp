@@ -303,8 +303,9 @@ namespace stan {
           for(int j = i + 1; j < L.rows(); ++j)
             vcl_L(j, i) = vcl_L(i, j);
         viennacl::linalg::inplace_solve(vcl_L, vcl_Lbar, viennacl::linalg::upper_tag());
-        viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag()); 
+        viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag());  
         viennacl::copy(vcl_Lbar, Lbar);
+        for (int i = 0; i < M_; i++) Lbar(i,i) /= 2.0;
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
