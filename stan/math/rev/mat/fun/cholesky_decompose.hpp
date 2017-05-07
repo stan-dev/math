@@ -299,8 +299,8 @@ namespace stan {
         viennacl::matrix<double>  vcl_LbarT(M_, M_);
         vcl_L =  viennacl::trans(vcl_L);
         vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
-        for (int i = 0; i < L.rows() - 1; ++i)
-          for(int j = i + 1; j < L.rows(); ++j)
+        for (int j = 0; j < L.rows() - 1; ++j)
+          for(int i = j + 1; i < L.rows(); ++i)
             vcl_L(j, i) = vcl_L(i, j);
         viennacl::linalg::inplace_solve(vcl_L, vcl_Lbar, viennacl::linalg::upper_tag());
         viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag());  
