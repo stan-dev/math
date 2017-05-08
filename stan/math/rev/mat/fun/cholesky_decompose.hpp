@@ -277,13 +277,13 @@ namespace stan {
       virtual void chain() {
         using Eigen::MatrixXd;
         using Eigen::Lower;
+        using Eigen::Block;
         using Eigen::Upper;
         using Eigen::StrictlyUpper;
+        using Eigen::StrictlyLower;
         MatrixXd Lbar(M_, M_);
         MatrixXd L(M_, M_);
-        viennacl::matrix<double>  vcl_L(M_, M_);
-        viennacl::matrix<double>  vcl_Lbar(M_, M_);
-        viennacl::matrix<double> vcl_Lbar_result(M_, M_);
+
         Lbar.setZero();
         L.setZero();
         size_t pos = 0;
@@ -294,24 +294,22 @@ namespace stan {
             ++pos;
           }
         }
-        viennacl::copy(L, vcl_L);
-        viennacl::copy(Lbar, vcl_Lbar);
-        viennacl::matrix<double>  vcl_LbarT(M_, M_);
-        vcl_L =  viennacl::trans(vcl_L);
-        vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
-        for (int j = 0; j < L.rows() - 1; ++j)
-          for(int i = j + 1; i < L.rows(); ++i)
-            vcl_L(j, i) = vcl_L(i, j);
-        viennacl::linalg::inplace_solve(vcl_L, vcl_Lbar, viennacl::linalg::upper_tag());
-        viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag());  
-        viennacl::copy(viennacl::trans(vcl_Lbar), Lbar);
-        Lbar.diagonal() *= 0.5;
+
+	L.transposeInPlace();
+        Lbar = (L * Lbar);
+        Lbar.triangularView<StrictlyUpper>()
+          = Lbar.transpose().triangularView<StrictlyUpper>();
+        L.triangularView<Upper>().solveInPlace(Lbar);
+        L.triangularView<Upper>().solveInPlace(Lbar.transpose());
+	Lbar.transposeInPlace();
+	Lbar.diagonal() *= 0.5;
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
             variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
       }
     };
+
 
     /**
      * Reverse mode specialization of cholesky decomposition
@@ -349,7 +347,7 @@ namespace stan {
       }
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
-      // cholesky_block
+      // cholesky_b	lock
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       if (L_A.rows() <= 35) {
