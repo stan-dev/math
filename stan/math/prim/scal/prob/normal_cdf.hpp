@@ -97,7 +97,8 @@ namespace stan {
           if (!is_constant_struct<T_loc>::value)
             ops_partials.edge2_.partials_[n] -= rep_deriv;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * SQRT_2;
+            ops_partials.edge3_.partials_[n]
+              -= rep_deriv * scaled_diff * SQRT_2;
         }
       }
 

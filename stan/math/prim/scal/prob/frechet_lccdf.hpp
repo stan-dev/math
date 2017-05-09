@@ -71,7 +71,8 @@ namespace stan {
           ops_partials.edge2_.partials_[n]
             -= log(y_dbl / sigma_dbl) * rep_deriv_;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials_[n] += alpha_dbl / sigma_dbl * rep_deriv_;
+          ops_partials.edge3_.partials_[n]
+            += alpha_dbl / sigma_dbl * rep_deriv_;
       }
       return ops_partials.build(ccdf_log);
     }

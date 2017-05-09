@@ -36,24 +36,27 @@ namespace stan {
 
       // This class serves as the base class for the ops_partials_edge template
       // specializations in fwd/mat and rev/mat where the operands are any
-      // sort of collection, and can be used both in univariate and multivariate code.
+      // sort of collection, and can be used both in univariate and multivariate
+      // code.
       // So this is farily overloaded, though the behavior is shared.
-      // Notably, you can instantiate this with Op = std::vector<T> and either R or C
-      // set to -1 and 1 - this will give us an Eigen row or column vector for the
-      // partial derivatives, which will be exposed as `partials` (for univariate)
-      // and as a broadcasted view in `partials_vec` (multivariate).
-      // This can also be instantiated more normally with Op = Eigen::Matrix of some
-      // kind; row or column vector or matrix. The partials (and partials_vec[0]) will
-      // be initialized to the same shape as the passed in matrix, both statically
-      // by sharing the R and C as well as dynamically through the use of the above
-      // zero_vec_or_mat metaprogram.
+      // Notably, you can instantiate this with Op = std::vector<T> and either R
+      // or C set to -1 and 1 - this will give us an Eigen row or column vector
+      // for the partial derivatives, which will be exposed as `partials`
+      // (for univariate) and as a broadcasted view in
+      // `partials_vec` (multivariate).
+      // This can also be instantiated more normally with Op = Eigen::Matrix
+      // of some kind;
+      // row or column vector or matrix. The partials (and partials_vec[0]) will
+      // be initialized to the same shape as the passed in matrix, both
+      // statically by sharing the R and C as well as dynamically through the
+      // use of the above zero_vec_or_mat metaprogram.
       template <typename ViewElt, typename Op, int R, int C>
       class ops_partials_edge_mat {
       public:
         typedef Eigen::Matrix<ViewElt, R, C> partials_t;
         const Op& operands_;
         partials_t partials_;  // For univariate use-cases
-        broadcast_array<partials_t> partials_vec_;  // For multivariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
 
         explicit ops_partials_edge_mat(const Op& ops)
           : operands_(ops),

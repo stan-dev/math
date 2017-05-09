@@ -15,7 +15,7 @@ namespace stan {
         explicit ops_partials_edge(const Op& /* a */) {}
         //
         void dump_partials(ViewElt* /* partials */) const {}  // used for vars
-        void dump_operands(void* /* operands */) const {}  // also used for reverse
+        void dump_operands(void* /* operands */) const {}  // used for vars
         ViewElt dx() const { return 0; }  // used for fvars
         int size() const { return 0; }
       };

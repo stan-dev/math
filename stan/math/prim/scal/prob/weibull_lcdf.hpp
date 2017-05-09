@@ -24,7 +24,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Weibull log cumulative distribution function for the given 
+     * Returns the Weibull log cumulative distribution function for the given
      * location and scale. Given containers of matching sizes, returns the
      * log sum of probabilities.
      *
@@ -35,7 +35,7 @@ namespace stan {
      * @param alpha shape parameter
      * @param sigma scale parameter
      * @return log probability or log sum of probabilities
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive
      */
     template <typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -80,7 +80,8 @@ namespace stan {
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge2_.partials_[n] += rep_deriv * log(y_dbl / sigma_dbl);
+          ops_partials.edge2_.partials_[n]
+            += rep_deriv * log(y_dbl / sigma_dbl);
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge3_.partials_[n] -= rep_deriv * alpha_dbl / sigma_dbl;
       }
