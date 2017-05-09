@@ -124,15 +124,15 @@ namespace stan {
       }
 
       if (!is_constant_struct<T_theta>::value)
-        ops_partials.edge1_.partials[0]
+        ops_partials.edge1_.partials_[0]
           = one_m_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
       if (!is_constant_struct<T_lambda1>::value)
-        ops_partials.edge2_.partials[0]
+        ops_partials.edge2_.partials_[0]
           = theta_double
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
       if (!is_constant_struct<T_lambda2>::value)
-        ops_partials.edge3_.partials[0]
+        ops_partials.edge3_.partials_[0]
           = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
