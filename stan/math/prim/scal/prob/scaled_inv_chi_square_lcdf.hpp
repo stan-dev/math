@@ -108,10 +108,10 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += half_nu_s2_overx_dbl * y_inv_dbl
+          ops_partials.edge1_.partials_[n] += half_nu_s2_overx_dbl * y_inv_dbl
             * gamma_p_deriv / Pn;
         if (!is_constant_struct<T_dof>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += (0.5 * grad_reg_inc_gamma(half_nu_dbl,
                                          half_nu_s2_overx_dbl,
                                          gamma_vec[n],
@@ -119,7 +119,7 @@ namespace stan {
                 - half_s2_overx_dbl * gamma_p_deriv)
             / Pn;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += - 2.0 * half_nu_dbl * s_dbl
+          ops_partials.edge3_.partials_[n] += - 2.0 * half_nu_dbl * s_dbl
             * y_inv_dbl * gamma_p_deriv / Pn;
       }
       return ops_partials.build(P);

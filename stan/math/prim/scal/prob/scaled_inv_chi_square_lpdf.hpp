@@ -138,12 +138,12 @@ namespace stan {
           logp -= half_nu[n] * s_dbl*s_dbl * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += -(half_nu[n] + 1.0) * inv_y[n]
             + half_nu[n] * s_dbl*s_dbl * inv_y[n]*inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += 0.5 * log_half_nu[n] + 0.5
             - digamma_half_nu_over_two[n]
             + log_s[n]
@@ -151,7 +151,7 @@ namespace stan {
             - 0.5* s_dbl*s_dbl * inv_y[n];
         }
         if (!is_constant_struct<T_scale>::value) {
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
         }
       }

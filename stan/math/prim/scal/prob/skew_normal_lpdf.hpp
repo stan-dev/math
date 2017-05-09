@@ -105,21 +105,21 @@ namespace stan {
           / (1 + erf(alpha_dbl * y_minus_mu_over_sigma
                      / std::sqrt(2.0)));
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += -y_minus_mu_over_sigma / sigma_dbl
             + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += y_minus_mu_over_sigma / sigma_dbl
             + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += -1.0 / sigma_dbl
             + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
             - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
             / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge4_.partials[n]
+          ops_partials.edge4_.partials_[n]
             += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
       }
       return ops_partials.build(logp);

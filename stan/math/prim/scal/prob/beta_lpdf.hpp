@@ -174,13 +174,13 @@ namespace stan {
           logp += (beta_dbl-1.0) * log1m_y[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += (alpha_dbl-1)/y_dbl
+          ops_partials.edge1_.partials_[n] += (alpha_dbl-1)/y_dbl
             + (beta_dbl-1)/(y_dbl-1);
         if (!is_constant_struct<T_scale_succ>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
         if (!is_constant_struct<T_scale_fail>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
       }
       return ops_partials.build(logp);

@@ -104,14 +104,14 @@ namespace stan {
           temp2 += N_vec[i] - n_vec[i];
         }
         if (!is_constant_struct<T_prob>::value) {
-          ops_partials.edge1_.partials[0]
+          ops_partials.edge1_.partials_[0]
             += temp1 / value_of(theta_vec[0])
             - temp2 / (1.0 - value_of(theta_vec[0]));
         }
       } else {
         if (!is_constant_struct<T_prob>::value) {
           for (size_t i = 0; i < size; ++i)
-            ops_partials.edge1_.partials[i]
+            ops_partials.edge1_.partials_[i]
               += n_vec[i] / value_of(theta_vec[i])
               - (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
         }

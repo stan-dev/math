@@ -134,13 +134,13 @@ namespace stan {
           const T_partials_return g
             = - C * (digamma(mu) - digammaOne + dF[1] / F
                      - digamma(alpha_dbl) + digammaTwo);
-          ops_partials.edge1_.partials[i] -= g / Pi;
+          ops_partials.edge1_.partials_[i] -= g / Pi;
         }
         if (!is_constant_struct<T_size2>::value) {
           const T_partials_return g
             = - C * (digamma(nu) - digammaOne - dF[4] / F - digamma(beta_dbl)
                      + digammaTwo);
-          ops_partials.edge2_.partials[i] -= g / Pi;
+          ops_partials.edge2_.partials_[i] -= g / Pi;
         }
       }
 

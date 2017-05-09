@@ -108,11 +108,11 @@ namespace stan {
           logp += lgamma(n_plus_phi[i]);
 
         if (!is_constant_struct<T_log_location>::value)
-          ops_partials.edge1_.partials[i]
+          ops_partials.edge1_.partials_[i]
             += n_vec[i] - n_plus_phi[i]
             / (phi__[i]/exp(eta__[i]) + 1.0);
         if (!is_constant_struct<T_precision>::value)
-          ops_partials.edge2_.partials[i]
+          ops_partials.edge2_.partials_[i]
             += 1.0 - n_plus_phi[i]/(exp(eta__[i]) + phi__[i])
             + log_phi[i] - logsumexp_eta_logphi[i] - digamma(phi__[i])
             + digamma(n_plus_phi[i]);

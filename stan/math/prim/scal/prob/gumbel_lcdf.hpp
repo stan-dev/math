@@ -78,11 +78,11 @@ namespace stan {
         cdf_log -= exp(-scaled_diff);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += rep_deriv;
+          ops_partials.edge1_.partials_[n] += rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] -= rep_deriv;
+          ops_partials.edge2_.partials_[n] -= rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] -= rep_deriv * scaled_diff;
+          ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
       }
       return ops_partials.build(cdf_log);
     }

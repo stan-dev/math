@@ -104,11 +104,11 @@ namespace stan {
           logp -= alpha_dbl * log_y[n] + log_y[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= alpha_dbl * inv_y[n] + inv_y[n];
+          ops_partials.edge1_.partials_[n] -= alpha_dbl * inv_y[n] + inv_y[n];
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge2_.partials[n] += alpha_dbl / value_of(y_min_vec[n]);
+          ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += 1 / alpha_dbl + log_y_min[n] - log_y[n];
       }
       return ops_partials.build(logp);

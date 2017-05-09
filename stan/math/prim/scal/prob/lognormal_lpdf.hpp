@@ -124,12 +124,12 @@ namespace stan {
           logp -= 0.5 * logy_m_mu_sq * inv_sigma_sq[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             -= (1 + logy_m_mu_div_sigma) * inv_y[n];
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] += logy_m_mu_div_sigma;
+          ops_partials.edge2_.partials_[n] += logy_m_mu_div_sigma;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
       }
       return ops_partials.build(logp);

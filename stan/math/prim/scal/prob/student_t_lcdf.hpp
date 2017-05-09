@@ -121,7 +121,7 @@ namespace stan {
           P += log(Pn);
 
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n]
+            ops_partials.edge1_.partials_[n]
               += - zJacobian * d_ibeta * J * sigma_inv / Pn;
 
           if (!is_constant_struct<T_dof>::value) {
@@ -134,15 +134,15 @@ namespace stan {
                               digammaNuPlusHalf_vec[n],
                               betaNuHalf);
 
-            ops_partials.edge2_.partials[n]
+            ops_partials.edge2_.partials_[n]
               += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
           }
 
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge3_.partials[n]
+            ops_partials.edge3_.partials_[n]
               += zJacobian * d_ibeta * J * sigma_inv / Pn;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge4_.partials[n]
+            ops_partials.edge4_.partials_[n]
               += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
 
         } else {
@@ -158,7 +158,7 @@ namespace stan {
           P += log(Pn);
 
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n]
+            ops_partials.edge1_.partials_[n]
               += zJacobian * d_ibeta * J * sigma_inv / Pn;
 
           if (!is_constant_struct<T_dof>::value) {
@@ -171,15 +171,15 @@ namespace stan {
                               digammaNuPlusHalf_vec[n],
                               betaNuHalf);
 
-            ops_partials.edge2_.partials[n]
+            ops_partials.edge2_.partials_[n]
               += zJacobian * (- d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
           }
 
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge3_.partials[n]
+            ops_partials.edge3_.partials_[n]
               += - zJacobian * d_ibeta * J * sigma_inv / Pn;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge4_.partials[n]
+            ops_partials.edge4_.partials_[n]
               += - zJacobian * d_ibeta * J * sigma_inv * t / Pn;
         }
       }

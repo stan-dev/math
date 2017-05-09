@@ -18,11 +18,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   dx1 << 17.0, 13.0;
 
   operands_and_partials<std::vector<fvar<double> >,fvar<double>,fvar<double> > o(x1, x2, x3);
-  o.edge1_.partials_vec[0] += dx1;
-  o.edge2_.partials[0] += 19.0;
-  o.edge2_.partials[0] += 19.0;
-  o.edge3_.partials[0] += 23.0;
-  o.edge3_.partials[0] += 23.0;
+  o.edge1_.partials_vec_[0] += dx1;
+  o.edge2_.partials_[0] += 19.0;
+  o.edge2_.partials_[0] += 19.0;
+  o.edge3_.partials_[0] += 23.0;
+  o.edge3_.partials_[0] += 23.0;
   fvar<double> y = o.build(-1.0);
 
   EXPECT_FLOAT_EQ(2*17 + 3*13 - 2*19 + 2*4*23,y.d_);

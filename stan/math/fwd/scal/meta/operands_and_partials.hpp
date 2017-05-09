@@ -11,12 +11,12 @@ namespace stan {
       // the contribution to the derivative of the o&p node for the edge.
       template <typename ViewElt, typename Dx>
       class ops_partials_edge<ViewElt, fvar<Dx> >
-        : public ops_partials_edge_singular<ViewElt, fvar<Dx> > {
+        : public ops_partials_edge_single<ViewElt, fvar<Dx> > {
       public:
         explicit ops_partials_edge(const fvar<Dx>& op)
-          : ops_partials_edge_singular<ViewElt, fvar<Dx> >(op) {}
+          : ops_partials_edge_single<ViewElt, fvar<Dx> >(op) {}
         Dx dx() {
-          return this->partials[0] * this->operand.d_;
+          return this->partials_[0] * this->operand_.d_;
         }
       };
     }  // end namespace detail
@@ -36,13 +36,13 @@ namespace stan {
      * This is the specialization for when the return type is fvar,
      * which should be for forward mode and all higher-order cases.
      *
-     * @tparam Op1 First set of operands.
-     * @tparam Op2 Second set of operands.
-     * @tparam Op3 Third set of operands.
-     * @tparam Op4 Fourth set of operands.
-     * @tparam T_return_type Return type of the expression. This defaults
+     * @tparam Op1 type of the first operand
+     * @tparam Op2 type of the second operand
+     * @tparam Op3 type of the third operand
+     * @tparam Op4 type of the fourth operand
+     * @tparam T_return_type return type of the expression. This defaults
      *   to a template metaprogram that calculates the scalar promotion of
-     *   Op1 -- Op4.
+     *   Op1 -- Op4
      */
     template <typename Op1, typename Op2, typename Op3, typename Op4,
               typename Dx>
@@ -63,14 +63,8 @@ namespace stan {
                             const Op4& o4)
         : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) { }
 
-      // this is what matters in terms of going on autodiff stack
       T_return_type build(Dx value) {
-        // Just call chain here and end up with an fvar(val, adj)
-        Dx deriv = 0;
-        deriv += edge1_.dx();
-        deriv += edge2_.dx();
-        deriv += edge3_.dx();
-        deriv += edge4_.dx();
+        Dx deriv = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx();
         return T_return_type(value, deriv);
       }
     };

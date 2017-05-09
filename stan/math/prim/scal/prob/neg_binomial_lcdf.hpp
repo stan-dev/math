@@ -118,10 +118,10 @@ namespace stan {
                             digammaN_vec[i],
                             digammaSum_vec[i],
                             beta_func);
-          ops_partials.edge1_.partials[i] += g1 / Pi;
+          ops_partials.edge1_.partials_[i] += g1 / Pi;
         }
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge2_.partials[i]  += d_dbl * pow(1-p_dbl, n_dbl)
+          ops_partials.edge2_.partials_[i]  += d_dbl * pow(1-p_dbl, n_dbl)
             * pow(p_dbl, alpha_dbl-1) / beta_func / Pi;
       }
 

@@ -100,13 +100,13 @@ namespace stan {
         ccdf_log += log(ccdf_);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             -= (deriv_1 - deriv_2 + deriv_3) / ccdf_;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             -= (-deriv_1 + deriv_2 - deriv_3) / ccdf_;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             -= (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_2 - deriv_2
                 * sigma_dbl * SQRT_2
                 * (-SQRT_2 * 0.5 * (-lambda_dbl + scaled_diff * SQRT_2
@@ -114,7 +114,7 @@ namespace stan {
                    - SQRT_2 * lambda_dbl))
             / ccdf_;
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge4_.partials[n] -= exp(0.5 * v_sq - u)
+          ops_partials.edge4_.partials_[n] -= exp(0.5 * v_sq - u)
             * (SQRT_2 / sqrt_pi * 0.5 * sigma_dbl
                * exp(-(v / SQRT_2 - scaled_diff) * (v / SQRT_2 - scaled_diff))
                - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)

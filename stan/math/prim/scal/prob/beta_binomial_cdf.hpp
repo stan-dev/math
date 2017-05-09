@@ -134,25 +134,25 @@ namespace stan {
           const T_partials_return g
             = - C * (digamma(mu) - digammaOne + dF[1] / F
                      - digamma(alpha_dbl) + digammaTwo);
-          ops_partials.edge1_.partials[i]
+          ops_partials.edge1_.partials_[i]
             += g / Pi;
         }
         if (!is_constant_struct<T_size2>::value) {
           const T_partials_return g
             = - C * (digamma(nu) - digammaOne - dF[4] / F - digamma(beta_dbl)
                      + digammaTwo);
-          ops_partials.edge2_.partials[i]
+          ops_partials.edge2_.partials_[i]
             += g / Pi;
         }
       }
 
       if (!is_constant_struct<T_size1>::value) {
         for (size_t i = 0; i < stan::length(alpha); ++i)
-          ops_partials.edge1_.partials[i] *= P;
+          ops_partials.edge1_.partials_[i] *= P;
       }
       if (!is_constant_struct<T_size2>::value) {
         for (size_t i = 0; i < stan::length(beta); ++i)
-          ops_partials.edge2_.partials[i] *= P;
+          ops_partials.edge2_.partials_[i] *= P;
       }
 
       return ops_partials.build(P);

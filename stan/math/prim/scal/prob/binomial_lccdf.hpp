@@ -100,7 +100,7 @@ namespace stan {
         P += log(Pi);
 
         if (!is_constant_struct<T_prob>::value)
-          ops_partials.edge1_.partials[i] += pow(theta_dbl, n_dbl)
+          ops_partials.edge1_.partials_[i] += pow(theta_dbl, n_dbl)
             * pow(1-theta_dbl, N_dbl-n_dbl-1) / betafunc / Pi;
       }
 

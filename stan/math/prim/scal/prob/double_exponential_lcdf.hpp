@@ -81,22 +81,22 @@ namespace stan {
           cdf_log += log_half + scaled_diff;
 
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n] += inv_sigma;
+            ops_partials.edge1_.partials_[n] += inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge2_.partials[n] -= inv_sigma;
+            ops_partials.edge2_.partials_[n] -= inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge3_.partials[n] -= scaled_diff * inv_sigma;
+            ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma;
         } else {
           cdf_log += log1m(0.5 * exp(-scaled_diff));
 
           const T_partials_return rep_deriv = 1.0
             / (2.0 * exp(scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n] += rep_deriv * inv_sigma;
+            ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge2_.partials[n] -= rep_deriv * inv_sigma;
+            ops_partials.edge2_.partials_[n] -= rep_deriv * inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge3_.partials[n] -= rep_deriv * scaled_diff
+            ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff
               * inv_sigma;
         }
       }

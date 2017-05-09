@@ -84,27 +84,27 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += - exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += - (y_dbl - mu_dbl) * sigma_inv_vec
+          ops_partials.edge3_.partials_[n] += - (y_dbl - mu_dbl) * sigma_inv_vec
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          ops_partials.edge1_.partials[n] *= P;
+          ops_partials.edge1_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_loc>::value) {
         for (size_t n = 0; n < stan::length(mu); ++n)
-          ops_partials.edge2_.partials[n] *= P;
+          ops_partials.edge2_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(sigma); ++n)
-          ops_partials.edge3_.partials[n] *= P;
+          ops_partials.edge3_.partials_[n] *= P;
       }
       return ops_partials.build(P);
     }

@@ -70,7 +70,7 @@ namespace stan {
         P += log_Pi;
 
         if (!is_constant_struct<T_rate>::value)
-          ops_partials.edge1_.partials[i] += exp(n_dbl * log(lambda_dbl)
+          ops_partials.edge1_.partials_[i] += exp(n_dbl * log(lambda_dbl)
                                                - lambda_dbl - lgamma(n_dbl+1)
                                                - log_Pi);
       }

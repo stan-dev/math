@@ -52,9 +52,9 @@ namespace stan {
         ccdf_log += -beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= beta_dbl;
+          ops_partials.edge1_.partials_[n] -= beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge2_.partials[n] -= y_dbl;
+          ops_partials.edge2_.partials_[n] -= y_dbl;
       }
       return ops_partials.build(ccdf_log);
     }

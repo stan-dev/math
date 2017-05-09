@@ -78,9 +78,9 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += 1.0 / y_dbl - scaled_diff;
+          ops_partials.edge1_.partials_[n] += 1.0 / y_dbl - scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
       }
       return ops_partials.build(logp);

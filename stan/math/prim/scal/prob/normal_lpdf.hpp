@@ -106,11 +106,11 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= scaled_diff;
+          ops_partials.edge1_.partials_[n] -= scaled_diff;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] += scaled_diff;
+          ops_partials.edge2_.partials_[n] += scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
       return ops_partials.build(logp);

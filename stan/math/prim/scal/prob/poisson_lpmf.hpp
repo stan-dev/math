@@ -71,7 +71,7 @@ namespace stan {
         }
 
         if (!is_constant_struct<T_rate>::value)
-          ops_partials.edge1_.partials[i]
+          ops_partials.edge1_.partials_[i]
             += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
       }
       return ops_partials.build(logp);

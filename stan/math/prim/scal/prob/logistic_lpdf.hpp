@@ -108,15 +108,15 @@ namespace stan {
           logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] +=
+          ops_partials.edge2_.partials_[n] +=
             (1 - 2 * exp_mu_div_sigma[n] / (exp_mu_div_sigma[n]
                                             + exp_y_div_sigma[n]))
             * inv_sigma[n];
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] +=
+          ops_partials.edge3_.partials_[n] +=
             ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma)
              *y_minus_mu*inv_sigma[n] - 1) * inv_sigma[n];
       }

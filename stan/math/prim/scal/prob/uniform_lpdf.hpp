@@ -104,9 +104,9 @@ namespace stan {
           logp -= log_beta_minus_alpha[n];
 
         if (!is_constant_struct<T_low>::value)
-          ops_partials.edge2_.partials[n] += inv_beta_minus_alpha[n];
+          ops_partials.edge2_.partials_[n] += inv_beta_minus_alpha[n];
         if (!is_constant_struct<T_high>::value)
-          ops_partials.edge3_.partials[n] -= inv_beta_minus_alpha[n];
+          ops_partials.edge3_.partials_[n] -= inv_beta_minus_alpha[n];
       }
       return ops_partials.build(logp);
     }

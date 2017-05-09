@@ -68,10 +68,10 @@ namespace stan {
           cdf_log += log1m(exp_val);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += y_dbl * inv_sigma_sqr
+          ops_partials.edge1_.partials_[n] += y_dbl * inv_sigma_sqr
             * exp_div_1m_exp;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge2_.partials[n] -= y_sqr * inv_sigma_sqr
+          ops_partials.edge2_.partials_[n] -= y_sqr * inv_sigma_sqr
             * inv_sigma[n] * exp_div_1m_exp;
       }
       return ops_partials.build(cdf_log);

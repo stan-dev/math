@@ -21,11 +21,12 @@ namespace stan {
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {
-            derivative += this->partials(i) * this->operands[i].d_;
+            derivative += this->partials_(i) * this->operands_[i].d_;
           }
           return derivative;
         }
       };
+
       template <typename ViewElt, typename Dx, int R, int C>
       class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> >
         : public ops_partials_edge_mat<ViewElt,
@@ -37,7 +38,7 @@ namespace stan {
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {
-            derivative += this->partials(i) * this->operands(i).d_;
+            derivative += this->partials_(i) * this->operands_(i).d_;
           }
           return derivative;
         }
@@ -55,9 +56,9 @@ namespace stan {
           : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
         Dx dx() {
           Dx derivative(0);
-          for (int i = 0; i < this->operands.size(); ++i) {
-            for (int j = 0; j < this->operands[i].size(); ++j) {
-              derivative += this->partials[i](j) * this->operands[i](j);
+          for (int i = 0; i < this->operands_.size(); ++i) {
+            for (int j = 0; j < this->operands_[i].size(); ++j) {
+              derivative += this->partials_[i](j) * this->operands_[i](j);
             }
           }
         }

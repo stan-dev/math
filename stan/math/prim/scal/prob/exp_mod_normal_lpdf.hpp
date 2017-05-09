@@ -97,22 +97,22 @@ namespace stan {
                   - y_dbl) / (sigma_dbl * std::sqrt(2.0)));
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += -lambda_dbl
             + deriv_logerfc * -1.0 / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += lambda_dbl
             + deriv_logerfc / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += sigma_dbl * lambda_dbl * lambda_dbl
             + deriv_logerfc
             * (-mu_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0))
                + lambda_dbl / std::sqrt(2.0)
                + y_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0)));
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge4_.partials[n]
+          ops_partials.edge4_.partials_[n]
             += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl
             + mu_dbl - y_dbl + deriv_logerfc * sigma_dbl / std::sqrt(2.0);
       }

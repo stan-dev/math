@@ -86,13 +86,13 @@ namespace stan {
           / cdf_log_;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += rep_deriv;
+          ops_partials.edge1_.partials_[n] += rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] -= rep_deriv;
+          ops_partials.edge2_.partials_[n] -= rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] -= rep_deriv * diff;
+          ops_partials.edge3_.partials_[n] -= rep_deriv * diff;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge4_.partials[n] += -2.0 * exp(-0.5 * diff_sq
+          ops_partials.edge4_.partials_[n] += -2.0 * exp(-0.5 * diff_sq
                                                       * (1.0 + alpha_dbl_sq))
             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / cdf_log_;
       }

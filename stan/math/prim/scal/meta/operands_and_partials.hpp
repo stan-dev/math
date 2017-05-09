@@ -8,31 +8,33 @@ namespace stan {
   namespace math {
     namespace detail {
       template <typename ViewElt, typename Op>
-      class ops_partials_edge {
-      public:
+      struct ops_partials_edge {
+        empty_broadcast_array<ViewElt> partials_;
+
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* a */) {}
-        empty_broadcast_array<ViewElt> partials;
-        void dump_partials(ViewElt* /* partials */) {}  // used for vars
-        void dump_operands(void* /* operands */) {}  // also used for reverse
-        double dx() const { return 0; }  // used for fvars
-        int size() { return 0; }
+        //
+        void dump_partials(ViewElt* /* partials */) const {}  // used for vars
+        void dump_operands(void* /* operands */) const {}  // also used for reverse
+        ViewElt dx() const { return 0; }  // used for fvars
+        int size() const { return 0; }
       };
 
       // Base class shared between fvar and var specializations of uni- and
       // multivariate edges will be in the prim/scal|arr|mat files.
-      // Singular version - underlying Var is the same as Op, so there's
+      // Single param version - underlying Var is the same as Op, so there's
       // just one.
       template <typename ViewElt, typename Op>
-      class ops_partials_edge_singular {
+      class ops_partials_edge_single {
+      private:
+        ViewElt partial_;
       public:
-        const Op& operand;
-        ViewElt partial;
-        broadcast_array<ViewElt> partials;
-        explicit ops_partials_edge_singular(const Op& a)
-          : operand(a), partial(0), partials(partial) {}
+        const Op& operand_;
+        broadcast_array<ViewElt> partials_;
+        explicit ops_partials_edge_single(const Op& a)
+          : partial_(0), operand_(a), partials_(partial_) {}
         // dump_operands implemented in specialization
-        int size() { return 1; }
+        int size() const { return 1; }
       };
     }  // end namespace detail
 
@@ -48,13 +50,17 @@ namespace stan {
      * This class now supports multivariate use-cases as well by
      * exposing edge#_.partials_vec
      *
-     * @tparam Op1 First set of operands.
-     * @tparam Op2 Second set of operands.
-     * @tparam Op3 Third set of operands.
-     * @tparam Op4 Fourth set of operands.
-     * @tparam T_return_type Return type of the expression. This defaults
+     * This base template is used when all operands are primitives
+     * and we don't want to calculate derivatives at all. So all
+     * Op1 - Op4 must be arithmetic primitives like int or double.
+     *
+     * @tparam Op1 type of the first operand
+     * @tparam Op2 type of the second operand
+     * @tparam Op3 type of the third operand
+     * @tparam Op4 type of the fourth operand
+     * @tparam T_return_type return type of the expression. This defaults
      *   to a template metaprogram that calculates the scalar promotion of
-     *   Op1 -- Op4.
+     *   Op1 -- Op4
      */
     template <typename Op1 = double, typename Op2 = double,
               typename Op3 = double, typename Op4 = double,
@@ -67,15 +73,16 @@ namespace stan {
       operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3) {}
       operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
                             const Op4& op4) {}
+      typedef double ViewElt;
 
-      double build(const double value) {
+      T_return_type build(ViewElt value) {
         return value;
       }
 
-      detail::ops_partials_edge<double, Op1> edge1_;
-      detail::ops_partials_edge<double, Op2> edge2_;
-      detail::ops_partials_edge<double, Op3> edge3_;
-      detail::ops_partials_edge<double, Op4> edge4_;
+      detail::ops_partials_edge<ViewElt, Op1> edge1_;
+      detail::ops_partials_edge<ViewElt, Op2> edge2_;
+      detail::ops_partials_edge<ViewElt, Op3> edge3_;
+      detail::ops_partials_edge<ViewElt, Op4> edge4_;
     };
   }  // end namespace math
 }  // end namespace stan

@@ -99,11 +99,11 @@ namespace stan {
           logp += kappa_cos;
 
         if (!y_const)
-          ops_partials.edge1_.partials[n] += kappa_sin;
+          ops_partials.edge1_.partials_[n] += kappa_sin;
         if (!mu_const)
-          ops_partials.edge2_.partials[n] -= kappa_sin;
+          ops_partials.edge2_.partials_[n] -= kappa_sin;
         if (!kappa_const)
-          ops_partials.edge3_.partials[n] += kappa_cos / kappa_dbl[n]
+          ops_partials.edge3_.partials_[n] += kappa_cos / kappa_dbl[n]
             - bessel1 / bessel0;
       }
       return ops_partials.build(logp);

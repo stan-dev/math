@@ -158,13 +158,13 @@ namespace stan {
           logp += lbeta_numerator[i] - lbeta_denominator[i];
 
         if (!is_constant_struct<T_size1>::value)
-          ops_partials.edge1_.partials[i]
+          ops_partials.edge1_.partials_[i]
             += digamma_n_plus_alpha[i]
             - digamma_N_plus_alpha_plus_beta[i]
             + digamma_alpha_plus_beta[i]
             - digamma_alpha[i];
         if (!is_constant_struct<T_size2>::value)
-          ops_partials.edge2_.partials[i]
+          ops_partials.edge2_.partials_[i]
             += digamma(value_of(N_vec[i]-n_vec[i]+beta_vec[i]))
             - digamma_N_plus_alpha_plus_beta[i]
             + digamma_alpha_plus_beta[i]

@@ -104,10 +104,10 @@ namespace stan {
         cdf *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+          ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
             * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                         * y_dbl, gamma_vec[n],
                                         digamma_vec[n]) / Pn;
@@ -115,11 +115,11 @@ namespace stan {
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          ops_partials.edge1_.partials[n] *= cdf;
+          ops_partials.edge1_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_dof>::value) {
         for (size_t n = 0; n < stan::length(nu); ++n)
-          ops_partials.edge2_.partials[n] *= cdf;
+          ops_partials.edge2_.partials_[n] *= cdf;
       }
       return ops_partials.build(cdf);
     }

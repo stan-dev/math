@@ -145,15 +145,15 @@ namespace stan {
           const T_partials_return common_derivative =
             n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[i] += common_derivative;
+            ops_partials.edge1_.partials_[i] += common_derivative;
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge3_.partials[i] -= common_derivative;
+            ops_partials.edge3_.partials_[i] -= common_derivative;
         }
         if (!is_constant_struct<T_s>::value)
-          ops_partials.edge2_.partials[i] -=
+          ops_partials.edge2_.partials_[i] -=
             0.5 / sigma_squared;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge4_.partials[i]
+          ops_partials.edge4_.partials_[i]
             += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
       }
       return ops_partials.build(logp);

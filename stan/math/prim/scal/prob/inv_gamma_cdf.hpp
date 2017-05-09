@@ -120,17 +120,17 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += beta_dbl * y_inv_dbl * y_inv_dbl
+          ops_partials.edge1_.partials_[n] += beta_dbl * y_inv_dbl * y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl) * pow(beta_dbl
                                                * y_inv_dbl, alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                   * y_inv_dbl, gamma_vec[n],
                                   digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += - y_inv_dbl
+          ops_partials.edge3_.partials_[n] += - y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
             * pow(beta_dbl * y_inv_dbl, alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
@@ -138,15 +138,15 @@ namespace stan {
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          ops_partials.edge1_.partials[n] *= P;
+          ops_partials.edge1_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_shape>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          ops_partials.edge2_.partials[n] *= P;
+          ops_partials.edge2_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(beta); ++n)
-          ops_partials.edge3_.partials[n] *= P;
+          ops_partials.edge3_.partials_[n] *= P;
       }
       return ops_partials.build(P);
     }

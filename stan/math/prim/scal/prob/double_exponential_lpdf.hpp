@@ -110,13 +110,13 @@ namespace stan {
         if (contains_nonconstant_struct<T_y, T_loc>::value)
           sign_y_m_mu_times_inv_sigma = sign(y_m_mu) * inv_sigma[n];
         if (!is_constant_struct<T_y>::value) {
-          ops_partials.edge1_.partials[n] -= sign_y_m_mu_times_inv_sigma;
+          ops_partials.edge1_.partials_[n] -= sign_y_m_mu_times_inv_sigma;
         }
         if (!is_constant_struct<T_loc>::value) {
-          ops_partials.edge2_.partials[n] += sign_y_m_mu_times_inv_sigma;
+          ops_partials.edge2_.partials_[n] += sign_y_m_mu_times_inv_sigma;
         }
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += -inv_sigma[n] + fabs_y_m_mu
+          ops_partials.edge3_.partials_[n] += -inv_sigma[n] + fabs_y_m_mu
             * inv_sigma_squared[n];
       }
       return ops_partials.build(logp);

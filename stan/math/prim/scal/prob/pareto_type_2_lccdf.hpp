@@ -98,14 +98,14 @@ namespace stan {
         P += ccdf_log[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= a_over_lambda_plus_y[n];
+          ops_partials.edge1_.partials_[n] -= a_over_lambda_plus_y[n];
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] += a_over_lambda_plus_y[n];
+          ops_partials.edge2_.partials_[n] += a_over_lambda_plus_y[n];
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += a_over_lambda_plus_y[n]
+          ops_partials.edge3_.partials_[n] += a_over_lambda_plus_y[n]
             * (y_dbl - mu_dbl) / lambda_dbl;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge4_.partials[n] -= log_1p_y_over_lambda[n];
+          ops_partials.edge4_.partials_[n] -= log_1p_y_over_lambda[n];
       }
       return ops_partials.build(P);
     }

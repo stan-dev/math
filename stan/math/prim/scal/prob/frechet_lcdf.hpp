@@ -62,11 +62,11 @@ namespace stan {
         cdf_log -= pow_;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] += pow_ * alpha_dbl / y_dbl;
+          ops_partials.edge1_.partials_[n] += pow_ * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge2_.partials[n] += pow_ * log(y_dbl / sigma_dbl);
+          ops_partials.edge2_.partials_[n] += pow_ * log(y_dbl / sigma_dbl);
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] -= pow_ * alpha_dbl / sigma_dbl;
+          ops_partials.edge3_.partials_[n] -= pow_ * alpha_dbl / sigma_dbl;
       }
       return ops_partials.build(cdf_log);
     }

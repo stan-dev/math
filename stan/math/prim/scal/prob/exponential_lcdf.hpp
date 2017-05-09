@@ -58,9 +58,9 @@ namespace stan {
 
         T_partials_return rep_deriv = -exp(-beta_dbl * y_dbl) / one_m_exp;
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= rep_deriv * beta_dbl;
+          ops_partials.edge1_.partials_[n] -= rep_deriv * beta_dbl;
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge2_.partials[n] -= rep_deriv * y_dbl;
+          ops_partials.edge2_.partials_[n] -= rep_deriv * y_dbl;
       }
       return ops_partials.build(cdf_log);
     }

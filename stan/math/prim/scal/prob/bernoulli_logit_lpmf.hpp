@@ -83,11 +83,11 @@ namespace stan {
         if (!is_constant_struct<T_prob>::value) {
           static const double cutoff = 20.0;
           if (ntheta > cutoff)
-            ops_partials.edge1_.partials[n] -= exp_m_ntheta;
+            ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
           else if (ntheta < -cutoff)
-            ops_partials.edge1_.partials[n] += sign;
+            ops_partials.edge1_.partials_[n] += sign;
           else
-            ops_partials.edge1_.partials[n] += sign * exp_m_ntheta
+            ops_partials.edge1_.partials_[n] += sign * exp_m_ntheta
               / (exp_m_ntheta + 1);
         }
       }

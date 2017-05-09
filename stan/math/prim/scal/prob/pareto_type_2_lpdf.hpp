@@ -115,14 +115,14 @@ namespace stan {
           logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= deriv_1_2;
+          ops_partials.edge1_.partials_[n] -= deriv_1_2;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] += deriv_1_2;
+          ops_partials.edge2_.partials_[n] += deriv_1_2;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] -= alpha_div_sum * (mu_dbl - y_dbl)
+          ops_partials.edge3_.partials_[n] -= alpha_div_sum * (mu_dbl - y_dbl)
             / lambda_dbl + inv_sum;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge4_.partials[n]
+          ops_partials.edge4_.partials_[n]
             += inv_alpha[n] - log1p_scaled_diff[n];
       }
       return ops_partials.build(logp);

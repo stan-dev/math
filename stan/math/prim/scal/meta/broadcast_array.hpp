@@ -17,7 +17,6 @@ namespace stan {
         T& operator[] (int /*i*/) {
           return prim_;
         }
-        int size() { return 1; }
       };
 
       template <typename T>
@@ -27,7 +26,6 @@ namespace stan {
         T& operator[] (int /*i*/) {
           throw std::logic_error("Don't do this");
         }
-        int size() { return 0; }
       };
     }  // end namespace detail
   }  // end namespace math

@@ -98,11 +98,11 @@ namespace stan {
         T_partials_return scaled_diff = inv_beta[n]
           * exp(-y_minus_mu_over_beta);
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= inv_beta[n] - scaled_diff;
+          ops_partials.edge1_.partials_[n] -= inv_beta[n] - scaled_diff;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n] += inv_beta[n] - scaled_diff;
+          ops_partials.edge2_.partials_[n] += inv_beta[n] - scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += -inv_beta[n] + y_minus_mu_over_beta * inv_beta[n]
             - scaled_diff * y_minus_mu_over_beta;
       }

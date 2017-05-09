@@ -93,25 +93,25 @@ namespace stan {
             : SQRT_TWO_OVER_PI * 0.5
             * exp(-scaled_diff * scaled_diff) / cdf_ / sigma_dbl;
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n] += rep_deriv;
+            ops_partials.edge1_.partials_[n] += rep_deriv;
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge2_.partials[n] -= rep_deriv;
+            ops_partials.edge2_.partials_[n] -= rep_deriv;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge3_.partials[n] -= rep_deriv * scaled_diff * SQRT_2;
+            ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * SQRT_2;
         }
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          ops_partials.edge1_.partials[n] *= cdf;
+          ops_partials.edge1_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_loc>::value) {
         for (size_t n = 0; n < stan::length(mu); ++n)
-          ops_partials.edge2_.partials[n] *= cdf;
+          ops_partials.edge2_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(sigma); ++n)
-          ops_partials.edge3_.partials[n] *= cdf;
+          ops_partials.edge3_.partials_[n] *= cdf;
       }
       return ops_partials.build(cdf);
     }

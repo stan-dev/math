@@ -66,12 +66,12 @@ namespace stan {
 
         const T_partials_return rep_deriv_ = pow_ / (1.0 / exp_ - 1);
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n] -= alpha_dbl / y_dbl * rep_deriv_;
+          ops_partials.edge1_.partials_[n] -= alpha_dbl / y_dbl * rep_deriv_;
         if (!is_constant_struct<T_shape>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             -= log(y_dbl / sigma_dbl) * rep_deriv_;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] += alpha_dbl / sigma_dbl * rep_deriv_;
+          ops_partials.edge3_.partials_[n] += alpha_dbl / sigma_dbl * rep_deriv_;
       }
       return ops_partials.build(ccdf_log);
     }

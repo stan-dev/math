@@ -99,11 +99,11 @@ namespace stan {
         P *= P_i;
 
         if (!is_constant_struct<T_location>::value)
-          ops_partials.edge1_.partials[i] +=
+          ops_partials.edge1_.partials_[i] +=
             - inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * phi_dbl * d_dbl / P_i;
 
         if (!is_constant_struct<T_precision>::value) {
-          ops_partials.edge2_.partials[i]
+          ops_partials.edge2_.partials_[i]
             += inc_beta_dda(phi_dbl, n_dbl + 1, p_dbl,
                             digamma_phi_vec[i],
                             digamma_sum_vec[i]) / P_i
@@ -114,12 +114,12 @@ namespace stan {
 
       if (!is_constant_struct<T_location>::value) {
         for (size_t i = 0; i < stan::length(mu); ++i)
-          ops_partials.edge1_.partials[i] *= P;
+          ops_partials.edge1_.partials_[i] *= P;
       }
 
       if (!is_constant_struct<T_precision>::value) {
         for (size_t i = 0; i < stan::length(phi); ++i)
-          ops_partials.edge2_.partials[i] *= P;
+          ops_partials.edge2_.partials_[i] *= P;
       }
 
       return ops_partials.build(P);

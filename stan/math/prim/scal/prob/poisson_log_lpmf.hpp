@@ -84,7 +84,7 @@ namespace stan {
         }
 
         if (!is_constant_struct<T_log_rate>::value)
-          ops_partials.edge1_.partials[i] += n_vec[i] - exp_alpha[i];
+          ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
       }
       return ops_partials.build(logp);
     }

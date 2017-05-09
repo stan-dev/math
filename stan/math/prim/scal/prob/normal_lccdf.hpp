@@ -83,11 +83,11 @@ namespace stan {
             : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff)
             / one_m_erf / sigma_dbl;
           if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials[n] -= rep_deriv_div_sigma;
+            ops_partials.edge1_.partials_[n] -= rep_deriv_div_sigma;
           if (!is_constant_struct<T_loc>::value)
-            ops_partials.edge2_.partials[n] += rep_deriv_div_sigma;
+            ops_partials.edge2_.partials_[n] += rep_deriv_div_sigma;
           if (!is_constant_struct<T_scale>::value)
-            ops_partials.edge3_.partials[n] += rep_deriv_div_sigma
+            ops_partials.edge3_.partials_[n] += rep_deriv_div_sigma
               * scaled_diff * SQRT_2;
         }
       }

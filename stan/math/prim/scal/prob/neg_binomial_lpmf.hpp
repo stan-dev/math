@@ -130,11 +130,11 @@ namespace stan {
             logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
 
           if (!is_constant_struct<T_shape>::value)
-            ops_partials.edge1_.partials[i]
+            ops_partials.edge1_.partials_[i]
               += n_vec[i] / value_of(alpha_vec[i])
               - 1.0 / value_of(beta_vec[i]);
           if (!is_constant_struct<T_inv_scale>::value)
-            ops_partials.edge2_.partials[i]
+            ops_partials.edge2_.partials_[i]
               += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
         } else {  // standard density definition
           if (include_summand<propto, T_shape>::value)
@@ -149,12 +149,12 @@ namespace stan {
               - n_vec[i] * log1p_beta[i];
 
           if (!is_constant_struct<T_shape>::value)
-            ops_partials.edge1_.partials[i]
+            ops_partials.edge1_.partials_[i]
               += digamma(value_of(alpha_vec[i]) + n_vec[i])
               - digamma_alpha[i]
               + log_beta_m_log1p_beta[i];
           if (!is_constant_struct<T_inv_scale>::value)
-            ops_partials.edge2_.partials[i]
+            ops_partials.edge2_.partials_[i]
               += lambda_m_alpha_over_1p_beta[i]
               - n_vec[i]  / (value_of(beta_vec[i]) + 1.0);
         }

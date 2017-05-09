@@ -126,30 +126,30 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
 
         if (!is_constant_struct<T_scale_succ>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl,
                             digamma_alpha_vec[n], digamma_sum_vec[n]) / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          ops_partials.edge3_.partials[n]
+          ops_partials.edge3_.partials_[n]
             += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl,
                             digamma_beta_vec[n], digamma_sum_vec[n]) / Pn;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          ops_partials.edge1_.partials[n] *= P;
+          ops_partials.edge1_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_scale_succ>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          ops_partials.edge2_.partials[n] *= P;
+          ops_partials.edge2_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_scale_fail>::value) {
         for (size_t n = 0; n < stan::length(beta); ++n)
-          ops_partials.edge3_.partials[n] *= P;
+          ops_partials.edge3_.partials_[n] *= P;
       }
 
       return ops_partials.build(P);

@@ -13,9 +13,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvar) {
   x3.d_ = 4.0;
 
   operands_and_partials<fvar<double>,fvar<double>,fvar<double> > o(x1, x2, x3);
-  o.edge1_.partials[0] += 17.0;
-  o.edge2_.partials[0] += 19.0;
-  o.edge3_.partials[0] += 23.0;
+  o.edge1_.partials_[0] += 17.0;
+  o.edge2_.partials_[0] += 19.0;
+  o.edge3_.partials_[0] += 23.0;
 
   fvar<double> y = o.build(-1.0);
   EXPECT_FLOAT_EQ(107,y.d_);

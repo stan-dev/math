@@ -83,13 +83,13 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials[n]
+          ops_partials.edge1_.partials_[n]
             -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_loc>::value)
-          ops_partials.edge2_.partials[n]
+          ops_partials.edge2_.partials_[n]
             -= - exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          ops_partials.edge3_.partials[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
+          ops_partials.edge3_.partials_[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
       return ops_partials.build(P);
