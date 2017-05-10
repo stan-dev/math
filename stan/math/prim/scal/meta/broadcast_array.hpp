@@ -27,8 +27,8 @@ namespace stan {
           throw std::logic_error("Don't do this");
         }
       };
-    }  // end namespace detail
-  }  // end namespace math
-}  // end namespace stan
+    }
+  }
+}
 
 #endif

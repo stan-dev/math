@@ -56,9 +56,9 @@ namespace stan {
           : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
         Dx dx() {
           Dx derivative(0);
-          for (int i = 0; i < this->operands_.size(); ++i) {
+          for (size_t i = 0; i < this->operands_.size(); ++i) {
             for (int j = 0; j < this->operands_[i].size(); ++j) {
-              derivative += this->partials_[i](j) * this->operands_[i](j);
+              derivative += this->partials_vec_[i](j) * this->operands_[i](j);
             }
           }
         }

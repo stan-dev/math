@@ -30,6 +30,11 @@ namespace stan {
      * primitives, reverse mode, and forward mode variables
      * seamlessly.
      *
+     * Conceptually, this class is used when we want to manually calculate
+     * the derivative of a function and store this manual result on the
+     * autodiff stack in a sort of "compressed" form. Think of it like an
+     * easy-to-use interface to rev/core/precomputed_gradients.
+     *
      * This class now supports multivariate use-cases as well by
      * exposing edge#_.partials_vec
      *
@@ -63,6 +68,19 @@ namespace stan {
                             const Op4& o4)
         : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) { }
 
+      /**
+       * Build the node to be stored on the autodiff graph.
+       * This should contain both the value and the tangent.
+       *
+       * For scalars, we don't calculate any tangents.
+       * For reverse mode, we end up returning a type of var that will calculate
+       * the appropriate adjoint using the stored operands and partials.
+       * Forward mode just calculates the tangent on the spot and returns it in
+       * a vanilla fvar.
+       *
+       * @param value the return value of the function we are compressing
+       * @return the value with its derivative
+       */
       T_return_type build(Dx value) {
         Dx deriv = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx();
         return T_return_type(value, deriv);
