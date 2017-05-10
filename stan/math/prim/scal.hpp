@@ -5,7 +5,6 @@
 
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
-#include <stan/math/prim/scal/meta/container_view.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
