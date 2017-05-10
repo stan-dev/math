@@ -66,7 +66,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
     scalar(val_dxs[2], 0.0), scalar(val_dxs[3], 0.0);
 
   uni_mat m2(2, 2);
-  // Set d_ to 1 for one variable we care about;
   m1 << scalar(val_dxs[3], 1.0), scalar(val_dxs[2], 0.0),
     scalar(val_dxs[1], 0.0), scalar(val_dxs[0], 0.0);
 
@@ -100,7 +99,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
   EXPECT_FLOAT_EQ(0.0, grad_grad[1]);
   EXPECT_FLOAT_EQ(0.0, grad_grad[2]);
   EXPECT_FLOAT_EQ(0.0, grad_grad[3]);
-  EXPECT_FLOAT_EQ(1.0, grad_grad[4]);
+  EXPECT_FLOAT_EQ(0.0, grad_grad[4]);
   EXPECT_FLOAT_EQ(0.0, grad_grad[5]);
   EXPECT_FLOAT_EQ(0.0, grad_grad[6]);
   EXPECT_FLOAT_EQ(0.0, grad_grad[7]);

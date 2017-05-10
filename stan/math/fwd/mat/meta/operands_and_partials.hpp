@@ -58,12 +58,13 @@ namespace stan {
           Dx derivative(0);
           for (size_t i = 0; i < this->operands_.size(); ++i) {
             for (int j = 0; j < this->operands_[i].size(); ++j) {
-              derivative += this->partials_vec_[i](j) * this->operands_[i](j);
+              derivative += this->partials_vec_[i](j) * this->operands_[i](j).d_;
             }
           }
+          return derivative;
         }
       };
-    }
-  }
-}
+    }  // namespace detail
+  }  // namespace math
+}  // namespace stan
 #endif
