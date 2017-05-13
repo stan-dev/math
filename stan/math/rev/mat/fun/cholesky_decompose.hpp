@@ -274,73 +274,76 @@ namespace stan {
        * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
        */
-virtual void chain() {
+    virtual void chain() {
 		
-		using Eigen::MatrixXd;
-		using Eigen::Lower;
-        using Eigen::Block;
-        using Eigen::Upper;
-        using Eigen::StrictlyUpper;
-        using Eigen::StrictlyLower;
-        MatrixXd Lbar(M_, M_);
-        MatrixXd L(M_, M_);
-		viennacl::matrix<double>  vcl_L(M_, M_);
-        viennacl::matrix<double>  vcl_Lbar(M_, M_);
-        viennacl::matrix<double> vcl_Lbar_temp(M_, M_);
-        
-        Lbar.setZero();
-        L.setZero();
-        size_t pos = 0;
-        for (size_type j = 0; j < M_; ++j) {
-          for (size_type i = j; i < M_; ++i) {
-            Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
-            L.coeffRef(i, j) = variRefL_[pos]->val_;
-            ++pos;
-          }
-        }
-        
-		viennacl::copy(L, vcl_L);
-		viennacl::copy(Lbar, vcl_Lbar);
-		vcl_L =  viennacl::trans(vcl_L);
-        my_kernel_lower_tri_mul.global_work_size(0, vcl_Lbar.internal_size1());
-        my_kernel_lower_tri_mul.global_work_size(1, vcl_Lbar.internal_size2());
-        my_kernel_lower_tri_mul.local_work_size(0,32);
-        my_kernel_lower_tri_mul.local_work_size(1,32);
-        viennacl::ocl::enqueue(
-          my_kernel_lower_tri_mul(
-           static_cast<cl_uint>(vcl_Lbar.size1()),
-           static_cast<cl_uint>(vcl_Lbar.size2()), 
-           vcl_L,
-           vcl_Lbar,
-           vcl_Lbar_temp
-		   )
-		  );
-		vcl_Lbar = vcl_Lbar_temp; 
-        //vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
-        
-		//internal_size is used because ViennaCL pads the matrices in global memory
-		my_kernel_mul.global_work_size(0,vcl_Lbar.internal_size1());
-		my_kernel_mul.global_work_size(1,vcl_Lbar.internal_size2());		
-		
-		//arbitrary block size, could also be different
-		my_kernel_mul.local_work_size(0,32);my_kernel_mul.local_work_size(1,32);
-		
-		viennacl::ocl::enqueue(my_kernel_mul(vcl_Lbar, static_cast<cl_uint>(vcl_Lbar.size1()), static_cast<cl_uint>(vcl_Lbar.size2()), 
-		static_cast<cl_uint>(vcl_Lbar.internal_size2())));
 
-        viennacl::linalg::inplace_solve(vcl_L, vcl_Lbar, viennacl::linalg::upper_tag());
-        viennacl::linalg::inplace_solve(vcl_L, viennacl::trans(vcl_Lbar), viennacl::linalg::upper_tag());
-                
-		viennacl::trans(vcl_Lbar);
-		viennacl::copy(vcl_Lbar, Lbar);
-		viennacl::copy(vcl_L, L);
-		Lbar.diagonal() *= 0.5;
+				
+		    using Eigen::MatrixXd;
+		    using Eigen::Lower;
+            using Eigen::Block;
+            using Eigen::Upper;
+            using Eigen::StrictlyUpper;
+            using Eigen::StrictlyLower;
+            MatrixXd Lbar(M_, M_);
+            MatrixXd L(M_, M_);
+		    viennacl::matrix<double>  vcl_L(M_, M_);
+            viennacl::matrix<double>  vcl_Lbar(M_, M_);
+            viennacl::matrix<double> vcl_Lbar_temp(M_, M_);
+            
+            Lbar.setZero();
+            L.setZero();
+            size_t pos = 0;
+            for (size_type j = 0; j < M_; ++j) {
+              for (size_type i = j; i < M_; ++i) {
+                Lbar.coeffRef(i, j) = variRefL_[pos]->adj_;
+                L.coeffRef(i, j) = variRefL_[pos]->val_;
+                ++pos;
+              }
+            }
+            
+		    viennacl::copy(L, vcl_L);
+		    viennacl::copy(Lbar, vcl_Lbar);
+		    vcl_L =  viennacl::trans(vcl_L);
+            vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
+            
+
+		    //internal_size is used because ViennaCL pads the matrices in global memory
+		    my_kernel_mul.global_work_size(0,vcl_Lbar.internal_size1());
+		    my_kernel_mul.global_work_size(1,vcl_Lbar.internal_size2());		
 		
-        pos = 0;
-        for (size_type j = 0; j < M_; ++j)
-          for (size_type i = j; i < M_; ++i)
-            variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
-      }
+		    //arbitrary block size, could also be different
+		    my_kernel_mul.local_work_size(0,32);my_kernel_mul.local_work_size(1,32);
+		
+		    viennacl::ocl::enqueue(my_kernel_mul(
+		      vcl_Lbar,
+		      static_cast<cl_uint>(vcl_Lbar.size1()),
+		      static_cast<cl_uint>(vcl_Lbar.size2()), 
+		      static_cast<cl_uint>(vcl_Lbar.internal_size2())
+		     )
+		    );
+
+            viennacl::linalg::inplace_solve(
+             vcl_L, 
+             vcl_Lbar, 
+             viennacl::linalg::upper_tag()
+            );
+            
+            viennacl::linalg::inplace_solve(
+              vcl_L,
+              viennacl::trans(vcl_Lbar),
+              viennacl::linalg::upper_tag()
+            );
+                    
+		    viennacl::trans(vcl_Lbar);
+		    viennacl::copy(vcl_Lbar, Lbar);
+		    viennacl::copy(vcl_L, L);
+		    Lbar.diagonal() *= 0.5;
+		
+            pos = 0;
+            for (size_type j = 0; j < M_; ++j)
+              for (size_type i = j; i < M_; ++i)
+                variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
+          }
     };
 
 
@@ -400,7 +403,7 @@ virtual void chain() {
           accum_i = accum;
         }
       // NOTE: This should be replaced by some check that comes from a user
-      /*} else if (L_A.rows()  > 500) {
+      } else if (L_A.rows()  > 500) {
         cholesky_gpu *baseVari
           = new cholesky_gpu(A, L_A);
         size_t pos = 0;
@@ -411,7 +414,7 @@ virtual void chain() {
           for (size_type k = 0; k < j; ++k)
             L.coeffRef(k, j).vi_ = dummy;
         }
-      */} else {
+      } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);
         size_t pos = 0;
