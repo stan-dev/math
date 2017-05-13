@@ -28,18 +28,33 @@ TEST(MathFunctions, append_array) {
   EXPECT_EQ(0, result.size());
 }
 
-TEST(MathFunctions, append_array_int) {
+TEST(MathFunctions, append_array_int_int) {
+  std::vector<int> x(2), y(3), result;
+
+  x[0] = 1;
+  x[1] = 2;
+  y[0] = 3;
+  y[1] = 4;
+  y[2] = 5;
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, y));
+  EXPECT_EQ(5, result.size());
+  EXPECT_FLOAT_EQ(1, result[0]);
+  EXPECT_FLOAT_EQ(2, result[1]);
+  EXPECT_FLOAT_EQ(3, result[2]);
+  EXPECT_FLOAT_EQ(4, result[3]);
+  EXPECT_FLOAT_EQ(5, result[4]);
+}
+
+TEST(MathFunctions, append_array_double_int) {
   std::vector<double> x(3), result;
-  std::vector<int> y(2), z(3);
+  std::vector<int> y(2);
 
   x[0] = 1.0;
   x[1] = 2.0;
   x[2] = 3.0;
   y[0] = 5;
   y[1] = 4;
-  z[0] = 6;
-  z[1] = 7;
-  z[2] = 8;
 
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
   EXPECT_EQ(5, result.size());
@@ -48,14 +63,6 @@ TEST(MathFunctions, append_array_int) {
   EXPECT_FLOAT_EQ(3.0, result[2]);
   EXPECT_FLOAT_EQ(5.0, result[3]);
   EXPECT_FLOAT_EQ(4.0, result[4]);
-
-  EXPECT_NO_THROW(result = stan::math::append_array(y, z));
-  EXPECT_EQ(5, result.size());
-  EXPECT_FLOAT_EQ(5.0, result[0]);
-  EXPECT_FLOAT_EQ(4.0, result[1]);
-  EXPECT_FLOAT_EQ(6.0, result[2]);
-  EXPECT_FLOAT_EQ(7.0, result[3]);
-  EXPECT_FLOAT_EQ(8.0, result[4]);
 }
 
 TEST(MathFunctions, append_array_nan) {

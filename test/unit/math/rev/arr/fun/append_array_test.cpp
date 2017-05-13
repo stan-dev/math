@@ -19,7 +19,7 @@ TEST(AgradRev, append_array_double_var) {
   EXPECT_FLOAT_EQ(0.5, result[3].val());
   EXPECT_FLOAT_EQ(4.0, result[4].val());
 
-  for(unsigned int i = 0; i < result.size(); i++) {
+  for(size_t i = 0; i < result.size(); i++) {
     stan::math::set_zero_all_adjoints();
 
     result[i].grad();
@@ -54,7 +54,7 @@ TEST(AgradRev, append_array_var_double) {
   EXPECT_FLOAT_EQ(1.0, result[3].val());
   EXPECT_FLOAT_EQ(2.0, result[4].val());
 
-  for(unsigned int i = 0; i < result.size(); i++) {
+  for(size_t i = 0; i < result.size(); i++) {
     stan::math::set_zero_all_adjoints();
 
     result[i].grad();
@@ -93,7 +93,7 @@ TEST(AgradRev, append_array_var_var) {
   EXPECT_FLOAT_EQ(0.5, result[3].val());
   EXPECT_FLOAT_EQ(4.0, result[4].val());
 
-  for(unsigned int i = 0; i < result.size(); i++) {
+  for(size_t i = 0; i < result.size(); i++) {
     stan::math::set_zero_all_adjoints();
 
     result[i].grad();
