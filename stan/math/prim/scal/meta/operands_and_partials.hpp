@@ -6,17 +6,27 @@
 
 namespace stan {
   namespace math {
+    template <typename Op1 = double, typename Op2 = double,
+              typename Op3 = double, typename Op4 = double,
+              typename T_return_type
+              = typename return_type<Op1, Op2, Op3, Op4>::type>
+    class operands_and_partials;
+
     namespace detail {
       // Here an "edge" is intended to hold both the operands and its associated
       // partial derivatives. The reason we wanted to hold them together in the
       // same class is because then we can keep the templating logic that
       // specializes on type of operand in one place.
       template <typename ViewElt, typename Op>
-      struct ops_partials_edge {
+      class ops_partials_edge {
+      public:
         empty_broadcast_array<ViewElt> partials_;
 
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* op */) {}
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
+      private:
         // dump_partials is used in reverse mode specializations of this class
         // to copy the partials stored in this class into memory provided by
         // a caller; this is always the autodiff stack memory arena. You can
@@ -39,15 +49,17 @@ namespace stan {
       // just one.
       template <typename ViewElt, typename Op>
       class ops_partials_edge_single {
-      private:
+      protected:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         ViewElt partial_;
-      public:
         const Op& operand_;
+        int size() const { return 1; }
+      public:
         broadcast_array<ViewElt> partials_;
         explicit ops_partials_edge_single(const Op& op)
           : partial_(0), operand_(op), partials_(partial_) {}
         // dump_operands implemented in specialization
-        int size() const { return 1; }
       };
     }  // namespace detail
 
@@ -80,10 +92,9 @@ namespace stan {
      *   to a template metaprogram that calculates the scalar promotion of
      *   Op1 -- Op4
      */
-    template <typename Op1 = double, typename Op2 = double,
-              typename Op3 = double, typename Op4 = double,
-              typename T_return_type
-              = typename return_type<Op1, Op2, Op3, Op4>::type>
+    template <typename Op1, typename Op2,
+              typename Op3, typename Op4,
+              typename T_return_type>
     class operands_and_partials {
     public:
       explicit operands_and_partials(const Op1& op1) {}

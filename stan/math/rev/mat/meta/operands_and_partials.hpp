@@ -16,6 +16,9 @@ namespace stan {
       public:
         explicit ops_partials_edge(const std::vector<var>& ops)
           : ops_partials_edge_mat<ViewElt, std::vector<var>, -1, 1>(ops) {}
+      private:
+        template<typename T1, typename T2, typename T3, typename T4, typename T5>
+        friend class stan::math::operands_and_partials;
         void dump_operands(vari** varis) {
           for (size_t i = 0; i < this->operands_.size(); ++i) {
             varis[i] = this->operands_[i].vi_;
@@ -31,6 +34,9 @@ namespace stan {
         explicit ops_partials_edge(const Eigen::Matrix<var, R, C>& ops)
           : ops_partials_edge_mat<ViewElt, Eigen::Matrix<var, R, C>, R, C>(ops)
         {}
+      private:
+        template<typename T1, typename T2, typename T3, typename T4, typename T5>
+        friend class stan::math::operands_and_partials;
         void dump_operands(vari** varis) {
           for (int i = 0; i < this->operands_.size(); ++i) {
             varis[i] = this->operands_(i).vi_;
@@ -47,6 +53,9 @@ namespace stan {
         typedef std::vector<Eigen::Matrix<var, R, C> > Op;
         explicit ops_partials_edge(const Op& ops)
           : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
+      private:
+        template<typename T1, typename T2, typename T3, typename T4, typename T5>
+        friend class stan::math::operands_and_partials;
         void dump_partials(double* partials) {
           int p_i = 0;
           for (size_t i = 0; i < this->partials_vec_.size(); ++i) {

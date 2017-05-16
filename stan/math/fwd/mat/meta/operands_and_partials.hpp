@@ -18,6 +18,9 @@ namespace stan {
         explicit ops_partials_edge(const std::vector<fvar<Dx> >& ops)
           : ops_partials_edge_mat<ViewElt,
                                   std::vector<fvar<Dx> >, -1, 1>(ops) {}
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {
@@ -35,6 +38,9 @@ namespace stan {
         explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx>, R, C>& ops)
           : ops_partials_edge_mat<ViewElt,
                                   Eigen::Matrix<fvar<Dx>, R, C>, R, C>(ops) {}
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {
@@ -54,6 +60,9 @@ namespace stan {
         typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
         explicit ops_partials_edge(const Op& ops)
           : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         Dx dx() {
           Dx derivative(0);
           for (size_t i = 0; i < this->operands_.size(); ++i) {

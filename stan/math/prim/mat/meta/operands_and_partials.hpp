@@ -54,15 +54,17 @@ namespace stan {
       class ops_partials_edge_mat {
       public:
         typedef Eigen::Matrix<ViewElt, R, C> partials_t;
-        const Op& operands_;
         partials_t partials_;  // For univariate use-cases
         broadcast_array<partials_t> partials_vec_;  // For multivariate
 
         explicit ops_partials_edge_mat(const Op& ops)
-          : operands_(ops),
-            partials_(zero_vec_or_mat<ViewElt, Op, R, C>::zero(ops)),
-            partials_vec_(partials_) {}
-
+          : partials_(zero_vec_or_mat<ViewElt, Op, R, C>::zero(ops)),
+            partials_vec_(partials_),
+            operands_(ops) {}
+      protected:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
+        const Op& operands_;
         void dump_partials(double* partials) {
           for (int i = 0; i < this->partials_.size(); ++i) {
             partials[i] = this->partials_(i);
@@ -77,7 +79,6 @@ namespace stan {
       public:
         typedef Eigen::Matrix<ViewElt, -1, -1> partial_t;
         std::vector<partial_t> partials_vec_;
-        const Ops& operands_;
 
         explicit ops_partials_edge_multivariate_prim(const Ops& ops)
           : partials_vec_(ops.size()), operands_(ops) {
@@ -85,6 +86,10 @@ namespace stan {
             partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
           }
         }
+      protected:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
+        const Ops& operands_;
         int size() {
           return this->operands_.size() * this->operands_[0].size();
         }

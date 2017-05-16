@@ -15,6 +15,9 @@ namespace stan {
       public:
         explicit ops_partials_edge(const fvar<Dx>& op)
           : ops_partials_edge_single<ViewElt, fvar<Dx> >(op) {}
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         Dx dx() {
           return this->partials_[0] * this->operand_.d_;
         }

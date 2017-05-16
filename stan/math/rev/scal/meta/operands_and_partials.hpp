@@ -17,6 +17,9 @@ namespace stan {
       public:
         explicit ops_partials_edge(const var& op)
           : ops_partials_edge_single<double, var>(op) {}
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
         void dump_partials(double* partials) {
           *partials = this->partials_[0];
         }
