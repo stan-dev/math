@@ -12,7 +12,7 @@ namespace stan {
               = typename return_type<Op1, Op2, Op3, Op4>::type>
     class operands_and_partials;
 
-    namespace detail {
+    namespace internal {
       // Here an "edge" is intended to hold both the operands and its associated
       // partial derivatives. The reason we wanted to hold them together in the
       // same class is because then we can keep the templating logic that
@@ -61,7 +61,7 @@ namespace stan {
           : partial_(0), operand_(op), partials_(partial_) {}
         // dump_operands implemented in specialization
       };
-    }  // namespace detail
+    }  // namespace internal
 
     /**
      * This class builds partial derivatives with respect to a set of
@@ -121,10 +121,10 @@ namespace stan {
         return value;
       }
 
-      detail::ops_partials_edge<ViewElt, Op1> edge1_;
-      detail::ops_partials_edge<ViewElt, Op2> edge2_;
-      detail::ops_partials_edge<ViewElt, Op3> edge3_;
-      detail::ops_partials_edge<ViewElt, Op4> edge4_;
+      internal::ops_partials_edge<ViewElt, Op1> edge1_;
+      internal::ops_partials_edge<ViewElt, Op2> edge2_;
+      internal::ops_partials_edge<ViewElt, Op3> edge3_;
+      internal::ops_partials_edge<ViewElt, Op4> edge4_;
     };
   }  // namespace math
 }  // namespace stan

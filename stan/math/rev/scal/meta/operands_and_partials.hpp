@@ -10,7 +10,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       template <>
       class ops_partials_edge<double, var>
         : public ops_partials_edge_single<double, var> {
@@ -27,7 +27,7 @@ namespace stan {
           *varis = this->operand_.vi_;
         }
       };
-    }  // end namespace detail
+    }  // namespace internal
 
     /**
      * This class builds partial derivatives with respect to a set of
@@ -60,10 +60,10 @@ namespace stan {
     template <typename Op1, typename Op2, typename Op3, typename Op4>
     class operands_and_partials<Op1, Op2, Op3, Op4, var> {
     public:
-      detail::ops_partials_edge<double, Op1> edge1_;
-      detail::ops_partials_edge<double, Op2> edge2_;
-      detail::ops_partials_edge<double, Op3> edge3_;
-      detail::ops_partials_edge<double, Op4> edge4_;
+      internal::ops_partials_edge<double, Op1> edge1_;
+      internal::ops_partials_edge<double, Op2> edge2_;
+      internal::ops_partials_edge<double, Op3> edge3_;
+      internal::ops_partials_edge<double, Op4> edge4_;
 
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }

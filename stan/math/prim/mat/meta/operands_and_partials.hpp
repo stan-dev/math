@@ -8,7 +8,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       // The zero_vec_or_mat metaprogram provides the logic for initializing
       // an Eigen row or column vector or matrix dynamically to zeroes of the
       // appropriate size.

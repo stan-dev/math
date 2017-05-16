@@ -5,7 +5,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       template <typename T>
       class broadcast_array {
       private:

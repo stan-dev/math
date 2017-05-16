@@ -6,7 +6,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       // For fvars, each of these must implement a dx() method that calculates
       // the contribution to the derivative of the o&p node for the edge.
       template <typename ViewElt, typename Dx>
@@ -22,7 +22,7 @@ namespace stan {
           return this->partials_[0] * this->operand_.d_;
         }
       };
-    }  // end namespace detail
+    }  // namespace internal
 
     /**
      * This class builds partial derivatives with respect to a set of
@@ -56,10 +56,10 @@ namespace stan {
               typename Dx>
     class operands_and_partials<Op1, Op2, Op3, Op4, fvar<Dx> > {
     public:
-      detail::ops_partials_edge<Dx, Op1> edge1_;
-      detail::ops_partials_edge<Dx, Op2> edge2_;
-      detail::ops_partials_edge<Dx, Op3> edge3_;
-      detail::ops_partials_edge<Dx, Op4> edge4_;
+      internal::ops_partials_edge<Dx, Op1> edge1_;
+      internal::ops_partials_edge<Dx, Op2> edge2_;
+      internal::ops_partials_edge<Dx, Op3> edge3_;
+      internal::ops_partials_edge<Dx, Op4> edge4_;
       typedef fvar<Dx> T_return_type;
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }

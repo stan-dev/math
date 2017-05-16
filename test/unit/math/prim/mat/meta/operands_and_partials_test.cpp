@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 TEST(AgradPartialsVari, OperandsAndPartialsPrimMatZero) {
-  using stan::math::detail::zero_vec_or_mat;
+  using stan::math::internal::zero_vec_or_mat;
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using Eigen::VectorXi;

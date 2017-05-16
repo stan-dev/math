@@ -8,7 +8,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       // Vectorized Univariate
       template <typename ViewElt>
       class ops_partials_edge<ViewElt, std::vector<var> >
@@ -73,7 +73,7 @@ namespace stan {
           }
         }
       };
-    }  // end namespace detail
-  }  // end namespace math
-}  // end namespace stan
+    }  // namespace internal
+  }  // namespace math
+}  // namespace stan
 #endif

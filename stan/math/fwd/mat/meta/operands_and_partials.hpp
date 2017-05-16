@@ -8,7 +8,7 @@
 
 namespace stan {
   namespace math {
-    namespace detail {
+    namespace internal {
       // Vectorized Univariate
       template <typename ViewElt, typename Dx>
       class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > >
@@ -74,7 +74,7 @@ namespace stan {
           return derivative;
         }
       };
-    }  // namespace detail
+    }  // namespace internal
   }  // namespace math
 }  // namespace stan
 #endif

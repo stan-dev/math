@@ -4,7 +4,7 @@
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 
 TEST(foo, bar) {
-  using stan::math::detail::broadcast_array;
+  using stan::math::internal::broadcast_array;
   using stan::math::fvar;
   using stan::math::var;
 
