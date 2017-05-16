@@ -91,6 +91,7 @@ namespace stan {
         friend class stan::math::operands_and_partials;
         const Ops& operands_;
         int size() {
+          if (this->operands_.size() == 0) return 0;
           return this->operands_.size() * this->operands_[0].size();
         }
       };
