@@ -39,10 +39,10 @@ namespace stan {
      * @return A vector of x and y concatenated together (in that order)
      */
     template <typename T1, typename T2, int R, int C>
-    inline std::vector<typename Eigen::Matrix<typename return_type<T1, T2>::type, R, C> >
+    inline std::vector<Eigen::Matrix<typename return_type<T1, T2>::type, R, C> >
     append_array(const std::vector<Eigen::Matrix<T1, R, C> >& x,
                  const std::vector<Eigen::Matrix<T2, R, C> >& y) {
-      if(!x.empty() && !y.empty()) {
+      if (!x.empty() && !y.empty()) {
         check_matching_dims("append_array",
                             "x[1]",
                             x.front(),
