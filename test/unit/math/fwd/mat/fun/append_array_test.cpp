@@ -1,4 +1,4 @@
-#include <stan/math/fwd/arr.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradFwd, append_array_double_fvar) {

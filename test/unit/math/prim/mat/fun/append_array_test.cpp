@@ -1,5 +1,7 @@
-#include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+
+using namespace Eigen;
 
 TEST(MathFunctions, append_array) {
   std::vector<double> x(3), y(2), z, result;
@@ -44,6 +46,31 @@ TEST(MathFunctions, append_array_int_int) {
   EXPECT_FLOAT_EQ(3, result[2]);
   EXPECT_FLOAT_EQ(4, result[3]);
   EXPECT_FLOAT_EQ(5, result[4]);
+}
+
+TEST(MathFunctions, append_array_matrix_matrix) {
+  std::vector<Matrix<double, Dynamic, Dynamic> > x, y, result, z;
+
+  x.push_back(Matrix<double, Dynamic, Dynamic>(2, 3));
+  y.push_back(Matrix<double, Dynamic, Dynamic>(2, 3));
+
+  x[0] << 1.0, 2.0, 3.0,
+    4.0, 5.0, 6.0;
+
+  y[0] << 2.0, 3.0, 4.0,
+    5.0, 6.0, 7.0;
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, y));
+  EXPECT_EQ(2, result.size());
+  EXPECT_FLOAT_EQ(2.0, result[0](0, 1));
+  EXPECT_FLOAT_EQ(5.0, result[1](1, 0));
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, z));
+  EXPECT_EQ(1, result.size());
+
+  z.push_back(Matrix<double, Dynamic, Dynamic>(1, 3));
+
+  EXPECT_THROW(result = stan::math::append_array(x, z), std::invalid_argument);
 }
 
 TEST(MathFunctions, append_array_double_int) {

@@ -1,4 +1,4 @@
-#include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRev, append_array_double_var) {
@@ -19,21 +19,13 @@ TEST(AgradRev, append_array_double_var) {
   EXPECT_FLOAT_EQ(0.5, result[3].val());
   EXPECT_FLOAT_EQ(4.0, result[4].val());
 
-  for(size_t i = 0; i < result.size(); i++) {
-    stan::math::set_zero_all_adjoints();
+  stan::math::set_zero_all_adjoints();
+  result[3].grad();
+  EXPECT_FLOAT_EQ(1.0, y[0].adj());
 
-    result[i].grad();
-
-    if(i == 3)
-      EXPECT_FLOAT_EQ(1.0, y[0].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[0].adj());
-
-    if(i == 4)
-      EXPECT_FLOAT_EQ(1.0, y[1].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[1].adj());
-  }
+  stan::math::set_zero_all_adjoints();
+  result[4].grad();
+  EXPECT_FLOAT_EQ(0.0, y[0].adj());
 }
 
 TEST(AgradRev, append_array_var_double) {
@@ -54,26 +46,13 @@ TEST(AgradRev, append_array_var_double) {
   EXPECT_FLOAT_EQ(1.0, result[3].val());
   EXPECT_FLOAT_EQ(2.0, result[4].val());
 
-  for(size_t i = 0; i < result.size(); i++) {
-    stan::math::set_zero_all_adjoints();
+  stan::math::set_zero_all_adjoints();
+  result[3].grad();
+  EXPECT_FLOAT_EQ(0.0, y[0].adj());
 
-    result[i].grad();
-
-    if(i == 0)
-      EXPECT_FLOAT_EQ(1.0, y[0].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[0].adj());
-
-    if(i == 1)
-      EXPECT_FLOAT_EQ(1.0, y[1].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[1].adj());
-
-    if(i == 2)
-      EXPECT_FLOAT_EQ(1.0, y[2].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[2].adj());
-  }
+  stan::math::set_zero_all_adjoints();
+  result[4].grad();
+  EXPECT_FLOAT_EQ(0.0, y[0].adj());
 }
 
 TEST(AgradRev, append_array_var_var) {
@@ -93,34 +72,11 @@ TEST(AgradRev, append_array_var_var) {
   EXPECT_FLOAT_EQ(0.5, result[3].val());
   EXPECT_FLOAT_EQ(4.0, result[4].val());
 
-  for(size_t i = 0; i < result.size(); i++) {
-    stan::math::set_zero_all_adjoints();
+  stan::math::set_zero_all_adjoints();
+  result[4].grad();
+  EXPECT_FLOAT_EQ(0.0, y[0].adj());
 
-    result[i].grad();
-
-    if(i == 0)
-      EXPECT_FLOAT_EQ(1.0, x[0].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, x[0].adj());
-
-    if(i == 1)
-      EXPECT_FLOAT_EQ(1.0, x[1].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, x[1].adj());
-
-    if(i == 2)
-      EXPECT_FLOAT_EQ(1.0, x[2].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, x[2].adj());
-
-    if(i == 3)
-      EXPECT_FLOAT_EQ(1.0, y[0].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[0].adj());
-
-    if(i == 4)
-      EXPECT_FLOAT_EQ(1.0, y[1].adj());
-    else
-      EXPECT_FLOAT_EQ(0.0, y[1].adj());
-  }
+  stan::math::set_zero_all_adjoints();
+  result[1].grad();
+  EXPECT_FLOAT_EQ(1.0, x[1].adj());
 }
