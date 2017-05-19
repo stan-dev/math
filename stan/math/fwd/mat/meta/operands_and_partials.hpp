@@ -11,13 +11,16 @@ namespace stan {
     namespace internal {
       // Vectorized Univariate
       template <typename ViewElt, typename Dx>
-      class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > >
-        : public ops_partials_edge_mat<ViewElt,
-                                       std::vector<fvar<Dx> >, -1, 1> {
+      class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > > {
       public:
-        explicit ops_partials_edge(const std::vector<fvar<Dx> >& ops)
-          : ops_partials_edge_mat<ViewElt,
-                                  std::vector<fvar<Dx> >, -1, 1>(ops) {}
+        explicit ops_partials_edge(const std::vector<fvar<Dx> >& op)
+          : partials_(op.size()), partials_vec_(partials_),
+            operands_(ops) {}
+
+        typedef std::vector<ViewElt> partials_t;
+        partials_t partials_;  // For univariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
@@ -31,16 +34,20 @@ namespace stan {
       };
 
       template <typename ViewElt, typename Dx, int R, int C>
-      class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> >
-        : public ops_partials_edge_mat<ViewElt,
-                                       Eigen::Matrix<fvar<Dx>, R, C>, R, C> {
+      class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> > {
       public:
         explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx>, R, C>& ops)
-          : ops_partials_edge_mat<ViewElt,
-                                  Eigen::Matrix<fvar<Dx>, R, C>, R, C>(ops) {}
+          : partials_(ops.rows(), ops.cols()), partials_vec_(partials_),
+            operands_(ops) {}
+
+        typedef Eigen::Matrix<ViewElt, R, C> partials_t;
+        partials_t partials_;  // For univariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        const Op& operands_;
+
         Dx dx() {
           Dx derivative(0);
           for (int i = 0; i < this->size(); ++i) {

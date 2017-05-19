@@ -14,10 +14,13 @@ namespace stan {
 
     namespace internal {
       /**
-       * Here an "edge" is intended to hold both the operands and its associated
-       * partial derivatives. The reason we wanted to hold them together in the
-       * same class is because then we can keep the templating logic that
+       * Here an edge is intended to hold both the operands and its associated
+       * partial derivatives. They're held together in the
+       * same class because then we can keep the templating logic that
        * specializes on type of operand in one place.
+       *
+       * This is the base template class that ends up getting instantiated
+       * for arithmetic primitives (doubles and ints).
        *
        * @tparam ViewElt the type we expect to be inside each partials_[i]
        * @tparam Op the type of the operand(s)

@@ -11,40 +11,64 @@ namespace stan {
     namespace internal {
       // Vectorized Univariate
       template <typename ViewElt>
-      class ops_partials_edge<ViewElt, std::vector<var> >
-        : public ops_partials_edge_mat<ViewElt, std::vector<var>, -1, 1> {
+      class ops_partials_edge<ViewElt, std::vector<var> > {
       public:
-        explicit ops_partials_edge(const std::vector<var>& ops)
-          : ops_partials_edge_mat<ViewElt, std::vector<var>, -1, 1>(ops) {}
+        explicit ops_partials_edge(const std::vector<var>& op)
+          : partials_(op.size()), partials_vec_(partials_),
+            operands_(ops) {}
+
+        typedef std::vector<ViewElt> partials_t;
+        partials_t partials_;  // For univariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        const std::vector<var>& operands_;
+
+        void dump_partials(double* partials) {
+          for (int i = 0; i < this->partials_.size(); ++i) {
+            partials[i] = this->partials_(i);
+          }
+        }
         void dump_operands(vari** varis) {
           for (size_t i = 0; i < this->operands_.size(); ++i) {
             varis[i] = this->operands_[i].vi_;
           }
         }
+        int size() { return this->operands_.size(); }
       };
 
       template <typename ViewElt, int R, int C>
-      class ops_partials_edge<ViewElt, Eigen::Matrix<var, R, C> >
-        : public ops_partials_edge_mat<ViewElt,
-                                       Eigen::Matrix<var, R, C>, R, C> {
+      class ops_partials_edge<ViewElt, Eigen::Matrix<var, R, C> > {
       public:
         explicit ops_partials_edge(const Eigen::Matrix<var, R, C>& ops)
-          : ops_partials_edge_mat<ViewElt, Eigen::Matrix<var, R, C>, R, C>(ops)
-        {}
+          : partials_(ops.rows(), ops.cols()), partials_vec_(partials_),
+            operands_(ops) {}
+
+        typedef Eigen::Matrix<ViewElt, R, C> partials_t;
+        partials_t partials_;  // For univariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        const Op& operands_;
+
         void dump_operands(vari** varis) {
           for (int i = 0; i < this->operands_.size(); ++i) {
             varis[i] = this->operands_(i).vi_;
           }
         }
+        void dump_partials(double* partials) {
+          for (int i = 0; i < this->partials_.size(); ++i) {
+            partials[i] = this->partials_(i);
+          }
+        }
+        int size() { return this->operands_.size(); }
       };
 
-      // MULTIVARIATE
+      // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
       template <typename ViewElt, int R, int C>
       class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<var, R, C> > >
         : public ops_partials_edge_multivariate_prim
