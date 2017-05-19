@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 
@@ -12,20 +13,24 @@ namespace stan {
   namespace math {
     namespace internal {
       template <>
-      class ops_partials_edge<double, var>
-        : public ops_partials_edge_single<double, var> {
+      class ops_partials_edge<double, var> {
       public:
+        ViewElt partial_;
         explicit ops_partials_edge(const var& op)
-          : ops_partials_edge_single<double, var>(op) {}
+          : partial_(0), operand_(op), partials_(partial_) {}
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        const Op& operand_;
+
         void dump_partials(double* partials) {
-          *partials = this->partials_[0];
+          *partials = this->partial_;
         }
         void dump_operands(vari** varis) {
           *varis = this->operand_.vi_;
         }
+        int size() const { return 1; }
       };
     }  // namespace internal
 

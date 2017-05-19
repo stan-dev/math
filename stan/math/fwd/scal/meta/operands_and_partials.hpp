@@ -1,23 +1,26 @@
 #ifndef STAN_MATH_FWD_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_FWD_SCAL_META_OPERANDS_AND_PARTIALS_HPP
 
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {
   namespace math {
     namespace internal {
-      // For fvars, each of these must implement a dx() method that calculates
-      // the contribution to the derivative of the o&p node for the edge.
       template <typename ViewElt, typename Dx>
       class ops_partials_edge<ViewElt, fvar<Dx> >
         : public ops_partials_edge_single<ViewElt, fvar<Dx> > {
       public:
+        broadcast_array<ViewElt> partials_;
         explicit ops_partials_edge(const fvar<Dx>& op)
-          : ops_partials_edge_single<ViewElt, fvar<Dx> >(op) {}
+          : partial_(0), operand_(op), partials_(partial_) {}
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        ViewElt partial_;
+        const Op& operand_;
         Dx dx() {
           return this->partials_[0] * this->operand_.d_;
         }

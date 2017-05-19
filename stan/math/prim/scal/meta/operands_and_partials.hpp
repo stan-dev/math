@@ -22,8 +22,8 @@ namespace stan {
        * This is the base template class that ends up getting instantiated
        * for arithmetic primitives (doubles and ints).
        *
-       * @tparam ViewElt the type we expect to be inside each partials_[i]
-       * @tparam Op the type of the operand(s)
+       * @tparam ViewElt the type we expect to be at partials_[i]
+       * @tparam Op the type of the operand
        */
       template <typename ViewElt, typename Op>
       class ops_partials_edge {
@@ -32,39 +32,14 @@ namespace stan {
 
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* op */) {}
-        template<typename, typename, typename, typename, typename>
-        friend class stan::math::operands_and_partials;
+
       private:
-        void dump_partials(ViewElt* /* partials */) const {}
-        void dump_operands(void* /* operands */) const {}
-        ViewElt dx() const { return 0; }  // used for fvars
-
-        /* size is used just for reverse mode to calculate the amount of memory
-         * slots required to store the operands and partials. */
-        int size() const { return 0; }
-      };
-
-      /**
-       * Base class shared between fvar and var specializations of uni- and
-       * multivariate edges will be in the prim/scal|arr|mat files.
-       * Single param version - underlying Var is the same as Op, so there's
-       * just one.
-       *
-       * @tparam ViewElt the type we expect to be inside each partials_[i]
-       * @tparam Op the type of the operand(s)
-       */
-      template <typename ViewElt, typename Op>
-      class ops_partials_edge_single {
-      protected:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
-        ViewElt partial_;
-        const Op& operand_;
-        int size() const { return 1; }
-      public:
-        broadcast_array<ViewElt> partials_;
-        explicit ops_partials_edge_single(const Op& op)
-          : partial_(0), operand_(op), partials_(partial_) {}
+        void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
+        void dump_operands(void* /* operands */) const {}  // reverse mode
+        ViewElt dx() const { return 0; }   // used for fvars
+        int size() const { return 0; }  // reverse mode
       };
     }  // namespace internal
 

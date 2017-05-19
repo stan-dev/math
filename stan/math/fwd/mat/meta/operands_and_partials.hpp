@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <vector>
 
 namespace stan {
@@ -59,14 +59,19 @@ namespace stan {
 
       // Multivariate; vectors of eigen types
       template <typename ViewElt, typename Dx, int R, int C>
-      class ops_partials_edge<ViewElt,
-                              std::vector<Eigen::Matrix<fvar<Dx>, R, C> > >
-        : public ops_partials_edge_multivariate_prim
+      class ops_partials_edge
       <ViewElt, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
       public:
-        typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
         explicit ops_partials_edge(const Op& ops)
-          : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
+          : partials_vec_(ops.size()), operands_(ops) {
+          for (size_t i = 0; i < ops.size(); ++i) {
+            partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+          }
+        }
+
+        typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
+        typedef Eigen::Matrix<ViewElt, -1, -1> partial_t;
+        std::vector<partial_t> partials_vec_;
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;

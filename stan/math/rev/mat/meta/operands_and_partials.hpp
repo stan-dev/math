@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_REV_MAT_META_OPERANDS_AND_PARTIALS_HPP
 
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {
@@ -74,9 +75,17 @@ namespace stan {
         : public ops_partials_edge_multivariate_prim
       <ViewElt, std::vector<Eigen::Matrix<var, R, C> > > {
       public:
-        typedef std::vector<Eigen::Matrix<var, R, C> > Op;
         explicit ops_partials_edge(const Op& ops)
-          : ops_partials_edge_multivariate_prim<ViewElt, Op>(ops) {}
+          : partials_vec_(ops.size()), operands_(ops) {
+          for (size_t i = 0; i < ops.size(); ++i) {
+            partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+          }
+        }
+
+        typedef std::vector<Eigen::Matrix<var, R, C> > Op;
+        typedef Eigen::Matrix<ViewElt, -1, -1> partial_t;
+        std::vector<partial_t> partials_vec_;
+
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
@@ -95,6 +104,10 @@ namespace stan {
               varis[p_i] = this->operands_[i](j).vi_;
             }
           }
+        }
+        int size() {
+          if (unlikely(this->operands_.size() == 0)) return 0;
+          return this->operands_.size() * this->operands_[0].size();
         }
       };
     }  // namespace internal
