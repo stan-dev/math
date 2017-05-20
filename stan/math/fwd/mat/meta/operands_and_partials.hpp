@@ -10,39 +10,17 @@ namespace stan {
   namespace math {
     namespace internal {
       // Vectorized Univariate
-      template <typename ViewElt, typename Dx>
-      class ops_partials_edge<ViewElt, std::vector<fvar<Dx> > > {
+      template <typename Dx>
+      class ops_partials_edge<std::vector<fvar<Dx> > > {
       public:
-        explicit ops_partials_edge(const std::vector<fvar<Dx> >& op)
-          : partials_(op.size()), partials_vec_(partials_),
-            operands_(ops) {}
-
-        typedef std::vector<ViewElt> partials_t;
+        typedef std::vector<fvar<Dx> > Op;
+        typedef Eigen::Matrix<Dx, -1, 1> partials_t;
         partials_t partials_;  // For univariate use-cases
         broadcast_array<partials_t> partials_vec_;  // For multivariate
+        explicit ops_partials_edge(const Op& ops)
+          : partials_(partials_t::Zero(ops.size())),
+            partials_vec_(partials_), operands_(ops) {}
 
-      private:
-        template<typename, typename, typename, typename, typename>
-        friend class stan::math::operands_and_partials;
-        Dx dx() {
-          Dx derivative(0);
-          for (int i = 0; i < this->size(); ++i) {
-            derivative += this->partials_(i) * this->operands_[i].d_;
-          }
-          return derivative;
-        }
-      };
-
-      template <typename ViewElt, typename Dx, int R, int C>
-      class ops_partials_edge<ViewElt, Eigen::Matrix<fvar<Dx>, R, C> > {
-      public:
-        explicit ops_partials_edge(const Eigen::Matrix<fvar<Dx>, R, C>& ops)
-          : partials_(ops.rows(), ops.cols()), partials_vec_(partials_),
-            operands_(ops) {}
-
-        typedef Eigen::Matrix<ViewElt, R, C> partials_t;
-        partials_t partials_;  // For univariate use-cases
-        broadcast_array<partials_t> partials_vec_;  // For multivariate
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
@@ -50,7 +28,32 @@ namespace stan {
 
         Dx dx() {
           Dx derivative(0);
-          for (int i = 0; i < this->size(); ++i) {
+          for (size_t i = 0; i < this->operands_.size(); ++i) {
+            derivative += this->partials_[i] * this->operands_[i].d_;
+          }
+          return derivative;
+        }
+      };
+
+      template <typename Dx, int R, int C>
+      class ops_partials_edge<Eigen::Matrix<fvar<Dx>, R, C> > {
+      public:
+        typedef Eigen::Matrix<Dx, R, C> partials_t;
+        typedef Eigen::Matrix<fvar<Dx>, R, C> Op;
+        partials_t partials_;  // For univariate use-cases
+        broadcast_array<partials_t> partials_vec_;  // For multivariate
+        explicit ops_partials_edge(const Op& ops)
+          : partials_(partials_t::Zero(ops.rows(), ops.cols())),
+            partials_vec_(partials_), operands_(ops) {}
+
+      private:
+        template<typename, typename, typename, typename, typename>
+        friend class stan::math::operands_and_partials;
+        const Op& operands_;
+
+        Dx dx() {
+          Dx derivative(0);
+          for (int i = 0; i < this->operands_.size(); ++i) {
             derivative += this->partials_(i) * this->operands_(i).d_;
           }
           return derivative;
@@ -58,10 +61,12 @@ namespace stan {
       };
 
       // Multivariate; vectors of eigen types
-      template <typename ViewElt, typename Dx, int R, int C>
-      class ops_partials_edge
-      <ViewElt, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
+      template <typename Dx, int R, int C>
+      class ops_partials_edge<std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
       public:
+        typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
+        typedef Eigen::Matrix<Dx, -1, -1> partial_t;
+        std::vector<partial_t> partials_vec_;
         explicit ops_partials_edge(const Op& ops)
           : partials_vec_(ops.size()), operands_(ops) {
           for (size_t i = 0; i < ops.size(); ++i) {
@@ -69,12 +74,11 @@ namespace stan {
           }
         }
 
-        typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
-        typedef Eigen::Matrix<ViewElt, -1, -1> partial_t;
-        std::vector<partial_t> partials_vec_;
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
+        const Op& operands_;
+
         Dx dx() {
           Dx derivative(0);
           for (size_t i = 0; i < this->operands_.size(); ++i) {

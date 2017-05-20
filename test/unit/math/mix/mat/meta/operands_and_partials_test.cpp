@@ -105,3 +105,31 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
   EXPECT_FLOAT_EQ(0.0, gradient[2]);
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
+TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt) {
+  using stan::math::operands_and_partials;
+
+  typedef Eigen::Matrix<int, -1, -1> uni_mat_t;
+
+  uni_mat_t m1(2, 2);
+  // Set d_ to 1 for one variable we care about;
+  m1(0, 0) = 1;
+  m1(0, 1) = 0;
+  m1(1, 0) = 0;
+  m1(1, 1) = 1;
+
+  uni_mat_t m2(2, 2);
+  m2(0, 0) = 2;
+  m2(0, 1) = 3;
+  m2(1, 0) = 4;
+  m2(1, 1) = 5;
+
+  std::vector<uni_mat_t> multi_mat;
+  multi_mat.push_back(m1);
+  multi_mat.push_back(m2);
+
+  operands_and_partials<std::vector<uni_mat_t> > ops_partials(multi_mat);
+
+  double v = ops_partials.build(10.0);
+
+  EXPECT_FLOAT_EQ(10.0, v);
+}

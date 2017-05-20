@@ -14,7 +14,7 @@ namespace stan {
 
     namespace internal {
       /**
-       * Here an edge is intended to hold both the operands and its associated
+       * An edge holds both the operands and its associated
        * partial derivatives. They're held together in the
        * same class because then we can keep the templating logic that
        * specializes on type of operand in one place.
@@ -25,10 +25,10 @@ namespace stan {
        * @tparam ViewElt the type we expect to be at partials_[i]
        * @tparam Op the type of the operand
        */
-      template <typename ViewElt, typename Op>
+      template <typename Op>
       class ops_partials_edge {
       public:
-        empty_broadcast_array<ViewElt> partials_;
+        empty_broadcast_array<double> partials_;
 
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* op */) {}
@@ -36,15 +36,16 @@ namespace stan {
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
-        void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
+        void dump_partials(double* /* partials */) const {}  // reverse mode
         void dump_operands(void* /* operands */) const {}  // reverse mode
-        ViewElt dx() const { return 0; }   // used for fvars
+        double dx() const { return 0; }   // used for fvars
         int size() const { return 0; }  // reverse mode
       };
     }  // namespace internal
 
     /**
-     * This class builds partial derivatives with respect to a set of
+     * This template builds partial derivatives with respect to a
+     * set of
      * operands. There are two reason for the generality of this
      * class. The first is to handle vector and scalar arguments
      * without needing to write additional code. The second is to use
@@ -57,20 +58,23 @@ namespace stan {
      * autodiff stack in a sort of "compressed" form. Think of it like an
      * easy-to-use interface to rev/core/precomputed_gradients.
      *
-     * This class now supports multivariate use-cases as well by
-     * exposing edge#_.partials_vec
+     * This class supports nested container ("multivariate") use-cases
+     * as well by exposing a partials_vec_ member on edges of the
+     * appropriate type.
      *
-     * This base template is used when all operands are primitives
-     * and we don't want to calculate derivatives at all. So all
-     * Op1 - Op4 must be arithmetic primitives like int or double.
+     * This base template is instantiated when all operands are
+     * primitives and we don't want to calculate derivatives at
+     * all. So all Op1 - Op4 must be arithmetic primitives
+     * like int or double. This is controlled with the
+     * T_return_type type parameter.
      *
      * @tparam Op1 type of the first operand
      * @tparam Op2 type of the second operand
      * @tparam Op3 type of the third operand
      * @tparam Op4 type of the fourth operand
      * @tparam T_return_type return type of the expression. This defaults
-     *   to a template metaprogram that calculates the scalar promotion of
-     *   Op1 -- Op4
+     *   to calling a template metaprogram that calculates the scalar
+     *   promotion of Op1..Op4
      */
     template <typename Op1, typename Op2,
               typename Op3, typename Op4,
@@ -82,13 +86,12 @@ namespace stan {
       operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3) {}
       operands_and_partials(const Op1& op1, const Op2& op2, const Op3& op3,
                             const Op4& op4) {}
-      typedef double ViewElt;
 
       /**
        * Build the node to be stored on the autodiff graph.
        * This should contain both the value and the tangent.
        *
-       * For scalars (this implementation), we don't calculate any tangents.
+       * For scalars (this implementation), we don't calculate any derivatives.
        * For reverse mode, we end up returning a type of var that will calculate
        * the appropriate adjoint using the stored operands and partials.
        * Forward mode just calculates the tangent on the spot and returns it in
@@ -97,14 +100,15 @@ namespace stan {
        * @param value the return value of the function we are compressing
        * @return the value with its derivative
        */
-      T_return_type build(ViewElt value) {
+      T_return_type build(double value) {
         return value;
       }
 
-      internal::ops_partials_edge<ViewElt, Op1> edge1_;
-      internal::ops_partials_edge<ViewElt, Op2> edge2_;
-      internal::ops_partials_edge<ViewElt, Op3> edge3_;
-      internal::ops_partials_edge<ViewElt, Op4> edge4_;
+      // These will always be 0 size base template instantiations (above).
+      internal::ops_partials_edge<Op1> edge1_;
+      internal::ops_partials_edge<Op2> edge2_;
+      internal::ops_partials_edge<Op3> edge3_;
+      internal::ops_partials_edge<Op4> edge4_;
     };
   }  // namespace math
 }  // namespace stan

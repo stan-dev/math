@@ -8,19 +8,20 @@
 namespace stan {
   namespace math {
     namespace internal {
-      template <typename ViewElt, typename Dx>
-      class ops_partials_edge<ViewElt, fvar<Dx> >
-        : public ops_partials_edge_single<ViewElt, fvar<Dx> > {
+      template <typename Dx>
+      class ops_partials_edge<fvar<Dx> > {
       public:
-        broadcast_array<ViewElt> partials_;
-        explicit ops_partials_edge(const fvar<Dx>& op)
-          : partial_(0), operand_(op), partials_(partial_) {}
+        typedef fvar<Dx> Op;
+        Dx partial_;
+        broadcast_array<Dx> partials_;
+        explicit ops_partials_edge(const Op& op)
+          : partial_(0), partials_(partial_), operand_(op) {}
 
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
-        ViewElt partial_;
         const Op& operand_;
+
         Dx dx() {
           return this->partials_[0] * this->operand_.d_;
         }
@@ -59,10 +60,10 @@ namespace stan {
               typename Dx>
     class operands_and_partials<Op1, Op2, Op3, Op4, fvar<Dx> > {
     public:
-      internal::ops_partials_edge<Dx, Op1> edge1_;
-      internal::ops_partials_edge<Dx, Op2> edge2_;
-      internal::ops_partials_edge<Dx, Op3> edge3_;
-      internal::ops_partials_edge<Dx, Op4> edge4_;
+      internal::ops_partials_edge<Op1> edge1_;
+      internal::ops_partials_edge<Op2> edge2_;
+      internal::ops_partials_edge<Op3> edge3_;
+      internal::ops_partials_edge<Op4> edge4_;
       typedef fvar<Dx> T_return_type;
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }
