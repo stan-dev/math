@@ -62,7 +62,8 @@ namespace stan {
 
       // Multivariate; vectors of eigen types
       template <typename Dx, int R, int C>
-      class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
+      class ops_partials_edge
+      <Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
       public:
         typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
         typedef Eigen::Matrix<Dx, -1, -1> partial_t;
