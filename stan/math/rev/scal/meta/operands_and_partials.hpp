@@ -13,17 +13,17 @@ namespace stan {
   namespace math {
     namespace internal {
       template <>
-      class ops_partials_edge<var> {
+      class ops_partials_edge<double, var> {
       public:
+        double partial_;
         broadcast_array<double> partials_;
         explicit ops_partials_edge(const var& op)
-          : partials_(partial_), operand_(op) {}
+          : partial_(0), partials_(partial_), operand_(op) {}
 
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
         const var& operand_;
-        double partial_;
 
         void dump_partials(double* partials) {
           *partials = this->partial_;
@@ -63,10 +63,10 @@ namespace stan {
     template <typename Op1, typename Op2, typename Op3, typename Op4>
     class operands_and_partials<Op1, Op2, Op3, Op4, var> {
     public:
-      internal::ops_partials_edge<Op1> edge1_;
-      internal::ops_partials_edge<Op2> edge2_;
-      internal::ops_partials_edge<Op3> edge3_;
-      internal::ops_partials_edge<Op4> edge4_;
+      internal::ops_partials_edge<double, Op1> edge1_;
+      internal::ops_partials_edge<double, Op2> edge2_;
+      internal::ops_partials_edge<double, Op3> edge3_;
+      internal::ops_partials_edge<double, Op4> edge4_;
 
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }

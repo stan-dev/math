@@ -10,7 +10,7 @@ namespace stan {
               typename Op3 = double, typename Op4 = double,
               typename T_return_type
               = typename return_type<Op1, Op2, Op3, Op4>::type>
-    class operands_and_partials;
+    class operands_and_partials;  // Forward declaration
 
     namespace internal {
       /**
@@ -25,10 +25,10 @@ namespace stan {
        * @tparam ViewElt the type we expect to be at partials_[i]
        * @tparam Op the type of the operand
        */
-      template <typename Op>
+      template <typename ViewElt, typename Op>
       class ops_partials_edge {
       public:
-        empty_broadcast_array<double> partials_;
+        empty_broadcast_array<ViewElt> partials_;
 
         ops_partials_edge() {}
         explicit ops_partials_edge(const Op& /* op */) {}
@@ -36,9 +36,10 @@ namespace stan {
       private:
         template<typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
-        void dump_partials(double* /* partials */) const {}  // reverse mode
+
+        void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
         void dump_operands(void* /* operands */) const {}  // reverse mode
-        double dx() const { return 0; }   // used for fvars
+        ViewElt dx() const { return 0; }   // used for fvars
         int size() const { return 0; }  // reverse mode
       };
     }  // namespace internal
@@ -105,10 +106,10 @@ namespace stan {
       }
 
       // These will always be 0 size base template instantiations (above).
-      internal::ops_partials_edge<Op1> edge1_;
-      internal::ops_partials_edge<Op2> edge2_;
-      internal::ops_partials_edge<Op3> edge3_;
-      internal::ops_partials_edge<Op4> edge4_;
+      internal::ops_partials_edge<double, Op1> edge1_;
+      internal::ops_partials_edge<double, Op2> edge2_;
+      internal::ops_partials_edge<double, Op3> edge3_;
+      internal::ops_partials_edge<double, Op4> edge4_;
     };
   }  // namespace math
 }  // namespace stan

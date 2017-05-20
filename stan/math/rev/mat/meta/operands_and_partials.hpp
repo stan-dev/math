@@ -12,7 +12,7 @@ namespace stan {
     namespace internal {
       // Vectorized Univariate
       template <>
-      class ops_partials_edge<std::vector<var> > {
+      class ops_partials_edge<double, std::vector<var> > {
       public:
         typedef std::vector<var> Op;
         typedef Eigen::VectorXd partials_t;
@@ -41,7 +41,7 @@ namespace stan {
       };
 
       template <int R, int C>
-      class ops_partials_edge<Eigen::Matrix<var, R, C> > {
+      class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
       public:
         typedef Eigen::Matrix<var, R, C> Op;
         typedef Eigen::Matrix<double, R, C> partials_t;
@@ -72,7 +72,7 @@ namespace stan {
       // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
       // (i.e. nested containers)
       template <int R, int C>
-      class ops_partials_edge<std::vector<Eigen::Matrix<var, R, C> > > {
+      class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
       public:
         typedef std::vector<Eigen::Matrix<var, R, C> > Op;
         typedef Eigen::Matrix<double, -1, -1> partial_t;

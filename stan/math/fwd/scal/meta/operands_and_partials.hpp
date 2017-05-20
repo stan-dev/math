@@ -9,7 +9,7 @@ namespace stan {
   namespace math {
     namespace internal {
       template <typename Dx>
-      class ops_partials_edge<fvar<Dx> > {
+      class ops_partials_edge<Dx, fvar<Dx> > {
       public:
         typedef fvar<Dx> Op;
         Dx partial_;
@@ -60,10 +60,10 @@ namespace stan {
               typename Dx>
     class operands_and_partials<Op1, Op2, Op3, Op4, fvar<Dx> > {
     public:
-      internal::ops_partials_edge<Op1> edge1_;
-      internal::ops_partials_edge<Op2> edge2_;
-      internal::ops_partials_edge<Op3> edge3_;
-      internal::ops_partials_edge<Op4> edge4_;
+      internal::ops_partials_edge<Dx, Op1> edge1_;
+      internal::ops_partials_edge<Dx, Op2> edge2_;
+      internal::ops_partials_edge<Dx, Op3> edge3_;
+      internal::ops_partials_edge<Dx, Op4> edge4_;
       typedef fvar<Dx> T_return_type;
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }

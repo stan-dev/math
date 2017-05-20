@@ -11,7 +11,7 @@ namespace stan {
     namespace internal {
       // Vectorized Univariate
       template <typename Dx>
-      class ops_partials_edge<std::vector<fvar<Dx> > > {
+      class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
       public:
         typedef std::vector<fvar<Dx> > Op;
         typedef Eigen::Matrix<Dx, -1, 1> partials_t;
@@ -36,7 +36,7 @@ namespace stan {
       };
 
       template <typename Dx, int R, int C>
-      class ops_partials_edge<Eigen::Matrix<fvar<Dx>, R, C> > {
+      class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C> > {
       public:
         typedef Eigen::Matrix<Dx, R, C> partials_t;
         typedef Eigen::Matrix<fvar<Dx>, R, C> Op;
@@ -62,7 +62,7 @@ namespace stan {
 
       // Multivariate; vectors of eigen types
       template <typename Dx, int R, int C>
-      class ops_partials_edge<std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
+      class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
       public:
         typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
         typedef Eigen::Matrix<Dx, -1, -1> partial_t;
