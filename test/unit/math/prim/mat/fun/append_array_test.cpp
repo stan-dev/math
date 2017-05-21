@@ -53,10 +53,8 @@ TEST(MathFunctions, append_array_matrix_matrix) {
 
   x.push_back(Matrix<double, Dynamic, Dynamic>(2, 3));
   y.push_back(Matrix<double, Dynamic, Dynamic>(2, 3));
-
   x[0] << 1.0, 2.0, 3.0,
     4.0, 5.0, 6.0;
-
   y[0] << 2.0, 3.0, 4.0,
     5.0, 6.0, 7.0;
 
@@ -69,7 +67,50 @@ TEST(MathFunctions, append_array_matrix_matrix) {
   EXPECT_EQ(1, result.size());
 
   z.push_back(Matrix<double, Dynamic, Dynamic>(1, 3));
+  EXPECT_THROW(result = stan::math::append_array(x, z), std::invalid_argument);
 
+  z.pop_back();
+  z.push_back(Matrix<double, Dynamic, Dynamic>(3, 1));
+  EXPECT_THROW(result = stan::math::append_array(z, x), std::invalid_argument);
+}
+
+TEST(MathFunctions, append_array_vector_vector) {
+  std::vector<Matrix<double, Dynamic, 1> > x, y, result, z;
+
+  x.push_back(Matrix<double, Dynamic, 1>(2));
+  y.push_back(Matrix<double, Dynamic, 1>(2));
+  x[0] << 1.0, 4.0;
+  y[0] << 2.0, 5.0;
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, y));
+  EXPECT_EQ(2, result.size());
+  EXPECT_FLOAT_EQ(1.0, result[0](0));
+  EXPECT_FLOAT_EQ(5.0, result[1](1));
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, z));
+  EXPECT_EQ(1, result.size());
+
+  z.push_back(Matrix<double, Dynamic, 1>(3));
+  EXPECT_THROW(result = stan::math::append_array(x, z), std::invalid_argument);
+}
+
+TEST(MathFunctions, append_array_row_vector_row_vector) {
+  std::vector<Matrix<double, 1, Dynamic> > x, y, result, z;
+
+  x.push_back(Matrix<double, 1, Dynamic>(2));
+  y.push_back(Matrix<double, 1, Dynamic>(2));
+  x[0] << 1.0, 4.0;
+  y[0] << 2.0, 5.0;
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, y));
+  EXPECT_EQ(2, result.size());
+  EXPECT_FLOAT_EQ(1.0, result[0](0));
+  EXPECT_FLOAT_EQ(5.0, result[1](1));
+
+  EXPECT_NO_THROW(result = stan::math::append_array(x, z));
+  EXPECT_EQ(1, result.size());
+
+  z.push_back(Matrix<double, 1, Dynamic>(3));
   EXPECT_THROW(result = stan::math::append_array(x, z), std::invalid_argument);
 }
 

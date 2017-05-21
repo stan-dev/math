@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_ARR_FUN_APPEND_ARRAY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <vector>
 
 namespace stan {
@@ -11,7 +13,7 @@ namespace stan {
 
     /**
      * Return the concatenation of two specified integer vectors in the
-     *   order of the arguments
+     *   order of the arguments.
      *
      * @param x First vector
      * @param y Second vector
@@ -27,8 +29,8 @@ namespace stan {
     }
 
     /**
-     * Return the concatenation of two vectors containing Matrix types
-     *   of the same type in the order of the arguments
+     * Return the concatenation of two vectors containing Matrices
+     *   of the same type in the order of the arguments.
      *
      * @tparam T1 Type of element in Matrices in first vector
      * @tparam T2 Type of element in Matrices in second vector
@@ -52,14 +54,17 @@ namespace stan {
 
       std::vector<Eigen::Matrix<typename return_type<T1, T2>::type, R, C> > z;
       z.reserve(x.size() + y.size());
-      z.insert(z.end(), x.begin(), x.end());
-      z.insert(z.end(), y.begin(), y.end());
+      for (size_t i = 0; i < x.size(); i++)
+        z.push_back(x[i].template cast<typename return_type<T1, T2>::type>());
+      for (size_t i = 0; i < y.size(); i++)
+        z.push_back(y[i].template cast<typename return_type<T1, T2>::type>());
       return z;
     }
 
     /**
      * Return the concatenation of two specified vectors in the order of
-     *   the arguments
+     *   the arguments. The types in each vector must not be vector-like
+     *   themselves.
      *
      * @tparam T1 Scalar type of first vector
      * @tparam T2 Scalar Type of second vector
@@ -68,7 +73,10 @@ namespace stan {
      * @return A vector of x and y concatenated together (in that order)
      */
     template <typename T1, typename T2>
-    inline std::vector<typename boost::math::tools::promote_args<T1, T2>::type>
+    inline typename
+    boost::disable_if_c<is_vector_like<T1>::value || is_vector_like<T2>::value,
+      std::vector<typename
+                  boost::math::tools::promote_args<T1, T2>::type> >::type
     append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
       std::vector<typename boost::math::tools::promote_args<T1, T2>::type> z;
       z.reserve(x.size() + y.size());
