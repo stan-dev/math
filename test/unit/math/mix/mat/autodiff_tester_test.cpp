@@ -31,7 +31,7 @@ TEST(foo, bar2) {
   stan::math::test::test_functor(f, x, 1.2 * 2.0 * std::exp(3.0));
 }
 
-TEST(foo, framework) {
+TEST(foo, oldFramework) {
   bar_fun f;
   stan::math::test::ad_tester<bar_fun> t(f);
   Eigen::VectorXd x(2);
@@ -43,4 +43,19 @@ TEST(foo, framework) {
   t.good(b, f(b));
 
   t.test();
+}
+
+struct baz_fun {
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply(const T1& x1, const T2& x2) {
+    using std::exp;
+    return -2.5 * x1 * x2 * exp(x2);
+  }
+};
+
+TEST(foo, framework) {
+  stan::math::test::ad_tester_binary<baz_fun, double, double> t;
+  t.good(2.1, -1.3, -2.5 * 2.1 * (-1.3) * std::exp(-1.3));
+  t.run_tests();
 }

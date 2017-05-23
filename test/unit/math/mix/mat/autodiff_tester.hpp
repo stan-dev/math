@@ -1,7 +1,9 @@
-#ifndef STAN_MATH_MIX_MAT_AUTODIFF_TESTER_HPP
-#define STAN_MATH_MIX_MAT_AUTODIFF_TESTER_HPP
+#ifndef TEST_UNIT_MATH_MIX_MAT_AUTODIFF_TESTER_HPP
+#define TEST_UNIT_MATH_MIX_MAT_AUTODIFF_TESTER_HPP
 
 #include <stan/math/mix/mat.hpp>
+#include <test/unit/math/mix/mat/seq_reader.hpp>
+#include <test/unit/math/mix/mat/seq_writer.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
 
@@ -106,15 +108,12 @@ namespace stan {
 
       template <typename F>
       void test_functor(const F& f, const Eigen::VectorXd& x, double fx) {
-        test_value(f, x, fx);
-
+        // test_value(f, x, fx);
         test_gradient(f, x, fx);
-        test_gradient_fvar(f, x, fx);
-
-        test_hessian(f, x, fx);
-        test_hessian_fvar(f, x, fx);
-
-        test_grad_hessian(f, x, fx);
+        // test_gradient_fvar(f, x, fx);
+        // test_hessian(f, x, fx);
+        // test_hessian_fvar(f, x, fx);
+        // test_grad_hessian(f, x, fx);
       }
 
       template <typename F>
@@ -153,11 +152,85 @@ namespace stan {
       struct multiply_fun {
         template <typename T1, typename T2>
         static typename boost::math::tools::promote_args<T1,T2>::type
-        multiply(const Eigen::Matrix<T1, 1, -1>& x1,
-                 const Eigen::Matrix<T2, -1, 1>& x2) {
+        apply(const Eigen::Matrix<T1, 1, -1>& x1,
+              const Eigen::Matrix<T2, -1, 1>& x2) {
           return multiply(x1, x2);
         }
       };
+
+      // any two args, real return
+      template <typename F, typename T1, typename T2>
+      struct binder_binary {
+        T1 x1_;
+        T2 x2_;
+        bool fixed1_;
+        bool fixed2_;
+        binder_binary(const T1& x1, const T2& x2)
+          : x1_(x1), x2_(x2), fixed1_(false), fixed2_(false) { }
+        template <typename T>
+        T operator()(const Eigen::Matrix<T, -1, 1>& theta) const {
+          if (fixed1_ && !fixed2_) {
+            seq_reader<T> r(theta);
+            return F::apply(x1_, r.read(x2_));
+          }
+
+          if (!fixed1_ && fixed2_) {
+            seq_reader<T> r(theta);
+            return F::apply(r.read(x1_), x2_);
+          }
+
+          if (!fixed1_ && !fixed2_) {
+            seq_reader<T> r(theta);
+            return F::apply(r.read(x1_), r.read(x2_));
+          }
+
+          throw std::logic_error("fixed1_ = true and fixed2_ = true illegal");
+          return T();
+        }
+      };
+
+      template <typename F, typename T1, typename T2>
+      struct ad_tester_binary {
+        std::vector<T1> x1s_;
+        std::vector<T2> x2s_;
+        std::vector<double> fxs_;
+
+        void good(const T1& x1, const T2& x2, double fx) {
+          x1s_.push_back(x1);
+          x2s_.push_back(x2);
+          fxs_.push_back(fx);
+        }
+
+        void test(const T1& x1, const T2& x2, double fx) {
+          binder_binary<F, T1, T2> f(x1, x2);
+
+          f.fixed1_ = true;
+          f.fixed2_ = false;
+          seq_writer<double> a;
+          a.write(x2);
+          test_functor(f, a.vector(), fx);
+
+          f.fixed1_ = false;
+          f.fixed2_ = true;
+          seq_writer<double> b;
+          b.write(x1);
+          test_functor(f, b.vector(), fx);
+
+          f.fixed1_ = false;
+          f.fixed2_ = false;
+          seq_writer<double> c;
+          c.write(x1);
+          c.write(x2);
+          test_functor(f, c.vector(), fx);
+        }
+
+        void run_tests() {
+          for (size_t i = 0; i < x1s_.size(); ++i)
+            test(x1s_[i], x2s_[i], fxs_[i]);
+        }
+
+      };
+
 
     }
   }
