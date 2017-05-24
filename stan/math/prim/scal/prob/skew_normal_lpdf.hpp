@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LPDF_HPP
 
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -58,15 +58,15 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
         return 0.0;
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
-        operands_and_partials(y, mu, sigma, alpha);
+      operands_and_partials<T_y, T_loc, T_scale, T_shape>
+        ops_partials(y, mu, sigma, alpha);
 
       using std::log;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, sigma, alpha);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
@@ -105,24 +105,24 @@ namespace stan {
           / (1 + erf(alpha_dbl * y_minus_mu_over_sigma
                      / std::sqrt(2.0)));
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             += -y_minus_mu_over_sigma / sigma_dbl
             + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += y_minus_mu_over_sigma / sigma_dbl
             + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials_[n]
             += -1.0 / sigma_dbl
             + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
             - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
             / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x4[n]
+          ops_partials.edge4_.partials_[n]
             += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

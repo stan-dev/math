@@ -33,8 +33,8 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision Parameter", phi);
 
-      scalar_seq_view<const T_location> mu_vec(mu);
-      scalar_seq_view<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_location> mu_vec(mu);
+      scalar_seq_view<T_precision> phi_vec(phi);
 
       size_t size_beta = max_size(mu, phi);
 

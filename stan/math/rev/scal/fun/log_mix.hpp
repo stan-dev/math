@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -90,8 +90,8 @@ namespace stan {
       using std::log;
       using stan::is_constant_struct;
 
-      OperandsAndPartials<T_theta, T_lambda1, T_lambda2>
-        operands_and_partials(theta, lambda1, lambda2);
+      operands_and_partials<T_theta, T_lambda1, T_lambda2>
+        ops_partials(theta, lambda1, lambda2);
 
       double theta_double = value_of(theta);
       const double lambda1_double = value_of(lambda1);
@@ -124,19 +124,19 @@ namespace stan {
       }
 
       if (!is_constant_struct<T_theta>::value)
-        operands_and_partials.d_x1[0]
+        ops_partials.edge1_.partials_[0]
           = one_m_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
       if (!is_constant_struct<T_lambda1>::value)
-        operands_and_partials.d_x2[0]
+        ops_partials.edge2_.partials_[0]
           = theta_double
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
       if (!is_constant_struct<T_lambda2>::value)
-        operands_and_partials.d_x3[0]
+        ops_partials.edge3_.partials_[0]
           = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
-      return operands_and_partials.value(log_mix_function_value);
+      return ops_partials.build(log_mix_function_value);
     }
 
   }

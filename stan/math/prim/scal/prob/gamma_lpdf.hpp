@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -77,9 +77,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value)
         return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
 
       for (size_t n = 0; n < length(y); n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -88,8 +88,8 @@ namespace stan {
       }
 
       size_t N = max_size(y, alpha, beta);
-      OperandsAndPartials<T_y, T_shape, T_inv_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_inv_scale>
+        ops_partials(y, alpha, beta);
 
       using boost::math::lgamma;
       using boost::math::digamma;
@@ -137,14 +137,14 @@ namespace stan {
           logp -= beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
+          ops_partials.edge1_.partials_[n] += (alpha_dbl-1)/y_dbl - beta_dbl;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n] += -digamma_alpha[n] + log_beta[n]
+          ops_partials.edge2_.partials_[n] += -digamma_alpha[n] + log_beta[n]
             + log_y[n];
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - y_dbl;
+          ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - y_dbl;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_inv_scale>

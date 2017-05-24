@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -59,13 +59,13 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_inv_scale>
-        operands_and_partials(y, mu, sigma, lambda);
+      operands_and_partials<T_y, T_loc, T_scale, T_inv_scale>
+        ops_partials(y, mu, sigma, lambda);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
-      scalar_seq_view<const T_inv_scale> lambda_vec(lambda);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_inv_scale> lambda_vec(lambda);
       size_t N = max_size(y, mu, sigma, lambda);
 
       for (size_t n = 0; n < N; n++) {
@@ -97,26 +97,26 @@ namespace stan {
                   - y_dbl) / (sigma_dbl * std::sqrt(2.0)));
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             += -lambda_dbl
             + deriv_logerfc * -1.0 / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += lambda_dbl
             + deriv_logerfc / (sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials_[n]
             += sigma_dbl * lambda_dbl * lambda_dbl
             + deriv_logerfc
             * (-mu_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0))
                + lambda_dbl / std::sqrt(2.0)
                + y_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0)));
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x4[n]
+          ops_partials.edge4_.partials_[n]
             += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl
             + mu_dbl - y_dbl + deriv_logerfc * sigma_dbl / std::sqrt(2.0);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale,
