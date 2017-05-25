@@ -48,9 +48,16 @@ namespace stan {
        * @param[in] y state of the ode system at time t.
        * @param[out] dy_dt ODE RHS
        */
+      template <typename Derived1>
       inline void operator()(double t, const std::vector<double>& y,
-                             std::vector<double>& dy_dt) const {
-        dy_dt = f_(t, y, theta_, x_, x_int_, msgs_);
+                             Eigen::MatrixBase<Derived1>& dy_dt) const {
+        const std::vector<double> dy_dt_vec = f_(t, y, theta_, x_, x_int_,
+                                                 msgs_);
+        if (unlikely(dy_dt_vec.size() != y.size()))
+          throw std::runtime_error("ode_system: size of state vector y and "
+                                   "dy_dt vector from ODE functor do not "
+                                   "match in size.");
+        dy_dt = Eigen::Map<const Eigen::VectorXd>(&dy_dt_vec[0], y.size());
       }
 
       /**
@@ -64,9 +71,9 @@ namespace stan {
        * @param[out] Jy Jacobian of ODE RHS wrt to y.
        */
       template <typename Derived1, typename Derived2>
-      void jacobian(double t, const std::vector<double>& y,
-                    Eigen::MatrixBase<Derived1>& dy_dt,
-                    Eigen::MatrixBase<Derived2>& Jy) const {
+      inline void jacobian(double t, const std::vector<double>& y,
+                           Eigen::MatrixBase<Derived1>& dy_dt,
+                           Eigen::MatrixBase<Derived2>& Jy) const {
         using Eigen::Matrix;
         using Eigen::Map;
         using Eigen::RowVectorXd;
@@ -77,6 +84,10 @@ namespace stan {
           start_nested();
           vector<var> y_var(y.begin(), y.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
+          if (unlikely(dy_dt_var.size() != y.size()))
+            throw std::runtime_error("ode_system: size of state vector y and "
+                                     "dy_dt vector from ODE functor do not "
+                                     "match in size.");
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();
@@ -103,10 +114,10 @@ namespace stan {
        * @param[out] Jtheta Jacobian of ODE RHS wrt to theta.
        */
       template <typename Derived1, typename Derived2>
-      void jacobian(double t, const std::vector<double>& y,
-                    Eigen::MatrixBase<Derived1>& dy_dt,
-                    Eigen::MatrixBase<Derived2>& Jy,
-                    Eigen::MatrixBase<Derived2>& Jtheta) const {
+      inline void jacobian(double t, const std::vector<double>& y,
+                           Eigen::MatrixBase<Derived1>& dy_dt,
+                           Eigen::MatrixBase<Derived2>& Jy,
+                           Eigen::MatrixBase<Derived2>& Jtheta) const {
         using Eigen::Dynamic;
         using Eigen::Map;
         using Eigen::Matrix;
@@ -123,6 +134,10 @@ namespace stan {
           z_var.insert(z_var.end(), y_var.begin(), y_var.end());
           z_var.insert(z_var.end(), theta_var.begin(), theta_var.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
+          if (unlikely(dy_dt_var.size() != y.size()))
+            throw std::runtime_error("ode_system: size of state vector y and "
+                                     "dy_dt vector from ODE functor do not "
+                                     "match in size.");
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();

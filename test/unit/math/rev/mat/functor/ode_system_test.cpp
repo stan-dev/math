@@ -44,7 +44,7 @@ struct StanMathRevOdeSystem : public ::testing::Test {
 TEST_F(StanMathRevOdeSystem, ode_system_rhs) {
   stan::math::ode_system<harm_osc_ode_fun> ode_system(ode_rhs, theta, x, x_int, &msgs);
 
-  std::vector<double> dy_dt;
+  Eigen::VectorXd dy_dt(N);
 
   ode_system(t0, y0, dy_dt);
 
