@@ -143,7 +143,7 @@ namespace stan {
       vari** variRefA_;
       vari** variRefL_;
 
-      /** 
+      /**
        * Constructor for cholesky function.
        *
        * Stores varis for A Instantiates and stores varis for L Instantiates
@@ -179,7 +179,7 @@ namespace stan {
         }
       }
 
-      /** 
+      /**
        * Reverse mode differentiation algorithm refernce:
        *
        * Mike Giles. An extended collection of matrix derivative results for
@@ -275,21 +275,18 @@ namespace stan {
        *
        */
     virtual void chain() {
-		
-
-				
-		    using Eigen::MatrixXd;
-		    using Eigen::Lower;
+        using Eigen::MatrixXd;
+        using Eigen::Lower;
             using Eigen::Block;
             using Eigen::Upper;
             using Eigen::StrictlyUpper;
             using Eigen::StrictlyLower;
             MatrixXd Lbar(M_, M_);
             MatrixXd L(M_, M_);
-		    viennacl::matrix<double>  vcl_L(M_, M_);
+        viennacl::matrix<double>  vcl_L(M_, M_);
             viennacl::matrix<double>  vcl_Lbar(M_, M_);
             viennacl::matrix<double> vcl_Lbar_temp(M_, M_);
-            
+
             Lbar.setZero();
             L.setZero();
             size_t pos = 0;
@@ -300,45 +297,43 @@ namespace stan {
                 ++pos;
               }
             }
-            
-		    viennacl::copy(L, vcl_L);
-		    viennacl::copy(Lbar, vcl_Lbar);
-		    vcl_L =  viennacl::trans(vcl_L);
-            vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
-            
 
-		    //internal_size is used because ViennaCL pads the matrices in global memory
-		    my_kernel_mul.global_work_size(0,vcl_Lbar.internal_size1());
-		    my_kernel_mul.global_work_size(1,vcl_Lbar.internal_size2());		
-		
-		    //arbitrary block size, could also be different
-		    my_kernel_mul.local_work_size(0,32);my_kernel_mul.local_work_size(1,32);
-		
-		    viennacl::ocl::enqueue(my_kernel_mul(
-		      vcl_Lbar,
-		      static_cast<cl_uint>(vcl_Lbar.size1()),
-		      static_cast<cl_uint>(vcl_Lbar.size2()), 
-		      static_cast<cl_uint>(vcl_Lbar.internal_size2())
-		     )
-		    );
+        viennacl::copy(L, vcl_L);
+        viennacl::copy(Lbar, vcl_Lbar);
+        vcl_L =  viennacl::trans(vcl_L);
+            vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar);
+
+
+        // internal_size is used because ViennaCL pads the matrices in
+        // global memory
+        my_kernel_mul.global_work_size(0, vcl_Lbar.internal_size1());
+        my_kernel_mul.global_work_size(1, vcl_Lbar.internal_size2());
+
+        // arbitrary block size, could also be different
+        my_kernel_mul.local_work_size(0, 32);
+        my_kernel_mul.local_work_size(1, 32);
+
+        viennacl::ocl::enqueue(my_kernel_mul(
+          vcl_Lbar,
+          static_cast<cl_uint>(vcl_Lbar.size1()),
+          static_cast<cl_uint>(vcl_Lbar.size2()),
+          static_cast<cl_uint>(vcl_Lbar.internal_size2())));
 
             viennacl::linalg::inplace_solve(
-             vcl_L, 
-             vcl_Lbar, 
-             viennacl::linalg::upper_tag()
-            );
-            
+             vcl_L,
+             vcl_Lbar,
+             viennacl::linalg::upper_tag());
+
             viennacl::linalg::inplace_solve(
               vcl_L,
               viennacl::trans(vcl_Lbar),
-              viennacl::linalg::upper_tag()
-            );
-                    
-		    viennacl::trans(vcl_Lbar);
-		    viennacl::copy(vcl_Lbar, Lbar);
-		    viennacl::copy(vcl_L, L);
-		    Lbar.diagonal() *= 0.5;
-		
+              viennacl::linalg::upper_tag());
+
+        viennacl::trans(vcl_Lbar);
+        viennacl::copy(vcl_Lbar, Lbar);
+        viennacl::copy(vcl_L, L);
+        Lbar.diagonal() *= 0.5;
+
             pos = 0;
             for (size_type j = 0; j < M_; ++j)
               for (size_type i = j; i < M_; ++i)
@@ -371,8 +366,8 @@ namespace stan {
         viennacl::copy(L_A, vcl_L_A);
         viennacl::linalg::lu_factorize(vcl_L_A);
         viennacl::copy(vcl_L_A, L_A);
-        // TODO: Where should this check go?
-        //check_pos_definite("cholesky_decompose", "m", L_A);
+        // TODO(Steve/Sean): Where should this check go?
+        // check_pos_definite("cholesky_decompose", "m", L_A);
         L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
         for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
       } else {
@@ -383,7 +378,7 @@ namespace stan {
       }
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
-      // cholesky_b	lock
+      // cholesky_b  lock
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       if (L_A.rows() <= 35) {

@@ -11,7 +11,7 @@
 #include "viennacl/linalg/lu.hpp"
 #include "viennacl/linalg/ilu_operations.hpp"
 
-//a custom openCL kernel for copying the lower triangle to the upper
+// a custom openCL kernel for copying the lower triangle to the upper
 static const char * custom_kernel_lower_upper =
 "__kernel void copy_lower_tri_upper_tri(\n"
 "          __global double * vec1,\n"
@@ -26,8 +26,9 @@ static const char * custom_kernel_lower_upper =
 "    }\n"
 "};\n";
 
-viennacl::ocl::program & my_prog = viennacl::ocl::current_context().add_program(custom_kernel_lower_upper, "custom_kernel_lower_upper");
-viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("copy_lower_tri_upper_tri");
-
+viennacl::ocl::program & my_prog = viennacl::ocl::current_context()
+  .add_program(custom_kernel_lower_upper, "custom_kernel_lower_upper");
+viennacl::ocl::kernel & my_kernel_mul =
+  my_prog.get_kernel("copy_lower_tri_upper_tri");
 
 #endif
