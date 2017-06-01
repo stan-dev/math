@@ -4,6 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 namespace stan {
@@ -19,11 +20,20 @@ namespace stan {
      */
     template <typename F>
     class ode_system {
+    private:
       const F& f_;
       const std::vector<double> theta_;
       const std::vector<double>& x_;
       const std::vector<int>& x_int_;
       std::ostream* msgs_;
+
+      std::string error_msg(size_t y_size, size_t dy_dt_size) const {
+        std::stringstream msg;
+        msg << "ode_system: size of state vector y (" << y_size << ")"
+            << " and derivative vector dy_dt (" << dy_dt_size << ")"
+            << " in the ODE functor do not match in size.";
+        return msg.str();
+      }
 
     public:
       /**
@@ -53,10 +63,8 @@ namespace stan {
                              Eigen::MatrixBase<Derived1>& dy_dt) const {
         const std::vector<double> dy_dt_vec = f_(t, y, theta_, x_, x_int_,
                                                  msgs_);
-        if (unlikely(dy_dt_vec.size() != y.size()))
-          throw std::runtime_error("ode_system: size of state vector y and "
-                                   "dy_dt vector from ODE functor do not "
-                                   "match in size.");
+        if (unlikely(y.size() != dy_dt_vec.size()))
+          throw std::runtime_error(error_msg(y.size(), dy_dt_vec.size()));
         dy_dt = Eigen::Map<const Eigen::VectorXd>(&dy_dt_vec[0], y.size());
       }
 
@@ -84,10 +92,8 @@ namespace stan {
           start_nested();
           vector<var> y_var(y.begin(), y.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
-          if (unlikely(dy_dt_var.size() != y.size()))
-            throw std::runtime_error("ode_system: size of state vector y and "
-                                     "dy_dt vector from ODE functor do not "
-                                     "match in size.");
+          if (unlikely(y.size() != dy_dt_var.size()))
+            throw std::runtime_error(error_msg(y.size(), dy_dt_var.size()));
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();
@@ -134,10 +140,8 @@ namespace stan {
           z_var.insert(z_var.end(), y_var.begin(), y_var.end());
           z_var.insert(z_var.end(), theta_var.begin(), theta_var.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
-          if (unlikely(dy_dt_var.size() != y.size()))
-            throw std::runtime_error("ode_system: size of state vector y and "
-                                     "dy_dt vector from ODE functor do not "
-                                     "match in size.");
+          if (unlikely(y.size() != dy_dt_var.size()))
+            throw std::runtime_error(error_msg(y.size(), dy_dt_var.size()));
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();
