@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 
 namespace stan {
