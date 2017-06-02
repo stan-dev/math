@@ -20,7 +20,7 @@ namespace stan {
       check_symmetric("quad_form_sym", "A", A);
       Eigen::Matrix<fvar<T>, CB, CB>
         ret(multiply(transpose(B), multiply(A, B)));
-      return 0.5 * (ret + transpose(ret));
+      return T(0.5) * (ret + transpose(ret));
     }
 
     template<int RA, int CA, int RB, typename T>
@@ -45,7 +45,7 @@ namespace stan {
       check_symmetric("quad_form_sym", "A", A);
       Eigen::Matrix<fvar<T>, CB, CB>
         ret(multiply(transpose(B), multiply(A, B)));
-      return 0.5 * (ret + transpose(ret));
+      return T(0.5) * (ret + transpose(ret));
     }
 
     template<int RA, int CA, int RB, typename T>

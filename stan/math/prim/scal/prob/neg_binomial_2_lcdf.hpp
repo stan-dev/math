@@ -35,9 +35,9 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision Parameter", phi);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_location> mu_vec(mu);
-      scalar_seq_view<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_location> mu_vec(mu);
+      scalar_seq_view<T_precision> phi_vec(phi);
 
       size_t size_phi_mu = max_size(mu, phi);
       VectorBuilder<true, typename return_type<T_location, T_precision>::type,

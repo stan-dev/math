@@ -3,7 +3,7 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -51,26 +51,26 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -83,16 +83,16 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             -= exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             -= - exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
+          ops_partials.edge3_.partials_[n] -= - (y_dbl - mu_dbl) * sigma_inv_vec
             * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

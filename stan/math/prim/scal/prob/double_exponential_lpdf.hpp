@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -68,12 +68,12 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
                     T_partials_return, T_scale> inv_sigma(length(sigma));
@@ -110,16 +110,16 @@ namespace stan {
         if (contains_nonconstant_struct<T_y, T_loc>::value)
           sign_y_m_mu_times_inv_sigma = sign(y_m_mu) * inv_sigma[n];
         if (!is_constant_struct<T_y>::value) {
-          operands_and_partials.d_x1[n] -= sign_y_m_mu_times_inv_sigma;
+          ops_partials.edge1_.partials_[n] -= sign_y_m_mu_times_inv_sigma;
         }
         if (!is_constant_struct<T_loc>::value) {
-          operands_and_partials.d_x2[n] += sign_y_m_mu_times_inv_sigma;
+          ops_partials.edge2_.partials_[n] += sign_y_m_mu_times_inv_sigma;
         }
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += -inv_sigma[n] + fabs_y_m_mu
+          ops_partials.edge3_.partials_[n] += -inv_sigma[n] + fabs_y_m_mu
             * inv_sigma_squared[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

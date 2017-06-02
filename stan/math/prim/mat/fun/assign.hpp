@@ -18,15 +18,15 @@ namespace stan {
     /**
      * Helper function to return the matrix size as either "dynamic" or "1".
      *
-     * @param n Eigen matrix size specification.
-     * @param o Output stream.
-     * @return String representing size.
+     * @tparam N Eigen matrix size specification
+     * @param o output stream
      */
-    inline void print_mat_size(int n, std::ostream& o) {
-      if (n == Eigen::Dynamic)
+    template <int N>
+    inline void print_mat_size(std::ostream& o) {
+      if (N == Eigen::Dynamic)
         o << "dynamically sized";
       else
-        o << n;
+        o << N;
     }
 
     /**
@@ -38,15 +38,15 @@ namespace stan {
      * assignable to the left and they are not both
      * <code>std::vector</code> or <code>Eigen::Matrix</code> types.
      *
-     * @tparam LHS Type of left-hand side.
-     * @tparam RHS Type of right-hand side.
-     * @param lhs Left-hand side.
-     * @param rhs Right-hand side.
+     * @tparam T_lhs Type of left-hand side.
+     * @tparam T_rhs Type of right-hand side.
+     * @param x Left-hand side.
+     * @param y Right-hand side.
      */
-    template <typename LHS, typename RHS>
+    template <typename T_lhs, typename T_rhs>
     inline void
-    assign(LHS& lhs, const RHS& rhs) {
-      lhs = rhs;
+    assign(T_lhs& x, const T_rhs& y) {
+      x = y;
     }
 
     /**
@@ -59,8 +59,8 @@ namespace stan {
      * compatible.  The shapes are specified in the row and column
      * template parameters.
      *
-     * @tparam LHS Type of left-hand side matrix elements.
-     * @tparam RHS Type of right-hand side matrix elements.
+     * @tparam T_lhs Type of left-hand side matrix elements.
+     * @tparam T_rhs Type of right-hand side matrix elements.
      * @tparam R1 Row shape of left-hand side matrix.
      * @tparam C1 Column shape of left-hand side matrix.
      * @tparam R2 Row shape of right-hand side matrix.
@@ -69,20 +69,20 @@ namespace stan {
      * @param y Right-hand side matrix.
      * @throw std::invalid_argument
      */
-    template <typename LHS, typename RHS, int R1, int C1, int R2, int C2>
+    template <typename T_lhs, typename T_rhs, int R1, int C1, int R2, int C2>
     inline void
-    assign(Eigen::Matrix<LHS, R1, C1>& x,
-           const Eigen::Matrix<RHS, R2, C2>& y) {
+    assign(Eigen::Matrix<T_lhs, R1, C1>& x,
+           const Eigen::Matrix<T_rhs, R2, C2>& y) {
       std::stringstream ss;
       ss << "shapes must match, but found"
          << " left-hand side rows=";
-      print_mat_size(R1, ss);
+      print_mat_size<R1>(ss);
       ss << "; left-hand side cols=";
-      print_mat_size(C1, ss);
+      print_mat_size<C1>(ss);
       ss << "; right-hand side rows=";
-      print_mat_size(R2, ss);
+      print_mat_size<R2>(ss);
       ss << "; right-hand side cols=";
-      print_mat_size(C2, ss);
+      print_mat_size<C2>(ss);
       std::string ss_str(ss.str());
       invalid_argument("assign(Eigen::Matrix, Eigen::Matrix)",
                        "", "", ss_str.c_str());
@@ -97,18 +97,18 @@ namespace stan {
      * <code>Eigen::Matrix</code> types and whose shapes match.  The
      * shapes are specified in the row and column template parameters.
      *
-     * @tparam LHS Type of left-hand side matrix elements.
-     * @tparam RHS Type of right-hand side matrix elements.
+     * @tparam T_lhs Type of left-hand side matrix elements.
+     * @tparam T_rhs Type of right-hand side matrix elements.
      * @tparam R Row shape of both matrices.
      * @tparam C Column shape of both mtarices.
      * @param x Left-hand side matrix.
      * @param y Right-hand side matrix.
      * @throw std::invalid_argument if sizes do not match.
      */
-    template <typename LHS, typename RHS, int R, int C>
+    template <typename T_lhs, typename T_rhs, int R, int C>
     inline void
-    assign(Eigen::Matrix<LHS, R, C>& x,
-           const Eigen::Matrix<RHS, R, C>& y) {
+    assign(Eigen::Matrix<T_lhs, R, C>& x,
+           const Eigen::Matrix<T_rhs, R, C>& y) {
       check_matching_dims("assign",
                           "left-hand-side", x,
                           "right-hand-side", y);
@@ -120,24 +120,29 @@ namespace stan {
      * Copy the right-hand side's value to the left-hand side
      * variable.
      *
-     * The <code>assign()</code> function is overloaded.  This
+     * <p>The <code>assign()</code> function is overloaded.  This
      * instance will be called for arguments that are both
      * <code>Eigen::Matrix</code> types and whose shapes match.  The
      * shape of the right-hand side matrix is specified in the row and
      * column shape template parameters.
      *
-     * @tparam LHS Type of matrix block elements.
-     * @tparam RHS Type of right-hand side matrix elements.
+     * <p>The left-hand side is intentionally not a reference, because
+     * that won't match generally enough;  instead, a non-reference is
+     * used, which still holds onto a reference to the contained
+     * matrix and thus still updates the appropriate values.
+     *
+     * @tparam T_lhs Type of matrix block elements.
+     * @tparam T Type of right-hand side matrix elements.
      * @tparam R Row shape for right-hand side matrix.
      * @tparam C Column shape for right-hand side matrix.
      * @param x Left-hand side block view of matrix.
      * @param y Right-hand side matrix.
      * @throw std::invalid_argument if sizes do not match.
      */
-    template <typename LHS, typename RHS, int R, int C>
+    template <typename T_lhs, typename T, int R, int C>
     inline void
-    assign(Eigen::Block<LHS> x,
-           const Eigen::Matrix<RHS, R, C>& y) {
+    assign(Eigen::Block<T_lhs> x,
+           const Eigen::Matrix<T, R, C>& y) {
       check_size_match("assign",
                        "left-hand side rows", x.rows(),
                        "right-hand side rows", y.rows());
@@ -162,15 +167,15 @@ namespace stan {
      * assigned to a <code>std::vector&lt;double&gt;</code> using this
      * function.
      *
-     * @tparam LHS Type of left-hand side vector elements.
-     * @tparam RHS Type of right-hand side vector elements.
+     * @tparam T_lhs Type of left-hand side vector elements.
+     * @tparam T_rhs Type of right-hand side vector elements.
      * @param x Left-hand side vector.
      * @param y Right-hand side vector.
      * @throw std::invalid_argument if sizes do not match.
      */
-    template <typename LHS, typename RHS>
+    template <typename T_lhs, typename T_rhs>
     inline void
-    assign(std::vector<LHS>& x, const std::vector<RHS>& y) {
+    assign(std::vector<T_lhs>& x, const std::vector<T_rhs>& y) {
       check_matching_sizes("assign",
                            "left-hand side", x,
                            "right-hand side", y);

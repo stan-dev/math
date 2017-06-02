@@ -3,7 +3,7 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -61,12 +61,12 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", beta);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, beta);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> beta_vec(beta);
       size_t N = max_size(y, mu, beta);
 
       for (size_t n = 0; n < N; n++) {
@@ -78,13 +78,13 @@ namespace stan {
         cdf_log -= exp(-scaled_diff);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += rep_deriv;
+          ops_partials.edge1_.partials_[n] += rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] -= rep_deriv;
+          ops_partials.edge2_.partials_[n] -= rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff;
+          ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
       }
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
 
   }

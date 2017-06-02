@@ -19,7 +19,7 @@ namespace stan {
        * Type of value stored in a standard vector with type
        * <code>T</code> entries.
        */
-      typedef typename std::vector<T>::value_type type;
+      typedef T type;
     };
 
   }
