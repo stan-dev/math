@@ -92,8 +92,10 @@ namespace stan {
           start_nested();
           vector<var> y_var(y.begin(), y.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_, x_, x_int_, msgs_);
-          if (unlikely(y.size() != dy_dt_var.size()))
+          if (unlikely(y.size() != dy_dt_var.size())) {
+            recover_memory_nested();
             throw std::runtime_error(error_msg(y.size(), dy_dt_var.size()));
+          }
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();
@@ -140,8 +142,10 @@ namespace stan {
           z_var.insert(z_var.end(), y_var.begin(), y_var.end());
           z_var.insert(z_var.end(), theta_var.begin(), theta_var.end());
           vector<var> dy_dt_var = f_(t, y_var, theta_var, x_, x_int_, msgs_);
-          if (unlikely(y.size() != dy_dt_var.size()))
+          if (unlikely(y.size() != dy_dt_var.size())) {
+            recover_memory_nested();
             throw std::runtime_error(error_msg(y.size(), dy_dt_var.size()));
+          }
           for (size_t i = 0; i < dy_dt_var.size(); ++i) {
             dy_dt(i) = dy_dt_var[i].val();
             set_zero_all_adjoints_nested();
