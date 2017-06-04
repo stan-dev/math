@@ -306,6 +306,7 @@ void SetToZero(DlsMat A)
 
 void PrintMat(DlsMat A)
 {
+#ifndef NO_FPRINTF_OUTPUT
   long int i, j, start, finish;
   realtype **a;
 
@@ -354,7 +355,7 @@ void PrintMat(DlsMat A)
     break;
 
   }
-
+#endif
 }
 
 

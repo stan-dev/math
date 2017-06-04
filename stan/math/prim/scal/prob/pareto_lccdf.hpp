@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -46,26 +47,26 @@ namespace stan {
                              "Scale parameter", y_min,
                              "Shape parameter", alpha);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> y_min_vec(y_min);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale> y_min_vec(y_min);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, y_min, alpha);
 
-      OperandsAndPartials<T_y, T_scale, T_shape>
-        operands_and_partials(y, y_min, alpha);
+      operands_and_partials<T_y, T_scale, T_shape>
+        ops_partials(y, y_min, alpha);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       for (size_t n = 0; n < N; n++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return log_dbl = log(value_of(y_min_vec[n])
@@ -76,14 +77,14 @@ namespace stan {
         P += alpha_dbl * log_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= alpha_dbl * y_min_inv_dbl
+          ops_partials.edge1_.partials_[n] -= alpha_dbl * y_min_inv_dbl
             * exp(log_dbl);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x2[n] += alpha_dbl * y_min_inv_dbl;
+          ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x3[n] += log_dbl;
+          ops_partials.edge3_.partials_[n] += log_dbl;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

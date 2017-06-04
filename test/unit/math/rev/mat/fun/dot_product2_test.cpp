@@ -995,8 +995,8 @@ TEST(AgradRevMatrix, cumulative_sum) {
   test_cumulative_sum<Eigen::Matrix<var,1,Eigen::Dynamic> >();
 }
 
-TEST(AgradRevMatrix, promoter) {
-  using stan::math::promoter;
+TEST(AgradRevMatrix, promoteElts) {
+  using stan::math::promote_elements;
   using stan::math::promote_common;
 
   using stan::math::var;

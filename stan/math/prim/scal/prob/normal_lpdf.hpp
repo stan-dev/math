@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -28,6 +29,9 @@ namespace stan {
      *
      * <p>The result log probability is defined to be the sum of the
      * log probabilities for each observation/mean/deviation triple.
+     * @tparam T_y Underlying type of scalar in sequence.
+     * @tparam T_loc Type of location parameter.
+     * @tparam T_scale Type of scale parameter.
      * @param y (Sequence of) scalar(s).
      * @param mu (Sequence of) location parameter(s)
      * for the normal distribution.
@@ -35,8 +39,6 @@ namespace stan {
      * distribution.
      * @return The log of the product of the densities.
      * @throw std::domain_error if the scale is not positive.
-     * @tparam T_y Underlying type of scalar in sequence.
-     * @tparam T_loc Type of location parameter.
      */
     template <bool propto,
               typename T_y, typename T_loc, typename T_scale>
@@ -67,12 +69,12 @@ namespace stan {
       if (!include_summand<propto, T_y, T_loc, T_scale>::value)
         return 0.0;
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
@@ -104,14 +106,14 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= scaled_diff;
+          ops_partials.edge1_.partials_[n] -= scaled_diff;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += scaled_diff;
+          ops_partials.edge2_.partials_[n] += scaled_diff;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials_[n]
             += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_loc, typename T_scale>

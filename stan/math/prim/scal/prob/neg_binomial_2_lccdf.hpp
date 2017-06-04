@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_ccdf_log.hpp>
 
 namespace stan {
@@ -32,8 +33,8 @@ namespace stan {
                              "Location parameter", mu,
                              "Precision Parameter", phi);
 
-      VectorView<const T_location> mu_vec(mu);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_location> mu_vec(mu);
+      scalar_seq_view<T_precision> phi_vec(phi);
 
       size_t size_beta = max_size(mu, phi);
 

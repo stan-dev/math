@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -18,6 +18,7 @@
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
@@ -29,6 +30,22 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the beta log cumulative distribution function for the given
+     * probability, success, and failure parameters. Given matching containers
+     * returns the log sum of probabilities.
+     *
+     * @tparam T_y type of probability parameter
+     * @tparam T_scale_succ type of success parameter
+     * @tparam T_scale_fail type of failure parameter
+     * @param y probability parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if alpha or beta is negative
+     * @throw std::domain_error if y is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_scale_succ, typename T_scale_fail>
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lcdf(const T_y& y, const T_scale_succ& alpha,
@@ -57,13 +74,13 @@ namespace stan {
                              "First shape parameter", alpha,
                              "Second shape parameter", beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale_succ> alpha_vec(alpha);
-      VectorView<const T_scale_fail> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale_succ> alpha_vec(alpha);
+      scalar_seq_view<T_scale_fail> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_scale_succ, T_scale_fail>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_scale_succ, T_scale_fail>
+        ops_partials(y, alpha, beta);
 
       using std::pow;
       using std::exp;
@@ -106,7 +123,7 @@ namespace stan {
         cdf_log += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += pow(1-y_dbl, beta_dbl-1)
+          ops_partials.edge1_.partials_[n] += pow(1-y_dbl, beta_dbl-1)
             * pow(y_dbl, alpha_dbl-1) / betafunc_dbl / Pn;
 
         T_partials_return g1 = 0;
@@ -119,12 +136,12 @@ namespace stan {
                             betafunc_dbl);
         }
         if (!is_constant_struct<T_scale_succ>::value)
-          operands_and_partials.d_x2[n] += g1 / Pn;
+          ops_partials.edge2_.partials_[n] += g1 / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          operands_and_partials.d_x3[n]  += g2 / Pn;
+          ops_partials.edge3_.partials_[n]  += g2 / Pn;
       }
 
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
 
   }

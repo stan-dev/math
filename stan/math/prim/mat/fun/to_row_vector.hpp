@@ -30,9 +30,8 @@ namespace stan {
     to_row_vector(const std::vector<int> & vec) {
       int C = vec.size();
       Eigen::Matrix<double, 1, Eigen::Dynamic> result(C);
-      double* datap = result.data();
       for (int i=0; i < C; i++)
-        datap[i] = vec[i];
+        result(i) = vec[i];
       return result;
     }
 

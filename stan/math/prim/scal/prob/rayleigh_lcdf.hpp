@@ -3,7 +3,7 @@
 
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 
@@ -45,10 +46,10 @@ namespace stan {
                              "Random variable", y,
                              "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_scale> operands_and_partials(y, sigma);
+      operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, sigma);
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
@@ -67,13 +68,13 @@ namespace stan {
           cdf_log += log1m(exp_val);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += y_dbl * inv_sigma_sqr
+          ops_partials.edge1_.partials_[n] += y_dbl * inv_sigma_sqr
             * exp_div_1m_exp;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x2[n] -= y_sqr * inv_sigma_sqr
+          ops_partials.edge2_.partials_[n] -= y_sqr * inv_sigma_sqr
             * inv_sigma[n] * exp_div_1m_exp;
       }
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
 
   }

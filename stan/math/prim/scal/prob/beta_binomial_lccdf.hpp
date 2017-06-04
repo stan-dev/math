@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
@@ -23,6 +24,23 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the log CCDF of the Beta-Binomial distribution with given population 
+     * size, prior success, and prior failure parameters. Given containers of 
+     * matching sizes, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_n, typename T_N,
               typename T_size1, typename T_size2>
     typename return_type<T_size1, T_size2>::type
@@ -50,31 +68,31 @@ namespace stan {
                              "First prior sample size parameter", alpha,
                              "Second prior sample size parameter", beta);
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_size1> alpha_vec(alpha);
-      VectorView<const T_size2> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_size1> alpha_vec(alpha);
+      scalar_seq_view<T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
       using std::exp;
       using std::log;
       using std::exp;
 
-      OperandsAndPartials<T_size1, T_size2>
-        operands_and_partials(alpha, beta);
+      operands_and_partials<T_size1, T_size2>
+        ops_partials(alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as neg infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) <= 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       for (size_t i = 0; i < size; i++) {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -116,17 +134,17 @@ namespace stan {
           const T_partials_return g
             = - C * (digamma(mu) - digammaOne + dF[1] / F
                      - digamma(alpha_dbl) + digammaTwo);
-          operands_and_partials.d_x1[i] -= g / Pi;
+          ops_partials.edge1_.partials_[i] -= g / Pi;
         }
         if (!is_constant_struct<T_size2>::value) {
           const T_partials_return g
             = - C * (digamma(nu) - digammaOne - dF[4] / F - digamma(beta_dbl)
                      + digammaTwo);
-          operands_and_partials.d_x2[i] -= g / Pi;
+          ops_partials.edge2_.partials_[i] -= g / Pi;
         }
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

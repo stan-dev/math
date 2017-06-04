@@ -99,7 +99,7 @@ TEST(ProbDistributionsMultiNormal,Mu) {
   EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal,MultiNormalOneRow) {
-  Matrix<double,Dynamic,Dynamic> y(1,3);
+  Matrix<double,1,Dynamic> y(1,3);
   y << 2.0, -2.0, 11.0;
   Matrix<double,Dynamic,1> mu(3,1);
   mu << 1.0, -1.0, 3.0;
@@ -111,7 +111,7 @@ TEST(ProbDistributionsMultiNormal,MultiNormalOneRow) {
 }
 
 TEST(ProbDistributionsMultiNormal,SigmaMultiRow) {
-  Matrix<double,Dynamic,Dynamic> y(1,2);
+  Matrix<double,1,Dynamic> y(1,2);
   y << 2.0, -2.0;
   Matrix<double,Dynamic,1> mu(2,1);
   mu << 1.0, -1.0;
@@ -122,14 +122,14 @@ TEST(ProbDistributionsMultiNormal,SigmaMultiRow) {
   // non-symmetric
   Sigma(0, 1) = -2.5;
   EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
-  Matrix<double,Dynamic,Dynamic> z(2,1);
+  Matrix<double,Dynamic,1> z(2,1);
   
   // wrong dimensions
   z << 2.0, -2.0;
   EXPECT_THROW (stan::math::multi_normal_log(z, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal,MuMultiRow) {
-  Matrix<double,Dynamic,Dynamic> y(1,3);
+  Matrix<double,1,Dynamic> y(1,3);
   y << 2.0, -2.0, 11.0;
   Matrix<double,Dynamic,1> mu(3,1);
   mu << 1.0, -1.0, 3.0;
@@ -159,7 +159,7 @@ TEST(ProbDistributionsMultiNormal,SizeMismatch) {
 
 TEST(ProbDistributionsMultiNormal, error_check) {
   boost::random::mt19937 rng;
-  Matrix<double,Dynamic,Dynamic> mu(3,1);
+  Matrix<double,Dynamic,1> mu(3,1);
   mu << 2.0, 
     -2.0,
     11.0;
@@ -191,7 +191,7 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
   sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 1.0,
     0.0, 1.0, 3.0;
-  Matrix<double,Dynamic,Dynamic> mu(3,1);
+  Matrix<double,Dynamic,1> mu(3,1);
   mu << 2.0, 
     -2.0,
     11.0;
@@ -234,7 +234,7 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
   sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 1.0,
     0.0, 1.0, 3.0;
-  Matrix<double,Dynamic,Dynamic> mu(3,1);
+  Matrix<double,Dynamic,1> mu(3,1);
   mu << 2.0, 
     -2.0,
     11.0;
@@ -277,7 +277,7 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
   sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 1.0,
     0.0, 1.0, 16.0;
-  Matrix<double,Dynamic,Dynamic> mu(3,1);
+  Matrix<double,Dynamic,1> mu(3,1);
   mu << 2.0, 
     -2.0,
     11.0;

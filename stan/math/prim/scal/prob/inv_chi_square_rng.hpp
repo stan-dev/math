@@ -11,7 +11,6 @@
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
@@ -22,6 +21,16 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Inverse chi squared variate with the nu degrees of
+     * freedom using the specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param nu positive degrees of freedom parameter
+     * @param rng random number generator
+     * @return inverse chi squared random variate
+     * @throw std::domain_error if nu is nonpositive
+     */
     template <class RNG>
     inline double
     inv_chi_square_rng(double nu,

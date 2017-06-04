@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -15,7 +15,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -23,7 +23,20 @@
 namespace stan {
   namespace math {
 
-    // Weibull(y|alpha, sigma)     [y >= 0;  alpha > 0;  sigma > 0]
+    /**
+     * Returns the Weibull log probability density for the given 
+     * location and scale. Given containers of matching sizes, returns the
+     * log sum of probability densities.
+     *
+     * @tparam T_y type of real parameter
+     * @tparam T_shape type of shape parameter
+     * @tparam T_scale type of scale paramater
+     * @param y real parameter
+     * @param alpha shape parameter
+     * @param sigma scale parameter
+     * @return log probability density or log sum of probability densities
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -51,9 +64,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, alpha, sigma);
 
       for (size_t n = 0; n < N; n++) {
@@ -96,8 +109,8 @@ namespace stan {
           y_div_sigma_pow_alpha[i] = pow(y_dbl * inv_sigma[i], alpha_dbl);
         }
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, sigma);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, sigma);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         if (include_summand<propto, T_shape>::value)
@@ -111,19 +124,19 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value) {
           const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             += (alpha_dbl-1.0) * inv_y
             - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
         }
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += 1.0/alpha_dbl
             + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials_[n]
             += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

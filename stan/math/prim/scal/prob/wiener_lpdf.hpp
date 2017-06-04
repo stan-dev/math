@@ -40,6 +40,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <cmath>
@@ -122,11 +123,11 @@ namespace stan {
       size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
       if (!N) return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_alpha> alpha_vec(alpha);
-      VectorView<const T_beta> beta_vec(beta);
-      VectorView<const T_tau> tau_vec(tau);
-      VectorView<const T_delta> delta_vec(delta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_alpha> alpha_vec(alpha);
+      scalar_seq_view<T_beta> beta_vec(beta);
+      scalar_seq_view<T_tau> tau_vec(tau);
+      scalar_seq_view<T_delta> delta_vec(delta);
 
       size_t N_y_tau = max_size(y, tau);
       for (size_t i = 0; i < N_y_tau; ++i) {

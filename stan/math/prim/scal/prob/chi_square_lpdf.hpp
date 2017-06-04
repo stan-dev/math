@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -62,8 +63,8 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_dof> nu_vec(nu);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
       for (size_t n = 0; n < length(y); n++)
@@ -103,7 +104,7 @@ namespace stan {
           digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
       }
 
-      OperandsAndPartials<T_y, T_dof> operands_and_partials(y, nu);
+      operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -118,14 +119,14 @@ namespace stan {
           logp -= half_y;
 
         if (!is_constant_struct<T_y>::value) {
-          operands_and_partials.d_x1[n] += (half_nu-1.0)*inv_y[n] - 0.5;
+          ops_partials.edge1_.partials_[n] += (half_nu-1.0)*inv_y[n] - 0.5;
         }
         if (!is_constant_struct<T_dof>::value) {
-          operands_and_partials.d_x2[n] += NEG_LOG_TWO_OVER_TWO
+          ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
             - digamma_half_nu_over_two[n] + log_y[n]*0.5;
         }
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_dof>

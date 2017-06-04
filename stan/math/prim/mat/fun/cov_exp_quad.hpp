@@ -38,8 +38,8 @@ namespace stan {
                  const T_sigma& sigma,
                  const T_l& l) {
       using std::exp;
-      check_positive("cov_exp_quad", "sigma", sigma);
-      check_positive("cov_exp_quad", "l", l);
+      check_positive("cov_exp_quad", "marginal variance", sigma);
+      check_positive("cov_exp_quad", "length-scale", l);
       for (size_t n = 0; n < x.size(); ++n)
         check_not_nan("cov_exp_quad", "x", x[n]);
 
@@ -91,8 +91,8 @@ namespace stan {
                  const T_sigma& sigma,
                  const T_l& l) {
       using std::exp;
-      check_positive("cov_exp_quad", "sigma", sigma);
-      check_positive("cov_exp_quad", "l", l);
+      check_positive("cov_exp_quad", "marginal variance", sigma);
+      check_positive("cov_exp_quad", "length-scale", l);
       for (size_t n = 0; n < x1.size(); ++n)
         check_not_nan("cov_exp_quad", "x1", x1[n]);
       for (size_t n = 0; n < x2.size(); ++n)

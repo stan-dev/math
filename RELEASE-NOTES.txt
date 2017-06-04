@@ -1,6 +1,29 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v.2.15.0 (13 April 2017)
+======================================================================
+
+New Features
+--------------------------------------------------
+
+* Efficient blocking algorithm for gradient of the Cholesky(#384)
+* New distribution functions _lpdf / _lpmf / _lcdf / _lccdf to replace _log function (#320)
+* Univariate normal distribution on sufficient statistics(#38) 
+* New to_matrix function for real arrays(real[]) (#467)
+* New specialization of stan::math::array_builder for matrix types(#496)
+
+Bug Fixes
+--------------------------------------------------
+* Fixes to hypergeometric functions(#487)
+
+Other
+--------------------------------------------------
+* Speedup for categorical_rng(#503)
+* Speedup for non-stiff ODE integration(#512)
+* Refactor VectorView into scalar_seq_view(#464)
+
+
 v.2.14.0 (26 December 2016)
 ======================================================================
 

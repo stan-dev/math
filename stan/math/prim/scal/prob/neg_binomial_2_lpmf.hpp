@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -13,16 +10,20 @@
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
+#include <boost/math/special_functions/digamma.hpp>
+#include <boost/random/negative_binomial_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -62,13 +63,13 @@ namespace stan {
       using std::log;
       using std::log;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_location> mu_vec(mu);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_location> mu_vec(mu);
+      scalar_seq_view<T_precision> phi_vec(phi);
       size_t size = max_size(n, mu, phi);
 
-      OperandsAndPartials<T_location, T_precision>
-        operands_and_partials(mu, phi);
+      operands_and_partials<T_location, T_precision>
+        ops_partials(mu, phi);
 
       size_t len_ep = max_size(mu, phi);
       size_t len_np = max_size(n, phi);
@@ -107,18 +108,23 @@ namespace stan {
         if (include_summand<propto, T_precision>::value)
           logp += lgamma(n_plus_phi[i]);
 
+        // if phi is large we probably overflow, defer to Poisson:
+        if (phi__[i] > 1e5) {
+          logp = poisson_lpmf(n_vec[i], mu__[i]);
+        }
+
         if (!is_constant_struct<T_location>::value)
-          operands_and_partials.d_x1[i]
+          ops_partials.edge1_.partials_[i]
             += n_vec[i]/mu__[i]
             - (n_vec[i] + phi__[i])
             / (mu__[i] + phi__[i]);
         if (!is_constant_struct<T_precision>::value)
-          operands_and_partials.d_x2[i]
+          ops_partials.edge2_.partials_[i]
             += 1.0 - n_plus_phi[i]/(mu__[i] + phi__[i])
             + log_phi[i] - log_mu_plus_phi[i] - digamma(phi__[i])
             + digamma(n_plus_phi[i]);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

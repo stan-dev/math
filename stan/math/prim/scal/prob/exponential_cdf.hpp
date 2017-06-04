@@ -3,7 +3,7 @@
 
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -11,7 +11,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -54,11 +54,11 @@ namespace stan {
       check_nonnegative(function, "Random variable", y);
       check_positive_finite(function, "Inverse scale parameter", beta);
 
-      OperandsAndPartials<T_y, T_inv_scale>
-        operands_and_partials(y, beta);
+      operands_and_partials<T_y, T_inv_scale>
+        ops_partials(y, beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t N = max_size(y, beta);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -75,11 +75,11 @@ namespace stan {
 
         T_partials_return rep_deriv = exp(-beta_dbl * y_dbl) / one_m_exp;
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += rep_deriv * beta_dbl * cdf;
+          ops_partials.edge1_.partials_[n] += rep_deriv * beta_dbl * cdf;
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x2[n] += rep_deriv * y_dbl * cdf;
+          ops_partials.edge2_.partials_[n] += rep_deriv * y_dbl * cdf;
       }
-      return operands_and_partials.value(cdf);
+      return ops_partials.build(cdf);
     }
 
   }

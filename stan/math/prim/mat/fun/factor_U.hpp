@@ -6,10 +6,8 @@
 
 #include <cmath>
 #include <cstddef>
-#include <iostream>
 #include <limits>
 #include <stdexcept>
-#include <sstream>
 #include <vector>
 
 namespace stan {

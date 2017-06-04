@@ -5,22 +5,6 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 
 namespace stan {
-  namespace {
-    template <bool is_vec, typename T>
-    struct scalar_type_helper {
-      typedef T type;
-    };
-
-    template <typename T>
-    struct scalar_type_helper<true, T> {
-      typedef typename
-      scalar_type_helper<is_vector<typename
-                                   stan::math::value_type<T>::type>::value,
-                         typename stan::math::value_type<T>::type>::type
-      type;
-    };
-  }
-
   /**
    * Metaprogram structure to determine the base scalar type
    * of a template argument.
@@ -31,7 +15,7 @@ namespace stan {
    */
   template <typename T>
   struct scalar_type {
-    typedef typename scalar_type_helper<is_vector<T>::value, T>::type type;
+    typedef T type;
   };
 
   template <typename T>

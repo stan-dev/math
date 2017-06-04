@@ -13,12 +13,23 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
-#include <stan/math/prim/scal/fun/F32.hpp>
-#include <stan/math/prim/scal/fun/grad_F32.hpp>
 
 namespace stan {
   namespace math {
 
+    /**
+     * Return a pseudorandom Beta-Binomial draw with specified population size,
+     * prior success, and prior failure parameter using the specified random
+     * number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param N population size parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @param rng random number generator
+     * @return Beta-Binomial random variate
+     * @throw std::domain_error if N, alpha, or beta is negative.
+     */
     template <class RNG>
     inline int
     beta_binomial_rng(int N,
@@ -33,11 +44,10 @@ namespace stan {
       check_positive_finite(function,
                             "Second prior sample size parameter", beta);
 
-      double a = beta_rng(alpha, beta, rng);
-      while (a > 1 || a < 0)
-        a = beta_rng(alpha, beta, rng);
-      return binomial_rng(N, a, rng);
+      double p = beta_rng(alpha, beta, rng);
+      return binomial_rng(N, p, rng);
     }
+
 
   }
 }

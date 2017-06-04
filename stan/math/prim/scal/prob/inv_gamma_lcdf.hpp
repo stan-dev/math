@@ -3,7 +3,7 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -18,7 +18,7 @@
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -56,19 +56,19 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Scale Parameter", beta);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
       }
 
       using std::exp;
@@ -105,22 +105,22 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += beta_dbl * y_inv_dbl * y_inv_dbl
+          ops_partials.edge1_.partials_[n] += beta_dbl * y_inv_dbl * y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl) * pow(beta_dbl * y_inv_dbl,
                                                alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += grad_reg_inc_gamma(alpha_dbl, beta_dbl
                                   * y_inv_dbl, gamma_vec[n],
                                   digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += - y_inv_dbl
+          ops_partials.edge3_.partials_[n] += - y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
             * pow(beta_dbl * y_inv_dbl, alpha_dbl-1)
             / tgamma(alpha_dbl) / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

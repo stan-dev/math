@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -20,6 +20,7 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -27,7 +28,23 @@
 namespace stan {
   namespace math {
 
-    // Binomial(n|N, theta)  [N >= 0;  0 <= n <= N;  0 <= theta <= 1]
+    /**
+     * Returns the log PMF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
+     * containers of matching lengths, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of successes parameter
+     * @tparam T_N type of population size parameter
+     * @tparam theta type of chance of success parameter
+     * @param n successes parameter
+     * @param N population size parameter
+     * @param theta chance of success parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if n is negative or greater than N
+     * @throw std::domain_error if N is negative
+     * @throw std::domain_error if theta is not a valid probability
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <bool propto,
               typename T_n,
               typename T_N,
@@ -59,12 +76,12 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_N> N_vec(N);
-      VectorView<const T_prob> theta_vec(theta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_prob> theta_vec(theta);
       size_t size = max_size(n, N, theta);
 
-      OperandsAndPartials<T_prob> operands_and_partials(theta);
+      operands_and_partials<T_prob> ops_partials(theta);
 
       if (include_summand<propto>::value) {
         for (size_t i = 0; i < size; ++i)
@@ -87,20 +104,20 @@ namespace stan {
           temp2 += N_vec[i] - n_vec[i];
         }
         if (!is_constant_struct<T_prob>::value) {
-          operands_and_partials.d_x1[0]
+          ops_partials.edge1_.partials_[0]
             += temp1 / value_of(theta_vec[0])
             - temp2 / (1.0 - value_of(theta_vec[0]));
         }
       } else {
         if (!is_constant_struct<T_prob>::value) {
           for (size_t i = 0; i < size; ++i)
-            operands_and_partials.d_x1[i]
+            ops_partials.edge1_.partials_[i]
               += n_vec[i] / value_of(theta_vec[i])
               - (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
         }
       }
 
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

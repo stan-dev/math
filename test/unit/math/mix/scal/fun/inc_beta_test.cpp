@@ -193,7 +193,7 @@ TEST(ProbInternalMath, inc_beta_ffv_3rddderiv1) {
   VEC grad1;
   z1.d_.d_.grad(y1,grad1);
   EXPECT_NEAR(0.079976746033671442, 
-              grad1[0],1e-6);
+              grad1[0],1.05e-6);
 }
 TEST(ProbInternalMath, inc_beta_ffv_3rddderiv2) {
   using stan::math::fvar;

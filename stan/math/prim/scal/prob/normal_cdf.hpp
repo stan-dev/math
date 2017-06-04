@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -58,12 +59,12 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
       const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
@@ -92,27 +93,28 @@ namespace stan {
             : SQRT_TWO_OVER_PI * 0.5
             * exp(-scaled_diff * scaled_diff) / cdf_ / sigma_dbl;
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[n] += rep_deriv;
+            ops_partials.edge1_.partials_[n] += rep_deriv;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x2[n] -= rep_deriv;
+            ops_partials.edge2_.partials_[n] -= rep_deriv;
           if (!is_constant_struct<T_scale>::value)
-            operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff * SQRT_2;
+            ops_partials.edge3_.partials_[n]
+              -= rep_deriv * scaled_diff * SQRT_2;
         }
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= cdf;
+          ops_partials.edge1_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_loc>::value) {
         for (size_t n = 0; n < stan::length(mu); ++n)
-          operands_and_partials.d_x2[n] *= cdf;
+          ops_partials.edge2_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(sigma); ++n)
-          operands_and_partials.d_x3[n] *= cdf;
+          ops_partials.edge3_.partials_[n] *= cdf;
       }
-      return operands_and_partials.value(cdf);
+      return ops_partials.build(cdf);
     }
 
   }

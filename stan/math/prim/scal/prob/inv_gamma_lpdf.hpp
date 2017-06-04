@@ -3,7 +3,7 @@
 
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -17,7 +17,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -73,9 +73,9 @@ namespace stan {
       if (!include_summand<propto, T_y, T_shape, T_scale>::value)
         return 0.0;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_shape> alpha_vec(alpha);
-      VectorView<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_scale> beta_vec(beta);
 
       for (size_t n = 0; n < length(y); n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -84,8 +84,8 @@ namespace stan {
       }
 
       size_t N = max_size(y, alpha, beta);
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, beta);
 
       using std::log;
 
@@ -133,15 +133,15 @@ namespace stan {
           logp -= beta_dbl * inv_y[n];
 
         if (!is_constant<typename is_vector<T_y>::type>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             += -(alpha_dbl+1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
         if (!is_constant<typename is_vector<T_shape>::type>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += -digamma_alpha[n] + log_beta[n] - log_y[n];
         if (!is_constant<typename is_vector<T_scale>::type>::value)
-          operands_and_partials.d_x3[n] += alpha_dbl / beta_dbl - inv_y[n];
+          ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - inv_y[n];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_y, typename T_shape, typename T_scale>

@@ -1,17 +1,19 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/type_traits.hpp>
+#include <test/unit/util.hpp>
+#include <vector>
 
-TEST(MetaTraits, scalar_type) {
-  using boost::is_same;
+TEST(MetaTraits, ScalarTypeMat) {
   using stan::scalar_type;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using test::expect_same_type;
+  using std::vector;
 
-  stan::scalar_type<Matrix<double, Dynamic, Dynamic> >::type x = 1;
-  EXPECT_FLOAT_EQ(1, x);
-
-  // hack to get value of template into Google test macro 
-  bool b3 = is_same<double, scalar_type<Matrix<double, Dynamic, Dynamic> >::type>::value;
-  EXPECT_TRUE(b3);
+  expect_same_type<double, scalar_type<MatrixXd>::type>();
+  expect_same_type<double, scalar_type<VectorXd>::type>();
+  expect_same_type<double, scalar_type<RowVectorXd>::type>();
+  expect_same_type<double, scalar_type<vector<double> >::type>();
+  expect_same_type<double, scalar_type<vector<MatrixXd> >::type>();
 }

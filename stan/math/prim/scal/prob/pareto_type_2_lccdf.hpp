@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LCCDF_HPP
 
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -13,7 +13,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -51,14 +51,14 @@ namespace stan {
                              "Scale parameter", lambda,
                              "Shape parameter", alpha);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> lambda_vec(lambda);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> lambda_vec(lambda);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, lambda, alpha);
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
-        operands_and_partials(y, mu, lambda, alpha);
+      operands_and_partials<T_y, T_loc, T_scale, T_shape>
+        ops_partials(y, mu, lambda, alpha);
 
       VectorBuilder<true, T_partials_return,
                     T_y, T_loc, T_scale, T_shape>
@@ -98,16 +98,16 @@ namespace stan {
         P += ccdf_log[n];
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= a_over_lambda_plus_y[n];
+          ops_partials.edge1_.partials_[n] -= a_over_lambda_plus_y[n];
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += a_over_lambda_plus_y[n];
+          ops_partials.edge2_.partials_[n] += a_over_lambda_plus_y[n];
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += a_over_lambda_plus_y[n]
+          ops_partials.edge3_.partials_[n] += a_over_lambda_plus_y[n]
             * (y_dbl - mu_dbl) / lambda_dbl;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x4[n] -= log_1p_y_over_lambda[n];
+          ops_partials.edge4_.partials_[n] -= log_1p_y_over_lambda[n];
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

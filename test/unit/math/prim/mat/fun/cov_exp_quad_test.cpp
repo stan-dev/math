@@ -2,6 +2,38 @@
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <gtest/gtest.h>
 
+template<typename T_x1, typename T_x2, typename T_sigma, typename T_l>
+std::string pull_msg(std::vector<T_x1> x1,
+                     std::vector<T_x2> x2,
+                     T_sigma sigma,
+                     T_l l) {
+  std::string message;
+  try {
+    stan::math::cov_exp_quad(x1, x2, sigma, l);
+  } catch (std::domain_error& e) {
+    message = e.what();
+  } catch (...) {
+    message = "Threw the wrong exception";
+  }
+  return message;
+}
+
+template<typename T_x1, typename T_sigma, typename T_l>
+std::string pull_msg(std::vector<T_x1> x1,
+                     T_sigma sigma,
+                     T_l l) {
+  std::string message;
+  try {
+    stan::math::cov_exp_quad(x1, sigma, l);
+  } catch (std::domain_error& e) {
+    message = e.what();
+  } catch (...) {
+    message = "Threw the wrong exception";
+  }
+  return message;
+}
+
+
 TEST(MathPrimMat, vec_double_cov_exp_quad1) {
   double sigma = 0.2;
   double l = 5;
@@ -318,6 +350,18 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
   double sigma_bad = -1;
   double l_bad = -1;
 
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x, sigma, l_bad);
+  msg2 = pull_msg(x, sigma_bad, l);
+  msg3 = pull_msg(x, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
+
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad), std::domain_error);
@@ -364,6 +408,19 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x, sigma, l_bad);
+  msg2 = pull_msg(x, sigma_bad, l);
+  msg3 = pull_msg(x, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
+
+
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad), std::domain_error);
@@ -406,6 +463,18 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
 
   double sigma_bad = -1;
   double l_bad = -1;
+
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x1, x2, sigma, l_bad);
+  msg2 = pull_msg(x1, x2, sigma_bad, l);
+  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l), std::domain_error);
@@ -470,6 +539,18 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
 
   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
   double l_bad = std::numeric_limits<double>::quiet_NaN();
+
+  std::string msg1, msg2, msg3;
+  msg1 = pull_msg(x1, x2, sigma, l_bad);
+  msg2 = pull_msg(x1, x2, sigma_bad, l);
+  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length-scale"))
+    << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" marginal variance"))
+    << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+    << msg3;
+
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l), std::domain_error);

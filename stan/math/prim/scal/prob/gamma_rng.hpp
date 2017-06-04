@@ -15,7 +15,6 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -39,7 +38,7 @@ namespace stan {
       /*
         the boost gamma distribution is defined by
         shape and scale, whereas the stan one is defined
-        by shape and rate
+        by shape and rate (inverse scale)
       */
       variate_generator<RNG&, gamma_distribution<> >
         gamma_rng(rng, gamma_distribution<>(alpha, 1.0 / beta));

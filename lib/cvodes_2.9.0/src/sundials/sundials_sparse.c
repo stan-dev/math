@@ -732,6 +732,7 @@ int SparseMatvec(const SlsMat A, const realtype *x, realtype *y)
  */
 void SparsePrintMat(const SlsMat A, FILE* outfile)
 {
+#ifndef NO_FPRINTF_OUTPUT
   int i,j, NNZ;
   char *matrixtype;
   char *indexname;
@@ -771,7 +772,7 @@ void SparsePrintMat(const SlsMat A, FILE* outfile)
     fprintf(outfile, "\n");
   }
   fprintf(outfile, "\n");
-    
+#endif   
 }
 
 

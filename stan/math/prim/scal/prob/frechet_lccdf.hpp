@@ -3,7 +3,7 @@
 
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -14,7 +14,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -45,14 +45,14 @@ namespace stan {
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);
 
-      OperandsAndPartials<T_y, T_shape, T_scale>
-        operands_and_partials(y, alpha, sigma);
+      operands_and_partials<T_y, T_shape, T_scale>
+        ops_partials(y, alpha, sigma);
 
       using std::log;
       using std::exp;
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, sigma, alpha);
 
       for (size_t n = 0; n < N; n++) {
@@ -66,13 +66,15 @@ namespace stan {
 
         const T_partials_return rep_deriv_ = pow_ / (1.0 / exp_ - 1);
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= alpha_dbl / y_dbl * rep_deriv_;
+          ops_partials.edge1_.partials_[n] -= alpha_dbl / y_dbl * rep_deriv_;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x2[n] -= log(y_dbl / sigma_dbl) * rep_deriv_;
+          ops_partials.edge2_.partials_[n]
+            -= log(y_dbl / sigma_dbl) * rep_deriv_;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += alpha_dbl / sigma_dbl * rep_deriv_;
+          ops_partials.edge3_.partials_[n]
+            += alpha_dbl / sigma_dbl * rep_deriv_;
       }
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

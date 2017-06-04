@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LCDF_HPP
 
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -13,7 +13,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
@@ -50,16 +50,16 @@ namespace stan {
                              "Scale parameter", sigma,
                              "Shape paramter", alpha);
 
-      OperandsAndPartials<T_y, T_loc, T_scale, T_shape>
-        operands_and_partials(y, mu, sigma, alpha);
+      operands_and_partials<T_y, T_loc, T_scale, T_shape>
+        ops_partials(y, mu, sigma, alpha);
 
       using std::log;
       using std::exp;
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
-      VectorView<const T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
       size_t N = max_size(y, mu, sigma, alpha);
       const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
@@ -86,17 +86,17 @@ namespace stan {
           / cdf_log_;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += rep_deriv;
+          ops_partials.edge1_.partials_[n] += rep_deriv;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] -= rep_deriv;
+          ops_partials.edge2_.partials_[n] -= rep_deriv;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] -= rep_deriv * diff;
+          ops_partials.edge3_.partials_[n] -= rep_deriv * diff;
         if (!is_constant_struct<T_shape>::value)
-          operands_and_partials.d_x4[n] += -2.0 * exp(-0.5 * diff_sq
+          ops_partials.edge4_.partials_[n] += -2.0 * exp(-0.5 * diff_sq
                                                       * (1.0 + alpha_dbl_sq))
             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / cdf_log_;
       }
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
 
   }

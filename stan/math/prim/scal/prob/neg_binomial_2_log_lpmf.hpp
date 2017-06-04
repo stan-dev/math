@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/math/special_functions/digamma.hpp>
@@ -60,13 +61,13 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      VectorView<const T_n> n_vec(n);
-      VectorView<const T_log_location> eta_vec(eta);
-      VectorView<const T_precision> phi_vec(phi);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_log_location> eta_vec(eta);
+      scalar_seq_view<T_precision> phi_vec(phi);
       size_t size = max_size(n, eta, phi);
 
-      OperandsAndPartials<T_log_location, T_precision>
-        operands_and_partials(eta, phi);
+      operands_and_partials<T_log_location, T_precision>
+        ops_partials(eta, phi);
 
       size_t len_ep = max_size(eta, phi);
       size_t len_np = max_size(n, phi);
@@ -107,16 +108,16 @@ namespace stan {
           logp += lgamma(n_plus_phi[i]);
 
         if (!is_constant_struct<T_log_location>::value)
-          operands_and_partials.d_x1[i]
+          ops_partials.edge1_.partials_[i]
             += n_vec[i] - n_plus_phi[i]
             / (phi__[i]/exp(eta__[i]) + 1.0);
         if (!is_constant_struct<T_precision>::value)
-          operands_and_partials.d_x2[i]
+          ops_partials.edge2_.partials_[i]
             += 1.0 - n_plus_phi[i]/(exp(eta__[i]) + phi__[i])
             + log_phi[i] - logsumexp_eta_logphi[i] - digamma(phi__[i])
             + digamma(n_plus_phi[i]);
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

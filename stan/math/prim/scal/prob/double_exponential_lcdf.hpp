@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -20,6 +21,20 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Returns the double exponential log cumulative density function. Given
+     * containers of matching sizes, returns the log sum of probabilities.
+     *
+     * @tparam T_y type of real parameter.
+     * @tparam T_loc type of location parameter.
+     * @tparam T_scale type of scale parameter.
+     * @param y real parameter
+     * @param mu location parameter
+     * @param sigma scale parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_lcdf(const T_y& y, const T_loc& mu,
@@ -47,12 +62,12 @@ namespace stan {
       using std::exp;
       using std::exp;
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
-      VectorView<const T_y> y_vec(y);
-      VectorView<const T_loc> mu_vec(mu);
-      VectorView<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       const double log_half = std::log(0.5);
       size_t N = max_size(y, mu, sigma);
 
@@ -66,26 +81,26 @@ namespace stan {
           cdf_log += log_half + scaled_diff;
 
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[n] += inv_sigma;
+            ops_partials.edge1_.partials_[n] += inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x2[n] -= inv_sigma;
+            ops_partials.edge2_.partials_[n] -= inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            operands_and_partials.d_x3[n] -= scaled_diff * inv_sigma;
+            ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma;
         } else {
           cdf_log += log1m(0.5 * exp(-scaled_diff));
 
           const T_partials_return rep_deriv = 1.0
             / (2.0 * exp(scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
-            operands_and_partials.d_x1[n] += rep_deriv * inv_sigma;
+            ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
           if (!is_constant_struct<T_loc>::value)
-            operands_and_partials.d_x2[n] -= rep_deriv * inv_sigma;
+            ops_partials.edge2_.partials_[n] -= rep_deriv * inv_sigma;
           if (!is_constant_struct<T_scale>::value)
-            operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff
+            ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff
               * inv_sigma;
         }
       }
-      return operands_and_partials.value(cdf_log);
+      return ops_partials.build(cdf_log);
     }
   }
 }
