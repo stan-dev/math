@@ -284,7 +284,7 @@ namespace stan {
             using Eigen::StrictlyLower;
             MatrixXd Lbar(M_, M_);
             MatrixXd L(M_, M_);
-        
+
         viennacl::matrix<double>  vcl_L(M_, M_);
             viennacl::matrix<double>  vcl_Lbar(M_, M_);
             viennacl::matrix<double> vcl_Lbar_temp(M_, M_);

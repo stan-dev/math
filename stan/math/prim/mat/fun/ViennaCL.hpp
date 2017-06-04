@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_VIENNACL_HPP
   #define STAN_MATH_PRIM_MAT_FUN_VIENNACL_HPP
-  
+
   #ifdef STAN_GPU
     #ifndef VIENNACL_WITH_OPENCL
       #define VIENNACL_WITH_OPENCL 1
     #endif
   #else
     #define STAN_GPU 0
-  #endif    
+  #endif
 
   #ifndef VIENNACL_WITH_EIGEN
     #define VIENNACL_WITH_EIGEN 1
