@@ -13,11 +13,11 @@
     #define VIENNACL_WITH_EIGEN 1
   #endif
 
-  #include "viennacl/vector.hpp"
-  #include "viennacl/matrix.hpp"
-  #include "viennacl/linalg/direct_solve.hpp"
-  #include "viennacl/linalg/lu.hpp"
-  #include "viennacl/linalg/ilu_operations.hpp"
+  #include <viennacl/vector.hpp>
+  #include <viennacl/matrix.hpp>
+  #include <viennacl/linalg/direct_solve.hpp>
+  #include <viennacl/linalg/lu.hpp>
+  #include <viennacl/linalg/ilu_operations.hpp>
 
   #if STAN_GPU
     // a custom openCL kernel for copying the lower triangle to the upper
