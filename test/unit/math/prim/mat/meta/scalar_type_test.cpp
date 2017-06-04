@@ -14,8 +14,6 @@ TEST(MetaTraits, ScalarTypeMat) {
   expect_same_type<double, scalar_type<MatrixXd>::type>();
   expect_same_type<double, scalar_type<VectorXd>::type>();
   expect_same_type<double, scalar_type<RowVectorXd>::type>();
-
-  // TODO(Sean): This behavior doesn't seem to make sense prima facie
-  // Likely change this so that we would expect `double` here instead.
-  expect_same_type<MatrixXd, scalar_type<vector<MatrixXd> >::type>();
+  expect_same_type<double, scalar_type<vector<double> >::type>();
+  expect_same_type<double, scalar_type<vector<MatrixXd> >::type>();
 }

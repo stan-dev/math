@@ -5,7 +5,6 @@
 
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
-#include <stan/math/prim/scal/meta/container_view.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
@@ -25,7 +24,7 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -35,7 +34,6 @@
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/VectorView.hpp>
 
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>

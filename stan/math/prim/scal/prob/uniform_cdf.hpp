@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
@@ -41,9 +41,9 @@ namespace stan {
                              "Lower bound parameter", alpha,
                              "Upper bound parameter", beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_low> alpha_vec(alpha);
-      scalar_seq_view<const T_high> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_low> alpha_vec(alpha);
+      scalar_seq_view<T_high> beta_vec(beta);
       size_t N = max_size(y, alpha, beta);
 
       for (size_t n = 0; n < N; n++) {
@@ -53,8 +53,8 @@ namespace stan {
           return 0.0;
       }
 
-      OperandsAndPartials<T_y, T_low, T_high>
-        operands_and_partials(y, alpha, beta);
+      operands_and_partials<T_y, T_low, T_high>
+        ops_partials(y, alpha, beta);
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
@@ -65,28 +65,28 @@ namespace stan {
         cdf *= cdf_;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] += 1.0 / b_min_a / cdf_;
+          ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_;
         if (!is_constant_struct<T_low>::value)
-          operands_and_partials.d_x2[n] += (y_dbl - beta_dbl) / b_min_a
+          ops_partials.edge2_.partials_[n] += (y_dbl - beta_dbl) / b_min_a
             / b_min_a / cdf_;
         if (!is_constant_struct<T_high>::value)
-          operands_and_partials.d_x3[n] -= 1.0 / b_min_a;
+          ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= cdf;
+          ops_partials.edge1_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_low>::value) {
         for (size_t n = 0; n < stan::length(alpha); ++n)
-          operands_and_partials.d_x2[n] *= cdf;
+          ops_partials.edge2_.partials_[n] *= cdf;
       }
       if (!is_constant_struct<T_high>::value) {
         for (size_t n = 0; n < stan::length(beta); ++n)
-          operands_and_partials.d_x3[n] *= cdf;
+          ops_partials.edge3_.partials_[n] *= cdf;
       }
 
-      return operands_and_partials.value(cdf);
+      return ops_partials.build(cdf);
     }
 
   }
