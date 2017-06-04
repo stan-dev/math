@@ -274,6 +274,7 @@ namespace stan {
        * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
        */
+    #if STAN_GPU
     virtual void chain() {
         using Eigen::MatrixXd;
         using Eigen::Lower;
@@ -283,6 +284,7 @@ namespace stan {
             using Eigen::StrictlyLower;
             MatrixXd Lbar(M_, M_);
             MatrixXd L(M_, M_);
+        
         viennacl::matrix<double>  vcl_L(M_, M_);
             viennacl::matrix<double>  vcl_Lbar(M_, M_);
             viennacl::matrix<double> vcl_Lbar_temp(M_, M_);
@@ -301,7 +303,7 @@ namespace stan {
         viennacl::copy(L, vcl_L);
         viennacl::copy(Lbar, vcl_Lbar);
         vcl_L =  viennacl::trans(vcl_L);
-            vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar);
+        vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar);
 
 
         // internal_size is used because ViennaCL pads the matrices in
@@ -338,7 +340,8 @@ namespace stan {
             for (size_type j = 0; j < M_; ++j)
               for (size_type i = j; i < M_; ++i)
                 variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
-          }
+           }
+    #endif
     };
 
 
@@ -360,7 +363,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
-      if (L_A.rows()  > 500) {
+      if (L_A.rows()  > 500 && STAN_GPU) {
         L_A = L_A.selfadjointView<Eigen::Lower>();
         viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
         viennacl::copy(L_A, vcl_L_A);
@@ -398,7 +401,7 @@ namespace stan {
           accum_i = accum;
         }
       // NOTE: This should be replaced by some check that comes from a user
-      } else if (L_A.rows()  > 500) {
+      } else if (L_A.rows()  > 500 && STAN_GPU) {
         cholesky_gpu *baseVari
           = new cholesky_gpu(A, L_A);
         size_t pos = 0;
