@@ -4,7 +4,6 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <iostream>
 
 namespace stan {
   namespace math {

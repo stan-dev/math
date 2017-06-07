@@ -5,8 +5,10 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
   namespace math {
@@ -23,6 +25,9 @@ namespace stan {
      * @param g   boost::math::tgamma(a) (precomputed value)
      * @param dig boost::math::digamma(a) (precomputed value)
      * @param precision required precision; applies to series expansion only
+     * @param max_steps number of steps to take.
+     * @throw throws std::domain_error if not converged after max_steps
+     *   or increment overflows to inf.
      *
      * For the asymptotic expansion, the gradient is given by:
        \f[
@@ -37,11 +42,17 @@ namespace stan {
        \f]
      */
     template<typename T>
-    T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6) {
+    T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6,
+                         int max_steps = 1e5) {
       using std::domain_error;
       using std::exp;
       using std::fabs;
       using std::log;
+
+      if (is_nan(a)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(z)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(g)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(dig)) return std::numeric_limits<T>::quiet_NaN();
 
       T l = log(z);
       if (z >= a && z >= 8) {
@@ -73,19 +84,26 @@ namespace stan {
         // gradient of series expansion http://dlmf.nist.gov/8.7#E3
 
         T S = 0;
-        T s = 1;
-        int k = 0;
-        T delta = s / square(a);
-        while (fabs(delta) > precision) {
-          S += delta;
-          ++k;
-          s *= - z / k;
-          delta = s / square(k + a);
-          if (is_inf(delta))
+        T log_s = 0.0;
+        double s_sign = 1.0;
+        T log_z = log(z);
+        T log_delta = log_s - 2 * log(a);
+        for (int k = 1; k <= max_steps; ++k) {
+          S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
+          log_s += log_z - log(k);
+          s_sign = -s_sign;
+          log_delta = log_s - 2 * log(k + a);
+          if (is_inf(log_delta))
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
+          if (log_delta <= log(precision))
+            return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
         }
-        return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
+        stan::math::domain_error("grad_reg_inc_gamma",
+          "k (internal counter)",
+          max_steps, "exceeded ",
+          " iterations, gamma function gradient did not converge.");
+        return std::numeric_limits<T>::infinity();
       }
     }
 
