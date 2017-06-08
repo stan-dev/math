@@ -10,6 +10,34 @@
 namespace stan {
   namespace math {
 
+    /**
+     * This template class represents scalars used in forward-mode
+     * automatic differentiation, which consist of values and
+     * directional derivatives of the specified template type.  When
+     * performing operations on instances of this class, all operands
+     * should be either primitive integer or double values or dual
+     * numbers representing derivatives in the same direction.  The
+     * typical use case is to have a unit length directional
+     * derivative in the direction of a single independent variable.
+     *
+     * <p>By using reverse-mode automatic derivative variables
+     * (instances of stan::math::var), second-order derivatives may be
+     * calculated.  By using fvar<var> instances, third-order
+     * derivatives may be calculated.  These are called mixed-mode
+     * automatic differentiation variable in Stan.
+     *
+     * <p>Specialized functionals that perform differentiation on
+     * functors may be found in the matrix subdirectories of the
+     * reverse, forward, and mixed-mode directories.
+     *
+     * The <a
+     * href="https://en.wikipedia.org/wiki/Automatic_differentiation">Wikipedia
+     * page on automatic differentiation</a> describes how
+     * forward-mode automatic differentiation works mathematically in
+     * terms of dual numbers.
+     *
+     * @tparam T type of value and tangent
+     */
     template <typename T>
     struct fvar {
       /**

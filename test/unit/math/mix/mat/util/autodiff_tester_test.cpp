@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <test/unit/math/mix/mat/autodiff_tester.hpp>
+#include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 
