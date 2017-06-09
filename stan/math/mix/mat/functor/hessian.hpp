@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stdexcept>
-#include <vector>
 
 namespace stan {
   namespace math {
@@ -40,14 +39,18 @@ namespace stan {
      * @param[out] H Hessian of function at argument
      */
     template <typename F>
-    void
-    hessian(const F& f,
-            const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-            double& fx,
-            Eigen::Matrix<double, Eigen::Dynamic, 1>& grad,
-            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
+    void hessian(const F& f,
+                 const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+                 double& fx,
+                 Eigen::Matrix<double, Eigen::Dynamic, 1>& grad,
+                 Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
       H.resize(x.size(), x.size());
       grad.resize(x.size());
+      // size 0 separate because nothing to loop over in main body
+      if (x.size() == 0) {
+        fx = f(x);
+        return;
+      }
       try {
         for (int i = 0; i < x.size(); ++i) {
           start_nested();
@@ -65,32 +68,6 @@ namespace stan {
       } catch (const std::exception& e) {
         recover_memory_nested();
         throw;
-      }
-    }
-    // time O(N^3);  space O(N^2)
-    template <typename T, typename F>
-    void
-    hessian(const F& f,
-            const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-            T& fx,
-            Eigen::Matrix<T, Eigen::Dynamic, 1>& grad,
-            Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& H) {
-      H.resize(x.size(), x.size());
-      grad.resize(x.size());
-      Eigen::Matrix<fvar<fvar<T> >, Eigen::Dynamic, 1> x_fvar(x.size());
-      for (int i = 0; i < x.size(); ++i) {
-        for (int j = i; j < x.size(); ++j) {
-          for (int k = 0; k < x.size(); ++k)
-            x_fvar(k) = fvar<fvar<T> >(fvar<T>(x(k), j == k),
-                                       fvar<T>(i == k, 0));
-          fvar<fvar<T> > fx_fvar = f(x_fvar);
-          if (j == 0)
-            fx = fx_fvar.val_.val_;
-          if (i == j)
-            grad(i) = fx_fvar.d_.val_;
-          H(i, j) = fx_fvar.d_.d_;
-          H(j, i) = H(i, j);
-        }
       }
     }
 
