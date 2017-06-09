@@ -75,8 +75,7 @@ namespace stan {
     template <typename T1, typename T2>
     inline typename
     boost::disable_if_c<is_vector_like<T1>::value || is_vector_like<T2>::value,
-      std::vector<typename
-                  boost::math::tools::promote_args<T1, T2>::type> >::type
+      std::vector<typename return_type<T1, T2>::type> >::type
     append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
       std::vector<typename boost::math::tools::promote_args<T1, T2>::type> z;
       z.reserve(x.size() + y.size());
