@@ -19,6 +19,7 @@ namespace stan {
       return fvar<T>(x1.val_ + x2.val_, x1.d_ + x2.d_);
     }
 
+
     /**
      * Return the sum of the specified double and forward mode addends.
      *
@@ -31,6 +32,7 @@ namespace stan {
     inline fvar<T> operator+(double x1, const fvar<T>& x2) {
       return fvar<T>(x1 + x2.val_, x2.d_);
     }
+
 
     /**
      * Return the sum of the specified forward mode and double addends.

@@ -11,6 +11,14 @@ namespace stan {
   namespace math {
     namespace test {
 
+      // For an example of how to use this tester, see
+      /  test/unit/math/mix/core/operator_addition_test.cpp
+
+      /**
+       * Test that scalars x1 and x2 are within the specified
+       * tolerance, with identity behavior for infinite and NaN
+       * values.
+       */
       template <typename T1, typename T2>
       void expect_near(const T1& x1, const T2& x2,
                        double tol = 1e-9) {
@@ -23,6 +31,10 @@ namespace stan {
       }
 
 
+      /**
+       * Tests that matrices (or vectors) x1 and x2 are same size and
+       * have near values up to specified tolerance.
+       */
       template <typename T, int R, int C>
       void expect_near(const Eigen::Matrix<T, R, C>& x1,
                        const Eigen::Matrix<T, R, C>& x2,
@@ -34,6 +46,10 @@ namespace stan {
       }
 
 
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the expected value fx (with scalars as double).
+       */
       template <typename F>
       void test_value(const F& f, const Eigen::VectorXd& x, double fx) {
         if (is_nan(fx))
@@ -43,7 +59,11 @@ namespace stan {
       }
 
 
-      // var
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the value fx and the correct first-order derivatives as
+       * calaculated with the gradient functional using var.
+       */
       template <typename F>
       void test_gradient(const F& f, const Eigen::VectorXd& x, double fx) {
         Eigen::VectorXd grad_ad;
@@ -57,7 +77,12 @@ namespace stan {
       }
 
 
-      // fvar<double>
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the value fx and correct first-order derivatives as
+       * calculated by the gradient functionional using fvar<double>
+       * scalars.
+       */
       template <typename F>
       void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx) {
         Eigen::VectorXd grad_ad;
@@ -71,7 +96,12 @@ namespace stan {
       }
 
 
-      // fvar<fvar<double>>
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the value fx and correct first- and second-order derivatives
+       * as calculated by the hessian functional using fvar<var>
+       * scalars.
+       */
       template <typename F>
       void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx) {
         double fx_ad;
@@ -88,7 +118,12 @@ namespace stan {
       }
 
 
-      // fvar<var>
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the value fx and correct first- and second-order derivatives
+       * as calculated by the hessian functional using
+       * fvar<fvar<double>> scalars.
+       */
       template <typename F>
       void test_hessian(const F& f, const Eigen::VectorXd& x, double fx) {
         double fx_ad;
@@ -105,7 +140,12 @@ namespace stan {
       }
 
 
-      // fvar<fvar<var>>
+      /**
+       * Tests that the function f applied to the argument x yields
+       * the value fx and correct first-, second-, and third-order
+       * derivatives as calculated by the hessian functional using
+       * fvar<fvar<var>> scalars.
+       */
       template <typename F>
       void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx) {
         double fx_ad;
@@ -143,15 +183,25 @@ namespace stan {
       }
 
 
-      // adapts two-argument function to vector function
-      // with x1 and x2 fixed or as arguments in the vector
+      /**
+       * Structure to adapt a two-argument function specified as a
+       * class with a static apply(,) method that returns a scalar to
+       * a function that operates on an Eigen vector with templated
+       * scalar type and returns a scalar of the same type.
+       *
+       * <p>It works by adapting the two-argument function to be a
+       * vector function with zero, one or both arguments being
+       * instantiated to doubles and the remaining arguments being
+       * templated on the functor argument scalar type.
+       *
+       * @tparam F class with static apply(,) method
+       * @tparam T1 type of first argument with double scalars
+       * @tparam T2 type of second argument with double scalars
+       */
       template <typename F, typename T1, typename T2>
       struct binder_binary {
-        // stored fixed values
         T1 x1_;
         T2 x2_;
-
-        // flags indicating whether to use fixed values
         bool fixed1_;
         bool fixed2_;
 
@@ -177,34 +227,43 @@ namespace stan {
       };
 
 
+      /**
+       * Tests whether the binary function specified through the static
+       * function F::apply with arguments of the specified types
+       * instantiated with double scalars returns right values and
+       * first, second, and third derivatives.  It tests all possible
+       * combinations of double, var, fvar<double>,
+       * fvar<fvar<double>>, fvar<var>, and fvar<fvar<var>>
+       * instantiations.
+       */
       // test a single sequence of arguments and result
       template <typename F, typename T1, typename T2>
       void test_ad(const T1& x1, const T2& x2, double fx) {
         // create binder then test all autodiff/double combos
         binder_binary<F, T1, T2> f(x1, x2);
 
-        // double, double
+        // test (double, double) instantiation
         f.fixed1_ = true;
         f.fixed2_ = true;
         seq_writer<double> a;
         Eigen::VectorXd aaa(0);
         test_functor(f, a.vector(), fx);
 
-        // double, autodiff
+        // test (double, autodiff) instantiation
         f.fixed1_ = true;
         f.fixed2_ = false;
         seq_writer<double> b;
         b.write(x2);
         test_functor(f, b.vector(), fx);
 
-        // autodiff, double
+        // test (autodiff, double) instantiation
         f.fixed1_ = false;
         f.fixed2_ = true;
         seq_writer<double> c;
         c.write(x1);
         test_functor(f, c.vector(), fx);
 
-        // autodiff, autodiff
+        // test (autodiff, autodiff) instantiation
         f.fixed1_ = false;
         f.fixed2_ = false;
         seq_writer<double> d;

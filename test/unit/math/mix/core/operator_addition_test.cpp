@@ -16,7 +16,6 @@ TEST(foo, framework) {
   test_ad<op_add_f>(1, 2.0, 3);
   test_ad<op_add_f>(-1.5, 1.5, 0);
 
-
   double pos_inf = stan::math::positive_infinity();
   test_ad<op_add_f>(pos_inf, 0, pos_inf);
   test_ad<op_add_f>(0, pos_inf, pos_inf);
