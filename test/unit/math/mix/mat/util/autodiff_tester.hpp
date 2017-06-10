@@ -12,7 +12,7 @@ namespace stan {
     namespace test {
 
       // For an example of how to use this tester, see
-      /  test/unit/math/mix/core/operator_addition_test.cpp
+      // test/unit/math/mix/core/operator_addition_test.cpp
 
       /**
        * Test that scalars x1 and x2 are within the specified
