@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUN_APPEND_ARRAY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <boost/math/tools/promotion.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <vector>
 
 namespace stan {
@@ -63,21 +60,18 @@ namespace stan {
 
     /**
      * Return the concatenation of two specified vectors in the order of
-     *   the arguments. The types in each vector must not be vector-like
-     *   themselves.
+     *   the arguments.
      *
      * @tparam T1 Scalar type of first vector
-     * @tparam T2 Scalar Type of second vector
+     * @tparam T2 Scalar type of second vector
      * @param x First vector
      * @param y Second vector
      * @return A vector of x and y concatenated together (in that order)
      */
     template <typename T1, typename T2>
-    inline typename
-    boost::disable_if_c<is_vector_like<T1>::value || is_vector_like<T2>::value,
-      std::vector<typename return_type<T1, T2>::type> >::type
+    inline typename std::vector<typename return_type<T1, T2>::type>
     append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
-      std::vector<typename boost::math::tools::promote_args<T1, T2>::type> z;
+      std::vector<typename return_type<T1, T2>::type> z;
       z.reserve(x.size() + y.size());
       z.insert(z.end(), x.begin(), x.end());
       z.insert(z.end(), y.begin(), y.end());
