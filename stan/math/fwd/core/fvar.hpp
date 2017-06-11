@@ -20,8 +20,8 @@ namespace stan {
      * typical use case is to have a unit length directional
      * derivative in the direction of a single independent variable.
      *
-     * By using reverse-mode automatic derivative variables (instances
-     * of <code>stan::math::var</code>), second-order derivatives may
+     * By using reverse-mode automatic derivative variables,
+     * second-order derivatives may
      * be calculated.  By using fvar&lt;<var&gt; instances,
      * third-order derivatives may be calculated.  These are called
      * mixed-mode automatic differentiation variable in Stan.
