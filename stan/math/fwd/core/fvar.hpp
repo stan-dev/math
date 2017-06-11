@@ -20,13 +20,13 @@ namespace stan {
      * typical use case is to have a unit length directional
      * derivative in the direction of a single independent variable.
      *
-     * <p>By using reverse-mode automatic derivative variables
-     * (instances of stan::math::var), second-order derivatives may be
-     * calculated.  By using fvar<var> instances, third-order
-     * derivatives may be calculated.  These are called mixed-mode
-     * automatic differentiation variable in Stan.
+     * By using reverse-mode automatic derivative variables (instances
+     * of <code>stan::math::var</code>), second-order derivatives may
+     * be calculated.  By using fvar&lt;<var&gt; instances,
+     * third-order derivatives may be calculated.  These are called
+     * mixed-mode automatic differentiation variable in Stan.
      *
-     * <p>Specialized functionals that perform differentiation on
+     * Specialized functionals that perform differentiation on
      * functors may be found in the matrix subdirectories of the
      * reverse, forward, and mixed-mode directories.
      *
@@ -43,12 +43,12 @@ namespace stan {
       /**
        * The value of this variable.
        */
-      T val_;  // value
+      T val_;
 
       /**
        * The tangent (derivative) of this variable.
        */
-      T d_;    // tangent (aka derivative)
+      T d_;
 
       /**
        * Return the value of this variable.
