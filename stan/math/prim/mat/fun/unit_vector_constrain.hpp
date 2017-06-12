@@ -15,7 +15,9 @@ namespace stan {
     /**
      * Return the unit length vector corresponding to the free vector y.
      *
-     * <p>See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
+     * See <a
+     * href="https://en.wikipedia.org/wiki/N-sphere#Generating_random_points">the
+     * Wikipedia page on generating random points on an N-sphere</a>.
      *
      * @tparam T Scalar type.
      * @param y vector of K unrestricted variables

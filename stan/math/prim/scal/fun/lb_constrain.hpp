@@ -29,7 +29,7 @@ namespace stan {
      * @return lower bound constrained value correspdonding to inputs
      */
     template <typename T, typename TL>
-    inline T lb_constrain(const T& x, const TL lb) {
+    inline T lb_constrain(const T& x, const TL& lb) {
       using std::exp;
       if (lb == -std::numeric_limits<double>::infinity())
         return identity_constrain(x);
