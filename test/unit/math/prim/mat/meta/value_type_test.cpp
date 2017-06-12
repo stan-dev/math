@@ -15,4 +15,7 @@ TEST(MathMeta, index_type) {
 
   expect_same_type<Matrix<double,1,Dynamic>::Scalar,
                    value_type<Matrix<double,1,Dynamic> >::type>();
+
+  expect_same_type<Matrix<double,1,Dynamic>,
+                   value_type<std::vector<Matrix<double,1,Dynamic> > >::type>();
 }

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <ostream>
 
 namespace stan {
@@ -10,17 +12,15 @@ namespace stan {
 
     template <typename T>
     struct fvar {
-      // typedef fvar value_type;
-
       /**
        * The value of this variable.
        */
-      T val_;
+      T val_;  // value
 
       /**
        * The tangent (derivative) of this variable.
        */
-      T d_;
+      T d_;    // tangent (aka derivative)
 
       /**
        * Return the value of this variable.
@@ -39,7 +39,7 @@ namespace stan {
       /**
        * Construct a forward variable with zero value and tangent.
        */
-      fvar() : val_(0), d_(0) { }
+      fvar() : val_(0.0), d_(0.0) { }
 
       /**
        * Construct a forward variable with value and tangent set to
@@ -47,7 +47,7 @@ namespace stan {
        *
        * @param[in] x variable to be copied
        */
-      fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) { }
+      fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {  }
 
       /**
        * Construct a forward variable with the specified value and
@@ -57,9 +57,28 @@ namespace stan {
        *   tangent type T)
        * @param[in] v value
        */
+      fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
+        if (unlikely(is_nan(v)))
+          d_ = v;
+      }
+
+      /**
+       * Construct a forward variable with the specified value and
+       * zero tangent.
+       *
+       * @tparam V type of value (must be assignable to the value and
+       *   tangent type T)
+       * @param[in] v value
+       * @param[in] dummy value given by default with enable-if
+       *   metaprogramming
+       */
       template <typename V>
-      fvar(const V& v) : val_(v), d_(0) {  // NOLINT(runtime/explicit)
-        if (is_nan(v)) d_ = v;
+      fvar(const V& v,
+           typename boost::enable_if_c<ad_promotable<V, T>::value>::type*
+           dummy = 0)
+        : val_(v), d_(0.0) {
+        if (unlikely(is_nan(v)))
+          d_ = v;
       }
 
       /**
@@ -75,7 +94,8 @@ namespace stan {
        */
       template <typename V, typename D>
       fvar(const V& v, const D& d) : val_(v), d_(d) {
-        if (is_nan(v)) d_ = v;
+        if (unlikely(is_nan(v)))
+          d_ = v;
       }
 
       /**

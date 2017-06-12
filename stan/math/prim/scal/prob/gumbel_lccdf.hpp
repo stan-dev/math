@@ -3,7 +3,7 @@
 
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -23,8 +23,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Gumbel log complementary cumulative distribution for the 
-     * given location and scale. Given containers of matching sizes, returns 
+     * Returns the Gumbel log complementary cumulative distribution for the
+     * given location and scale. Given containers of matching sizes, returns
      * the log sum of probabilities.
      *
      * @tparam T_y type of real parameter
@@ -62,12 +62,12 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale parameter", beta);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, beta);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, beta);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> beta_vec(beta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> beta_vec(beta);
       size_t N = max_size(y, mu, beta);
 
       for (size_t n = 0; n < N; n++) {
@@ -82,14 +82,15 @@ namespace stan {
         ccdf_log += log(ccdf_log_);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= rep_deriv / ccdf_log_;
+          ops_partials.edge1_.partials_[n] -= rep_deriv / ccdf_log_;
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n] += rep_deriv / ccdf_log_;
+          ops_partials.edge2_.partials_[n] += rep_deriv / ccdf_log_;
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n] += rep_deriv * scaled_diff / ccdf_log_;
+          ops_partials.edge3_.partials_[n]
+            += rep_deriv * scaled_diff / ccdf_log_;
       }
 
-      return operands_and_partials.value(ccdf_log);
+      return ops_partials.build(ccdf_log);
     }
 
   }

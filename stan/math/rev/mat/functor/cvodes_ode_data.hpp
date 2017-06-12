@@ -90,14 +90,13 @@ namespace stan {
       }
 
     private:
-      void rhs(const double y[], double dy_dt[], double t) const {
+      inline void rhs(const double y[], double dy_dt[], double t) const {
         const std::vector<double> y_vec(y, y + N_);
-        std::vector<double> dy_dt_vec(N_);
-        ode_system_(t, y_vec, dy_dt_vec);
-        std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+        Eigen::Map<Eigen::VectorXd> dy_dt_eig(dy_dt, N_);
+        ode_system_(t, y_vec, dy_dt_eig);
       }
 
-      int dense_jacobian(const double* y, DlsMat J, double t) const {
+      inline int dense_jacobian(const double* y, DlsMat J, double t) const {
         const std::vector<double> y_vec(y, y + N_);
         Eigen::VectorXd fy(N_);
         Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);

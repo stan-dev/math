@@ -11,7 +11,7 @@
 namespace stan {
   namespace math {
 
-    namespace detail {
+    namespace internal {
 
       // implemented using structs because there is no partial specialization
       // for templated functions
@@ -93,7 +93,7 @@ namespace stan {
                               const T_y& y,
                               const T_low& low,
                               const T_high& high) {
-      detail::bounded<T_y, T_low, T_high, is_vector_like<T_y>::value>
+      internal::bounded<T_y, T_low, T_high, is_vector_like<T_y>::value>
         ::check(function, name, y, low, high);
     }
 
