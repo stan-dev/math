@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <valarray>
-#include <iostream>
 
 namespace stan {
   namespace math {
@@ -34,12 +33,6 @@ namespace stan {
           bvi_->adj_ += adj_ * exp(
             - bvi_->val_ + (avi_->val_ - 1.0) * log(bvi_->val_) 
             - lgamma(avi_->val_));
-
-          std::cout << "Called it." << std::endl;
-          std::cout << "adj_: " << adj_ << std::endl;
-          std::cout << "avi_->val_: " << avi_->val_ << std::endl;
-          std::cout << "bvi_->val_: " << bvi_->val_ << std::endl;
-          std::cout << "lgamma(avi_->val_): " << lgamma(avi_->val_) << std::endl;
 
         }
       };
