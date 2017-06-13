@@ -424,7 +424,7 @@ TEST(AgradRevMatrix, check_varis_on_stack_small) {
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
   test_gradient(36, 1e-08);
   test_gp_grad(100, 1e-08);
-  test_gp_grad(2000, 1e-08);
+  test_gp_grad(1000, 1e-08);
   test_chol_mult(37, 1e-08);
   test_simple_vec_mult(45, 1e-08);
 }
