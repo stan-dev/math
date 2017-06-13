@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <valarray>
+#include <iostream>
 
 namespace stan {
   namespace math {
@@ -19,16 +20,27 @@ namespace stan {
                      avi, bvi) {
         }
         void chain() {
+          using std::fabs;
+          using std::log;
+          using std::exp;
+          using std::pow;
+          using boost::math::lgamma;
           // return zero derivative as gamma_p is flat
           // to machine precision for b / a > 10
           if (std::fabs(bvi_->val_ / avi_->val_) > 10 ) return;
 
-          double g = tgamma(avi_->val_);
-
           avi_->adj_ += adj_
             * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_, 1.0e-10);
-          bvi_->adj_ += adj_ * (std::exp(-bvi_->val_)
-            * std::pow(bvi_->val_, avi_->val_ - 1.0) / g);
+          bvi_->adj_ += adj_ * exp(
+            - bvi_->val_ + (avi_->val_ - 1.0) * log(bvi_->val_) 
+            - lgamma(avi_->val_));
+
+          std::cout << "Called it." << std::endl;
+          std::cout << "adj_: " << adj_ << std::endl;
+          std::cout << "avi_->val_: " << avi_->val_ << std::endl;
+          std::cout << "bvi_->val_: " << bvi_->val_ << std::endl;
+          std::cout << "lgamma(avi_->val_): " << lgamma(avi_->val_) << std::endl;
+
         }
       };
 
