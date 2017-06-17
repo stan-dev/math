@@ -1,15 +1,18 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_AD_PROMOTABLE_HPP
 #define STAN_MATH_PRIM_SCAL_META_AD_PROMOTABLE_HPP
 
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+
 namespace stan {
   namespace math {
 
     /**
      * Template traits metaprogram to determine if a variable of one
      * template type can be promoted to a second target template
-     * type. All variales are promotable to themselves, and all
+     * type. All variables are promotable to themselves, and all
      * primitive arithmetic types are promotable to double.
-     * 
+     *
      * <p>It will delcare an enum <code>value</code> equal to
      * <code>false</code>.
      *
@@ -27,10 +30,11 @@ namespace stan {
      * @tparam T promoted and target type
      */
     template <typename T>
-    struct ad_promotable<T, T> {
+    struct
+    ad_promotable<typename boost::enable_if<boost::is_arithmetic<T>, T>::type,
+                  T> {
       enum { value = true };
     };
-
     /**
      * A long double may be promoted to a double.
      */

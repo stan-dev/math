@@ -25,7 +25,5 @@ namespace stan {
       ::type
       type;
     };
-
 }
 #endif
-

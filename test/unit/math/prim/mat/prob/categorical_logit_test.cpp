@@ -5,7 +5,6 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::log_softmax;
-using stan::math::log_softmax;
 
 TEST(ProbDistributionsCategoricalLogit,Categorical) {
   Matrix<double,Dynamic,1> theta(3,1);
@@ -34,15 +33,12 @@ TEST(ProbDistributionsCategoricalLogit,CategoricalVectorized) {
                   stan::math::categorical_logit_log(ms,theta));
 }
 
-
-
 TEST(ProbDistributionsCategoricalLogit,Propto) {
   Matrix<double,Dynamic,1> theta(3,1);
   theta << -1, 2, 10;
   EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(1,theta));
   EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3,theta));
 }
-
 
 TEST(ProbDistributionsCategoricalLogit, error) {
   using stan::math::categorical_logit_log;

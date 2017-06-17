@@ -5,18 +5,19 @@
 #include <stdexcept>
 #include <vector>
 
-void test_print_mat_size(int n, const std::string& expected) {
+template <int N>
+void test_print_mat_size(const std::string& expected) {
   using stan::math::print_mat_size;
   std::stringstream ss;
-  stan::math::print_mat_size(n, ss);
+  stan::math::print_mat_size<N>(ss);
   EXPECT_EQ(expected, ss.str());
 }
 
 TEST(MathMatrixAssign, print_mat_size) {
-  test_print_mat_size(-1, "dynamically sized");
-  test_print_mat_size(0, "0");
-  test_print_mat_size(1, "1");
-  test_print_mat_size(10, "10");
+  test_print_mat_size<-1>("dynamically sized");
+  test_print_mat_size<0>("0");
+  test_print_mat_size<1>("1");
+  test_print_mat_size<10>("10");
 }
 
 TEST(MathMatrixAssign, realToDouble) {
@@ -60,7 +61,7 @@ TEST(MathMatrixAssign, matSizeMismatch) {
   EXPECT_THROW_MSG(assign(m3.block(1,1,7,3), m4), std::exception,
                    "left-hand side rows (7) and right-hand"
                    " side rows (2) must match in size");
-  
+
   EXPECT_THROW_MSG(assign(m3.block(1,1,2,5), m4), std::exception,
                    "assign: left-hand side cols (5) and"
                    " right-hand side cols (3) must match in size");
@@ -92,14 +93,14 @@ TEST(MathMatrixAssign,test_double) {
   assign(a,c);
   EXPECT_FLOAT_EQ(5.0,a);
   EXPECT_FLOAT_EQ(5.0,b);
-  
+
   assign(a,5.2);
   EXPECT_FLOAT_EQ(5.2,a);
 }
 TEST(MathMatrixAssign,vectorDouble) {
   using stan::math::assign;
   using std::vector;
-  
+
   vector<double> y(3);
   y[0] = 1.2;
   y[1] = 100;
@@ -133,7 +134,7 @@ TEST(MathMatrixAssign,eigenRowVectorDoubleToDouble) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<double,1,Dynamic> y(3);
   y[0] = 1.2;
   y[1] = 100;
@@ -150,7 +151,7 @@ TEST(MathMatrixAssign,eigenRowVectorIntToDouble) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<double,1,Dynamic> x(3);
   x[0] = 1.2;
   x[1] = 100;
@@ -171,7 +172,7 @@ TEST(MathMatrixAssign,eigenRowVectorShapeMismatch) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<double,1,Dynamic> x(3);
   x[0] = 1.2;
   x[1] = 100;
@@ -183,7 +184,7 @@ TEST(MathMatrixAssign,eigenRowVectorShapeMismatch) {
   Matrix<double,Dynamic,1> zz(3);
   zz << 1, 2, 3;
   EXPECT_THROW(assign(x,zz),std::invalid_argument);
-  
+
   Matrix<double,Dynamic,Dynamic> zzz(3,1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x,zzz),std::invalid_argument);
@@ -197,7 +198,7 @@ TEST(MathMatrixAssign,eigenMatrixDoubleToDouble) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<double,Dynamic,Dynamic> y(3,2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
 
@@ -216,7 +217,7 @@ TEST(MathMatrixAssign,eigenMatrixIntToDouble) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<int,Dynamic,Dynamic> y(3,2);
   y << 1, 2, 3, 4, 5, 6;
 
@@ -235,7 +236,7 @@ TEST(MathMatrixAssign,eigenMatrixShapeMismatch) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  
+
   Matrix<double,Dynamic,Dynamic> x(2,3);
   x << 1, 2, 3, 4, 5, 6;
 
@@ -248,7 +249,7 @@ TEST(MathMatrixAssign,eigenMatrixShapeMismatch) {
   zz << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(assign(x,zz),std::invalid_argument);
   EXPECT_THROW(assign(zz,x),std::invalid_argument);
-  
+
   Matrix<double,Dynamic,Dynamic> zzz(6,1);
   zzz << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(assign(x,zzz),std::invalid_argument);
@@ -264,14 +265,36 @@ TEST(MathMatrix,block) {
 
   Matrix<double,Dynamic,Dynamic> m(2,3);
   m << 1, 2, 3, 4, 5, 6;
-  
+
   Matrix<double,1,Dynamic> rv(3);
   rv << 10, 100, 1000;
-  
-  assign(get_base1_lhs(m,1,"m",1),rv);  
+
+  assign(get_base1_lhs(m,1,"m",1),rv);
   EXPECT_FLOAT_EQ(10.0, m(0,0));
   EXPECT_FLOAT_EQ(100.0, m(0,1));
   EXPECT_FLOAT_EQ(1000.0, m(0,2));
+}
+
+TEST(MathMatrix,block2) {
+  using Eigen::MatrixXd;
+  using stan::math::assign;
+
+  MatrixXd a(2,3);
+  a << 1, 2, 3,
+    4, 5, 6;
+
+  MatrixXd b(2,2);
+  b << 10, 20,
+    30, 40;
+
+  assign(a.block(0, 0, 2, 2), b);
+
+  for (int i = 0; i < 2; ++i)
+    for (int j = 0; j < 2; ++j)
+      EXPECT_FLOAT_EQ(a(i, j), b(i, j));
+
+  EXPECT_FLOAT_EQ(a(0,2), 3.0);
+  EXPECT_FLOAT_EQ(a(1,2), 6.0);
 }
 
 
@@ -282,7 +305,7 @@ TEST(MathMatrix,vectorVector) {
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)
       x[i][j] = (i + 1) * (j - 10);
-  
+
   vector<vector<double> > y(3,vector<double>(2));
 
   assign(y,x);
@@ -299,14 +322,14 @@ TEST(MathMatrix,vectorVector) {
 TEST(MathMatrix,vectorVectorVector) {
   using std::vector;
   using stan::math::assign;
-  vector<vector<vector<double> > > 
+  vector<vector<vector<double> > >
     x(4,vector<vector<double> >(3,vector<double>(2)));
   for (size_t k = 0; k < 4; ++k)
     for (size_t i = 0; i < 3; ++i)
       for (size_t j = 0; j < 2; ++j)
         x[k][i][j] = (i + 1) * (j - 10) * (20 * k + 100);
-  
-  vector<vector<vector<double> > > 
+
+  vector<vector<vector<double> > >
     y(4,vector<vector<double> >(3,vector<double>(2)));
 
   assign(y,x);
@@ -353,11 +376,11 @@ TEST(MathMatrix,getAssignRow) {
 
   Matrix<double,Dynamic,Dynamic> m(2,3);
   m << 1, 2, 3, 4, 5, 6;
-  
+
   Matrix<double,1,Dynamic> rv(3);
   rv << 10, 100, 1000;
-  
-  assign(get_base1_lhs(m,1,"m",1),rv);  
+
+  assign(get_base1_lhs(m,1,"m",1),rv);
   EXPECT_FLOAT_EQ(10.0, m(0,0));
   EXPECT_FLOAT_EQ(100.0, m(0,1));
   EXPECT_FLOAT_EQ(1000.0, m(0,2));

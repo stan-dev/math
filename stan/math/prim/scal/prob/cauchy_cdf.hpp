@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -60,19 +60,19 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale Parameter", sigma);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_loc> mu_vec(mu);
-      scalar_seq_view<const T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
 
-      OperandsAndPartials<T_y, T_loc, T_scale>
-        operands_and_partials(y, mu, sigma);
+      operands_and_partials<T_y, T_loc, T_scale>
+        ops_partials(y, mu, sigma);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++) {
         if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
       }
 
       using std::atan;
@@ -95,29 +95,29 @@ namespace stan {
         P *= Pn;
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n]
+          ops_partials.edge1_.partials_[n]
             += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
         if (!is_constant_struct<T_loc>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             += - sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
         if (!is_constant_struct<T_scale>::value)
-          operands_and_partials.d_x3[n]
+          ops_partials.edge3_.partials_[n]
             += - z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
       }
 
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < stan::length(y); ++n)
-          operands_and_partials.d_x1[n] *= P;
+          ops_partials.edge1_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_loc>::value) {
         for (size_t n = 0; n < stan::length(mu); ++n)
-          operands_and_partials.d_x2[n] *= P;
+          ops_partials.edge2_.partials_[n] *= P;
       }
       if (!is_constant_struct<T_scale>::value) {
         for (size_t n = 0; n < stan::length(sigma); ++n)
-          operands_and_partials.d_x3[n] *= P;
+          ops_partials.edge3_.partials_[n] *= P;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

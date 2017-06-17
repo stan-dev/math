@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
@@ -40,20 +40,20 @@ namespace stan {
                              "Random variable", n,
                              "Rate parameter", lambda);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_rate> lambda_vec(lambda);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_rate> lambda_vec(lambda);
       size_t size = max_size(n, lambda);
 
       using std::log;
       using std::exp;
 
-      OperandsAndPartials<T_rate> operands_and_partials(lambda);
+      operands_and_partials<T_rate> ops_partials(lambda);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as neg infinity
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -69,11 +69,11 @@ namespace stan {
         P += log_Pi;
 
         if (!is_constant_struct<T_rate>::value)
-          operands_and_partials.d_x1[i] += - exp(n_dbl * log(lambda_dbl)
+          ops_partials.edge1_.partials_[i] += - exp(n_dbl * log(lambda_dbl)
                                                  - lambda_dbl - lgamma(n_dbl+1)
                                                  - log_Pi);
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }
