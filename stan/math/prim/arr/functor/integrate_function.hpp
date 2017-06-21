@@ -11,41 +11,41 @@
 
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/arr/functor/DEIntegrator.hpp>
 #include <boost/bind.hpp>
 #include <cmath>
 #include <ostream>
 #include <vector>
-#include <stan/math/prim/arr/functor/DEIntegrator.hpp>
 
 namespace stan {
 
   namespace math {
-    
+
     template <typename T>
     struct return_type_of_value_of {
       typedef double type;
     };
-    
+
     template <typename T>
     struct return_type_of_value_of <std::vector<T> > {
       typedef std::vector<double> type;
     };
-    
+
     template <typename T, int R, int C>
     struct return_type_of_value_of <Eigen::Matrix<T, R, C> > {
       typedef Eigen::Matrix<double, R, C> type;
     };
-    
+
     template <typename T>
     struct return_type_of_to_var {
       typedef var type;
     };
-    
+
     template <typename T>
     struct return_type_of_to_var <std::vector<T> > {
       typedef std::vector<var> type;
     };
-    
+
     template <typename T, int R, int C>
     struct return_type_of_to_var <Eigen::Matrix<T, R, C> > {
       typedef Eigen::Matrix<var, R, C> type;
@@ -54,7 +54,7 @@ namespace stan {
     /**
      * Wrap around function to call static method Integrate from
      * class DEIntegrator.
-     * 
+     *
      * @tparam T Type of f.
      * @param f a functor with signature double (double).
      * @param a lower limit of integration, must be double type.
@@ -74,7 +74,7 @@ namespace stan {
 
     /**
      * Return the numeric integral of a function f given its gradient g.
-     * 
+     *
      * @tparam T Type of f.
      * @tparam G Type of g.
      * @param f a functor with signature
@@ -105,18 +105,17 @@ namespace stan {
                       std::ostream* msgs,
                       const double tre = 1e-6,
                       const double tae = 1e-6) {
-
       check_finite("integrate_1d", "lower limit", a);
       check_finite("integrate_1d", "upper limit", b);
 
-      //hard case, we want a normalizing factor
+      // hard case, we want a normalizing factor
       if (!is_constant_struct<T_beta>::value) {
         size_t N = length(beta);
         std::vector<double> grad(N);
 
         typename return_type_of_value_of<T_beta>::type
           value_of_beta = value_of(beta);
-         
+
         for (size_t n = 0; n < N; n++)
           grad[n] =
             call_DEIntegrator(
@@ -134,8 +133,8 @@ namespace stan {
           ops_partials.edge1_.partials_[n] += grad[n];
 
         return ops_partials.build(val_);
-      //easy case, here we are calculating a normalizing constant,
-      //not a normalizing factor, so g doesn't matter at all
+      // easy case, here we are calculating a normalizing constant,
+      // not a normalizing factor, so g doesn't matter at all
       } else {
         return call_DEIntegrator(
           boost::bind<double>(f, _1, value_of(beta), msgs), a, b, tre,
@@ -146,7 +145,7 @@ namespace stan {
     /**
      * Calculate gradient of f(x, param, std::ostream*)
      * with respect to param_n (which must be an element of param)
-     */ 
+     */
     template <typename F, typename T_param>
     inline
     double gradient_of_f(const F& f,
@@ -162,7 +161,7 @@ namespace stan {
     /**
      * Return the numeric integral of a function f with its
      * gradients being infered automatically (but slowly).
-     * 
+     *
      * @tparam T Type of f.
      * @param f a functor with signature
      * double (double, std::vector<T_beta>, std::ostream*) or with
@@ -183,7 +182,6 @@ namespace stan {
                                std::ostream* msgs,
                                const double tre = 1e-6,
                                const double tae = 1e-6) {
-
       stan::math::check_finite("integrate_1d", "lower limit", a);
       stan::math::check_finite("integrate_1d", "upper limit", b);
 
@@ -201,7 +199,7 @@ namespace stan {
           typedef typename return_type_of_to_var<T_param>::type
             clean_T_param;
           clean_T_param clean_param = to_var(value_of(param));
-          
+
           scalar_seq_view<const clean_T_param> clean_param_vec(clean_param);
 
           for (size_t n = 0; n < N; n++)
@@ -210,7 +208,6 @@ namespace stan {
                 boost::bind<double>(gradient_of_f<F, clean_T_param>, f,
                                     _1, clean_param, clean_param_vec[n],
                                     msgs), a, b, tre, tae);
-            
         } catch (const std::exception& e) {
           recover_memory_nested();
           throw;
