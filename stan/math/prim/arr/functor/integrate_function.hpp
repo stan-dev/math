@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
 
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
@@ -66,8 +67,9 @@ namespace stan {
     double call_DEIntegrator(const F& f,
                              const double a,
                              const double b,
+                             const double tre,
                              const double tae) {
-      return DEIntegrator<F>::Integrate(f, a, b, tae);
+      return DEIntegrator<F>::Integrate(f, a, b, tre, tae);
     }
 
     /**
@@ -100,7 +102,9 @@ namespace stan {
                       const double a,
                       const double b,
                       const T_beta& beta,
-                      std::ostream* msgs) {
+                      std::ostream* msgs,
+                      const double tre = 1e-6,
+                      const double tae = 1e-6) {
 
       check_finite("integrate_1d", "lower limit", a);
       check_finite("integrate_1d", "upper limit", b);
@@ -118,11 +122,12 @@ namespace stan {
             call_DEIntegrator(
               boost::bind<double>(g, _1, value_of_beta,
                                   static_cast<int>(n+1), msgs),
-                                  a, b, 1e-6);
+                                  a, b, tre, tae);
 
-        double val_ = call_DEIntegrator(boost::bind<double>(f, _1, value_of_beta,
-                                                     msgs),
-                                 a, b, 1e-6);
+        double val_ = call_DEIntegrator(boost::bind<double>(f, _1,
+                                        value_of_beta,
+                                        msgs),
+                                        a, b, tre, tae);
 
         operands_and_partials<T_beta> ops_partials(beta);
         for (size_t n = 0; n < N; n++)
@@ -133,7 +138,8 @@ namespace stan {
       //not a normalizing factor, so g doesn't matter at all
       } else {
         return call_DEIntegrator(
-          boost::bind<double>(f, _1, value_of(beta), msgs), a, b, 1e-6);
+          boost::bind<double>(f, _1, value_of(beta), msgs), a, b, tre,
+                              tae);
       }
     }
 
@@ -174,16 +180,17 @@ namespace stan {
                                const double a,
                                const double b,
                                const T_param& param,
-                               std::ostream* msgs) {
+                               std::ostream* msgs,
+                               const double tre = 1e-6,
+                               const double tae = 1e-6) {
 
       stan::math::check_finite("integrate_1d", "lower limit", a);
       stan::math::check_finite("integrate_1d", "upper limit", b);
 
       double val_ =
         call_DEIntegrator(
-          boost::bind<double>(f,
-                              _1, value_of(param), msgs),
-                              a, b, 1e-6);
+          boost::bind<double>(f, _1, value_of(param), msgs),
+          a, b, tre, tae);
 
       if (!is_constant_struct<T_param>::value) {
         size_t N = stan::length(param);
@@ -199,7 +206,10 @@ namespace stan {
 
           for (size_t n = 0; n < N; n++)
             results[n] =
-              call_DEIntegrator(boost::bind<double>(gradient_of_f<F, clean_T_param>, f, _1, clean_param, clean_param_vec[n], msgs), a, b, 1e-6);
+              call_DEIntegrator(
+                boost::bind<double>(gradient_of_f<F, clean_T_param>, f,
+                                    _1, clean_param, clean_param_vec[n],
+                                    msgs), a, b, tre, tae);
             
         } catch (const std::exception& e) {
           recover_memory_nested();

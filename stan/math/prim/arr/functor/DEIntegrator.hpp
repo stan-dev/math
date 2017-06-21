@@ -34,6 +34,7 @@ namespace stan {
             const TFunctionObject& f,       //!< [in] integrand
             double a,                       //!< [in] left limit of integration
             double b,                       //!< [in] right limit of integration
+            double targetRelativeError,     //!< [in] desired bound on error
             double targetAbsoluteError,     //!< [in] desired bound on error
             int& numFunctionEvaluations,    //!< [out] number of function evaluations used
             double& errorEstimate           //!< [out] estimated error in integration
@@ -51,6 +52,7 @@ namespace stan {
                 f,
                 c,
                 d,
+                targetRelativeError,
                 targetAbsoluteError,
                 numFunctionEvaluations,
                 errorEstimate,
@@ -69,7 +71,8 @@ namespace stan {
             const TFunctionObject& f,       //!< [in] integrand
             double a,                       //!< [in] left limit of integration
             double b,                       //!< [in] right limit of integration
-            double targetAbsoluteError      //!< [in] desired bound on error
+            double targetRelativeError,     //!< [in] desired bound on error
+            double targetAbsoluteError     //!< [in] desired bound on error
         )
         {
             int numFunctionEvaluations;
@@ -79,6 +82,7 @@ namespace stan {
                 f,
                 a,
                 b,
+                targetRelativeError,
                 targetAbsoluteError,
                 numFunctionEvaluations,
                 errorEstimate
@@ -94,6 +98,7 @@ namespace stan {
             const TFunctionObject& f,
             double c,   // slope of change of variables
             double d,   // intercept of change of variables
+            double targetRelativeError,
             double targetAbsoluteError,
             int& numFunctionEvaluations,
             double& errorEstimate,
@@ -110,6 +115,7 @@ namespace stan {
 
             double newContribution = 0.0;
             double integral = 0.0;
+            double previousErrorEstimate = DBL_MAX;
             errorEstimate = DBL_MAX;
             double h = 1.0;
             double previousDelta, currentDelta = DBL_MAX;
@@ -146,6 +152,7 @@ namespace stan {
                     break;
                 double r = log( currentDelta )/log( previousDelta );  // previousDelta != 0 or would have been kicked out previously
 
+                previousErrorEstimate = errorEstimate;
                 if (r > 1.9 && r < 2.1)
                 {
                     // If convergence theory applied perfectly, r would be 2 in the convergence region.
@@ -159,7 +166,9 @@ namespace stan {
                     errorEstimate = currentDelta;
                 }
 
-                if (errorEstimate < 0.1*targetAbsoluteError)
+                if (errorEstimate < 0.1*targetAbsoluteError and
+                    (errorEstimate - previousErrorEstimate) /
+                    previousErrorEstimate < targetRelativeError)
                     break;
             }
 
