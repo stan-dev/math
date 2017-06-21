@@ -8,7 +8,8 @@
 #include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <boost/bind.hpp>
 #include <cmath>
 #include <ostream>
@@ -123,11 +124,11 @@ namespace stan {
                                                      msgs),
                                  a, b, 1e-6);
 
-        OperandsAndPartials<T_beta> operands_and_partials(beta);
+        operands_and_partials<T_beta> ops_partials(beta);
         for (size_t n = 0; n < N; n++)
-          operands_and_partials.d_x1[n] += grad[n];
+          ops_partials.edge1_.partials_[n] += grad[n];
 
-        return operands_and_partials.value(val_);
+        return ops_partials.build(val_);
       //easy case, here we are calculating a normalizing constant,
       //not a normalizing factor, so g doesn't matter at all
       } else {
@@ -194,7 +195,7 @@ namespace stan {
             clean_T_param;
           clean_T_param clean_param = to_var(value_of(param));
           
-          VectorView<const clean_T_param> clean_param_vec(clean_param);
+          scalar_seq_view<const clean_T_param> clean_param_vec(clean_param);
 
           for (size_t n = 0; n < N; n++)
             results[n] =
@@ -206,11 +207,11 @@ namespace stan {
         }
         recover_memory_nested();
 
-        OperandsAndPartials<T_param> operands_and_partials(param);
+        operands_and_partials<T_param> ops_partials(param);
         for (size_t n = 0; n < N; n++)
-          operands_and_partials.d_x1[n] += results[n];
+          ops_partials.edge1_.partials_[n] += results[n];
 
-        return operands_and_partials.value(val_);
+        return ops_partials.build(val_);
       } else {
         return val_;
       }
