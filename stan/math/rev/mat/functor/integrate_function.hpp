@@ -11,8 +11,9 @@
 
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/arr/functor/DEIntegrator.hpp>
+#include <stan/math/rev/mat/functor/DEIntegrator.hpp>
 #include <boost/bind.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <cmath>
 #include <ostream>
 #include <vector>
@@ -112,6 +113,9 @@ namespace stan {
       check_finite("integrate_1d", "lower limit", a);
       check_finite("integrate_1d", "upper limit", b);
 
+      using boost::lambda::_1;
+
+
       // hard case, we want a normalizing factor
       if (!is_constant_struct<T_param>::value) {
         size_t N = length(param);
@@ -191,6 +195,8 @@ namespace stan {
                                const double tae = 1e-6) {
       stan::math::check_finite("integrate_1d", "lower limit", a);
       stan::math::check_finite("integrate_1d", "upper limit", b);
+
+      using boost::lambda::_1;
 
       double val_ =
         call_DEIntegrator(

@@ -33,6 +33,7 @@
 #define DEINTEGRATOR_H
 
 #include "DEIntegrationConstants.h"
+#include <cmath>
 #include <cfloat>
 namespace stan {
 
