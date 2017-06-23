@@ -41,27 +41,30 @@ namespace stan {
     using std::log;
     using std::fabs;
 
-    /*! Numerical integration in one dimension using the double
-     * expontial method of M. Mori. */
+
     template<class TFunctionObject>
     class DEIntegrator {
     public:
-        /*! Integrate an analytic function over a finite interval.
-         * @return The value of the integral. */
+        /*! Numerical integration in one dimension using the double
+         * expontial method of M. Mori.
+         *
+         * @tparam TFunctionObject Type of f.
+         * @param f a functor
+         * @param a lower limit of integration, must be double type.
+         * @param b upper limit of integration, must be double type.
+         * @param targetRelativeError target relative error.
+         * @param targetAbsoluteError target absolute error.
+         * @param numFunctionEvaluations number of function evaluations used
+         * @param errorEstimate estimated error in integration.
+         * @return numeric integral of function f.
+         */
         static double Integrate
-        (  //!< [in] integrand
-         const TFunctionObject& f,
-         //!< [in] left limit of integration
+        (const TFunctionObject& f,
          double a,
-         //!< [in] right limit of integration
          double b,
-         //!< [in] desired relative bound on error
          double targetRelativeError,
-         //!< [in] desired absolute bound on error
          double targetAbsoluteError,
-         //!< [out] number of function evaluations used
          int& numFunctionEvaluations,
-         //!< [out] estimated error in integration
          double& errorEstimate) {
             // Apply the linear change of variables x = ct + d
             // $$\int_a^b f(x) dx = c \int_{-1}^1 f( ct + d ) dt$$
@@ -82,22 +85,22 @@ namespace stan {
              doubleExponentialWeights);
         }
 
-        /*! Integrate an analytic function over a finite interval.
-            This version overloaded to not require arguments passed in
-            for function evaluation counts or error estimates.
-            @return The value of the integral.
-        */
+        /*! Numerical integration in one dimension using the double
+         * expontial method of M. Mori.
+         *
+         * @tparam TFunctionObject Type of f.
+         * @param f a functor
+         * @param a lower limit of integration, must be double type.
+         * @param b upper limit of integration, must be double type.
+         * @param targetRelativeError target relative error.
+         * @param targetAbsoluteError target absolute error.
+         * @return numeric integral of function f.
+         */
         static double Integrate
-        (
-         //!< [in] integrand
-         const TFunctionObject& f,
-         //!< [in] left limit of integration
+        (const TFunctionObject& f,
          double a,
-         //!< [in] right limit of integration
          double b,
-         //!< [in] desired relative bound on error
          double targetRelativeError,
-         //!< [in] desired absolute bound on error
          double targetAbsoluteError) {
             int numFunctionEvaluations;
             double errorEstimate;
