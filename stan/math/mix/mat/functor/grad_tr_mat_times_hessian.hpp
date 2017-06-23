@@ -30,9 +30,9 @@ namespace stan {
         Matrix<fvar<var>, Dynamic, 1> x_fvar(x.size());
 
         var sum(0.0);
-        Matrix<double, Dynamic, 1> M_n(x.size());
-        for (int n = 0; n < x.size(); ++n) {
-          for (int k = 0; k < x.size(); ++k)
+        Eigen::VectorXd M_n = Eigen::VectorXd::Zero(x.size());
+        for (int n = 0; n < M.rows(); ++n) {
+          for (int k = 0; k < M.cols(); ++k)
             M_n(k) = M(n, k);
           for (int k = 0; k < x.size(); ++k)
             x_fvar(k) = fvar<var>(x_var(k), k == n);
