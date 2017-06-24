@@ -38,6 +38,7 @@
 #include <stan/math/rev/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <stan/math/rev/mat/fun/quad_form_sym.hpp>
+#include <stan/math/rev/mat/fun/quad_form_vari.hpp>
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
