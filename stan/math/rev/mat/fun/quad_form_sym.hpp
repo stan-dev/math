@@ -5,9 +5,6 @@
 #include <boost/type_traits.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// #include <stan/math/prim/mat/fun/typedefs.hpp>
-// #include <stan/math/rev/mat/fun/typedefs.hpp>
-// #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
@@ -26,9 +23,10 @@ namespace stan {
       check_square("quad_form_sym", "A", A);
       check_symmetric("quad_form_sym", "A", A);
       check_multiplicable("quad_form_sym", "A", A, "B", B);
-      quad_form_vari<TA, RA, CA, TB, RB, CB> *baseVari
-        = new quad_form_vari<TA, RA, CA, TB, RB, CB>(A, B, true);
-      return baseVari->C_;
+
+      typedef quad_form_vari<TA, RA, CA, TB, RB, CB, true> vari_t;
+      vari_t* baseVari = new vari_t(A, B);
+      return Eigen::Matrix<var, CB, CB>(baseVari->map_C_);
     }
 
     template <typename TA, int RA, int CA, typename TB, int RB>
@@ -40,9 +38,10 @@ namespace stan {
       check_square("quad_form_sym", "A", A);
       check_symmetric("quad_form_sym", "A", A);
       check_multiplicable("quad_form_sym", "A", A, "B", B);
-      quad_form_vari<TA, RA, CA, TB, RB, 1> *baseVari
-        = new quad_form_vari<TA, RA, CA, TB, RB, 1>(A, B, true);
-      return baseVari->C_(0, 0);
+
+      typedef quad_form_vari<TA, RA, CA, TB, RB, 1, true> vari_t;
+      vari_t* base_vari = new vari_t(A, B);
+      return base_vari->map_C_(0, 0);
     }
 
   }
