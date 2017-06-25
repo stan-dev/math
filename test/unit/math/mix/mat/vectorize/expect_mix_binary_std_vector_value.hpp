@@ -25,15 +25,37 @@ bool seed_one = 1, bool seed_two = 1) {
         input_a1 = build_binary_vector1<F>(template_v1)[i];
         input_a2 = build_binary_vector1<F>(template_v1)[i];
       }
-      vector<input_t2> input_v1(5, build_binary_vector2<F>(template_v2)[i]);
-      vector<input_t2> input_v2(5, build_binary_vector2<F>(template_v2)[i]);
+      vector<input_t2> input_v1;
+      vector<input_t2> input_v2;
+      for (size_t k = 0; k < 5; ++k) {
+        input_v1.push_back(build_binary_vector2<F>(template_v2)[i]);
+        input_v2.push_back(build_binary_vector2<F>(template_v2)[i]);
+      }
       if (seed_two) {
         input_v1[j] = build_binary_vector2<F>(template_v2, i)[i]; 
         input_v2[j] = build_binary_vector2<F>(template_v2, i)[i]; 
       }
       vector<FV> fa = F::template apply<vector<FV> >(input_a2, input_v2);
       EXPECT_EQ(input_v2.size(), fa.size());
-      /*
+      std::cout << "Well" << std::endl;
+      std::cout << input_a1 << std::endl;
+      std::cout << input_v1[j] << std::endl;
+      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
+      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
+      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
+      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
+     /*
+      FV fb = F::apply_base(input_a1, input_v1[j]);
+      AVEC exp_b = createAVEC(input_a1.d_);
+      VEC exp_bg;
+      fb.d_.grad(exp_b, exp_bg);
+      std::cout << input_a1 << std::endl;
+      std::cout << input_v1[j] << std::endl;
+      std::cout << exp_bg[0] << std::endl;
+      stan::math::set_zero_all_adjoints();
+      std::cout << exp_bg[0] << std::endl;
+      fa[j].d_.grad();
+      std::cout << exp_bg[0] << std::endl;
   std::cout << input_a1.val() << std::endl;
       std::cout << input_a2.val() << std::endl;
       std::cout << input_v1[j] << std::endl;
@@ -41,11 +63,20 @@ bool seed_one = 1, bool seed_two = 1) {
       //F::template apply<vector<FV> >(input_a1, input_v1);
       std::cout << fa[j] << std::endl;
       std::cout << fa[j].d_ << std::endl;
+      FV ab = F::apply_base(input_a1, input_v1[j]);
+      std::cout << ab.val() << std::endl;
+      std::cout << ab.d_ << std::endl;
+      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
+      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
+      std::cout << input_a1.val() << std::endl;
+      std::cout << input_v1[j] << std::endl;
+      //FV ab = F::apply_base(input_a1, input_v1[j]);
+      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
+      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
+      std::cout << "Yay" << std::endl;
       expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
       input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
 */
-      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
-      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
     }
   }
 }
@@ -218,9 +249,34 @@ void expect_mix_binary_std_vector_value() {
   vector<int> int_template_v(F::int_valid_inputs1().size());
   vector<double> d_template_v(F::valid_inputs1().size());
   vector<FV> var_template_v(F::valid_inputs1().size());
-
+/*
+  for (size_t i = 0; i < template_v1.size(); ++i) {
+    for (size_t j = 0; j < 5; ++j) {
+      input_t1 input_a1 = 0;
+      input_t1 input_a2 = 0;
+      if (seed_one) { 
+        input_a1 = build_binary_vector1<F>(template_v1, i)[i];
+        input_a2 = build_binary_vector1<F>(template_v1, i)[i];
+      } 
+      else {
+        input_a1 = build_binary_vector1<F>(template_v1)[i];
+        input_a2 = build_binary_vector1<F>(template_v1)[i];
+      }
+      vector<input_t2> input_v1(5, build_binary_vector2<F>(template_v2)[i]);
+      vector<input_t2> input_v2(5, build_binary_vector2<F>(template_v2)[i]);
+      if (seed_two) {
+        input_v1[j] = build_binary_vector2<F>(template_v2, i)[i]; 
+        input_v2[j] = build_binary_vector2<F>(template_v2, i)[i]; 
+      }
+      vector<FV> fa = F::template apply<vector<FV> >(input_a2, input_v2);
+      EXPECT_EQ(input_v2.size(), fa.size());
+      expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
+      input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
+    }
+  } 
   //scalar, vector
   //var, int
+*/
   expect_mix_binary_scalar_std_vector_eq<F, FV>(var_template_v, 
   int_template_v);
 /*

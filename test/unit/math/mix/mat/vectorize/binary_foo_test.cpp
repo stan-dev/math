@@ -126,7 +126,7 @@ struct binary_foo_test {
   }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_binary_test, binary_foo_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_binary_test, binary_foo_test);
+//INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
+//INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_binary_test, binary_foo_test);
+//INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_binary_test, binary_foo_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_binary_test, binary_foo_test);
