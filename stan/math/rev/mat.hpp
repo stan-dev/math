@@ -12,6 +12,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
+#include <stan/math/rev/mat/fun/adjoints_of.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -22,6 +23,7 @@
 #include <stan/math/rev/mat/fun/dot_product.hpp>
 #include <stan/math/rev/mat/fun/dot_self.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
+#include <stan/math/rev/mat/fun/increment_adjoint.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
@@ -34,6 +36,7 @@
 #include <stan/math/rev/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_spd.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_tri.hpp>
+#include <stan/math/rev/mat/fun/memalloc_matrix_map.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/mat/fun/quad_form.hpp>
