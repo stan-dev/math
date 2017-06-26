@@ -22,16 +22,15 @@ namespace stan {
      * If the upper bound is positive infinity, this function
      * reduces to <code>identity_constrain(x)</code>.
      *
-     * @param x Free scalar.
-     * @param ub Upper bound.
-     * @return Transformed scalar with specified upper bound.
-     * @tparam T Type of scalar.
-     * @tparam TU Type of upper bound.
+     * @tparam T type of scalar
+     * @tparam TU type of upper bound
+     * @param[in] x free scalar.
+     * @param[in] ub upper bound
+     * @return scalar constrained to have upper bound
      */
     template <typename T, typename TU>
-    inline
-    typename boost::math::tools::promote_args<T, TU>::type
-    ub_constrain(const T x, const TU ub) {
+    inline typename boost::math::tools::promote_args<T, TU>::type
+    ub_constrain(const T& x, const TU& ub) {
       using std::exp;
       if (ub == std::numeric_limits<double>::infinity())
         return identity_constrain(x);
@@ -54,17 +53,17 @@ namespace stan {
      * If the upper bound is positive infinity, this function
      * reduces to <code>identity_constrain(x, lp)</code>.
      *
-     * @param x Free scalar.
-     * @param ub Upper bound.
-     * @param lp Log probability reference.
-     * @return Transformed scalar with specified upper bound.
-     * @tparam T Type of scalar.
-     * @tparam TU Type of upper bound.
+     * @tparam T type of scalar
+     * @tparam TU type of upper bound
+     * @param[in] x free scalar.
+     * @param[in] ub upper bound
+     * @param[in,out] lp log density
+     * @return scalar constrained to have upper bound
      */
     template <typename T, typename TU>
     inline
     typename boost::math::tools::promote_args<T, TU>::type
-    ub_constrain(const T x, const TU ub, T& lp) {
+    ub_constrain(const T& x, const TU& ub, T& lp) {
       using std::exp;
       if (ub == std::numeric_limits<double>::infinity())
         return identity_constrain(x, lp);

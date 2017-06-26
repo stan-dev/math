@@ -22,15 +22,14 @@ namespace stan {
      * <p>If the lower bound is negative infinity, this function
      * reduces to <code>identity_constrain(x)</code>.
      *
-     * @param x Unconstrained scalar input.
-     * @param lb Lower-bound on constrained ouptut.
-     * @return Lower-bound constrained value correspdonding to inputs.
-     * @tparam T Type of scalar.
-     * @tparam TL Type of lower bound.
+     * @tparam T type of scalar
+     * @tparam TL type of lower bound
+     * @param[in] x Unconstrained scalar input
+     * @param[in] lb lower bound on constrained ouptut
+     * @return lower bound constrained value correspdonding to inputs
      */
     template <typename T, typename TL>
-    inline
-    T lb_constrain(const T x, const TL lb) {
+    inline T lb_constrain(const T& x, const TL& lb) {
       using std::exp;
       if (lb == -std::numeric_limits<double>::infinity())
         return identity_constrain(x);
@@ -46,17 +45,16 @@ namespace stan {
      * If the lower bound is negative infinity, this function
      * reduces to <code>identity_constraint(x, lp)</code>.
      *
-     * @param x Unconstrained scalar input.
-     * @param lb Lower-bound on output.
-     * @param lp Reference to log probability to increment.
-     * @return Loer-bound constrained value corresponding to inputs.
-     * @tparam T Type of scalar.
-     * @tparam TL Type of lower bound.
+     * @tparam T type of scalar.
+     * @tparam TL type of lower bound.
+     * @param[in] x unconstrained scalar input
+     * @param[in] lb lower bound on output
+     * @param[in,out] lp Reference to log probability to increment.
+     * @return lower-bound constrained value corresponding to inputs
      */
     template <typename T, typename TL>
-    inline
-    typename boost::math::tools::promote_args<T, TL>::type
-    lb_constrain(const T x, const TL lb, T& lp) {
+    inline typename boost::math::tools::promote_args<T, TL>::type
+    lb_constrain(const T& x, const TL& lb, T& lp) {
       using std::exp;
       if (lb == -std::numeric_limits<double>::infinity())
         return identity_constrain(x, lp);

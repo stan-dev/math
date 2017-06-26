@@ -5,20 +5,18 @@ namespace stan {
   namespace math {
 
     /**
-     * The logical negation function which returns 1 if the input
-     * is equal to zero and 0 otherwise.
+     * The logical negation function which returns one if the input
+     * is equal to zero and zero otherwise.
      *
-     * @tparam T Type to compare to zero.
-     * @param x Value to compare to zero.
-     * @return 1 if input is equal to zero.
+     * @tparam T type of value
+     * @param x value
+     * @return 1 if value is zero and 0 otherwise
      */
     template <typename T>
-    inline int
-    logical_negation(const T x) {
-      return (x == 0);
+    inline int logical_negation(const T& x) {
+      return x == 0;
     }
 
   }
 }
-
 #endif
