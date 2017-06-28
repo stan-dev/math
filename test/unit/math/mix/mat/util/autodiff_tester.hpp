@@ -246,7 +246,6 @@ namespace stan {
         f.fixed1_ = true;
         f.fixed2_ = true;
         seq_writer<double> a;
-        Eigen::VectorXd aaa(0);
         test_functor(f, a.vector(), fx);
 
         // test (double, autodiff) instantiation

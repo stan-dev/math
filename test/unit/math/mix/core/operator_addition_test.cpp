@@ -9,7 +9,7 @@ struct op_add_f {
   }
 };
 
-TEST(foo, framework) {
+TEST(mathMixCore, opratorPlus) {
   using stan::math::test::test_ad;
 
   test_ad<op_add_f>(0.5, 1.3, 1.8);
