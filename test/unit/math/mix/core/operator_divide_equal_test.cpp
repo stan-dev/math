@@ -1,108 +1,28 @@
-#include <stan/math/mix/scal.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math.hpp>
+#include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 
-TEST(AgradMixOperatorDivideEqual, FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
+struct op_divide_equal_f {
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply(const T1& x1, const T2& x2) {
+    typename boost::math::tools::promote_args<T1, T2>::type y = x1;
+    y /= x2;
+    return y;
+  }
+};
 
-  fvar<var> x(0.5,1.3);
+TEST(mathMixCore, opratorDivideEqual) {
+  using stan::math::test::test_ad;
 
-  x /= 0.3;
-  EXPECT_FLOAT_EQ(0.5 / 0.3, x.val_.val());
-  EXPECT_FLOAT_EQ(1.3 / 0.3, x.d_.val());
+  std::vector<double> xs;
+  xs.push_back(0.5);
+  xs.push_back(0);
+  xs.push_back(-1.3);
+  xs.push_back(stan::math::positive_infinity());
+  xs.push_back(stan::math::negative_infinity());
+  xs.push_back(stan::math::not_a_number());
 
-  AVEC y = createAVEC(x.val_);
-  VEC g;
-  x.val_.grad(y,g);
-  EXPECT_FLOAT_EQ(1.0, g[0]);
-}
-TEST(AgradMixOperatorDivideEqual, FvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<var> x(0.5,1.3);
-
-  x /= 0.3;
-
-  AVEC y = createAVEC(x.val_);
-  VEC g;
-  x.d_.grad(y,g);
-  EXPECT_FLOAT_EQ(0, g[0]);
-}
-
-TEST(AgradMixOperatorDivideEqual, FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-
-  x /= 0.3;
-  EXPECT_FLOAT_EQ(0.5 / 0.3, x.val_.val_.val());
-  EXPECT_FLOAT_EQ(1 / 0.3, x.val_.d_.val());
-  EXPECT_FLOAT_EQ(0, x.d_.val_.val());
-  EXPECT_FLOAT_EQ(0, x.d_.d_.val());
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.val_.val_.grad(p,g);
-  EXPECT_FLOAT_EQ(1, g[0]);
-}
-TEST(AgradMixOperatorDivideEqual, FvarFvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-
-  x /= 0.3;
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.val_.d_.grad(p,g);
-  EXPECT_FLOAT_EQ(0, g[0]);
-}
-TEST(AgradMixOperatorDivideEqual, FvarFvarVar_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-  x.d_.val_ = 1.0;
-
-  x /= 0.3;
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.d_.d_.grad(p,g);
-  EXPECT_FLOAT_EQ(0, g[0]);
-}
-
-TEST(AgradMixOperatorDivideEqual, div_eq_nan) {
-  using stan::math::fvar;
-  using stan::math::var;
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  double a = 3.0;
-  fvar<var> nan_fv = std::numeric_limits<double>::quiet_NaN();
-  fvar<var> a_fv = 3.0;
-  fvar<fvar<var> > nan_ffv = std::numeric_limits<double>::quiet_NaN();
-  fvar<fvar<var> > a_ffv = 3.0;
-
-  EXPECT_TRUE(boost::math::isnan( (nan_fv/=a).val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_fv/=a_fv).val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_fv/=nan).val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_fv/=nan_fv).val().val()));
-  EXPECT_TRUE(boost::math::isnan( (a_fv/=nan).val().val()));
-  EXPECT_TRUE(boost::math::isnan( (a_fv/=nan_fv).val().val()));
-
-  EXPECT_TRUE(boost::math::isnan( (nan_ffv/=a).val().val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_ffv/=a_ffv).val().val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_ffv/=nan).val().val().val()));
-  EXPECT_TRUE(boost::math::isnan( (nan_ffv/=nan_ffv).val().val().val()));
-  EXPECT_TRUE(boost::math::isnan( (a_ffv/=nan).val().val().val()));
-  EXPECT_TRUE(boost::math::isnan( (a_ffv/=nan_ffv).val().val().val()));
+  for (size_t i = 0; i < xs.size(); ++i)
+    for (size_t j = 0; j < xs.size(); ++j)
+      test_ad<op_divide_equal_f>(xs[i], xs[j], xs[i] / xs[j]);
 }
