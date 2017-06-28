@@ -16,7 +16,7 @@ template <typename F>
 void expect_mix_binary_values() {
   using stan::math::var;
   using stan::math::fvar;
-  expect_mix_binary_scalar_value<F, fvar<var> >();
+  //expect_mix_binary_scalar_value<F, fvar<var> >();
   expect_mix_binary_std_vector_value<F, fvar<var> >();
 /*
   expect_mix_binary_matrix_value<F, fvar<double> >();

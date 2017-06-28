@@ -43,7 +43,6 @@ stan::math::fvar<FV> base_test_var1, int base_test_var2) {
     std::cout << test_bg[0] << std::endl;
     std::cout << exp_bg[0] << std::endl;
     std::cout << "Yay" << std::endl;
-
 */
 }
 
