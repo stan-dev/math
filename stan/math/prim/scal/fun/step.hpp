@@ -20,13 +20,12 @@ namespace stan {
        \end{cases}
        \f]
      *
-     * @param y Scalar argument.
-     *
-     * @return 1 if the specified argument is greater than or equal to
-     * 0.0, and 0 otherwise.
+     * @tparam T type of value
+     * @param y value
+     * @return zero if the value is less than zero, and one otherwise
      */
     template <typename T>
-    inline int step(const T y) {
+    inline double step(const T& y) {
       return y < 0.0 ? 0 : 1;
     }
 
