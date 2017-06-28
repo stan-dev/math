@@ -15,34 +15,89 @@ namespace stan {
       // test/unit/math/mix/core/operator_addition_test.cpp
 
       /**
+       * Return true if the specified value is finite.
+       *
+       * @param x value to test
+       * @return true if value is finite
+       */
+      bool is_finite(double x) {
+        return !is_inf(x) && !is_nan(x);
+      }
+
+      /**
+       * Return true if all of the elements in the container are finite
+       *
+       * @tparam T scalar type
+       * @tparam R row type
+       * @tparam C col type
+       * @param x container to test
+       * @return true if all container values are finite
+       */
+      template <typename T, int R, int C>
+      bool is_finite(const Eigen::Matrix<T, R, C>& x) {
+        for (int i = 0; i < x.size(); ++i)
+          if (!is_finite(x(i)))
+            return false;
+        return true;
+      }
+
+      /**
+       * Return true if all of the elements in the container are finite
+       *
+       * @tparam T contained type
+       * @param x container to test
+       * @return true if all container values are finite
+       */
+       template <typename T>
+       bool is_finite(const std::vector<T>& x) {
+         for (size_t i = 0; i < x.size(); ++i)
+           if (!is_finite(x[i]))
+             return false;
+         return true;
+       }
+
+
+      /**
        * Test that scalars x1 and x2 are within the specified
        * tolerance, with identity behavior for infinite and NaN
        * values.
        */
       template <typename T1, typename T2>
-      void expect_near(const T1& x1, const T2& x2,
+      void expect_near(const std::string& msg, const T1& x1, const T2& x2,
                        double tol = 1e-9) {
         if (is_nan(x1) || is_nan(x2))
-          EXPECT_TRUE(is_nan(x1) && is_nan(x2));
+          EXPECT_TRUE(is_nan(x1) && is_nan(x2))
+            << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
+            << msg << std::endl;
         else if (is_inf(x1) || is_inf(x2))
-          EXPECT_EQ(x1, x2);
+          EXPECT_EQ(x1, x2)
+            << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
+            << msg << std::endl;
         else
-          EXPECT_NEAR(x1, x2, tol);
+          EXPECT_NEAR(x1, x2, tol)
+            << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
+            << msg << std::endl;
       }
-
 
       /**
        * Tests that matrices (or vectors) x1 and x2 are same size and
        * have near values up to specified tolerance.
        */
       template <typename T, int R, int C>
-      void expect_near(const Eigen::Matrix<T, R, C>& x1,
-                       const Eigen::Matrix<T, R, C>& x2,
-                       double tol = 1e-7) {
-        EXPECT_EQ(x1.rows(), x2.rows());
-        EXPECT_EQ(x1.cols(), x2.cols());
+      void expect_near(const std::string& msg,
+                       const Eigen::Matrix<T, R, C>& x1,
+                       const Eigen::Matrix<T, R, C>& x2, double tol = 1e-7) {
+        EXPECT_EQ(x1.rows(), x2.rows())
+          << "expect_near rows expect_eq(" << x1.rows()
+          << ", " << x2.rows() << ")" << std::endl
+          << msg << std::endl;
+        EXPECT_EQ(x1.cols(), x2.cols())
+          << "expect_near cols expect_eq(" << x1.rows()
+          << ", " << x2.rows() << ")" << std::endl
+          << msg << std::endl;
+        std::string msg2 = "expect_near elt x1(i) = x2(i)\n" + msg;
         for (int i = 0; i < x1.size(); ++i)
-          expect_near(x1(i), x2(i), tol);
+          expect_near(msg2, x1(i), x2(i), tol);
       }
 
 
@@ -53,11 +108,11 @@ namespace stan {
       template <typename F>
       void test_value(const F& f, const Eigen::VectorXd& x, double fx) {
         if (is_nan(fx))
-          EXPECT_TRUE(is_nan(f(x)));
+          EXPECT_TRUE(is_nan(f(x)))
+            << "test_value is_nan(" << f(x) << std::endl;
         else
-          expect_near(fx, f(x));
+          expect_near("test_value fx == f(x)", fx, f(x));
       }
-
 
       /**
        * Tests that the function f applied to the argument x yields
@@ -69,13 +124,14 @@ namespace stan {
         Eigen::VectorXd grad_ad;
         double fx_ad;
         gradient<F>(f, x, fx_ad, grad_ad);
-        expect_near(fx, fx_ad);
+        expect_near("test_gradient fx = fx_ad", fx, fx_ad);
+        if (!is_finite(x) || !is_finite(fx))
+          return;
         Eigen::VectorXd grad_fd;
         double fx_fd;
         finite_diff_gradient(f, x, fx_fd, grad_fd);
-        expect_near(grad_fd, grad_ad);
+        expect_near("test gradient grad_fd == grad_ad", grad_fd, grad_ad);
       }
-
 
       /**
        * Tests that the function f applied to the argument x yields
@@ -88,11 +144,13 @@ namespace stan {
         Eigen::VectorXd grad_ad;
         double fx_ad;
         gradient<double, F>(f, x, fx_ad, grad_ad);
-        expect_near(fx, fx_ad);
+        expect_near("gradient_fvar fx == fx_ad", fx, fx_ad);
+        if (!is_finite(x) || !is_finite(fx))
+          return;
         Eigen::VectorXd grad_fd;
         double fx_fd;
         finite_diff_gradient(f, x, fx_fd, grad_fd);
-        expect_near(grad_fd, grad_ad);
+        expect_near("gradeint_fvar gard_fd == grad_ad", grad_fd, grad_ad);
       }
 
 
@@ -108,13 +166,15 @@ namespace stan {
         Eigen::VectorXd grad_ad;
         Eigen::MatrixXd H_ad;
         hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
-        expect_near(fx, fx_ad);
+        expect_near("hessian_fvar fx == fx_ad", fx, fx_ad);
+        if (!is_finite(x) || !is_finite(fx))
+          return;
         double fx_fd;
         Eigen::VectorXd grad_fd;
         Eigen::MatrixXd H_fd;
         finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
-        expect_near(grad_fd, grad_ad);
-        expect_near(H_fd, H_ad);
+        expect_near("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad);
+        expect_near("hessian fvar H_fd = H_ad", H_fd, H_ad);
       }
 
 
@@ -130,13 +190,15 @@ namespace stan {
         Eigen::VectorXd grad_ad;
         Eigen::MatrixXd H_ad;
         hessian<F>(f, x, fx_ad, grad_ad, H_ad);
-        expect_near(fx, fx_ad);
+        expect_near("hessian fx == fx_ad", fx, fx_ad);
+        if (!is_finite(x) || !is_finite(fx))
+          return;
         double fx_fd;
         Eigen::VectorXd grad_fd;
         Eigen::MatrixXd H_fd;
         finite_diff_hessian(f, x, fx_fd, grad_fd, H_fd);
-        expect_near(grad_fd, grad_ad);
-        expect_near(H_fd, H_ad);
+        expect_near("hessian grad_fd = grad_ad", grad_fd, grad_ad);
+        expect_near("hessian grad_fd H_fd == H_ad", H_fd, H_ad);
       }
 
 
@@ -152,15 +214,18 @@ namespace stan {
         Eigen::MatrixXd H_ad;
         std::vector<Eigen::MatrixXd> grad_H_ad;
         grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
-        expect_near(fx, fx_ad);
+        expect_near("grad_hessian fx == fx_ad", fx, fx_ad);
+        if (!is_finite(x) || !is_finite(fx))
+          return;
         double fx_fd;
         Eigen::MatrixXd H_fd;
         std::vector<Eigen::MatrixXd> grad_H_fd;
-        grad_hessian(f, x, fx_fd, H_fd, grad_H_fd);
-        expect_near(H_fd, H_ad);
+        finite_diff_grad_hessian(f, x, fx_fd, H_fd, grad_H_fd);
+        expect_near("grad hessian H_fd == H_ad", H_fd, H_ad);
         EXPECT_EQ(x.size(), grad_H_fd.size());
         for (size_t i = 0; i < grad_H_fd.size(); ++i)
-          expect_near(grad_H_fd[i], grad_H_ad[i]);
+          expect_near("grad hessian grad_H_fd[i] == grad_H_ad[i]",
+                      grad_H_fd[i], grad_H_ad[i]);
       }
 
 
@@ -168,18 +233,11 @@ namespace stan {
       template <typename F>
       void test_functor(const F& f, const Eigen::VectorXd& x, double fx) {
         test_value(f, x, fx);
-
-        // finite diffs can't handle infinity
-        if (is_inf(fx)) return;
-        for (int i = 0; i < x.size(); ++i)
-          if (is_inf(x(i)))
-            return;
-
         test_gradient(f, x, fx);
         test_gradient_fvar(f, x, fx);
         test_hessian(f, x, fx);
         test_hessian_fvar(f, x, fx);
-        // test_grad_hessian(f, x, fx);
+        test_grad_hessian(f, x, fx);
       }
 
 
