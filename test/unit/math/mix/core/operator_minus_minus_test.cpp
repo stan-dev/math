@@ -1,7 +1,6 @@
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 
 struct op_minus_minus_pre_f {
-  // ignoring second argument is OK for testing
   template <typename T1, typename T2>
   static typename boost::math::tools::promote_args<T1, T2>::type
   apply(const T1& x1, const T2& x2) {
@@ -11,7 +10,6 @@ struct op_minus_minus_pre_f {
 };
 
 struct op_minus_minus_post_f {
-  // ignoring second argument is OK for testing
   template <typename T1, typename T2>
   static typename boost::math::tools::promote_args<T1, T2>::type
   apply(const T1& x1, const T2& x2) {

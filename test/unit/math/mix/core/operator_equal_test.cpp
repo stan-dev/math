@@ -11,4 +11,3 @@ struct op_equal_f {
 TEST(mathMixCore, operatorEqual) {
   stan::math::test::test_common_args<op_equal_f, true>();
 }
-

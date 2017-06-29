@@ -13,6 +13,7 @@
 #include <stan/math/fwd/core/operator_not_equal.hpp>
 #include <stan/math/fwd/core/operator_subtraction.hpp>
 #include <stan/math/fwd/core/operator_unary_minus.hpp>
+#include <stan/math/fwd/core/operator_unary_plus.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 
 #endif
