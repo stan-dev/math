@@ -1,4 +1,3 @@
-#include <stan/math.hpp>
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 
 struct op_divide_equal_f {
@@ -12,17 +11,5 @@ struct op_divide_equal_f {
 };
 
 TEST(mathMixCore, opratorDivideEqual) {
-  using stan::math::test::test_ad;
-
-  std::vector<double> xs;
-  xs.push_back(0.5);
-  xs.push_back(0);
-  xs.push_back(-1.3);
-  xs.push_back(stan::math::positive_infinity());
-  xs.push_back(stan::math::negative_infinity());
-  xs.push_back(stan::math::not_a_number());
-
-  for (size_t i = 0; i < xs.size(); ++i)
-    for (size_t j = 0; j < xs.size(); ++j)
-      test_ad<op_divide_equal_f>(xs[i], xs[j], xs[i] / xs[j]);
+  stan::math::test::test_common_args<op_divide_equal_f, false>();
 }

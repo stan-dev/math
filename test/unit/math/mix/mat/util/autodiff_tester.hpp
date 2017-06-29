@@ -300,10 +300,9 @@ namespace stan {
        * fvar<fvar<double>>, fvar<var>, and fvar<fvar<var>>
        * instantiations.
        */
-      // test a single sequence of arguments and result
       template <typename F, typename T1, typename T2>
-        void test_ad(const T1& x1, const T2& x2, double fx,
-                     bool test_derivs = true) {
+      void test_ad(const T1& x1, const T2& x2, double fx,
+                   bool test_derivs = true) {
         // create binder then test all autodiff/double combos
         binder_binary<F, T1, T2> f(x1, x2);
 
@@ -336,8 +335,28 @@ namespace stan {
         test_functor(f, d.vector(), fx, test_derivs);
       }
 
+      template <typename F, bool is_comparison>
+      void test_common_args() {
+        using stan::math::test::test_ad;
+
+        std::vector<double> xs;
+        xs.push_back(0.5);
+        xs.push_back(0);
+        xs.push_back(-1.3);
+        xs.push_back(stan::math::positive_infinity());
+        xs.push_back(stan::math::negative_infinity());
+        xs.push_back(stan::math::not_a_number());
+
+        for (size_t i = 0; i < xs.size(); ++i) {
+          for (size_t j = 0; j < xs.size(); ++j) {
+            double fx = F::apply(xs[i], xs[j]);
+            test_ad<F>(xs[i], xs[j], fx,
+                       !(is_comparison && fx == true));
+          }
+        }
+      }
+
     }
   }
 }
-
 #endif
