@@ -347,11 +347,13 @@ namespace stan {
         xs.push_back(stan::math::negative_infinity());
         xs.push_back(stan::math::not_a_number());
 
+        // avoid testing derivatives for comparisons of equal values
+        // as results will be non-differentiable in one direction
         for (size_t i = 0; i < xs.size(); ++i) {
           for (size_t j = 0; j < xs.size(); ++j) {
             double fx = F::apply(xs[i], xs[j]);
             test_ad<F>(xs[i], xs[j], fx,
-                       !(is_comparison && fx == true));
+                       !(is_comparison && xs[i] == xs[j]));
           }
         }
       }
