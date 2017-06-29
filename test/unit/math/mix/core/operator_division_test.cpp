@@ -1,7 +1,6 @@
-#include <stan/math.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 #include <vector>
-#include <iostream>
 
 struct op_divide_f {
   template <typename T1, typename T2>

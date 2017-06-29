@@ -120,12 +120,13 @@ namespace stan {
        * calaculated with the gradient functional using var.
        */
       template <typename F>
-      void test_gradient(const F& f, const Eigen::VectorXd& x, double fx) {
+        void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
+                           bool test_derivs) {
         Eigen::VectorXd grad_ad;
         double fx_ad;
         gradient<F>(f, x, fx_ad, grad_ad);
         expect_near("test_gradient fx = fx_ad", fx, fx_ad);
-        if (!is_finite(x) || !is_finite(fx))
+        if (!test_derivs || !is_finite(x) || !is_finite(fx))
           return;
         Eigen::VectorXd grad_fd;
         double fx_fd;
@@ -140,12 +141,13 @@ namespace stan {
        * scalars.
        */
       template <typename F>
-      void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx) {
+      void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
+                              bool test_derivs) {
         Eigen::VectorXd grad_ad;
         double fx_ad;
         gradient<double, F>(f, x, fx_ad, grad_ad);
         expect_near("gradient_fvar fx == fx_ad", fx, fx_ad);
-        if (!is_finite(x) || !is_finite(fx))
+        if (!test_derivs || !is_finite(x) || !is_finite(fx))
           return;
         Eigen::VectorXd grad_fd;
         double fx_fd;
@@ -161,13 +163,14 @@ namespace stan {
        * scalars.
        */
       template <typename F>
-      void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx) {
+      void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
+                             bool test_derivs) {
         double fx_ad;
         Eigen::VectorXd grad_ad;
         Eigen::MatrixXd H_ad;
         hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
         expect_near("hessian_fvar fx == fx_ad", fx, fx_ad);
-        if (!is_finite(x) || !is_finite(fx))
+        if (!test_derivs || !is_finite(x) || !is_finite(fx))
           return;
         double fx_fd;
         Eigen::VectorXd grad_fd;
@@ -185,13 +188,14 @@ namespace stan {
        * fvar<fvar<double>> scalars.
        */
       template <typename F>
-      void test_hessian(const F& f, const Eigen::VectorXd& x, double fx) {
+      void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
+                        bool test_derivs) {
         double fx_ad;
         Eigen::VectorXd grad_ad;
         Eigen::MatrixXd H_ad;
         hessian<F>(f, x, fx_ad, grad_ad, H_ad);
         expect_near("hessian fx == fx_ad", fx, fx_ad);
-        if (!is_finite(x) || !is_finite(fx))
+        if (!test_derivs || !is_finite(x) || !is_finite(fx))
           return;
         double fx_fd;
         Eigen::VectorXd grad_fd;
@@ -209,13 +213,14 @@ namespace stan {
        * fvar<fvar<var>> scalars.
        */
       template <typename F>
-      void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx) {
+      void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
+                             bool test_derivs) {
         double fx_ad;
         Eigen::MatrixXd H_ad;
         std::vector<Eigen::MatrixXd> grad_H_ad;
         grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
         expect_near("grad_hessian fx == fx_ad", fx, fx_ad);
-        if (!is_finite(x) || !is_finite(fx))
+        if (!test_derivs || !is_finite(x) || !is_finite(fx))
           return;
         double fx_fd;
         Eigen::MatrixXd H_fd;
@@ -231,13 +236,14 @@ namespace stan {
 
       // test value and derivative in all functionals vs. finite diffs
       template <typename F>
-      void test_functor(const F& f, const Eigen::VectorXd& x, double fx) {
+      void test_functor(const F& f, const Eigen::VectorXd& x, double fx,
+                        bool test_derivs = true) {
         test_value(f, x, fx);
-        test_gradient(f, x, fx);
-        test_gradient_fvar(f, x, fx);
-        test_hessian(f, x, fx);
-        test_hessian_fvar(f, x, fx);
-        test_grad_hessian(f, x, fx);
+        test_gradient(f, x, fx, test_derivs);
+        test_gradient_fvar(f, x, fx, test_derivs);
+        test_hessian(f, x, fx, test_derivs);
+        test_hessian_fvar(f, x, fx, test_derivs);
+        test_grad_hessian(f, x, fx, test_derivs);
       }
 
 
@@ -296,7 +302,8 @@ namespace stan {
        */
       // test a single sequence of arguments and result
       template <typename F, typename T1, typename T2>
-      void test_ad(const T1& x1, const T2& x2, double fx) {
+        void test_ad(const T1& x1, const T2& x2, double fx,
+                     bool test_derivs = true) {
         // create binder then test all autodiff/double combos
         binder_binary<F, T1, T2> f(x1, x2);
 
@@ -304,21 +311,21 @@ namespace stan {
         f.fixed1_ = true;
         f.fixed2_ = true;
         seq_writer<double> a;
-        test_functor(f, a.vector(), fx);
+        test_functor(f, a.vector(), fx, test_derivs);
 
         // test (double, autodiff) instantiation
         f.fixed1_ = true;
         f.fixed2_ = false;
         seq_writer<double> b;
         b.write(x2);
-        test_functor(f, b.vector(), fx);
+        test_functor(f, b.vector(), fx, test_derivs);
 
         // test (autodiff, double) instantiation
         f.fixed1_ = false;
         f.fixed2_ = true;
         seq_writer<double> c;
         c.write(x1);
-        test_functor(f, c.vector(), fx);
+        test_functor(f, c.vector(), fx, test_derivs);
 
         // test (autodiff, autodiff) instantiation
         f.fixed1_ = false;
@@ -326,7 +333,7 @@ namespace stan {
         seq_writer<double> d;
         d.write(x1);
         d.write(x2);
-        test_functor(f, d.vector(), fx);
+        test_functor(f, d.vector(), fx, test_derivs);
       }
 
     }

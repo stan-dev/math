@@ -1,4 +1,4 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
@@ -15,54 +15,36 @@ TEST(AgradMixOperatorEqual, FvarVar) {
   EXPECT_FALSE(z == y);
 }
 
-TEST(AgradMixOperatorEqual, FvarFvarVar) {
-  using stan::math::fvar;
-  using stan::math::var;
+#include <stan/math.hpp>
+#include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
+#include <vector>
 
-  fvar<fvar<var> > x;
-  x.val_.val_ = 1.5;
-  x.val_.d_ = 1.0;
+struct op_equal_f {
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply(const T1& x1, const T2& x2) {
+    return (x1 == x2);
+  }
+};
 
-  fvar<fvar<var> > y;
-  y.val_.val_ = 0.5;
-  y.d_.val_ = 1.0;
+TEST(mathMixCore, operatorEqual) {
+  using stan::math::test::test_ad;
 
-  fvar<fvar<var> > z;
-  z.val_.val_ = 0.5;
-  z.d_.val_ = 1.0;
+  test_ad<op_equal_f>(1.2, 1.0, 1.2 == 1.0);
 
-  EXPECT_FALSE(x == y);
-  EXPECT_FALSE(x == z);
-  EXPECT_TRUE(z == y);
+  std::vector<double> xs;
+  xs.push_back(0.5);
+  xs.push_back(0);
+  xs.push_back(-1.3);
+  xs.push_back(stan::math::positive_infinity());
+  xs.push_back(stan::math::negative_infinity());
+  xs.push_back(stan::math::not_a_number());
+
+  for (size_t i = 0; i < xs.size(); ++i) {
+    for (size_t j = 0; j < xs.size(); ++j) {
+      bool test_derivs = xs[i] != xs[j];
+      test_ad<op_equal_f>(xs[i], xs[j], xs[i] == xs[j], test_derivs);
+    }
+  }
 }
 
-TEST(AgradMixOperatorEqual, eq_nan) {
-  using stan::math::fvar;
-  using stan::math::var;
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  double a = 3.0;
-  fvar<var> nan_fv = std::numeric_limits<double>::quiet_NaN();
-  fvar<var> a_fv = 3.0;
-  fvar<fvar<var> > nan_ffv = std::numeric_limits<double>::quiet_NaN();
-  fvar<fvar<var> > a_ffv = 3.0;
-
-  EXPECT_FALSE(a == nan_fv);
-  EXPECT_FALSE(a_fv == nan_fv);
-  EXPECT_FALSE(nan == nan_fv);
-  EXPECT_FALSE(nan_fv == nan_fv);
-  EXPECT_FALSE(a_fv == nan);
-  EXPECT_FALSE(nan_fv == nan);
-  EXPECT_FALSE(nan_fv == a);
-  EXPECT_FALSE(nan_fv == a_fv);
-  EXPECT_FALSE(nan == a_fv);
-
-  EXPECT_FALSE(a == nan_ffv);
-  EXPECT_FALSE(a_ffv == nan_ffv);
-  EXPECT_FALSE(nan == nan_ffv);
-  EXPECT_FALSE(nan_ffv == nan_ffv);
-  EXPECT_FALSE(a_ffv == nan);
-  EXPECT_FALSE(nan_ffv == nan);
-  EXPECT_FALSE(nan_ffv == a);
-  EXPECT_FALSE(nan_ffv == a_ffv);
-  EXPECT_FALSE(nan == a_ffv);
-}
