@@ -33,3 +33,5 @@ env:
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
 script: ./runTests.py -j2 $TESTFOLDER
+
+dist: trusty
