@@ -19,7 +19,6 @@ CC = clang++
 O = 3
 O_STANC = 0
 AR = ar
-C++11 = false
 
 ##
 # Library locations
@@ -30,7 +29,8 @@ include make/libraries
 ##
 # Set default compiler options.
 ##
-CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem$(CVODES)/include -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DNO_FPRINTF_OUTPUT -pipe
+CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem$(CVODES)/include -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DNO_FPRINTF_OUTPUT -pipe -stdlib=libc++ -std=c++14
+LDFLAGS += -lc++
 CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
 LDLIBS =
 EXE =
