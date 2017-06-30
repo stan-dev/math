@@ -15,6 +15,7 @@ ifneq (,$(findstring i686-w64-mingw32-g++,$(CC)))
 endif
 ifneq (,$(findstring g++,$(CC)))
   CC_TYPE ?= g++
+  LDFLAGS += -lc++
 endif
 CC_TYPE ?= other
 CC_MAJOR := $(shell $(CC) -dumpversion 2>&1 | cut -d'.' -f1)
