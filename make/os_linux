@@ -26,6 +26,5 @@ ifeq (clang++,$(CC_TYPE))
   CFLAGS_GTEST += -Wno-c++11-long-long
   CFLAGS += -Wno-unused-function
   CFLAGS += -Wno-uninitialized
-  CFLAGS += -Wno-c++11-long-long
 endif
 

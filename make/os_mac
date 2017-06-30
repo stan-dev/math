@@ -19,7 +19,6 @@ ifeq (clang++,$(CC_TYPE))
   CFLAGS += -Wno-unknown-warning-option
   CFLAGS += -Wno-unused-function
   CFLAGS += -Wno-tautological-compare
-  CFLAGS += -Wno-c++11-long-long
   CFLAGS += -Wsign-compare
   CFLAGS += -Wno-unused-local-typedef
   #PCH = .pch
