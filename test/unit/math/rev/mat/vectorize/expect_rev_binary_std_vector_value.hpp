@@ -170,82 +170,78 @@ std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   }
 }
 
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_scalar_std_vector_all_eq(
+std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+  expect_rev_binary_scalar_std_vector_eq<F>(template_v1, template_v2);
+  expect_rev_binary_std_vector_scalar_eq<F>(template_v1, template_v2);
+  expect_rev_binary_scalar_std_vector_eq<F>(template_v2, template_v1);
+  expect_rev_binary_std_vector_scalar_eq<F>(template_v2, template_v1);
+}
+
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_all_eq(
+std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+  expect_rev_binary_std_vector_std_vector_eq<F>(template_v1, template_v2);
+  expect_rev_binary_std_vector_std_vector_eq<F>(template_v2, template_v1);
+}
+
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_scalar_std_vector_std_vector_all_eq(
+std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(template_v1, 
+  template_v2);
+  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(template_v1, 
+  template_v2);
+  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(template_v2, 
+  template_v1);
+  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(template_v2, 
+  template_v1);
+}
+
+template <typename F, typename input_t1, typename input_t2>
+void expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
+std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
+  template_v1, template_v2);
+  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
+  template_v2, template_v1);
+}
+
 template <typename F>
 void expect_rev_binary_std_vector_value() {
   using std::vector;
   using stan::math::var;
 
-  vector<int> int_template_v(F::int_valid_inputs1().size());
-  vector<double> d_template_v(F::valid_inputs1().size());
-  vector<var> var_template_v(F::valid_inputs1().size());
+  vector<int> int_template_v;
+  vector<double> d_template_v;
+  vector<var> var_template_v;
 
-  //scalar, vector
-  //var, int
-  expect_rev_binary_scalar_std_vector_eq<F>(var_template_v, int_template_v);
-  expect_rev_binary_std_vector_scalar_eq<F>(var_template_v, int_template_v);
-  expect_rev_binary_scalar_std_vector_eq<F>(int_template_v, var_template_v);
-  expect_rev_binary_std_vector_scalar_eq<F>(int_template_v, var_template_v);
-  //var, double
-  expect_rev_binary_scalar_std_vector_eq<F>(var_template_v, d_template_v);
-  expect_rev_binary_std_vector_scalar_eq<F>(var_template_v, d_template_v);
-  expect_rev_binary_scalar_std_vector_eq<F>(d_template_v, var_template_v);
-  expect_rev_binary_std_vector_scalar_eq<F>(d_template_v, var_template_v);
-  //var, var
-  expect_rev_binary_scalar_std_vector_eq<F>(var_template_v, var_template_v);
-  expect_rev_binary_std_vector_scalar_eq<F>(var_template_v, var_template_v);
+  expect_rev_binary_scalar_std_vector_all_eq<F>(var_template_v, 
+  int_template_v);
+  expect_rev_binary_scalar_std_vector_all_eq<F>(var_template_v, 
+  d_template_v);
+  expect_rev_binary_scalar_std_vector_all_eq<F>(var_template_v, 
+  var_template_v);
   
-  //vector, vector
-  //var, int
-  expect_rev_binary_std_vector_std_vector_eq<F>(var_template_v, 
+  expect_rev_binary_std_vector_std_vector_all_eq<F>(var_template_v,
   int_template_v);
-  expect_rev_binary_std_vector_std_vector_eq<F>(int_template_v, 
-  var_template_v);
-  //var, double
-  expect_rev_binary_std_vector_std_vector_eq<F>(var_template_v, 
+  expect_rev_binary_std_vector_std_vector_all_eq<F>(var_template_v,
   d_template_v);
-  expect_rev_binary_std_vector_std_vector_eq<F>(d_template_v, 
-  var_template_v);
-  //var, var
-  expect_rev_binary_std_vector_std_vector_eq<F>(var_template_v, 
+  expect_rev_binary_std_vector_std_vector_all_eq<F>(var_template_v,
   var_template_v);
 
-  //scalar, vector<vector>
-  //var, int 
-  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(var_template_v, 
+  expect_rev_binary_scalar_std_vector_std_vector_all_eq<F>(var_template_v, 
   int_template_v);
-  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(var_template_v, 
-  int_template_v);
-  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(int_template_v, 
-  var_template_v);
-  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(int_template_v, 
-  var_template_v);
-  //var, double 
-  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(var_template_v, 
+  expect_rev_binary_scalar_std_vector_std_vector_all_eq<F>(var_template_v, 
   d_template_v);
-  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(var_template_v, 
-  d_template_v);
-  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(d_template_v, 
-  var_template_v);
-  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(d_template_v, 
-  var_template_v);
-  //var, var 
-  expect_rev_binary_scalar_std_vector_std_vector_eq<F>(var_template_v, 
-  var_template_v);
-  expect_rev_binary_std_vector_std_vector_scalar_eq<F>(var_template_v, 
+  expect_rev_binary_scalar_std_vector_std_vector_all_eq<F>(var_template_v, 
   var_template_v);
  
-  //vector<vector>, vector<vector>
-  //var, int
-  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
+  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq<F>(
   var_template_v, int_template_v);
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-  int_template_v, var_template_v);
-  //var, double
-  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
   var_template_v, d_template_v);
-  expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-  d_template_v, var_template_v);
-  //var, var 
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
   var_template_v, var_template_v);
 }    

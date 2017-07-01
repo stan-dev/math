@@ -61,12 +61,10 @@ struct binary_foo_test {
    * Return sequence of valid double-valued inputs.
    */
   static std::vector<double> valid_inputs1() {
-    return test::math::vector_builder<double>().add(0).build();
-/*
+    //return test::math::vector_builder<double>().add(0).build();
     return test::math::vector_builder<double>()
       .add(0.7).add(2.3).add(3.5).add(0).add(0).add(0)
       .add(-0.3).add(-5.3).add(-3.7).build();
-*/
   }
 
   /**
@@ -107,12 +105,10 @@ struct binary_foo_test {
    * Return sequence of valid integer inputs.
    */
   static std::vector<int> int_valid_inputs2() {
-    return test::math::vector_builder<int>().add(-4).build();
-/*
+    //return test::math::vector_builder<int>().add(-4).build();
     return test::math::vector_builder<int>()
       .add(3).add(-2).add(0).add(5).add(0).add(-4)
       .add(0).add(6).add(-3).build();
-*/
   }
 
   /**
@@ -132,7 +128,7 @@ struct binary_foo_test {
   }
 };
 
-//INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
-//INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_binary_test, binary_foo_test);
-//INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_binary_test, binary_foo_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_binary_test, binary_foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_binary_test, binary_foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_binary_test, binary_foo_test);
+//INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_binary_test, binary_foo_test);
