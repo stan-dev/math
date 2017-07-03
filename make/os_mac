@@ -22,7 +22,7 @@ ifeq (clang++,$(CC_TYPE))
 
   #https://stackoverflow.com/questions/19774778/when-is-it-necessary-to-use-use-the-flag-stdlib-libstdc
   #for OSX before mavericks, specifically, but fine for post-mavericks too
-  CXXFLAGS += -stdlib=libc++
+  #CXXFLAGS += -stdlib=libc++
   #PCH = .pch
   ifeq (4.2,$(CC_MAJOR).$(CC_MINOR))
     TEMPLATE_DEPTH ?= 256
