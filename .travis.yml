@@ -17,19 +17,7 @@ matrix:
       env:
         - CXX=clang+-3.8
           TESTFOLDER=test/unit/math/memory
-        - CXX=clang+-3.8
-          TESTFOLDER=test/unit/math/prim/scal
       addons: *clang38
-    - os: linux
-      compiler: gcc
-      env:
-        - TESTFOLDER=test/unit/math/memory
-        - TESTFOLDER=test/unit/math/prim/scal
-    - os: osx
-      compiler: clang
-      env:
-        - TESTFOLDER=test/unit/math/memory
-        - TESTFOLDER=test/unit/math/prim/scal
 
           # env:
           #   - TESTFOLDER=test/unit/math/memory
@@ -51,6 +39,7 @@ dist: trusty
 
 before_install:
   - echo ${CXX}
+  - ${CXX} --version
 
 # sudo: required
 # before_install:
