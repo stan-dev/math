@@ -1,13 +1,5 @@
 language: cpp
 
-os:
-  - linux
-  - osx
-  
-compiler:
-  - clang
-  - gcc
-
 before_script:
   - echo "CC=$CXX" > make/local
 
@@ -15,7 +7,7 @@ addons_shortcuts:
     addons_clang38: &clang38
       apt:
         sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-        packages: [ 'clang-3.8', 'libprotobuf-dev','protobuf-compiler' ]
+        packages: [ 'clang-3.8' ]
 
 matrix:
   fast_finish: true
