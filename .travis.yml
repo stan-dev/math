@@ -7,6 +7,8 @@ addons_shortcuts:
         packages: [ 'clang-3.8' ]
 
 before_script:
+  - echo ${CXX}
+  - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
 matrix:
@@ -15,7 +17,7 @@ matrix:
     - os: linux
       compiler: "clang-3.8"
       env:
-        - CXX=clang+-3.8
+        - MATRIX_EVAL="CXX=clang++-3.9"
           TESTFOLDER=test/unit/math/memory
       addons: *clang38
 
@@ -36,21 +38,3 @@ script: ./runTests.py -j2 $TESTFOLDER
 
 sudo: false
 dist: trusty
-
-before_install:
-  - echo ${CXX}
-  - ${CXX} --version
-
-# sudo: required
-# before_install:
-#   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#   - sudo apt-get update -qq
-#   - sudo apt-get install -qq build-essential
-#   - if [ "$CXX" = "clang++" ]; then
-#       sudo apt-get install -qq clang-3.9;
-#       export CXX="clang++-3.9";
-#     fi
-#   - if [ "$CXX" = "g++" ]; then
-#       sudo apt-get install -qq g++-4.9;
-#       export CXX="g++-4.9";
-#     fi
