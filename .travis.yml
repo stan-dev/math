@@ -33,16 +33,16 @@ env:
 script: ./runTests.py -j2 $TESTFOLDER
 
 dist: trusty
-sudo: required
-before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq build-essential
-  - if [ "$CXX" = "clang++" ]; then
-      sudo apt-get install -qq clang-3.9;
-      export CXX="clang++-3.9";
-    fi
-  - if [ "$CXX" = "g++" ]; then
-      sudo apt-get install -qq g++-4.9;
-      export CXX="g++-4.9";
-    fi
+# sudo: required
+# before_install:
+#   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+#   - sudo apt-get update -qq
+#   - sudo apt-get install -qq build-essential
+#   - if [ "$CXX" = "clang++" ]; then
+#       sudo apt-get install -qq clang-3.9;
+#       export CXX="clang++-3.9";
+#     fi
+#   - if [ "$CXX" = "g++" ]; then
+#       sudo apt-get install -qq g++-4.9;
+#       export CXX="g++-4.9";
+#     fi
