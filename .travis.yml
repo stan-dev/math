@@ -34,13 +34,12 @@ env:
 
 script: ./runTests.py -j2 $TESTFOLDER
 
-dist: trusty
-
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
   - if [ "$CXX" = "clang++" ]; then
       sudo apt-get install -qq clang-3.9;
+      export CXX="clang++-3.9";
     fi
   - if [ "$CXX" = "g++" ]; then
       sudo apt-get install -qq g++-4.9;
