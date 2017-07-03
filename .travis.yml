@@ -32,6 +32,7 @@ env:
 
 script: ./runTests.py -j2 $TESTFOLDER
 
+sudo: false
 dist: trusty
 # sudo: required
 # before_install:
