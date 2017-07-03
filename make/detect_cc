@@ -6,6 +6,7 @@
 ##
 ifneq (,$(findstring clang++,$(CC)))
   CC_TYPE ?= clang++
+  CXXFLAGS += -stdlib=libc++
 endif
 ifneq (,$(findstring mingw32-g++,$(CC)))
   CC_TYPE ?= mingw32-g++
