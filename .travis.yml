@@ -1,24 +1,33 @@
 language: cpp
 
-before_script:
-  - echo "CC=$CXX" > make/local
+os:
+  - linux
+  - osx
 
 addons_shortcuts:
     addons_clang38: &clang38
       apt:
         sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
         packages: [ 'clang-3.8' ]
+  
+compiler:
+  - "clang-3.8"
+    env: CXX=clang++-3.8
+    addons: *clang38
+  - clang
+  - gcc
+
+before_script:
+  - echo "CC=$CXX" > make/local
 
 matrix:
   fast_finish: true
-  include:
-    - os: linux
-      compiler: "clang-3.8"
-      env: CXX=clang++-3.8
-      addons: *clang38
-    - os: linux
-      compiler: gcc
+  exclude:
     - os: osx
+      compiler: "clang-3.8"
+    - os: osx
+      compiler: gcc
+    - os: linux
       compiler: clang
 
 env:
