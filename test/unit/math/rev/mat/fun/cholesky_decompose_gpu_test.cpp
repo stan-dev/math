@@ -360,6 +360,19 @@ double test_gradient(int size, double prec) {
 
 TEST(AgradRevMatrix, 1st_deriv_large_gradients_gpu) {
   test_gradient(600, 1e-06);
- // test_gp_grad(1000, 1e-08);
+}
+
+TEST(AgradRevMatrix, 1st_deriv_large_gp_gradients_gpu) {
+  test_gp_grad(3000, 1e-08);
+  test_gp_grad(2000, 1e-08);
+  test_gp_grad(1000, 1e-08);
+  test_gp_grad(250, 1e-08);
+}
+TEST(AgradRevMatrix, 1st_deriv_large_vec_mult_gpu) {
+  test_simple_vec_mult(600, 1e-08);
+}
+
+TEST(AgradRevMatrix, 1st_deriv_large_chol_mult_gpu) {
+  test_chol_mult(600, 1e-08);
 }
 
