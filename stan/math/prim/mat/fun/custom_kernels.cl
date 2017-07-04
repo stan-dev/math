@@ -233,3 +233,4 @@ __kernel void inverse_step3(__global double* ap,__global int* sizes,__global dou
     }
   }   
 }  
+

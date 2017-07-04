@@ -450,7 +450,7 @@ namespace stan {
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
       #ifdef STAN_GPU
-        if (L_A.rows()  > 500) {
+        if (L_A.rows()  > 200) {
           L_A = L_A.selfadjointView<Eigen::Lower>();
           viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
           viennacl::copy(L_A, vcl_L_A);
@@ -491,7 +491,7 @@ namespace stan {
         }
 
       #ifdef STAN_GPU
-        } else if (L_A.rows()  > 500) {
+        } else if (L_A.rows()  > 200) {
           cholesky_gpu *baseVari
             = new cholesky_gpu(A, L_A);
           size_t pos = 0;
