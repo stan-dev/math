@@ -357,91 +357,9 @@ double test_gradient(int size, double prec) {
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
 }
-/*
-TEST(AgradRevMatrix,mat_cholesky) {
-  using stan::math::matrix_v;
-  using stan::math::transpose;
-  using stan::math::cholesky_decompose;
-  using stan::math::singular_values;
 
-  // symmetric
-  matrix_v X(2,2);
-  AVAR a = 3.0;
-  AVAR b = -1.0;
-  AVAR c = -1.0;
-  AVAR d = 1.0;
-  X << a, b, 
-    c, d;
-
-  matrix_v L = cholesky_decompose(X);
-
-  matrix_v LL_trans = multiply(L,transpose(L));
-  EXPECT_FLOAT_EQ(a.val(),LL_trans(0,0).val());
-  EXPECT_FLOAT_EQ(b.val(),LL_trans(0,1).val());
-  EXPECT_FLOAT_EQ(c.val(),LL_trans(1,0).val());
-  EXPECT_FLOAT_EQ(d.val(),LL_trans(1,1).val());
-
-  EXPECT_NO_THROW(singular_values(X));
+TEST(AgradRevMatrix, 1st_deriv_large_gradients_gpu) {
+  test_gradient(600, 1e-06);
+ // test_gp_grad(1000, 1e-08);
 }
 
-TEST(AgradRevMatrix, exception_mat_cholesky) {
-  stan::math::matrix_v m;
-  
-  // not positive definite
-  m.resize(2,2);
-  m << 1.0, 2.0, 
-    2.0, 3.0;
-  EXPECT_THROW(stan::math::cholesky_decompose(m),std::domain_error);
-
-  // zero size
-  m.resize(0, 0);
-  EXPECT_NO_THROW(stan::math::cholesky_decompose(m));
-  
-  // not square
-  m.resize(2, 3);
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::invalid_argument);
-
-  // not symmetric
-  m.resize(2,2);
-  m << 1.0, 2.0,
-    3.0, 4.0;
-  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
-}
-
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
-  test_gradients(9, 1e-10);
-  test_gradients_simple(10, 1e-10);
-  test_gradient(15, 1e-10);
-  test_gp_grad(20, 1e-10);
-}
-
-TEST(AgradRevMatrix, check_varis_on_stack_small) {
-  stan::math::matrix_v X(2,2);
-  X << 3, -1, -1, 1;
-
-  test::check_varis_on_stack(stan::math::cholesky_decompose(X));
-}
-*/
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
-  test_gradient(36, 1e-08);
-  test_gp_grad(100, 1e-08);
-  test_gp_grad(201, 1e-08);
-  test_chol_mult(37, 1e-08);
-  test_simple_vec_mult(45, 1e-08);
-}
-/*
-TEST(AgradRevMatrix, check_varis_on_stack_large) {
-  stan::math::matrix_v X(50,50);
-  for (int j = 0; j < X.cols() - 1; ++j) {
-    X(j, j) = 1;
-    for (int i = j + 1; i < X.cols(); ++i) {
-      X(i, j) = (i + 1) * (j + 1);
-      X(j, i) = 0;
-    }
-  }
-  X(X.cols() - 1, X.cols() - 1) = 1;
-
-  X = stan::math::multiply(X, stan::math::transpose(X));
-  test::check_varis_on_stack(stan::math::cholesky_decompose(X));
-}
-*/

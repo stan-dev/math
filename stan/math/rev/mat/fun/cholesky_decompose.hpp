@@ -320,14 +320,14 @@ namespace stan {
         vcl_L =  viennacl::trans(vcl_L);
         vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
 
-        my_kernel_mul.global_work_size(0, vcl_Lbar.internal_size1());
-        my_kernel_mul.global_work_size(1, vcl_Lbar.internal_size2());		
+        stan_kernel_mul.global_work_size(0, vcl_Lbar.internal_size1());
+        stan_kernel_mul.global_work_size(1, vcl_Lbar.internal_size2());		
 
-        my_kernel_mul.local_work_size(0, 32);
-        my_kernel_mul.local_work_size(1, 32);
+        stan_kernel_mul.local_work_size(0, 32);
+        stan_kernel_mul.local_work_size(1, 32);
 
         viennacl::ocl::enqueue(
-          my_kernel_mul(
+          stan_kernel_mul(
             vcl_Lbar,
             static_cast<cl_uint>(vcl_Lbar.size1()),
             static_cast<cl_uint>(vcl_Lbar.size2()), 
@@ -348,11 +348,11 @@ namespace stan {
         
         viennacl::copy(stl_sizes, vcl_sizes);
 
-        my_kernel_inv1.global_work_size(0, parts);
-        my_kernel_inv1.local_work_size(0, 1);
+        stan_kernel_inv1.global_work_size(0, parts);
+        stan_kernel_inv1.local_work_size(0, 1);
 
         viennacl::ocl::enqueue(
-          my_kernel_inv1(
+          stan_kernel_inv1(
             vcl_L,vcl_temp,
             static_cast<cl_uint>(remainder),
             static_cast<cl_uint>(part_size_fixed),
@@ -365,21 +365,21 @@ namespace stan {
         for(int pp = parts; pp > 1; pp /= 2){
 
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
-          my_kernel_inv2.global_work_size(0, sizePad);
-          my_kernel_inv2.global_work_size(1, sizePad / 4);
-          my_kernel_inv2.global_work_size(2, pp / 2);
-          my_kernel_inv2.local_work_size(0, 32);
-          my_kernel_inv2.local_work_size(1, 32 / 4);
-          my_kernel_inv2.local_work_size(2, 1);
-          my_kernel_inv3.global_work_size(0, sizePad);
-          my_kernel_inv3.global_work_size(1, sizePad / 4);
-          my_kernel_inv3.global_work_size(2, pp / 2);
-          my_kernel_inv3.local_work_size(0, 32);
-          my_kernel_inv3.local_work_size(1, 32/4);
-          my_kernel_inv3.local_work_size(2, 1);
+          stan_kernel_inv2.global_work_size(0, sizePad);
+          stan_kernel_inv2.global_work_size(1, sizePad / 4);
+          stan_kernel_inv2.global_work_size(2, pp / 2);
+          stan_kernel_inv2.local_work_size(0, 32);
+          stan_kernel_inv2.local_work_size(1, 32 / 4);
+          stan_kernel_inv2.local_work_size(2, 1);
+          stan_kernel_inv3.global_work_size(0, sizePad);
+          stan_kernel_inv3.global_work_size(1, sizePad / 4);
+          stan_kernel_inv3.global_work_size(2, pp / 2);
+          stan_kernel_inv3.local_work_size(0, 32);
+          stan_kernel_inv3.local_work_size(1, 32/4);
+          stan_kernel_inv3.local_work_size(2, 1);
 
           viennacl::ocl::enqueue(
-            my_kernel_inv2(
+            stan_kernel_inv2(
               vcl_L, vcl_sizes, vcl_temp2,
               static_cast<cl_uint>(repeat),
               static_cast<cl_uint>(remainder),
@@ -389,7 +389,7 @@ namespace stan {
             )
           );
           viennacl::ocl::enqueue(
-            my_kernel_inv3(
+            stan_kernel_inv3(
               vcl_L, vcl_sizes, vcl_temp2,
               static_cast<cl_uint>(repeat),
               static_cast<cl_uint>(remainder),
@@ -405,13 +405,13 @@ namespace stan {
         vcl_Lbar =  viennacl::linalg::prod(vcl_L, viennacl::trans(vcl_Lbar));
         viennacl::trans(vcl_Lbar);
 
-        my_kernel_diag.global_work_size(0, vcl_Lbar.internal_size1());
-        my_kernel_diag.global_work_size(1, vcl_Lbar.internal_size2());
-        my_kernel_diag.local_work_size(0,32);
-        my_kernel_diag.local_work_size(1,32);
+        stan_kernel_diag.global_work_size(0, vcl_Lbar.internal_size1());
+        stan_kernel_diag.global_work_size(1, vcl_Lbar.internal_size2());
+        stan_kernel_diag.local_work_size(0,32);
+        stan_kernel_diag.local_work_size(1,32);
 
         viennacl::ocl::enqueue(
-          my_kernel_diag(
+          stan_kernel_diag(
             vcl_Lbar,
             static_cast<cl_uint>(vcl_Lbar.size1()),
             static_cast<cl_uint>(vcl_Lbar.size2()),
@@ -428,6 +428,7 @@ namespace stan {
 
       }
     #endif
+    
     };
 
 
@@ -449,6 +450,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
+      
       #ifdef STAN_GPU
         if (L_A.rows()  > 200) {
           L_A = L_A.selfadjointView<Eigen::Lower>();
@@ -459,12 +461,13 @@ namespace stan {
           // TODO(Steve/Sean): Where should this check go?
           // check_pos_definite("cholesky_decompose", "m", L_A);
           L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
-          for (int i = 0; i < A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
+          for (int i = 0; i < L_A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
         } else {
           Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
           check_pos_definite("cholesky_decompose", "m", L_factor);
         }
       #else
+      
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
         check_pos_definite("cholesky_decompose", "m", L_factor);
       #endif
@@ -503,6 +506,7 @@ namespace stan {
               L.coeffRef(k, j).vi_ = dummy;
           }
       #endif
+ 
       } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);
