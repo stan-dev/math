@@ -3,8 +3,8 @@ language: cpp
 addons_shortcuts:
     addons_clang38: &clang38
       apt:
-        sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-        packages: [ 'clang-3.8' ]
+        sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
+        packages: [ 'clang-3.9' ]
 
 before_script:
   - eval "${MATRIX_EVAL}"
@@ -16,9 +16,9 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      compiler: "clang-3.8"
+      compiler: "clang-3.9"
       env:
-        - MATRIX_EVAL="CXX='clang++-3.8 -v'"
+        - MATRIX_EVAL="CXX='clang++-3.9 -v'"
           TESTFOLDER=test/unit/math/memory
       addons: *clang38
 
