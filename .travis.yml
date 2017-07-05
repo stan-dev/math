@@ -23,61 +23,160 @@ matrix:
       compiler: clang
       env:
         - TESTFOLDER=test/unit/math/memory    
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/prim/scal           
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/prim/arr  
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/prim/mat  
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/rev/scal  
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/rev/arr   
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/rev/mat   
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/fwd/scal  
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/fwd/arr   
+    - os: osx
+      compiler: clang
+      env:
         - TESTFOLDER=test/unit/math/fwd/mat   
     - os: linux
       compiler: "clang-3.8"
+      addons: *clang38
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/memory    
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/prim/scal           
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/prim/arr  
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/prim/mat  
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/rev/scal  
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/rev/arr   
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/rev/mat   
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/fwd/scal  
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/fwd/arr   
+    - os: linux
+      compiler: "clang-3.8"
+      addons: *clang38
+      env:
         - MATRIX_EVAL="CXX=clang++-3.8"
           TESTFOLDER=test/unit/math/fwd/mat   
-      addons: *clang38
     - os: linux
       compiler: gcc
       addons: *gcc49
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/memory    
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/prim/scal           
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/prim/arr  
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/prim/mat  
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/rev/scal  
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/rev/arr   
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/rev/mat   
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/fwd/scal  
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/fwd/arr   
+    - os: linux
+      compiler: gcc
+      addons: *gcc49
+      env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/fwd/mat   
  # - TESTFOLDER=test/unit/math/mix # times out on travis
