@@ -4,7 +4,7 @@ addons_shortcuts:
     addons_clang38: &clang38
       apt:
         sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
-        packages: [ 'clang-3.9' ]
+        packages: [ 'clang-3.9', 'libc++-dev' ]
 
 before_script:
   - eval "${MATRIX_EVAL}"
