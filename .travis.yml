@@ -19,30 +19,67 @@ before_script:
 matrix:
   fast_finish: true
   include:
+    - os: osx
+      compiler: clang
+      env:
+        - TESTFOLDER=test/unit/math/memory    
+        - TESTFOLDER=test/unit/math/prim/scal           
+        - TESTFOLDER=test/unit/math/prim/arr  
+        - TESTFOLDER=test/unit/math/prim/mat  
+        - TESTFOLDER=test/unit/math/rev/scal  
+        - TESTFOLDER=test/unit/math/rev/arr   
+        - TESTFOLDER=test/unit/math/rev/mat   
+        - TESTFOLDER=test/unit/math/fwd/scal  
+        - TESTFOLDER=test/unit/math/fwd/arr   
+        - TESTFOLDER=test/unit/math/fwd/mat   
     - os: linux
       compiler: "clang-3.8"
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/memory
+          TESTFOLDER=test/unit/math/memory    
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/scal           
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/arr  
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat  
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/rev/scal  
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/rev/arr   
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/rev/mat   
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/fwd/scal  
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/fwd/arr   
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/fwd/mat   
       addons: *clang38
     - os: linux
       compiler: gcc
       addons: *gcc49
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/memory
-
-          # env:
-          #   - TESTFOLDER=test/unit/math/memory
-          #   - TESTFOLDER=test/unit/math/prim/scal
-          #   - TESTFOLDER=test/unit/math/prim/arr
-          #   - TESTFOLDER=test/unit/math/prim/mat
-          #   - TESTFOLDER=test/unit/math/rev/scal
-          #   - TESTFOLDER=test/unit/math/rev/arr
-          #   - TESTFOLDER=test/unit/math/rev/mat
-          #   - TESTFOLDER=test/unit/math/fwd/scal
-          #   - TESTFOLDER=test/unit/math/fwd/arr
-          #   - TESTFOLDER=test/unit/math/fwd/mat
+          TESTFOLDER=test/unit/math/memory    
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/scal           
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/arr  
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/mat  
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/rev/scal  
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/rev/arr   
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/rev/mat   
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/fwd/scal  
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/fwd/arr   
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/fwd/mat   
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
 script: ./runTests.py -j2 $TESTFOLDER
