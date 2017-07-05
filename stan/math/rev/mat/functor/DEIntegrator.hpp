@@ -39,10 +39,6 @@ namespace stan {
 
   namespace math {
 
-    using std::log;
-    using std::fabs;
-
-
     template<class TFunctionObject>
     class DEIntegrator {
     public:
@@ -129,6 +125,9 @@ namespace stan {
          double& errorEstimate,
          const double* abcissas,
          const double* weights) {
+            using std::log;
+            using std::fabs;
+
             targetAbsoluteError /= c;
 
             // Offsets to where each level's integration constants
