@@ -26,7 +26,6 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/memory
-      addons: *clang38
 
           # env:
           #   - TESTFOLDER=test/unit/math/memory
