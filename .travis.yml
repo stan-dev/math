@@ -26,9 +26,8 @@ matrix:
       addons: *clang38
     - os: linux
       compiler: gcc
-      addons: *gcc49
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=gcc-4.9"
           TESTFOLDER=test/unit/math/memory
 
           # env:
