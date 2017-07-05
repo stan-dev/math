@@ -87,6 +87,7 @@ help:
 	@echo '  Current configuration:'
 	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
 	@echo '  - CC (Compiler):              ' $(CC)
+	@echo '  - CC_TYPE                     ' $(CC_TYPE)
 	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
 	@echo '  - O_STANC (Opt for stanc):    ' $(O_STANC)
