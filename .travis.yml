@@ -31,21 +31,35 @@ matrix:
   include:
     - <<: *osx_clang
       env:
-        - TESTFOLDER="test/unit/math/memory test/unit/math/prim"
+        - TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *osx_clang
       env:
-        - TESTFOLDER=test/unit/math/rev
+        - TESTFOLDER=test/unit/math/prim/mat
+    - <<: *osx_clang
+      env:
+        - TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
+    - <<: *osx_clang
+      env:
+        - TESTFOLDER=test/unit/math/rev/mat
     - <<: *osx_clang
       env:
         - TESTFOLDER=test/unit/math/fwd
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER="test/unit/math/memory test/unit/math/prim"
+          TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/rev
+          TESTFOLDER=test/unit/math/prim/mat
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/rev/mat
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -53,11 +67,19 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER="test/unit/math/memory test/unit/math/prim"
+          TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/rev
+          TESTFOLDER=test/unit/math/prim/mat
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/rev/mat
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
