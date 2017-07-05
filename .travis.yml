@@ -7,7 +7,7 @@ addons_shortcuts:
         packages: [ 'clang-3.8', 'libc++-dev' ]
     addons_gcc49: &gcc49
       apt:
-        packages: [ 'gcc-4.9' ]
+        packages: [ 'g++-4.9' ]
 
 before_script:
   - eval "${MATRIX_EVAL}"
@@ -26,8 +26,9 @@ matrix:
       addons: *clang38
     - os: linux
       compiler: gcc
+      addons: *gcc49
       env:
-        - MATRIX_EVAL="CXX=gcc-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER=test/unit/math/memory
 
           # env:
