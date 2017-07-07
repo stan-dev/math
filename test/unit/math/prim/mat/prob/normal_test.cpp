@@ -78,7 +78,7 @@ TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest_vec) {
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  std::vector<double> samples(N);
+  std::vector<double> samples;
 
   Matrix<double, Dynamic, 1> mu(N), sigma(N), r;
   for (int i = 0; i < N; ++i) {
@@ -86,11 +86,7 @@ TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest_vec) {
     sigma(i) = 1.0;
   }
 
-  r = stan::math::normal_rng(mu, sigma, rng);
-
-  for (int i = 0; i < N; ++i) {
-    samples[i] = r(i);
-  }
+  samples = stan::math::normal_rng(mu, sigma, rng);
 
   //Generate quantiles from boost's normal distribution
   boost::math::normal_distribution<> dist (2.0, 1.0);
