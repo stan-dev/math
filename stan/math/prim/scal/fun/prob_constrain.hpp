@@ -16,14 +16,12 @@ namespace stan {
      *
      * <p>\f$f(x) = \mbox{logit}^{-1}(x) = \frac{1}{1 + \exp(x)}\f$.
      *
-     * @param x Free scalar.
-     * @return Probability-constrained result of transforming
-     * the free scalar.
-     * @tparam T Type of scalar.
+     * @tparam T type of scalar
+     * @param[in] x unconstrained value
+     * @return result constrained to fall in (0, 1)
      */
     template <typename T>
-    inline
-    T prob_constrain(const T x) {
+    inline T prob_constrain(const T& x) {
       return inv_logit(x);
     }
 
@@ -42,15 +40,13 @@ namespace stan {
      * <p>\f$\log ((\mbox{logit}^{-1}(x)) (1 - \mbox{logit}^{-1}(x))\f$
      * <p>\f$\log (\mbox{logit}^{-1}(x)) + \log (1 - \mbox{logit}^{-1}(x))\f$.
      *
-     * @param x Free scalar.
-     * @param lp Log probability reference.
-     * @return Probability-constrained result of transforming
-     * the free scalar.
-     * @tparam T Type of scalar.
+     * @tparam T type of scalar
+     * @param[in] x unconstrained value
+     * @param[in, out] lp log density
+     * @return result constrained to fall in (0, 1)
      */
     template <typename T>
-    inline
-    T prob_constrain(const T x, T& lp) {
+    inline T prob_constrain(const T& x, T& lp) {
       using std::log;
       T inv_logit_x = inv_logit(x);
       lp += log(inv_logit_x) + log1m(inv_logit_x);

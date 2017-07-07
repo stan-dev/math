@@ -17,7 +17,7 @@ namespace stan {
      * @return Input transformed to be positive.
      */
     template <typename T>
-    inline T positive_constrain(const T x) {
+    inline T positive_constrain(const T& x) {
       using std::exp;
       return exp(x);
     }
@@ -33,13 +33,13 @@ namespace stan {
      * <p>\f$\log | \frac{d}{dx} \mbox{exp}(x) |
      *    = \log | \mbox{exp}(x) | =  x\f$.
      *
-     * @param x Arbitrary input scalar.
-     * @param lp Log probability reference.
-     * @return Input transformed to be positive.
-     * @tparam T Type of scalar.
+     * @tparam T type of unconstrained value
+     * @param x unconstrained value
+     * @param lp log density reference.
+     * @return positive constrained version of unconstrained value
      */
     template <typename T>
-    inline T positive_constrain(const T x, T& lp) {
+    inline T positive_constrain(const T& x, T& lp) {
       using std::exp;
       lp += x;
       return exp(x);
