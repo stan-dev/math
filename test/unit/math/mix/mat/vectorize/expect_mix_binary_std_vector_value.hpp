@@ -12,6 +12,7 @@ template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_mix_binary_scalar_std_vector_eq(
 std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
 bool seed_one = 1, bool seed_two = 1) {
+  using stan::math::fvar;
   using std::vector;
 //  for (size_t i = 0; i < template_v1.size(); ++i) {
 //    for (size_t j = 0; j < 5; ++j) {
@@ -47,6 +48,10 @@ bool seed_one = 1, bool seed_two = 1) {
       expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 
       input_a1, input_v1[j], fa[j], input_a2, input_v2[j]);
      /*
+      fvar<fvar<double> > a = 
+      build_binary_vector1<F>(std::vector<fvar<fvar<double> > >(), 0)[0];
+      fvar<fvar<double> > fb = F::apply_base(a, input_v1[j]);
+      std::cout << fb.d_.d_ << std::endl; 
       FV fb = F::apply_base(input_a1, input_v1[j]);
       AVEC exp_b = createAVEC(input_a1.d_);
       VEC exp_bg;

@@ -19,7 +19,7 @@ void expect_prim_binary_matrix_value() {
   vector<int> int_valid_inputs2 = F::int_valid_inputs2();
   vector<double> valid_inputs1 = F::valid_inputs1();
   vector<double> valid_inputs2 = F::valid_inputs2();
-  
+
   //Tests int, matrix
   for (size_t i = 0; i < int_valid_inputs1.size(); ++i) {
     MatrixXd a1 = MatrixXd::Constant(5, 3, valid_inputs1[i]);
@@ -63,9 +63,9 @@ void expect_prim_binary_matrix_value() {
     d2.push_back(b2);
     d2.push_back(b2);
     expect_prim_binary_scalar_std_vector_matrix_eq<F>(
-    int_valid_inputs1[i], d2);
+      int_valid_inputs1[i], d2);
     expect_prim_binary_std_vector_matrix_scalar_eq<F>(
-    d1, int_valid_inputs2[i]);
+      d1, int_valid_inputs2[i]);
   }
 
   //Tests double, vector<matrix>

@@ -52,9 +52,9 @@ void expect_prim_binary_vector_value() {
     d2.push_back(c2);
     d2.push_back(c2);
     expect_prim_binary_scalar_std_vector_matrix_eq<F>(
-    int_valid_inputs1[i], d2);
+      int_valid_inputs1[i], d2);
     expect_prim_binary_std_vector_matrix_scalar_eq<F>(
-    d1, int_valid_inputs2[i]);
+      d1, int_valid_inputs2[i]);
   }
 
   //Tests double, std::vector<vector>
@@ -68,9 +68,9 @@ void expect_prim_binary_vector_value() {
     d2.push_back(c2);
     d2.push_back(c2);
     expect_prim_binary_scalar_std_vector_matrix_eq<F>(
-    valid_inputs1[i], d2);
+      valid_inputs1[i], d2);
     expect_prim_binary_std_vector_matrix_scalar_eq<F>(
-    d1, valid_inputs2[i]);
+      d1, valid_inputs2[i]);
   }
 
   //Tests std::vector<vector>, std::vector<vector>

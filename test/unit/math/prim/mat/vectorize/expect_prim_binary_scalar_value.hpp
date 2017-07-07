@@ -16,29 +16,29 @@ void expect_prim_binary_scalar_value() {
   //int, int
   for (size_t i = 0; i < int_valid_inputs1.size(); ++i) {
     double v = F::template apply<double>(int_valid_inputs1[i],
-    int_valid_inputs2[i]);
+                                         int_valid_inputs2[i]);
     double exp_v = F::apply_base(int_valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                 int_valid_inputs2[i]);
     expect_val_eq(exp_v, v);
   }
   //double, double
   for (size_t i = 0; i < valid_inputs1.size(); ++i) {
     double v = F::template apply<double>(valid_inputs1[i], 
-    valid_inputs2[i]);
+                                         valid_inputs2[i]);
     double exp_v = F::apply_base(valid_inputs1[i], valid_inputs2[i]);
     expect_val_eq(exp_v, v);
   }
   //int, double
   for (size_t i = 0; i < int_valid_inputs1.size(); ++i) {
     double v = F::template apply<double>(int_valid_inputs1[i], 
-    valid_inputs2[i]);
+                                         valid_inputs2[i]);
     double exp_v = F::apply_base(int_valid_inputs1[i], valid_inputs2[i]);
     expect_val_eq(exp_v, v);
   }
   //double, int
   for (size_t i = 0; i < valid_inputs1.size(); ++i) {
     double v = F::template apply<double>(valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                         int_valid_inputs2[i]);
     double exp_v = F::apply_base(valid_inputs1[i], int_valid_inputs2[i]);
     expect_val_eq(exp_v, v);
   }

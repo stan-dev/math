@@ -8,8 +8,7 @@
 
 template <typename F, typename matrix_t>
 void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1, 
-const matrix_t& input_m2) {
-
+                                         const matrix_t& input_m2) {
   matrix_t fa = F::template apply<matrix_t>(input_m1, input_m2);
   EXPECT_EQ(input_m1.size(), fa.size());
   EXPECT_EQ(input_m2.size(), fa.size());

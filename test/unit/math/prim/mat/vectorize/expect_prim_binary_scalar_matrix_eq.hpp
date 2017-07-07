@@ -7,8 +7,8 @@
 
 
 template <typename F, typename input_t, typename matrix_t>
-void expect_prim_binary_scalar_matrix_eq(input_t input, const matrix_t&
-input_m) {
+void expect_prim_binary_scalar_matrix_eq(input_t input, 
+                                         const matrix_t& input_m) {
   matrix_t fa = F::template apply<matrix_t>(input, input_m);
   EXPECT_EQ(input_m.size(), fa.size());
   for (int i = 0; i < fa.size(); ++i) {

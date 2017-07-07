@@ -17,13 +17,13 @@ void expect_row_vector_error() {
   RowVectorXd badsize_dm(11);
 
   EXPECT_THROW(F::template apply<row_vector_t>(badsize_tm1, badsize_dm),
-  std::domain_error);
+               std::domain_error);
   EXPECT_THROW(F::template apply<row_vector_t>(badsize_dm, badsize_tm1),
-  std::domain_error);
+               std::domain_error);
   EXPECT_THROW(F::template apply<row_vector_t>(badsize_tm1, badsize_tm2),
-  std::domain_error);
+               std::domain_error);
   EXPECT_THROW(F::template apply<row_vector_t>(badsize_tm2, badsize_tm1),
-  std::domain_error);
+               std::domain_error);
 
   vector<double> invalid_inputs = F::invalid_inputs();
   if (invalid_inputs.size() == 0) return;
@@ -44,8 +44,9 @@ void expect_row_vector_error() {
   EXPECT_THROW(F::template apply<row_vector_t>(a, b), std::domain_error);
   EXPECT_THROW(F::template apply<row_vector_t>(b, a), std::domain_error);
   EXPECT_THROW(F::template apply<row_vector_t>(b, b), std::domain_error);
-  EXPECT_THROW(F::template apply<row_vector_t>(b.block(1, 1, 1, 1), 
-  b.block(1, 1, 1, 1)), std::domain_error);
+  EXPECT_THROW(F::template apply<row_vector_t>(b.block(1, 1, 1, 1),
+                                               b.block(1, 1, 1, 1)),
+               std::domain_error);
 
   vector<RowRowVectorXd> d;
   d.push_back(a);
@@ -56,7 +57,7 @@ void expect_row_vector_error() {
   expect_binary_scalar_std_vector_matrix_err_throw<F>(y, d);
   expect_binary_scalar_std_vector_matrix_err_throw<F>(y, e);
   expect_binary_scalar_std_vector_matrix_err_throw<F>(
-  int_invalid_inputs, e);
+    int_invalid_inputs, e);
   expect_binary_scalar_std_vector_matrix_err_throw<F>(invalid_inputs, e);
   EXPECT_THROW(F::template apply<row_vector_t>(d, e), std::domain_error);
 }

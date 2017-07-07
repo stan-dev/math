@@ -11,14 +11,15 @@ void expect_binary_int_std_vector_error() {
 
   vector<int> a1(5);
   vector<int> a2(9);
-  EXPECT_THROW(F::template apply<vector<double> >(a1, a2), 
-  std::invalid_argument);
+  EXPECT_THROW(F::template apply<vector<double> >(a1, a2),
+               std::invalid_argument);
 
   vector<int> invalid_inputs1 = F::int_invalid_inputs1();
   vector<int> invalid_inputs2 = F::int_invalid_inputs2();
   if (invalid_inputs1.size() == 0) return;
   EXPECT_THROW(F::template apply<vector<double> >(invalid_inputs1,
-               invalid_inputs2), std::domain_error);
+                                                  invalid_inputs2),
+               std::domain_error);
 
   vector<vector<int> > z1;
   z1.push_back(invalid_inputs1);

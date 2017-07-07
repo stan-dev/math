@@ -34,8 +34,8 @@ input_t2 input2) {
   vector<vector<input_t2> > input_v2;
   input_v2.push_back(b2);
   input_v2.push_back(b2);
-  vector<vector<double> > fb
-  = F::template apply<vector<vector<double> > >(input1, input_v2); 
+  vector<vector<double> > fb = 
+    F::template apply<vector<vector<double> > >(input1, input_v2); 
   EXPECT_EQ(input_v2.size(), fb.size()); 
   for (size_t i = 0; i < input_v2.size(); ++i) {
     EXPECT_EQ(input_v2[i].size(), fb[i].size());
@@ -107,40 +107,40 @@ void expect_prim_binary_std_vector_value() {
   //int, vector tests
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
     expect_binary_scalar_std_vector_eq<F>(int_valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                          int_valid_inputs2[i]);
     expect_binary_scalar_std_vector_eq<F>(int_valid_inputs1[i], 
-    valid_inputs2[i]);
+                                          valid_inputs2[i]);
   }
   //double, vector tests
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
     expect_binary_scalar_std_vector_eq<F>(valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                          int_valid_inputs2[i]);
     expect_binary_scalar_std_vector_eq<F>(valid_inputs1[i], 
-    valid_inputs2[i]);
+                                          valid_inputs2[i]);
   }
   //vector, vector tests
   expect_binary_std_vector_std_vector_eq<F>(int_valid_inputs1,
-  valid_inputs2);
+                                            valid_inputs2);
   expect_binary_std_vector_std_vector_eq<F>(valid_inputs1, 
-  int_valid_inputs2);
+                                            int_valid_inputs2);
   expect_binary_std_vector_std_vector_eq<F>(int_valid_inputs1, 
-  int_valid_inputs2);
+                                            int_valid_inputs2);
   expect_binary_std_vector_std_vector_eq<F>(valid_inputs1, valid_inputs2);
 
   //int, vector<vector> tests
   for (size_t i = 0; i < int_valid_inputs.size(); ++i) {
     expect_binary_scalar_std_vector_std_vector_eq<F>(int_valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                                     int_valid_inputs2[i]);
     expect_binary_scalar_std_vector_std_vector_eq<F>(int_valid_inputs1[i], 
-    valid_inputs2[i]);
+                                                     valid_inputs2[i]);
   }
 
   //double, vector<vector> tests
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
     expect_binary_scalar_std_vector_std_vector_eq<F>(valid_inputs1[i], 
-    int_valid_inputs2[i]);
+                                                     int_valid_inputs2[i]);
     expect_binary_scalar_std_vector_std_vector_eq<F>(valid_inputs1[i], 
-    valid_inputs2[i]);
+                                                     valid_inputs2[i]);
   }
 
   vector<vector<int> > a1;

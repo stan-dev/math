@@ -6,9 +6,10 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-template <typename F, typename input_t, typename matrix_t>
-void expect_prim_binary_scalar_std_vector_matrix_eq(input_t input, 
-const std::vector<matrix_t>& input_mv) {
+template <typename F, typename input_t, typename matrix_t> void 
+expect_prim_binary_scalar_std_vector_matrix_eq(input_t input, 
+                                               const std::vector<matrix_t>& 
+                                               input_mv) {
   using std::vector;
 
   vector<matrix_t> fd=F::template apply<vector<matrix_t> >(input,input_mv);

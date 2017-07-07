@@ -7,11 +7,12 @@
 #include <gtest/gtest.h>
 
 template <typename F, typename input_t, typename matrix_t>
-void expect_prim_binary_std_vector_matrix_scalar_eq( 
-const std::vector<matrix_t>& input_mv, input_t input) {
+void expect_prim_binary_std_vector_matrix_scalar_eq(const std::vector<
+                                                    matrix_t>& input_mv,
+                                                    input_t input) {
   using std::vector;
 
-  vector<matrix_t> fd = 
+  vector<matrix_t> fd =
   F::template apply<vector<matrix_t> >(input_mv, input);
   EXPECT_EQ(input_mv.size(), fd.size());
   for (size_t i = 0; i < input_mv.size(); ++i) {
@@ -20,6 +21,6 @@ const std::vector<matrix_t>& input_mv, input_t input) {
       double exp_v = F::apply_base(input_mv[i](j), input);
       expect_val_eq(exp_v, fd[i](j));
     }
-  }    
+  }
 }
 #endif

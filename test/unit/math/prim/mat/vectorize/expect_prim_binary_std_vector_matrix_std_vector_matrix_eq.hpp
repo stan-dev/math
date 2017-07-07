@@ -7,13 +7,15 @@
 #include <gtest/gtest.h>
 
 
-template <typename F, typename matrix_t>
-void expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(const
-std::vector<matrix_t>& input_mv1, const std::vector<matrix_t>& input_mv2) {
+template <typename F, typename matrix_t> void
+expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(
+  const std::vector<matrix_t>& input_mv1,
+  const std::vector<matrix_t>& input_mv2) {
+
   using std::vector;
 
   std::vector<matrix_t> fa = F::template apply<vector<matrix_t> >(
-  input_mv1, input_mv2);
+    input_mv1, input_mv2);
   EXPECT_EQ(input_mv1.size(), fa.size());
   EXPECT_EQ(input_mv2.size(), fa.size());
   for (size_t i = 0; i < input_mv1.size(); ++i) {
@@ -23,6 +25,6 @@ std::vector<matrix_t>& input_mv1, const std::vector<matrix_t>& input_mv2) {
       double exp_v = F::apply_base(input_mv1[i](j), input_mv2[i](j));
       expect_val_eq(exp_v, fa[i](j));
     }
-  }    
+  }
 }
 #endif
