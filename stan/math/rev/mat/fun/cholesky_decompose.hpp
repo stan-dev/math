@@ -16,6 +16,8 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <algorithm>
 
+
+
 namespace stan {
   namespace math {
 
@@ -452,7 +454,7 @@ namespace stan {
       // NOTE: This should be replaced by some check that comes from a user
       
       #ifdef STAN_GPU
-        if (L_A.rows()  > 200) {
+        if (L_A.rows()  > 70) {
           L_A = L_A.selfadjointView<Eigen::Lower>();
           viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
           viennacl::copy(L_A, vcl_L_A);
@@ -494,7 +496,7 @@ namespace stan {
         }
 
       #ifdef STAN_GPU
-        } else if (L_A.rows()  > 200) {
+        } else if (L_A.rows()  > 70) {
           cholesky_gpu *baseVari
             = new cholesky_gpu(A, L_A);
           size_t pos = 0;

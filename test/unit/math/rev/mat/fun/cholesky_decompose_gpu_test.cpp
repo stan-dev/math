@@ -358,36 +358,26 @@ double test_gradient(int size, double prec) {
   return grads_ad.sum();
 }
 
+
 // medium tests
-TEST(AgradRevMatrix, 1st_deriv_medium250_gradients_gpu) {
-  test_gradient(250, 1e-06);
+TEST(AgradRevMatrix, 1st_deriv_medium_gradients_gpu) {
+  test_gradient(74, 1e-06);
 }
 
-TEST(AgradRevMatrix, 1st_deriv_medium250_vec_mult_gpu) {
-  test_simple_vec_mult(250, 1e-08);
-}
-
-TEST(AgradRevMatrix, 1st_deriv_medium250_chol_mult_gpu) {
-  test_chol_mult(250, 1e-08);
+TEST(AgradRevMatrix, 1st_deriv_medium_vec_mult_gpu) {
+  test_simple_vec_mult(74, 1e-08);
 }
 
 
-// large tests
-TEST(AgradRevMatrix, 1st_deriv_large600_gradients_gpu) {
-  test_gradient(600, 1e-06);
+TEST(AgradRevMatrix, 1st_deriv_medium_chol_mult_gpu) {
+  test_chol_mult(74, 1e-08);
 }
+
 
 TEST(AgradRevMatrix, 1st_deriv_large_gp_gradients_gpu) {
   test_gp_grad(3000, 1e-08);
   test_gp_grad(2000, 1e-08);
   test_gp_grad(1000, 1e-08);
   test_gp_grad(250, 1e-08);
-}
-TEST(AgradRevMatrix, 1st_deriv_large600_vec_mult_gpu) {
-  test_simple_vec_mult(600, 1e-08);
-}
-
-TEST(AgradRevMatrix, 1st_deriv_large600_chol_mult_gpu) {
-  test_chol_mult(600, 1e-08);
 }
 
