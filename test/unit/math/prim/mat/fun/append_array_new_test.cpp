@@ -54,7 +54,7 @@ void build(int n0, Eigen::Matrix<T1, R, C>& z) {
 template<typename T1>
 void build(int n1, int n0, std::vector<T1> &z) {
   z.resize(n1);
-  for(size_t i = 0; i < n1; i++) {
+  for(int i = 0; i < n1; i++) {
     build(n0, z[i]);
   }
 }
@@ -72,7 +72,7 @@ void build(int n1, int n0, std::vector<T1> &z) {
 template<typename T1>
 void build(int n2, int n1, int n0, std::vector<T1> &z) {
   z.resize(n2);
-  for(size_t i = 0; i < n2; i++) {
+  for(int i = 0; i < n2; i++) {
     build(n1, n0, z[i]);
   }
 }
@@ -114,8 +114,8 @@ void check_eq(const Eigen::Matrix<T1, R, C>& z1, const Eigen::Matrix<T2, R, C>& 
   EXPECT_EQ(z1.rows(), z2.rows());
   EXPECT_EQ(z1.cols(), z2.cols());
 
-  for(size_t i = 0; i < z1.rows(); i++)
-    for(size_t j = 0; j < z1.cols(); j++)
+  for(int i = 0; i < z1.rows(); i++)
+    for(int j = 0; j < z1.cols(); j++)
       check_eq(z1(i, j), z2(i, j));
 }
 
