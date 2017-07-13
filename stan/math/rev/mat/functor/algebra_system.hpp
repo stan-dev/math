@@ -31,26 +31,20 @@ namespace stan {
     public:
       system_functor() { }
 
-      system_functor(const F f,
+      system_functor(const F& f,
                      const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
                      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                      const std::vector<double>& dat,
                      const std::vector<int>& dat_int,
                      std::ostream* msgs,
                      const bool& x_is_dv)
-        : f_() {
-        x_ = x;
-        y_ = y;
-        dat_ = dat;
-        dat_int_ = dat_int;
-        msgs_ = msgs;
-        x_is_dv_ = x_is_dv;
-      }
+        : f_(), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs),
+        x_is_dv_(x_is_dv) { }
 
       template <typename T>
       inline
       Eigen::Matrix<T, Eigen::Dynamic, 1>
-      operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1> x) const {
+      operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
         if (x_is_dv_)
           return f_(x, y_, dat_, dat_int_, msgs_);
         else
@@ -62,7 +56,7 @@ namespace stan {
      * This functor has the structure required to call Eigen's solver.
      */
     template <typename FS, typename F, typename T0, typename T1>
-    struct hybrj_functor_solver : stan::math::NLOFunctor<double> {
+    struct hybrj_functor_solver : NLOFunctor<double> {
     private:
       FS fs_;
       int x_size_;
@@ -71,17 +65,17 @@ namespace stan {
     public:
       hybrj_functor_solver(const FS& fs,
                            const F& f,
-                           const Eigen::Matrix<T0, Eigen::Dynamic, 1> x,
-                           const Eigen::Matrix<T1, Eigen::Dynamic, 1> y,
-                           const std::vector<double> dat,
-                           const std::vector<int> dat_int,
+                           const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+                           const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+                           const std::vector<double>& dat,
+                           const std::vector<int>& dat_int,
                            std::ostream* msgs,
-                           const bool x_is_dv)
+                           const bool& x_is_dv)
         : fs_(f, x, y, dat, dat_int, msgs, x_is_dv),
           x_size_(x.size()) { }
 
       int operator()(const Eigen::VectorXd &dv, Eigen::VectorXd &fvec) {
-        stan::math::jacobian(fs_, dv, fvec, J_);
+        jacobian(fs_, dv, fvec, J_);
         return 0;
       }
 
@@ -96,7 +90,7 @@ namespace stan {
         return J_;
       }
 
-      Eigen::VectorXd get_value(const Eigen::VectorXd dv) {
+      Eigen::VectorXd get_value(const Eigen::VectorXd &dv) {
         return fs_(dv);
       }
     };

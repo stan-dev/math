@@ -266,9 +266,8 @@ TEST(MathMatrix, error_conditions) {
   std::vector<int> dat_int(0);
 
   std::stringstream err_msg;
-  err_msg << "algebra_solver: the ouput of the algebraic system has "
-          << "dimension = 2, but should have the same dimension as x "
-          << "(the vector of unknowns), which is: 3";
+  err_msg << "algebra_solver: size of the algebraic system's output (2) "
+          << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(algebra_solver(nonSquareEq_functor(),
                                   x, y, dat, dat_int),
@@ -350,9 +349,8 @@ TEST(MathMatrix, error_conditions_dbl) {
   std::vector<int> dat_int(0);
 
   std::stringstream err_msg;
-  err_msg << "algebra_solver: the ouput of the algebraic system has "
-          << "dimension = 2, but should have the same dimension as x "
-          << "(the vector of unknowns), which is: 3";
+  err_msg << "algebra_solver: size of the algebraic system's output (2) "
+          << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(algebra_solver(nonSquareEq_functor(),
                                   x, y, dat, dat_int),

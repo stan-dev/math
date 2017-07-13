@@ -7,6 +7,7 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
@@ -39,11 +40,11 @@ namespace stan {
 
       algebra_solver_vari(const FS& fs,
                           const F& f,
-                          const Eigen::VectorXd x,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1> y,
-                          const std::vector<double> dat,
-                          const std::vector<int> dat_int,
-                          const Eigen::VectorXd theta_dbl,
+                          const Eigen::VectorXd& x,
+                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+                          const std::vector<double>& dat,
+                          const std::vector<int>& dat_int,
+                          const Eigen::VectorXd& theta_dbl,
                           FX& fx,
                           std::ostream* msgs)
         : vari(theta_dbl(0)),
@@ -64,12 +65,12 @@ namespace stan {
           fy(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs, false);
         Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
-        Jx_y_ = - stan::math::mdivide_left(Jf_x, Jf_y);
+        Jx_y_ = - mdivide_left(Jf_x, Jf_y);
       }
 
       void chain() {
-        for (int i = 0; i < x_size_; i++)
-          for (int j = 0; j < y_size_; j++)
+        for (int j = 0; j < y_size_; j++)
+          for (int i = 0; i < x_size_; i++)
             y_[j]->adj_ += theta_[i]->adj_ * Jx_y_(i, j);
       }
     };
@@ -101,6 +102,21 @@ namespace stan {
      * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
      * @return theta Vector of solutions to the system of equations.
+     *
+     * @throw <code>std::invalid_argument</code> if x has size zero.
+     * @throw <code>std::invalid_argument</code> if y has size zero.
+     * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
+     * negative.
+     * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+     * negative.
+     * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+     * @throw <code>error_type>?</code> if solver exceeds max_num_steps.
+     * @throw <code>error_type>?</code> if the norm of the solution exceeds the
+     * function tolerance.
      */
     template <typename F>
     Eigen::VectorXd
@@ -116,21 +132,23 @@ namespace stan {
       // Check that arguments are valid
       check_nonzero_size("algebra_solver", "initial guess", x);
       check_nonzero_size("algebra_solver", "parameter vector", y);
-      for (int i = 0; i < x.size(); i++)  // FIX ME - do these w/o for loop?
+      for (int i = 0; i < x.size(); i++)
         check_finite("algebra_solver", "initial guess", x(i));
       for (int i = 0; i < y.size(); i++)
         check_finite("algebra_solver", "parameter vector", y(i));
       for (size_t i = 0; i < dat.size(); i++)
         check_finite("algebra_solver", "continuous data", dat[i]);
+      for (size_t i = 0; i < dat_int.size(); i++)
+        check_finite("algebra_solver", "integer data", dat_int[i]);
 
-      if (relative_tolerance <= 0)
+      if (relative_tolerance < 0)
         invalid_argument("algebra_solver",
                          "relative_tolerance,", relative_tolerance,
-                         "", ", must be greater than 0");
-      if (function_tolerance <= 0)
+                         "", ", must be greater than or equal to 0");
+      if (function_tolerance < 0)
         invalid_argument("algebra_solver",
                          "function_tolerance,", function_tolerance,
-                         "", ", must be greater than 0");
+                         "", ", must be greater than or equal to 0");
       if (max_num_steps <= 0)
         invalid_argument("algebra_solver",
                          "max_num_steps,", max_num_steps,
@@ -143,16 +161,11 @@ namespace stan {
       Eigen::HybridNonLinearSolver<FX> solver(fx);
 
       // Check dimension unknowns equals dimension of system output
-      int z_size = fx.get_value(x).size();  // FIX ME: do w/o computing fx?
-      if (z_size != x.size()) {
-        std::stringstream msg;
-        msg << ", but should have the same dimension as x "
-            << "(the vector of unknowns), which is: "
-            << x.size();
-        std::string msg_str(msg.str());
-        invalid_argument("algebra_solver", "the ouput of the algebraic system",
-                         z_size, "has dimension = ", msg_str.c_str());
-      }
+      // int z_size = fx.get_value(x).size();  // FIX ME: do w/o computing fx?
+      check_matching_sizes("algebra_solver",
+                           "the algebraic system's output",
+                           fx.get_value(x),
+                           "the vector of unknowns, x,", x);
 
       // Compute theta_dbl
       Eigen::VectorXd theta_dbl = x;
@@ -166,9 +179,8 @@ namespace stan {
                          max_num_steps, "", " exceeded.");
 
       // Check solution is a root
-      Eigen::VectorXd system = fx.get_value(theta_dbl);
-      if (system.stableNorm() > function_tolerance) {
-          std::stringstream msg_index;
+      double system_norm = fx.get_value(theta_dbl).stableNorm();
+      if (system_norm > function_tolerance) {
           std::stringstream msg_f;
           msg_f << " but should be lower than the function tolerance: "
                 << function_tolerance
@@ -178,18 +190,24 @@ namespace stan {
 
           invalid_argument("algebra_solver",
                            "the norm of the algebraic function is:",
-                           system.stableNorm(), "", msg_str_f.c_str());
+                           system_norm, "", msg_str_f.c_str());
       }
 
       return theta_dbl;
      }
 
     /**
-     * Overload the algebraic system to handle the case where y
+     * Return the solution to the specified system of algebraic
+     * equations given an initial guess, and parameters and data,
+     * which get passed into the algebraic system. The user can
+     * also specify the relative tolerance (xtol in Eigen's code),
+     * the function tolerance, and the maximum number of steps
+     * (maxfev in Eigen's code).
+     *
+     * Overload the previous definition to handle the case where y
      * is a vector of parameters (var). The overload calls the
      * algebraic solver defined above and builds a vari object on
      * top, using the algebra_solver_vari class.
-     *
      *
      * @tparam F type of equation system function.
      * @tparam T  Type of elements in y vectors.
@@ -222,7 +240,7 @@ namespace stan {
                                                  function_tolerance,
                                                  max_num_steps);
 
-      // FIX ME - the next three lines are redeundant (they occur in the prim
+      // FIX ME - the next three lines are redundant (they occur in the prim
       // algebra solver), but shouldn't be too expensive.
       typedef system_functor<F, double, double> FS;
       typedef hybrj_functor_solver<FS, F, double, double> FX;
@@ -233,7 +251,7 @@ namespace stan {
         = new algebra_solver_vari<FS, F, T, FX>(FS(), f, x, y, dat, dat_int,
                                                 theta_dbl, fx, msgs);
       Eigen::Matrix<T, Eigen::Dynamic, 1> theta(x.size());
-      theta(0) = var(vi0);
+      theta(0) = var(vi0->theta_[0]);
       for (int i = 1; i < x.size(); ++i)
         theta(i) = var(vi0->theta_[i]);
 

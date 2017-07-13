@@ -6,50 +6,54 @@
 
 namespace stan {
   namespace math {
-
-    template <typename _Scalar, int NX = Eigen::Dynamic,
-      int NY = Eigen::Dynamic>
+    /**
+     * A structure which gets passed to Eigen's dogleg
+     * algebraic solver.
+     */
+    template <typename T, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
     struct NLOFunctor {
-      typedef _Scalar Scalar;
-      enum {
-        InputsAtCompileTime = NX,
-        ValuesAtCompileTime = NY
-      };
-
-      typedef Eigen::Matrix<Scalar, InputsAtCompileTime, 1> InputType;
-      typedef Eigen::Matrix<Scalar, ValuesAtCompileTime, 1> ValueType;
-      typedef Eigen::Matrix<Scalar, ValuesAtCompileTime, InputsAtCompileTime>
+      typedef Eigen::Matrix<T, NX, 1> InputType;
+      typedef Eigen::Matrix<T, NY, 1> ValueType;
+      typedef Eigen::Matrix<T, NY, NX>
         JacobianType;
 
       const int m_inputs, m_values;
 
-      NLOFunctor() : m_inputs(InputsAtCompileTime),
-        m_values(ValuesAtCompileTime) {}
+      NLOFunctor() : m_inputs(NX),
+        m_values(NY) {}
       NLOFunctor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
 
       int inputs() const { return m_inputs; }
       int values() const { return m_values; }
     };
 
+    /**
+     * A functor which stores an algebraic system and
+     * its gradient, and contains the class functions
+     * required for Eigen's dogleg algebraic solver.
+     *
+     * Members:
+     * f1 functor which returns output of algebraic system.
+     * f2 gradient of f1 with respect to the unknowns for
+     * which we solve.
+     */
     template <typename F1, typename F2>
     struct hybrj_functor : NLOFunctor<double> {
     private:
-      F1 f1;
-      F2 f2;
+      F1 f1_;
+      F2 f2_;
 
     public:
-      hybrj_functor(const F1& f1_param, const F2& f2_param) {
-        f1 = f1_param;
-        f2 = f2_param;
-      }
-
+      hybrj_functor(const F1& f1,
+                    const F2& f2)
+        : f1_(f1), f2_(f2) { }
 
       int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
-        fvec = f1(x);
+        fvec = f1_(x);
         return 0;
       }
       int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) {
-        fjac = f2(x);
+        fjac = f2_(x);
         return 0;
       }
     };
@@ -71,7 +75,7 @@ namespace stan {
     inline
     Eigen::VectorXd
     dogleg(const Eigen::VectorXd& x, const F1 f1, const F2 f2) {
-      stan::math::hybrj_functor<F1, F2> functor(f1, f2);
+      hybrj_functor<F1, F2> functor(f1, f2);
       Eigen::HybridNonLinearSolver<hybrj_functor<F1, F2> > solver(functor);
       Eigen::VectorXd theta = x;
       solver.solve(theta);
