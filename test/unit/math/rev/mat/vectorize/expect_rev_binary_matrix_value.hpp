@@ -298,9 +298,8 @@ void expect_rev_binary_scalar_std_vector_matrix_all_eq(
                                                    var_template_v);
 }
 
-template <typename F, typename matrix_t, int R, int C>
-void expect_rev_binary_matrix_value(
-  Eigen::Matrix<matrix_t, R, C> template_m) {
+template <typename F, int R, int C> void
+expect_rev_binary_matrix_value(Eigen::Matrix<double, R, C> template_m) {
 
   using stan::math::var;
   using std::vector;
@@ -318,11 +317,11 @@ void expect_rev_binary_matrix_value(
   var_matrix_t var_template_m;
 
   d_scalar_template_m = build_template_matrix(d_scalar_template_m, 3, 5);
-  d_template_m = build_template_matrix(d_scalar_template_m, 
+  d_template_m = build_template_matrix(d_scalar_template_m,
                                        3, F::valid_inputs1().size());
-  var_scalar_template_m = build_template_matrix(var_scalar_template_m, 
+  var_scalar_template_m = build_template_matrix(var_scalar_template_m,
                                                 3, 5);
-  var_template_m = build_template_matrix(var_scalar_template_m, 
+  var_template_m = build_template_matrix(var_scalar_template_m,
                                          3, F::valid_inputs1().size());
   expect_rev_binary_scalar_matrix_all_eq<F>(int_template_v, d_template_v,
                                             var_template_v,
