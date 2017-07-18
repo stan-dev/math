@@ -36,7 +36,7 @@ namespace stan {
       int y_size_;
       int x_size_;
       vari** theta_;
-      Eigen::MatrixXd Jx_y_;
+      std::vector<double> Jx_y_;
 
       algebra_solver_vari(const FS& fs,
                           const F& f,
@@ -52,6 +52,8 @@ namespace stan {
           y_size_(y.size()),
           x_size_(x.size()),
           theta_(ChainableStack::memalloc_.alloc_array<vari*>(x.size())) {
+        using Eigen::MatrixXd;
+        using Eigen::Map;
         for (int i = 0; i < y.size(); ++i)
           y_[i] = y(i).vi_;
 
@@ -59,19 +61,26 @@ namespace stan {
         for (int i = 1; i < x.size(); ++i)
           theta_[i] = new vari(theta_dbl(i), false);
 
-        // Compute the Jacobian
-        Eigen::MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
+        // Compute the Jacobian and store in vector
+        MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
         hybrj_functor_solver<FS, F, double, double>
           fy(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs, false);
-        Eigen::MatrixXd Jf_y = fy.get_jacobian(value_of(y));
+        MatrixXd Jf_y = fy.get_jacobian(value_of(y));
 
-        Jx_y_ = - mdivide_left(Jf_x, Jf_y);
+        MatrixXd Jx_y = - mdivide_left(Jf_x, Jf_y);
+        double array[x_size_ * y_size_];
+        Map<MatrixXd>(&array[0], x_size_, y_size_) = Jx_y;
+        Jx_y_ = std::vector<double>(array, array + sizeof(array)
+          / sizeof(array[0]));
       }
 
       void chain() {
+        using Eigen::Map;
+        using Eigen::MatrixXd;
         for (int j = 0; j < y_size_; j++)
           for (int i = 0; i < x_size_; i++)
-            y_[j]->adj_ += theta_[i]->adj_ * Jx_y_(i, j);
+            y_[j]->adj_ += theta_[i]->adj_
+              * Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)(i, j);
       }
     };
 
@@ -102,7 +111,6 @@ namespace stan {
      * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
      * @return theta Vector of solutions to the system of equations.
-     *
      * @throw <code>std::invalid_argument</code> if x has size zero.
      * @throw <code>std::invalid_argument</code> if y has size zero.
      * @throw <code>std::invalid_argument</code> if x has non-finite elements.
@@ -222,6 +230,20 @@ namespace stan {
      * @param[in] function_tolerance determines whether roots are acceptable.
      * @param[in] max_num_steps  maximum number of function evaluations.
      * @return theta Vector of solutions to the system of equations.
+     * @throw <code>std::invalid_argument</code> if x has size zero.
+     * @throw <code>std::invalid_argument</code> if y has size zero.
+     * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
+     * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
+     * negative.
+     * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+     * negative.
+     * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+     * @throw <code>error_type>?</code> if solver exceeds max_num_steps.
+     * @throw <code>error_type>?</code> if the norm of the solution exceeds the
+     * function tolerance.
      */
     template <typename F, typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
