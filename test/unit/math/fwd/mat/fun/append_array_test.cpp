@@ -3,10 +3,11 @@
 #include <gtest/gtest.h>
 
 using namespace Eigen;
+using stan::math::fvar;
 
 TEST(AgradFwd, append_array_double_fvar) {
   std::vector<double> x(3);
-  std::vector<stan::math::fvar<double> > y(2), result;
+  std::vector<fvar<double> > y(2), result;
 
   x[0] = 1.0;
   x[1] = 2.0;
@@ -34,7 +35,7 @@ TEST(AgradFwd, append_array_double_fvar) {
 
 TEST(AgradFwd, append_array_fvar_double) {
   std::vector<double> x(2);
-  std::vector<stan::math::fvar<double> > y(3), result;
+  std::vector<fvar<double> > y(3), result;
 
   x[0] = 1.0;
   x[1] = 2.0;
@@ -62,7 +63,7 @@ TEST(AgradFwd, append_array_fvar_double) {
 
 TEST(AgradFwd, append_array_double_fvar_fvar) {
   std::vector<double> x(3);
-  std::vector<stan::math::fvar<stan::math::fvar<double> > > y(2), result;
+  std::vector<fvar<fvar<double> > > y(2), result;
 
   x[0] = 1.0;
   x[1] = 2.0;
@@ -106,7 +107,7 @@ TEST(AgradFwd, append_array_double_fvar_fvar) {
 
 TEST(AgradFwd, append_array_fvar_fvar_double) {
   std::vector<double> x(2);
-  std::vector<stan::math::fvar<stan::math::fvar<double> > > y(3), result;
+  std::vector<fvar<fvar<double> > > y(3), result;
 
   x[0] = 1.0;
   x[1] = 2.0;
@@ -151,7 +152,7 @@ TEST(AgradFwd, append_array_fvar_fvar_double) {
 }
 
 TEST(AgradFwd, append_array_fvar_fvar) {
-  std::vector<stan::math::fvar<double> > x(3), y(2), result;
+  std::vector<fvar<double> > x(3), y(2), result;
 
   x[0] = 5.0;
   x[0].d_ = 1.5;
@@ -180,8 +181,8 @@ TEST(AgradFwd, append_array_fvar_fvar) {
 }
 
 TEST(AgradFwd, append_array_fvar_fvar_fvar1) {
-  std::vector<stan::math::fvar<double> > x(3);
-  std::vector<stan::math::fvar<stan::math::fvar<double> > > y(2), result;
+  std::vector<fvar<double> > x(3);
+  std::vector<fvar<fvar<double> > > y(2), result;
 
   x[0] = 5.0;
   x[0].d_ = 1.5;
@@ -226,8 +227,8 @@ TEST(AgradFwd, append_array_fvar_fvar_fvar1) {
 }
 
 TEST(AgradFwd, append_array_fvar_fvar_fvar2) {
-  std::vector<stan::math::fvar<double> > y(2);
-  std::vector<stan::math::fvar<stan::math::fvar<double> > > x(3), result;
+  std::vector<fvar<double> > y(2);
+  std::vector<fvar<fvar<double> > > x(3), result;
 
   x[0] = 5.0;
   x[0].val_.d_ = 11.0;
@@ -274,7 +275,7 @@ TEST(AgradFwd, append_array_fvar_fvar_fvar2) {
 }
 
 TEST(AgradFwd, append_array_fvar_fvar_fvar_fvar) {
-  std::vector<stan::math::fvar<stan::math::fvar<double> > > x(3), y(2), result;
+  std::vector<fvar<fvar<double> > > x(3), y(2), result;
 
   x[0] = 5.0;
   x[0].val_.d_ = 11.0;
@@ -327,12 +328,12 @@ TEST(AgradFwd, append_array_fvar_fvar_fvar_fvar) {
 
 TEST(AgradFwd, append_array_matrix_double_matrix_fvar) {
   std::vector<Matrix<double, Dynamic, Dynamic> > x;
-  std::vector<Matrix<stan::math::fvar<double>, Dynamic, Dynamic> > y, result;
+  std::vector<Matrix<fvar<double>, Dynamic, Dynamic> > y, result;
 
-  for(int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++)
     x.push_back(Matrix<double, Dynamic, Dynamic>::Zero(3, 3));
-  for(int i = 0; i < 2; i++)
-    y.push_back(Matrix<stan::math::fvar<double>, Dynamic, Dynamic>::Zero(3, 3));
+  for (int i = 0; i < 2; i++)
+    y.push_back(Matrix<fvar<double>, Dynamic, Dynamic>::Zero(3, 3));
 
   x[0](0, 0) = 1.0;
   y[1](2, 1) = 2.0;
@@ -345,20 +346,20 @@ TEST(AgradFwd, append_array_matrix_double_matrix_fvar) {
   EXPECT_FLOAT_EQ(3.0, result[4](2, 1).tangent());
   EXPECT_FLOAT_EQ(0.0, result[4](2, 2).val());
 
-  for(int i = 0; i < 2; i++)
-    y[i] = Matrix<stan::math::fvar<double>, Dynamic, Dynamic>::Zero(2, 2);
+  for (int i = 0; i < 2; i++)
+    y[i] = Matrix<fvar<double>, Dynamic, Dynamic>::Zero(2, 2);
 
   EXPECT_THROW(result = stan::math::append_array(x, y), std::invalid_argument);
 }
 
 TEST(AgradFwd, append_array_matrix_double_matrix_fvar_fvar) {
   std::vector<Matrix<double, Dynamic, Dynamic> > x;
-  std::vector<Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic> > y, result;
+  std::vector<Matrix<fvar<fvar<double> >, Dynamic, Dynamic> > y, result;
 
-  for(int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++)
     x.push_back(Matrix<double, Dynamic, Dynamic>::Zero(3, 3));
-  for(int i = 0; i < 2; i++)
-    y.push_back(Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
+  for (int i = 0; i < 2; i++)
+    y.push_back(Matrix<fvar<fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
 
   x[0](0, 0) = 1.0;
   y[1](2, 1) = 2.0;
@@ -375,20 +376,20 @@ TEST(AgradFwd, append_array_matrix_double_matrix_fvar_fvar) {
   EXPECT_FLOAT_EQ(5.0, result[4](2, 1).tangent().tangent());
   EXPECT_FLOAT_EQ(0.0, result[4](2, 2).val().val());
 
-  for(int i = 0; i < 2; i++)
-    y[i] = Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic>::Zero(2, 2);
+  for (int i = 0; i < 2; i++)
+    y[i] = Matrix<fvar<fvar<double> >, Dynamic, Dynamic>::Zero(2, 2);
 
   EXPECT_THROW(result = stan::math::append_array(x, y), std::invalid_argument);
 }
 
 TEST(AgradFwd, append_array_matrix_fvar_fvar_matrix_fvar_fvar) {
-  std::vector<Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic> > x, y, result;
+  std::vector<Matrix<fvar<fvar<double> >, Dynamic, Dynamic> > x, y, result;
 
-  for(int i = 0; i < 3; i++)
-    x.push_back(Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
+  for (int i = 0; i < 3; i++)
+    x.push_back(Matrix<fvar<fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
 
-  for(int i = 0; i < 2; i++)
-    y.push_back(Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
+  for (int i = 0; i < 2; i++)
+    y.push_back(Matrix<fvar<fvar<double> >, Dynamic, Dynamic>::Zero(3, 3));
 
   x[0](0, 0) = 1.0;
   x[0](0, 0).d_ = 6.0;
@@ -411,43 +412,8 @@ TEST(AgradFwd, append_array_matrix_fvar_fvar_matrix_fvar_fvar) {
   EXPECT_FLOAT_EQ(5.0, result[4](2, 1).tangent().tangent());
   EXPECT_FLOAT_EQ(0.0, result[4](2, 2).val().val());
 
-  for(int i = 0; i < 2; i++)
-    y[i] = Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic>::Zero(2, 2);
+  for (int i = 0; i < 2; i++)
+    y[i] = Matrix<fvar<fvar<double> >, Dynamic, Dynamic>::Zero(2, 2);
 
   EXPECT_THROW(result = stan::math::append_array(x, y), std::invalid_argument);
-}
-
-TEST(AgradFwd, append_array_matrix_types) {
-  std::vector<Matrix<double, Dynamic, Dynamic> > xddd(3);
-  std::vector<Matrix<stan::math::fvar<double>, Dynamic, Dynamic> > xfddd(4), rfddd;
-  std::vector<Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, Dynamic> > xffddd(5), rffddd;
-
-  EXPECT_NO_THROW(rfddd = stan::math::append_array(xddd, xfddd));
-  EXPECT_NO_THROW(rfddd = stan::math::append_array(xfddd, xddd));
-  EXPECT_NO_THROW(rfddd = stan::math::append_array(xfddd, xfddd));
-  EXPECT_NO_THROW(rffddd = stan::math::append_array(xddd, xffddd));
-  EXPECT_NO_THROW(rffddd = stan::math::append_array(xffddd, xddd));
-  EXPECT_NO_THROW(rffddd = stan::math::append_array(xffddd, xffddd));
-
-  std::vector<Matrix<double, Dynamic, 1> > xdd1(3);
-  std::vector<Matrix<stan::math::fvar<double>, Dynamic, 1> > xfdd1(4), rfdd1;
-  std::vector<Matrix<stan::math::fvar<stan::math::fvar<double> >, Dynamic, 1> > xffdd1(5), rffdd1;
-
-  EXPECT_NO_THROW(rfdd1 = stan::math::append_array(xdd1, xfdd1));
-  EXPECT_NO_THROW(rfdd1 = stan::math::append_array(xfdd1, xdd1));
-  EXPECT_NO_THROW(rfdd1 = stan::math::append_array(xfdd1, xfdd1));
-  EXPECT_NO_THROW(rffdd1 = stan::math::append_array(xdd1, xffdd1));
-  EXPECT_NO_THROW(rffdd1 = stan::math::append_array(xffdd1, xdd1));
-  EXPECT_NO_THROW(rffdd1 = stan::math::append_array(xffdd1, xffdd1));
-
-  std::vector<Matrix<double, 1, Dynamic> > xd1d(3);
-  std::vector<Matrix<stan::math::fvar<double>, 1, Dynamic> > xfd1d(4), rfd1d;
-  std::vector<Matrix<stan::math::fvar<stan::math::fvar<double> >, 1, Dynamic> > xffd1d(5), rffd1d;
-
-  EXPECT_NO_THROW(rfd1d = stan::math::append_array(xd1d, xfd1d));
-  EXPECT_NO_THROW(rfd1d = stan::math::append_array(xfd1d, xd1d));
-  EXPECT_NO_THROW(rfd1d = stan::math::append_array(xfd1d, xfd1d));
-  EXPECT_NO_THROW(rffd1d = stan::math::append_array(xd1d, xffd1d));
-  EXPECT_NO_THROW(rffd1d = stan::math::append_array(xffd1d, xd1d));
-  EXPECT_NO_THROW(rffd1d = stan::math::append_array(xffd1d, xffd1d));
 }

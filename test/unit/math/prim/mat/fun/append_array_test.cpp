@@ -153,13 +153,13 @@ TEST(MathFunctions, append_array_nan) {
 TEST(MathFunctions, append_array_check_size_vector1) {
   std::vector<std::vector<double> > x(3), y(3), result;
 
-  for(size_t i = 0; i < x.size(); i++) {
+  for (size_t i = 0; i < x.size(); i++) {
     x[i].resize(3);
     y[i].resize(3);
   }
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
 
-  for(size_t i = 0; i < x.size(); i++) {
+  for (size_t i = 0; i < x.size(); i++) {
     x[i].resize(3);
     y[i].resize(4);
   }
@@ -169,30 +169,30 @@ TEST(MathFunctions, append_array_check_size_vector1) {
 TEST(MathFunctions, append_array_check_size_vector2) {
   std::vector<std::vector<std::vector<double> > > x(3), y(3), result;
 
-  for(size_t i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     x[i].resize(3);
     y[i].resize(3);
-    for(size_t j = 0; j < 3; j++) {
+    for (size_t j = 0; j < 3; j++) {
       x[i][j].resize(3);
       y[i][j].resize(3);
     }
   }
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
 
-  for(size_t i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     x[i].resize(3);
     y[i].resize(3);
-    for(size_t j = 0; j < 3; j++) {
+    for (size_t j = 0; j < 3; j++) {
       x[i][j].resize(3);
       y[i][j].resize(4);
     }
   }
   EXPECT_THROW(result = stan::math::append_array(x, y), std::invalid_argument);
 
-  for(size_t i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     x[i].resize(4);
     y[i].resize(3);
-    for(size_t j = 0; j < 3; j++) {
+    for (size_t j = 0; j < 3; j++) {
       x[i][j].resize(3);
       y[i][j].resize(3);
     }
