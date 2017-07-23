@@ -1,4 +1,6 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -73,30 +75,72 @@ TEST(ProbDistributionsNormal, error_check_vec) {
   std::invalid_argument);
 }
 
-TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest_vec) {
+template<typename T1, typename T2>
+void chiSquareTestNormal(const T1& mu,
+                         const T2& sigma) {
   boost::random::mt19937 rng;
   int N = 10000;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
+  int M = stan::max_size(mu, sigma);
+  std::vector<std::vector<double> > samples_to_test_transpose;
 
-  std::vector<double> samples;
-
-  Matrix<double, Dynamic, 1> mu(N), sigma(N), r;
-  for (int i = 0; i < N; ++i) {
-    mu(i) = 2.0;
-    sigma(i) = 1.0;
+  for (int n = 0; n < N; ++n) {
+    samples_to_test_transpose.push_back(stan::math::normal_rng(mu, sigma, rng));
   }
 
-  samples = stan::math::normal_rng(mu, sigma, rng);
+  stan::scalar_seq_view<T1> mu_vec(mu);
+  stan::scalar_seq_view<T2> sigma_vec(sigma);
+  for (int m = 0; m < M; ++m) {
+    int K = boost::math::round(2 * std::pow(N, 0.4));
 
-  //Generate quantiles from boost's normal distribution
-  boost::math::normal_distribution<> dist (2.0, 1.0);
-  std::vector<double> quantiles;
-  for (int i = 1; i < K; ++i) {
-    double frac = static_cast<double>(i) / K;
-    quantiles.push_back(quantile(dist, frac));
+    boost::math::normal_distribution<> dist (mu_vec[m], sigma_vec[m]);
+    std::vector<double> quantiles;
+    for (int i = 1; i < K; ++i) {
+      double frac = static_cast<double>(i) / K;
+      quantiles.push_back(quantile(dist, frac));
+    }
+    quantiles.push_back(std::numeric_limits<double>::max());
+
+    std::vector<double> samples_to_test;
+    for (int n = 0; n < N; ++n) {
+      samples_to_test.push_back(samples_to_test_transpose[n][m]);
+    }
+    assert_matches_quantiles(samples_to_test, quantiles, 1e-6);
   }
-  quantiles.push_back(std::numeric_limits<double>::max());
+}
 
-  //Assert that they match
-  assert_matches_quantiles(samples, quantiles, 1e-6);
+TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest_vec) {
+  int M = 10;
+
+  std::vector<double> mu(M), sigma(M);
+  Matrix<double, Dynamic, 1> muV(M), sigmaV(M);
+  Matrix<double, 1, Dynamic> muRV(M), sigmaRV(M);
+  for(int m = 0; m < M; ++m) {
+    mu[m] = m + 1.0;
+    sigma[m] = m + 2.0;
+    muV[m] = mu[m];
+    sigmaV[m] = sigma[m];
+    muRV[m] = mu[m];
+    sigmaRV[m] = sigma[m];
+  }
+
+  chiSquareTestNormal(mu, sigma);
+  chiSquareTestNormal(1.5, sigma);
+  chiSquareTestNormal(mu, 1.0);
+
+  chiSquareTestNormal(muV, sigmaV);
+  chiSquareTestNormal(1.5, sigmaV);
+  chiSquareTestNormal(muV, 1.0);
+
+  chiSquareTestNormal(muRV, sigmaRV);
+  chiSquareTestNormal(1.5, sigmaRV);
+  chiSquareTestNormal(muRV, 1.0);
+
+  chiSquareTestNormal(mu, sigmaV);
+  chiSquareTestNormal(muV, sigma);
+
+  chiSquareTestNormal(mu, sigmaRV);
+  chiSquareTestNormal(muRV, sigma);
+  
+  chiSquareTestNormal(muV, sigmaRV);
+  chiSquareTestNormal(muRV, sigmaV);
 }
