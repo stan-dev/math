@@ -15,9 +15,9 @@ namespace stan {
      * types requiring pass-by-reference, this template function
      * should be specialized.
      *
-     * @tparam T Type of scalar.
-     * @param x Scalar to convert to double.
-     * @return Value of scalar cast to a double.
+     * @tparam T type of scalar.
+     * @param x scalar to convert to double
+     * @return value of scalar cast to double
      */
     template <typename T>
     inline double value_of(const T x) {
@@ -32,8 +32,8 @@ namespace stan {
      *
      * <p>This inline pass-through no-op should be compiled away.
      *
-     * @param x Specified value.
-     * @return Specified value.
+     * @param x value
+     * @return input value
      */
     template <>
     inline double value_of<double>(double x) {

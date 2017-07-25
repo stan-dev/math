@@ -17,23 +17,21 @@ namespace stan {
      * If the lower bound is negative infinity, it is ignored and
      * the function reduces to <code>identity_free(y)</code>.
      *
-     * @param y Input scalar.
-     * @param lb Lower bound.
-     * @return Unconstrained value that produces the input when
-     * constrained.
-     * @tparam T Type of scalar.
-     * @tparam TL Type of lower bound.
-     * @throw std::domain_error if y is lower than the lower bound.
+     * @tparam T type of scalar
+     * @tparam TL type of lower bound
+     * @param[in] y input scalar
+     * @param[in] lb lower bound
+     * @return unconstrained value that produces the input when
+     * constrained
+     * @throw std::domain_error if y is lower than the lower bound
      */
     template <typename T, typename TL>
-    inline
-    typename boost::math::tools::promote_args<T, TL>::type
-    lb_free(const T y, const TL lb) {
+    inline typename boost::math::tools::promote_args<T, TL>::type
+    lb_free(const T& y, const TL& lb) {
       using std::log;
       if (lb == -std::numeric_limits<double>::infinity())
         return identity_free(y);
-      check_greater_or_equal("lb_free",
-                             "Lower bounded variable", y, lb);
+      check_greater_or_equal("lb_free", "Lower bounded variable", y, lb);
       return log(y - lb);
     }
 

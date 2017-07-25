@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -51,18 +51,18 @@ namespace stan {
                              "Random variable", n,
                              "Probability parameter", theta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_prob> theta_vec(theta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_prob> theta_vec(theta);
       size_t size = max_size(n, theta);
 
       using std::log;
-      OperandsAndPartials<T_prob> operands_and_partials(theta);
+      operands_and_partials<T_prob> ops_partials(theta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
       }
 
       for (size_t i = 0; i < size; i++) {
@@ -76,10 +76,10 @@ namespace stan {
         P += log(Pi);
 
         if (!is_constant_struct<T_prob>::value)
-          operands_and_partials.d_x1[i] -= 1 / Pi;
+          ops_partials.edge1_.partials_[i] -= 1 / Pi;
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

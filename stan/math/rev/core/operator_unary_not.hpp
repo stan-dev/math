@@ -7,31 +7,17 @@ namespace stan {
   namespace math {
 
     /**
-     * Prefix logical negation for the value of variables (C++).  The
-     * expression (!a) is equivalent to negating the scalar value of
-     * the variable a.
+     * Return the negation of the value of the argument as defined by
+     * <code>!</code>.
      *
-     * Note that this is the only logical operator defined for
-     * variables.  Overridden logical conjunction (&&) and disjunction
-     * (||) operators do not apply the same "short circuit" rules
-     * as the built-in logical operators.
-     *
-        \f[
-        \mbox{operator!}(x) =
-        \begin{cases}
-          0 & \mbox{if } x \neq 0 \\
-          1 & \mbox{if } x = 0 \\[6pt]
-          0 & \mbox{if } x = \textrm{NaN}
-        \end{cases}
-        \f]
-     *
-     * @param a Variable to negate.
-     * @return True if variable is non-zero.
+     * @param[in] x argument
+     * @return negation of argument value
      */
-    inline bool operator!(const var& a) {
-      return !a.val();
+    inline bool operator!(const var& x) {
+      return !x.val();
     }
 
   }
 }
 #endif
+

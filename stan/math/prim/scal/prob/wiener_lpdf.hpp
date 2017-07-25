@@ -123,11 +123,11 @@ namespace stan {
       size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
       if (!N) return 0.0;
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_alpha> alpha_vec(alpha);
-      scalar_seq_view<const T_beta> beta_vec(beta);
-      scalar_seq_view<const T_tau> tau_vec(tau);
-      scalar_seq_view<const T_delta> delta_vec(delta);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_alpha> alpha_vec(alpha);
+      scalar_seq_view<T_beta> beta_vec(beta);
+      scalar_seq_view<T_tau> tau_vec(tau);
+      scalar_seq_view<T_delta> delta_vec(delta);
 
       size_t N_y_tau = max_size(y, tau);
       for (size_t i = 0; i < N_y_tau; ++i) {

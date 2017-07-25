@@ -1,95 +1,26 @@
-#include <stan/math/mix/scal.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 
-TEST(AgradMixOperatorMinusMinus, FvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<var> x(0.5,1.3);
-  x--;
-  EXPECT_FLOAT_EQ(0.5 - 1.0, x.val_.val());
-  EXPECT_FLOAT_EQ(1.3, x.d_.val());
-
-  AVEC y = createAVEC(x.val_);
-  VEC g;
-  x.val_.grad(y,g);
-  EXPECT_FLOAT_EQ(1.0, g[0]);
-}
-TEST(AgradMixOperatorMinusMinus, FvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<var> x(0.5,1.3);
-  x--;
-
-  AVEC y = createAVEC(x.val_);
-  VEC g;
-  x.d_.grad(y,g);
-  EXPECT_FLOAT_EQ(0, g[0]);
-}
-TEST(AgradMixOperatorMinusMinus, FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-
-  x--;
-  EXPECT_FLOAT_EQ(0.5 - 1.0, x.val_.val_.val());
-  EXPECT_FLOAT_EQ(1, x.val_.d_.val());
-  EXPECT_FLOAT_EQ(0, x.d_.val_.val());
-  EXPECT_FLOAT_EQ(0, x.d_.d_.val());
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.val_.val_.grad(p,g);
-  EXPECT_FLOAT_EQ(1.0, g[0]);
-}
-TEST(AgradMixOperatorMinusMinus, FvarFvarVar_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-
-  x--;
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.val_.d_.grad(p,g);
-  EXPECT_FLOAT_EQ(0.0, g[0]);
-}
-TEST(AgradMixOperatorMinusMinus, FvarFvarVar_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::var;
-
-  fvar<fvar<var> > x;
-  x.val_.val_ = 0.5;
-  x.val_.d_ = 1.0;
-  x.d_.val_ = 1.0;
-
-  x--;
-
-  AVEC p = createAVEC(x.val_.val_);
-  VEC g;
-  x.d_.d_.grad(p,g);
-  EXPECT_FLOAT_EQ(0.0, g[0]);
-}
-
-struct minus_minus_fun {
-  template <typename T0>
-  inline T0
-  operator()(T0 arg1) const {
-    return (arg1--);
+struct op_minus_minus_pre_f {
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply(const T1& x1, const T2& x2) {
+    typename boost::math::tools::promote_args<T1, T2>::type y = x1;
+    return --y;
   }
 };
 
-TEST(AgradMixOperatorMinusMinus, minus_minus_nan) {
-  minus_minus_fun minus_minus_;
+struct op_minus_minus_post_f {
+  template <typename T1, typename T2>
+  static typename boost::math::tools::promote_args<T1, T2>::type
+  apply(const T1& x1, const T2& x2) {
+    typename boost::math::tools::promote_args<T1, T2>::type y = x1;
+    return y--;
+  }
+};
 
-  test_nan_mix(minus_minus_,false);
+TEST(mathMixCore, operatorMinusMinusPre) {
+  stan::math::test::test_common_args<op_minus_minus_pre_f, false>();
+}
+TEST(mathMixCore, operatorMinusMinusPost) {
+  stan::math::test::test_common_args<op_minus_minus_post_f, false>();
 }

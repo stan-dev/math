@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -73,12 +73,12 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_prob> alpha_vec(alpha);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_prob> alpha_vec(alpha);
       size_t size = max_size(n, N, alpha);
 
-      OperandsAndPartials<T_prob> operands_and_partials(alpha);
+      operands_and_partials<T_prob> ops_partials(alpha);
 
       if (include_summand<propto>::value) {
         for (size_t i = 0; i < size; ++i)
@@ -107,20 +107,20 @@ namespace stan {
           temp2 += N_vec[i] - n_vec[i];
         }
         if (!is_constant_struct<T_prob>::value) {
-          operands_and_partials.d_x1[0]
+          ops_partials.edge1_.partials_[0]
             += temp1 * inv_logit(-value_of(alpha_vec[0]))
             - temp2 * inv_logit(value_of(alpha_vec[0]));
         }
       } else {
         if (!is_constant_struct<T_prob>::value) {
           for (size_t i = 0; i < size; ++i)
-            operands_and_partials.d_x1[i]
+            ops_partials.edge1_.partials_[i]
               += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))
               - (N_vec[i] - n_vec[i]) * inv_logit(value_of(alpha_vec[i]));
         }
       }
 
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

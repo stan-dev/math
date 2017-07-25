@@ -3,7 +3,7 @@
 
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -62,17 +62,17 @@ namespace stan {
                              "Random variable", y,
                              "Degrees of freedom parameter", nu);
 
-      scalar_seq_view<const T_y> y_vec(y);
-      scalar_seq_view<const T_dof> nu_vec(nu);
+      scalar_seq_view<T_y> y_vec(y);
+      scalar_seq_view<T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
 
-      OperandsAndPartials<T_y, T_dof> operands_and_partials(y, nu);
+      operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(y); i++)
         if (value_of(y_vec[i]) == 0)
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
 
       using boost::math::tgamma;
       using std::exp;
@@ -96,7 +96,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -109,17 +109,17 @@ namespace stan {
         P += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          operands_and_partials.d_x1[n] -= 0.5 * y_inv_dbl * y_inv_dbl
+          ops_partials.edge1_.partials_[n] -= 0.5 * y_inv_dbl * y_inv_dbl
             * exp(-0.5*y_inv_dbl) * pow(0.5*y_inv_dbl, 0.5*nu_dbl-1)
             / tgamma(0.5*nu_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
-          operands_and_partials.d_x2[n]
+          ops_partials.edge2_.partials_[n]
             -= 0.5 * grad_reg_inc_gamma(0.5 * nu_dbl,
                                         0.5 * y_inv_dbl,
                                         gamma_vec[n],
                                         digamma_vec[n]) / Pn;
       }
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

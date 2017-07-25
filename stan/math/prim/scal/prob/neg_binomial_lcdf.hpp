@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -50,9 +50,9 @@ namespace stan {
                              "Shape parameter", alpha,
                              "Inverse scale parameter", beta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_shape> alpha_vec(alpha);
-      scalar_seq_view<const T_inv_scale> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      scalar_seq_view<T_inv_scale> beta_vec(beta);
       size_t size = max_size(n, alpha, beta);
 
       using std::exp;
@@ -60,14 +60,14 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      OperandsAndPartials<T_shape, T_inv_scale>
-        operands_and_partials(alpha, beta);
+      operands_and_partials<T_shape, T_inv_scale>
+        ops_partials(alpha, beta);
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
       for (size_t i = 0; i < stan::length(n); i++) {
         if (value_of(n_vec[i]) < 0)
-          return operands_and_partials.value(negative_infinity());
+          return ops_partials.build(negative_infinity());
       }
 
       VectorBuilder<!is_constant_struct<T_shape>::value,
@@ -95,7 +95,7 @@ namespace stan {
         // Explicit results for extreme values
         // The gradients are technically ill-defined, but treated as zero
         if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
-          return operands_and_partials.value(0.0);
+          return ops_partials.build(0.0);
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -118,14 +118,14 @@ namespace stan {
                             digammaN_vec[i],
                             digammaSum_vec[i],
                             beta_func);
-          operands_and_partials.d_x1[i] += g1 / Pi;
+          ops_partials.edge1_.partials_[i] += g1 / Pi;
         }
         if (!is_constant_struct<T_inv_scale>::value)
-          operands_and_partials.d_x2[i]  += d_dbl * pow(1-p_dbl, n_dbl)
+          ops_partials.edge2_.partials_[i]  += d_dbl * pow(1-p_dbl, n_dbl)
             * pow(p_dbl, alpha_dbl-1) / beta_func / Pi;
       }
 
-      return operands_and_partials.value(P);
+      return ops_partials.build(P);
     }
 
   }

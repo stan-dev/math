@@ -6,7 +6,6 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 
-#include <stan/math/prim/mat/meta/container_view.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/meta/is_constant_struct.hpp>
@@ -18,7 +17,6 @@
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/mat/meta/VectorView.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
@@ -49,6 +47,7 @@
 #include <stan/math/prim/mat/fun/acos.hpp>
 #include <stan/math/prim/mat/fun/acosh.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
+#include <stan/math/prim/mat/fun/append_array.hpp>
 #include <stan/math/prim/mat/fun/append_col.hpp>
 #include <stan/math/prim/mat/fun/append_row.hpp>
 #include <stan/math/prim/mat/fun/asin.hpp>

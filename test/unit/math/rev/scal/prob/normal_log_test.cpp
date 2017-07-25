@@ -8,7 +8,7 @@ TEST(ProbDistributionsNormal, intVsDouble) {
     var lp1(0.0);
     lp1 += stan::math::normal_log<true>(0, theta, 1);
     double lp1val = lp1.val();
-    stan::math::grad(lp1.vi_); 
+    stan::math::grad(lp1.vi_);
     double lp1adj = lp1.adj();
 
     var theta2(thetaval);
@@ -21,4 +21,3 @@ TEST(ProbDistributionsNormal, intVsDouble) {
     EXPECT_FLOAT_EQ(lp1adj,lp2adj);
   }
 }
-

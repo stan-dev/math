@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/OperandsAndPartials.hpp>
+#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -74,18 +74,18 @@ namespace stan {
       if (!include_summand<propto, T_size1, T_size2>::value)
         return 0.0;
 
-      OperandsAndPartials<T_size1, T_size2>
-        operands_and_partials(alpha, beta);
+      operands_and_partials<T_size1, T_size2>
+        ops_partials(alpha, beta);
 
-      scalar_seq_view<const T_n> n_vec(n);
-      scalar_seq_view<const T_N> N_vec(N);
-      scalar_seq_view<const T_size1> alpha_vec(alpha);
-      scalar_seq_view<const T_size2> beta_vec(beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_size1> alpha_vec(alpha);
+      scalar_seq_view<T_size2> beta_vec(beta);
       size_t size = max_size(n, N, alpha, beta);
 
       for (size_t i = 0; i < size; i++) {
         if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
-          return operands_and_partials.value(LOG_ZERO);
+          return ops_partials.build(LOG_ZERO);
       }
 
       VectorBuilder<include_summand<propto>::value,
@@ -158,19 +158,19 @@ namespace stan {
           logp += lbeta_numerator[i] - lbeta_denominator[i];
 
         if (!is_constant_struct<T_size1>::value)
-          operands_and_partials.d_x1[i]
+          ops_partials.edge1_.partials_[i]
             += digamma_n_plus_alpha[i]
             - digamma_N_plus_alpha_plus_beta[i]
             + digamma_alpha_plus_beta[i]
             - digamma_alpha[i];
         if (!is_constant_struct<T_size2>::value)
-          operands_and_partials.d_x2[i]
+          ops_partials.edge2_.partials_[i]
             += digamma(value_of(N_vec[i]-n_vec[i]+beta_vec[i]))
             - digamma_N_plus_alpha_plus_beta[i]
             + digamma_alpha_plus_beta[i]
             - digamma_beta[i];
       }
-      return operands_and_partials.value(logp);
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,
