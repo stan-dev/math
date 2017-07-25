@@ -1,18 +1,18 @@
 ##
 # This file should modify the following variables
 # as appropriate:
-#   - CFLAGS
+#   - CPPFLAGS
 #   - CFLAGS_GTEST
 
 ifeq (g++,$(CC_TYPE))
-  CFLAGS += -Wno-unused-function
+  CPPFLAGS += -Wno-unused-function
   VERSION := $(CC_MAJOR).$(CC_MINOR)
 endif
 
 ifeq (clang++,$(CC_TYPE))
-  CFLAGS += -Wno-unknown-warning-option
-  CFLAGS += -Wno-unused-function
-  CFLAGS += -Wno-tautological-compare
-  CFLAGS += -Wsign-compare
-  CFLAGS += -Wno-unused-local-typedef
+  CPPFLAGS += -Wno-unknown-warning-option
+  CPPFLAGS += -Wno-unused-function
+  CPPFLAGS += -Wno-tautological-compare
+  CPPFLAGS += -Wsign-compare
+  CPPFLAGS += -Wno-unused-local-typedef
 endif
