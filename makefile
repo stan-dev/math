@@ -19,7 +19,6 @@ CC = clang++
 O = 3
 O_STANC = 0
 AR = ar
-C++11 = false
 
 ##
 # Library locations
@@ -31,7 +30,7 @@ include make/libraries
 # Set default compiler options.
 ##
 CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem$(CVODES)/include -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DNO_FPRINTF_OUTPUT -pipe
-CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
+CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE -std=c++14
 LDLIBS =
 EXE =
 WINE =
@@ -87,6 +86,7 @@ help:
 	@echo '  Current configuration:'
 	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
 	@echo '  - CC (Compiler):              ' $(CC)
+	@echo '  - CC_TYPE                     ' $(CC_TYPE)
 	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
 	@echo '  - O_STANC (Opt for stanc):    ' $(O_STANC)
