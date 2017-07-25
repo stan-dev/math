@@ -40,7 +40,7 @@ bool seed_one = 1, bool seed_two = 1) {
       }
       vector<FV> fa = F::template apply<vector<FV> >(input_a2, input_v2);
       EXPECT_EQ(input_v2.size(), fa.size());
-      //std::cout << "Well" << j << std::endl;
+      std::cout << "Well" << j << std::endl;
       //std::cout << input_a1 << std::endl;
       //std::cout << input_v1[j] << std::endl;
       expect_binary_val_deriv_eq(F::apply_base(input_a1, input_v1[j]), 

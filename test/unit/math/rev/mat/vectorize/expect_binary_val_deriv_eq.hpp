@@ -73,14 +73,7 @@ stan::math::var base_test_var1, int base_test_var2) {
   VEC test_g;
   set_zero_all_adjoints();
   test_var.grad(test_y, test_g);
-/*
-  std::cout << exp_var << std::endl;
-  std::cout << test_var << std::endl;
-  std::cout << exp_g[0] << std::endl;
-  std::cout << test_g[0] << std::endl;
-*/
   expect_val_eq(exp_g[0], test_g[0]);
-  //std::cout << "d" << std::endl;
 }
 
 static inline void expect_binary_val_deriv_eq(
