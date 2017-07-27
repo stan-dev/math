@@ -466,7 +466,7 @@ TEST(MathMatrix, unsolvable) {
                                   x, y, dat, dat_int, 0,
                                   relative_tolerance, function_tolerance,
                                   max_num_steps),
-                   std::invalid_argument, msg);
+                   boost::math::evaluation_error, msg);
 }
 
 TEST(MathMatrix, unsolvable_dbl) {
@@ -495,7 +495,7 @@ TEST(MathMatrix, unsolvable_dbl) {
                                   x, y, dat, dat_int, 0,
                                   relative_tolerance, function_tolerance,
                                   max_num_steps),
-                   std::invalid_argument, msg);
+                   boost::math::evaluation_error, msg);
 }
 
 TEST(MathMatrix, max_num_steps) {
@@ -521,7 +521,7 @@ TEST(MathMatrix, max_num_steps) {
                                   x, y, dat, dat_int, 0,
                                   relative_tolerance, function_tolerance,
                                   max_num_steps),
-                   std::invalid_argument, msg);
+                   boost::math::evaluation_error, msg);
 }
 
 TEST(MathMatrix, max_num_steps_dbl) {
@@ -546,7 +546,7 @@ TEST(MathMatrix, max_num_steps_dbl) {
                                   x, y, dat, dat_int, 0,
                                   relative_tolerance, function_tolerance,
                                   max_num_steps),
-                   std::invalid_argument, msg);
+                   boost::math::evaluation_error, msg);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

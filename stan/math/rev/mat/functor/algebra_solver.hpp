@@ -63,7 +63,7 @@ namespace stan {
         for (int i = 1; i < x.size(); ++i)
           theta_[i] = new vari(theta_dbl(i), false);
 
-        // Compute the Jacobian and store in vector, using the
+        // Compute the Jacobian and store in array, using the
         // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
         typedef hybrj_functor_solver<FS, F, double, double> f_y;
         Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
@@ -179,23 +179,27 @@ namespace stan {
       solver.solve(theta_dbl);
 
       // Check if the max number of steps has been exceeded
-      if (solver.nfev >= max_num_steps)
-        invalid_argument("algebra_solver", "max number of iterations:",
-                         max_num_steps, "", " exceeded.");
+      if (solver.nfev >= max_num_steps) {
+        std::ostringstream message;
+        message << "algebra_solver: max number of iterations: "
+                << max_num_steps << " exceeded.";
+        throw boost::math::evaluation_error(message.str());
+      }
 
       // Check solution is a root
       double system_norm = fx.get_value(theta_dbl).stableNorm();
       if (system_norm > function_tolerance) {
-          std::stringstream msg_f;
-          msg_f << " but should be lower than the function tolerance: "
-                << function_tolerance
-                << ". Consider increasing the relative tolerance and the"
-                << " max_num_steps.";
-          std::string msg_str_f(msg_f.str());
+        std::ostringstream message2;
+        message2 << "algebra_solver: the norm of the algebraic function is: "
+                 << system_norm << " but should be lower than the function "
+                 << "tolerance: " << function_tolerance << ". Consider "
+                 << "increasing the relative tolerance and the "
+                 << "max_num_steps.";
+        throw boost::math::evaluation_error(message2.str());
 
-          invalid_argument("algebra_solver",
-                           "the norm of the algebraic function is:",
-                           system_norm, "", msg_str_f.c_str());
+          // invalid_argument("algebra_solver",
+          //                  "the norm of the algebraic function is:",
+          //                  system_norm, "", msg_str_f.c_str());
       }
 
       return theta_dbl;
