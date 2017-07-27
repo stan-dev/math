@@ -11,11 +11,8 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST)
 ##
 # Build the google test library.
 ##
-$(LIBGTEST): $(LIBGTEST)(test/gtest.o)
-
-test/gtest.o: $(GTEST)/src/gtest-all.cc
-	@mkdir -p test
-	$(COMPILE.cc) -O$O $(GTEST_CXXFLAGS) $< $(OUTPUT_OPTION)
+$(LIBGTEST): CXXFLAGS += $(GTEST_CXXFLAGS)
+$(LIBGTEST): $(LIBGTEST)($(GTEST)/src/gtest-all.o)
 
 ##
 # Rule for building a test
