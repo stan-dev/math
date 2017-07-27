@@ -15,6 +15,9 @@ test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
+
+
+
 ##
 # Rule for generating dependencies.
 ##
@@ -38,6 +41,14 @@ test/unit/libmultiple.so : test/unit/libmultiple.so(test/unit/multiple_translati
 test/unit/multiple_translation_units_test.cpp : CXXFLAGS += -fPIC
 test/unit/multiple_translation_units_test.cpp : LDFLAGS += -shared
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
+
+############################################################
+#
+# CVODES tests
+##
+
+CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp))
+$(CVODES_TESTS) : LDFLAGS += $(LIBCVODES)
 
 ############################################################
 #
