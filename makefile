@@ -48,18 +48,6 @@ ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOAL
   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
 endif
 
-##
-# Rule for generating dependencies.
-##
-test/%.d : stan/%.cpp
-	@mkdir -p $(dir $@)
-	@set -e; \
-	rm -f $@; \
-	$(COMPILE.C) -O$O $(TARGET_ARCH) -MM $< > $@.$$$$; \
-	sed -e 's,\($(notdir $*)\)\.o[ :]*,$(dir $@)\1\.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-
 
 .PHONY: help
 help:
