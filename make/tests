@@ -75,7 +75,7 @@ test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 
 
 ## FIXME: think about how to do this generally using test_types
-test_types := v fd fv ffd ffv
+# test_types := v fd fv ffd ffv
 
 test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
