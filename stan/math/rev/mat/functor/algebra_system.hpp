@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/dogleg.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <iostream>
 #include <string>
@@ -53,7 +52,60 @@ namespace stan {
     };
 
     /**
-     * This functor has the structure required to call Eigen's solver.
+     * A structure which gets passed to Eigen's dogleg
+     * algebraic solver.
+     */
+    template <typename T, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
+    struct NLOFunctor {
+      typedef Eigen::Matrix<T, NX, 1> InputType;
+      typedef Eigen::Matrix<T, NY, 1> ValueType;
+      typedef Eigen::Matrix<T, NY, NX>
+        JacobianType;
+
+      const int m_inputs, m_values;
+
+      NLOFunctor() : m_inputs(NX),
+      m_values(NY) {}
+      NLOFunctor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
+
+      int inputs() const { return m_inputs; }
+      int values() const { return m_values; }
+    };
+
+    /**
+    * A functor which stores an algebraic system and
+    * its gradient, and contains the class functions
+    * required for Eigen's dogleg algebraic solver.
+    *
+    * Members:
+    * f1 functor which returns output of algebraic system.
+    * f2 gradient of f1 with respect to the unknowns for
+    * which we solve.
+    */
+    template <typename F1, typename F2>
+    struct hybrj_functor : NLOFunctor<double> {
+    private:
+      F1 f1_;
+      F2 f2_;
+
+    public:
+      hybrj_functor(const F1& f1,
+                    const F2& f2)
+        : f1_(f1), f2_(f2) { }
+      
+      int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
+        fvec = f1_(x);
+        return 0;
+      }
+      int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) {
+        fjac = f2_(x);
+        return 0;
+      }
+    };
+
+    /**
+     * A functor with the rquired operators to call Eigen's 
+     * algebraic solver.
      */
     template <typename FS, typename F, typename T0, typename T1>
     struct hybrj_functor_solver : NLOFunctor<double> {

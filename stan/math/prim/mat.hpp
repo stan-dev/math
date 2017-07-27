@@ -98,7 +98,6 @@
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
-#include <stan/math/prim/mat/fun/dogleg.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
