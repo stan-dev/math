@@ -33,7 +33,7 @@ CXX = $(CC)
 # These includes should update the following variables
 # based on the OS:
 #   - CFLAGS
-#   - CFLAGS_GTEST
+#   - GTEST_CXXFLAGS
 #   - EXE
 ##
 -include make/detect_os
