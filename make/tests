@@ -91,10 +91,11 @@ test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 	$(LINK.cc) -O$(O_STANC) $< $(OUTPUT_OPTION)
 
 
-test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
 ## FIXME: think about how to do this generally using test_types
 # test_types := v fd fv ffd ffv
+
+test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
 .SECONDEXPANSION:
 test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
