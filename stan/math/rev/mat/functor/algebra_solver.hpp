@@ -36,7 +36,7 @@ namespace stan {
       int y_size_;
       int x_size_;
       vari** theta_;
-      std::vector<double> Jx_y_;
+      double* Jx_y_;
 
       algebra_solver_vari(const FS& fs,
                           const F& f,
@@ -51,7 +51,9 @@ namespace stan {
           y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
           y_size_(y.size()),
           x_size_(x.size()),
-          theta_(ChainableStack::memalloc_.alloc_array<vari*>(x.size())) {
+          theta_(ChainableStack::memalloc_.alloc_array<vari*>(x_size_)),
+          Jx_y_(ChainableStack::memalloc_.alloc_array<double>
+                  (x_size_ * y_size_)) {
         using Eigen::MatrixXd;
         using Eigen::Map;
         for (int i = 0; i < y.size(); ++i)
@@ -61,17 +63,13 @@ namespace stan {
         for (int i = 1; i < x.size(); ++i)
           theta_[i] = new vari(theta_dbl(i), false);
 
-        // Compute the Jacobian and store in vector
-        MatrixXd Jf_x = fx.get_jacobian(theta_dbl);
-        hybrj_functor_solver<FS, F, double, double>
-          fy(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs, false);
-        MatrixXd Jf_y = fy.get_jacobian(value_of(y));
-
-        MatrixXd Jx_y = - mdivide_left(Jf_x, Jf_y);
-        double array[x_size_ * y_size_];
-        Map<MatrixXd>(&array[0], x_size_, y_size_) = Jx_y;
-        Jx_y_ = std::vector<double>(array, array + sizeof(array)
-          / sizeof(array[0]));
+        // Compute the Jacobian and store in vector, using the
+        // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
+        typedef hybrj_functor_solver<FS, F, double, double> f_y;
+        Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
+          = - mdivide_left(fx.get_jacobian(theta_dbl),
+                f_y(fs, f, theta_dbl, value_of(y),
+                    dat, dat_int, msgs, false).get_jacobian(value_of(y)));
       }
 
       void chain() {
@@ -79,8 +77,7 @@ namespace stan {
         using Eigen::MatrixXd;
         for (int j = 0; j < y_size_; j++)
           for (int i = 0; i < x_size_; i++)
-            y_[j]->adj_ += theta_[i]->adj_
-              * Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)(i, j);
+            y_[j]->adj_ += theta_[i]->adj_ * Jx_y_[j * x_size_ + i];
       }
     };
 
