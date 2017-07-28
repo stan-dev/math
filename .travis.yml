@@ -34,7 +34,10 @@ matrix:
         - TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *osx_clang
       env:
-        - TESTFOLDER=test/unit/math/prim/mat
+        - TESTFOLDER=test/unit/math/prim/mat/fun
+    - <<: *osx_clang
+      env:
+        - TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
     - <<: *osx_clang
       env:
         - TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
@@ -51,7 +54,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/prim/mat
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -71,7 +78,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/prim/mat
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
