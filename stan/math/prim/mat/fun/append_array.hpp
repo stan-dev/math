@@ -9,6 +9,8 @@
 namespace stan {
   namespace math {
     /**
+     * Warning: This function should only be called within append_array
+     *
      * This function copies the value at x to y, casting from the type of T1 to
      * type T2. This implementation assumes the necessary copy constructors are
      * available to do the casting from T1 to T2.
@@ -39,7 +41,7 @@ namespace stan {
      */
     template<typename T1, typename T2, int R, int C>
     inline void append_array_copy(const Eigen::Matrix<T1, R, C>& x,
-                     Eigen::Matrix<T2, R, C>& y) {
+                                  Eigen::Matrix<T2, R, C>& y) {
       y = x.template cast<T2>();
     }
 
@@ -63,10 +65,18 @@ namespace stan {
     }
 
     /**
-     * This function checks the sizes of both arguments are consistent.
+     * Warning: This function should only be called within append_array
      *
-     * The basic version assumes variables are of compatible sizes. There are
-     * specializations for Eigen::Matrices and std::vectors (where this
+     * This function checks the sizes of both arguments are consistent and
+     * throws exceptions if they are not. It assumes the arrangement of
+     * containers in each type match, though the respective scalar types might
+     * not. Scalars should not be compared against vector types. Also, vector
+     * types should not be mixed. For instance, an
+     * Eigen::Matrix<double, Dynamic, 1> should not be compared with a
+     * std::vector<double> even if they contain the same number of arguments.
+     *
+     * The base template function assumes variables are scalars. There are
+     * specializations for Eigen::Matrix s and std::vectors (where this
      * assumption is not true).
      *
      * @tparam T1 Type of x
@@ -79,8 +89,8 @@ namespace stan {
     }
 
     /**
-     * This function checks if two Eigen::Matrices are of compatible sizes
-     * by delegating to check_matching_dims.
+     * This function checks if two Eigen::Matrix variables are of compatible
+     * sizes by delegating to check_matching_dims.
      *
      * @tparam T1 Scalar type of x
      * @tparam T2 Scalar type of y
@@ -91,14 +101,17 @@ namespace stan {
      */
     template<typename T1, typename T2, int R, int C>
     inline void append_array_check_size(const Eigen::Matrix<T1, R, C>& x,
-                     const Eigen::Matrix<T2, R, C>& y) {
-      check_matching_dims("append_array", "x", x, "y", y);
+                                        const Eigen::Matrix<T2, R, C>& y) {
+      check_matching_dims("append_array_check_size", "x", x, "y", y);
     }
 
     /**
-     * This function checks if two std::vectors are of compatible sizes and
-     * then recursively calls append_array_check_size to see if the first
-     * elements of each std::vector have compatible sizes.
+     * This function checks if two std::vectors are the same size with
+     * check_consistent_sizes and then recursively calls append_array_check_size
+     * to see if the first elements of each std::vector have compatible sizes.
+     *
+     * This function assumes that all elements of x and y have the same size as
+     * their respective first elements
      *
      * @tparam T1 Element type of x
      * @tparam T2 Element type of y
@@ -108,15 +121,19 @@ namespace stan {
     template<typename T1, typename T2>
     inline void append_array_check_size(const std::vector<T1> &x,
                                         const std::vector<T2> &y) {
-      check_consistent_sizes("append_array", "size of x", x, "size of y", y);
-      if (!x.empty() && !y.empty()) {
-        append_array_check_size(x[0], y[0]);
+      check_consistent_sizes("append_array_check_size",
+                             "size of x", x,
+                             "size of y", y);
+      if (!x.empty()) {
+        append_array_check_size(x.front(), y.front());
       }
     }
 
     /**
      * Return the concatenation of two specified vectors in the order of
      *   the arguments.
+     *
+     * The return type is computed with append_return_type
      *
      * @tparam T1 Type of first vector
      * @tparam T2 Type of second vector
@@ -136,6 +153,28 @@ namespace stan {
         append_array_copy(x[i], z[i]);
       for (size_t i = 0; i < y.size(); i++)
         append_array_copy(y[i], z[x.size() + i]);
+      return z;
+    }
+
+    /**
+     * Return the concatenation of two specified vectors in the order of
+     *   the arguments.
+     *
+     * @tparam T1 Type of vectors
+     * @param x First vector
+     * @param y Second vector
+     * @return A vector of x and y concatenated together (in that order)
+     */
+    template <typename T1>
+    inline T1
+    append_array(const T1& x, const T1& y) {
+      T1 z;
+      if (!x.empty() && !y.empty()) {
+        append_array_check_size(x[0], y[0]);
+      }
+      z.reserve(x.size() + y.size());
+      z.insert(z.end(), x.begin(), x.end());
+      z.insert(z.end(), y.begin(), y.end());
       return z;
     }
   }

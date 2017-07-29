@@ -8,14 +8,12 @@
 namespace stan {
   namespace math {
     /**
-     * This template metaprogram defines the return type for appending
-     * containers of the specified template parameter types.
+     * This template metaprogram is used to compute the return type for
+     * append_array
      *
      * This base implementation assumes the template parameters are not
-     * container types and calculates their return type using
+     * vector types and calculates their return type using
      * <code>return_type</code>.
-     *
-     * Specializations define behavior for other basic types and for containers.
      *
      * @tparam T1 First type to be promoted
      * @tparam T2 Second type to be promoted
@@ -26,9 +24,10 @@ namespace stan {
     };
 
     /**
-     * If both types are ints, the type member is an int (this is different
-     * than the default Boost type promotion logic used in
-     * <code>return_type</code>).
+     * This template metaprogram is used to compute the return type for
+     * append_array
+     *
+     * If both types are ints, the type member is an int
      *
      * @tparam T1 First type to be promoted
      * @tparam T2 Second type to be promoted
@@ -39,13 +38,16 @@ namespace stan {
     };
 
     /**
+     * This template metaprogram is used to compute the return type for
+     * append_array
+     *
      * If both types are Eigen::Matrices with the same Row/Column specification,
      * then the type member is another Eigen::Matrix with the same Row/Column
      * specification and a scalar type promoted using <code>return_type</code>.
      * Part of return type promotion logic for append_array
      *
-     * @tparam T1 Scalar type of first matrix type
-     * @tparam T2 Scalar type of first matrix type
+     * @tparam T1 Scalar type of first matrix argument
+     * @tparam T2 Scalar type of first matrix argument
      * @tparam R Eigen RowsAtCompileTime of both matrices
      * @tparam C Eigen ColsAtCompileTime of both matrices
      */
@@ -57,6 +59,9 @@ namespace stan {
     };
 
     /**
+     * This template metaprogram is used to compute the return type for
+     * append_array
+     *
      * If the types of both template arguments are std::vectors, the type member
      * is recursively computed as the append_return_type of the scalar types
      * associated with those std::vectors.
