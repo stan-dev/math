@@ -24,8 +24,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_square(const char* function,
-                 const char* name,
+    check_square(const std::string& function,
+                 const std::string& name,
                  const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_size_match(function,
                        "Expecting a square matrix; rows of ", name, y.rows(),

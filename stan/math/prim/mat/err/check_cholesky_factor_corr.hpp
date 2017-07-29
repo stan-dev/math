@@ -32,8 +32,8 @@ namespace stan {
      */
     template <typename T_y>
     void
-    check_cholesky_factor_corr(const char* function,
-                               const char* name,
+    check_cholesky_factor_corr(const std::string& function,
+                               const std::string& name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using Eigen::Dynamic;
       check_square(function, name, y);

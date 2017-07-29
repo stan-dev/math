@@ -16,8 +16,8 @@ namespace stan {
 
       template <typename T_y, bool is_vec>
       struct positive {
-        static void check(const char* function,
-                          const char* name,
+        static void check(const std::string& function,
+                          const std::string& name,
                           const T_y& y) {
           // have to use not is_unsigned. is_signed will be false
           // floating point types that have no unsigned versions.
@@ -29,8 +29,8 @@ namespace stan {
 
       template <typename T_y>
       struct positive<T_y, true> {
-        static void check(const char* function,
-                          const char* name,
+        static void check(const std::string& function,
+                          const std::string& name,
                           const T_y& y) {
           using stan::length;
           for (size_t n = 0; n < length(y); n++) {
@@ -60,8 +60,8 @@ namespace stan {
      *   if any element of y is NaN.
      */
     template <typename T_y>
-    inline void check_positive(const char* function,
-                               const char* name,
+    inline void check_positive(const std::string& function,
+                               const std::string& name,
                                const T_y& y) {
       positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
     }
