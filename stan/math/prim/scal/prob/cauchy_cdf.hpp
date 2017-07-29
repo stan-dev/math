@@ -22,7 +22,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the cauchy cumulative distribution function for the given 
+     * Returns the cauchy cumulative distribution function for the given
      * location, and scale. If given containers of matching sizes
      * returns the product of probabilities.
      *
@@ -42,8 +42,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(mu)
-              && stan::length(sigma) ) )
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 1.0;
 
       static const char* function("cauchy_cdf");

@@ -97,8 +97,8 @@ namespace stan {
       if (include_summand<propto, T_shape>::value)
         lp += do_lkj_constant(eta, K);
 
-      if ( (eta == 1.0) &&
-           stan::is_constant<typename stan::scalar_type<T_shape> >::value )
+      if ((eta == 1.0) &&
+          stan::is_constant<typename stan::scalar_type<T_shape> >::value)
         return lp;
 
       if (!include_summand<propto, T_y, T_shape>::value)

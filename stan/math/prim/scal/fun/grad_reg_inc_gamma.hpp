@@ -97,12 +97,13 @@ namespace stan {
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
           if (log_delta <= log(precision))
-            return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
+            return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
         }
         stan::math::domain_error("grad_reg_inc_gamma",
-          "k (internal counter)",
-          max_steps, "exceeded ",
-          " iterations, gamma function gradient did not converge.");
+                                 "k (internal counter)",
+                                 max_steps, "exceeded ",
+                                 " iterations, gamma function"
+                                 " gradient did not converge.");
         return std::numeric_limits<T>::infinity();
       }
     }

@@ -28,8 +28,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the inverse chi square log complementary cumulative distribution 
-     * function for the given variate and degrees of freedom. If given 
+     * Returns the inverse chi square log complementary cumulative distribution
+     * function for the given variate and degrees of freedom. If given
      * containers of matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -46,7 +46,8 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(nu) ) ) return 0.0;
+      if (!(stan::length(y) && stan::length(nu)))
+        return 0.0;
 
       static const char* function("inv_chi_square_lccdf");
 

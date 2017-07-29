@@ -89,8 +89,8 @@ namespace stan {
         const T_partials_return beta_dbl = value_of(beta_vec[i]);
 
         const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-        const T_partials_return d_dbl = 1.0 / ( (1.0 + beta_dbl)
-                                                * (1.0 + beta_dbl) );
+        const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl)
+                                               * (1.0 + beta_dbl));
 
         const T_partials_return P_i =
           inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);

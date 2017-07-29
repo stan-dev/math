@@ -31,8 +31,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the beta log complementary cumulative distribution function for 
-     * the given probability, success, and failure parameters. Given matching 
+     * Returns the beta log complementary cumulative distribution function for
+     * the given probability, success, and failure parameters. Given matching
      * containers returns the log sum of probabilities.
      *
      * @tparam T_y type of probability parameter
@@ -54,8 +54,7 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(alpha)
-              && stan::length(beta) ) )
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       static const char* function("beta_lccdf");
