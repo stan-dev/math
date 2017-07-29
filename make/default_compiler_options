@@ -12,7 +12,7 @@ AR = ar
 # CPPFLAGS are used for both C and C++ compilation
 CPPFLAGS = -Wall -DNO_FPRINTF_OUTPUT -pipe
 # CXXFLAGS are just used for C++
-CXXFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem$(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS
+CXXFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS
 GTEST_CXXFLAGS = -DGTEST_USE_OWN_TR1_TUPLE
 LDLIBS =
 EXE =
