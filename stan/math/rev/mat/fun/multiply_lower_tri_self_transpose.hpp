@@ -22,7 +22,8 @@ namespace stan {
       int K = L.rows();
       int J = L.cols();
       matrix_v LLt(K, K);
-      if (K == 0) return LLt;
+      if (K == 0)
+        return LLt;
       // if (K == 1) {
       //   LLt(0, 0) = L(0, 0) * L(0, 0);
       //   return LLt;

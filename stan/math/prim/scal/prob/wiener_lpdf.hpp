@@ -121,7 +121,8 @@ namespace stan {
                              "Nondecision time", tau, "Drift rate", delta);
 
       size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
-      if (!N) return 0.0;
+      if (!N)
+        return 0.0;
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_alpha> alpha_vec(alpha);

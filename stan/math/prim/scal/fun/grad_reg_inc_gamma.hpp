@@ -49,10 +49,8 @@ namespace stan {
       using std::fabs;
       using std::log;
 
-      if (is_nan(a)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(z)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(g)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(dig)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(a) || is_nan(z) || is_nan(g) || is_nan(dig))
+        return std::numeric_limits<T>::quiet_NaN();
 
       T l = log(z);
       if (z >= a && z >= 8) {
