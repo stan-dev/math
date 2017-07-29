@@ -92,7 +92,7 @@ namespace stan {
       hybrj_functor(const F1& f1,
                     const F2& f2)
         : f1_(f1), f2_(f2) { }
-      
+
       int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
         fvec = f1_(x);
         return 0;
