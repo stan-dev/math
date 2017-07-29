@@ -73,7 +73,7 @@ namespace stan {
     typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
     wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                const T_beta& beta, const T_delta& delta) {
-      static const char* function("wiener_lpdf(%1%)");
+      static const char* function("wiener_lpdf");
 
       using std::log;
       using std::exp;
