@@ -44,9 +44,7 @@ namespace stan {
 
       static const char* function("neg_binomial_lpmf");
 
-      if (!(stan::length(n)
-            && stan::length(alpha)
-            && stan::length(beta)))
+      if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       T_partials_return logp(0.0);

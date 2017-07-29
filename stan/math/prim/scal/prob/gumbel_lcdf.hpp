@@ -23,8 +23,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Gumbel log cumulative distribution for the given 
-     * location and scale. Given containers of matching sizes, returns the 
+     * Returns the Gumbel log cumulative distribution for the given
+     * location and scale. Given containers of matching sizes, returns the
      * log sum of probabilities.
      *
      * @tparam T_y type of real parameter
@@ -47,9 +47,7 @@ namespace stan {
       using std::exp;
 
       T_partials_return cdf_log(0.0);
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(beta)))
         return cdf_log;
 
       check_not_nan(function, "Random variable", y);
@@ -90,4 +88,3 @@ namespace stan {
   }
 }
 #endif
-

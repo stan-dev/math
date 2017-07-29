@@ -22,7 +22,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the log PMF of the Bernoulli distribution. If containers are 
+     * Returns the log PMF of the Bernoulli distribution. If containers are
      * supplied, returns the log sum of the probabilities.
      *
      * @tparam T_n type of integer parameters
@@ -43,8 +43,7 @@ namespace stan {
 
       using std::log;
 
-      if (!(stan::length(n)
-            && stan::length(theta)))
+      if (!(stan::length(n) && stan::length(theta)))
         return 0.0;
 
       T_partials_return logp(0.0);

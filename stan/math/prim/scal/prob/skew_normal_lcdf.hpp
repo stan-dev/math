@@ -32,9 +32,7 @@ namespace stan {
 
       T_partials_return cdf_log(0.0);
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
             && stan::length(alpha)))
         return cdf_log;
 
@@ -102,4 +100,3 @@ namespace stan {
   }
 }
 #endif
-

@@ -34,9 +34,7 @@ namespace stan {
 
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(y_min)
-            && stan::length(alpha)))
+      if (!(stan::length(y) && stan::length(y_min)&& stan::length(alpha)))
         return 0.0;
 
       T_partials_return logp(0.0);

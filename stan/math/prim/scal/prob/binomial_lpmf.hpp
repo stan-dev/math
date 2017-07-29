@@ -29,8 +29,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the log PMF for the binomial distribution evaluated at the 
-     * specified success, population size, and chance of success. If given 
+     * Returns the log PMF for the binomial distribution evaluated at the
+     * specified success, population size, and chance of success. If given
      * containers of matching lengths, returns the log sum of probabilities.
      *
      * @tparam T_n type of successes parameter
@@ -58,9 +58,7 @@ namespace stan {
 
       static const char* function("binomial_lpmf");
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(theta)))
+      if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
         return 0.0;
 
       T_partials_return logp = 0;

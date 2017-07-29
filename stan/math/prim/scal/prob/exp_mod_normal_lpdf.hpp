@@ -33,9 +33,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
             && stan::length(lambda)))
         return 0.0;
 
@@ -131,4 +129,3 @@ namespace stan {
   }
 }
 #endif
-

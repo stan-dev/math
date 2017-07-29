@@ -25,8 +25,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the log PMF of the Beta-Binomial distribution with given population 
-     * size, prior success, and prior failure parameters. Given containers of 
+     * Returns the log PMF of the Beta-Binomial distribution with given population
+     * size, prior success, and prior failure parameters. Given containers of
      * matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_n type of success parameter
@@ -53,9 +53,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(alpha)
+      if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 

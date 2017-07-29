@@ -29,9 +29,7 @@ namespace stan {
 
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       T_partials_return ccdf_log(0.0);

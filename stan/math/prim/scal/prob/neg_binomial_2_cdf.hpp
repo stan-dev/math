@@ -33,9 +33,7 @@ namespace stan {
         T_partials_return;
 
       T_partials_return P(1.0);
-      if (!(stan::length(n)
-            && stan::length(mu)
-            && stan::length(phi)))
+      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
         return P;
 
       check_positive_finite(function, "Location parameter", mu);

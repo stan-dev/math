@@ -23,8 +23,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Gumbel log probability density for the given 
-     * location and scale. Given containers of matching sizes, returns the 
+     * Returns the Gumbel log probability density for the given
+     * location and scale. Given containers of matching sizes, returns the
      * log sum of densities.
      *
      * @tparam T_y type of real parameter
@@ -48,9 +48,7 @@ namespace stan {
       using std::exp;
       using stan::is_constant_struct;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(beta)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -119,4 +117,3 @@ namespace stan {
   }
 }
 #endif
-

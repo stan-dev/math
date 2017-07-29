@@ -91,11 +91,8 @@ namespace stan {
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(beta)
-            && stan::length(tau)
-            && stan::length(delta)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)
+            && stan::length(tau) && stan::length(delta)))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,

@@ -29,9 +29,7 @@ namespace stan {
                        const T_a& a, const T_b& b) {
       static const char* function("hypergeometric_lpmf");
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(a)
+      if (!(stan::length(n) && stan::length(N) && stan::length(a)
             && stan::length(b)))
         return 0.0;
 

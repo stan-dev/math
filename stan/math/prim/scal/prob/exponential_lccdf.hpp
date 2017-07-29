@@ -32,8 +32,7 @@ namespace stan {
       using boost::math::tools::promote_args;
 
       T_partials_return ccdf_log(0.0);
-      if (!(stan::length(y)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(beta)))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

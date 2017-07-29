@@ -36,8 +36,7 @@ namespace stan {
 
       using std::exp;
 
-      if (!(stan::length(n)
-            && stan::length(alpha)))
+      if (!(stan::length(n) && stan::length(alpha)))
         return 0.0;
 
       T_partials_return logp(0.0);

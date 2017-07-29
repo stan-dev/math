@@ -36,9 +36,7 @@ namespace stan {
       using std::log;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(lambda)
+      if (!(stan::length(y) && stan::length(mu) && stan::length(lambda)
             && stan::length(alpha)))
         return 0.0;
 

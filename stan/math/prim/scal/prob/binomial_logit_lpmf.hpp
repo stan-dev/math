@@ -29,7 +29,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha)) 
+     * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha))
      *
      * If given vectors of matching lengths, returns
      * the log sum of probabilities.
@@ -56,9 +56,7 @@ namespace stan {
 
       static const char* function("binomial_logit_lpmf");
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(alpha)))
+      if (!(stan::length(n) && stan::length(N) && stan::length(alpha)))
         return 0.0;
 
       T_partials_return logp = 0;

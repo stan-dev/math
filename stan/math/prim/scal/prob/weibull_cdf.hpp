@@ -49,9 +49,7 @@ namespace stan {
       using std::log;
       using std::exp;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
         return 1.0;
 
       T_partials_return cdf(1.0);

@@ -24,7 +24,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the Weibull log probability density for the given 
+     * Returns the Weibull log probability density for the given
      * location and scale. Given containers of matching sizes, returns the
      * log sum of probability densities.
      *
@@ -35,7 +35,7 @@ namespace stan {
      * @param alpha shape parameter
      * @param sigma scale parameter
      * @return log probability density or log sum of probability densities
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive
      */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
@@ -47,9 +47,7 @@ namespace stan {
 
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
         return 0.0;
 
       T_partials_return logp(0.0);

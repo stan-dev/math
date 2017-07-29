@@ -22,8 +22,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the double exponential log complementary cumulative density 
-     * function. Given containers of matching sizes, returns the log sum of 
+     * Returns the double exponential log complementary cumulative density
+     * function. Given containers of matching sizes, returns the log sum of
      * probabilities.
      *
      * @tparam T_y type of real parameter.
@@ -46,9 +46,7 @@ namespace stan {
 
       T_partials_return ccdf_log(0.0);
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

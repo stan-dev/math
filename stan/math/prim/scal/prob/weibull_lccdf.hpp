@@ -25,7 +25,7 @@ namespace stan {
 
     /**
      * Returns the Weibull log complementary cumulative distribution function
-     * for the given location and scale. Given containers of matching sizes, 
+     * for the given location and scale. Given containers of matching sizes,
      * returns the log sum of probabilities.
      *
      * @tparam T_y type of real parameter
@@ -35,7 +35,7 @@ namespace stan {
      * @param alpha shape parameter
      * @param sigma scale parameter
      * @return log probability or log sum of probabilities
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive
      */
     template <typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -48,9 +48,7 @@ namespace stan {
       using boost::math::tools::promote_args;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
         return 0.0;
 
       T_partials_return ccdf_log(0.0);
