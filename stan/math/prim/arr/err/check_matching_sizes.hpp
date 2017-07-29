@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

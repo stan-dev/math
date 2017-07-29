@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

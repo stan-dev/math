@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_range.hpp>
+#include <string>
 #include <vector>
 
 namespace stan {

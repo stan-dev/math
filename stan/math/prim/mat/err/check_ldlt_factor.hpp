@@ -26,7 +26,8 @@ namespace stan {
      *   invalid.
      */
     template <typename T, int R, int C>
-    inline void check_ldlt_factor(const std::string& function, const std::string& name,
+    inline void check_ldlt_factor(const std::string& function,
+                                  const std::string& name,
                                   LDLT_factor<T, R, C>& A) {
       if (!A.success()) {
         std::ostringstream msg;

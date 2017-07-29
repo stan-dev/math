@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

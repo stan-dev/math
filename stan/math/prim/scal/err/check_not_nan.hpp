@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

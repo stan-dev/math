@@ -7,6 +7,7 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/check_unit_vector.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

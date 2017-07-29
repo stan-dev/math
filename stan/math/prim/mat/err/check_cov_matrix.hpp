@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

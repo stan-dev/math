@@ -10,6 +10,7 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <sstream>
+#include <string>
 
 namespace stan {
   namespace math {

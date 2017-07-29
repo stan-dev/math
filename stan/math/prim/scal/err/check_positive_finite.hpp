@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <string>
 
 namespace stan {
   namespace math {

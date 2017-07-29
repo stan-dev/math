@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/err/check_positive_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -30,7 +31,8 @@ namespace stan {
      * if it is not positive definite, or if any element is <code>NaN</code>.
      */
     template <typename T_y>
-    inline void check_pos_definite(const std::string& function, const std::string& name,
+    inline void check_pos_definite(const std::string& function,
+                                   const std::string& name,
                                    const Eigen::Matrix<T_y, -1, -1>& y) {
       check_symmetric(function, name, y);
       check_positive_size(function, name, "rows", y.rows());
@@ -58,7 +60,8 @@ namespace stan {
      * positive definite.
      */
     template <typename Derived>
-    inline void check_pos_definite(const std::string& function, const std::string& name,
+    inline void check_pos_definite(const std::string& function,
+                                   const std::string& name,
                                    const Eigen::LDLT<Derived>& cholesky) {
       if (cholesky.info() != Eigen::Success
           || !cholesky.isPositive()
@@ -81,7 +84,8 @@ namespace stan {
      * L matrix is not positive.
      */
     template <typename Derived>
-    inline void check_pos_definite(const std::string& function, const std::string& name,
+    inline void check_pos_definite(const std::string& function,
+                                   const std::string& name,
                                    const Eigen::LLT<Derived>& cholesky) {
       if (cholesky.info() != Eigen::Success
           || !(cholesky.matrixLLT().diagonal().array() > 0.0).all())

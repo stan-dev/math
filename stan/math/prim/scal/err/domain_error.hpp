@@ -27,8 +27,10 @@ namespace stan {
      * @throw std::domain_error Always.
      */
     template <typename T>
-    inline void domain_error(const std::string& function, const std::string& name,
-                             const T& y, const std::string& msg1, const std::string& msg2) {
+    inline void domain_error(const std::string& function,
+                             const std::string& name,
+                             const T& y,
+                             const std::string& msg1, const std::string& msg2) {
       std::ostringstream message;
       // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
       const T* y_ptr = &y;
@@ -53,7 +55,8 @@ namespace stan {
      * @throw std::domain_error Always.
      */
     template <typename T>
-    inline void domain_error(const std::string& function, const std::string& name,
+    inline void domain_error(const std::string& function,
+                             const std::string& name,
                              const T& y, const std::string& msg1) {
       domain_error(function, name, y, msg1, "");
     }

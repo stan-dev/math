@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive_size.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
