@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-const char* function = "function";
+const std::string function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
 public:
   void SetUp() {
