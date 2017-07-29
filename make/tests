@@ -47,7 +47,7 @@ test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 # CVODES tests
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
 $(CVODES_TESTS) : LDFLAGS += $(LIBCVODES)
 
 ############################################################
