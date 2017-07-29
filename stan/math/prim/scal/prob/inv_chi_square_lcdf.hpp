@@ -23,13 +23,14 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
      * Returns the inverse chi square log cumulative distribution function for
-     * the given variate and degrees of freedom. If given containers of 
+     * the given variate and degrees of freedom. If given containers of
      * matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -48,7 +49,7 @@ namespace stan {
 
       if ( !( stan::length(y) && stan::length(nu) ) ) return 0.0;
 
-      static const char* function("inv_chi_square_lcdf");
+      static const std::string function = "inv_chi_square_lcdf";
 
       using boost::math::tools::promote_args;
       using std::exp;

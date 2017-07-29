@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -31,7 +32,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const char* function("categorical_logit_rng");
+      static const std::string function = "categorical_logit_rng";
 
       check_finite(function, "Log odds parameter", beta);
 

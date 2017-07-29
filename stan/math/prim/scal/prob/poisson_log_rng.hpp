@@ -12,6 +12,7 @@
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -23,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::poisson_distribution;
 
-      static const char* function("poisson_log_rng");
+      static const std::string function = "poisson_log_rng";
       static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
 
       using std::exp;

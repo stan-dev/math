@@ -26,6 +26,7 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -58,7 +59,7 @@ namespace stan {
               && stan::length(beta) ) )
         return 0.0;
 
-      static const char* function("beta_lcdf");
+      static const std::string function = "beta_lcdf";
 
       using boost::math::tools::promote_args;
 

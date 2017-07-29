@@ -19,6 +19,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -31,7 +32,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::gamma_distribution;
 
-      static const char* function("inv_gamma_rng");
+      static const std::string function = "inv_gamma_rng";
 
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", beta);

@@ -24,6 +24,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -40,7 +41,7 @@ namespace stan {
             && stan::length(sigma)))
         return 0.0;
 
-      static const char* function("student_t_lccdf");
+      static const std::string function = "student_t_lccdf";
 
       using std::exp;
 

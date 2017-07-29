@@ -17,12 +17,13 @@
 #include <boost/random/cauchy_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the cauchy log cumulative distribution function for the given 
+     * Returns the cauchy log cumulative distribution function for the given
      * location, and scale. If given containers of matching sizes
      * returns the log sum of probabilities.
      *
@@ -46,7 +47,7 @@ namespace stan {
               && stan::length(sigma) ) )
         return 0.0;
 
-      static const char* function("cauchy_lcdf");
+      static const std::string function = "cauchy_lcdf";
 
       using boost::math::tools::promote_args;
 

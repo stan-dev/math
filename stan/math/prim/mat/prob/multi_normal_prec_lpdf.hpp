@@ -25,6 +25,7 @@
 #include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -35,7 +36,7 @@ namespace stan {
     multi_normal_prec_lpdf(const T_y& y,
                           const T_loc& mu,
                           const T_covar& Sigma) {
-      static const char* function("multi_normal_prec_lpdf");
+      static const std::string function = "multi_normal_prec_lpdf";
       typedef typename scalar_type<T_covar>::type T_covar_elem;
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);
@@ -134,4 +135,3 @@ namespace stan {
   }
 }
 #endif
-
