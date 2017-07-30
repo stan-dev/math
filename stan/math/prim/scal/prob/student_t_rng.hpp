@@ -16,22 +16,21 @@ namespace stan {
      * Return a pseudorandom student-t variate for the given degrees of freedom,
      * location, and scale using the specified random number generator.
      *
-     * nu, mu, and sigma can be mixes of either scalars or vector types. If
-     * mu and sigma are vector types, they both need to be the same size.
+     * nu, mu, and sigma can each be either scalars or vectors. All vector
+     * inputs must be the same length.
      *
-     * @tparam T_deg Type of nu, can either be scalar or vector
-     * @tparam T_loc Type of mu, can either be scalar or vector
-     * @tparam T_scale Type of sigma, can either be scalar or vector
+     * @tparam T_deg Type of degrees of freedom parameter
+     * @tparam T_loc Type of location parameter
+     * @tparam T_scale Type of scale parameter
      * @tparam RNG type of random number generator
-     * @param nu positive degrees of freedom parameter
-     * @param mu location parameter
-     * @param sigma positive scale parameter
+     * @param nu (Sequence of) degrees of freedom parameter(s)
+     * @param mu (Sequence of) location parameter(s)
+     * @param sigma (Sequence of) scale parameter(s)
      * @param rng random number generator
      * @return Student-t random variate
      * @throw std::domain_error if nu is nonpositive, mu is infinite, or sigma
      * is nonpositive
-     * @throw std::invalid_argument if any two of nu, mu, or sigma are vector
-     * types of different sizes
+     * @throw std::invalid_argument if vector arguments are not the same length
      */
     template <typename T_deg, typename T_loc, typename T_scale, class RNG>
     inline  typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type

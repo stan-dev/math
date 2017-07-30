@@ -4,7 +4,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
@@ -14,25 +13,24 @@
 namespace stan {
   namespace math {
     /**
-     * Return a pseudorandom Skew-Normal variate for the given location, scale,
+     * Return a pseudorandom Skew-normal variate for the given location, scale,
      * and shape using the specified random number generator.
      *
-     * mu, sigma, and alpha can be mixes of either scalars or vector types. If
-     * mu and sigma are vector types, they both need to be the same size.
+     * mu, alpha, and sigma can each be either scalars or vectors. All vector
+     * inputs must be the same length.
      *
-     * @tparam T_loc Type of mu, can either be scalar or vector
-     * @tparam T_scale Type of sigma, can either be scalar or vector
-     * @tparam T_shape Type of alpha, can either be scalar or vector
+     * @tparam T_loc Type of location parameter
+     * @tparam T_scale Type of scale parameter
+     * @tparam T_shape Type of shape parameter
      * @tparam RNG type of random number generator
-     * @param mu location parameter
-     * @param sigma positive scale parameter
-     * @param alpha shape parameter
+     * @param mu (Sequence of) location parameter(s)
+     * @param sigma (Sequence of) scale parameter(s)
+     * @param alpha (Sequence of) shape parameter(s)
      * @param rng random number generator
-     * @return Skew-Normal random variate
-     * @throw std::domain_error if mu is infinite, sigma is nonpositive,
-     * or alpha is infinite
-     * @throw std::invalid_argument if any two of mu, sigma, and alpha are
-     * vector types of different sizes
+     * @return Skew-normal random variate
+     * @throw std::domain_error if mu is infinite, alpha is infinite, or sigma
+     * is nonpositive
+     * @throw std::invalid_argument if vector arguments are not the same length
      */
     template <typename T_loc, typename T_scale, typename T_shape, class RNG>
     inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type

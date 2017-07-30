@@ -1,43 +1,37 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
 namespace stan {
   namespace math {
     /**
-     * Return a pseudorandom Exponentially Modified Normal variate for the
+     * Return a pseudorandom Exponentially modified normal variate for the
      * given location, scale, and inverse scale using the specified random
      * number generator.
      *
-     * mu, sigma, and lambda can be mixes of either scalars or vector types. If
-     * mu and sigma are vector types, they both need to be the same size.
+     * mu, sigma, and lambda can each be either scalars or vectors. All vector
+     * inputs must be the same length.
      *
-     * @tparam T_loc Type of mu, can either be scalar or vector
-     * @tparam T_scale Type of sigma, can either be scalar or vector
-     * @tparam T_shape Type of lambda, can either be scalar or vector
+     * @tparam T_loc Type of location parameter
+     * @tparam T_scale Type of scale parameter
+     * @tparam T_shape Type of inverse scale parameter
      * @tparam RNG type of random number generator
-     * @param mu location parameter
-     * @param sigma positive scale parameter
-     * @param lambda positive inverse scale parameter
+     * @param mu (Sequence of) location parameter(s)
+     * @param sigma (Sequence of) scale parameter(s)
+     * @param lambda (Sequence of) inverse scale parameter(s)
      * @param rng random number generator
-     * @return Skew-Normal random variate
+     * @return Exponentially modified normal random variate
      * @throw std::domain_error if mu is infinite, sigma is nonpositive,
      * or lambda is nonpositive
-     * @throw std::invalid_argument if any two of mu, sigma, and lambda are
-     * vector types of different sizes
+     * @throw std::invalid_argument if vector arguments are not the same length
      */
     template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
     inline

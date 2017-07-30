@@ -16,19 +16,18 @@ namespace stan {
      * Return a pseudorandom Gumbel variate with the given location and scale
      * using the specified random number generator.
      *
-     * mu and beta can be mixes of either scalars or vector types. If mu and
-     * beta are vector types, they both need to be the same size.
+     * mu and sigma can each be either scalars or vectors. All vector inputs
+     * must be the same length.
      *
-     * @tparam T_loc Type of mu, can either be scalar or vector
-     * @tparam T_scale Type of beta, can either be scalar or vector
+     * @tparam T_loc Type of location parameter
+     * @tparam T_scale Type of scale parameter
      * @tparam RNG type of random number generator
-     * @param mu location parameter
-     * @param beta positive scale parameter
+     * @param mu (Sequence of) location parameter(s)
+     * @param beta (Sequence of) scale parameter(s)
      * @param rng random number generator
      * @return Gumbel random variate
      * @throw std::domain_error if mu is infinite or beta is nonpositive.
-     * @throw std::invalid_argument if mu and beta are vector types of
-     * different sizes
+     * @throw std::invalid_argument if vector arguments are not the same length
      */
     template <typename T_loc, typename T_scale, class RNG>
     inline typename VectorBuilder<true, double, T_loc, T_scale>::type

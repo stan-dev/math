@@ -3,47 +3,48 @@
 
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 
 namespace stan {
   namespace math {
-
     /**
      * Return a pseudorandom chi squared variate with the nu degrees of freedom
      * using the specified random number generator.
      *
+     * nu can be either a scalar or vector.
+     *
+     * @tparam T_deg Type of degrees of freedom parameter
      * @tparam RNG class of random number generator
-     * @param nu positive degrees of freedom parameter
+     * @param nu (Sequence of) degrees of freedom parameter(s)
      * @param rng random number generator
      * @return chi squared random variate
      * @throw std::domain_error if nu is nonpositive
      */
-    template <class RNG>
-    inline double
-    chi_square_rng(double nu,
+    template <typename T_deg, class RNG>
+    inline typename VectorBuilder<true, double, T_deg>::type
+    chi_square_rng(const T_deg& nu,
                    RNG& rng) {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;
 
       static const char* function("chi_square_rng");
 
+      scalar_seq_view<T_deg> nu_vec(nu);
       check_positive_finite(function, "Degrees of freedom parameter", nu);
 
-      variate_generator<RNG&, chi_squared_distribution<> >
-        chi_square_rng(rng, chi_squared_distribution<>(nu));
-      return chi_square_rng();
-    }
+      size_t N = length(nu);
+      VectorBuilder<true, double, T_deg> output(N);
+      for (size_t n = 0; n < N; n++) {
+        variate_generator<RNG&, chi_squared_distribution<> >
+          chi_square_rng(rng, chi_squared_distribution<>(nu_vec[n]));
+        output[n] = chi_square_rng();
+      }
 
+      return output.data();
+    }
   }
 }
 #endif
