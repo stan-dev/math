@@ -6,10 +6,6 @@ before_script:
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
-osx_clang: &osx_clang
-  os: osx
-  compiler: clang
-
 linux_clang: &linux_clang
   os: linux
   compiler: "clang-3.8"
@@ -29,24 +25,6 @@ linux_gcc: &linux_gcc
 matrix:
   fast_finish: true
   include:
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/prim/mat/fun
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/rev/mat
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/fwd
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
