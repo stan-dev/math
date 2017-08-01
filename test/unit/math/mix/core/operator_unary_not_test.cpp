@@ -1,10 +1,14 @@
-#include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 
 void test_unary_not(double x) {
-  AVAR x_v = x;
-  EXPECT_EQ(!x, !x_v);
+  using stan::math::var;
+  using stan::math::fvar;
+
+  EXPECT_EQ(!x, !fvar<double>(x));
+  EXPECT_EQ(!x, !fvar<fvar<double> >(x));
+  EXPECT_EQ(!x, !fvar<var>(x));
+  EXPECT_EQ(!x, !fvar<fvar<var> >(x));
 }
 
 TEST(AgradRev,unaryNot) {
