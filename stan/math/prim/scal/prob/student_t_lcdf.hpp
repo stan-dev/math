@@ -22,8 +22,8 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
 #include <string>
 
 namespace stan {

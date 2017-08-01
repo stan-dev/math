@@ -9,8 +9,8 @@
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace stan {
   namespace math {

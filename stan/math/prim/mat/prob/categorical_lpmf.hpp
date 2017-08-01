@@ -12,8 +12,8 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace stan {
   namespace math {
