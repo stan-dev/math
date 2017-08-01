@@ -51,46 +51,46 @@ struct g3 {
 };
 
 
-TEST(StanMath_integrate_1d, test1) {
-  using stan::math::integrate_1d;
+TEST(StanMath_integrate_1d_tsc, test1) {
+  using stan::math::integrate_1d_tsc;
 
   f1 if1;
 
-  EXPECT_FLOAT_EQ(integrate_1d(if1, .2, .7, stan::math::var(.5), 0).val(), 0.7923499+.25);
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if1, .2, .7, stan::math::var(.5), 0).val(), 0.7923499+.25);
 
 }
 
 
-TEST(StanMath_integrate_1d, finite_diff) {
-  using stan::math::integrate_1d;
+TEST(StanMath_integrate_1d_tsc, finite_diff) {
+  using stan::math::integrate_1d_tsc;
 
   {
   f1 if1;
 
   AVAR a = .6;
-  AVAR f = integrate_1d(if1, .2, .7, a, 0);
-  EXPECT_FLOAT_EQ(integrate_1d(if1, .2, .7, .6, 0), f.val());
+  AVAR f = integrate_1d_tsc(if1, .2, .7, a, 0);
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if1, .2, .7, .6, 0), f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x,g);
 
-  EXPECT_FLOAT_EQ((integrate_1d(if1, .2, .7, .6+1e-6, 0) -
-    integrate_1d(if1, .2, .7, .6-1e-6, 0))/2e-6, g[0]);
+  EXPECT_FLOAT_EQ((integrate_1d_tsc(if1, .2, .7, .6+1e-6, 0) -
+    integrate_1d_tsc(if1, .2, .7, .6-1e-6, 0))/2e-6, g[0]);
   }
   {
   f2 if2;
 
   AVAR a = 0.68;
-  AVAR f = integrate_1d(if2, 0., 1.1, a, 0);
-  EXPECT_FLOAT_EQ(integrate_1d(if2, 0., 1.1, .68, 0), f.val());
+  AVAR f = integrate_1d_tsc(if2, 0., 1.1, a, 0);
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if2, 0., 1.1, .68, 0), f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x,g);
 
-  EXPECT_FLOAT_EQ((integrate_1d(if2, 0., 1.1, .68+1e-6, 0) -
-    integrate_1d(if2, 0., 1.1, .68-1e-6, 0))/2e-6, g[0]);
+  EXPECT_FLOAT_EQ((integrate_1d_tsc(if2, 0., 1.1, .68+1e-6, 0) -
+    integrate_1d_tsc(if2, 0., 1.1, .68-1e-6, 0))/2e-6, g[0]);
   }
   {
   f3 if3;
@@ -99,7 +99,7 @@ TEST(StanMath_integrate_1d, finite_diff) {
   AVAR b = 0.38;
   AVAR c = 0.78;
   AVEC vec = createAVEC(a, b, c);
-  AVAR f = integrate_1d(if3, 0., 1.1, vec, 0);
+  AVAR f = integrate_1d_tsc(if3, 0., 1.1, vec, 0);
 
   VEC g;
   double p1;
@@ -107,19 +107,19 @@ TEST(StanMath_integrate_1d, finite_diff) {
   f.grad(vec, g);
 
   std::vector<double> vecd = value_of(vec);
-  EXPECT_FLOAT_EQ(integrate_1d(if3, 0., 1.1, vecd, 0), f.val());
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if3, 0., 1.1, vecd, 0), f.val());
 
   vecd[0] += 1e-6;
-  p1 = integrate_1d(if3, 0., 1.1, vecd, 0);
+  p1 = integrate_1d_tsc(if3, 0., 1.1, vecd, 0);
   vecd[0] -= 2e-6;
-  p2 = integrate_1d(if3, 0., 1.1, vecd, 0);
+  p2 = integrate_1d_tsc(if3, 0., 1.1, vecd, 0);
 
   EXPECT_FLOAT_EQ((p1 - p2)/2e-6, g[0]);
 
 
   g3 ig3;
   stan::math::set_zero_all_adjoints();
-  integrate_1d_grad(if3, ig3, 0., 1.1, vec, 0).grad();
+  integrate_1d_tsc_tscg(if3, ig3, 0., 1.1, vec, 0).grad();
   EXPECT_FLOAT_EQ((p1 - p2)/2e-6, a.adj());
   }
 }

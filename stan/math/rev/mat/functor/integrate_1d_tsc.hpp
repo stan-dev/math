@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_1D_HPP
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_tsc_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_tsc_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
@@ -102,7 +102,7 @@ namespace stan {
     template <typename F, typename G, typename T_param>
     inline
     typename scalar_type<T_param>::type
-    integrate_1d_grad(const F& f,
+    integrate_1d_tsc_tscg(const F& f,
                       const G& g,
                       const double a,
                       const double b,
@@ -110,8 +110,8 @@ namespace stan {
                       std::ostream* msgs,
                       const double tre = 1e-6,
                       const double tae = 1e-6) {
-      check_finite("integrate_1d", "lower limit", a);
-      check_finite("integrate_1d", "upper limit", b);
+      check_finite("integrate_1d_tsc", "lower limit", a);
+      check_finite("integrate_1d_tsc", "upper limit", b);
 
       using boost::lambda::_1;
 
@@ -186,15 +186,15 @@ namespace stan {
      */
     template <typename F, typename T_param>
     inline
-    typename scalar_type<T_param>::type integrate_1d(const F& f,
+    typename scalar_type<T_param>::type integrate_1d_tsc(const F& f,
                                const double a,
                                const double b,
                                const T_param& param,
                                std::ostream* msgs,
                                const double tre = 1e-6,
                                const double tae = 1e-6) {
-      stan::math::check_finite("integrate_1d", "lower limit", a);
-      stan::math::check_finite("integrate_1d", "upper limit", b);
+      stan::math::check_finite("integrate_1d_tsc", "lower limit", a);
+      stan::math::check_finite("integrate_1d_tsc", "upper limit", b);
 
       using boost::lambda::_1;
 

@@ -46,16 +46,16 @@ struct f4 {
 };
 
 
-TEST(StanMath_integrate_1d, test1) {
-  using stan::math::integrate_1d;
+TEST(StanMath_integrate_1d_tsc, test1) {
+  using stan::math::integrate_1d_tsc;
 
   f1 if1;
 
-  EXPECT_FLOAT_EQ(integrate_1d(if1, .2, .7, .5, 0), 1.04235);
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if1, .2, .7, .5, 0), 1.04235);
 
   f2 if2;
 
-  EXPECT_FLOAT_EQ(integrate_1d(if2, -.2, .7,
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if2, -.2, .7,
                                      std::vector<double>(2, .4), 0),
                   1.396622);
   f3 if3;
@@ -64,7 +64,7 @@ TEST(StanMath_integrate_1d, test1) {
   a(1) = 6.0;
   a(2) = 5.1;
 
-  EXPECT_FLOAT_EQ(integrate_1d(if3, -.2, 2.9, a, 0),
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if3, -.2, 2.9, a, 0),
                   4131.985);
 
   f4 if4;
@@ -73,7 +73,7 @@ TEST(StanMath_integrate_1d, test1) {
   b(1) = 6.0;
   b(2) = 5.1;
 
-  EXPECT_FLOAT_EQ(integrate_1d(if4, -.2, 2.9, b, 0),
+  EXPECT_FLOAT_EQ(integrate_1d_tsc(if4, -.2, 2.9, b, 0),
                   24219.99);
 
 }
