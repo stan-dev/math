@@ -147,12 +147,12 @@ namespace stan {
 
         } else {
           T_partials_return z = 1.0 - inc_beta((T_partials_return)0.5,
-                                               0.5*nu_dbl, r);
+                                               0.5 * nu_dbl, r);
           zJacobian *= -1;
 
           const T_partials_return Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
 
-          T_partials_return d_ibeta = pow(1.0-r, 0.5*nu_dbl-1) * pow(r, -0.5)
+          T_partials_return d_ibeta = pow(1.0 - r, 0.5*nu_dbl - 1) * pow(r, -0.5)
             / betaNuHalf;
 
           P += log(Pn);

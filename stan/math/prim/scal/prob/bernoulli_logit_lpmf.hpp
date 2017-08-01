@@ -66,7 +66,7 @@ namespace stan {
         const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        const int sign = 2*n_int-1;
+        const int sign = 2 * n_int - 1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
 

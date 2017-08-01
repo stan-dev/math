@@ -22,11 +22,11 @@ namespace stan {
       check_less_or_equal("segment", "n", i,
                           static_cast<size_t>(v.rows()));
       if (n != 0) {
-        check_greater("segment", "n", i+n-1, 0.0);
-        check_less_or_equal("segment", "n", i+n-1,
+        check_greater("segment", "n", i + n - 1, 0.0);
+        check_less_or_equal("segment", "n", i + n - 1,
                             static_cast<size_t>(v.rows()));
       }
-      return v.segment(i-1, n);
+      return v.segment(i - 1, n);
     }
 
     template <typename T>
@@ -38,12 +38,12 @@ namespace stan {
       check_less_or_equal("segment", "n", i,
                           static_cast<size_t>(v.cols()));
       if (n != 0) {
-        check_greater("segment", "n", i+n-1, 0.0);
+        check_greater("segment", "n", i + n - 1, 0.0);
         check_less_or_equal("segment", "n", i + n - 1,
                             static_cast<size_t>(v.cols()));
       }
 
-      return v.segment(i-1, n);
+      return v.segment(i - 1, n);
     }
 
     template <typename T>

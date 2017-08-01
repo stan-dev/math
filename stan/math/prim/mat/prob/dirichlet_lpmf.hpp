@@ -63,7 +63,7 @@ namespace stan {
       }
       if (include_summand<propto, T_prob, T_prior_sample_size>::value) {
         for (int k = 0; k < theta.rows(); ++k)
-          lp += multiply_log(alpha[k]-1, theta[k]);
+          lp += multiply_log(alpha[k] - 1, theta[k]);
       }
       return lp;
     }

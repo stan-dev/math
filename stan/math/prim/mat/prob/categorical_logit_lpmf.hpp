@@ -31,7 +31,7 @@ namespace stan {
         return 0.0;
 
       // FIXME:  wasteful vs. creating term (n-1) if not vectorized
-      return beta(n-1) - log_sum_exp(beta);  // == log_softmax(beta)(n-1);
+      return beta(n - 1) - log_sum_exp(beta);  // == log_softmax(beta)(n-1);
     }
 
     template <typename T_prob>

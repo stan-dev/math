@@ -118,11 +118,11 @@ namespace stan {
           logp -= half_y;
 
         if (!is_constant_struct<T_y>::value) {
-          ops_partials.edge1_.partials_[n] += (half_nu-1.0)*inv_y[n] - 0.5;
+          ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
         }
         if (!is_constant_struct<T_dof>::value) {
           ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
-            - digamma_half_nu_over_two[n] + log_y[n]*0.5;
+            - digamma_half_nu_over_two[n] + log_y[n] * 0.5;
         }
       }
       return ops_partials.build(logp);

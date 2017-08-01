@@ -122,7 +122,7 @@ namespace stan {
         }
         if (!is_constant_struct<T_inv_scale>::value)
           ops_partials.edge2_.partials_[i]  += d_dbl * pow(1 - p_dbl, n_dbl)
-            * pow(p_dbl, alpha_dbl-1) / beta_func / Pi;
+            * pow(p_dbl, alpha_dbl - 1) / beta_func / Pi;
       }
 
       return ops_partials.build(P);

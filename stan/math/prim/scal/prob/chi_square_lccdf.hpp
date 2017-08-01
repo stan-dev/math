@@ -26,8 +26,8 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the chi square log complementary cumulative distribution 
-     * function for the given variate and degrees of freedom. If given 
+     * Returns the chi square log complementary cumulative distribution
+     * function for the given variate and degrees of freedom. If given
      * containers of matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -106,7 +106,7 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
-            * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
+            * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           ops_partials.edge2_.partials_[n]
             += 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl

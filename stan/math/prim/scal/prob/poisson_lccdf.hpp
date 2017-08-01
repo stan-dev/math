@@ -65,13 +65,13 @@ namespace stan {
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-        const T_partials_return log_Pi = log(gamma_p(n_dbl+1, lambda_dbl));
+        const T_partials_return log_Pi = log(gamma_p(n_dbl + 1, lambda_dbl));
 
         P += log_Pi;
 
         if (!is_constant_struct<T_rate>::value)
           ops_partials.edge1_.partials_[i] += exp(n_dbl * log(lambda_dbl)
-                                               - lambda_dbl - lgamma(n_dbl+1)
+                                               - lambda_dbl - lgamma(n_dbl + 1)
                                                - log_Pi);
       }
       return ops_partials.build(P);

@@ -122,8 +122,8 @@ namespace stan {
         cdf_log += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] += pow(1-y_dbl, beta_dbl-1)
-            * pow(y_dbl, alpha_dbl-1) / betafunc_dbl / Pn;
+          ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
+            * pow(y_dbl, alpha_dbl - 1) / betafunc_dbl / Pn;
 
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
@@ -137,7 +137,7 @@ namespace stan {
         if (!is_constant_struct<T_scale_succ>::value)
           ops_partials.edge2_.partials_[n] += g1 / Pn;
         if (!is_constant_struct<T_scale_fail>::value)
-          ops_partials.edge3_.partials_[n]  += g2 / Pn;
+          ops_partials.edge3_.partials_[n] += g2 / Pn;
       }
 
       return ops_partials.build(cdf_log);

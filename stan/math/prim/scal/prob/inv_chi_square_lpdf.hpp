@@ -108,18 +108,18 @@ namespace stan {
         if (include_summand<propto, T_dof>::value)
           logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
         if (include_summand<propto, T_y, T_dof>::value)
-          logp -= (half_nu+1.0) * log_y[n];
+          logp -= (half_nu + 1.0) * log_y[n];
         if (include_summand<propto, T_y>::value)
           logp -= 0.5 * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
           ops_partials.edge1_.partials_[n]
-            += -(half_nu+1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
+            += -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
           ops_partials.edge2_.partials_[n]
             += NEG_LOG_TWO_OVER_TWO - digamma_half_nu_over_two[n]
-            - 0.5*log_y[n];
+            - 0.5 * log_y[n];
         }
       }
       return ops_partials.build(logp);

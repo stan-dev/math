@@ -111,7 +111,7 @@ namespace stan {
       std::vector<double> ts_vec(ts.size() + 1);
       ts_vec[0] = t0;
       for (size_t n = 0; n < ts.size(); n++)
-        ts_vec[n+1] = ts[n];
+        ts_vec[n + 1] = ts[n];
 
       std::vector<std::vector<double> > y_coupled(ts_vec.size());
       coupled_ode_observer observer(y_coupled);

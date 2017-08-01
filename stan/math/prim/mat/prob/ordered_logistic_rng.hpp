@@ -32,10 +32,10 @@ namespace stan {
       for (int i = 1; i < c.size(); ++i) {
         check_greater(function, "Cut points parameter", c(i), c(i - 1));
       }
-      check_finite(function, "Cut points parameter", c(c.size()-1));
+      check_finite(function, "Cut points parameter", c(c.size() - 1));
       check_finite(function, "Cut points parameter", c(0));
 
-      Eigen::VectorXd cut(c.rows()+1);
+      Eigen::VectorXd cut(c.rows() + 1);
       cut(0) = 1 - inv_logit(eta - c(0));
       for (int j = 1; j < c.rows(); j++)
         cut(j) = inv_logit(eta - c(j - 1)) - inv_logit(eta - c(j));

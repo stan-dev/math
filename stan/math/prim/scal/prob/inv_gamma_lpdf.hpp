@@ -126,13 +126,13 @@ namespace stan {
         if (include_summand<propto, T_shape, T_scale>::value)
           logp += alpha_dbl * log_beta[n];
         if (include_summand<propto, T_y, T_shape>::value)
-          logp -= (alpha_dbl+1.0) * log_y[n];
+          logp -= (alpha_dbl + 1.0) * log_y[n];
         if (include_summand<propto, T_y, T_scale>::value)
           logp -= beta_dbl * inv_y[n];
 
         if (!is_constant<typename is_vector<T_y>::type>::value)
           ops_partials.edge1_.partials_[n]
-            += -(alpha_dbl+1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
+            += -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
         if (!is_constant<typename is_vector<T_shape>::type>::value)
           ops_partials.edge2_.partials_[n]
             += -digamma_alpha[n] + log_beta[n] - log_y[n];

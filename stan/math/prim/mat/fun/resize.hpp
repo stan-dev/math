@@ -13,7 +13,7 @@ namespace stan {
       void resize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x,
                   const std::vector<size_t>& dims,
                   size_t pos) {
-        x.resize(dims[pos], dims[pos+1]);
+        x.resize(dims[pos], dims[pos + 1]);
       }
 
       template <typename T>
