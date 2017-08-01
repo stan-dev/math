@@ -12,22 +12,23 @@ namespace stan {
 
     /**
      * A functor that allows us to treat either x or y as
-     * the independent variable. This allows us to
-     * choose with respect to which variable the
-     * jacobian gets computed.
+     * the independent variable. If x_is_dv = true, than the
+     * Jacobian is computed w.r.t x, else it is computed
+     * w.r.t y.
+     * @tparam F type for algebraic system functor
+     * @tparam T0 type for unknowns
+     * @tparam T1 type for auxiliary parameters
+     * @tparam x_is_iv true if x is the independent variable
      */
-    template <typename F, typename T0, typename T1>
+    template <typename F, typename T0, typename T1, bool x_is_iv>
     struct system_functor {
-    private:
-      F f_;
-      Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;
-      Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
-      std::vector<double> dat_;
-      std::vector<int> dat_int_;
-      std::ostream* msgs_;
-      bool x_is_dv_;
+      F f_;  /** algebraic system functor */
+      Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;  /** unknowns */
+      Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;  /** auxiliary parameters */
+      std::vector<double> dat_;  /** real data */
+      std::vector<int> dat_int_;  /** integer data */
+      std::ostream* msgs_;  /** stream message */
 
-    public:
       system_functor() { }
 
       system_functor(const F& f,
@@ -35,115 +36,117 @@ namespace stan {
                      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                      const std::vector<double>& dat,
                      const std::vector<int>& dat_int,
-                     std::ostream* msgs,
-                     const bool& x_is_dv)
-        : f_(), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs),
-        x_is_dv_(x_is_dv) { }
+                     std::ostream* msgs)
+        : f_(), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs) { }
 
+      /**
+       * An operator that takes in an independent variable. The
+       * independent variable is either passed as the unknown x,
+       * or the auxiliary parameter y. The x_is_iv template parameter
+       * allows us to determine whether the jacobian is computed
+       * with respect to x or y.
+       * @tparam T the scalar type of the independent variable
+       */
       template <typename T>
       inline
       Eigen::Matrix<T, Eigen::Dynamic, 1>
-      operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
-        if (x_is_dv_)
-          return f_(x, y_, dat_, dat_int_, msgs_);
+      operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
+        if (x_is_iv)
+          return f_(iv, y_, dat_, dat_int_, msgs_);
         else
-          return f_(x_, x, dat_, dat_int_, msgs_);
+          return f_(x_, iv, dat_, dat_int_, msgs_);
       }
     };
 
     /**
      * A structure which gets passed to Eigen's dogleg
      * algebraic solver.
+     * @tparam T scalar type of independent variable.
+     * @tparam NX number of rows
+     * @tparam NY number of columns
      */
     template <typename T, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
-    struct NLOFunctor {
-      typedef Eigen::Matrix<T, NX, 1> InputType;
-      typedef Eigen::Matrix<T, NY, 1> ValueType;
-      typedef Eigen::Matrix<T, NY, NX>
-        JacobianType;
-
+    struct nlo_functor {
       const int m_inputs, m_values;
 
-      NLOFunctor() : m_inputs(NX),
-      m_values(NY) {}
-      NLOFunctor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
+      nlo_functor() : m_inputs(NX),
+                      m_values(NY) { }
+
+      nlo_functor(int inputs, int values) : m_inputs(inputs),
+                                            m_values(values) { }
 
       int inputs() const { return m_inputs; }
       int values() const { return m_values; }
     };
 
     /**
-    * A functor which stores an algebraic system and
-    * its gradient, and contains the class functions
-    * required for Eigen's dogleg algebraic solver.
-    *
-    * Members:
-    * f1 functor which returns output of algebraic system.
-    * f2 gradient of f1 with respect to the unknowns for
-    * which we solve.
-    */
-    template <typename F1, typename F2>
-    struct hybrj_functor : NLOFunctor<double> {
-    private:
-      F1 f1_;
-      F2 f2_;
-
-    public:
-      hybrj_functor(const F1& f1,
-                    const F2& f2)
-        : f1_(f1), f2_(f2) { }
-
-      int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) {
-        fvec = f1_(x);
-        return 0;
-      }
-      int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) {
-        fjac = f2_(x);
-        return 0;
-      }
-    };
-
-    /**
-     * A functor with the rquired operators to call Eigen's 
+     * A functor with the required operators to call Eigen's 
      * algebraic solver.
+     * @tparam FS wrapper around the algebraic system functor. Has the
+     * signature required for jacobian (i.e takes only one argument).
+     * @tparam F algebraic system functor
+     * @tparam T0 scalar type for unknowns
+     * @tparam T1 scalar type for auxiliary parameters
      */
     template <typename FS, typename F, typename T0, typename T1>
-    struct hybrj_functor_solver : NLOFunctor<double> {
-    private:
-      FS fs_;
-      int x_size_;
-      Eigen::MatrixXd J_;
+    struct hybrj_functor_solver : nlo_functor<double> {
+      FS fs_;  /** Wrapper around algebraic system */
+      int x_size_;  /** number of unknowns */
+      Eigen::MatrixXd J_;  /** Jacobian of algebraic function wrt unknowns */
 
-    public:
       hybrj_functor_solver(const FS& fs,
                            const F& f,
                            const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
                            const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
                            const std::vector<double>& dat,
                            const std::vector<int>& dat_int,
-                           std::ostream* msgs,
-                           const bool& x_is_dv)
-        : fs_(f, x, y, dat, dat_int, msgs, x_is_dv),
+                           std::ostream* msgs)
+        : fs_(f, x, y, dat, dat_int, msgs),
           x_size_(x.size()) { }
 
-      int operator()(const Eigen::VectorXd &dv, Eigen::VectorXd &fvec) {
-        jacobian(fs_, dv, fvec, J_);
+      /**
+       * Computes the value the algebraic function, f, when pluging in the
+       * independent variables, and the Jacobian w.r.t unknowns. Required
+       * by Eigen.
+       * @param [in] iv independent variables
+       * @param [in, out] value of algebraic function when plugging in iv. 
+       */
+      int operator()(const Eigen::VectorXd& iv, Eigen::VectorXd &fvec) {
+        jacobian(fs_, iv, fvec, J_);
         return 0;
       }
 
-      int df(const Eigen::VectorXd &dv, Eigen::MatrixXd &fjac) {
+      /**
+       * Assign the Jacobian to fjac (signature required by Eigen). Required
+       * by Eigen.
+       * @param [in] iv independent variables.
+       * @param [in, out] fjac matrix container for jacobian 
+       */
+      int df(const Eigen::VectorXd& iv, Eigen::MatrixXd& fjac) {
         fjac = J_;
         return 0;
       }
 
-      Eigen::MatrixXd get_jacobian(const Eigen::VectorXd &dv) {
+      /**
+       * Performs the same task as the operator(), but returns the 
+       * Jacobian, instead of saving it inside an argument 
+       * passed by reference.
+       * @param [in] iv indepdent variable.
+       */
+      Eigen::MatrixXd get_jacobian(const Eigen::VectorXd& iv) {
         Eigen::VectorXd fvec;
-        stan::math::jacobian(fs_, dv, fvec, J_);
+        jacobian(fs_, iv, fvec, J_);
         return J_;
       }
 
-      Eigen::VectorXd get_value(const Eigen::VectorXd &dv) {
-        return fs_(dv);
+      /**
+       * Performs the same task as df(), but returns the value of
+       * algebraic function, instead of saving it inside an
+       * argument passed by reference.
+       * @tparam [in] independent variable.
+       */
+      Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const {
+        return fs_(iv);
       }
     };
 
