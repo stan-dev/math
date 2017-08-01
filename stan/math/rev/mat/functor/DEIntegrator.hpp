@@ -199,7 +199,7 @@ namespace stan {
                     errorEstimate = currentDelta;
                 }
 
-                if (errorEstimate < 0.1*targetAbsoluteError ||
+                if (errorEstimate < 0.1*targetAbsoluteError &&
                     fabs(1 - integral / previousIntegral) <
                     targetRelativeError)
                     break;
