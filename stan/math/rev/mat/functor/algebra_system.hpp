@@ -109,7 +109,7 @@ namespace stan {
        * independent variables, and the Jacobian w.r.t unknowns. Required
        * by Eigen.
        * @param [in] iv independent variables
-       * @param [in, out] value of algebraic function when plugging in iv. 
+       * @param [in, out] fvec value of algebraic function when plugging in iv.
        */
       int operator()(const Eigen::VectorXd& iv, Eigen::VectorXd &fvec) {
         jacobian(fs_, iv, fvec, J_);
@@ -143,7 +143,7 @@ namespace stan {
        * Performs the same task as df(), but returns the value of
        * algebraic function, instead of saving it inside an
        * argument passed by reference.
-       * @tparam [in] independent variable.
+       * @tparam [in] iv independent variable.
        */
       Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const {
         return fs_(iv);
