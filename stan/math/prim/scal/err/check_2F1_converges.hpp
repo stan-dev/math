@@ -60,8 +60,8 @@ namespace stan {
       bool is_undefined = is_nonpositive_integer(b1) && fabs(b1) <= num_terms;
 
       if (!is_undefined && (is_polynomial
-                          || fabs(z) < 1
-                          || fabs(z) == 1 && b1 > a1 + a2))
+                            || fabs(z) < 1
+                            || (fabs(z) == 1 && b1 > a1 + a2)))
         return;
 
       std::stringstream msg;
