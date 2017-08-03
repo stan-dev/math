@@ -20,6 +20,7 @@
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -47,7 +48,7 @@ namespace stan {
               typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_lpdf(const T_y& y, const T_dof& nu) {
-      static const char* function("chi_square_lpdf");
+      static const std::string function = "chi_square_lpdf";
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 

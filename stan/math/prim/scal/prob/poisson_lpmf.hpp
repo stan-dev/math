@@ -19,6 +19,7 @@
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -30,7 +31,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
-      static const char* function("poisson_lpmf");
+      static const std::string function = "poisson_lpmf";
 
       if (!(stan::length(n) && stan::length(lambda)))
         return 0.0;

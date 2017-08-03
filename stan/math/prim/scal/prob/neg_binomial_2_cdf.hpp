@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -27,7 +28,7 @@ namespace stan {
     neg_binomial_2_cdf(const T_n& n,
                        const T_location& mu,
                        const T_precision& phi) {
-      static const char* function("neg_binomial_2_cdf");
+      static const std::string function = "neg_binomial_2_cdf";
       typedef typename stan::partials_return_type<T_n, T_location,
                                                   T_precision>::type
         T_partials_return;

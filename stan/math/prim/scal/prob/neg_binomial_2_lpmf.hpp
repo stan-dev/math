@@ -25,6 +25,7 @@
 #include <boost/random/negative_binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -41,7 +42,7 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      static const char* function("neg_binomial_2_lpmf");
+      static const std::string function = "neg_binomial_2_lpmf";
 
       if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
         return 0.0;

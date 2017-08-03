@@ -19,6 +19,7 @@
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +29,7 @@ namespace stan {
               typename T_y, typename T_scale, typename T_shape>
     typename return_type<T_y, T_scale, T_shape>::type
     pareto_lpdf(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-      static const char* function("pareto_lpdf");
+      static const std::string function = "pareto_lpdf";
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 

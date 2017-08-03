@@ -23,6 +23,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -49,7 +50,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu)))
         return 0.0;
 
-      static const char* function("inv_chi_square_lcdf");
+      static const std::string function = "inv_chi_square_lcdf";
 
       using boost::math::tools::promote_args;
       using std::exp;

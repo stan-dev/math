@@ -19,6 +19,7 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -42,7 +43,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_lpdf(const T_y& y,
                            const T_loc& mu, const T_scale& sigma) {
-      static const char* function("double_exponential_lpdf");
+      static const std::string function = "double_exponential_lpdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 

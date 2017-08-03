@@ -26,8 +26,8 @@ namespace stan {
      *   values, or if any element is <code>NaN</code>.
      */
     template <typename T_y>
-    void check_ordered(const char* function,
-                       const char* name,
+    void check_ordered(const std::string& function,
+                       const std::string& name,
                        const std::vector<T_y>& y) {
       for (size_t n = 1; n < y.size(); n++) {
         if (!(y[n] > y[n - 1])) {

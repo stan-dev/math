@@ -19,6 +19,7 @@
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +29,7 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_cdf(const T_n& n, const T_shape& alpha,
                      const T_inv_scale& beta) {
-      static const char* function("neg_binomial_cdf");
+      static const std::string function = "neg_binomial_cdf";
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;

@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -33,7 +34,7 @@ namespace stan {
             && stan::length(alpha)))
         return 0.0;
 
-      static const char* function("pareto_type_2_lcdf");
+      static const std::string function = "pareto_type_2_lcdf";
 
       using std::log;
 

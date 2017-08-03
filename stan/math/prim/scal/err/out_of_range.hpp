@@ -28,11 +28,11 @@ namespace stan {
      * @param msg2 Message to print. Default is "".
      * @throw std::out_of_range with message.
      */
-    inline void out_of_range(const char* function,
+    inline void out_of_range(const std::string& function,
                              int max,
                              int index,
-                             const char* msg1 = "",
-                             const char* msg2 = "") {
+                             const std::string& msg1 = "",
+                             const std::string& msg2 = "") {
       std::ostringstream message;
 
       message << function << ": accessing element out of range. "

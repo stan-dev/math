@@ -17,6 +17,7 @@
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +37,7 @@ namespace stan {
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
-      static const char* function("bernoulli_logit_lpmf");
+      static const std::string function = "bernoulli_logit_lpmf";
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 

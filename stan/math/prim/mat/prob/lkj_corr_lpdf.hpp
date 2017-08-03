@@ -45,6 +45,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -82,7 +83,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_y, T_shape>::type
     lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
                  const T_shape& eta) {
-      static const char* function("lkj_corr_lpdf");
+      static const std::string function = "lkj_corr_lpdf";
 
       using boost::math::tools::promote_args;
 
