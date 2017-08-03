@@ -135,7 +135,8 @@ namespace stan {
           logp -= beta_dbl * y_dbl;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
+          ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl
+            - beta_dbl;
         if (!is_constant_struct<T_shape>::value)
           ops_partials.edge2_.partials_[n] += -digamma_alpha[n] + log_beta[n]
             + log_y[n];
