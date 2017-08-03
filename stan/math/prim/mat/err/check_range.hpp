@@ -25,12 +25,12 @@ namespace stan {
      *
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline void check_range(const char* function,
-                            const char* name,
+    inline void check_range(const std::string& function,
+                            const std::string& name,
                             int max,
                             int index,
                             int nested_level,
-                            const char* error_msg) {
+                            const std::string& error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
         return;
@@ -56,11 +56,11 @@ namespace stan {
      *
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline void check_range(const char* function,
-                            const char* name,
+    inline void check_range(const std::string& function,
+                            const std::string& name,
                             int max,
                             int index,
-                            const char* error_msg) {
+                            const std::string& error_msg) {
       if ((index >= stan::error_index::value)
           && (index < max + stan::error_index::value))
         return;
@@ -81,8 +81,8 @@ namespace stan {
      *
      * @throw <code>std::out_of_range</code> if the index is not in range
      */
-    inline void check_range(const char* function,
-                            const char* name,
+    inline void check_range(const std::string& function,
+                            const std::string& name,
                             int max,
                             int index) {
       if ((index >= stan::error_index::value)

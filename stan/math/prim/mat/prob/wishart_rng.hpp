@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/prob/chi_square_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -15,7 +16,7 @@ namespace stan {
     template <class RNG>
     inline Eigen::MatrixXd
     wishart_rng(double nu, const Eigen::MatrixXd& S, RNG& rng) {
-      static const char* function("wishart_rng");
+      static const std::string function = "wishart_rng";
 
       using Eigen::MatrixXd;
       typename index_type<MatrixXd>::type k = S.rows();

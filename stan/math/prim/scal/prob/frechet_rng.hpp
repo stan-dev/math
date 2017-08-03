@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +29,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::weibull_distribution;
 
-      static const char* function("frechet_rng");
+      static const std::string function = "frechet_rng";
 
       check_finite(function, "Shape parameter", alpha);
       check_positive(function, "Shape parameter", alpha);

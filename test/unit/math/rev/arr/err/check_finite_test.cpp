@@ -7,7 +7,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
 
   int N = 5;
-  const char* function = "check_finite";
+  const std::string function = "check_finite";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

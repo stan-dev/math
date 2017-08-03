@@ -24,6 +24,7 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -48,7 +49,7 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     inv_gamma_lpdf(const T_y& y, const T_shape& alpha, const T_scale& beta) {
-      static const char* function("inv_gamma_lpdf");
+      static const std::string function = "inv_gamma_lpdf";
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 

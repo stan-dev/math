@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -29,8 +30,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_cholesky_factor(const char* function,
-                          const char* name,
+    check_cholesky_factor(const std::string& function,
+                          const std::string& name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_less_or_equal(function, "columns and rows of Cholesky factor",
                           y.cols(), y.rows());

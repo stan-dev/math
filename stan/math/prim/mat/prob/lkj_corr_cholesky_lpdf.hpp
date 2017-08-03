@@ -44,6 +44,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_log.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -56,7 +57,7 @@ namespace stan {
     lkj_corr_cholesky_lpdf(const Eigen::Matrix
                           <T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
                           const T_shape& eta) {
-      static const char* function("lkj_corr_cholesky_lpdf");
+      static const std::string function = "lkj_corr_cholesky_lpdf";
 
       using boost::math::tools::promote_args;
 

@@ -13,6 +13,7 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <vector>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -22,7 +23,7 @@ namespace stan {
     multinomial_rng(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta,
                     int N,
                     RNG& rng) {
-      static const char* function("multinomial_rng");
+      static const std::string function = "multinomial_rng";
 
       check_simplex(function, "Probabilites parameter", theta);
       check_positive(function, "number of trials variables", N);
