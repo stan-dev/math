@@ -122,7 +122,7 @@ namespace stan {
        * @param [in] iv independent variables.
        * @param [in, out] fjac matrix container for jacobian 
        */
-      int df(const Eigen::VectorXd& iv, Eigen::MatrixXd& fjac) {
+      int df(const Eigen::VectorXd& iv, Eigen::MatrixXd& fjac) const {
         fjac = J_;
         return 0;
       }

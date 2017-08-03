@@ -256,7 +256,7 @@ namespace stan {
 
       // TODO(charlesm93): a similar object gets constructed inside
       // the call to algebra_solver. Cache the previous result
-      // and use it here.
+      // and use it here (if possible).
       typedef system_functor<F, double, double, true> FS;
       typedef hybrj_functor_solver<FS, F, double, double> FX;
       FX fx(FS(), f, x, value_of(y), dat, dat_int, msgs);
