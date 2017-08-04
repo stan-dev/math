@@ -1,18 +1,5 @@
 #include <stan/math/prim/mat.hpp>
-#include <test/unit/math/mix/mat/fun/append_array_test.hpp>
 #include <gtest/gtest.h>
-
-using namespace Eigen;
-
-TEST(MathFunctions, append_array) {
-  check<int, int, int>();
-  check<double, double, double>();
-  check<double, int, double>();
-  check<int, double, double>();
-  check<V, V, V>();
-  check<RV, RV, RV>();
-  check<M, M, M>();
-}
 
 TEST(MathFunctions, append_array_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();

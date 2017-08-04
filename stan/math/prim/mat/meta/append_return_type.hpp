@@ -55,7 +55,7 @@ namespace stan {
     struct append_return_type<Eigen::Matrix<T1, R, C>,
                               Eigen::Matrix<T2, R, C> > {
       typedef typename
-      Eigen::Matrix<typename append_return_type<T1, T2>::type, R, C> type;
+      Eigen::Matrix<typename return_type<T1, T2>::type, R, C> type;
     };
 
     /**
