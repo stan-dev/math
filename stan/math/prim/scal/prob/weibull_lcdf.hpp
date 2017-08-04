@@ -19,6 +19,7 @@
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -43,7 +44,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const char* function("weibull_lcdf");
+      static const std::string function = "weibull_lcdf";
 
       using boost::math::tools::promote_args;
       using std::log;

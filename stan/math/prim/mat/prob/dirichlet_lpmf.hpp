@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -45,7 +46,7 @@ namespace stan {
     dirichlet_lpmf(const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix
                   <T_prior_sample_size, Eigen::Dynamic, 1>& alpha) {
-      static const char* function("dirichlet_lpmf");
+      static const std::string function = "dirichlet_lpmf";
       using boost::math::lgamma;
       using boost::math::tools::promote_args;
 

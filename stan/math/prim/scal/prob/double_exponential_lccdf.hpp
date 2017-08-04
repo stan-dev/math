@@ -17,13 +17,14 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the double exponential log complementary cumulative density 
-     * function. Given containers of matching sizes, returns the log sum of 
+     * Returns the double exponential log complementary cumulative density
+     * function. Given containers of matching sizes, returns the log sum of
      * probabilities.
      *
      * @tparam T_y type of real parameter.
@@ -40,7 +41,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale>::type
     double_exponential_lccdf(const T_y& y, const T_loc& mu,
                                 const T_scale& sigma) {
-      static const char* function("double_exponential_lccdf");
+      static const std::string function = "double_exponential_lccdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 

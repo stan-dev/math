@@ -19,6 +19,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +29,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("skew_normal_lpdf");
+      static const std::string function = "skew_normal_lpdf";
       typedef typename stan::partials_return_type<T_y, T_loc,
                                                   T_scale, T_shape>::type
         T_partials_return;
@@ -136,4 +137,3 @@ namespace stan {
   }
 }
 #endif
-

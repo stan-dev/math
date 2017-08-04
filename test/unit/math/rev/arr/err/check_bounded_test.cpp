@@ -7,7 +7,7 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckVectorized) {
   using stan::math::check_bounded;
 
   int N = 5;
-  const char* function = "check_bounded";
+  const std::string function = "check_bounded";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

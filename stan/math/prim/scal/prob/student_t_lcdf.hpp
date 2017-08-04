@@ -22,8 +22,9 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -40,7 +41,7 @@ namespace stan {
             && stan::length(sigma)))
         return 0.0;
 
-      static const char* function("student_t_lcdf");
+      static const std::string function = "student_t_lcdf";
 
       using std::exp;
 

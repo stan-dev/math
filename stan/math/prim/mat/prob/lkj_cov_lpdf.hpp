@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -23,7 +24,7 @@ namespace stan {
                 const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
                 const T_shape& eta) {
-      static const char* function("lkj_cov_lpdf");
+      static const std::string function = "lkj_cov_lpdf";
 
       using boost::math::tools::promote_args;
 
@@ -81,7 +82,7 @@ namespace stan {
                 const T_loc& mu,
                 const T_scale& sigma,
                 const T_shape& eta) {
-      static const char* function("lkj_cov_lpdf");
+      static const std::string function = "lkj_cov_lpdf";
 
       using boost::math::tools::promote_args;
 

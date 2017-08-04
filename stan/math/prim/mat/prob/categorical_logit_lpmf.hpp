@@ -9,6 +9,7 @@
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <string>
 #include <vector>
 
 namespace stan {
@@ -21,7 +22,7 @@ namespace stan {
     categorical_logit_lpmf(int n,
                           const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&
                           beta) {
-      static const char* function("categorical_logit_lpmf");
+      static const std::string function = "categorical_logit_lpmf";
 
       check_bounded(function, "categorical outcome out of support", n,
                     1, beta.size());
@@ -49,7 +50,7 @@ namespace stan {
     categorical_logit_lpmf(const std::vector<int>& ns,
                           const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&
                           beta) {
-      static const char* function("categorical_logit_lpmf");
+      static const std::string function = "categorical_logit_lpmf";
 
       for (size_t k = 0; k < ns.size(); ++k)
         check_bounded(function, "categorical outcome out of support",

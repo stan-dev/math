@@ -19,9 +19,9 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if <code>size</code> is
      *   zero or negative.
      */
-    inline void check_positive_size(const char* function,
-                                    const char* name,
-                                    const char* expr,
+    inline void check_positive_size(const std::string& function,
+                                    const std::string& name,
+                                    const std::string& expr,
                                     int size) {
       if (size <= 0) {
         std::stringstream msg;
