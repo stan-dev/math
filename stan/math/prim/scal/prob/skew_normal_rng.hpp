@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -38,7 +39,8 @@ namespace stan {
                     const T_scale& sigma,
                     const T_shape& alpha,
                     RNG& rng) {
-      static const char* function("skew_normal_rng");
+      static const std::string function = "skew_normal_rng";
+      boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);

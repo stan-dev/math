@@ -10,6 +10,10 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/fun/sign.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -35,7 +39,7 @@ namespace stan {
     double_exponential_rng(const T_loc &mu,
                            const T_scale &sigma,
                            RNG& rng) {
-      static const char* function("double_exponential_rng");
+      static const std::string function = "double_exponential_rng";
 
       using boost::variate_generator;
       using boost::random::uniform_01;

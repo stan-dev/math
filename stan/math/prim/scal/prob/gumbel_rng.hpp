@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -37,7 +38,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const char* function("gumbel_rng");
+      static const std::string function = "gumbel_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> beta_vec(beta);

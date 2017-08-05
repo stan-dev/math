@@ -21,6 +21,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +37,7 @@ namespace stan {
               && stan::length(sigma) ) )
         return 1.0;
 
-      static const char* function("logistic_cdf");
+      static const std::string function = "logistic_cdf";
 
       using boost::math::tools::promote_args;
       using std::exp;

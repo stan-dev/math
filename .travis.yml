@@ -1,35 +1,90 @@
 language: cpp
 
-sudo: false
-
-os:
-  - linux
-  - osx
-  
-compiler:
-  - clang
-  - gcc
-
 before_script:
+  - eval "${MATRIX_EVAL}"
+  - echo ${CXX}
+  - ${CXX} --version
   - echo "CC=$CXX" > make/local
+
+linux_clang: &linux_clang
+  os: linux
+  compiler: "clang-3.8"
+  addons: 
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
+      packages: [ 'clang-3.8', 'libc++-dev' ]
+
+linux_gcc: &linux_gcc
+  os: linux
+  compiler: "gcc-4.9"
+  addons:
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test' ]
+      packages: [ 'g++-4.9' ]
 
 matrix:
   fast_finish: true
-  exclude:
-    - os: osx
-      compiler: gcc
+  include:
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat/fun
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/rev/mat
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/fwd/mat
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/mat/fun
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/rev/mat
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/fwd/mat
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
 
-env:
-  - TESTFOLDER=test/unit/math/memory
-  - TESTFOLDER=test/unit/math/prim/scal
-  - TESTFOLDER=test/unit/math/prim/arr
-  - TESTFOLDER=test/unit/math/prim/mat
-  - TESTFOLDER=test/unit/math/rev/scal
-  - TESTFOLDER=test/unit/math/rev/arr
-  - TESTFOLDER=test/unit/math/rev/mat
-  - TESTFOLDER=test/unit/math/fwd/scal
-  - TESTFOLDER=test/unit/math/fwd/arr
-  - TESTFOLDER=test/unit/math/fwd/mat
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 
 script: ./runTests.py -j2 $TESTFOLDER
+
+sudo: false
+dist: trusty

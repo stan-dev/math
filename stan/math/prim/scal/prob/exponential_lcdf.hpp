@@ -18,6 +18,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -29,7 +30,7 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("exponential_lcdf");
+      static const std::string function = "exponential_lcdf";
 
       using boost::math::tools::promote_args;
       using std::log;

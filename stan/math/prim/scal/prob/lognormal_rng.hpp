@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -37,7 +38,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::lognormal_distribution;
 
-      static const char* function("lognormal_rng");
+      static const std::string function = "lognormal_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);

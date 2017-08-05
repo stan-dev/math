@@ -20,6 +20,7 @@
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -32,7 +33,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const char* function("multi_normal_cholesky_rng");
+      static const std::string function = "multi_normal_cholesky_rng";
       check_finite(function, "Location parameter", mu);
 
       variate_generator<RNG&, normal_distribution<> >

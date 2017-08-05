@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +26,7 @@ namespace stan {
                          RNG& rng) {
       using boost::variate_generator;
 
-      static const char* function("ordered_logistic");
+      static const std::string function = "ordered_logistic";
 
       check_finite(function, "Location parameter", eta);
       check_greater(function, "Size of cut points parameter", c.size(), 0);

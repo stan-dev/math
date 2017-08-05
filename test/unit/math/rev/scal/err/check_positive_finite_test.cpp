@@ -5,9 +5,9 @@ using stan::math::var;
 using stan::math::check_positive_finite;
 
 TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite) {
-  const char* function = "check_positive_finite";
+  const std::string function = "check_positive_finite";
   var x = 1;
- 
+
   EXPECT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x: " << x;
   x = -1;
@@ -20,7 +20,7 @@ TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite) {
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
     << "check_positive_finite should throw exception on Inf: " << x;
   x = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error) 
+  EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
     << "check_positive_finite should throw exception on -Inf: " << x;
 
   x = std::numeric_limits<double>::quiet_NaN();
@@ -34,7 +34,7 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_positive_finite;
 
-  const char* function = "check_positive_finite";
+  const std::string function = "check_positive_finite";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

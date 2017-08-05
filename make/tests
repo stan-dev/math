@@ -15,21 +15,21 @@ $(LIBGTEST): $(LIBGTEST)(test/gtest.o)
 
 test/gtest.o: $(GTEST)/src/gtest-all.cc
 	@mkdir -p test
-	$(COMPILE.c) -O$O $(CFLAGS_GTEST) $< $(OUTPUT_OPTION)
+	$(COMPILE.cc) -O$O $(CFLAGS_GTEST) $< $(OUTPUT_OPTION)
 
 ##
 # Rule for building a test
 ##
 test/%_test.o : test/%_test.cpp
 	@mkdir -p $(dir $@)
-	$(COMPILE.c) -O$O $(CFLAGS_GTEST) $< $(OUTPUT_OPTION)
+	$(COMPILE.cc) -O$O $(CFLAGS_GTEST) $< $(OUTPUT_OPTION)
 
 ##
 # Rule for building a test executable
 ##
 test/%$(EXE) : test/%.o $(LIBGTEST) $(LIBCVODES)
 	@mkdir -p $(dir $@)
-	$(LINK.c) -O$O $(GTEST_MAIN) $< $(CFLAGS_GTEST) $(OUTPUT_OPTION) $(LIBGTEST) $(LDLIBS) $(LIBCVODES)
+	$(LINK.cc) -O$O $(GTEST_MAIN) $< $(CFLAGS_GTEST) $(OUTPUT_OPTION) $(LIBGTEST) $(LDLIBS) $(LIBCVODES)
 
 
 ##
@@ -40,7 +40,7 @@ test/%_test.d : test/%_test.cpp
 	@mkdir -p $(dir $@)
 	@set -e; \
 	rm -f $@; \
-	$(CC) $(CFLAGS) -O$O $(CFLAGS_GTEST) $(TARGET_ARCH) -MM $< > $@.$$$$; \
+	$(COMPILE.cc) -O$O $(CFLAGS_GTEST) $(TARGET_ARCH) -MM $< > $@.$$$$; \
 	sed -e 's,\($(notdir $*)\)\(_test\)\.o[ :]*,$(dir $@)\1_test\$(EXE) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
@@ -51,10 +51,10 @@ test/%_test.d : test/%_test.cpp
 ##
 
 test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
-	$(COMPILE.c) -O$O $< $(OUTPUT_OPTION)
+	$(COMPILE.cc) -O$O $< $(OUTPUT_OPTION)
 
 test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
-	$(CC) -shared -fPIC $(OUTPUT_OPTION) $^
+	$(COMPILE.cc) -shared -fPIC $(OUTPUT_OPTION) $^
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
@@ -75,7 +75,7 @@ endif
 
 .PHONY: HEADER_TESTS
 %.hpp-test : %.hpp test/dummy.cpp
-	$(COMPILE.c) -O0 -include $< -o $(DEV_NULL) test/dummy.cpp
+	$(COMPILE.cc) -O0 -include $< -o $(DEV_NULL) test/dummy.cpp
 
 test/dummy.cpp:
 	@mkdir -p test
@@ -91,7 +91,7 @@ test-headers: $(HEADER_TESTS)
 ##
 test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 	@mkdir -p $(dir $@)
-	$(LINK.c) -O$(O_STANC) $(CFLAGS) $< $(OUTPUT_OPTION)
+	$(LINK.cc) -O$(O_STANC) $< $(OUTPUT_OPTION)
 
 
 test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')

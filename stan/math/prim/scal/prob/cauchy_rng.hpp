@@ -9,6 +9,12 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -37,7 +43,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::cauchy_distribution;
 
-      static const char* function("cauchy_rng");
+      static const std::string function = "cauchy_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);
