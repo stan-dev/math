@@ -25,11 +25,16 @@ namespace stan {
      */
     template <typename FS, typename F, typename T, typename FX>
     struct algebra_solver_vari : public vari {
-      vari** y_;  /** vector of parameters */
-      int y_size_;  /** number of parameters */
-      int x_size_;  /** number of unknowns */
-      vari** theta_;  /** vector of solution */
-      double* Jx_y_;  /** Jacobian of the solution w.r.t parameters */
+      /** vector of parameters */
+      vari** y_;
+      /** number of parameters */
+      int y_size_;
+      /** number of unknowns */
+      int x_size_;
+      /** vector of solution */
+      vari** theta_;
+      /** Jacobian of the solution w.r.t parameters */
+      double* Jx_y_;
 
       algebra_solver_vari(const FS& fs,
                           const F& f,

@@ -22,12 +22,18 @@ namespace stan {
      */
     template <typename F, typename T0, typename T1, bool x_is_iv>
     struct system_functor {
-      F f_;  /** algebraic system functor */
-      Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;  /** unknowns */
-      Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;  /** auxiliary parameters */
-      std::vector<double> dat_;  /** real data */
-      std::vector<int> dat_int_;  /** integer data */
-      std::ostream* msgs_;  /** stream message */
+      /** algebraic system functor */
+      F f_;
+      /** unknowns */
+      Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;
+      /** auxiliary parameters */
+      Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
+      /** real data */
+      std::vector<double> dat_;
+      /** integer data */
+      std::vector<int> dat_int_;
+      /** stream message */
+      std::ostream* msgs_;
 
       system_functor() { }
 
@@ -90,9 +96,12 @@ namespace stan {
      */
     template <typename FS, typename F, typename T0, typename T1>
     struct hybrj_functor_solver : nlo_functor<double> {
-      FS fs_;  /** Wrapper around algebraic system */
-      int x_size_;  /** number of unknowns */
-      Eigen::MatrixXd J_;  /** Jacobian of algebraic function wrt unknowns */
+      /** Wrapper around algebraic system */
+      FS fs_;
+      /** number of unknowns */
+      int x_size_;
+      /** Jacobian of algebraic function wrt unknowns */
+      Eigen::MatrixXd J_;
 
       hybrj_functor_solver(const FS& fs,
                            const F& f,
