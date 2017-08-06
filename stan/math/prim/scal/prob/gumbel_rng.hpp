@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <string>
 
 namespace stan {
@@ -40,14 +40,14 @@ namespace stan {
 
       static const std::string function = "gumbel_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> beta_vec(beta);
-
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", beta);
       check_consistent_sizes(function,
                              "Location parameter", mu,
                              "Scale Parameter", beta);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> beta_vec(beta);
 
       size_t N = max_size(mu, beta);
 

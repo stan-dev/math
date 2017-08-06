@@ -1,14 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_RNG_HPP
 
-#include <boost/random/variate_generator.hpp>
-#include <boost/math/distributions.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <boost/math/distributions.hpp>
 #include <string>
 
 namespace stan {
@@ -41,10 +41,6 @@ namespace stan {
                     RNG& rng) {
       static const std::string function = "skew_normal_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      scalar_seq_view<T_shape> alpha_vec(alpha);
-
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);
@@ -52,6 +48,10 @@ namespace stan {
                              "Location parameter", mu,
                              "Scale Parameter", sigma,
                              "Shape Parameter", alpha);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
 
       size_t N = max_size(mu, sigma, alpha);
 

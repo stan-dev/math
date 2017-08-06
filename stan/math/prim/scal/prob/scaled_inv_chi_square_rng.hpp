@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_RNG_HPP
 
-#include <boost/random/chi_squared_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
+#include <boost/random/chi_squared_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <string>
 
 namespace stan {
@@ -39,14 +39,14 @@ namespace stan {
 
       static const std::string function = "scaled_inv_chi_square_rng";
 
-      scalar_seq_view<T_deg> nu_vec(nu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_consistent_sizes(function,
                              "Degrees of freedom parameter", nu,
                              "Scale Parameter", sigma);
+
+      scalar_seq_view<T_deg> nu_vec(nu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
 
       size_t N = max_size(nu, sigma);
 
