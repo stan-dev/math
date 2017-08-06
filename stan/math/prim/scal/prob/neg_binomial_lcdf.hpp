@@ -102,8 +102,8 @@ namespace stan {
         const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
         const T_partials_return beta_dbl = value_of(beta_vec[i]);
         const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-        const T_partials_return d_dbl = 1.0 / ( (1.0 + beta_dbl)
-                                                * (1.0 + beta_dbl) );
+        const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl)
+                                               * (1.0 + beta_dbl));
         const T_partials_return Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
         const T_partials_return beta_func = exp(lbeta(n_dbl + 1, alpha_dbl));
 
@@ -122,8 +122,8 @@ namespace stan {
           ops_partials.edge1_.partials_[i] += g1 / Pi;
         }
         if (!is_constant_struct<T_inv_scale>::value)
-          ops_partials.edge2_.partials_[i]  += d_dbl * pow(1-p_dbl, n_dbl)
-            * pow(p_dbl, alpha_dbl-1) / beta_func / Pi;
+          ops_partials.edge2_.partials_[i]  += d_dbl * pow(1 - p_dbl, n_dbl)
+            * pow(p_dbl, alpha_dbl - 1) / beta_func / Pi;
       }
 
       return ops_partials.build(P);

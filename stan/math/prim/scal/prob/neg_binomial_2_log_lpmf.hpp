@@ -42,9 +42,7 @@ namespace stan {
 
       static const std::string function = "neg_binomial_2_log_lpmf";
 
-      if (!(stan::length(n)
-            && stan::length(eta)
-            && stan::length(phi)))
+      if (!(stan::length(n) && stan::length(eta) && stan::length(phi)))
         return 0.0;
 
       T_partials_return logp(0.0);

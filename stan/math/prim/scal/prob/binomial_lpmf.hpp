@@ -59,9 +59,7 @@ namespace stan {
 
       static const std::string function = "binomial_lpmf";
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(theta)))
+      if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
         return 0.0;
 
       T_partials_return logp = 0;

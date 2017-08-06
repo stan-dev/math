@@ -47,9 +47,7 @@ namespace stan {
 
       T_partials_return ccdf_log(0.0);
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

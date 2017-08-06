@@ -104,7 +104,7 @@ namespace stan {
 
         const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
         const T_partials_return gamma_p_deriv = exp(-half_nu_s2_overx_dbl)
-          * pow(half_nu_s2_overx_dbl, half_nu_dbl-1) / tgamma(half_nu_dbl);
+          * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
 
         P += log(Pn);
 

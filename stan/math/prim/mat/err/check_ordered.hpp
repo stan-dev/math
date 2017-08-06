@@ -36,7 +36,7 @@ namespace stan {
       typedef typename index_type<Matrix<T_y, Dynamic, 1> >::type size_t;
 
       for (size_t n = 1; n < y.size(); n++) {
-        if (!(y[n] > y[n-1])) {
+        if (!(y[n] > y[n - 1])) {
           std::ostringstream msg1;
           msg1 << "is not a valid ordered vector."
                << " The element at " << stan::error_index::value + n
@@ -44,7 +44,7 @@ namespace stan {
           std::string msg1_str(msg1.str());
           std::ostringstream msg2;
           msg2 << ", but should be greater than the previous element, "
-               << y[n-1];
+               << y[n - 1];
           std::string msg2_str(msg2.str());
           domain_error(function, name, y[n],
                        msg1_str.c_str(), msg2_str.c_str());

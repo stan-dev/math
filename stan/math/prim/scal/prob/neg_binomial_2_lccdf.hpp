@@ -20,9 +20,7 @@ namespace stan {
     neg_binomial_2_lccdf(const T_n& n,
                             const T_location& mu,
                             const T_precision& phi) {
-      if (!(stan::length(n)
-            && stan::length(mu)
-            && stan::length(phi)))
+      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
         return 0.0;
 
       static const std::string function = "neg_binomial_2_lccdf";

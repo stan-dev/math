@@ -54,9 +54,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 
-      if (!(stan::length(n)
-            && stan::length(N)
-            && stan::length(alpha)
+      if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
             && stan::length(beta)))
         return 0.0;
 

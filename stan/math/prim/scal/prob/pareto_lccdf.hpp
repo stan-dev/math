@@ -29,7 +29,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(y_min) && stan::length(alpha) ) )
+      if (!(stan::length(y) && stan::length(y_min) && stan::length(alpha)))
         return 0.0;
 
       static const std::string function = "pareto_lccdf";

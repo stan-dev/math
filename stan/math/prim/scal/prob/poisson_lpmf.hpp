@@ -33,8 +33,7 @@ namespace stan {
 
       static const std::string function = "poisson_lpmf";
 
-      if (!(stan::length(n)
-            && stan::length(lambda)))
+      if (!(stan::length(n) && stan::length(lambda)))
         return 0.0;
 
       T_partials_return logp(0.0);

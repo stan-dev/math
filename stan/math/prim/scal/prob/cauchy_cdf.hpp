@@ -43,8 +43,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(mu)
-              && stan::length(sigma) ) )
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 1.0;
 
       static const std::string function = "cauchy_cdf";

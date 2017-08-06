@@ -44,8 +44,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::exp;
 
-      if (!(stan::length(n)
-            && stan::length(theta)))
+      if (!(stan::length(n) && stan::length(theta)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -68,7 +67,7 @@ namespace stan {
         const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        const int sign = 2*n_int-1;
+        const int sign = 2 * n_int - 1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
 

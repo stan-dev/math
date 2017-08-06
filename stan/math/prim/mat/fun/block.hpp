@@ -24,9 +24,9 @@ namespace stan {
     block(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m,
           size_t i, size_t j, size_t nrows, size_t ncols) {
       check_row_index("block", "i", m, i);
-      check_row_index("block", "i+nrows-1", m, i+nrows-1);
+      check_row_index("block", "i+nrows-1", m, i + nrows - 1);
       check_column_index("block", "j", m, j);
-      check_column_index("block", "j+ncols-1", m, j+ncols-1);
+      check_column_index("block", "j+ncols-1", m, j + ncols - 1);
       return m.block(i - 1, j - 1, nrows, ncols);
     }
 

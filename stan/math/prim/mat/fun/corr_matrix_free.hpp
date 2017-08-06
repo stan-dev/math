@@ -46,7 +46,7 @@ namespace stan {
       typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 
       size_type k = y.rows();
-      size_type k_choose_2 = (k * (k-1)) / 2;
+      size_type k_choose_2 = (k * (k - 1)) / 2;
       Array<T, Dynamic, 1> x(k_choose_2);
       Array<T, Dynamic, 1> sds(k);
       bool successful = factor_cov_matrix(y, x, sds);

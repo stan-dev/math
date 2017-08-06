@@ -37,9 +37,7 @@ namespace stan {
 
       using stan::is_constant_struct;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 0.0;
 
       T_partials_return logp(0.0);

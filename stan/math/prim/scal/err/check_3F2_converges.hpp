@@ -40,9 +40,9 @@ namespace stan {
     template <typename T_a1, typename T_a2, typename T_a3, typename T_b1,
               typename T_b2, typename T_z>
     inline void check_3F2_converges(const std::string& function,
-      const T_a1& a1, const T_a2& a2, const T_a3& a3, const T_b1& b1,
-      const T_b2& b2, const T_z& z
-    ) {
+                                    const T_a1& a1, const T_a2& a2,
+                                    const T_a3& a3, const T_b1& b1,
+                                    const T_b2& b2, const T_z& z) {
       using std::floor;
       using std::fabs;
 
@@ -73,9 +73,12 @@ namespace stan {
         fabs(b1) <= num_terms) || (is_nonpositive_integer(b2) &&
         fabs(b2) <= num_terms);
 
-      if (is_polynomial && !is_undefined) return;
-      if (fabs(z) < 1.0 && !is_undefined) return;
-      if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3) return;
+      if (is_polynomial && !is_undefined)
+        return;
+      if (fabs(z) < 1.0 && !is_undefined)
+        return;
+      if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3)
+        return;
 
       std::stringstream msg;
       msg << "called from function '" << function << "', "

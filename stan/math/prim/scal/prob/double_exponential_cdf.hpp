@@ -33,7 +33,8 @@ namespace stan {
      * @param mu location parameter
      * @param sigma scale parameter
      * @return probability or product of probabilities
-     * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+     * @throw std::domain_error if y is nan, mu is infinite,
+     *  or sigma is nonpositive
      */
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
@@ -43,8 +44,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(mu)
-              && stan::length(sigma) ) )
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 1.0;
 
       using boost::math::tools::promote_args;

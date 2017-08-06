@@ -36,9 +36,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return cdf;
 
       check_not_nan(function, "Random variable", y);

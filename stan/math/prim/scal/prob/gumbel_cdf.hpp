@@ -48,9 +48,7 @@ namespace stan {
       using std::exp;
 
       T_partials_return cdf(1.0);
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(beta)))
         return cdf;
 
       check_not_nan(function, "Random variable", y);

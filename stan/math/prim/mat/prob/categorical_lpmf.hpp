@@ -35,7 +35,7 @@ namespace stan {
       check_simplex(function, "Probabilities parameter", theta);
 
       if (include_summand<propto, T_prob>::value)
-        return log(theta(n-1));
+        return log(theta(n - 1));
       return 0.0;
     }
 

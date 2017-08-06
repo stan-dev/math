@@ -11,7 +11,7 @@ namespace stan {
 
     namespace {
       /**
-       * Calculates the generalized hypergeometric 3F2(a, a, b; a+1, a+1; z).
+       * Calculates the generalized hypergeometric 3F2(a, a, b; a + 1, a + 1; z).
        *
        * Handles negative values of b properly.
        */
@@ -48,15 +48,15 @@ namespace stan {
           using std::log;
           using boost::math::constants::pi;
           avi_->adj_ += adj_ *
-            (log(c) - digamma(a) + digamma(a+b)) * val_
-            - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
-            / tgamma(1+a) / tgamma(1+a)
-            * ibeta_hypergeometric_helper(a, 1-b, c);
+            (log(c) - digamma(a) + digamma(a + b)) * val_
+            - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
+            / tgamma(1 + a) / tgamma(1 + a)
+            * ibeta_hypergeometric_helper(a, 1 - b, c);
           bvi_->adj_ += adj_ *
-            (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
-             * ibeta_hypergeometric_helper(b, 1-a, 1-c)
-             / tgamma(b+1) / tgamma(b+1)
-             + ibeta(b, a, 1-c) * (digamma(b) - digamma(a+b) - log(1-c)));
+            (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
+             * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)
+             / tgamma(b + 1) / tgamma(b + 1)
+             + ibeta(b, a, 1 - c) * (digamma(b) - digamma(a + b) - log(1 - c)));
           cvi_->adj_ += adj_ *
             boost::math::ibeta_derivative(a, b, c);
         }
@@ -76,15 +76,15 @@ namespace stan {
           using std::log;
           using boost::math::constants::pi;
           avi_->adj_ += adj_ *
-            (log(c) - digamma(a) + digamma(a+b)) * val_ -
-            tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
-            / tgamma(1+a) / tgamma(1+a)
-            * ibeta_hypergeometric_helper(a, 1-b, c);
+            (log(c) - digamma(a) + digamma(a + b)) * val_ -
+            tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
+            / tgamma(1 + a) / tgamma(1 + a)
+            * ibeta_hypergeometric_helper(a, 1 - b, c);
           bvi_->adj_ += adj_ *
-            (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
-             * ibeta_hypergeometric_helper(b, 1-a, 1-c)
-             / tgamma(b+1) / tgamma(b+1)
-             + ibeta(b, a, 1-c) * (digamma(b) - digamma(a+b) - log(1-c)));
+            (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
+             * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)
+             / tgamma(b + 1) / tgamma(b + 1)
+             + ibeta(b, a, 1 - c) * (digamma(b) - digamma(a + b) - log(1 - c)));
         }
       };
       class ibeta_vdv_vari : public op_vdv_vari {
@@ -105,10 +105,10 @@ namespace stan {
           using boost::math::digamma;
           using boost::math::ibeta;
           avi_->adj_ += adj_ *
-            (log(c) - digamma(a) + digamma(a+b)) * val_
-            - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
-            / tgamma(1+a) / tgamma(1+a)
-            * ibeta_hypergeometric_helper(a, 1-b, c);
+            (log(c) - digamma(a) + digamma(a + b)) * val_
+            - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
+            / tgamma(1 + a) / tgamma(1 + a)
+            * ibeta_hypergeometric_helper(a, 1 - b, c);
           cvi_->adj_ += adj_ *
             boost::math::ibeta_derivative(a, b, c);
         }
@@ -131,10 +131,10 @@ namespace stan {
           using boost::math::digamma;
           using boost::math::ibeta;
           avi_->adj_ += adj_ *
-            (log(c) - digamma(a) + digamma(a+b)) * val_
-            - tgamma(a) * tgamma(a+b) / tgamma(b) * pow(c, a)
-            / tgamma(1+a) / tgamma(1+a)
-            * ibeta_hypergeometric_helper(a, 1-b, c);
+            (log(c) - digamma(a) + digamma(a + b)) * val_
+            - tgamma(a) * tgamma(a + b) / tgamma(b) * pow(c, a)
+            / tgamma(1 + a) / tgamma(1 + a)
+            * ibeta_hypergeometric_helper(a, 1 - b, c);
         }
       };
       class ibeta_dvv_vari : public op_dvv_vari {
@@ -155,10 +155,10 @@ namespace stan {
           using boost::math::digamma;
           using boost::math::ibeta;
           bvi_->adj_ += adj_ *
-            (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
-             * ibeta_hypergeometric_helper(b, 1-a, 1-c)
-             / tgamma(b+1) / tgamma(b+1)
-             + ibeta(b, a, 1-c) * (digamma(b) - digamma(a+b) - log(1-c)));
+            (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
+             * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)
+             / tgamma(b + 1) / tgamma(b + 1)
+             + ibeta(b, a, 1 - c) * (digamma(b) - digamma(a + b) - log(1 - c)));
           cvi_->adj_ += adj_ *
             boost::math::ibeta_derivative(a, b, c);
         }
@@ -181,10 +181,10 @@ namespace stan {
           using boost::math::digamma;
           using boost::math::ibeta;
           bvi_->adj_ += adj_ *
-            (tgamma(b) * tgamma(a+b) / tgamma(a) * pow(1-c, b)
-             * ibeta_hypergeometric_helper(b, 1-a, 1-c)
-             / tgamma(b+1) / tgamma(b+1)
-             + ibeta(b, a, 1-c) * (digamma(b) - digamma(a+b) - log(1-c)));
+            (tgamma(b) * tgamma(a + b) / tgamma(a) * pow(1 - c, b)
+             * ibeta_hypergeometric_helper(b, 1 - a, 1 - c)
+             / tgamma(b + 1) / tgamma(b + 1)
+             + ibeta(b, a, 1 - c) * (digamma(b) - digamma(a + b) - log(1 - c)));
         }
       };
       class ibeta_ddv_vari : public op_ddv_vari {

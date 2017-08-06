@@ -106,7 +106,8 @@ namespace stan {
           }
         }
         int size() {
-          if (unlikely(this->operands_.size() == 0)) return 0;
+          if (unlikely(this->operands_.size() == 0))
+            return 0;
           return this->operands_.size() * this->operands_[0].size();
         }
       };

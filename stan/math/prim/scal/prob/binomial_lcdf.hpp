@@ -94,7 +94,7 @@ namespace stan {
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return N_dbl = value_of(N_vec[i]);
         const T_partials_return theta_dbl = value_of(theta_vec[i]);
-        const T_partials_return betafunc = exp(lbeta(N_dbl-n_dbl, n_dbl+1));
+        const T_partials_return betafunc = exp(lbeta(N_dbl - n_dbl, n_dbl + 1));
         const T_partials_return Pi = inc_beta(N_dbl - n_dbl, n_dbl + 1,
                                               1 - theta_dbl);
 
@@ -102,7 +102,7 @@ namespace stan {
 
         if (!is_constant_struct<T_prob>::value)
           ops_partials.edge1_.partials_[i] -= pow(theta_dbl, n_dbl)
-            * pow(1-theta_dbl, N_dbl-n_dbl-1) / betafunc / Pi;
+            * pow(1 - theta_dbl, N_dbl-n_dbl - 1) / betafunc / Pi;
       }
       return ops_partials.build(P);
     }

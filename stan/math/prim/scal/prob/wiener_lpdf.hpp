@@ -91,11 +91,8 @@ namespace stan {
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(beta)
-            && stan::length(tau)
-            && stan::length(delta)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)
+            && stan::length(tau) && stan::length(delta)))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,
@@ -121,7 +118,8 @@ namespace stan {
                              "Nondecision time", tau, "Drift rate", delta);
 
       size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
-      if (!N) return 0.0;
+      if (!N)
+        return 0.0;
 
       scalar_seq_view<T_y> y_vec(y);
       scalar_seq_view<T_alpha> alpha_vec(alpha);

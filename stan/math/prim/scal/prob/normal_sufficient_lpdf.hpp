@@ -68,11 +68,8 @@ namespace stan {
       using stan::math::include_summand;
 
       // check if any vectors are zero length
-      if (!(stan::length(y_bar)
-            && stan::length(s_squared)
-            && stan::length(n_obs)
-            && stan::length(mu)
-            && stan::length(sigma)))
+      if (!(stan::length(y_bar) && stan::length(s_squared)
+            && stan::length(n_obs) && stan::length(mu) && stan::length(sigma)))
         return 0.0;
 
       // set up return value accumulator

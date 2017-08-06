@@ -106,7 +106,7 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-            * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
+            * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           ops_partials.edge2_.partials_[n]
             -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl
