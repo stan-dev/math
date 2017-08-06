@@ -22,6 +22,7 @@
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -50,13 +51,11 @@ namespace stan {
     typename return_type<T_y, T_dof, T_scale>::type
     scaled_inv_chi_square_lpdf(const T_y& y,
                                const T_dof& nu, const T_scale& s) {
-      static const char* function("scaled_inv_chi_square_lpdf");
+      static const std::string function = "scaled_inv_chi_square_lpdf";
       typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
         T_partials_return;
 
-      if (!(stan::length(y)
-            && stan::length(nu)
-            && stan::length(s)))
+      if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -133,14 +132,14 @@ namespace stan {
         if (include_summand<propto, T_dof, T_scale>::value)
           logp += nu_dbl * log_s[n];
         if (include_summand<propto, T_dof, T_y>::value)
-          logp -= (half_nu[n]+1.0) * log_y[n];
+          logp -= (half_nu[n] + 1.0) * log_y[n];
         if (include_summand<propto, T_dof, T_y, T_scale>::value)
-          logp -= half_nu[n] * s_dbl*s_dbl * inv_y[n];
+          logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
           ops_partials.edge1_.partials_[n]
             += -(half_nu[n] + 1.0) * inv_y[n]
-            + half_nu[n] * s_dbl*s_dbl * inv_y[n]*inv_y[n];
+            + half_nu[n] * s_dbl * s_dbl * inv_y[n]*inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
           ops_partials.edge2_.partials_[n]
@@ -148,7 +147,7 @@ namespace stan {
             - digamma_half_nu_over_two[n]
             + log_s[n]
             - 0.5 * log_y[n]
-            - 0.5* s_dbl*s_dbl * inv_y[n];
+            - 0.5* s_dbl * s_dbl * inv_y[n];
         }
         if (!is_constant_struct<T_scale>::value) {
           ops_partials.edge3_.partials_[n]

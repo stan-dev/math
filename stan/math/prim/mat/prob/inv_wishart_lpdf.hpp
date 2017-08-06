@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -50,7 +51,7 @@ namespace stan {
                      const T_dof& nu,
                      const Eigen::Matrix
                      <T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-      static const char* function("inv_wishart_lpdf");
+      static const std::string function = "inv_wishart_lpdf";
 
       using boost::math::tools::promote_args;
       using Eigen::Dynamic;

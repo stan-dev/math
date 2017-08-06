@@ -41,9 +41,9 @@ namespace stan {
          */
         bool operator()(int i, int j) const {
            if (ascending)
-             return xs_[i-1] < xs_[j-1];
+             return xs_[i - 1] < xs_[j - 1];
            else
-             return xs_[i-1] > xs_[j-1];
+             return xs_[i - 1] > xs_[j - 1];
          }
       };
 

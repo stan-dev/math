@@ -37,7 +37,7 @@ namespace stan {
         return x;
       x[0] = y[0];
       for (size_type i = 1; i < k; ++i)
-        x[i] = log(y[i] - y[i-1]);
+        x[i] = log(y[i] - y[i - 1]);
       return x;
     }
   }

@@ -17,6 +17,7 @@
 #include <boost/random/cauchy_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -42,11 +43,10 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(mu)
-              && stan::length(sigma) ) )
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 0.0;
 
-      static const char* function("cauchy_lccdf");
+      static const std::string function = "cauchy_lccdf";
 
       using boost::math::tools::promote_args;
 

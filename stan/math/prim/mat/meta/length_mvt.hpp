@@ -9,7 +9,7 @@
 namespace stan {
 
   template <typename T, int R, int C>
-  size_t length_mvt(const Eigen::Matrix<T, R, C>& ) {
+  size_t length_mvt(const Eigen::Matrix<T, R, C>& /* unused */) {
     return 1U;
   }
 
@@ -20,4 +20,3 @@ namespace stan {
 
 }
 #endif
-

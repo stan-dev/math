@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive_size.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -28,10 +29,10 @@ namespace stan {
      *   multiplicable or if either matrix is size 0 for either rows or columns
      */
     template <typename T1, typename T2>
-    inline void check_multiplicable(const char* function,
-                                    const char* name1,
+    inline void check_multiplicable(const std::string& function,
+                                    const std::string& name1,
                                     const T1& y1,
-                                    const char* name2,
+                                    const std::string& name2,
                                     const T2& y2) {
       check_positive_size(function, name1, "rows()", y1.rows());
       check_positive_size(function, name2, "cols()", y2.cols());

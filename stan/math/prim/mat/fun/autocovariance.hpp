@@ -34,7 +34,7 @@ namespace stan {
                         Eigen::FFT<T>& fft) {
       autocorrelation(y, acov, fft);
 
-      T var = variance(y) * (y.size()-1) / y.size();
+      T var = variance(y) * (y.size() - 1) / y.size();
       for (size_t i = 0; i < y.size(); i++) {
         acov[i] *= var;
       }

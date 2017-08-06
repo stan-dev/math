@@ -17,6 +17,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -25,16 +26,14 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const char* function("skew_normal_cdf");
+      static const std::string function = "skew_normal_cdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_shape>::type
         T_partials_return;
 
       T_partials_return cdf(1.0);
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
             && stan::length(alpha)))
         return cdf;
 
@@ -119,4 +118,3 @@ namespace stan {
   }
 }
 #endif
-

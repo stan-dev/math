@@ -49,10 +49,8 @@ namespace stan {
       using std::fabs;
       using std::log;
 
-      if (is_nan(a)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(z)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(g)) return std::numeric_limits<T>::quiet_NaN();
-      if (is_nan(dig)) return std::numeric_limits<T>::quiet_NaN();
+      if (is_nan(a) || is_nan(z) || is_nan(g) || is_nan(dig))
+        return std::numeric_limits<T>::quiet_NaN();
 
       T l = log(z);
       if (z >= a && z >= 8) {
@@ -97,12 +95,13 @@ namespace stan {
             stan::math::domain_error("grad_reg_inc_gamma",
                                      "is not converging", "", "");
           if (log_delta <= log(precision))
-            return gamma_p(a, z) * ( dig - l ) + exp( a * l ) * S / g;
+            return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
         }
         stan::math::domain_error("grad_reg_inc_gamma",
-          "k (internal counter)",
-          max_steps, "exceeded ",
-          " iterations, gamma function gradient did not converge.");
+                                 "k (internal counter)",
+                                 max_steps, "exceeded ",
+                                 " iterations, gamma function"
+                                 " gradient did not converge.");
         return std::numeric_limits<T>::infinity();
       }
     }

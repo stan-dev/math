@@ -22,7 +22,8 @@ namespace stan {
       int K = L.rows();
       int J = L.cols();
       matrix_v LLt(K, K);
-      if (K == 0) return LLt;
+      if (K == 0)
+        return LLt;
       // if (K == 1) {
       //   LLt(0, 0) = L(0, 0) * L(0, 0);
       //   return LLt;
@@ -37,16 +38,17 @@ namespace stan {
                                    .alloc(Knz * sizeof(vari*)));
       int pos = 0;
       for (int m = 0; m < K; ++m)
-        for (int n = 0; n < ((J < (m+1)) ? J : (m+1)); ++n) {
+        for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
           vs[pos++] = L(m, n).vi_;
         }
       for (int m = 0, mpos=0; m < K; ++m, mpos += (J < m) ? J : m) {
-        LLt(m, m) = var(new dot_self_vari(vs + mpos, (J < (m+1)) ? J : (m+1)));
+        LLt(m, m) = var(new dot_self_vari(vs + mpos,
+                                          (J < (m + 1)) ? J : (m + 1)));
         for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
           LLt(m, n)
             = LLt(n, m)
             = var(new dot_product_vari<var, var>(vs + mpos, vs + npos,
-                                                 (J < (n+1))?J:(n+1)));
+                                                 (J < (n + 1)) ? J : (n + 1)));
         }
       }
       return LLt;

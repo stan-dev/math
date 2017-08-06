@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -59,7 +60,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const char* function("ordered_logistic");
+      static const std::string function = "ordered_logistic";
 
       int K = c.size() + 1;
 
