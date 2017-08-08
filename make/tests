@@ -13,7 +13,7 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+	$(LINK.cpp) -o $@ $^
 
 
 
@@ -48,7 +48,7 @@ test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 ##
 
 CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
-$(CVODES_TESTS) : LDFLAGS += $(LIBCVODES)
+$(CVODES_TESTS) : $(LIBCVODES)
 
 ############################################################
 #
