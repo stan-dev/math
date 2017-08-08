@@ -28,7 +28,7 @@ namespace stan {
         x.resize(dims[pos]);
         ++pos;
         if (pos >= dims.size())
-	  return;  // skips lowest loop to scalar
+          return;  // skips lowest loop to scalar
         for (int i = 0; i < x.size(); ++i)
           resize(x[i], dims, pos);
       }
