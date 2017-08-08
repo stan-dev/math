@@ -30,16 +30,17 @@ test/%.d : test/%.cpp
 	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
-############################################################
-#
-# Test for multiple translation units. If this fails,
+##
+# Adding a test for multiple translation units. If this fails,
 # a new function is probably missing an inline
 ##
 
-test/unit/libmultiple.so : test/unit/libmultiple.so(test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o)
+test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
+	$(COMPILE.cc) -O$O $< $(OUTPUT_OPTION)
 
-test/unit/multiple_translation_units_test.cpp : CXXFLAGS += -fPIC
-test/unit/multiple_translation_units_test.cpp : LDFLAGS += -shared
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
+	$(COMPILE.cc) -shared -fPIC $(OUTPUT_OPTION) $^
+
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
 ############################################################
