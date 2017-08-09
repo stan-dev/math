@@ -64,7 +64,7 @@ namespace stan {
         check_matching_sizes("append_array",
                              "dimension of x", xdims,
                              "dimension of y", ydims);
-        for (int i = 1; i < xdims.size(); ++i) {
+        for (size_t i = 1; i < xdims.size(); ++i) {
           check_size_match("append_array",
                            "shape of x", xdims[i],
                            "shape of y", ydims[i]);
