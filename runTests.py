@@ -14,6 +14,7 @@ import platform
 import subprocess
 import sys
 import time
+import pdb
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
@@ -78,6 +79,7 @@ def doCommand(command):
     """Run command as a shell command and report/exit on errors."""
     print("------------------------------------------------------------")
     print("%s" % command)
+   # pdb.set_trace()
     p1 = subprocess.Popen(command, shell=True)
     p1.wait()
     if (not(p1.returncode is None) and not(p1.returncode == 0)):

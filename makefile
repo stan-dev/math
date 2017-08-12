@@ -35,7 +35,7 @@ endif
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
 
-CXX = g++
+CXX = $(CC)
 
 ##
 # Get information about the compiler used.

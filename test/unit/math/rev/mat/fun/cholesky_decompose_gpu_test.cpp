@@ -30,7 +30,7 @@ struct gp_chol {
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     Eigen::Matrix<T, -1, -1> x_c = create_mat(inp, x[0], x[1], x[2]);
-    Eigen::Matrix<T, -1, -1> L = stan::math::cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = stan::math::cholesky_decompose_gpu(x_c);
     T lp = stan::math::multi_normal_cholesky_lpdf(y, mean, L);
     return lp;
   }
@@ -42,10 +42,10 @@ struct chol_functor {
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
-    using stan::math::cholesky_decompose;
+    using stan::math::cholesky_decompose_gpu;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
-    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose_gpu(x_c);
     lp += L(i, j);
     return lp;
   }
@@ -58,12 +58,12 @@ struct chol_functor_mult_scal {
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
-    using stan::math::cholesky_decompose;
+    using stan::math::cholesky_decompose_gpu;
     using stan::math::multiply;
     using stan::math::transpose;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
-    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose_gpu(x_c);
     lp += multiply(transpose(vec), multiply(L, vec));
     return lp;
   }
@@ -76,11 +76,11 @@ struct chol_functor_2 {
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
-    using stan::math::cholesky_decompose;
+    using stan::math::cholesky_decompose_gpu;
     using stan::math::multi_normal_cholesky_log;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
-    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose_gpu(x_c);
     Eigen::Matrix<double, -1, 1> vec(K);
     Eigen::Matrix<double, -1, 1> mu(K);
     vec.setZero();
@@ -95,7 +95,7 @@ struct chol_functor_simple {
   chol_functor_simple(int i_, int j_, int K_) : i(i_), j(j_), K(K_) { }
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cholesky_decompose;
+    using stan::math::cholesky_decompose_gpu;
     Eigen::Matrix<T, -1, -1> x_c(K, K);
     int pos = 0;
     for (int n = 0; n < K; ++n) 
@@ -103,7 +103,7 @@ struct chol_functor_simple {
         x_c(m,n) = x(pos++);
         x_c(n,m) = x_c(m,n);
       }
-    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose_gpu(x_c);
     return L(i, j);
   }
 };
@@ -114,7 +114,7 @@ struct chol_functor_simple_vec {
   chol_functor_simple_vec(int K_, Eigen::VectorXd vec_): K(K_), vec(vec_) { }
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cholesky_decompose;
+    using stan::math::cholesky_decompose_gpu;
     using stan::math::multiply;
     using stan::math::transpose;
     Eigen::Matrix<T, -1, -1> x_c(K, K);
@@ -124,7 +124,7 @@ struct chol_functor_simple_vec {
         x_c(m,n) = x(pos++);
         x_c(n,m) = x_c(m,n);
       }
-    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose_gpu(x_c);
     T lp = multiply(transpose(vec), multiply(L, vec));
     return lp;
   }

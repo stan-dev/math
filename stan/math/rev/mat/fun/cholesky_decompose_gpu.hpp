@@ -1,12 +1,11 @@
-#ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
-#define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
+#ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
+#define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 // NOTE: for GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
 //
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
@@ -216,8 +215,6 @@ namespace stan {
       }
     
     };
-
-
     /**
      * Reverse mode specialization of cholesky decomposition
      *
@@ -230,12 +227,11 @@ namespace stan {
      * @return L cholesky factor of A
      */
     inline Eigen::Matrix<var, -1, -1>
-      cholesky_decompose(const Eigen::Matrix<var, -1, -1> &A) {
+      cholesky_decompose_gpu(const Eigen::Matrix<var, -1, -1> &A) {
       check_square("cholesky_decompose", "A", A);
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      // NOTE: This should be replaced by some check that comes from a user
       L_A = L_A.selfadjointView<Eigen::Lower>();
       viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
       viennacl::copy(L_A, vcl_L_A);
@@ -245,24 +241,20 @@ namespace stan {
       // check_pos_definite("cholesky_decompose", "m", L_A);
       L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
       for (int i = 0; i < L_A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
-      
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
-      check_pos_definite("cholesky_decompose", "m", L_factor);
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
       // cholesky_b  lock
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
-          cholesky_gpu *baseVari
-            = new cholesky_gpu(A, L_A);
-          size_t pos = 0;
-          for (size_type j = 0; j < L.cols(); ++j) {
-            for (size_type i = j; i < L.cols(); ++i) {
-              L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
-            }
-            for (size_type k = 0; k < j; ++k)
-              L.coeffRef(k, j).vi_ = dummy;
-          }
+      cholesky_gpu *baseVari = new cholesky_gpu(A, L_A);
+      size_t pos = 0;
+      for (size_type j = 0; j < L.cols(); ++j) {
+        for (size_type i = j; i < L.cols(); ++i) {
+          L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+        }
+        for (size_type k = 0; k < j; ++k)
+          L.coeffRef(k, j).vi_ = dummy;
+      }
       return L;
     }
   }
