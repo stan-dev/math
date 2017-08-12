@@ -6,6 +6,10 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/fun/ViennaCL.hpp>
+#endif
+
 namespace stan {
   namespace math {
 
@@ -26,13 +30,36 @@ namespace stan {
                        <T, Eigen::Dynamic, Eigen::Dynamic>& m) {
       check_square("cholesky_decompose", "m", m);
       check_symmetric("cholesky_decompose", "m", m);
-      Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
-        llt(m.rows());
-      llt.compute(m);
-      check_pos_definite("cholesky_decompose", "m", llt);
-      return llt.matrixL();
+      #ifdef STAN_GPU
+        if (m.rows()  > 70) {
+          viennacl::matrix<double>  vcl_m(m.rows(), m.cols());
+          viennacl::copy(m, vcl_m);
+          viennacl::linalg::lu_factorize(vcl_m);
+          Eigen::Matrix<double, -1, -1> m_l(m.rows(), m.cols());
+          viennacl::copy(vcl_m, m_l);
+          // TODO(Steve/Sean): Where should this check go?
+          // check_pos_definite("cholesky_decompose", "m", L_A);
+          m_l = Eigen::MatrixXd(m_l.triangularView<Eigen::Upper>()).transpose();
+          for (int i = 0; i < m_l.rows(); i++) m_l.col(i) /= std::sqrt(m_l(i, i));
+          return m_l;
+        } else {
+          Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
+            llt(m.rows());
+          llt.compute(m);
+          check_pos_definite("cholesky_decompose", "m", llt);
+          return llt.matrixL();
+        }
+      #else
+        Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
+          llt(m.rows());
+        llt.compute(m);
+        check_pos_definite("cholesky_decompose", "m", llt);
+        return llt.matrixL();
+      #endif
     }
 
   }
 }
 #endif
+
+
