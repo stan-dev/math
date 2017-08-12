@@ -17,3 +17,7 @@ GTEST_CXXFLAGS = -DGTEST_USE_OWN_TR1_TUPLE
 LDLIBS =
 EXE =
 WINE =
+
+ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
+    CXXFLAGS +=  -isystem $(VIENNACL) -lOpenCL
+endif
