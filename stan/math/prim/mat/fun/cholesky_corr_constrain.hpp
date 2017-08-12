@@ -26,7 +26,8 @@ namespace stan {
       for (int i = 0; i < k_choose_2; ++i)
         z(i) = corr_constrain(y(i));
       Matrix<T, Dynamic, Dynamic> x(K, K);
-      if (K == 0) return x;
+      if (K == 0)
+        return x;
       T zero(0);
       for (int j = 1; j < K; ++j)
         for (int i = 0; i < j; ++i)
@@ -62,7 +63,8 @@ namespace stan {
       for (int i = 0; i < k_choose_2; ++i)
         z(i) = corr_constrain(y(i), lp);
       Matrix<T, Dynamic, Dynamic> x(K, K);
-      if (K == 0) return x;
+      if (K == 0)
+        return x;
       T zero(0);
       for (int j = 1; j < K; ++j)
         for (int i = 0; i < j; ++i)

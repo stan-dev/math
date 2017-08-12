@@ -28,7 +28,7 @@ namespace stan {
       check_vector("squared_distance", "v1", v1);
       check_vector("squared_distance", "v2", v2);
       check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-      return (v1-v2).squaredNorm();
+      return (v1 - v2).squaredNorm();
     }
 
     /**
@@ -52,7 +52,7 @@ namespace stan {
       check_vector("squared_distance", "v1", v1);
       check_vector("squared_distance", "v2", v2);
       check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-      return (v1.transpose()-v2).squaredNorm();
+      return (v1.transpose() - v2).squaredNorm();
     }
 
   }

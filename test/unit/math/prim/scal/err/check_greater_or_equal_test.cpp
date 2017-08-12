@@ -4,13 +4,13 @@
 using stan::math::check_greater_or_equal;
 
 TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
-  const char* function = "check_greater_or_equal";
+  const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
- 
-  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb)) 
+
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb))
     << "check_greater_or_equal should be true with x > lb";
-  
+
   x = -1.0;
   EXPECT_THROW(check_greater_or_equal(function, "x", x, lb),
                std::domain_error)
@@ -37,7 +37,7 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
 }
 
 TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
-  const char* function = "check_greater_or_equal";
+  const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -49,4 +49,3 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
   EXPECT_THROW(check_greater_or_equal(function, "x", nan, nan),
                std::domain_error);
 }
- 

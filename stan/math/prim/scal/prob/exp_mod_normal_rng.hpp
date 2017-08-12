@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -24,7 +25,7 @@ namespace stan {
                        double sigma,
                        double lambda,
                        RNG& rng) {
-      static const char* function("exp_mod_normal_rng");
+      static const std::string function = "exp_mod_normal_rng";
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Inv_scale parameter", lambda);
@@ -37,4 +38,3 @@ namespace stan {
   }
 }
 #endif
-

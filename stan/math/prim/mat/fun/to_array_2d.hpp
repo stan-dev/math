@@ -10,9 +10,8 @@ namespace stan {
     // real[, ] to_array_2d(matrix)
     template <typename T>
     inline std::vector< std::vector<T> >
-    to_array_2d(
-      const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & matrix
-    ) {
+    to_array_2d(const
+                Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& matrix) {
       using std::vector;
       const T* datap = matrix.data();
       int C = matrix.cols();

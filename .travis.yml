@@ -6,10 +6,6 @@ before_script:
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
-osx_clang: &osx_clang
-  os: osx
-  compiler: clang
-
 linux_clang: &linux_clang
   os: linux
   compiler: "clang-3.8"
@@ -29,21 +25,6 @@ linux_gcc: &linux_gcc
 matrix:
   fast_finish: true
   include:
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/prim/mat
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/rev/mat
-    - <<: *osx_clang
-      env:
-        - TESTFOLDER=test/unit/math/fwd
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -51,7 +32,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/prim/mat
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -63,7 +48,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/fwd
+          TESTFOLDER=test/unit/math/fwd/mat
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
@@ -71,7 +60,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/prim/mat
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
@@ -83,7 +76,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/fwd
+          TESTFOLDER=test/unit/math/fwd/mat
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 

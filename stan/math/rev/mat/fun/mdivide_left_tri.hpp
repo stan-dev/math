@@ -54,7 +54,7 @@ namespace stan {
                 variRefA_[pos++] = A(i, j).vi_;
           } else if (TriView == Eigen::Upper) {
             for (size_type j = 0; j < M_; j++)
-              for (size_type i = 0; i < j+1; i++)
+              for (size_type i = 0; i < j + 1; i++)
                 variRefA_[pos++] = A(i, j).vi_;
           }
 
@@ -113,7 +113,7 @@ namespace stan {
                 variRefA_[pos++]->adj_ += adjA(i, j);
           } else if (TriView == Eigen::Upper) {
             for (size_type j = 0; j < adjA.cols(); j++)
-              for (size_type i = 0; i < j+1; i++)
+              for (size_type i = 0; i < j + 1; i++)
                 variRefA_[pos++]->adj_ += adjA(i, j);
           }
 
@@ -243,7 +243,7 @@ namespace stan {
                 variRefA_[pos++] = A(i, j).vi_;
           } else if (TriView == Eigen::Upper) {
             for (size_type j = 0; j < M_; j++)
-              for (size_type i = 0; i < j+1; i++)
+              for (size_type i = 0; i < j + 1; i++)
                 variRefA_[pos++] = A(i, j).vi_;
           }
 
@@ -291,7 +291,7 @@ namespace stan {
                 variRefA_[pos++]->adj_ += adjA(i, j);
           } else if (TriView == Eigen::Upper) {
             for (size_type j = 0; j < adjA.cols(); j++)
-              for (size_type i = 0; i < j+1; i++)
+              for (size_type i = 0; i < j + 1; i++)
                 variRefA_[pos++]->adj_ += adjA(i, j);
           }
         }

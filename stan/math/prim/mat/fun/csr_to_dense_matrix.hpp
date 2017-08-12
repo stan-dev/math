@@ -15,7 +15,7 @@ namespace stan {
     /** \addtogroup csr_format
      *  @{
      */
-    /** 
+    /**
      * Construct a dense Eigen matrix from the CSR format components.
      *
      * @tparam T Type of matrix entries.
@@ -44,10 +44,10 @@ namespace stan {
 
       check_positive("csr_to_dense_matrix", "m", m);
       check_positive("csr_to_dense_matrix", "n", n);
-      check_size_match("csr_to_dense_matrix", "m", m, "u", u.size()-1);
+      check_size_match("csr_to_dense_matrix", "m", m, "u", u.size() - 1);
       check_size_match("csr_to_dense_matrix", "w", w.size(), "v", v.size());
       check_size_match("csr_to_dense_matrix", "u/z",
-                       u[m-1] + csr_u_to_z(u, m - 1) - 1,
+                       u[m - 1] + csr_u_to_z(u, m - 1) - 1,
                        "v", v.size());
       for (size_t i = 0; i < v.size(); ++i)
         check_range("csr_to_dense_matrix", "v[]", n, v[i]);

@@ -13,7 +13,7 @@ namespace stan {
       void resize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x,
                   const std::vector<size_t>& dims,
                   size_t pos) {
-        x.resize(dims[pos], dims[pos+1]);
+        x.resize(dims[pos], dims[pos + 1]);
       }
 
       template <typename T>
@@ -43,7 +43,8 @@ namespace stan {
                   size_t pos) {
         x.resize(dims[pos]);
         ++pos;
-        if (pos >= dims.size()) return;  // skips lowest loop to scalar
+        if (pos >= dims.size())
+          return;  // skips lowest loop to scalar
         for (size_t i = 0; i < x.size(); ++i)
           resize(x[i], dims, pos);
       }

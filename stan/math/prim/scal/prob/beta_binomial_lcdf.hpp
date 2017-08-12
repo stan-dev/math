@@ -20,13 +20,14 @@
 #include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the log CDF of the Beta-Binomial distribution with given population 
-     * size, prior success, and prior failure parameters. Given containers of 
+     * Returns the log CDF of the Beta-Binomial distribution with given population
+     * size, prior success, and prior failure parameters. Given containers of
      * matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_n type of success parameter
@@ -46,7 +47,7 @@ namespace stan {
     typename return_type<T_size1, T_size2>::type
     beta_binomial_lcdf(const T_n& n, const T_N& N, const T_size1& alpha,
                           const T_size2& beta) {
-      static const char* function("beta_binomial_lcdf");
+      static const std::string function = "beta_binomial_lcdf";
       typedef typename stan::partials_return_type<T_n, T_N, T_size1,
                                                   T_size2>::type
         T_partials_return;

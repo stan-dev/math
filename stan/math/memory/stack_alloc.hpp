@@ -37,7 +37,8 @@ namespace stan {
       // big fun to inline, but only called twice
       inline char* eight_byte_aligned_malloc(size_t size) {
         char* ptr = static_cast<char*>(malloc(size));
-        if (!ptr) return ptr;  // malloc failed to alloc
+        if (!ptr)
+          return ptr;  // malloc failed to alloc
         if (!is_aligned(ptr, 8U)) {
           std::stringstream s;
           s << "invalid alignment to 8 bytes, ptr="

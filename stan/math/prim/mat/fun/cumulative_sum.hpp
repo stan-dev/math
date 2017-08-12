@@ -26,7 +26,7 @@ namespace stan {
         return result;
       result[0] = x[0];
       for (size_t i = 1; i < result.size(); ++i)
-        result[i] = x[i] + result[i-1];
+        result[i] = x[i] + result[i - 1];
       return result;
     }
 
@@ -52,7 +52,7 @@ namespace stan {
         return result;
       result(0) = m(0);
       for (int i = 1; i < result.size(); ++i)
-        result(i) = m(i) + result(i-1);
+        result(i) = m(i) + result(i - 1);
       return result;
     }
   }

@@ -22,8 +22,9 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -40,7 +41,7 @@ namespace stan {
             && stan::length(sigma)))
         return 0.0;
 
-      static const char* function("student_t_lcdf");
+      static const std::string function = "student_t_lcdf";
 
       using std::exp;
 
@@ -147,12 +148,13 @@ namespace stan {
 
         } else {
           T_partials_return z = 1.0 - inc_beta((T_partials_return)0.5,
-                                               0.5*nu_dbl, r);
+                                               0.5 * nu_dbl, r);
           zJacobian *= -1;
 
           const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
-          T_partials_return d_ibeta = pow(1.0-r, 0.5*nu_dbl-1) * pow(r, -0.5)
+          T_partials_return d_ibeta = pow(1.0 - r, 0.5 * nu_dbl - 1)
+            * pow(r, -0.5)
             / betaNuHalf;
 
           P += log(Pn);

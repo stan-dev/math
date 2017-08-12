@@ -15,8 +15,8 @@ namespace stan {
     namespace {
       template <typename T_y, typename T_high, bool is_vec>
       struct less {
-        static void check(const char* function,
-                          const char* name,
+        static void check(const std::string& function,
+                          const std::string& name,
                           const T_y& y,
                           const T_high& high) {
           using stan::length;
@@ -36,8 +36,8 @@ namespace stan {
 
       template <typename T_y, typename T_high>
       struct less<T_y, T_high, true> {
-        static void check(const char* function,
-                          const char* name,
+        static void check(const std::string& function,
+                          const std::string& name,
                           const T_y& y,
                           const T_high& high) {
           using stan::length;
@@ -75,8 +75,8 @@ namespace stan {
      *   or if any element of y or high is NaN.
      */
     template <typename T_y, typename T_high>
-    inline void check_less(const char* function,
-                           const char* name,
+    inline void check_less(const std::string& function,
+                           const std::string& name,
                            const T_y& y,
                            const T_high& high) {
       less<T_y, T_high, is_vector_like<T_y>::value>

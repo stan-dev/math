@@ -19,12 +19,13 @@
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the Weibull log probability density for the given 
+     * Returns the Weibull log probability density for the given
      * location and scale. Given containers of matching sizes, returns the
      * log sum of probability densities.
      *
@@ -35,21 +36,19 @@ namespace stan {
      * @param alpha shape parameter
      * @param sigma scale parameter
      * @return log probability density or log sum of probability densities
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive
      */
     template <bool propto,
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     weibull_lpdf(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const char* function("weibull_lpdf");
+      static const std::string function = "weibull_lpdf";
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -116,7 +115,7 @@ namespace stan {
         if (include_summand<propto, T_shape>::value)
           logp += log_alpha[n];
         if (include_summand<propto, T_y, T_shape>::value)
-          logp += (alpha_dbl-1.0)*log_y[n];
+          logp += (alpha_dbl - 1.0)*log_y[n];
         if (include_summand<propto, T_shape, T_scale>::value)
           logp -= alpha_dbl*log_sigma[n];
         if (include_summand<propto, T_y, T_shape, T_scale>::value)
@@ -125,7 +124,7 @@ namespace stan {
         if (!is_constant_struct<T_y>::value) {
           const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
           ops_partials.edge1_.partials_[n]
-            += (alpha_dbl-1.0) * inv_y
+            += (alpha_dbl - 1.0) * inv_y
             - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
         }
         if (!is_constant_struct<T_shape>::value)

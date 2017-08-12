@@ -26,6 +26,7 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -53,7 +54,7 @@ namespace stan {
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lpdf(const T_y& y,
              const T_scale_succ& alpha, const T_scale_fail& beta) {
-      static const char* function("beta_lpdf");
+      static const std::string function = "beta_lpdf";
 
       typedef typename stan::partials_return_type<T_y,
                                                   T_scale_succ,
@@ -64,9 +65,7 @@ namespace stan {
       using stan::is_vector;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -169,13 +168,13 @@ namespace stan {
         if (include_summand<propto, T_scale_fail>::value)
           logp -= lgamma_beta[n];
         if (include_summand<propto, T_y, T_scale_succ>::value)
-          logp += (alpha_dbl-1.0) * log_y[n];
+          logp += (alpha_dbl - 1.0) * log_y[n];
         if (include_summand<propto, T_y, T_scale_fail>::value)
-          logp += (beta_dbl-1.0) * log1m_y[n];
+          logp += (beta_dbl - 1.0) * log1m_y[n];
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] += (alpha_dbl-1)/y_dbl
-            + (beta_dbl-1)/(y_dbl-1);
+          ops_partials.edge1_.partials_[n] += (alpha_dbl - 1)/y_dbl
+            + (beta_dbl - 1) / (y_dbl - 1);
         if (!is_constant_struct<T_scale_succ>::value)
           ops_partials.edge2_.partials_[n]
             += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
