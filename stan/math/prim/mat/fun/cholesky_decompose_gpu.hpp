@@ -6,11 +6,7 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-
-#ifdef STAN_GPU
-#include <stan/math/prim/mat/fun/ViennaCL.hpp>
-#endif
-
+#include <algorithm>
 namespace stan {
   namespace math {
 

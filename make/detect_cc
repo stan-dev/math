@@ -10,7 +10,7 @@ ifneq (,$(findstring clang++,$(CC)))
   # To deal with that we force it to use llvm's bundled libc++ replacement for
   # gcc's stdlibc++ here. Plus it's better to rely on just one compiler if we
   # can.
-  CXXFLAGS += -stdlib=libc++
+#  CXXFLAGS += -stdlib=libc++
 endif
 ifneq (,$(findstring mingw32-g++,$(CC)))
   CC_TYPE ?= mingw32-g++

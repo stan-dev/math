@@ -269,6 +269,7 @@ namespace stan {
               }
             }
           }
+      #ifdef STAN_GPU
 
       /**
        * Reverse mode differentiation algorithm refernce:
@@ -276,8 +277,6 @@ namespace stan {
        * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
        */
-    #ifdef STAN_GPU
-
       virtual void chain() {
 
         using Eigen::MatrixXd;
@@ -333,9 +332,7 @@ namespace stan {
             vcl_Lbar,
             static_cast<cl_uint>(vcl_Lbar.size1()),
             static_cast<cl_uint>(vcl_Lbar.size2()), 
-            static_cast<cl_uint>(vcl_Lbar.internal_size2())
-          )
-        );
+            static_cast<cl_uint>(vcl_Lbar.internal_size2())));
 
         viennacl::matrix<double>  vcl_temp2(M_, M_ * 2);
         std::vector<int> stl_sizes(parts);

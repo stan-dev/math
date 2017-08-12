@@ -9,7 +9,7 @@
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
 #endif
-
+#include <algorithm>
 namespace stan {
   namespace math {
 
@@ -39,8 +39,11 @@ namespace stan {
           viennacl::copy(vcl_m, m_l);
           // TODO(Steve/Sean): Where should this check go?
           // check_pos_definite("cholesky_decompose", "m", L_A);
-          m_l = Eigen::MatrixXd(m_l.triangularView<Eigen::Upper>()).transpose();
-          for (int i = 0; i < m_l.rows(); i++) m_l.col(i) /= std::sqrt(m_l(i, i));
+          m_l =
+            Eigen::MatrixXd(m_l.triangularView<Eigen::Upper>()).transpose();
+          for (int i = 0; i < m_l.rows(); i++) {
+            m_l.col(i) /= std::sqrt(m_l(i, i));
+          }
           return m_l;
         } else {
           Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
