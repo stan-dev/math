@@ -19,5 +19,6 @@ EXE =
 WINE =
 
 ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
-    CXXFLAGS +=  -isystem $(VIENNACL) -lOpenCL
+    CXXFLAGS +=  -isystem $(VIENNACL)
+    LDFLAGS += -lOpenCL
 endif
