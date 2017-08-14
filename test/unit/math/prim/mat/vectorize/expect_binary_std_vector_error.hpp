@@ -10,14 +10,6 @@ template <typename F, typename result_t, typename vector_t1,
 void expect_binary_std_vector_err_throw(std::vector<vector_t1> input_v1,
                                         std::vector<vector_t2> input_v2) {
   using std::vector;
-  for (size_t i = 0; i < input_v1.size(); ++i) {
-    EXPECT_THROW(F::template apply<vector<result_t> >(
-                   input_v1[i], vector<vector_t2>(5, input_v2[i])),
-                 std::domain_error);
-    EXPECT_THROW(F::template apply<vector<result_t> >(
-                   vector<vector_t1>(5, input_v1[i]), input_v2[i]),
-                 std::domain_error);
-  }
   EXPECT_THROW(F::template apply<vector<result_t> >(input_v1, input_v2),
                std::domain_error);
 }
@@ -29,22 +21,6 @@ void expect_binary_std_vector_std_vector_err_throw(std::vector<vector_t1>
                                                    std::vector<vector_t2>
                                                    input_v2) {
   using std::vector;
-  for (size_t i = 0; i < input_v1.size(); ++i) {
-    vector<vector_t1> invalid_input1(5, input_v1[i]);
-    vector<vector_t2> invalid_input2(5, input_v2[i]);
-    vector<vector<vector_t1> > a;
-    a.push_back(invalid_input1);
-    a.push_back(invalid_input1);
-    vector<vector<vector_t2> > b;
-    b.push_back(invalid_input2);
-    b.push_back(invalid_input2);
-    EXPECT_THROW(F::template apply<vector<vector<result_t> > >(
-                   input_v1[i], b),
-                 std::domain_error);
-    EXPECT_THROW(F::template apply<vector<vector<result_t> > >(
-                   a, input_v2[i]),
-                 std::domain_error);
-  }
   vector<vector<vector_t1> > a;
   a.push_back(input_v1);
   a.push_back(input_v1);
@@ -56,10 +32,9 @@ void expect_binary_std_vector_std_vector_err_throw(std::vector<vector_t1>
 }
 
 template <typename F, typename T>
-void expect_binary_std_vector_error() {
-  using std::vector;
+void expect_binary_std_vector_size_err_throw() {
 
-  //Test vectors with different sizes
+  using std::vector;
   vector<T> badsize_tv1(4);
   vector<T> badsize_tv2(9);
   vector<int> badsize_iv(7);
@@ -74,6 +49,14 @@ void expect_binary_std_vector_error() {
                std::invalid_argument);
   EXPECT_THROW(F::template apply<vector<T> >(badsize_tv1, badsize_tv2),
                std::invalid_argument);
+
+}
+
+template <typename F, typename T>
+void expect_binary_std_vector_error() {
+  using std::vector;
+
+  expect_binary_std_vector_size_err_throw<F, T>();
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
   if (invalid_inputs1.size() == 0) return;

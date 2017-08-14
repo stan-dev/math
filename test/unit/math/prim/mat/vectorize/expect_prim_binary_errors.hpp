@@ -6,7 +6,6 @@
 #include <test/unit/math/prim/mat/vectorize/expect_binary_int_std_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_std_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_matrix_error.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_binary_vector_error.hpp>
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 
@@ -27,9 +26,14 @@ void expect_prim_binary_errors() {
   expect_binary_int_std_vector_error<F>();
   expect_binary_scalar_error<F, double>();
   expect_binary_std_vector_error<F, double>();
-  expect_binary_matrix_error<F, double>();
-  expect_binary_vector_error<F, double, Eigen::VectorXd>();
-  expect_binary_vector_error<F, double, Eigen::RowVectorXd>();
+/*
+  Eigen::MatrixXd model_matrix;
+  Eigen::VectorXd model_vector;
+  Eigen::RowVectorXd model_row_vector;
+  expect_binary_matrix_error<F, double>(model_matrix);
+  expect_binary_vector_error<F, double>(model_vector);
+  expect_binary_vector_error<F, double>(model_row_vector);
+*/
 }
 
 #endif

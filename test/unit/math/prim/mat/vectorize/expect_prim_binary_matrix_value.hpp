@@ -1,85 +1,68 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_BINARY_MATRIX_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_BINARY_MATRIX_VALUE_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_scalar_matrix_eq.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_matrix_scalar_eq.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_matrix_matrix_eq.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_scalar_std_vector_matrix_eq.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_std_vector_matrix_scalar_eq.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_prim_binary_std_vector_matrix_std_vector_matrix_eq.hpp>
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
+#include <test/unit/math/prim/mat/vectorize/build_template_matrix.hpp>
 #include <vector>
 #include <Eigen/Dense>
 
-template <typename F>
-void expect_prim_binary_matrix_value() {
+template <typename F, typename matrix_t>
+void expect_prim_binary_matrix_matrix_eq(const matrix_t& input_m1, 
+                                         const matrix_t& input_m2) {
+  matrix_t fa = F::template apply<matrix_t>(input_m1, input_m2);
+  EXPECT_EQ(input_m1.size(), fa.size());
+  EXPECT_EQ(input_m2.size(), fa.size());
+  for (int i = 0; i < input_m1.size(); ++i) {
+    double exp_v = F::apply_base(input_m1(i), input_m2(i));
+    expect_val_eq(exp_v, fa(i));
+  }    
+}
+
+template <typename F, typename matrix_t> void
+expect_prim_binary_std_vector_matrix_std_vector_matrix_eq(
+  const std::vector<matrix_t>& input_mv1,
+  const std::vector<matrix_t>& input_mv2) {
+
+  using std::vector;
+
+  std::vector<matrix_t> fa = F::template apply<vector<matrix_t> >(
+    input_mv1, input_mv2);
+  EXPECT_EQ(input_mv1.size(), fa.size());
+  EXPECT_EQ(input_mv2.size(), fa.size());
+  for (size_t i = 0; i < input_mv1.size(); ++i) {
+    EXPECT_EQ(input_mv1[i].size(), fa[i].size());
+    EXPECT_EQ(input_mv2[i].size(), fa[i].size());
+    for (int j = 0; j < input_mv1[i].size(); ++j) {
+      double exp_v = F::apply_base(input_mv1[i](j), input_mv2[i](j));
+      expect_val_eq(exp_v, fa[i](j));
+    }
+  }
+}
+
+template <typename F, typename matrix_t>
+void expect_prim_binary_matrix_value(matrix_t template_m) {
   using Eigen::MatrixXd;
   using std::vector;
 
-  vector<int> int_valid_inputs1 = F::int_valid_inputs1();
-  vector<int> int_valid_inputs2 = F::int_valid_inputs2();
   vector<double> valid_inputs1 = F::valid_inputs1();
   vector<double> valid_inputs2 = F::valid_inputs2();
 
-  //Tests int, matrix
-  for (size_t i = 0; i < int_valid_inputs1.size(); ++i) {
-    MatrixXd a1 = MatrixXd::Constant(5, 3, valid_inputs1[i]);
-    MatrixXd a2 = MatrixXd::Constant(5, 3, valid_inputs2[i]);
-    expect_prim_binary_scalar_matrix_eq<F>(int_valid_inputs1[i], a2);
-    expect_prim_binary_matrix_scalar_eq<F>(a1, int_valid_inputs2[i]);
-  }
-
-  //Tests double, matrix
-  for (size_t i = 0; i < valid_inputs1.size(); ++i) {
-    MatrixXd a1 = MatrixXd::Constant(5, 3, valid_inputs1[i]);
-    MatrixXd a2 = MatrixXd::Constant(5, 3, valid_inputs2[i]);
-    expect_prim_binary_scalar_matrix_eq<F>(valid_inputs1[i], a2);
-    expect_prim_binary_matrix_scalar_eq<F>(a1, valid_inputs2[i]);
-  }
-
-  //Tests matrix, matrix
-  MatrixXd a1(valid_inputs1.size(), 3);
-  for (int i = 0; i < a1.size(); i++) {
+  matrix_t a1 = build_template_matrix(template_m, valid_inputs1.size(), 3);
+  for (int i = 0; i < a1.size(); ++i) {
     a1(i) =  valid_inputs1[(i % valid_inputs1.size())];
   }
-  MatrixXd a2(valid_inputs2.size(), 3);
-  for (int i = 0; i < a2.size(); i++) {
-    a2(i) =  valid_inputs1[(i % valid_inputs2.size())];
+
+  matrix_t a2 = build_template_matrix(template_m, valid_inputs1.size(), 3);
+  for (int i = 0; i < a2.size(); ++i) {
+    a2(i) =  valid_inputs2[(i % valid_inputs2.size())];
   }
 
   expect_prim_binary_matrix_matrix_eq<F>(a1, a2);
 
-  MatrixXd ab1 = a1.block(1, 1, 1, 1);
-  MatrixXd ab2 = a2.block(1, 1, 1, 1);
-  expect_prim_binary_matrix_matrix_eq<F>(ab1, ab2);
-
-  //Tests int, vector<matrix>
-  for (size_t i = 0; i < int_valid_inputs1.size(); ++i) {
-    MatrixXd b1 = MatrixXd::Constant(5, 3, valid_inputs1[i]);
-    MatrixXd b2 = MatrixXd::Constant(5, 3, valid_inputs2[i]);
-    vector<MatrixXd> d1;
-    d1.push_back(b1);
-    d1.push_back(b1);
-    vector<MatrixXd> d2;
-    d2.push_back(b2);
-    d2.push_back(b2);
-    expect_prim_binary_scalar_std_vector_matrix_eq<F>(
-      int_valid_inputs1[i], d2);
-    expect_prim_binary_std_vector_matrix_scalar_eq<F>(
-      d1, int_valid_inputs2[i]);
-  }
-
-  //Tests double, vector<matrix>
-  for (size_t i = 0; i < valid_inputs1.size(); ++i) {
-    MatrixXd b1 = MatrixXd::Constant(5, 3, valid_inputs1[i]);
-    MatrixXd b2 = MatrixXd::Constant(5, 3, valid_inputs2[i]);
-    vector<MatrixXd> d1;
-    d1.push_back(b1);
-    d1.push_back(b1);
-    vector<MatrixXd> d2;
-    d2.push_back(b2);
-    d2.push_back(b2);
-    expect_prim_binary_scalar_std_vector_matrix_eq<F>(valid_inputs1[i], d2);
-    expect_prim_binary_std_vector_matrix_scalar_eq<F>(d1, valid_inputs2[i]);
+  if (a1.rows() > 1 && a1.cols() > 1) {
+    matrix_t ab1 = a1.block(1, 1, 1, 1);
+    matrix_t ab2 = a2.block(1, 1, 1, 1);
+    expect_prim_binary_matrix_matrix_eq<F>(ab1, ab2);
   }
 
   vector<MatrixXd> d1;
