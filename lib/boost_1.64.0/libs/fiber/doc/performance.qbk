@@ -1,0 +1,195 @@
+[/
+          Copyright Oliver Kowalke 2016.
+ Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+          http://www.boost.org/LICENSE_1_0.txt
+]
+
+[section:performance Performance]
+
+Performance measurements were taken using `std::chrono::highresolution_clock`,
+with overhead corrections.
+The code was compiled with gcc-6.3.1, using build options:
+variant = release, optimization = speed.
+Tests were executed on dual socket Intel XEON E5 2620 2.2GHz, 16C/32T, running
+Linux (x86_64).
+
+Measurements headed 1C/1T were run in a single-threaded process.
+
+The [@https://github.com/atemerev/skynet microbenchmark ['syknet]] from
+Alexander Temerev was ported and used for performance measurements.
+At the root the test spawns 10 threads-of-execution (ToE), e.g.
+actor/goroutine/fiber etc.. Each spawned ToE spawns additional 10 ToEs ...
+until *1,000,000* ToEs are created. ToEs return back their ordinal numbers
+(0 ... 999,999), which are summed on the previous level and sent back upstream,
+until reaching the root. The test was run 10-20 times, producing a range of
+values for each measurement.
+
+[table time per actor/erlang process/goroutine (other languages) (average over 1,000,000)
+    [
+         [Haskell | stack-1.4.0]
+         [Go | go1.8]
+         [Erlang | erts-8.3]
+    ]
+    [
+        [0.05 \u00b5s - 0.06 \u00b5s]
+        [0.45 \u00b5s - 0.52 \u00b5s]
+        [0.63 \u00b5s - 0.73 \u00b5s]
+    ]
+]
+
+Pthreads are created with a stack size of 8kB while `std::thread`'s use the
+system default (1MB - 2MB). The microbenchmark could not be run with 1,000,000
+threads because of resource exhaustion (pthread and std::thread).
+Instead the test runs only at *10,000* threads.
+
+[table time per thread (average over *10,000* - unable to spawn 1,000,000 threads)
+    [
+         [pthread]
+         [`std::thread`]
+    ]
+    [
+        [54 \u00b5s - 73 \u00b5s]
+        [52 \u00b5s - 73 \u00b5s]
+    ]
+]
+
+The test utilizes 16 cores with Symmetric MultiThreading enabled (32 logical
+CPUs). The fiber stacks are allocated by __fixedsize_stack__.
+
+As the benchmark shows, the memory allocation algorithm is significant for
+performance in a multithreaded environment. The tests use glibc[s] memory
+allocation algorithm (based on ptmalloc2) as well as Google[s]
+[@http://goog-perftools.sourceforge.net/doc/tcmalloc.html TCmalloc] (via
+linkflags="-ltcmalloc").[footnote
+Tais B. Ferreira, Rivalino Matias, Autran Macedo, Lucio B. Araujo
+["An Experimental Study on Memory Allocators in Multicore and
+Multithreaded Applications], PDCAT [,]11 Proceedings of the 2011 12th
+International Conference on Parallel and Distributed Computing, Applications
+and Technologies, pages 92-98]
+
+In the __work_stealing__ scheduling algorithm, each thread has its own local
+queue. Fibers that are ready to run are pushed to and popped from the local
+queue. If the queue runs out of ready fibers, fibers are stolen from the local
+queues of other participating threads.
+
+[table time per fiber (average over 1.000.000)
+    [
+         [fiber (16C/32T, work stealing, tcmalloc)]
+         [fiber (1C/1T, round robin, tcmalloc)]
+    ]
+    [
+        [0.05 \u00b5s - 0.11 \u00b5s]
+        [1.69 \u00b5s - 1.79 \u00b5s]
+    ]
+]
+
+
+[section:tweaking Tweaking]
+
+__boost_fiber__ enables synchronization of fibers running on different threads
+per default. This is accomplished by spinlocks (using atomics).
+(BOOST_FIBERS_SPINLOCK_STD_MUTEX defined at the compiler[s] command line enables
+`std::mutex` instead of spinlocks).
+
+
+[heading disable synchronization]
+
+With [link cross_thread_sync `BOOST_FIBERS_NO_ATOMICS`] defined at the
+compiler[s] command line, synchronization between fibers (in different
+threads) is disabled. This is acceptable if the application is single threaded
+and/or fibers are not synchronized between threads.
+
+
+[heading TTAS locks]
+
+Spinlocks are implemented as TTAS locks, i.e. the spinlock tests the lock
+before calling an atomic exchange. This strategy helps to reduce the cache
+line invalidations triggered by acquiring/releasing the lock.
+
+
+[heading spin-wait loop]
+
+A lock is considered under high contention, if a thread repeatedly fails to
+acquire the lock because some other thread was faster.
+Waiting for a short time lets other threads finish before trying to enter the
+critical section again. While busy waiting on the lock, relaxing the CPU (via
+pause/yield memnonic) gives the CPU a hint that the code is in a spin-wait loop.
+
+* prevents expensive pipeline flushes (speculatively executed load and compare
+  instructions are not pushed to pipeline)
+* another hardware thread (simultaneous multithreading) can get time slice
+* it does delay a few CPU cycles, but this is necessary to prevent starvation
+
+It is obvious that this strategy is useless on single core systems because the
+lock can only released if the thread gives up its time slice in order to let
+other threads run. The macro BOOST_FIBERS_SPIN_SINGLE_CORE disables active spinning,
+in other words, the operating system is notified (via `std::this_thread_yield()`) that the
+thread gives up its time slice and the operating system switches to another
+thread.
+
+
+[heading exponential back-off]
+
+The macro BOOST_FIBERS_SPIN_MAX_TESTS determines how many times the CPU
+iterates in the spin-wait loop before yielding the thread or blocking in
+futex-wait.
+The spinlock tracks how many times the thread failed to acquire the lock.
+The higher the contention, the longer the thread should back-off.
+A ["Binary Exponential Backoff] algorithm together with a randomized contention
+window is utilized for this purpose.
+BOOST_FIBERS_SPIN_MAX_COLLISIONS determines the upper limit of collisions
+between threads after the thread waits on a futex.
+
+
+[table macros for tweaking
+    [
+        [Macro]
+        [Effect on Boost.Fiber]
+    ]
+    [
+        [BOOST_FIBERS_NO_ATOMICS]
+        [no multithreading support, all atomics removed, no synchronization
+        between fibers running in different threads]
+    ]
+    [
+        [BOOST_FIBERS_SPINLOCK_STD_MUTEX]
+        [`std::mutex` used inside spinlock]
+    ]
+    [
+        [BOOST_FIBERS_SPINLOCK_TTAS]
+        [spinlock with test-test-and-swap on shared variable]
+    ]
+    [
+        [BOOST_FIBERS_SPINLOCK_TTAS_ADAPTIVE]
+        [spinlock with test-test-and-swap on shared variable, adaptive retries
+        while busy waiting]
+    ]
+    [
+        [BOOST_FIBERS_SPINLOCK_TTAS_FUTEX]
+        [spinlock with test-test-and-swap on shared variable, suspend on
+        futex after certain number of retries]
+    ]
+    [
+        [BOOST_FIBERS_SPINLOCK_TTAS_ADAPTIVE_FUTEX]
+        [spinlock with test-test-and-swap on shared variable, while busy
+        waiting adaptive retries, suspend on futex certain amount of retries]
+    ]
+    [
+        [BOOST_FIBERS_SPIN_SINGLE_CORE]
+        [on single core machines with multiple threads, yield thread
+        (`std::this_thread::yield()`) after collisions]
+    ]
+    [
+        [BOOST_FIBERS_SPIN_MAX_TESTS]
+        [max number of retries while busy spinning]
+    ]
+    [
+        [BOOST_FIBERS_SPIN_MAX_COLLISIONS]
+        [max number of collisions between contending threads]
+    ]
+]
+
+[endsect]
+
+[endsect]

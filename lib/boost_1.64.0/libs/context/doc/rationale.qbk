@@ -1,0 +1,88 @@
+[/
+          Copyright Oliver Kowalke 2014.
+ Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+          http://www.boost.org/LICENSE_1_0.txt
+]
+
+[section:rationale Rationale]
+
+[heading No inline-assembler]
+
+Some newer compiler (for instance MSVC 10 for x86_64 and itanium) do not
+support inline assembler.
+[footnote [@http://msdn.microsoft.com/en-us/library/4ks26t93.aspx MSDN article
+'Inline Assembler']].
+Inlined assembler generates code bloating which is not welcome on embedded
+systems.
+
+
+[heading fcontext_t]
+
+__boost_context__ provides the low level API fcontext_t which is
+implemented in assembler to provide context swapping operations.
+fcontext_t is the part to port to new platforms.
+
+[note Context switches do not preserve the signal mask on UNIX systems.]
+
+__fcontext__ is an opaque pointer.
+
+
+
+[section Other APIs ]
+
+[heading setjmp()/longjmp()]
+
+C99 defines `setjmp()`/`longjmp()` to provide non-local jumps but it does not
+require that ['longjmp()] preserves the current stack frame. Therefore, jumping
+into a function which was exited via a call to ['longjmp()] is undefined
+[footnote ISO/IEC 9899:1999, 2005, 7.13.2.1:2].
+
+
+[heading ucontext_t]
+
+Since POSIX.1-2003 `ucontext_t` is deprecated and was removed in POSIX.1-2008!
+The function signature of `makecontext()` is:
+
+    void makecontext(ucontext_t *ucp, void (*func)(), int argc, ...);
+
+The third argument of `makecontext()` specifies the number of integer arguments
+that follow which will require function pointer cast if `func` will accept those
+arguments which is undefined in C99
+[footnote ISO/IEC 9899:1999, 2005, J.2].
+
+The arguments in the var-arg list are required to be integers, passing pointers
+in var-arg list is not guaranteed to work, especially it will fail for
+architectures where pointers are larger than integers.
+
+`ucontext_t` preserves signal mask between context switches which involves system
+calls consuming a lot of CPU cycles (ucontext_t is slower by
+perfomance_link[factor 13x] relative to `fcontext_t`).
+
+
+[heading Windows fibers]
+
+A drawback of Windows Fiber API is that `CreateFiber()` does not accept a
+pointer to user allocated stack space preventing the reuse of stacks for other
+context instances. Because the Windows Fiber API requires to call
+`ConvertThreadToFiber()` if `SwitchFiber()` is called for a thread which has not
+been converted to a fiber. For the same reason `ConvertFiberToThread()`
+must be called after return from `SwitchFiber()` if the thread was forced to be
+converted to a fiber before (which is inefficient).
+
+        if ( ! is_a_fiber() )
+        {
+            ConvertThreadToFiber( 0);
+            SwitchToFiber( ctx);
+            ConvertFiberToThread();
+        }
+
+If the condition `_WIN32_WINNT >= _WIN32_WINNT_VISTA` is met function
+`IsThreadAFiber()` is provided in order to detect if the current thread was
+already converted. Unfortunately Windows XP + SP 2/3 defines
+`_WIN32_WINNT >= _WIN32_WINNT_VISTA` without providing `IsThreadAFiber()`.
+
+[endsect]
+
+
+[endsect]

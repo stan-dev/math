@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>allocate_shared and make_shared for arrays</title>
+</head>
+<body>
+<h1>allocate_shared and make_shared for arrays</h1>
+<div id="navigation">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#synopsis">Synopsis</a></li>
+<li><a href="#requirements">Common Requirements</a></li>
+<li><a href="#functions">Free Functions</a></li>
+<li><a href="#history">History</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+<div id="introduction">
+<h2>Introduction</h2>
+<p>
+Originally the Boost function templates <code>allocate_shared</code> and
+<code>make_shared</code> were for efficient allocation of shared scalar
+objects only. There was a need to have efficient allocation of shared
+arrays. One criticism of class template <code>shared_array</code>
+was always the lack of a utility like <code>make_shared</code> that
+uses only a single allocation.
+</p>
+<p>
+The header files &lt;boost/smart_ptr/allocate_shared_array.hpp&gt; and
+&lt;boost/smart_ptr/make_shared_array.hpp&gt; provide function
+templates, overloads of <code>allocate_shared</code> and
+<code>make_shared</code> for array types, to address this need.
+<code>allocate_shared</code> uses a user-supplied allocator for
+allocation, while <code>make_shared</code> uses
+ <code>allocate_shared</code> with the Default Allocator.
+</p>
+</div>
+<div id="synopsis">
+<h2>Synopsis</h2>
+<div>
+<h3>Header &lt;boost/smart_ptr/allocate_shared_array.hpp&gt;</h3>
+<code>namespace boost {</code>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared</a>(const A&amp; a,
+std::size_t n);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared</a>(const A&amp; a);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared</a>(const A&amp; a, std::size_t n,
+const <em>E</em>&amp; v);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared</a>(const A&amp; a,
+const <em>E</em>&amp; v);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared_noinit</a>(const A&amp; a,
+std::size_t n);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">allocate_shared_noinit</a>(const A&amp; a);</code>
+</blockquote>
+<code>}</code>
+</div>
+<div>
+<h3>Header &lt;boost/smart_ptr/make_shared_array.hpp&gt;</h3>
+<code>namespace boost {</code>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared</a>(std::size_t n);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared</a>();</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared</a>(std::size_t n,
+const <em>E</em>&amp; v);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared</a>(const <em>E</em>&amp; v);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared_noinit</a>(std::size_t n);</code>
+</blockquote>
+<blockquote>
+<code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+<a href="#functions">make_shared_noinit</a>();</code>
+</blockquote>
+<code>}</code>
+</div>
+</div>
+<div id="requirements">
+<h2>Common Requirements</h2>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared(const A&amp; a, <em>args</em>);</code></h3>
+<dl>
+<dt><strong>Requires:</strong></dt>
+<dd><code>T</code> is of the form <code>E[N]</code> or
+<code>E[]</code>. <code>A</code> shall be an <em>Allocator</em>, as
+described in section 17.6.3.5 [Allocator requirements] of the C++
+Standard. The copy constructor and destructor of <code>A</code> shall
+not throw exceptions.</dd>
+<dt><strong>Effects:</strong></dt>
+<dd>Allocates storage for an object of type <code>E</code> (or
+<code>E[size]</code> when <code>T</code> is <code>E[]</code>, where
+<code>size</code> is determined from <code>args</code> as specified by
+the concrete overload). A copy of the allocator is used to allocate
+storage. The storage is initialized as specified by the concrete
+overload. If an exception is thrown, the functions have no effect.</dd>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> instance that stores and owns the address
+of the newly allocated and constructed object.</dd>
+<dt><strong>Postconditions:</strong></dt>
+<dd><code>r.get() != 0</code> and <code>r.use_count() == 1</code>,
+where <code>r</code> is the return value.</dd>
+<dt><strong>Throws:</strong></dt>
+<dd>An exception thrown from <code>A::allocate()</code>, or from the
+initialization of the object.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>
+<ul>
+<li>This implementation performs no more than one memory allocation.
+This provides efficiency to equivalent to an intrusive smart
+pointer.</li>
+<li>When an object of an array type <code>T</code> is specified to be
+initialized to a value of the same type <code>v</code>, this shall be
+interpreted to mean that each array element of the object is initialized
+to the corresponding element from <code>v</code>.</li>
+<li>When an object of an array type <code>T</code> is specified to be
+value-initialized, this shall be interpreted to mean that each array
+element of the object is value-initialized.</li>
+<li>Array elements are initialized in ascending order of their
+addresses.</li>
+<li>When a subobject of a scalar type <code>S</code> is specified to
+be initialized to a value <code>v</code>, <code>allocate_shared</code>
+shall perform this initialization via the expression
+<code>std::allocator_traits&lt;A&gt;::construct(b, p, v)</code>, where
+<code>p</code> points to storage suitable to hold an object of type
+<code>S</code> and <code>b</code> of is a copy of the allocator
+<code>a</code> passed to <code>allocate_shared</code> such that its
+<code>value_type</code> is <code>S</code>.</li>
+<li>When a subobject of scalar type <code>S</code> is specified to be
+value-initialized, <code>allocate_shared</code> shall perform this
+initialization via the expression
+<code>std::allocator_traits&lt;A&gt;::construct(b, p)</code>, where
+<code>p</code> points to storage suitable to hold an object
+of type <code>S</code> and <code>b</code> is a copy of the allocator
+<code>a</code> passed to <code>allocate_shared</code> such that its
+<code>value_type</code> is <code>S</code>.</li>
+<li>When a subobject of scalar type <code>S</code> is specified to be
+default-initialized, <code>allocate_shared_noinit</code> shall perform
+this initialization via the expression <code>::new(p) S</code>, where
+<code>p</code> has type <code>void*</code> and points to storage
+suitable to hold an object of type <code>S</code>.</li>
+<li>When the lifetime of the object managed by the return value ends,
+or when the initialization of an array element throws an exception,
+the initialized elements should be destroyed in the reverse order
+of their construction.</li>
+</ul>
+</dd>
+<dt><strong>Notes:</strong></dt>
+<dd>These functions will typically allocate more memory than the size of
+<code>sizeof(E)</code> to allow for internal bookkeeping structures such
+as the reference counts.</dd>
+</dl>
+</div>
+<div id="functions">
+<h2>Free Functions</h2>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared(const A&amp; a, std::size_t n);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to a value-initialized object of type
+<code>E[size]</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared&lt;int[]<!--
+-->&gt;(std::allocator&lt;int&gt;(), 8);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared(const A&amp; a);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to a value-initialized object of type
+<code>E[N]</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared&lt;int[8]<!--
+-->&gt;(std::allocator&lt;int&gt;());</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared(const A&amp; a, std::size_t n,
+const <em>E</em>&amp; v);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to an object of type
+<code>E[size]</code>, where each array element of type <code>E</code> is
+initialized to <code>v</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared&lt;double[]<!--
+-->&gt;(std::allocator&lt;double&gt;(), 8, 1.0);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared(const A&amp; a, const <em>E</em>&amp; v);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to an object of type <code>E[N]</code>,
+where each array element of type <code>E</code> is initialized to
+<code>v</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared&lt;double[8]<!--
+-->&gt;(std::allocator&lt;double&gt;(), 1.0);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared_noinit(const A&amp; a, std::size_t n);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to a default-initialized object of type
+<code>E[size]</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared_noinit&lt;int[]<!--
+-->&gt;(std::allocator&lt;int&gt;(), 8);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T, class A&gt;<br>shared_ptr&lt;T&gt;
+allocate_shared_noinit(const A&amp; a);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd>A <code>shared_ptr</code> to a default-initialized object of type
+<code>E[N]</code>.</dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::allocate_shared_noinit&lt;int[8]<!--
+-->&gt;(std::allocator&lt;int&gt;());</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared(std::size_t n);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;(), n);</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared&lt;int[]&gt;(8);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared();</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;());</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared&lt;int[8]&gt;();</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared(std::size_t n, const <em>E</em>&amp; v);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;(), n, v);</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared&lt;double[]&gt;(8, 1.0);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared(const <em>E</em>&amp; v);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;(), v);</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N].</code></dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared&lt;double[8]&gt;(1.0);</code></dd></dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared_noinit(std::size_t n);</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared_noinit&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;(), n);</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared_noinit&lt;int[]&gt;(8);</code></dd>
+</dl>
+</div>
+<div>
+<h3><code>template&lt;class T&gt;<br>shared_ptr&lt;T&gt;
+make_shared_noinit();</code></h3>
+<dl>
+<dt><strong>Returns:</strong></dt>
+<dd><code>allocate_shared_noinit&lt;T&gt;(std::allocator&lt;<em>S<!--
+--></em>&gt;());</code></dd>
+<dt><strong>Remarks:</strong></dt>
+<dd>This overload shall only participate in overload resolution when
+<code>T</code> is of the form <code>E[N]</code>.</dd>
+<dt><strong>Example:</strong></dt>
+<dd><code>boost::make_shared_noinit&lt;int[8]&gt;();</code></dd>
+</dl>
+</div>
+</div>
+<div id="history">
+<h2>History</h2>
+<dl>
+<dt><strong>Boost 1.64</strong></dt>
+<dd>Glen Fernandes rewrote allocate_shared and make_shared for a more
+optimal and more maintainable implementation.</dd>
+<dt><strong>Boost 1.56</strong></dt>
+<dd>Glen Fernandes updated overloads of make_shared and allocate_shared
+to conform to the specification in C++ standard paper
+<a href="#N3870">N3870</a>, including resolving C++ standard library
+defect report <a href="#dr2070">DR 2070</a>.</dd>
+<dt><strong>Boost 1.53</strong></dt>
+<dd>Glen Fernandes contributed implementations of make_shared and
+allocate_shared for arrays.</dd>
+</dl>
+</div>
+<div id="references">
+<h2>References</h2>
+<ol>
+<li id="N3870"><strong>N3870</strong>, <a href=
+"http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3870.html">
+Extending make_shared to Support Arrays, Revision 1</a>, Peter Dimov
+&amp; Glen Fernandes, January, 2014.</li>
+<li id="dr2070"><strong>DR 2070</strong>,
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html">
+allocate_shared should use allocator_traits&lt;A&gt;::construct</a>,
+Jonathan Wakely, July, 2011.</li>
+</ol>
+</div>
+<hr>
+Copyright 2012-2017 Glen Fernandes. Distributed under the
+<a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License,
+Version 1.0</a>.
+</body>
+</html>

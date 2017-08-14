@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>pointer_cast</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    </head>
+    <body text="#000000" bgcolor="#ffffff" link="#0000ff" vlink="#0000ff">
+        <h1><img height="86" alt="boost.png (6897 bytes)" src="../../boost.png" 
+            width="277" align="middle" border="0" />pointer_cast</h1>
+        <p>The pointer cast functions (<code>boost::static_pointer_cast</code> <code>boost::dynamic_pointer_cast</code>
+            <code>boost::reinterpret_pointer_cast</code> <code>boost::const_pointer_cast</code>) 
+            provide a way to write generic pointer castings for raw pointers, <code>std::shared_ptr</code> and <code>std::unique_ptr</code>. The functions 
+            are defined in <cite><a href="../../boost/pointer_cast.hpp">boost/pointer_cast.hpp</a>.</cite></p>
+        <p>There is test/example code in <cite><a href="test/pointer_cast_test.cpp">pointer_cast_test.cpp</a></cite>.</p>
+            <h2><a name="rationale">Rationale</a></h2>
+        <P>Boost smart pointers usually overload those functions to provide a mechanism to 
+            emulate pointers casts. For example, <code>boost::shared_ptr&lt;...&gt;</code> implements 
+            a static pointer cast this way:</P>
+        <pre>
+template&lt;class T, class U&gt;
+    shared_ptr&lt;T&gt; static_pointer_cast(shared_ptr&lt;U&gt; const &amp;r);
+</pre>
+        <p>Pointer cast functions from <cite><A href="../../boost/pointer_cast.hpp">boost/pointer_cast.hpp</A></CITE>
+            are overloads of <code>boost::static_pointer_cast</code>, <code>boost::dynamic_pointer_cast</code>,
+            <code>boost::reinterpret_pointer_cast</code> and <code>boost::const_pointer_cast</code>
+            for raw pointers, <code>std::shared_ptr</code> and <code>std::unique_ptr</code>. This way when developing
+            pointer type independent classes, for example, memory managers or shared memory compatible classes, the same
+            code can be used for raw and smart pointers.</p>
+            <h2><a name="synopsis">Synopsis</a></h2>
+            <blockquote>
+                <pre>
+namespace boost {
+
+template&lt;class T, class U&gt;
+inline T* static_pointer_cast(U *ptr)
+  { return static_cast&lt;T*&gt;(ptr); }
+
+template&lt;class T, class U&gt;
+inline T* dynamic_pointer_cast(U *ptr)
+  { return dynamic_cast&lt;T*&gt;(ptr); }
+
+template&lt;class T, class U&gt;
+inline T* const_pointer_cast(U *ptr)
+  { return const_cast&lt;T*&gt;(ptr); }
+
+template&lt;class T, class U&gt;
+inline T* reinterpret_pointer_cast(U *ptr)
+  { return reinterpret_cast&lt;T*&gt;(ptr); }
+
+template&lt;class T, class U&gt;
+inline std::shared_ptr&lt;T&gt; static_pointer_cast(std::shared_ptr&lt;U&gt; const&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::shared_ptr&lt;T&gt; dynamic_pointer_cast(std::shared_ptr&lt;U&gt; const&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::shared_ptr&lt;T&gt; const_pointer_cast(std::shared_ptr&lt;U&gt; const&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::shared_ptr&lt;T&gt; reinterpret_pointer_cast(std::shared_ptr&lt;U&gt; const&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::unique_ptr&lt;T&gt; static_pointer_cast(std::unique_ptr&lt;U&gt;&amp;&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::unique_ptr&lt;T&gt; dynamic_pointer_cast(std::unique_ptr&lt;U&gt;&amp;&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::unique_ptr&lt;T&gt; const_pointer_cast(std::unique_ptr&lt;U&gt;&amp;&amp; r);
+
+template&lt;class T, class U&gt;
+inline std::unique_ptr&lt;T&gt; reinterpret_pointer_cast(std::unique_ptr&lt;U&gt;&amp;&amp; r);
+  
+} // namespace boost
+</pre>
+            </blockquote>
+        <p>As you can see from the above synopsis, the pointer cast functions for raw pointers are just 
+           wrappers around standard C++ cast operators.</p>
+
+        <p>The pointer casts for <code>std::shared_ptr</code> are aliases of the corresponding standard
+           functions with the same names and equivalent to <a href="shared_ptr.htm#static_pointer_cast">the
+           functions taking <code>boost::shared_ptr</code></a>.</p>
+
+        <p>The pointer casts for <code>std::unique_ptr</code> are documented below.</p>
+
+        <h3 id="static_pointer_cast">static_pointer_cast</h3>
+        <pre>template&lt;class T, class U&gt;
+  unique_ptr&lt;T&gt; static_pointer_cast(unique_ptr&lt;U&gt;&amp;&amp; r); // never throws</pre>
+        <blockquote>
+            <p><b>Requires:</b> The expression <code>static_cast&lt;T*&gt;( (U*)0 )</code>
+                must be well-formed.</p>
+            <p><b>Returns:</b> <code>unique_ptr&lt;T&gt;( static_cast&lt;typename unique_ptr&lt;T&gt;::element_type*&gt;(r.release()) )</code>.</p>
+            <p><b>Throws:</b> nothing.</p>
+            <p><b>Notes:</b> the seemingly equivalent expression
+                <code>unique_ptr&lt;T&gt;(static_cast&lt;T*&gt;(r.get()))</code>
+                will eventually result in undefined behavior, attempting to delete the same
+                object twice.</p>
+        </blockquote>
+        <h3 id="const_pointer_cast">const_pointer_cast</h3>
+        <pre>template&lt;class T, class U&gt;
+  unique_ptr&lt;T&gt; const_pointer_cast(unique_ptr&lt;U&gt;&amp;&amp; r); // never throws</pre>
+        <blockquote>
+            <p><b>Requires:</b> The expression <code>const_cast&lt;T*&gt;( (U*)0 )</code>
+                must be well-formed.</p>
+            <p><b>Returns:</b> <code>unique_ptr&lt;T&gt;( const_cast&lt;typename unique_ptr&lt;T&gt;::element_type*&gt;(r.release()) )</code>.</p>
+            <p><b>Throws:</b> nothing.</p>
+        </blockquote>
+        <h3 id="dynamic_pointer_cast">dynamic_pointer_cast</h3>
+        <pre>template&lt;class T, class U&gt;
+  unique_ptr&lt;T&gt; dynamic_pointer_cast(unique_ptr&lt;U&gt;&amp;&amp; r);</pre>
+        <blockquote>
+            <p><b>Requires:</b> The expression <code>dynamic_cast&lt;T*&gt;( (U*)0 )</code>
+                must be well-formed. <code>T</code> must have a virtual destructor.</p>
+            <p><b>Returns:</b></p>
+            <ul>
+                <li>
+                    When <code>dynamic_cast&lt;typename unique_ptr&lt;T&gt;::element_type*&gt;(r.get())</code> returns a nonzero value,
+                    <code>unique_ptr&lt;T&gt;(dynamic_cast&lt;typename unique_ptr&lt;T&gt;::element_type*&gt;(r.release()))</code>;</li>
+                <li>
+                    Otherwise, <code>unique_ptr&lt;T&gt;()</code>.</li></ul>
+            <p><b>Throws:</b> nothing.</p>
+        </blockquote>
+        <h3 id="reinterpret_pointer_cast">reinterpret_pointer_cast</h3>
+        <pre>template&lt;class T, class U&gt;
+  unique_ptr&lt;T&gt; reinterpret_pointer_cast(unique_ptr&lt;U&gt;&amp;&amp; r); // never throws</pre>
+        <blockquote>
+            <p><b>Requires:</b> The expression <code>reinterpret_cast&lt;T*&gt;( (U*)0 )</code>
+                must be well-formed.</p>
+            <p><b>Returns:</b> <code>unique_ptr&lt;T&gt;( reinterpret_cast&lt;typename unique_ptr&lt;T&gt;::element_type*&gt;(r.release()) )</code>.</p>
+            <p><b>Throws:</b> nothing.</p>
+        </blockquote>
+
+        <h2><a name="example">Example</a></h2>
+        <blockquote>
+            <pre>
+#include &lt;boost/pointer_cast.hpp&gt;
+#include &lt;boost/shared_ptr.hpp&gt;
+
+class base
+{
+public:
+
+   virtual ~base()
+   {
+   }
+};
+
+class derived: public base
+{
+};
+
+template &lt;class BasePtr&gt;
+void check_if_it_is_derived(const BasePtr &amp;ptr)
+{
+   assert(boost::dynamic_pointer_cast&lt;derived&gt;(ptr) != 0);
+}
+
+int main()
+{
+   <em>// Create a raw and a shared_ptr</em>
+
+   base *ptr = new derived;
+   boost::shared_ptr&lt;base&gt; sptr(new derived);
+   
+   <em>// Check that base pointer points actually to derived class</em>
+
+   check_if_it_is_derived(ptr);
+   check_if_it_is_derived(sptr);
+   
+   <em>// Ok!</em>
+   
+   delete ptr;
+   return 0;
+}</pre>
+        </blockquote>
+        <p>The example demonstrates how the generic pointer casts help us create pointer 
+            independent code.</p>
+        <hr />
+        <p>Copyright 2005 Ion Gaztañaga. Use, modification, and distribution are subject to 
+            the Boost Software License, Version 1.0. (See accompanying file <a href="../../LICENSE_1_0.txt">
+            LICENSE_1_0.txt</a> or a copy at &lt;<a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>&gt;.)</p>
+    </body>
+</html>

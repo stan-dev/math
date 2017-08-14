@@ -1,0 +1,31 @@
+[/
+          Copyright Oliver Kowalke 2014.
+ Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+          http://www.boost.org/LICENSE_1_0.txt
+]
+
+[section:performance Performance]
+
+Performance of __boost_coroutine__ was measured on the platforms shown in the
+following table. Performance measurements were taken using `rdtsc` and
+`boost::chrono::high_resolution_clock`, with overhead corrections, on x86
+platforms. In each case, cache warm-up was accounted for, and the one
+running thread was pinned to a single CPU.
+
+[table Performance of asymmetric coroutines (using execution_context)
+    [
+        [Platform]
+        [switch]
+        [construction (protected stack-allocator)]
+        [construction (standard stack-allocator)]
+    ]
+    [
+        [x86_64 [footnote Intel Core i7-4770S 3.10GHz]]
+        [16 ns / 50 cycles]
+        [7 \u00b5s / 22133 cycles]
+        [1.7 \u00b5s / 5383 cycles]
+    ]
+]
+
+[endsect]
