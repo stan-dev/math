@@ -64,7 +64,6 @@ template <typename F, typename matrix_t, typename matrix_d>
 void expect_binary_matrix_value_err_throw(matrix_t template_tm,
                                           matrix_d template_dm) {
   using std::vector;
-  using Eigen::MatrixXd;
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
   if (invalid_inputs1.size() == 0) return;
@@ -103,10 +102,10 @@ void expect_binary_matrix_value_err_throw(matrix_t template_tm,
                  std::domain_error);
   }
 
-  vector<MatrixXd> d1;
+  vector<matrix_d> d1;
   d1.push_back(a1);
   d1.push_back(a1);
-  vector<MatrixXd> d2;
+  vector<matrix_d> d2;
   d2.push_back(a2);
   d2.push_back(a2);
   vector<matrix_t> e1;
