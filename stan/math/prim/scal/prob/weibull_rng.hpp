@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +37,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::weibull_distribution;
 
-      static const char* function("weibull_rng");
+      static const std::string function = "weibull_rng";
 
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Scale parameter", sigma);

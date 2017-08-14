@@ -4,24 +4,24 @@
 TEST(AgradRevErrorHandlingScalar,CheckFinite) {
   using stan::math::var;
   using stan::math::check_finite;
- 
-  const char* function = "check_bounded";
-  const char* name = "x";
+
+  const std::string function = "check_bounded";
+  const std::string name = "x";
   var x = 0;
- 
-  EXPECT_NO_THROW(check_finite(function, name, x)) 
+
+  EXPECT_NO_THROW(check_finite(function, name, x))
     << "check_finite should be TRUE with x: " << x;
-  
+
   x = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(check_finite(function, name, x), std::domain_error) 
+  EXPECT_THROW(check_finite(function, name, x), std::domain_error)
     << "check_finite should throw with x: " << x;
 
   x = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_finite(function, name, x), std::domain_error) 
+  EXPECT_THROW(check_finite(function, name, x), std::domain_error)
     << "check_finite should throw with x: " << x;
 
   x = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_finite(function, name, x), std::domain_error) 
+  EXPECT_THROW(check_finite(function, name, x), std::domain_error)
     << "check_finite should throw with x: " << x;
   stan::math::recover_memory();
 }
@@ -30,7 +30,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_finite;
 
-  const char* function = "check_finite";
+  const std::string function = "check_finite";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

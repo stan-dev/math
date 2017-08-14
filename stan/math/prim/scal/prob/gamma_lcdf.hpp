@@ -25,6 +25,7 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -38,7 +39,7 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("gamma_lcdf");
+      static const std::string function = "gamma_lcdf";
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -104,7 +105,7 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-            * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
+            * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
           ops_partials.edge2_.partials_[n]
             -= grad_reg_inc_gamma(alpha_dbl, beta_dbl
@@ -112,7 +113,7 @@ namespace stan {
                                   digamma_vec[n]) / Pn;
         if (!is_constant_struct<T_inv_scale>::value)
           ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
-            * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
+            * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
       }
       return ops_partials.build(P);
     }

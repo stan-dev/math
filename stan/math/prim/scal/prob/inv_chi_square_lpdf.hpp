@@ -22,6 +22,7 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -49,12 +50,11 @@ namespace stan {
               typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
-      static const char* function("inv_chi_square_lpdf");
+      static const std::string function = "inv_chi_square_lpdf";
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      if (!(stan::length(y)
-            && stan::length(nu)))
+      if (!(stan::length(y) && stan::length(nu)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -109,18 +109,18 @@ namespace stan {
         if (include_summand<propto, T_dof>::value)
           logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
         if (include_summand<propto, T_y, T_dof>::value)
-          logp -= (half_nu+1.0) * log_y[n];
+          logp -= (half_nu + 1.0) * log_y[n];
         if (include_summand<propto, T_y>::value)
           logp -= 0.5 * inv_y[n];
 
         if (!is_constant_struct<T_y>::value) {
           ops_partials.edge1_.partials_[n]
-            += -(half_nu+1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
+            += -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
         }
         if (!is_constant_struct<T_dof>::value) {
           ops_partials.edge2_.partials_[n]
             += NEG_LOG_TWO_OVER_TWO - digamma_half_nu_over_two[n]
-            - 0.5*log_y[n];
+            - 0.5 * log_y[n];
         }
       }
       return ops_partials.build(logp);

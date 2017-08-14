@@ -15,7 +15,8 @@ namespace stan {
      */
     template <typename T>
     inline T prod(const std::vector<T>& v) {
-      if (v.size() == 0) return 1;
+      if (v.size() == 0)
+        return 1;
       T product = v[0];
       for (size_t i = 1; i < v.size(); ++i)
         product *= v[i];
@@ -30,7 +31,8 @@ namespace stan {
      */
     template <typename T, int R, int C>
     inline T prod(const Eigen::Matrix<T, R, C>& v) {
-      if (v.size() == 0) return 1.0;
+      if (v.size() == 0)
+        return 1.0;
       return v.prod();
     }
 

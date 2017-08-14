@@ -29,7 +29,8 @@ namespace stan {
       using stan::math::check_less_or_equal;
       check_nonnegative("choose", "n", n);
       check_nonnegative("choose", "k", k);
-      if (k > n) return 0;
+      if (k > n)
+        return 0;
       const double choices = boost::math::binomial_coefficient<double>(n, k);
       check_less_or_equal("choose", "n choose k", choices,
                           std::numeric_limits<int>::max());
