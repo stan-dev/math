@@ -22,7 +22,7 @@ namespace stan {
     inline double asinh(double x) {
       if (unlikely(is_nan(x)))
         return x;
-      else 
+      else
         return boost::math::asinh(x, boost_policy_t());
     }
 

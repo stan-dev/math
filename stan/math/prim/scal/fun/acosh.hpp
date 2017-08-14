@@ -21,7 +21,7 @@ namespace stan {
     inline double acosh(double x) {
       if (unlikely(is_nan(x)))
         return x;
-      else 
+      else
         return boost::math::acosh(x, boost_policy_t());
     }
 

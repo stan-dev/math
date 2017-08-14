@@ -23,7 +23,7 @@ namespace stan {
     inline double atanh(double x) {
       if (unlikely(is_nan(x)))
         return x;
-      else 
+      else
         return boost::math::atanh(x, boost_policy_t());
     }
 
