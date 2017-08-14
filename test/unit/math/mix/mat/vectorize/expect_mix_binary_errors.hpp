@@ -6,7 +6,6 @@
 #include <test/unit/math/prim/mat/vectorize/expect_binary_scalar_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_std_vector_error.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_matrix_error.hpp>
-#include <test/unit/math/prim/mat/vectorize/expect_binary_vector_error.hpp>
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 
@@ -26,15 +25,18 @@ void expect_mix_binary_errors() {
   using stan::math::var;
   using stan::math::fvar;
   expect_binary_scalar_error<F, fvar<var> >();
-  expect_binary_std_vector_error<F, fvar<var> >();
-  expect_binary_matrix_error<F, fvar<var> >();
-  expect_binary_vector_error<F, fvar<var>, Eigen::VectorXd>();
-  expect_binary_vector_error<F, fvar<var>, Eigen::RowVectorXd>();
   expect_binary_scalar_error<F, fvar<fvar<var> > >();
+  expect_binary_std_vector_error<F, fvar<var> >();
   expect_binary_std_vector_error<F, fvar<fvar<var> > >();
-  expect_binary_matrix_error<F, fvar<fvar<var> > >();
-  expect_binary_vector_error<F, fvar<fvar<var> >, Eigen::VectorXd>();
-  expect_binary_vector_error<F, fvar<fvar<var> >, Eigen::RowVectorXd>();
+  Eigen::MatrixXd model_matrix;
+  Eigen::VectorXd model_vector;
+  Eigen::RowVectorXd model_row_vector;
+  expect_binary_matrix_error<F, fvar<var> >(model_matrix);
+  expect_binary_matrix_error<F, fvar<fvar<var> > >(model_matrix);
+  expect_binary_matrix_error<F, fvar<var> >(model_vector);
+  expect_binary_matrix_error<F, fvar<fvar<var> > >(model_vector);
+  expect_binary_matrix_error<F, fvar<var> >(model_row_vector);
+  expect_binary_matrix_error<F, fvar<fvar<var> > >(model_row_vector);
 }
 
 #endif

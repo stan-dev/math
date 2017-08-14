@@ -4,7 +4,7 @@
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_binary_test.hpp>
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_binary_test.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_binary_test.hpp>
-//#include <test/unit/math/mix/mat/vectorize/mix_scalar_binary_test.hpp>
+#include <test/unit/math/mix/mat/vectorize/mix_scalar_binary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/binary_foo_fun.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
@@ -129,4 +129,4 @@ struct binary_foo_test {
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_binary_test, binary_foo_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_binary_test, binary_foo_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_binary_test, binary_foo_test);
-//INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_binary_test, binary_foo_test);
+INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_binary_test, binary_foo_test);

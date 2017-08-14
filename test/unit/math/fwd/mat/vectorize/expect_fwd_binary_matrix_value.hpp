@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_BINARY_MATRIX_VALUE
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <test/unit/math/fwd/mat/vectorize/build_binary_vector.hpp>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_binary_matrix.hpp>
 #include <test/unit/math/prim/mat/vectorize/build_template_matrix.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
