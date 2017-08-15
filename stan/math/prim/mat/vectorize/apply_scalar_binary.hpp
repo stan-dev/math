@@ -14,7 +14,7 @@ namespace stan {
      * Base template class for vectorization of unary scalar functions
      * defined by a template class <code>F</code> to a scalar,
      * standard library vector, or Eigen dense matrix expression
-     * template.  
+     * template.
      *
      * <p>The base class applies to any Eigen dense matrix expression
      * template.  Specializations define applications to scalars
@@ -52,15 +52,15 @@ namespace stan {
 
       /**
        * Return the result of applying the function defined by the
-       * template parameter F to the specified matrix argument. 
+       * template parameter F to the specified matrix argument.
        *
        * @param x Matrix to which operation is applied.
        * @return Componentwise application of the function specified
        * by F to the specified matrix.
        */
       static inline return_t apply(const T1& x, const T2& y) {
-        check_matching_dims<scalar_t1, scalar_t2, 
-        T1::RowsAtCompileTime, T1::ColsAtCompileTime, 
+        check_matching_dims<scalar_t1, scalar_t2,
+        T1::RowsAtCompileTime, T1::ColsAtCompileTime,
         T2::RowsAtCompileTime, T2::ColsAtCompileTime>(
         "binary vectorization", "x", x, "y", y);
         return_t result(x.rows(), x.cols());
@@ -89,7 +89,7 @@ namespace stan {
        * Apply the function specified by F to the specified argument.
        * This is defined through a direct application of
        * <code>F::fun()</code>, which must be defined for int and double
-       * arguments. 
+       * arguments.
        *
        * @param x Int argument scalar.
        * @param y Double argument scalar.
@@ -117,7 +117,7 @@ namespace stan {
        * Apply the function specified by F to the specified argument.
        * This is defined through a direct application of
        * <code>F::fun()</code>, which must be defined for double
-       * and int arguments. 
+       * and int arguments.
        *
        * @param x Double argument scalar.
        * @param y Int argument scalar.
@@ -145,7 +145,7 @@ namespace stan {
        * Apply the function specified by F to the specified argument.
        * This is defined through a direct application of
        * <code>F::fun()</code>, which must be defined for double
-       * arguments. 
+       * arguments.
        *
        * @param x Double argument scalar.
        * @param y Double argument scalar.
@@ -160,7 +160,7 @@ namespace stan {
      * Template specialization for vectorized functions applying to
      * integer arguments.  Although the argument is integer, the
      * return type is specified as double.  This allows promotion of
-     * integers to doubles in vectorized functions, or in containers.  
+     * integers to doubles in vectorized functions, or in containers.
      *
      * @tparam F Type of function defining static apply function.
      */
@@ -175,7 +175,7 @@ namespace stan {
        * Apply the function specified by F to the specified argument.
        * This is defined through a direct application of
        * <code>F::fun()</code>, which must be defined for double
-       * arguments. 
+       * arguments.
        *
        * @param x Int argument scalar.
        * @param y Int argument scalar.
@@ -201,7 +201,7 @@ namespace stan {
        * Return type, which is calculated recursively as a standard
        * vector of the return type of the contained type T.
        */
-      typedef typename 
+      typedef typename
       std::vector<typename apply_scalar_binary<F, T1, T2>::return_t>
       return_t;
 
@@ -218,7 +218,7 @@ namespace stan {
                                    const std::vector<T2>& y) {
         using stan::math::check_size_match;
 
-        check_size_match("binary vectorization", "x", x.size(), 
+        check_size_match("binary vectorization", "x", x.size(),
         "y", y.size());
         return_t fx(x.size());
         for (size_t i = 0; i < x.size(); ++i)

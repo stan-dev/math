@@ -12,7 +12,7 @@ namespace stan {
      * Template specialization to var for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -24,12 +24,12 @@ namespace stan {
       typedef stan::math::var return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
-      static inline return_t apply(const stan::math::var& x, 
+      static inline return_t apply(const stan::math::var& x,
       const stan::math::var& y) {
         return F::fun(x, y);
       }
@@ -39,7 +39,7 @@ namespace stan {
      * Template specialization to var for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -51,8 +51,8 @@ namespace stan {
       typedef stan::math::var return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
@@ -65,7 +65,7 @@ namespace stan {
      * Template specialization to var for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -77,8 +77,8 @@ namespace stan {
       typedef stan::math::var return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
@@ -91,7 +91,7 @@ namespace stan {
      * Template specialization to var for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -103,8 +103,8 @@ namespace stan {
       typedef stan::math::var return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument variable.
        * @return Function applied to the variable.
        */
@@ -117,7 +117,7 @@ namespace stan {
      * Template specialization to var for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -129,8 +129,8 @@ namespace stan {
       typedef stan::math::var return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument variable.
        * @return Function applied to the variable.
        */

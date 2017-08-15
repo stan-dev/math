@@ -12,12 +12,12 @@ namespace stan {
      * Template specialization to fvar<FV> for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
     template <typename F, typename FV>
-    struct apply_scalar_binary<F, stan::math::fvar<FV>, 
+    struct apply_scalar_binary<F, stan::math::fvar<FV>,
     stan::math::fvar<FV> > {
       /**
        * Function return type, which is <code>fvar<FV></code>.
@@ -25,12 +25,12 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
-      static inline return_t apply(const stan::math::fvar<FV>& x, 
+      static inline return_t apply(const stan::math::fvar<FV>& x,
       const stan::math::fvar<FV>& y) {
         return F::fun(x, y);
       }
@@ -40,7 +40,7 @@ namespace stan {
      * Template specialization to fvar<FV> for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -52,8 +52,8 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
@@ -66,7 +66,7 @@ namespace stan {
      * Template specialization to fvar<FV> for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -78,8 +78,8 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
@@ -92,7 +92,7 @@ namespace stan {
      * Template specialization to fvar<FV> for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -104,12 +104,12 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
-      static inline return_t apply(const stan::math::fvar<FV>& x, 
+      static inline return_t apply(const stan::math::fvar<FV>& x,
       double y) {
         return F::fun(x, y);
       }
@@ -119,7 +119,7 @@ namespace stan {
      * Template specialization to fvar<FV> for vectorizing a unary scalar
      * function.  This is a base scalar specialization.  It applies
      * the function specified by the template parameter to the
-     * argument.  
+     * argument.
      *
      * @tparam F Type of function to apply.
      */
@@ -131,12 +131,12 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.  
-       * 
+       * Apply the function specified by F to the specified argument.
+       *
        * @param x Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
-      static inline return_t apply(double x, const 
+      static inline return_t apply(double x, const
       stan::math::fvar<FV>& y) {
         return F::fun(x, y);
       }
