@@ -14,5 +14,4 @@ ifeq (clang++,$(CC_TYPE))
   CPPFLAGS += -Wno-unused-function
   CPPFLAGS += -Wno-tautological-compare
   CPPFLAGS += -Wsign-compare
-  CPPFLAGS += -Wno-unused-local-typedef
 endif
