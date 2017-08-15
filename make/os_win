@@ -17,12 +17,18 @@ EXE = .exe
 O_STANC = 3
 GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 PATH_SEPARATOR = '\'
-BIT = 64
+## Detecting Process Bitness:
+## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
+  BIT?=32
+else
+  BIT?=64
+endif
 ifeq (g++,$(CC_TYPE))
   CFLAGS += -m$(BIT)
   CFLAGS += -Wno-unused-function
   CFLAGS += -Wno-uninitialized
-  CFLAGS += -Wno-unused-but-set
+  CFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
 endif
