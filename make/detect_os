@@ -20,4 +20,4 @@ OS_TYPE ?= win
 #   - CFLAGS
 #   - EXE
 ##
--include $(MATH)/make/os_$(OS_TYPE)
+-include $(MATH)make/os_$(OS_TYPE)
