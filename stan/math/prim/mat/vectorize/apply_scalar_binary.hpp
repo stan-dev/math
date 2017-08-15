@@ -11,7 +11,7 @@ namespace stan {
   namespace math {
 
     /**
-     * Base template class for vectorization of unary scalar functions
+     * Base template class for vectorization of binary scalar functions
      * defined by a template class <code>F</code> to a scalar,
      * standard library vector, or Eigen dense matrix expression
      * template.

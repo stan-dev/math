@@ -9,8 +9,8 @@
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 
 /**
- * This is the structure for testing mock function foo (defined in the
- * testing framework).  See README.txt for more instructions.
+ * This is the structure for testing mock function binary_foo 
+ * (defined in the * testing framework). 
  */
 struct binary_foo_test {
 
@@ -24,7 +24,8 @@ struct binary_foo_test {
    * (prim, rev, fwd, mix) ***have already been tested***.
    *
    * @tparam R Return type.
-   * @tparam T Argument type.
+   * @tparam T1 Argument type for x.
+   * @tparam T2 Argument type for y.
    */
   template <typename R, typename T1, typename T2>
   static R apply(const T1& x, const T2& y) {
@@ -58,7 +59,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of valid double-valued inputs.
+   * Return sequence of valid double-valued inputs for x.
+   *
+   * NOTE: To test int, T combinations, valid int-valued inputs
+   * for y will be matched to these values.
    */
   static std::vector<double> valid_inputs1() {
       return test::math::vector_builder<double>()
@@ -67,7 +71,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of valid double-valued inputs.
+   * Return sequence of valid double-valued inputs for y.
+   *
+   * NOTE: To test int, T combinations, valid int-valued inputs
+   * for x will be matched to these values.
    */
   static std::vector<double> valid_inputs2() {
     return test::math::vector_builder<double>()
@@ -76,7 +83,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of invalid double-valued inputs.
+   * Return sequence of invalid double-valued inputs for x.
+   *
+   * NOTE: To test int, T combinations, invalid int-valued inputs
+   * for y will be matched to these values.
    */
   static std::vector<double> invalid_inputs1() {
     return test::math::vector_builder<double>()
@@ -84,7 +94,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of invalid double-valued inputs.
+   * Return sequence of invalid double-valued inputs for y.
+   *
+   * NOTE: To test int, T combinations, valid int-valued inputs
+   * for x will be matched to these values.
    */
   static std::vector<double> invalid_inputs2() {
     return test::math::vector_builder<double>()
@@ -92,7 +105,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of valid integer inputs.
+   * Return sequence of valid integer inputs for x.
+   *
+   * NOTE: To test int, T combinations, valid double-valued inputs
+   * for y will be matched to these values.
    */
   static std::vector<int> int_valid_inputs1() {
     return test::math::vector_builder<int>()
@@ -101,7 +117,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of valid integer inputs.
+   * Return sequence of valid integer inputs for y.
+   *
+   * NOTE: To test int, T combinations, valid double-valued inputs
+   * for x will be matched to these values.
    */
   static std::vector<int> int_valid_inputs2() {
     return test::math::vector_builder<int>()
@@ -110,7 +129,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of invalid integer inputs.
+   * Return sequence of invalid integer inputs for x.
+   *
+   * NOTE: To test int, T combinations, invalid double-valued inputs
+   * for y will be matched to these values.
    */
   static std::vector<int> int_invalid_inputs1() {
     return test::math::vector_builder<int>()
@@ -118,7 +140,10 @@ struct binary_foo_test {
   }
 
   /**
-   * Return sequence of invalid integer inputs.
+   * Return sequence of invalid integer inputs for y.
+   *
+   * NOTE: To test int, T combinations, invalid double-valued inputs
+   * for x will be matched to these values.
    */
   static std::vector<int> int_invalid_inputs2() {
     return test::math::vector_builder<int>()

@@ -9,13 +9,13 @@ namespace stan {
   namespace math {
 
     /**
-     * Template specialization to fvar<FV> for vectorizing a unary scalar
-     * function.  This is a base scalar specialization.  It applies
-     * the function specified by the template parameter to the
-     * argument.
+     * Template specialization for vectorized functions applying to
+     * fvar<FV> and fvar<FV> arguments.
      *
-     * @tparam F Type of function to apply.
-     */
+     * @tparam F Type of function defining static apply function.
+     * @tparam FV Value and tangent type for for forward-mode
+     * autodiff variable.
+    */
     template <typename F, typename FV>
     struct apply_scalar_binary<F, stan::math::fvar<FV>,
     stan::math::fvar<FV> > {
@@ -25,9 +25,10 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.
+       * Apply the function specified by F to the specified arguments.
        *
        * @param x Argument fvar<FV>iable.
+       * @param y Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
       static inline return_t apply(const stan::math::fvar<FV>& x,
@@ -37,12 +38,12 @@ namespace stan {
     };
 
     /**
-     * Template specialization to fvar<FV> for vectorizing a unary scalar
-     * function.  This is a base scalar specialization.  It applies
-     * the function specified by the template parameter to the
-     * argument.
+     * Template specialization for vectorized functions applying to
+     * fvar<FV> and fvar<FV> arguments.
      *
-     * @tparam F Type of function to apply.
+     * @tparam F Type of function defining static apply function.
+     * @tparam FV Value and tangent type for for forward-mode
+     * autodiff variable.
      */
     template <typename F, typename FV>
     struct apply_scalar_binary<F, stan::math::fvar<FV>, int> {
@@ -52,9 +53,10 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.
+       * Apply the function specified by F to the specified arguments.
        *
        * @param x Argument fvar<FV>iable.
+       * @param y Int argument
        * @return Function applied to the fvar<FV>iable.
        */
       static inline return_t apply(const stan::math::fvar<FV>& x, int y) {
@@ -63,12 +65,12 @@ namespace stan {
     };
 
     /**
-     * Template specialization to fvar<FV> for vectorizing a unary scalar
-     * function.  This is a base scalar specialization.  It applies
-     * the function specified by the template parameter to the
-     * argument.
+     * Template specialization for vectorized functions applying to
+     * fvar<FV> and fvar<FV> arguments.
      *
-     * @tparam F Type of function to apply.
+     * @tparam F Type of function defining static apply function.
+     * @tparam FV Value and tangent type for for forward-mode
+     * autodiff variable.
      */
     template <typename F, typename FV>
     struct apply_scalar_binary<F, int, stan::math::fvar<FV> > {
@@ -78,9 +80,10 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.
+       * Apply the function specified by F to the specified arguments.
        *
-       * @param x Argument fvar<FV>iable.
+       * @param x Int argument.
+       * @param y Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
       static inline return_t apply(int x, const stan::math::fvar<FV>& y) {
@@ -89,12 +92,12 @@ namespace stan {
     };
 
     /**
-     * Template specialization to fvar<FV> for vectorizing a unary scalar
-     * function.  This is a base scalar specialization.  It applies
-     * the function specified by the template parameter to the
-     * argument.
+     * Template specialization for vectorized functions applying to
+     * fvar<FV> and fvar<FV> arguments.
      *
-     * @tparam F Type of function to apply.
+     * @tparam F Type of function defining static apply function.
+     * @tparam FV Value and tangent type for for forward-mode
+     * autodiff variable.
      */
     template <typename F, typename FV>
     struct apply_scalar_binary<F, stan::math::fvar<FV>, double> {
@@ -104,9 +107,10 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.
+       * Apply the function specified by F to the specified arguments.
        *
        * @param x Argument fvar<FV>iable.
+       * @param y Double argument.
        * @return Function applied to the fvar<FV>iable.
        */
       static inline return_t apply(const stan::math::fvar<FV>& x,
@@ -116,12 +120,12 @@ namespace stan {
     };
 
     /**
-     * Template specialization to fvar<FV> for vectorizing a unary scalar
-     * function.  This is a base scalar specialization.  It applies
-     * the function specified by the template parameter to the
-     * argument.
+     * Template specialization for vectorized functions applying to
+     * fvar<FV> and fvar<FV> arguments.
      *
-     * @tparam F Type of function to apply.
+     * @tparam F Type of function defining static apply function.
+     * @tparam FV Value and tangent type for for forward-mode
+     * autodiff variable.
      */
     template <typename F, typename FV>
     struct apply_scalar_binary<F, double, stan::math::fvar<FV> > {
@@ -131,9 +135,10 @@ namespace stan {
       typedef stan::math::fvar<FV> return_t;
 
       /**
-       * Apply the function specified by F to the specified argument.
+       * Apply the function specified by F to the specified arguments.
        *
-       * @param x Argument fvar<FV>iable.
+       * @param x Double argument.
+       * @param y Argument fvar<FV>iable.
        * @return Function applied to the fvar<FV>iable.
        */
       static inline return_t apply(double x, const
