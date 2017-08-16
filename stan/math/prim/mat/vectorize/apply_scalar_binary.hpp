@@ -32,19 +32,21 @@ namespace stan {
      * behavior on scalars.
      *
      * @tparam F Type of function to apply.
-     * @tparam T Type of argument to which function is applied.
+     * @tparam T1 Type of first argument to which function is applied.
+     * @tparam T2 Type of second argument to which function is applied.
      */
     template <typename F, typename T1, typename T2>
     struct apply_scalar_binary {
       /**
-       * Type of underlying scalar for the matrix type T.
+       * Type of underlying scalar for the matrix type T1.
+       * Type of underlying scalar for the matrix type T2.
        */
       typedef typename Eigen::internal::traits<T1>::Scalar scalar_t1;
       typedef typename Eigen::internal::traits<T2>::Scalar scalar_t2;
 
       /**
        * Return type for applying the function elementwise to a matrix
-       * expression template of type T.
+       * expression template of type T1 and T2.
        */
       typedef Eigen::Matrix<typename apply_scalar_binary<F, scalar_t1,
       scalar_t2>::return_t, T1::RowsAtCompileTime, T1::ColsAtCompileTime>
@@ -55,6 +57,7 @@ namespace stan {
        * template parameter F to the specified matrix argument.
        *
        * @param x Matrix to which operation is applied.
+       * @param y Matrix to which operation is applied.
        * @return Componentwise application of the function specified
        * by F to the specified matrix.
        */
@@ -193,13 +196,16 @@ namespace stan {
      * promoted to double values.
      *
      * @tparam F Class defining a static apply function.
-     * @tparam T Type of element contained in standard vector.
+     * @tparam T1 Type of element contained in standard vector for
+     * the first argument.
+     * @tparam T2 Type of element contained in standard vector for
+     * the second argument.
      */
     template <typename F, typename T1, typename T2>
     struct apply_scalar_binary<F, std::vector<T1>, std::vector<T2> > {
       /**
        * Return type, which is calculated recursively as a standard
-       * vector of the return type of the contained type T.
+       * vector of the return type of the contained type T1 and T2.
        */
       typedef typename
       std::vector<typename apply_scalar_binary<F, T1, T2>::return_t>
@@ -208,9 +214,10 @@ namespace stan {
       /**
        * Apply the function specified by F elementwise to the
        * specified argument.  This is defined recursively through this
-       * class applied to elements of type T.
+       * class applied to elements of type T1 and T2.
        *
        * @param x Argument container.
+       * @param y Argument container.
        * @return Elementwise application of F to the elements of the
        * container.
        */
