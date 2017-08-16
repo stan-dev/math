@@ -1,7 +1,6 @@
 ##
 # This file should modify the following variables
 # as appropriate:
-#   - CPPFLAGS
 #   - CXXFLAGS
 #   - GTEST_CXXFLAGS
 #   - OPT
@@ -26,16 +25,16 @@ else
   BIT?=64
 endif
 ifeq (g++,$(CC_TYPE))
-  CPPFLAGS += -m$(BIT)
-  CPPFLAGS += -Wno-unused-function
-  CPPFLAGS += -Wno-uninitialized
-  CPPFLAGS += -Wno-unused-but-set-variable
+  CXXFLAGS += -m$(BIT)
+  CXXFLAGS += -Wno-unused-function
+  CXXFLAGS += -Wno-uninitialized
+  CXXFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
-  CPPFLAGS += -Wno-unused-function
-  CPPFLAGS += -Wno-uninitialized
+  CXXFLAGS += -Wno-unused-function
+  CXXFLAGS += -Wno-uninitialized
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
 endif
