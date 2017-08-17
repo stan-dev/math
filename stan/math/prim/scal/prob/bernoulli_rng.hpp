@@ -1,17 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <boost/random/bernoulli_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <string>
 
 namespace stan {

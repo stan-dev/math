@@ -1,18 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_RNG_HPP
 
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <cmath>
-#include <limits>
 #include <string>
 
 namespace stan {

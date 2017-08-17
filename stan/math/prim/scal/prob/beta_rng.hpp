@@ -1,26 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_RNG_HPP
 
-#include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
+#include <cmath>
 #include <string>
 
 namespace stan {
