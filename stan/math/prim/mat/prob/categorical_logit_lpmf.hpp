@@ -18,9 +18,9 @@ namespace stan {
     // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
     template <bool propto,
               typename T_prob>
-    typename boost::math::tools::promote_args<T_prob>::type
+    typename boost::math::tools::promote_args<T_prob>::type // boost is like a second standard library for C++
     categorical_logit_lpmf(int n,
-                          const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>&
+                          const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& // Eigen is respected matrix library
                           beta) {
       static const std::string function = "categorical_logit_lpmf";
 
@@ -28,7 +28,7 @@ namespace stan {
                     1, beta.size());
       check_finite(function, "log odds parameter", beta);
 
-      if (!include_summand<propto, T_prob>::value)
+      if (!include_summand<propto, T_prob>::value) // maybe look up exact behaviour
         return 0.0;
 
       // FIXME:  wasteful vs. creating term (n-1) if not vectorized
