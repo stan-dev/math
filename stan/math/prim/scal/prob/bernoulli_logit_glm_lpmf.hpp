@@ -52,13 +52,13 @@ namespace stan {
       using stan::is_constant_struct;
       using std::exp;
 
-      if (!(stan::length(n) && stan::length(x) && stan::length(beta) && stan::length(alpha))) // will this work? probably...
+      if (!(stan::length(n) && stan::length(x) && stan::length(beta) && stan::length(alpha))) 
         return 0.0;
 
       T_partials_return logp(0.0);
 
       check_bounded(function, "n", n, 0, 1);
-      check_not_nan(function, "Data matrix", x); // Does should work, presumably?
+      check_not_nan(function, "Data matrix", x); 
       check_not_nan(function, "Weight vector", beta); 
       check_not_nan(function, "Bias vector", alpha);
       check_consistent_sizes(function,
@@ -66,8 +66,8 @@ namespace stan {
                              "Bias vector", alpha); 
       //check_consistent_sizes(function,
       //                       "Random variable", n,
-        //                     "Data matrix", x); // would this work?
-							 // !!! add one more check to see that x is compatible with beta
+      //                       "Data matrix", x); // would this work?
+	  //			!!! add one more check to see that x is compatible with beta
 
       if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
         return 0.0;
@@ -91,7 +91,7 @@ namespace stan {
 
       for (size_t n = 0; n < N; n++) {
         const int n_int = value_of(n_vec[n]);
-        const T_partials_return theta_dbl = (x_dbl(n)* beta_dbl)[0] + value_of(alpha_vec[n]); // there seems to be a problem here?
+        const T_partials_return theta_dbl = (x_dbl(n)* beta_dbl)[0] + value_of(alpha_vec[n]); 
 
 
         const int sign = 2 * n_int - 1;
@@ -128,7 +128,7 @@ namespace stan {
 			}				
 		  }
 		  if (! constant_x){
-		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl; // for some reason the LHS is a number, rather than a vector... this is very strange
+		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl.transpose(); // for some reason the LHS is a number, rather than a vector... this is very strange
           }
 		  if (! constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;
