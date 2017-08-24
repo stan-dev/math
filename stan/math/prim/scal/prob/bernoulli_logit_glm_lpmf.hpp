@@ -76,7 +76,7 @@ namespace stan {
       //scalar_seq_view<T_x> x_vec(x); // ok to only make this work for a matrix X, or maybe a vector x; so don't need to do this for x
       scalar_seq_view<T_beta> beta_vec(beta);
       scalar_seq_view<T_alpha> alpha_vec(alpha);
-      size_t N = max_size(n, x, alpha);
+      size_t N = max_size(n, alpha); // do we want to check anything about x here? and in the next line?
 	  size_t M = beta.size();
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
 	  
@@ -128,7 +128,7 @@ namespace stan {
 			}				
 		  }
 		  if (! constant_x){
-		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl; 
+		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl; // for some reason the LHS is a number, rather than a vector... this is very strange
           }
 		  if (! constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;
