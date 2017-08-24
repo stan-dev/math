@@ -23,6 +23,8 @@ Fix includes
 #include <cmath>
 #include <string>
 
+using Eigen::Dynamic;
+using Eigen::Matrix;
 
 namespace stan {
   namespace math {
@@ -75,11 +77,21 @@ namespace stan {
       scalar_seq_view<T_beta> beta_vec(beta);
       scalar_seq_view<T_alpha> alpha_vec(alpha);
       size_t N = max_size(n, x, alpha);
+	  size_t M = beta.size();
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
+	  
+	  Matrix<double, Dynamic, 1> beta_dbl;
+	  Matrix<double, Dynamic, Dynamic> x_dbl;
+	  for (size_t i = 0; i < M; i++) {
+		beta_dbl(i) = value_of(beta_vec[i]);
+		for (size_t j = 0; j < N; j++) {
+			x_dbl(i,j) = value_of(x(i,j));
+		}
+	  }
 
       for (size_t n = 0; n < N; n++) {
         const int n_int = value_of(n_vec[n]);
-        const T_partials_return theta_dbl = value_of(x[n] * beta_vec + alpha_vec[n]); // there seems to be a problem here?
+        const T_partials_return theta_dbl = (x_dbl(n)* beta_dbl)[0] + value_of(alpha_vec[n]); // there seems to be a problem here?
 
 
         const int sign = 2 * n_int - 1;
@@ -109,11 +121,14 @@ namespace stan {
           else
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
-          if (! constant_beta){ 
-		    ops_partials.edge2_.partials_ += theta_derivative * x[n];
+          if (! constant_beta){
+            for (size_t m = 0; m < M; m++)
+			{
+				ops_partials.edge2_.partials_[m] += theta_derivative * x_dbl(n,m);
+			}				
 		  }
 		  if (! constant_x){
-		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta; //beta_vec here instead. 
+		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl; 
           }
 		  if (! constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;
