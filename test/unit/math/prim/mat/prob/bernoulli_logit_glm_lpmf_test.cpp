@@ -1,4 +1,3 @@
-#include <stan/math/prim/scal.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
@@ -23,10 +22,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit) {
                   (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false>(n, theta)),
                   (stan::math::bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<true, double>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<true, double, double, double>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false, double>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<false,  double, double, double>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<double>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf< double, double, double>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<true, Matrix<int,Dynamic,1> >(n, theta)),
+                  (stan::math::bernoulli_logit_glm_lpmf<true, Matrix<int,Dynamic,1> >(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false, Matrix<int,Dynamic,1> >(n, theta)),
+                  (stan::math::bernoulli_logit_glm_lpmf<false,  Matrix<int,Dynamic,1>>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<Matrix<int,Dynamic,1> >(n, theta)),
+                  (stan::math::bernoulli_logit_glm_lpmf< Matrix<int,Dynamic,1> >(n, x, beta, alpha)));
 }

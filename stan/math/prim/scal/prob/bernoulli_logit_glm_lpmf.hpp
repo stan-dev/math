@@ -79,7 +79,7 @@ namespace stan {
 
       for (size_t n = 0; n < N; n++) {
         const int n_int = value_of(n_vec[n]);
-        const T_partials_return theta_dbl = value_of((x * beta_vec)[n] + alpha_vec[n]); // there seems to be a problem here?
+        const T_partials_return theta_dbl = value_of(x[n] * beta_vec + alpha_vec[n]); // there seems to be a problem here?
 
 
         const int sign = 2 * n_int - 1;
@@ -110,10 +110,10 @@ namespace stan {
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
           if (! constant_beta){ 
-		    ops_partials.edge2_.partials_[n] += theta_derivative * x[n];
+		    ops_partials.edge2_.partials_ += theta_derivative * x[n];
 		  }
 		  if (! constant_x){
-		    ops_partials.edge1_.partials_[n][n] += theta_derivative * beta_vec; // this probably won't work. generally, can we take a derivative wrt a matrix?
+		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta; //beta_vec here instead. 
           }
 		  if (! constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;
