@@ -76,22 +76,20 @@ namespace stan {
       //scalar_seq_view<T_x> x_vec(x); // ok to only make this work for a matrix X, or maybe a vector x; so don't need to do this for x
       scalar_seq_view<T_beta> beta_vec(beta);
       scalar_seq_view<T_alpha> alpha_vec(alpha);
-      size_t N = max_size(n, alpha); // do we want to check anything about x here? and in the next line?
-	  size_t M = beta.size();
+      const size_t N = max_size(n, alpha); // do we want to check anything about x here? and in the next line?
+	  const size_t M = beta.size();
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
-	  
-	  Matrix<double, Dynamic, 1> beta_dbl;
-	  Matrix<double, Dynamic, Dynamic> x_dbl;
-	  for (size_t i = 0; i < M; i++) {
-		beta_dbl(i) = value_of(beta_vec[i]);
+	  Matrix<double, Dynamic, 1> beta_dbl(M,1);
+	  Matrix<double, Dynamic, Dynamic> x_dbl(N,M);
+	  for (size_t i = 0; i < M; i++) {  
+		beta_dbl[i] = value_of(beta_vec[i]);
 		for (size_t j = 0; j < N; j++) {
-			x_dbl(i,j) = value_of(x(i,j));
+			x_dbl(j,i) = value_of(x(j,i));
 		}
 	  }
-
       for (size_t n = 0; n < N; n++) {
         const int n_int = value_of(n_vec[n]);
-        const T_partials_return theta_dbl = (x_dbl(n)* beta_dbl)[0] + value_of(alpha_vec[n]); 
+        const T_partials_return theta_dbl = (x_dbl.row(n)* beta_dbl)[0] + value_of(alpha_vec[n]); 
 
 
         const int sign = 2 * n_int - 1;
@@ -106,12 +104,12 @@ namespace stan {
           logp += ntheta;
         else
           logp -= log1p(exp_m_ntheta);
-        
+		
 		const bool constant_x = is_constant_struct<T_x>::value;
 		const bool constant_beta = is_constant_struct<T_beta>::value;
 		const bool constant_alpha = is_constant_struct<T_alpha>::value;
-
-        if (! (constant_x && constant_beta && constant_alpha)) { 
+        if ( !(constant_x && constant_beta && constant_alpha)) { 
+		            std::cout << "hello";
           static const double cutoff = 20.0; // do we really need this line?
 		  T_partials_return theta_derivative;
           if (ntheta > cutoff)
@@ -121,16 +119,17 @@ namespace stan {
           else
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
-          if (! constant_beta){
+          if ( !constant_beta){
             for (size_t m = 0; m < M; m++)
 			{
 				ops_partials.edge2_.partials_[m] += theta_derivative * x_dbl(n,m);
 			}				
 		  }
-		  if (! constant_x){
-		    ops_partials.edge1_.partials_[n] +=   theta_derivative * beta_dbl.transpose(); // for some reason the LHS is a number, rather than a vector... this is very strange
-          }
-		  if (! constant_alpha){
+		  if (!constant_x){
+		    ops_partials.edge1_.partials_[n] +=  1; //theta_derivative * beta_dbl.transpose(); // for some reason the LHS is a number, rather than a vector... this is very strange
+			}
+		  std::cout << x.size();
+		  if ( !constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;
           }			
         }
