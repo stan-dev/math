@@ -17,8 +17,8 @@ namespace stan {
      * Return a pseudorandom Normal variate for the given location and scale
      * using the specified random number generator.
      *
-     * mu and sigma can each be either a scalar or vector type. Any vector
-     * inputs must be the same length.
+     * mu and sigma can each be either a scalar or vector type (the ones that
+     * scalar_seq_view knows about). Any vector inputs must be the same length.
      *
      * @tparam T_loc Type of location parameter
      * @tparam T_scale Type of scale parameter

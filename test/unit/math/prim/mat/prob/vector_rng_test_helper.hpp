@@ -1,54 +1,128 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 
-enum class Constraint { None, Positive, NonNegative };
+/*
+ * Objects of this class can be used to generate sequences of non-random
+ * numbers.
+ */
+class NonRandomGenerator {
+private:
+  int last_used_idx_;
+
+  const std::vector<double> real_values_ =
+    { -5.0, -4.0, -3.5, -1.0, -0.5, 0.0, 1.5, 2.8, 3.0, 5.0, 7.0 };
+
+public:
+  NonRandomGenerator() : last_used_idx_(0) {}
+
+  size_t size() const {
+    return real_values_.size();
+  }
+
+  /*
+   * Get next value from non-random generator. Increment internal index to the
+   * next valid value (wrapping around to the beginning).
+   *
+   * @return A non-random number
+   */
+  double operator()() {
+    last_used_idx_ = (last_used_idx_ + 1) % real_values_.size();
+    return real_values_[last_used_idx_];
+  }
+
+  /*
+   * Test to make sure that it is possible to generate at least one value with
+   * the NonRandomGenerator that satisfies the given constraint.
+   *
+   * @tparam T_check Callable that takes in one double and returns a bool
+   * @param check Callable that checks constraint
+   */
+  template<typename T_check>
+  static void CanSatisfyConstraint(T_check check) {
+    NonRandomGenerator non_random_generator;
+
+    bool at_least_one_value_works = false;
+    for(size_t i = 0; i < non_random_generator.size(); i++)
+      at_least_one_value_works |= check(non_random_generator());
+    if(!at_least_one_value_works)
+      throw std::domain_error("None of the test values statisfy the constraint");
+  }
+};
 
 /*
- * Resize v to be length N and fill v with values that satisfy the given constraint c.
+ * Build a length N vector-like variable of type T1. Fill it with numbers
+ * generated from the callable non_random_generator that satisfy the constraint
+ * check.
+ *
+ * Before calling this functor, check that the non_random_generator can
+ * actually generate values that satisfy the check constraint, otherwise this
+ * function will loop endlessly.
+ *
+ * This is a functor instead of a function because it takes advantage of partial
+ * template specialization.
  *
  * @tparam T1 Type of v
- * @param v Vector to fill with values
- * @param c Constraint that values must fulfill
+ * @tparam T_check Callable type that takes in one double and returns a bool
+ * @tparam T_generator Callable type that takes no arguments and returns a double
  * @param N Number of elements that v will be resized to
+ * @param check Callable for validating p
+ * @param non_random_generator Callable for generating possible parameters
  */
-template <typename T1>
-void generateValues(T1& v, Constraint c, int N) {
-  v.resize(N);
-  
-  if (c == Constraint::None) {
-    for (int i = 0; i < N; i++)
-      v[i] = i - 1;
-  } else if (c == Constraint::Positive) {
-    for (int i = 0; i < N; i++)
-      v[i] = i + 1;
-  } else if (c == Constraint::NonNegative) {
-    for (int i = 0; i < N; i++)
-      v[i] = i;
+template<typename T1>
+struct GenerateValues {
+  template <typename T_check, typename T_generator>
+  T1 operator()(int N, T_check check, T_generator &non_random_generator) {
+    T1 vec(N);
+    
+    for (int i = 0; i < vec.size(); i++) {
+      double v;
+    
+      do {
+        v = non_random_generator();
+      } while(!check(v));
+    
+      vec[i] = v;
+    }
+
+    return vec;
   }
-}
+};
 
 /*
- * Set v to a value that satisfies the constraint (and as much as possible
- * does not satisfy other constraints -- but this isn't totally possible)
+ * Generate a value from non_random_generator that satisfies the constraint
+ * check.
+ *
+ * Before calling this functor, check that the non_random_generator can
+ * actually generate values that satisfy the check constraint, otherwise this
+ * function will loop endlessly.
+ *
+ * This is a functor instead of a function because it takes advantage of partial
+ * template specialization.
  *
  * @tparam T1 Type of v
- * @param v Variable to assign value to
- * @param c Constraint that value must fulfill
+ * @tparam T_check Callable type that takes in one double and returns a bool
+ * @tparam T_generator Callable type that takes no arguments and returns a
+ * double
  * @param N Unused
+ * @param check Callable for validating p
+ * @param non_random_generator Callable for generating possible parameters
  */
-template <>
-void generateValues(double& v, Constraint c, int N) {
-  if (c == Constraint::None) {
-    v = -1;
-  } else if (c == Constraint::Positive) {
-    v = 1;
-  } else if (c == Constraint::NonNegative) {
-    v = 0;
+template<>
+struct GenerateValues<double> {
+  template <typename T_check, typename T_generator>
+  double operator()(int N, T_check check, T_generator &non_random_generator) {
+    double v;
+    
+    do {
+      v = non_random_generator();
+    } while(!check(v));
+
+    return v;
   }
-}
+};
 
 /*
  * Sets first element of v to a given value
@@ -58,7 +132,7 @@ void generateValues(double& v, Constraint c, int N) {
  * @param value Value to assign
  */
 template <typename T1>
-void setValue(T1& v, double value) {
+void SetValue(T1& v, double value) {
   v[0] = value;
 }
 
@@ -69,37 +143,38 @@ void setValue(T1& v, double value) {
  * @param value Value to assign
  */
 template<>
-void setValue(double& v, double value) {
+void SetValue(double& v, double value) {
   v = value;
 }
 
 /*
- * Return true if variables defined with constraint c1 do not violate constraint
- * c2
+ * Check that every element of p (if p is a vector) passes check. If p is a
+ * scalar, then just make sure it passes the check.
  *
- * @param c1 First constraint
- * @param c2 Second constraint
- * @return True if values with constraint c1 and compatible with c2
+ * @tparam T_check Callable type that takes in one double and returns a bool
+ * @tparam T_param Any type compatible with stan::scalar_seq_view
+ * @param check Callable for validating (values of) p
+ * @param p Parameter to check
  */
-bool compatible(Constraint c1, Constraint c2) {
-  if (c1 == Constraint::NonNegative && c2 == Constraint::Positive)
-    return false;
+template<typename T_check, typename T_param>
+bool VectorizeCheck(T_check check, T_param p) {
+  stan::scalar_seq_view<T_param> p_vec(p);
 
-  if (c1 == Constraint::None && c2 == Constraint::NonNegative)
-    return false;
+  bool out = true;
+  for (int i = 0; i < p_vec.size(); i++) {
+    out &= check(p_vec[i]);
+  }
 
-  if (c1 == Constraint::None && c2 == Constraint::Positive)
-    return false;
-
-  return true;
+  return out;
 }
 
 /*
- * twoParamCheckTrows feeds the given generate_samples callable various
+ * CheckDistThrows feeds the given generate_samples callable various
  * combinations of valid and invalid parameters (as defined by the two
- * constraints, c1 and c2). For generated constraints that are not compatible
- * with the supplied constraints, the generate_samples callable is expected
- * to throw domain_errors.
+ * constraints callables, check_p1 and check_p2). For generated parameters
+ * that cause check_p1 or check_p2 to return false, the generate_samples
+ * callable is expected to throw domain_errors. If both checks pass, the sampler
+ * is expected to throw no errors.
  *
  * The generate_samples callable is also passed various other guaranteed invalid
  * values like positive infinity, negative infinity, and NaNs (these should also
@@ -123,102 +198,134 @@ bool compatible(Constraint c1, Constraint c2) {
  * @tparam T_param1 Type of first parameter
  * @tparam T_param2 Type of second parameter
  * @tparam T_generate_samples Type of generate_samples functor
+ * @tparam T_check_p1 Callable type that takes in one double and returns a bool
+ * @tparam T_check_p2 Callable type that takes in one double and returns a bool
  * @param generate_samples generate_samples functor to test
- * @param c1 Constraint of first parameter
- * @param c2 Constraint of second parameter
+ * @param check_p1 Callable for validating first parameter
+ * @param check_p2 Callable for validating second parameter
  */
-template<typename T_param1, typename T_param2, typename T_generate_samples>
-void twoParamDistCheckThrows(T_generate_samples generate_samples, Constraint c1,
-                             Constraint c2) {
+template<typename T_param1, typename T_param2, typename T_generate_samples,
+         typename T_check_p1, typename T_check_p2>
+void CheckDistThrows(T_generate_samples generate_samples,
+                     T_check_p1 check_p1, T_check_p2 check_p2) {
   boost::random::mt19937 rng;
-
+  NonRandomGenerator non_random_generator;
+  
   T_param1 p1;
   T_param2 p2;
 
-  std::vector<Constraint> constraints = { Constraint::Positive,
-                                          Constraint::NonNegative,
-                                          Constraint::None };
+  // Try a few combinations of parameters that should work
+  for (int i = 0; i < 5; i++) {
+    p1 = GenerateValues<T_param1>{}(5, check_p1, non_random_generator);
+    p2 = GenerateValues<T_param2>{}(5, check_p2, non_random_generator);
+    
+    EXPECT_NO_THROW(generate_samples(p1, p2, rng));
+  }
 
-  for (auto it1 = constraints.begin(); it1 != constraints.end(); it1++) {
-    for (auto it2 = constraints.begin(); it2 != constraints.end(); it2++) {
-      generateValues(p1, *it1, 3);
-      generateValues(p2, *it2, 3);
+  // Now just try putting anything for the first parameter and checking the
+  // throws
+  for (int i = 0; i < 5; i++) {
+    p1 = GenerateValues<T_param1>{}(5, [](double mean) { return true; },
+                                    non_random_generator);
+    p2 = GenerateValues<T_param2>{}(5, check_p2, non_random_generator);
 
-      if (compatible(*it1, c1) && compatible(*it2, c2)) {
-        EXPECT_NO_THROW(generate_samples(p1, p2, rng));
-      } else {
-        EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
-      }
+    if (VectorizeCheck(check_p1, p1) && VectorizeCheck(check_p2, p2)) {
+      EXPECT_NO_THROW(generate_samples(p1, p2, rng));
+    } else {
+      EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
     }
   }
 
-  std::vector<double> badValues = { stan::math::positive_infinity(),
-                                    stan::math::negative_infinity(),
-                                    stan::math::not_a_number() };
+  // Now just try putting anything for the second parameter and checking the
+  // throws
+  for (int i = 0; i < 5; i++) {
+    p1 = GenerateValues<T_param1>{}(5, check_p1, non_random_generator);
+    p2 = GenerateValues<T_param2>{}(5, [](double sd) { return sd > 0.0; },
+                                    non_random_generator);
 
-  for (auto it = badValues.begin(); it != badValues.end(); it++) {
-    generateValues(p1, c1, 3);
-    generateValues(p2, c2, 3);
-    setValue(p1, *it);
+    if (VectorizeCheck(check_p1, p1) && VectorizeCheck(check_p2, p2)) {
+      EXPECT_NO_THROW(generate_samples(p1, p2, rng));
+    } else {
+      EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
+    }
+  }
+
+  // Make sure sampler throws errors with these values
+  std::vector<double> bad_values = { stan::math::positive_infinity(),
+                                     stan::math::negative_infinity(),
+                                     stan::math::not_a_number() };
+
+  for (auto bad_value : bad_values) {
+    p1 = GenerateValues<T_param1>{}(5, check_p1, non_random_generator);
+    p2 = GenerateValues<T_param2>{}(5, check_p2, non_random_generator);
+    SetValue(p1, bad_value); // p1 is written here
     EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
 
-    generateValues(p1, c1, 3);
-    setValue(p2, *it);
+    p1 = GenerateValues<T_param1>{}(5, check_p1, non_random_generator);
+    SetValue(p2, bad_value); // p2 is written here
     EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
   }
 
-  generateValues(p1, c1, 3);
-  generateValues(p2, c2, 4);
+  // Check to make sure _rng rejects vector arguments of different lengths
+  // If either p1 or p2 are scalars, this test is skipped
+  p1 = GenerateValues<T_param1>{}(5, check_p1, non_random_generator);
+  p2 = GenerateValues<T_param2>{}(3, check_p2, non_random_generator);
   if (stan::length(p1) != 1 && stan::length(p2) != 1)
     EXPECT_THROW(generate_samples(p1, p2, rng), std::invalid_argument);
 }
 
 /*
- * Call twoParamDistCheckThrows with the given arguments and all combinations of
- * double, std::vector<double>, Eigen::VectorXd, and Eigen::RowVectorXd
+ * This function calls CheckDistThrows with the given generate_samples
+ * callable and all combinations of double, std::vector<double>,
+ * Eigen::VectorXd, and Eigen::RowVectorXd as template arguments
  *
  * @tparam T_generate_samples Type of generate_samples functor
+ * @tparam T_check_p1 Callable type that takes in one double and returns a bool
+ * @tparam T_check_p2 Callable type that takes in one double and returns a bool
  * @param generate_samples generate_samples functor to test
- * @param c1 Constraint of first parameter
- * @param c2 Constraint of second parameter
+ * @param c1 Callable for validating first parameter
+ * @param c2 Callable for validating second parameter
  */
-template<typename T_generate_samples>
-void twoParamDistCheckThrowsAllTypes(T_generate_samples generate_samples, Constraint c1,
-                                     Constraint c2) {
+template<typename T_generate_samples, typename T_check_p1, typename T_check_p2>
+void CheckDistThrowsAllTypes(T_generate_samples generate_samples,
+                             T_check_p1 check_p1, T_check_p2 check_p2) {
   using namespace Eigen;
+  // Check that given constraint can be satisfied, otherwise tests will deadlock
+  NonRandomGenerator::CanSatisfyConstraint(check_p1);
+  NonRandomGenerator::CanSatisfyConstraint(check_p2);
   
-  twoParamDistCheckThrows<double, double>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<double, std::vector<double> >
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<double, VectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<double, RowVectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<std::vector<double>, double>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<std::vector<double>, std::vector<double> >
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<std::vector<double>, VectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<std::vector<double>, RowVectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<VectorXd, double>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<VectorXd, std::vector<double> >
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<VectorXd, VectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<VectorXd, RowVectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<RowVectorXd, double>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<RowVectorXd, std::vector<double> >
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<RowVectorXd, VectorXd>
-    (generate_samples, c1, c2);
-  twoParamDistCheckThrows<RowVectorXd, RowVectorXd>
-    (generate_samples, c1, c2);
+  CheckDistThrows<double, double>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<double, std::vector<double> >
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<double, VectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<double, RowVectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<std::vector<double>, double>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<std::vector<double>, std::vector<double> >
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<std::vector<double>, VectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<std::vector<double>, RowVectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<VectorXd, double>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<VectorXd, std::vector<double> >
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<VectorXd, VectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<VectorXd, RowVectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<RowVectorXd, double>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<RowVectorXd, std::vector<double> >
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<RowVectorXd, VectorXd>
+    (generate_samples, check_p1, check_p2);
+  CheckDistThrows<RowVectorXd, RowVectorXd>
+    (generate_samples, check_p1, check_p2);
 }
 
 /*
@@ -227,21 +334,21 @@ void twoParamDistCheckThrowsAllTypes(T_generate_samples generate_samples, Constr
  * @param v Input scalar
  * @return vector of length 1 with value v
  */
-std::vector<double> promote_to_vector(double v) {
+std::vector<double> PromoteToVector(double v) {
   return std::vector<double>(1, v);
 }
 
 /*
  * For arguments that are already vectors, just return the input (via std::move)
  */
-std::vector<double>&& promote_to_vector(std::vector<double>&& v) {
+std::vector<double>&& PromoteToVector(std::vector<double>&& v) {
   return std::move(v);
 }
 
 /*
- * chiSquareTest uses assert_matches_quantiles to check random numbers generated
- * by a given callable generate_samples against the reference quantiles computed
- * with the given callable generate_quantiles.
+ * CheckQuantiles uses assert_matches_quantiles to check random numbers
+ * generated by the callable generate_samples against the reference
+ * quantiles computed with the given callable generate_quantiles.
  *
  * The generate_samples callable must have the signature:
  *   T_out generate_samples(T_param1 p1, T_param2 p2, T_rng)
@@ -266,29 +373,32 @@ std::vector<double>&& promote_to_vector(std::vector<double>&& v) {
  * empirical distributions used by assert_matches_quantiles
  *
  * Parameters for each of these callables are generated according to constraints
- * c1 and c2.
+ * callables check_p1 and check_p2.
  *
  * @tparam T_param1 Type of first parameter
  * @tparam T_param2 Type of second parameter
  * @tparam T_generate_samples Type of callable for generating samples
  * @tparam T_generate_quantiles Type of callable for generating quantiles
+ * @tparam T_check_p1 Callable type that takes in one double and returns a bool
+ * @tparam T_check_p2 Callable type that takes in one double and returns a bool
  * @param sampler sampler functor to test
- * @param c1 Constraint of first parameter
- * @param c2 Constraint of second parameter
+ * @param check_p1 Callable for validating first parameter
+ * @param check_p2 Callable for validating second parameter
  */
 template<typename T_param1, typename T_param2,
-         typename T_generate_samples, typename T_generate_quantiles>
-void chiSquareTest(int N, int M_vec,
-                   T_generate_samples generate_samples,
-                   T_generate_quantiles generate_quantiles,
-                   Constraint c1,
-                   Constraint c2) {
+         typename T_generate_samples, typename T_generate_quantiles,
+         typename T_check_p1, typename T_check_p2>
+void CheckQuantiles(int N, int M_vec,
+                    T_generate_samples generate_samples,
+                    T_generate_quantiles generate_quantiles,
+                    T_check_p1 check_p1, T_check_p2 check_p2) {
   boost::random::mt19937 rng;
+  NonRandomGenerator non_random_generator;
   T_param1 p1;
   T_param2 p2;
   int M = stan::max_size(M_vec, M_vec);
-  generateValues(p1, c1, M);
-  generateValues(p2, c2, M);
+  p1 = GenerateValues<T_param1>{}(M, check_p1, non_random_generator);
+  p2 = GenerateValues<T_param2>{}(M, check_p2, non_random_generator);
   stan::scalar_seq_view<T_param1> p1_vec(p1);
   stan::scalar_seq_view<T_param2> p2_vec(p2);
 
@@ -297,7 +407,7 @@ void chiSquareTest(int N, int M_vec,
     // If p1 and p2 are scalars, the output is a scalar. Need to promote it
     // to a std::vector
     samples_to_test_transpose.push_back(
-      promote_to_vector(generate_samples(p1, p2, rng))
+      PromoteToVector(generate_samples(p1, p2, rng))
     );
   }
   for (int m = 0; m < M; ++m) {
@@ -312,53 +422,58 @@ void chiSquareTest(int N, int M_vec,
 }
 
 /*
- * Call chiSquareTest with the given arguments and all combinations of
+ * Call CheckQuantiles with the given arguments and all combinations of
  * double, std::vector<double>, Eigen::VectorXd, and Eigen::RowVectorXd
  *
  * @tparam T_generate_samples Type of callable for generating samples
  * @tparam T_generate_quantiles Type of callable for generating quantiles
+ * @tparam T_check_p1 Callable type that takes in one double and returns a bool
+ * @tparam T_check_p2 Callable type that takes in one double and returns a bool
  * @param sampler sampler functor to test
- * @param c1 Constraint of first parameter
- * @param c2 Constraint of second parameter
+ * @param c1 Callable for validating first parameter
+ * @param c2 Callable for validating second parameter
  */
-template<typename T_generate_samples, typename T_generate_quantiles>
-void chiSquareTestAllTypes(int N, int M,
-                           T_generate_samples generate_samples,
-                           T_generate_quantiles generate_quantiles,
-                           Constraint c1,
-                           Constraint c2) {
+template<typename T_generate_samples, typename T_generate_quantiles,
+         typename T_check_p1, typename T_check_p2>
+void CheckQuantilesAllTypes(int N, int M,
+                            T_generate_samples generate_samples,
+                            T_generate_quantiles generate_quantiles,
+                            T_check_p1 check_p1, T_check_p2 check_p2) {
   using namespace Eigen;
+  // Check that given constraint can be satisfied, otherwise tests will deadlock
+  NonRandomGenerator::CanSatisfyConstraint(check_p1);
+  NonRandomGenerator::CanSatisfyConstraint(check_p2);
   
-  chiSquareTest<double, double>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<double, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<double, VectorXd >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<double, RowVectorXd >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<std::vector<double>, double>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<std::vector<double>, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<std::vector<double>, VectorXd >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<std::vector<double>, RowVectorXd >
-    (N, M, generate_samples, generate_quantiles, c1, c2);  
-  chiSquareTest<VectorXd, double>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<VectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<VectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<VectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, c1, c2);  
-  chiSquareTest<RowVectorXd, double>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<RowVectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<RowVectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
-  chiSquareTest<RowVectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, c1, c2);
+  CheckQuantiles<double, double>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<double, std::vector<double> >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<double, VectorXd >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<double, RowVectorXd >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<std::vector<double>, double>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<std::vector<double>, std::vector<double> >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<std::vector<double>, VectorXd >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<std::vector<double>, RowVectorXd >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);  
+  CheckQuantiles<VectorXd, double>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<VectorXd, std::vector<double> >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<VectorXd, VectorXd>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<VectorXd, RowVectorXd>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);  
+  CheckQuantiles<RowVectorXd, double>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<RowVectorXd, std::vector<double> >
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<RowVectorXd, VectorXd>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
+  CheckQuantiles<RowVectorXd, RowVectorXd>
+    (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
 }
