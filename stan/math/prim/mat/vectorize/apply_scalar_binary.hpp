@@ -37,7 +37,6 @@ namespace stan {
      */
     template <typename F, typename T1, typename T2>
     struct apply_scalar_binary {
-
       /**
        * Return type for applying the function to the scalars
        * of types T1 and T2.
@@ -94,7 +93,6 @@ namespace stan {
               int R2, int C2>
     struct apply_scalar_binary<F, Eigen::Block<Eigen::Matrix<T1, R1, C1> >,
                                Eigen::Block<Eigen::Matrix<T2, R2, C2> > > {
-
       /**
        * Return type, which is calculated recursively as an Eigen::Matrix
        * of the return type of the contained types T1 and T2.
@@ -115,10 +113,10 @@ namespace stan {
        * @return Elementwise application of F to the elements of the
        * containers.
        */
-      static inline return_t apply(
-        const Eigen::Block<Eigen::Matrix<T1, R1, C1> >& x,
-        const Eigen::Block<Eigen::Matrix<T2, R2, C2> >& y) {
-
+      static inline return_t apply(const Eigen::Block<
+                                     Eigen::Matrix<T1, R1, C1> >& x,
+                                   const Eigen::Block<
+                                     Eigen::Matrix<T2, R2, C2> >& y) {
         return(apply_scalar_binary<F, Eigen::Matrix<T1, R1, C1>,
                                    Eigen::Matrix<T2, R2, C2> >::apply(
                  static_cast<Eigen::Matrix<T1, R1, C1> >(x),
