@@ -32,34 +32,12 @@ public:
     last_used_idx_ = (last_used_idx_ + 1) % real_values_.size();
     return real_values_[last_used_idx_];
   }
-
-  /*
-   * Test to make sure that it is possible to generate at least one value with
-   * the NonRandomGenerator that satisfies the given constraint.
-   *
-   * @tparam T_check Callable that takes in one double and returns a bool
-   * @param check Callable that checks constraint
-   */
-  template<typename T_check>
-  static void CanSatisfyConstraint(T_check check) {
-    NonRandomGenerator non_random_generator;
-
-    bool at_least_one_value_works = false;
-    for(size_t i = 0; i < non_random_generator.size(); i++)
-      at_least_one_value_works |= check(non_random_generator());
-    if(!at_least_one_value_works)
-      throw std::domain_error("None of the test values statisfy the constraint");
-  }
 };
 
 /*
  * Build a length N vector-like variable of type T1. Fill it with numbers
  * generated from the callable non_random_generator that satisfy the constraint
  * check.
- *
- * Before calling this functor, check that the non_random_generator can
- * actually generate values that satisfy the check constraint, otherwise this
- * function will loop endlessly.
  *
  * This is a functor instead of a function because it takes advantage of partial
  * template specialization.
@@ -70,6 +48,8 @@ public:
  * @param N Number of elements that v will be resized to
  * @param check Callable for validating p
  * @param non_random_generator Callable for generating possible parameters
+ * @throws std::domain_error if non_random_generator cannot satisfy check
+ * constraint
  */
 template<typename T1>
 struct GenerateValues {
@@ -79,11 +59,20 @@ struct GenerateValues {
     
     for (int i = 0; i < vec.size(); i++) {
       double v;
-    
-      do {
+
+      // There are only .size() possible non_random_numbers to try
+      for (int j = 0; j < non_random_generator.size(); j++) {
         v = non_random_generator();
-      } while(!check(v));
-    
+        if (check(v))
+          break;
+      }
+
+      // If last number tried doesn't pass check, throw exception (constraint
+      // cannot be satisfied)
+      if (!check(v))
+        stan::math::domain_error("GenerateValues", "check", "",
+                                 "constraint cannot be satisfied by generator");
+
       vec[i] = v;
     }
 
@@ -95,10 +84,6 @@ struct GenerateValues {
  * Generate a value from non_random_generator that satisfies the constraint
  * check.
  *
- * Before calling this functor, check that the non_random_generator can
- * actually generate values that satisfy the check constraint, otherwise this
- * function will loop endlessly.
- *
  * This is a functor instead of a function because it takes advantage of partial
  * template specialization.
  *
@@ -109,16 +94,27 @@ struct GenerateValues {
  * @param N Unused
  * @param check Callable for validating p
  * @param non_random_generator Callable for generating possible parameters
+ * @throws std::domain_error if non_random_generator cannot satisfy check
+ * constraint
  */
 template<>
 struct GenerateValues<double> {
   template <typename T_check, typename T_generator>
   double operator()(int N, T_check check, T_generator &non_random_generator) {
     double v;
-    
-    do {
+
+    // There are only .size() possible non_random_numbers to try
+    for (int j = 0; j < non_random_generator.size(); j++) {
       v = non_random_generator();
-    } while(!check(v));
+      if (check(v))
+        break;
+    }
+
+    // If last number tried doesn't pass check, throw exception (constraint
+    // cannot be satisfied)
+    if (!check(v))
+      stan::math::domain_error("GenerateValues", "check", "",
+                               "constraint cannot be satisfied by generator");
 
     return v;
   }
@@ -290,9 +286,6 @@ template<typename T_generate_samples, typename T_check_p1, typename T_check_p2>
 void CheckDistThrowsAllTypes(T_generate_samples generate_samples,
                              T_check_p1 check_p1, T_check_p2 check_p2) {
   using namespace Eigen;
-  // Check that given constraint can be satisfied, otherwise tests will deadlock
-  NonRandomGenerator::CanSatisfyConstraint(check_p1);
-  NonRandomGenerator::CanSatisfyConstraint(check_p2);
   
   CheckDistThrows<double, double>
     (generate_samples, check_p1, check_p2);
@@ -440,9 +433,6 @@ void CheckQuantilesAllTypes(int N, int M,
                             T_generate_quantiles generate_quantiles,
                             T_check_p1 check_p1, T_check_p2 check_p2) {
   using namespace Eigen;
-  // Check that given constraint can be satisfied, otherwise tests will deadlock
-  NonRandomGenerator::CanSatisfyConstraint(check_p1);
-  NonRandomGenerator::CanSatisfyConstraint(check_p2);
   
   CheckQuantiles<double, double>
     (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
