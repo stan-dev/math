@@ -88,7 +88,7 @@ void expect_binary_matrix_err_throw(
                     invalid_inputs2[i]); 
     EXPECT_THROW(F::template apply<result_tm>(c, d), std::domain_error);
 
-    if (template_m1.rows() > 1 && template_m2.cols() > 1) {
+    if (template_m1.rows() > 1 && template_m1.cols() > 1) {
       EXPECT_THROW(F::template apply<result_tm>(a.block(1, 1, 1, 1),
                                                 b.block(1, 1, 1, 1)),
                    std::domain_error);

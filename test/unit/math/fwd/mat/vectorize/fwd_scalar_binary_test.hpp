@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_FWD_SCALAR_BINARY_TEST_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/mat/vectorize/apply_scalar_binary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_types.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_binary_values.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_binary_errors.hpp>
