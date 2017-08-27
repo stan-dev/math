@@ -16,7 +16,7 @@ ifneq (,$(findstring mingw32-g++,$(CC)))
   CC_TYPE ?= mingw32-g++
 endif
 ifneq (,$(findstring i686-w64-mingw32-g++,$(CC)))
-  CPPFLAGS += -m32
+  CXXFLAGS += -m32
 endif
 ifneq (,$(findstring g++,$(CC)))
   CC_TYPE ?= g++

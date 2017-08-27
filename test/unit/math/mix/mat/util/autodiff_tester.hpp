@@ -284,7 +284,9 @@ namespace stan {
             return F::apply(r.read(x1_), x2_);
           } else if (!fixed1_ && !fixed2_) {
             seq_reader<T> r(theta);
-            return F::apply(r.read(x1_), r.read(x2_));
+            T read_x1 = r.read(x1_);
+            T read_x2 = r.read(x2_);
+            return F::apply(read_x1, read_x2);
           }
           throw std::logic_error("binder_binary illegal state");
         }
