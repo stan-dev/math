@@ -20,10 +20,8 @@ void expect_binary_std_vector_err_throw(std::vector<vector_t1> input_v1,
 
 template <typename F, typename result_t, typename vector_t1,
           typename vector_t2>
-void expect_binary_std_vector_std_vector_err_throw(std::vector<vector_t1>
-                                                   input_v1,
-                                                   std::vector<vector_t2>
-                                                   input_v2) {
+void expect_binary_std_vector_std_vector_err_throw(
+    std::vector<vector_t1> input_v1, std::vector<vector_t2> input_v2) {
   using std::vector;
   vector<vector<vector_t1> > c;
   vector<vector<vector_t2> > d;
@@ -81,13 +79,13 @@ void expect_binary_std_vector_value_error() {
   expect_binary_std_vector_err_throw<F, T>(y1, y2);
 
   expect_binary_std_vector_std_vector_err_throw<F, T>(
-    y1, int_invalid_inputs2);
+      y1, int_invalid_inputs2);
   expect_binary_std_vector_std_vector_err_throw<F, T>(
-    int_invalid_inputs1, y2);
+      int_invalid_inputs1, y2);
   expect_binary_std_vector_std_vector_err_throw<F, T>(
-    y1, invalid_inputs2);
+      y1, invalid_inputs2);
   expect_binary_std_vector_std_vector_err_throw<F, T>(
-    invalid_inputs1, y2);
+      invalid_inputs1, y2);
   expect_binary_std_vector_std_vector_err_throw<F, T>(y1, y2);
 }
 

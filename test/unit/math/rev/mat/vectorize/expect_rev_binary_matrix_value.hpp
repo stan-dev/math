@@ -24,7 +24,7 @@ void expect_rev_binary_matrix_matrix_eq(const matrix_t1& template_m1,
     matrix_t2 input_mb1 = build_rev_binary_matrix2<F>(template_m2);
     matrix_t2 input_mb2 = build_rev_binary_matrix2<F>(template_m2);
     result_matrix_t fa = F::template apply<result_matrix_t>(
-      input_ma2, input_mb2);
+                             input_ma2, input_mb2);
     EXPECT_EQ(input_ma2.size(), fa.size());
     EXPECT_EQ(input_mb2.size(), fa.size());
     expect_binary_val_deriv_eq(F::apply_base(input_ma1(i), input_mb1(i)),
@@ -39,16 +39,18 @@ void expect_rev_binary_matrix_matrix_eq(const matrix_t1& template_m1,
     matrix_t2 input_mb2 = build_rev_binary_matrix2<F>(template_m2);
 
     result_matrix_t fb = F::template apply<result_matrix_t>(
-    input_ma2.block(1, 1, 1, 1), input_mb2.block(1, 1, 1, 1));
+                             input_ma2.block(1, 1, 1, 1),
+                             input_mb2.block(1, 1, 1, 1));
     expect_binary_val_deriv_eq(F::apply_base(input_ma1(1, 1),
-    input_mb1(1, 1)), input_ma1(1, 1), input_mb1(1, 1),
-    fb(0, 0), input_ma2(1, 1), input_mb2(1, 1));
+                                             input_mb1(1, 1)),
+                               input_ma1(1, 1), input_mb1(1, 1),
+                               fb(0, 0), input_ma2(1, 1), input_mb2(1, 1));
   }
 }
 
 template <typename F, typename matrix_t1, typename matrix_t2>
 void expect_rev_binary_std_vector_matrix_std_vector_matrix_eq(
-const matrix_t1& template_m1, const matrix_t2& template_m2) {
+    const matrix_t1& template_m1, const matrix_t2& template_m2) {
   using std::vector;
   using stan::math::var;
 
@@ -110,11 +112,11 @@ expect_rev_binary_matrix_value(Eigen::Matrix<double, R, C> template_m) {
   expect_rev_binary_matrix_matrix_eq<F>(var_template_m, var_template_m);
 
   expect_rev_binary_std_vector_matrix_std_vector_matrix_eq<F>(
-    var_template_m, d_template_m);
+      var_template_m, d_template_m);
   expect_rev_binary_std_vector_matrix_std_vector_matrix_eq<F>(
-    d_template_m, var_template_m);
+      d_template_m, var_template_m);
   expect_rev_binary_std_vector_matrix_std_vector_matrix_eq<F>(
-    var_template_m, var_template_m);
+      var_template_m, var_template_m);
 }
 
 #endif

@@ -8,9 +8,9 @@
 #include <gtest/gtest.h>
 
 static inline void expect_binary_val_deriv_eq(
-stan::math::var exp_var, stan::math::var base_exp_var1, 
-stan::math::var base_exp_var2, stan::math::var test_var,
-stan::math::var base_test_var1, stan::math::var base_test_var2) {
+    stan::math::var exp_var, stan::math::var base_exp_var1, 
+    stan::math::var base_exp_var2, stan::math::var test_var,
+    stan::math::var base_test_var1, stan::math::var base_test_var2) {
   using stan::math::set_zero_all_adjoints;
   expect_val_eq(exp_var.val(), test_var.val());
   AVEC exp_y = createAVEC(base_exp_var1, base_exp_var2);
@@ -26,9 +26,9 @@ stan::math::var base_test_var1, stan::math::var base_test_var2) {
 }
 
 static inline void expect_binary_val_deriv_eq(
-stan::math::var exp_var, stan::math::var base_exp_var1,
-double base_exp_var2, stan::math::var test_var,
-stan::math::var base_test_var1, double base_test_var2) {
+    stan::math::var exp_var, stan::math::var base_exp_var1,
+    double base_exp_var2, stan::math::var test_var,
+    stan::math::var base_test_var1, double base_test_var2) {
   using stan::math::set_zero_all_adjoints;
   expect_val_eq(exp_var.val(), test_var.val());
   AVEC exp_y = createAVEC(base_exp_var1);
@@ -43,9 +43,9 @@ stan::math::var base_test_var1, double base_test_var2) {
 }
 
 static inline void expect_binary_val_deriv_eq(
-stan::math::var exp_var, double base_exp_var1, 
-stan::math::var base_exp_var2, stan::math::var test_var, 
-double base_test_var1, stan::math::var base_test_var2) {
+    stan::math::var exp_var, double base_exp_var1, 
+    stan::math::var base_exp_var2, stan::math::var test_var, 
+    double base_test_var1, stan::math::var base_test_var2) {
   using stan::math::set_zero_all_adjoints;
   expect_val_eq(exp_var.val(), test_var.val());
   AVEC exp_y = createAVEC(base_exp_var2);
@@ -60,9 +60,9 @@ double base_test_var1, stan::math::var base_test_var2) {
 }
 
 static inline void expect_binary_val_deriv_eq(
-stan::math::var exp_var, stan::math::var base_exp_var1,
-int base_exp_var2, stan::math::var test_var,
-stan::math::var base_test_var1, int base_test_var2) {
+    stan::math::var exp_var, stan::math::var base_exp_var1,
+    int base_exp_var2, stan::math::var test_var,
+    stan::math::var base_test_var1, int base_test_var2) {
   using stan::math::set_zero_all_adjoints;
   expect_val_eq(exp_var.val(), test_var.val());
   AVEC exp_y = createAVEC(base_exp_var1);
@@ -77,9 +77,9 @@ stan::math::var base_test_var1, int base_test_var2) {
 }
 
 static inline void expect_binary_val_deriv_eq(
-stan::math::var exp_var, int base_exp_var1, 
-stan::math::var base_exp_var2, stan::math::var test_var, 
-int base_test_var1, stan::math::var base_test_var2) {
+    stan::math::var exp_var, int base_exp_var1, 
+    stan::math::var base_exp_var2, stan::math::var test_var, 
+    int base_test_var1, stan::math::var base_test_var2) {
   using stan::math::set_zero_all_adjoints;
   expect_val_eq(exp_var.val(), test_var.val());
   AVEC exp_y = createAVEC(base_exp_var2);

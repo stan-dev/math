@@ -14,9 +14,9 @@ namespace stan {
      * The example includes a constrained version of pow().
      */
     struct binary_foo_fun {
-      template <typename T1, typename T2>
-      static inline typename boost::math::tools::promote_args<T1, T2>::type
-      fun(const T1& x, const T2& y) {
+      template <typename T1, typename T2> static inline 
+      typename boost::math::tools::promote_args<T1, T2>::type fun(
+          const T1& x, const T2& y) {
         using std::pow;
         stan::math::check_less_or_equal("binary_foo_fun vectorize",
                                         "x", x, 10);

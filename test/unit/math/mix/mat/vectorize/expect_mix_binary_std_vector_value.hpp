@@ -10,8 +10,8 @@
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_mix_binary_std_vector_std_vector_eq(
-std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
-bool seed_one = 1, bool seed_two = 1) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
+    bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   for (size_t i = 0; i < template_v1.size(); ++i) {
     vector<input_t1> input_a1;
@@ -45,8 +45,8 @@ bool seed_one = 1, bool seed_two = 1) {
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq(
-std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
-bool seed_one = 1, bool seed_two = 1) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
+    bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   using stan::math::var;
 
@@ -94,8 +94,7 @@ bool seed_one = 1, bool seed_two = 1) {
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_mix_binary_std_vector_std_vector_all_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_mix_binary_std_vector_std_vector_eq<F, FV>(template_v1,
                                                     template_v2);
   expect_mix_binary_std_vector_std_vector_eq<F, FV>(template_v2,
@@ -104,8 +103,7 @@ void expect_mix_binary_std_vector_std_vector_all_eq(
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
     template_v1, template_v2);
   expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
@@ -132,18 +130,15 @@ void expect_mix_binary_std_vector_value() {
   expect_mix_binary_std_vector_std_vector_eq<F, FV>(var_template_v,
                                                     var_template_v, 0, 1);
 
-  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq<F, 
-                                                                       FV>(
-    var_template_v, int_template_v);
-  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq<F, 
-                                                                       FV>(
-    var_template_v, d_template_v);
-  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq<F, 
-                                                                       FV>(
-    var_template_v, var_template_v);
+  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, int_template_v);
+  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, d_template_v);
+  expect_mix_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, var_template_v);
   expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-    var_template_v, var_template_v, 1, 0);
+      var_template_v, var_template_v, 1, 0);
   expect_mix_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-    var_template_v, var_template_v, 0, 1);
+      var_template_v, var_template_v, 0, 1);
 }
 #endif

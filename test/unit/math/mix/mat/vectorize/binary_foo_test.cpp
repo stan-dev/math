@@ -65,7 +65,7 @@ struct binary_foo_test {
    * for y will be matched to these values.
    */
   static std::vector<double> valid_inputs1() {
-      return test::math::vector_builder<double>()
+    return test::math::vector_builder<double>()
       .add(0.7).add(2.3).add(3.5).add(0).add(0).add(0)
       .add(-0.3).add(-5.3).add(-3.7).build();
   }

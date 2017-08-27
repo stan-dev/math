@@ -15,7 +15,6 @@ void expect_mix_binary_matrix_matrix_eq(const matrix_t1& template_m1,
                                         const matrix_t2& template_m2,
                                         bool seed_one = 1,
                                         bool seed_two = 1) {
-
   typedef Eigen::Matrix<FV, matrix_t1::RowsAtCompileTime,
                         matrix_t1::ColsAtCompileTime> result_matrix_t;
 
@@ -66,9 +65,8 @@ void expect_mix_binary_matrix_matrix_eq(const matrix_t1& template_m1,
 
 template <typename F, typename FV, typename matrix_t1, typename matrix_t2>
 void expect_mix_binary_std_vector_matrix_std_vector_matrix_eq(
-  const matrix_t1& template_m1, const matrix_t2& template_m2,
-  bool seed_one = 1, bool seed_two = 1) {
-
+    const matrix_t1& template_m1, const matrix_t2& template_m2,
+    bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   typedef Eigen::Matrix<FV, matrix_t1::RowsAtCompileTime,
                         matrix_t1::ColsAtCompileTime> result_matrix_t;
@@ -106,54 +104,53 @@ void expect_mix_binary_std_vector_matrix_std_vector_matrix_eq(
       EXPECT_EQ(input_mvb2.size(), fa.size());
       EXPECT_EQ(input_mva2[i].size(), fa[i].size());
       EXPECT_EQ(input_mvb2[i].size(), fa[i].size());
-      expect_binary_val_deriv_eq(F::apply_base(input_mva1[i](j), 
+      expect_binary_val_deriv_eq(F::apply_base(input_mva1[i](j),
                                                input_mvb1[i](j)),
-                                 input_mva1[i](j), input_mvb1[i](j), 
-                                 fa[i](j), input_mva2[i](j), 
+                                 input_mva1[i](j), input_mvb1[i](j),
+                                 fa[i](j), input_mva2[i](j),
                                  input_mvb2[i](j));
     }
   }
 }
 
-template <typename F, typename FV, int R, int C> void
-expect_mix_binary_matrix_value(Eigen::Matrix<double, R, C> template_m) {
+template <typename F, typename FV, int R, int C>
+void expect_mix_binary_matrix_value(
+    Eigen::Matrix<double, R, C> template_m) {
   using std::vector;
 
   vector<int> int_template_v;
   vector<double> d_template_v;
-  vector<FV> fvar_template_v;
+  vector<FV> mix_template_v;
 
   typedef Eigen::Matrix<double, R, C> d_matrix_t;
-  typedef Eigen::Matrix<FV, R, C> fvar_matrix_t;
+  typedef Eigen::Matrix<FV, R, C> mix_matrix_t;
 
   d_matrix_t d_template_m;
-  fvar_matrix_t fvar_template_m;
+  mix_matrix_t mix_template_m;
 
   d_template_m = build_template_matrix(d_template_m,
                                        F::valid_inputs1().size(), 3);
-  fvar_template_m = build_template_matrix(fvar_template_m,
-                                          F::valid_inputs1().size(), 3);
+  mix_template_m = build_template_matrix(mix_template_m,
+                                         F::valid_inputs1().size(), 3);
 
-  expect_mix_binary_matrix_matrix_eq<F, FV>(fvar_template_m, d_template_m);
-  expect_mix_binary_matrix_matrix_eq<F, FV>(d_template_m, fvar_template_m);
-  expect_mix_binary_matrix_matrix_eq<F, FV>(fvar_template_m,
-                                            fvar_template_m, 1, 0);
-  expect_mix_binary_matrix_matrix_eq<F, FV>(fvar_template_m,
-                                            fvar_template_m, 0, 1);
-  expect_mix_binary_matrix_matrix_eq<F, FV>(fvar_template_m,
-                                            fvar_template_m, 1, 1);
+  expect_mix_binary_matrix_matrix_eq<F, FV>(mix_template_m, d_template_m);
+  expect_mix_binary_matrix_matrix_eq<F, FV>(d_template_m, mix_template_m);
+  expect_mix_binary_matrix_matrix_eq<F, FV>(mix_template_m,
+                                            mix_template_m, 1, 0);
+  expect_mix_binary_matrix_matrix_eq<F, FV>(mix_template_m,
+                                            mix_template_m, 0, 1);
+  expect_mix_binary_matrix_matrix_eq<F, FV>(mix_template_m,
+                                            mix_template_m, 1, 1);
 
   expect_mix_binary_std_vector_matrix_std_vector_matrix_eq<F, FV>(
-    fvar_template_m, d_template_m);
+      mix_template_m, d_template_m);
   expect_mix_binary_std_vector_matrix_std_vector_matrix_eq<F, FV>(
-    d_template_m, fvar_template_m);
+      d_template_m, mix_template_m);
   expect_mix_binary_std_vector_matrix_std_vector_matrix_eq<F, FV>(
-    fvar_template_m, fvar_template_m, 1, 0);
+      mix_template_m, mix_template_m, 1, 0);
   expect_mix_binary_std_vector_matrix_std_vector_matrix_eq<F, FV>(
-    fvar_template_m, fvar_template_m, 0, 1);
+      mix_template_m, mix_template_m, 0, 1);
   expect_mix_binary_std_vector_matrix_std_vector_matrix_eq<F, FV>(
-    fvar_template_m, fvar_template_m, 1, 1);
+      mix_template_m, mix_template_m, 1, 1);
 }
-
-
 #endif

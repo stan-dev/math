@@ -9,7 +9,7 @@
 
 template <typename F, typename input_t1, typename input_t2> void
 expect_rev_binary_std_vector_std_vector_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   using std::vector;
   using stan::math::var;
 
@@ -29,7 +29,7 @@ expect_rev_binary_std_vector_std_vector_eq(
 
 template <typename F, typename input_t1, typename input_t2> void
 expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
 
   using std::vector;
   using stan::math::var;
@@ -64,20 +64,18 @@ expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq(
 
 template <typename F, typename input_t1, typename input_t2> void
 expect_rev_binary_std_vector_std_vector_all_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_rev_binary_std_vector_std_vector_eq<F>(template_v1, template_v2);
   expect_rev_binary_std_vector_std_vector_eq<F>(template_v2, template_v1);
 }
 
 template <typename F, typename input_t1, typename input_t2> void
 expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
-  std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
-
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-    template_v1, template_v2);
+      template_v1, template_v2);
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-    template_v2, template_v1);
+      template_v2, template_v1);
 }
 
 template <typename F>
@@ -97,10 +95,10 @@ void expect_rev_binary_std_vector_value() {
                                                     var_template_v);
 
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_all_eq<F>(
-    var_template_v, int_template_v);
+      var_template_v, int_template_v);
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-    var_template_v, d_template_v);
+      var_template_v, d_template_v);
   expect_rev_binary_std_vector_std_vector_std_vector_std_vector_eq<F>(
-    var_template_v, var_template_v);
+      var_template_v, var_template_v);
 }
 #endif

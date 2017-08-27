@@ -5,13 +5,13 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-template <typename F, typename vector_t1, typename vector_t2> 
+template <typename F, typename vector_t1, typename vector_t2>
 void expect_binary_std_vector_std_vector_eq(
-std::vector<vector_t1> input_v1, std::vector<vector_t2> input_v2) {
+    std::vector<vector_t1> input_v1, std::vector<vector_t2> input_v2) {
   using std::vector;
 
-  vector<double> fc = F::template apply<vector<double> >
-                      (input_v1, input_v2);
+  vector<double> fc = F::template apply<vector<double> >(input_v1,
+                                                         input_v2);
   EXPECT_EQ(input_v1.size(), fc.size());
   EXPECT_EQ(input_v2.size(), fc.size());
   for (size_t i = 0; i < input_v1.size(); ++i) {
@@ -20,14 +20,14 @@ std::vector<vector_t1> input_v1, std::vector<vector_t2> input_v2) {
   }
 }
 
-template <typename F, typename vector_t1, typename vector_t2> 
+template <typename F, typename vector_t1, typename vector_t2>
 void expect_binary_std_vector_std_vector_std_vector_std_vector_eq(
-std::vector<std::vector<vector_t1> > input_v1, 
-std::vector<std::vector<vector_t2> > input_v2) {
+    std::vector<std::vector<vector_t1> > input_v1,
+    std::vector<std::vector<vector_t2> > input_v2) {
   using std::vector;
 
-  vector<vector<double> > fd = F::template apply<vector<vector<double> > >
-                               (input_v1, input_v2);
+  vector<vector<double> > fd = F::template apply<vector<vector<double> > >(
+                                   input_v1, input_v2);
   EXPECT_EQ(input_v1.size(), fd.size());
   EXPECT_EQ(input_v2.size(), fd.size());
   for (size_t i = 0; i < input_v1.size(); ++i) {
@@ -51,9 +51,9 @@ void expect_prim_binary_std_vector_value() {
 
   expect_binary_std_vector_std_vector_eq<F>(int_valid_inputs1,
                                             valid_inputs2);
-  expect_binary_std_vector_std_vector_eq<F>(valid_inputs1, 
+  expect_binary_std_vector_std_vector_eq<F>(valid_inputs1,
                                             int_valid_inputs2);
-  expect_binary_std_vector_std_vector_eq<F>(int_valid_inputs1, 
+  expect_binary_std_vector_std_vector_eq<F>(int_valid_inputs1,
                                             int_valid_inputs2);
   expect_binary_std_vector_std_vector_eq<F>(valid_inputs1, valid_inputs2);
 

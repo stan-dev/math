@@ -8,8 +8,8 @@
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_fwd_binary_std_vector_std_vector_eq(
-std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
-bool seed_one = 1, bool seed_two = 1) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
+    bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   for (size_t i = 0; i < template_v1.size(); ++i) {
     vector<input_t1> input_a;
@@ -31,8 +31,8 @@ bool seed_one = 1, bool seed_two = 1) {
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_eq(
-std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
-bool seed_one = 1, bool seed_two = 1) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2,
+    bool seed_one = 1, bool seed_two = 1) {
   using std::vector;
   using stan::math::var;
 
@@ -54,33 +54,33 @@ bool seed_one = 1, bool seed_two = 1) {
           input_v2.push_back(build_binary_vector2<F>(template_v2));
       }
       vector<vector<FV> > fa = F::template apply<vector<vector<FV> > >(
-      input_v1, input_v2);
+          input_v1, input_v2);
       EXPECT_EQ(input_v1.size(), fa.size());
       EXPECT_EQ(input_v2.size(), fa.size());
       EXPECT_EQ(input_v1[i].size(), fa[i].size());
       EXPECT_EQ(input_v2[i].size(), fa[i].size());
       expect_val_deriv_eq(F::apply_base(input_v1[i][j], input_v2[i][j]),
-      fa[i][j]);
+                          fa[i][j]);
     }
   }
 }
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_fwd_binary_std_vector_std_vector_all_eq(
-std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
+    std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_fwd_binary_std_vector_std_vector_eq<F, FV>(template_v1,
-  template_v2);
+                                                    template_v2);
   expect_fwd_binary_std_vector_std_vector_eq<F, FV>(template_v2,
-  template_v1);
+                                                    template_v1);
 }
 
 template <typename F, typename FV, typename input_t1, typename input_t2>
 void expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq(
 std::vector<input_t1> template_v1, std::vector<input_t2> template_v2) {
   expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-  template_v1, template_v2);
+      template_v1, template_v2);
   expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-  template_v2, template_v1);
+      template_v2, template_v1);
 }
 
 template <typename F, typename FV>
@@ -93,25 +93,25 @@ void expect_fwd_binary_std_vector_value() {
   vector<FV> var_template_v;
 
   expect_fwd_binary_std_vector_std_vector_all_eq<F, FV>(var_template_v,
-  int_template_v);
+                                                        int_template_v);
   expect_fwd_binary_std_vector_std_vector_all_eq<F, FV>(var_template_v,
-  d_template_v);
+                                                        d_template_v);
   expect_fwd_binary_std_vector_std_vector_all_eq<F, FV>(var_template_v,
-  var_template_v);
+                                                        var_template_v);
   expect_fwd_binary_std_vector_std_vector_eq<F, FV>(var_template_v,
-  var_template_v, 1, 0);
+                                                    var_template_v, 1, 0);
   expect_fwd_binary_std_vector_std_vector_eq<F, FV>(var_template_v,
-  var_template_v, 0, 1);
+                                                    var_template_v, 0, 1);
 
-  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq<
-  F, FV>(var_template_v, int_template_v);
-  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq<
-  F, FV>(var_template_v, d_template_v);
-  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq<
-  F, FV>(var_template_v, var_template_v);
+  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, int_template_v);
+  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, d_template_v);
+  expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_all_eq
+      <F, FV>(var_template_v, var_template_v);
   expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-  var_template_v, var_template_v, 1, 0);
+      var_template_v, var_template_v, 1, 0);
   expect_fwd_binary_std_vector_std_vector_std_vector_std_vector_eq<F, FV>(
-  var_template_v, var_template_v, 0, 1);
+      var_template_v, var_template_v, 0, 1);
 }
 #endif

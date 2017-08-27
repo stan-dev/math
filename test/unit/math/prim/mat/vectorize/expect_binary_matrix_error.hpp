@@ -59,33 +59,32 @@ void expect_binary_matrix_size_error(matrix_t template_tm,
   }
 }
 
-template <typename F, typename result_t, typename T1, 
+template <typename F, typename result_t, typename T1,
           typename T2, int R, int C>
 void expect_binary_matrix_err_throw(
-  Eigen::Matrix<T1, R, C> template_m1, 
-  Eigen::Matrix<T2, R, C> template_m2,
-  std::vector<double> invalid_inputs1,
-  std::vector<double> invalid_inputs2) {
-
+    Eigen::Matrix<T1, R, C> template_m1,
+    Eigen::Matrix<T2, R, C> template_m2,
+    std::vector<double> invalid_inputs1,
+    std::vector<double> invalid_inputs2) {
   typedef typename Eigen::Matrix<T1, R, C> matrix_t1;
   typedef typename Eigen::Matrix<T2, R, C> matrix_t2;
   typedef typename Eigen::Matrix<result_t, R, C> result_tm;
 
   for (size_t i = 0; i < invalid_inputs1.size(); ++i) {
-    matrix_t1 a = Eigen::Matrix<T1, R, C>::Constant(
-                    template_m1.rows(), template_m1.cols(), 
-                    invalid_inputs1[i]); 
-    matrix_t2 b = Eigen::Matrix<T2, R, C>::Constant(
-                    template_m2.rows(), template_m2.cols(), 
-                    invalid_inputs2[i]); 
+    matrix_t1 a = Eigen::Matrix<T1, R, C>::Constant(template_m1.rows(),
+                                                    template_m1.cols(),
+                                                    invalid_inputs1[i]);
+    matrix_t2 b = Eigen::Matrix<T2, R, C>::Constant(template_m2.rows(),
+                                                    template_m2.cols(),
+                                                    invalid_inputs2[i]);
     EXPECT_THROW(F::template apply<result_tm>(a, b), std::domain_error);
 
-    matrix_t2 c = Eigen::Matrix<T2, R, C>::Constant(
-                    template_m2.rows(), template_m2.cols(), 
-                    invalid_inputs1[i]); 
-    matrix_t1 d = Eigen::Matrix<T1, R, C>::Constant(
-                    template_m1.rows(), template_m1.cols(), 
-                    invalid_inputs2[i]); 
+    matrix_t2 c = Eigen::Matrix<T2, R, C>::Constant(template_m2.rows(),
+                                                    template_m2.cols(),
+                                                    invalid_inputs1[i]);
+    matrix_t1 d = Eigen::Matrix<T1, R, C>::Constant(template_m1.rows(),
+                                                    template_m1.cols(),
+                                                    invalid_inputs2[i]);
     EXPECT_THROW(F::template apply<result_tm>(c, d), std::domain_error);
 
     if (template_m1.rows() > 1 && template_m1.cols() > 1) {
@@ -99,14 +98,13 @@ void expect_binary_matrix_err_throw(
   }
 }
 
-template <typename F, typename result_t, typename T1, 
+template <typename F, typename result_t, typename T1,
           typename T2, int R, int C>
 void expect_binary_std_vector_matrix_err_throw(
-  Eigen::Matrix<T1, R, C> template_m1, 
-  Eigen::Matrix<T2, R, C> template_m2,
-  std::vector<double> invalid_inputs1,
-  std::vector<double> invalid_inputs2) {
-
+    Eigen::Matrix<T1, R, C> template_m1,
+    Eigen::Matrix<T2, R, C> template_m2,
+    std::vector<double> invalid_inputs1,
+    std::vector<double> invalid_inputs2) {
   using std::vector;
   typedef typename Eigen::Matrix<T1, R, C> matrix_t1;
   typedef typename Eigen::Matrix<T2, R, C> matrix_t2;
@@ -121,36 +119,35 @@ void expect_binary_std_vector_matrix_err_throw(
     f.clear();
     g.clear();
     h.clear();
-    matrix_t1 a = Eigen::Matrix<T1, R, C>::Constant(
-                    template_m1.rows(), template_m1.cols(), 
-                    invalid_inputs1[i]); 
-    matrix_t2 b = Eigen::Matrix<T2, R, C>::Constant(
-                    template_m2.rows(), template_m2.cols(), 
-                    invalid_inputs2[i]); 
-    matrix_t2 c = Eigen::Matrix<T2, R, C>::Constant(
-                    template_m2.rows(), template_m2.cols(), 
-                    invalid_inputs1[i]); 
-    matrix_t1 d = Eigen::Matrix<T1, R, C>::Constant(
-                    template_m1.rows(), template_m1.cols(), 
-                    invalid_inputs2[i]); 
+    matrix_t1 a = Eigen::Matrix<T1, R, C>::Constant(template_m1.rows(),
+                                                    template_m1.cols(),
+                                                    invalid_inputs1[i]);
+    matrix_t2 b = Eigen::Matrix<T2, R, C>::Constant(template_m2.rows(),
+                                                    template_m2.cols(),
+                                                    invalid_inputs2[i]);
+    matrix_t2 c = Eigen::Matrix<T2, R, C>::Constant(template_m2.rows(),
+                                                    template_m2.cols(),
+                                                    invalid_inputs1[i]);
+    matrix_t1 d = Eigen::Matrix<T1, R, C>::Constant(template_m1.rows(),
+                                                    template_m1.cols(),
+                                                    invalid_inputs2[i]);
     for (size_t j = 0; j < 2; ++j) {
       e.push_back(a);
       f.push_back(b);
       g.push_back(c);
       h.push_back(d);
     }
-    EXPECT_THROW(F::template apply<vector<result_tm> >(e, f), 
+    EXPECT_THROW(F::template apply<vector<result_tm> >(e, f),
                  std::domain_error);
-    EXPECT_THROW(F::template apply<vector<result_tm> >(g, h), 
+    EXPECT_THROW(F::template apply<vector<result_tm> >(g, h),
                  std::domain_error);
   }
 }
 
 template <typename F, typename T, int R, int C>
 void expect_binary_matrix_value_error(
-  Eigen::Matrix<T, R, C> template_tm, 
-  Eigen::Matrix<double, R, C> template_dm) {
-
+    Eigen::Matrix<T, R, C> template_tm,
+    Eigen::Matrix<double, R, C> template_dm) {
   using std::vector;
 
   vector<double> invalid_inputs1 = F::invalid_inputs1();
@@ -168,9 +165,9 @@ void expect_binary_matrix_value_error(
                                               invalid_inputs2);
 
   expect_binary_std_vector_matrix_err_throw<F, T>(
-    template_tm, template_dm, invalid_inputs1, invalid_inputs2);
+      template_tm, template_dm, invalid_inputs1, invalid_inputs2);
   expect_binary_std_vector_matrix_err_throw<F, T>(
-    template_tm, template_tm, invalid_inputs1, invalid_inputs2);
+      template_tm, template_tm, invalid_inputs1, invalid_inputs2);
 }
 
 
