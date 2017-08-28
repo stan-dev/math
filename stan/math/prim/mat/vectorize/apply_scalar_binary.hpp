@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_BINARY_SCALAR_HPP
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_BINARY_SCALAR_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <Eigen/Core>
