@@ -65,8 +65,8 @@ namespace math {
      * Return type, which is calculated recursively as a matrix
      * of the return type of the contained types T1 and T2.
      */
-    typedef typename Eigen::Matrix<typename apply_scalar_binary<F, T1, T2>
-                                       ::return_t, R1, C1> return_t;
+    typedef Eigen::Matrix<typename apply_scalar_binary<F, T1, T2>
+                              ::return_t, R1, C1> return_t;
 
     /**
      * Return the result of applying the function defined by the
@@ -95,17 +95,17 @@ namespace math {
      * Return type, which is calculated recursively as an Eigen::Matrix
      * of the return type of the contained types T1 and T2.
      */
-    typedef typename Eigen::Matrix<typename apply_scalar_binary<F, T1, T2>
-                                       ::return_t, R1, C1> return_t;
+    typedef Eigen::Matrix<typename apply_scalar_binary<F, T1, T2>
+                              ::return_t, R1, C1> return_t;
 
     /**
      * Apply the function specified by F elementwise to the
      * specified argument. This is defined recursively through this
-     * class by passing the arguments as matrices to the Eigen::Matrix
-     * specialization.
+     * class by passing the arguments as matrices to the 
+     * <code>Eigen::Matrix</code> specialization.
      *
-     * @param x Eigen::Block argument container.
-     * @param y Eigen::Block argument container.
+     * @param x <code>Eigen::Block</code> argument container.
+     * @param y <code>Eigen::Block argument</code> container.
      * @return Elementwise application of F to the elements of the
      * containers.
      */
