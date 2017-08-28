@@ -20,22 +20,15 @@ namespace stan {
 
     /**
      * The log of the normal density for the specified scalar(s) given
-     * the specified mean(s) and deviation(s). y, mu, or sigma can
-     * each be either a scalar or a vector. Any vector inputs
-     * must be the same length.
+     * a mean of 0 and a standard deviation of 1. y can be either
+     * a scalar or a vector.
      *
      * <p>The result log probability is defined to be the sum of the
-     * log probabilities for each observation/mean/deviation triple.
+     * log probabilities for each observation.
      * @tparam T_y Underlying type of scalar in sequence.
-     * @tparam T_loc Type of location parameter.
-     * @tparam T_scale Type of scale parameter.
      * @param y (Sequence of) scalar(s).
-     * @param mu (Sequence of) location parameter(s)
-     * for the normal distribution.
-     * @param sigma (Sequence of) scale parameters for the normal
-     * distribution.
      * @return The log of the product of the densities.
-     * @throw std::domain_error if the scale is not positive.
+     * @throw std::domain_error if any scalar is nan.
      */
     template <bool propto, typename T_y>
     typename return_type<T_y>::type
