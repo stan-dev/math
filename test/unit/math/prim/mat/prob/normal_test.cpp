@@ -3,6 +3,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
+#include <limits>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -12,7 +14,7 @@ using Eigen::Matrix;
  * as an argument to another function (and I'm not sure it's possible to easily
  * pass a templated function as an argument)
  */
-struct NormalRNGWrapper {
+struct normal_rng_wrapper {
   template<typename T1, typename T2, typename T3>
   auto operator()(const T1& mean, const T2& sd, T3& rng) const {
     return stan::math::normal_rng(mean, sd, rng);
@@ -23,7 +25,7 @@ struct NormalRNGWrapper {
  * This function builds the quantiles that we will supply to
  * assert_matches_quantiles to test the normal_rng
  */
-std::vector<double> BuildQuantiles(int N, double mu, double sigma) {
+std::vector<double> build_quantiles(int N, double mu, double sigma) {
   std::vector<double> quantiles;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(mu, sigma);
@@ -35,7 +37,7 @@ std::vector<double> BuildQuantiles(int N, double mu, double sigma) {
   quantiles.push_back(std::numeric_limits<double>::max());
 
   return quantiles;
-};
+}
 
 TEST(ProbDistributionsNormal, errorCheck) {
   /*
@@ -45,9 +47,9 @@ TEST(ProbDistributionsNormal, errorCheck) {
    *
    * It does so for all possible combinations of calling arguments.
    */
-  CheckDistThrowsAllTypes(NormalRNGWrapper{},
-                          [](double mean) { return true; },
-                          [](double sd) { return sd > 0.0; });
+  check_dist_throws_all_types(normal_rng_wrapper{},
+                              [](double mean) { return true; },
+                              [](double sd) { return sd > 0.0; });
 }
 
 TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
@@ -61,7 +63,7 @@ TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
    *
    * It does so for all possible combinations of calling arguments.
    */
-  CheckQuantilesAllTypes(N, M, NormalRNGWrapper{}, BuildQuantiles,
-                         [](double mean) { return true; },
-                         [](double sd) { return sd > 0.0; });
+  check_quantiles_all_types(N, M, normal_rng_wrapper{}, build_quantiles,
+                            [](double mean) { return true; },
+                            [](double sd) { return sd > 0.0; });
 }
