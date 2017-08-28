@@ -1,3 +1,6 @@
+#ifndef TEST_UNIT_MATH_PRIM_MAT_PROB_VECTOR_RNG_TEST_HELPER_HPP
+#define TEST_UNIT_MATH_PRIM_MAT_PROB_VECTOR_RNG_TEST_HELPER_HPP
+
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -467,3 +470,6 @@ void CheckQuantilesAllTypes(int N, int M,
   CheckQuantiles<RowVectorXd, RowVectorXd>
     (N, M, generate_samples, generate_quantiles, check_p1, check_p2);
 }
+
+#endif
+
