@@ -34,12 +34,12 @@ namespace stan {
      * @throw std::domain_error if theta is infinite.
      * @throw std::invalid_argument if container sizes mismatch.
      */
-    template <bool propto, typename T_n, typename T_prob> // propto: false means we care about the normalisation constant.
+    template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
       static const std::string function = "bernoulli_logit_lpmf";
       typedef typename stan::partials_return_type<T_n, T_prob>::type
-        T_partials_return; // One level down: var-> double
+        T_partials_return;
 
       using stan::is_constant_struct;
       using std::exp;
@@ -47,9 +47,9 @@ namespace stan {
       if (!(stan::length(n) && stan::length(theta)))
         return 0.0;
 
-      T_partials_return logp(0.0); // This initialises log probability to 0.0.
-//some error checking next
-      check_bounded(function, "n", n, 0, 1);  // Right, so n is supposed to hold 0s and 1s (it is our usual y)
+      T_partials_return logp(0.0);
+
+      check_bounded(function, "n", n, 0, 1);
       check_not_nan(function, "Logit transformed probability parameter", theta);
       check_consistent_sizes(function,
                              "Random variable", n,
@@ -58,16 +58,16 @@ namespace stan {
       if (!include_summand<propto, T_prob>::value)
         return 0.0;
 
-      scalar_seq_view<T_n> n_vec(n); //scalar seq view takes scalar or sequence and makes it look like a sequence
+      scalar_seq_view<T_n> n_vec(n);
       scalar_seq_view<T_prob> theta_vec(theta);
       size_t N = max_size(n, theta);
-      operands_and_partials<T_prob> ops_partials(theta); // operands_and_partials stores the partial derivatives and creates the autodiff node, the var to return
+      operands_and_partials<T_prob> ops_partials(theta);
 
       for (size_t n = 0; n < N; n++) {
-        const int n_int = value_of(n_vec[n]); // value_of gives value of an autodiff variable
+        const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        const int sign = 2 * n_int - 1; // maps 0,1 to -1,1
+        const int sign = 2 * n_int - 1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
 
@@ -80,10 +80,10 @@ namespace stan {
         else
           logp -= log1p(exp_m_ntheta);
 
-        if (!is_constant_struct<T_prob>::value) {  //is_constant_struct figures out if we just passed in a double (or int), rather than a var
-          static const double cutoff = 20.0; // Presumably, we can delete this line.
+        if (!is_constant_struct<T_prob>::value) {
+          static const double cutoff = 20.0;
           if (ntheta > cutoff)
-            ops_partials.edge1_.partials_[n] -= exp_m_ntheta; // edge1 has the partial derivatives for the first argument (operand); it always returns a list
+            ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
           else if (ntheta < -cutoff)
             ops_partials.edge1_.partials_[n] += sign;
           else
@@ -91,7 +91,7 @@ namespace stan {
               / (exp_m_ntheta + 1);
         }
       }
-      return ops_partials.build(logp); // ops_partials.build returns a fake autodiff variable (which contains the analytic derivatives) if we start from autodiff 
+      return ops_partials.build(logp);
     }
 
     template <typename T_n,

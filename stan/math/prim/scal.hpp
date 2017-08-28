@@ -178,7 +178,6 @@
 #include <stan/math/prim/scal/prob/bernoulli_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_log.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_lpmf.hpp>
-#include <stan/math/prim/scal/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_logit_rng.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_lpmf.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_rng.hpp>
