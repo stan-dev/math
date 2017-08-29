@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/prim/mat/vectorize/apply_scalar_binary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_types.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_binary_values.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_binary_errors.hpp>

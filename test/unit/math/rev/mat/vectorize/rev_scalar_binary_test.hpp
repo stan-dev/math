@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_REV_SCALAR_BINARY_TEST_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/mat/vectorize/apply_scalar_binary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_binary_types.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_rev_binary_values.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_rev_binary_errors.hpp>
