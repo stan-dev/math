@@ -1,66 +1,22 @@
-#ifndef STAN_MATH_PRIM_ARR_FUN_APPEND_ARRAY_HPP
-#define STAN_MATH_PRIM_ARR_FUN_APPEND_ARRAY_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
+#define STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/mat/fun/dims.hpp>
+#include <stan/math/prim/mat/fun/resize.hpp>
+#include <stan/math/prim/mat/fun/assign.hpp>
+#include <stan/math/prim/mat/meta/append_return_type.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
 namespace stan {
   namespace math {
-
-    /**
-     * Return the concatenation of two specified integer vectors in the
-     *   order of the arguments.
-     *
-     * @param x First vector
-     * @param y Second vector
-     * @return A vector of x and y concatenated together (in that order)
-     */
-    inline std::vector<int>
-    append_array(const std::vector<int>& x, const std::vector<int>& y) {
-      std::vector<int> z;
-      z.reserve(x.size() + y.size());
-      z.insert(z.end(), x.begin(), x.end());
-      z.insert(z.end(), y.begin(), y.end());
-      return z;
-    }
-
-    /**
-     * Return the concatenation of two vectors containing Matrices
-     *   of the same type in the order of the arguments.
-     *
-     * @tparam T1 Type of element in Matrices in first vector
-     * @tparam T2 Type of element in Matrices in second vector
-     * @tparam R Row specification of matrices
-     * @tparam C Column specification of matrices
-     * @param x First vector
-     * @param y Second vector
-     * @return A vector of x and y concatenated together (in that order)
-     */
-    template <typename T1, typename T2, int R, int C>
-    inline std::vector<Eigen::Matrix<typename return_type<T1, T2>::type, R, C> >
-    append_array(const std::vector<Eigen::Matrix<T1, R, C> >& x,
-                 const std::vector<Eigen::Matrix<T2, R, C> >& y) {
-      if (!x.empty() && !y.empty()) {
-        check_matching_dims("append_array",
-                            "x[1]",
-                            x.front(),
-                            "y[1]",
-                            y.front());
-      }
-
-      std::vector<Eigen::Matrix<typename return_type<T1, T2>::type, R, C> > z;
-      z.reserve(x.size() + y.size());
-      for (size_t i = 0; i < x.size(); i++)
-        z.push_back(x[i].template cast<typename return_type<T1, T2>::type>());
-      for (size_t i = 0; i < y.size(); i++)
-        z.push_back(y[i].template cast<typename return_type<T1, T2>::type>());
-      return z;
-    }
-
     /**
      * Return the concatenation of two specified vectors in the order of
      *   the arguments.
+     *
+     * The return type is computed with append_return_type
      *
      * @tparam T1 Scalar type of first vector
      * @tparam T2 Scalar type of second vector
@@ -68,10 +24,53 @@ namespace stan {
      * @param y Second vector
      * @return A vector of x and y concatenated together (in that order)
      */
-    template <typename T1, typename T2>
-    inline typename std::vector<typename return_type<T1, T2>::type>
+    template <typename T1, typename T2 >
+    inline typename append_return_type<std::vector<T1>, std::vector<T2> >::type
     append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
-      std::vector<typename return_type<T1, T2>::type> z;
+      typename append_return_type<std::vector<T1>, std::vector<T2> >::type z;
+      std::vector<int> zdims;
+      if (x.empty()) {
+        zdims = dims(y);
+        zdims[0] += x.size();
+      } else {
+        zdims = dims(x);
+        zdims[0] += y.size();
+      }
+      resize(z, zdims);
+      for (size_t i = 0; i < x.size(); ++i)
+        assign(z[i], x[i]);
+      for (size_t i = 0; i < y.size(); ++i)
+        assign(z[i + x.size()], y[i]);
+      return z;
+    }
+
+    /**
+     * Return the concatenation of two specified vectors in the order of
+     *   the arguments.
+     *
+     * @tparam T1 Type of vectors
+     * @param x First vector
+     * @param y Second vector
+     * @return A vector of x and y concatenated together (in that order)
+     */
+    template <typename T1>
+    inline std::vector<T1>
+    append_array(const std::vector<T1>& x, const std::vector<T1>& y) {
+      std::vector<T1> z;
+
+      if (!x.empty() && !y.empty()) {
+        std::vector<int> xdims = dims(x),
+          ydims = dims(y);
+        check_matching_sizes("append_array",
+                             "dimension of x", xdims,
+                             "dimension of y", ydims);
+        for (size_t i = 1; i < xdims.size(); ++i) {
+          check_size_match("append_array",
+                           "shape of x", xdims[i],
+                           "shape of y", ydims[i]);
+        }
+      }
+
       z.reserve(x.size() + y.size());
       z.insert(z.end(), x.begin(), x.end());
       z.insert(z.end(), y.begin(), y.end());

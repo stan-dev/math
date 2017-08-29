@@ -6,49 +6,32 @@
 
 namespace stan {
   namespace math {
-
     namespace {
-
-      template <typename T>
-      void resize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x,
-                  const std::vector<size_t>& dims,
-                  size_t pos) {
-        x.resize(dims[pos], dims[pos + 1]);
-      }
-
-      template <typename T>
-      void resize(Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                  const std::vector<size_t>& dims,
-                  size_t pos) {
-        x.resize(dims[pos]);
-      }
-
-      template <typename T>
-      void resize(Eigen::Matrix<T, 1, Eigen::Dynamic>& x,
-                  const std::vector<size_t>& dims,
-                  size_t pos) {
-        x.resize(dims[pos]);
+      template <typename T, int R, int C>
+      void resize(Eigen::Matrix<T, R, C>& x,
+                  const std::vector<int>& dims,
+                  int pos) {
+        x.resize(dims[pos], dims[pos+1]);
       }
 
       template <typename T>
       void resize(T /*x*/,
-                  const std::vector<size_t>& /*dims*/,
-                  size_t /*pos*/) {
+                  const std::vector<int>& /*dims*/,
+                  int /*pos*/) {
         // no-op
       }
 
       template <typename T>
       void resize(std::vector<T>& x,
-                  const std::vector<size_t>& dims,
-                  size_t pos) {
+                  const std::vector<int>& dims,
+                  int pos) {
         x.resize(dims[pos]);
         ++pos;
-        if (pos >= dims.size())
+        if (pos >= static_cast<int>(dims.size()))
           return;  // skips lowest loop to scalar
         for (size_t i = 0; i < x.size(); ++i)
           resize(x[i], dims, pos);
       }
-
     }
 
     /**
@@ -61,7 +44,7 @@ namespace stan {
      * @tparam T Type of object being resized.
      */
     template <typename T>
-    inline void resize(T& x, std::vector<size_t> dims) {
+    inline void resize(T& x, std::vector<int> dims) {
       resize(x, dims, 0U);
     }
 
