@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
