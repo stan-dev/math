@@ -48,12 +48,14 @@ namespace stan {
 	
 
 	// The overloaded method addtorow is a bit of an ugly hack to satisfy the type checker. Hopefully, we can come up with something better.
-	void addtorow(int n, internal::empty_broadcast_array<double> x, Matrix<double, 1, Dynamic> y)
+	void addtorow(int n, internal::empty_broadcast_array<double> x, Matrix<double, 1,Dynamic > y)
 	{
+		std::cout << "bad";
 	}
 	void addtorow(int n, Matrix<double, Dynamic, Dynamic> x, Matrix<double, 1, Dynamic> y)
 	{
 		x.row(n) += y;
+		std::cout << "good";
 	}
 	 
     template <bool propto, typename T_n, typename T_x, typename T_beta, typename T_alpha>
@@ -100,7 +102,7 @@ namespace stan {
 			x_dbl(j,i) = value_of(x(j,i));
 		}
 	  }
-      for (size_t n = 0; n < N; n++) {
+      for (size_t n = 0; n < N; n++) { // is there a point in vectorising this loop?
         const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = (x_dbl.row(n)* beta_dbl)[0] + value_of(alpha_vec[n]); 
 
@@ -132,7 +134,7 @@ namespace stan {
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
           if ( !constant_beta){
-            for (size_t m = 0; m < M; m++)
+            for (size_t m = 0; m < M; m++) // vectorise this loop?
 			{
 				ops_partials.edge2_.partials_[m] += theta_derivative * x_dbl(n,m);
 			}		
