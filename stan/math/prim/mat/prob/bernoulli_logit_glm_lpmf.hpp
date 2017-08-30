@@ -48,19 +48,10 @@ namespace stan {
 	
 
 	// The overloaded method addtorow is a bit of an ugly hack to satisfy the type checker. Hopefully, we can come up with something better.
-	void addtorow(int n, internal::empty_broadcast_array<double> x, Matrix<double, 1,Dynamic > y)
-	{
-		std::cout << "bad";
-	}
-	void addtorow(int n, Matrix<double, Dynamic, Dynamic> x, Matrix<double, 1, Dynamic> y)
-	{
-		x.row(n) += y;
-		std::cout << "good";
-	}
 	 
     template <bool propto, typename T_n, typename T_x, typename T_beta, typename T_alpha>
     typename return_type<T_x, T_beta, T_alpha>::type
-    bernoulli_logit_glm_lpmf(const T_n& n, T_x& x, const T_beta& beta, const T_alpha& alpha) {
+    bernoulli_logit_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta, const T_alpha& alpha) {
       static const std::string function = "bernoulli_logit_glm_lpmf";
       typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha>::type
         T_partials_return;
@@ -140,7 +131,7 @@ namespace stan {
 			}		
 		  }
 		  if ( !constant_x){
-			addtorow(n, ops_partials.edge1_.partials_, theta_derivative * beta_dbl.transpose());
+			ops_partials.edge1_.partials_.row(n) += theta_derivative * beta_dbl.transpose();
 		  }
 		  if ( !constant_alpha){
             ops_partials.edge3_.partials_[n] += theta_derivative;	

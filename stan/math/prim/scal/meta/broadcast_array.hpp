@@ -26,6 +26,9 @@ namespace stan {
         T& operator[] (int /*i*/) {
           throw std::logic_error("Don't do this");
         }
+        Eigen::Matrix<T, 1, Eigen::Dynamic>& row (int /*i*/) {
+          throw std::logic_error("Don't do this");
+        }
       };
     }
   }
