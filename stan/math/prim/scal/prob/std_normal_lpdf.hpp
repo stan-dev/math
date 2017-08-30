@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -30,8 +31,7 @@ namespace stan {
      * @throw std::domain_error if any scalar is nan.
      */
     template <bool propto, typename T_y>
-    typename return_type<T_y>::type
-    std_normal_lpdf(const T_y& y) {
+    typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
       static const std::string function = "std_normal_lpdf";
       typedef typename stan::partials_return_type<T_y>::type
         T_partials_return;
@@ -69,8 +69,7 @@ namespace stan {
     }
 
     template <typename T_y> inline
-    typename return_type<T_y>::type
-    std_normal_lpdf(const T_y& y) {
+    typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
       return std_normal_lpdf<false>(y);
     }
 
