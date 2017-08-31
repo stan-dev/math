@@ -36,11 +36,11 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
                   (stan::math::bernoulli_logit_glm_lpmf<false,  Matrix<int,Dynamic,1>>(n, x, beta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<Matrix<int,Dynamic,1> >(n, theta)),
                   (stan::math::bernoulli_logit_glm_lpmf< Matrix<int,Dynamic,1> >(n, x, beta, alpha)));
-				  
+          
 }
 
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
-	
+  
   
   Matrix<int,Dynamic,1> n(3,1);
   n << 1, 0, 1;
@@ -78,24 +78,24 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   EXPECT_FLOAT_EQ(lp.val(),
                   lp2.val());
   for (size_t i = 0; i < 2; i++) {
-	  EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
-  }	  
+    EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
+  }    
   for (size_t j = 0; j < 3; j++) {
-	  EXPECT_FLOAT_EQ(alpha[j].adj(), alpha2[j].adj());
-	  for (size_t i = 0; i < 2; i++) {
-		  EXPECT_FLOAT_EQ(x(j,i).adj(), x2(j,i).adj());
-	  }
-  }			  
+    EXPECT_FLOAT_EQ(alpha[j].adj(), alpha2[j].adj());
+    for (size_t i = 0; i < 2; i++) {
+      EXPECT_FLOAT_EQ(x(j,i).adj(), x2(j,i).adj());
+    }
+  }        
 }
 
 
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   int R = 3000;
   int C = 20;  
-	
+  
   Matrix<int,Dynamic,1> n(R,1);
   for (size_t i = 0; i < R; i++) {
-	  n[i] = rand()%2;
+    n[i] = rand()%2;
   }
   Matrix<double,Dynamic,Dynamic> xreal =  Eigen::MatrixXd::Random(R,C);
   Matrix<double,Dynamic,1> betareal =  Eigen::MatrixXd::Random(C,1);
@@ -117,6 +117,6 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   lp2.grad();
   TimeVar t4 = timeNow();
   
-  std::cout << "Existing Primitives:" << std::endl << duration(t2-t1) << std::endl  << "New Primitives:" << std::endl << duration(t4-t3) << std::endl;  	
+  std::cout << "Existing Primitives:" << std::endl << duration(t2-t1) << std::endl  << "New Primitives:" << std::endl << duration(t4-t3) << std::endl;    
 }
 

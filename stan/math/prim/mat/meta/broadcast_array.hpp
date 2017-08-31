@@ -1,9 +1,9 @@
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <Eigen/Dense>
+#include <stdexcept>
+
 #ifndef STAN_MATH_PRIM_MAT_META_BROADCAST_ARRAY_HPP
 #define STAN_MATH_PRIM_MAT_META_BROADCAST_ARRAY_HPP
-
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stdexcept>
-#include <Eigen/Dense>
 
 namespace stan {
   namespace math {
