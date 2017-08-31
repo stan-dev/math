@@ -81,6 +81,18 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/mix/arr test/unit/math/mix/core"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/mix/mat/fun
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/mix/scal test/unit/math/mix/mat/functor test/unit/math/mix/mat/meta test/unit/math/mix/mat/prob test/unit/math/mix/mat/util test/unit/math/mix/mat/vectorize"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
 

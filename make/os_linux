@@ -9,9 +9,6 @@
 ifeq (g++,$(CC_TYPE))
   LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
-  ifeq (4.8,$(CC_MAJOR).$(CC_MINOR))
-    CFLAGS += -Wno-unused-local-typedefs
-  endif
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
@@ -23,7 +20,7 @@ ifeq (mingw32-g++,$(CC_TYPE))
 endif
 ifeq (clang++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
-  CFLAGS += -Wno-unused-function
-  CFLAGS += -Wno-uninitialized
+  CXXFLAGS += -Wno-unused-function
+  CXXFLAGS += -Wno-uninitialized
 endif
 
