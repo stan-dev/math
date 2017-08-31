@@ -72,7 +72,7 @@ namespace stan {
       //check_consistent_sizes(function,
       //                       "Random variable", n,
       //                       "Data matrix", x); // would this work?
-	  //			!!! add one more check to see that x is compatible with beta
+	  //			           maybe add one more check to see that x is compatible with beta?
 
       if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
         return 0.0;
@@ -80,7 +80,7 @@ namespace stan {
       scalar_seq_view<T_n> n_vec(n);
       scalar_seq_view<T_beta> beta_vec(beta);
       scalar_seq_view<T_alpha> alpha_vec(alpha);
-      const size_t N = max_size(n, alpha); // do we want to check anything about x here? and in the next line?
+      const size_t N = max_size(n, alpha); // do we also want to check anything about x here? and in the next line?
 	  const size_t M = beta.size();
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
 	  Matrix<double, Dynamic, 1> beta_dbl(M,1);
@@ -88,7 +88,7 @@ namespace stan {
 	  for (size_t m = 0; m < M; m++) {  
 		beta_dbl[m] = value_of(beta_vec[m]);
 	  }
-      for (size_t n = 0; n < N; n++) { // is there a point in vectorising this loop?
+      for (size_t n = 0; n < N; n++) { // could we vectorise this loop?
 		for (size_t m = 0; m < M; m++) {
 			x_dbl(n,m) = value_of(x(n,m));
 		}
@@ -123,7 +123,7 @@ namespace stan {
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
           if ( !constant_beta){
-			for (size_t m = 0; m < M; m++) // vectorise this loop?
+			for (size_t m = 0; m < M; m++) // can we vectorise this loop?
 			{
 				ops_partials.edge2_.partials_[m] += theta_derivative * x_dbl(n,m);
 			}
