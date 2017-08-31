@@ -47,8 +47,6 @@ namespace stan {
      */
 	
 
-	// The overloaded method addtorow is a bit of an ugly hack to satisfy the type checker. Hopefully, we can come up with something better.
-	 
     template <bool propto, typename T_n, typename T_x, typename T_beta, typename T_alpha>
     typename return_type<T_x, T_beta, T_alpha>::type
     bernoulli_logit_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta, const T_alpha& alpha) {
@@ -87,13 +85,13 @@ namespace stan {
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
 	  Matrix<double, Dynamic, 1> beta_dbl(M,1);
 	  Matrix<double, Dynamic, Dynamic> x_dbl(N,M);
-	  for (size_t i = 0; i < M; i++) {  
-		beta_dbl[i] = value_of(beta_vec[i]);
-		for (size_t j = 0; j < N; j++) {
-			x_dbl(j,i) = value_of(x(j,i));
-		}
+	  for (size_t m = 0; m < M; m++) {  
+		beta_dbl[m] = value_of(beta_vec[m]);
 	  }
       for (size_t n = 0; n < N; n++) { // is there a point in vectorising this loop?
+		for (size_t m = 0; m < M; m++) {
+			x_dbl(n,m) = value_of(x(n,m));
+		}
         const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = (x_dbl.row(n)* beta_dbl)[0] + value_of(alpha_vec[n]); 
 
@@ -125,10 +123,10 @@ namespace stan {
             theta_derivative = sign * exp_m_ntheta 
               / (exp_m_ntheta + 1);
           if ( !constant_beta){
-            for (size_t m = 0; m < M; m++) // vectorise this loop?
+			for (size_t m = 0; m < M; m++) // vectorise this loop?
 			{
 				ops_partials.edge2_.partials_[m] += theta_derivative * x_dbl(n,m);
-			}		
+			}
 		  }
 		  if ( !constant_x){
 			ops_partials.edge1_.partials_.row(n) += theta_derivative * beta_dbl.transpose();
