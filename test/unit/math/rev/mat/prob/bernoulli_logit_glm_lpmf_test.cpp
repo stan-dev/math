@@ -95,8 +95,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
-  int R = 3000;
-  int C = 100;  
+  int R = 30000;
+  int C = 1000;  
   
   Matrix<int,Dynamic,1> n(R,1);
   for (size_t i = 0; i < R; i++) {

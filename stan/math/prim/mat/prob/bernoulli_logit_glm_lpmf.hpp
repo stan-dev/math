@@ -1,10 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 
-
-/*
-Fix includes
-*/
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
@@ -13,7 +9,6 @@ Fix includes
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -94,16 +89,24 @@ namespace stan {
       scalar_seq_view<T_n> n_vec(n);
       scalar_seq_view<T_beta> beta_vec(beta);
       scalar_seq_view<T_alpha> alpha_vec(alpha);
+      
       const size_t N = max_size(n, alpha);
       // do we also want to check
       // anything about x here? and in the next line?
       const size_t M = beta.size();
+      
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
+      
+      const bool constant_x = is_constant_struct<T_x>::value;
+      const bool constant_beta = is_constant_struct<T_beta>::value;
+      const bool constant_alpha = is_constant_struct<T_alpha>::value;
+      
       Matrix<double, Dynamic, 1> beta_dbl(M, 1);
       Matrix<double, Dynamic, Dynamic> x_dbl(N, M);
       for (size_t m = 0; m < M; m++) {
         beta_dbl[m] = value_of(beta_vec[m]);
       }
+
       for (size_t n = 0; n < N; n++) {  // could we vectorise this loop?
         for (size_t m = 0; m < M; m++) {
           x_dbl(n, m) = value_of(x(n, m));  
@@ -125,9 +128,6 @@ namespace stan {
         else
           logp -= log1p(exp_m_ntheta);
 
-        const bool constant_x = is_constant_struct<T_x>::value;
-        const bool constant_beta = is_constant_struct<T_beta>::value;
-        const bool constant_alpha = is_constant_struct<T_alpha>::value;
         if (!(constant_x && constant_beta && constant_alpha)) {
           static const double cutoff = 20.0;  // do we really need this line?
           T_partials_return theta_derivative;
