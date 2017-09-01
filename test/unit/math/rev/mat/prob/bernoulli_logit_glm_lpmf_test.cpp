@@ -11,6 +11,8 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 #define duration(a) std::chrono::duration_cast<std::chrono::nanoseconds>(a).count()
 #define timeNow() std::chrono::high_resolution_clock::now()
 
+//  We check that the values of the new regression match those of one built
+//  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   Matrix<int,Dynamic,1> n(3,1);
   n << 1, 0, 1;
@@ -39,6 +41,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
           
 }
 
+//  We check that the gradients of the new regression match those of one built
+//  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   
   
@@ -88,10 +92,11 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   }        
 }
 
-
+//  Here, we compare the speed of the new regression to that of one built from
+//  existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   int R = 3000;
-  int C = 20;  
+  int C = 100;  
   
   Matrix<int,Dynamic,1> n(R,1);
   for (size_t i = 0; i < R; i++) {
@@ -109,6 +114,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   lp.grad();
   TimeVar t2 = timeNow();
   stan::math::recover_memory();
+
   
   Matrix<var,Dynamic,1> beta2 = betareal;
   
