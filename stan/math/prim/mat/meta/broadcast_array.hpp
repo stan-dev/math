@@ -18,6 +18,9 @@ namespace stan {
         Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/) {
           throw std::logic_error("Don't do this");
         }
+        Eigen::Matrix<ViewElt, 1, C>& col(int /*i*/) {
+          throw std::logic_error("Don't do this");
+        }
       };
     }
   }

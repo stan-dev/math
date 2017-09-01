@@ -139,14 +139,12 @@ namespace stan {
             theta_derivative = sign * exp_m_ntheta
               / (exp_m_ntheta + 1);
           if (!constant_beta) {
-            for (size_t m = 0; m < M; m++) {  // can we vectorise this loop?
-              ops_partials.edge2_.partials_[m] += theta_derivative *
-                                                  x_dbl(n, m);  
-            }
+              ops_partials.edge2_.partials_.col(0) += theta_derivative *
+                                                      x_dbl.row(n).transpose();  
           }
           if (!constant_x) {
             ops_partials.edge1_.partials_.row(n).noalias() += theta_derivative *
-                                                    beta_dbl.transpose();  
+                                                              beta_dbl.transpose();  
           }
           if (!constant_alpha) {
             ops_partials.edge3_.partials_[n] += theta_derivative;
@@ -158,8 +156,8 @@ namespace stan {
 
     template <typename T_n,
               typename T_x,
-        typename T_beta,
-        typename T_alpha>
+              typename T_beta,
+              typename T_alpha>
     inline
     typename return_type<T_x, T_beta, T_alpha>::type
     bernoulli_logit_glm_lpmf(const T_n& n,
