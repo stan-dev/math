@@ -94,6 +94,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
+/*
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   int R = 30000;
   int C = 1000;  
@@ -125,4 +126,4 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   
   std::cout << "Existing Primitives:" << std::endl << duration(t2-t1) << std::endl  << "New Primitives:" << std::endl << duration(t4-t3) << std::endl;    
 }
-
+*/
