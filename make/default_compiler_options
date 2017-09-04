@@ -4,7 +4,7 @@
 # - O: Optimization level. Valid values are {0, 1, 2, 3}.
 # - AR: archiver (must specify for cross-compiling)
 ##
-CC = clang++
+CC = g++
 O = 3
 O_STANC = 0
 AR = ar
@@ -14,11 +14,9 @@ CPPFLAGS = -DNO_FPRINTF_OUTPUT -pipe
 # CXXFLAGS are just used for C++
 CXXFLAGS = -Wall -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
 GTEST_CXXFLAGS = -DGTEST_USE_OWN_TR1_TUPLE
-LDLIBS =
 EXE =
 WINE =
 
 ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
-    CXXFLAGS +=  -isystem $(VIENNACL)
     LDFLAGS += -lOpenCL
 endif
