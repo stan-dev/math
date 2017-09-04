@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
 
+#ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// NOTE: for GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
-//
+
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -16,12 +16,25 @@
 #include <algorithm>
 
 
-
 namespace stan {
   namespace math {
 
     class cholesky_gpu : public vari {
     public:
+    
+      viennacl::ocl::program & stan_prog =
+        viennacl::ocl::current_context().add_program(custom_kernels.c_str(),
+        "custom_kernels");
+      viennacl::ocl::kernel & stan_kernel_mul =
+        stan_prog.get_kernel("copy_lower_tri_upper_tri");
+      viennacl::ocl::kernel & stan_kernel_diag =
+        stan_prog.get_kernel("diagonal_mul");
+      viennacl::ocl::kernel & stan_kernel_inv1 =
+        stan_prog.get_kernel("inverse_step1");
+      viennacl::ocl::kernel & stan_kernel_inv2 =
+        stan_prog.get_kernel("inverse_step2");
+      viennacl::ocl::kernel & stan_kernel_inv3 =
+        stan_prog.get_kernel("inverse_step3");
       int M_;
       vari** variRefA_;
       vari** variRefL_;
@@ -259,4 +272,5 @@ namespace stan {
     }
   }
 }
+#endif
 #endif

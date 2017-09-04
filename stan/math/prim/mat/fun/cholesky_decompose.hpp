@@ -8,7 +8,6 @@
 
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose_gpu.hpp>
 #endif
 #include <algorithm>
 namespace stan {
@@ -33,7 +32,16 @@ namespace stan {
       check_symmetric("cholesky_decompose", "m", m);
       #ifdef STAN_GPU
         if (m.rows()  > 70) {
-          return cholesky_decompose_gpu(m);
+          viennacl::matrix<double>  vcl_m(m.rows(), m.cols());
+          viennacl::copy(m, vcl_m);
+          viennacl::linalg::lu_factorize(vcl_m);
+          Eigen::Matrix<double, -1, -1> m_l(m.rows(), m.cols());
+          viennacl::copy(vcl_m, m_l);
+          // TODO(Steve/Sean): Where should this check go?
+          // check_pos_definite("cholesky_decompose", "m", L_A);
+          m_l = Eigen::MatrixXd(m_l.triangularView<Eigen::Upper>()).transpose();
+          for (int i = 0; i < m_l.rows(); i++) m_l.col(i) /= std::sqrt(m_l(i, i));
+          return m_l;
           //NOTE: (Steve/Sean) we need a check for positive definite in this call
         } else {
           Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_GPU_HPP
 
+#ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
@@ -41,4 +42,5 @@ namespace stan {
 
   }
 }
+#endif
 #endif
