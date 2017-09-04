@@ -17,10 +17,8 @@
   #include <viennacl/linalg/lu.hpp>
   #include <viennacl/linalg/ilu_operations.hpp>
 
-  #include <iostream>
-  #include <string>
-  #include <fstream>
-    std::ifstream in("stan/math/prim/mat/fun/custom_kernels.cl",
+  std::string foo = "stan/math/prim/mat/fun/custom_kernels.cl";
+    std::ifstream in(foo,
     std::ios::in | std::ios::binary);
   std::string custom_kernels =
     std::string((std::istreambuf_iterator<char>(in)),

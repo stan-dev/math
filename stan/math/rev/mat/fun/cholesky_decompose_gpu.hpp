@@ -14,13 +14,20 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <algorithm>
-
+#include <iostream>
+#include <string>
+#include <fstream>
 
 namespace stan {
   namespace math {
 
     class cholesky_gpu : public vari {
     public:
+
+      int M_;
+      vari** variRefA_;
+      vari** variRefL_;
+
     
       viennacl::ocl::program & stan_prog =
         viennacl::ocl::current_context().add_program(custom_kernels.c_str(),
@@ -35,9 +42,6 @@ namespace stan {
         stan_prog.get_kernel("inverse_step2");
       viennacl::ocl::kernel & stan_kernel_inv3 =
         stan_prog.get_kernel("inverse_step3");
-      int M_;
-      vari** variRefA_;
-      vari** variRefL_;
 
       /**
        * Constructor for GPU cholesky function.
