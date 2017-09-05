@@ -21,7 +21,7 @@
 template <typename T_param>
 void assign_parameter_values(T_param& params,
                              const std::vector<double>& values) {
-  for (size_t i = 0; i < params.size(); i++) {
+  for (int i = 0; i < params.size(); i++) {
     params[i] = values[i % values.size()];
   }
 }
