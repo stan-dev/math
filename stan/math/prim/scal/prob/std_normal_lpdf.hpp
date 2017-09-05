@@ -40,20 +40,20 @@ namespace stan {
         return 0.0;
 
       check_not_nan(function, "Random variable", y);
+
+      if (!include_summand<propto, T_y>::value)
+        return 0.0;
+
       operands_and_partials<T_y> ops_partials(y);
       scalar_seq_view<T_y> y_vec(y);
       T_partials_return logp(0.0);
-      if (include_summand<propto, T_y>::value) {
-        for (size_t n = 0; n < length(y); n++) {
-          const T_partials_return y_val = value_of(y_vec[n]);
-          logp += y_val * y_val;
-          if (!is_constant_struct<T_y>::value)
-            ops_partials.edge1_.partials_[n] -= y_val;
-        }
-        logp *= -0.5;
-      } else {
-        return 0.0;
+      for (size_t n = 0; n < length(y); n++) {
+        const T_partials_return y_val = value_of(y_vec[n]);
+        logp += y_val * y_val;
+        if (!is_constant_struct<T_y>::value)
+          ops_partials.edge1_.partials_[n] -= y_val;
       }
+      logp *= -0.5;
       if (include_summand<propto>::value)
         logp += NEG_LOG_SQRT_TWO_PI * length(y);
       return ops_partials.build(logp);
