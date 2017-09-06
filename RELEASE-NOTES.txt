@@ -1,6 +1,22 @@
 Stan Math Library Release Notes
 ======================================================================
 
+v.2.17.0 (05 September 2017)
+======================================================================
+
+New Features
+--------------------------------------------------
+* New algebraic solver! (stan-dev/stan#2023, #516)
+* append_array now supports vectors of vectors
+
+Other
+--------------------------------------------------
+* C++11 (and some of 14) now supported; see https://github.com/stan-dev/stan/wiki/Supported-C---Compilers-and-Language-Features
+* Updated to Boost 1.64.0 (#599)
+* Makefile refactoring (#602, others)
+* New forward-mode test kit (#0557, #0568)
+* replace copy args with refs (#346)
+
 v.2.16.0 (15 June 2017)
 ======================================================================
 
@@ -12,7 +28,6 @@ New Features
 Bug Fixes
 --------------------------------------------------
 * Align gamma_* function parameter names with documentation
-
 
 Other
 --------------------------------------------------
