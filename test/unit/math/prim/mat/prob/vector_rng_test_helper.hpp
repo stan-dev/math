@@ -123,10 +123,8 @@ void check_dist_throws(T_generate_samples generate_samples,
 
   // Now try putting incompatible values in first parameter
   if (bad_p1.size() > 0) {
-    for (int i = 0; i < 5; i++) {
-      std::random_shuffle(bad_p1.begin(), bad_p1.end());
-      std::random_shuffle(good_p2.begin(), good_p2.end());
-      assign_parameter_values(p1, bad_p1);
+    for (auto bad_p1_value : bad_p1) {
+      assign_parameter_values(p1, { bad_p1_value });
       assign_parameter_values(p2, good_p2);
       EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
     }
@@ -134,11 +132,9 @@ void check_dist_throws(T_generate_samples generate_samples,
 
   // Now try putting incompatible values in second parameter
   if (bad_p2.size() > 0) {
-    for (int i = 0; i < 5; i++) {
-      std::random_shuffle(good_p1.begin(), good_p1.end());
-      std::random_shuffle(bad_p2.begin(), bad_p2.end());
+    for (auto bad_p2_value : bad_p2) {
       assign_parameter_values(p1, good_p1);
-      assign_parameter_values(p2, bad_p2);
+      assign_parameter_values(p2, { bad_p2_value });
       EXPECT_THROW(generate_samples(p1, p2, rng), std::domain_error);
     }
   }
