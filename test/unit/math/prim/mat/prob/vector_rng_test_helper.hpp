@@ -21,9 +21,7 @@
 template <typename T_param>
 void assign_parameter_values(T_param& params,
                              const std::vector<double>& values) {
-  // Static cast the size here because sometimes it is unsigned (if T_param
-  // is a std::vector) and sometimes it is signed (when it is an Eigen type)
-  for (size_t i = 0; i < static_cast<size_t>(params.size()); i++) {
+  for (auto i = 0; i < params.size(); i++) {
     params[i] = values[i % values.size()];
   }
 }
