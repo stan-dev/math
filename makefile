@@ -15,8 +15,6 @@ include make/default_compiler_options
 MATH ?=
 include make/libraries
 
--include $(HOME)/.config/stan/make.local  # define local variables
--include make/local                       # overwrite local variables
 
 CXX = $(CC)
 
@@ -40,6 +38,11 @@ CXX = $(CC)
 
 include make/tests    # tests
 include make/cpplint  # cpplint
+
+# Allow local variables to overwrite/modify anything specified in 
+# other makefiles
+-include $(HOME)/.config/stan/make.local  # define local variables
+-include make/local                       # overwrite local variables
 
 ##
 # Dependencies
