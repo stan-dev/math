@@ -5,7 +5,7 @@ TEST(ErrorHandlingScalar,CheckPositive) {
   using stan::math::check_positive;
   const char* function = "check_positive";
 
-  EXPECT_NO_THROW(check_positive(function, "x", nan));
+  EXPECT_NO_THROW(check_positive(function, "x", 3.0));
 }
 
 TEST(ErrorHandlingScalar,CheckPositive_nan) {
