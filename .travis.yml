@@ -96,7 +96,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/mix/mat/fun
+          TESTFOLDER="test/unit/math/mix/mat/fun/[A-l]*"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
