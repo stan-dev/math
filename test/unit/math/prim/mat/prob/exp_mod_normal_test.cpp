@@ -1,0 +1,18 @@
+#include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
+
+struct exp_mod_normal_rng_wrapper {
+  template<typename T1, typename T2, typename T3, typename T_rng>
+  auto operator()(const T1& loc, const T2& scale, const T3& inv_scale,
+                  T_rng& rng) const {
+    return stan::math::exp_mod_normal_rng(loc, scale, inv_scale, rng);
+  }
+};
+
+TEST(ProbDistributionsExpModNormal, errorCheck) {
+  check_dist_throws_all_types(exp_mod_normal_rng_wrapper{},
+                              {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, {},
+                              {0.1, 1.0, 2.5, 4.0}, {-2.7, -1.5, -0.5, 0.0},
+                              {0.2, 1.1, 2.5, 2.0}, {-3.7, -2.5, -1.0, 0.0});
+}

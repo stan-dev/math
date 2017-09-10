@@ -15,8 +15,8 @@ using Eigen::Matrix;
  * pass a templated function as an argument)
  */
 struct normal_rng_wrapper {
-  template<typename T1, typename T2, typename T3>
-  auto operator()(const T1& mean, const T2& sd, T3& rng) const {
+  template<typename T1, typename T2, typename T3, typename T_rng>
+  auto operator()(const T1& mean, const T2& sd, const T3& unused, T_rng& rng) const {
     return stan::math::normal_rng(mean, sd, rng);
   }
 };
@@ -25,7 +25,8 @@ struct normal_rng_wrapper {
  * This function builds the quantiles that we will supply to
  * assert_matches_quantiles to test the normal_rng
  */
-std::vector<double> build_quantiles(int N, double mu, double sigma) {
+std::vector<double> build_quantiles(int N, double mu, double sigma,
+                                    double unused) {
   std::vector<double> quantiles;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(mu, sigma);
@@ -43,14 +44,18 @@ TEST(ProbDistributionsNormal, errorCheck) {
   /*
    * This test verifies that normal_rng throws errors in the right places. Test
    * inputs are picked from the four input initializer lists which are (in
-   * order): valid values for p1, invalid values for p1,
-   *         valid values for p2, and invalid values for p2.
+   * order):
+   *   valid values for p1, invalid values for p1,
+   *   valid values for p2, and invalid values for p2,
+   *   valid values for p3 (not used here), and invalid values for p3 (again
+   *   not used).
    *
    * It does so for all possible combinations of calling arguments.
    */
   check_dist_throws_all_types(normal_rng_wrapper{},
                               {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, {},
-                              {0.1, 1.0, 2.5, 4.0}, {-2.7, -1.5, -0.5, 0.0});
+                              {0.1, 1.0, 2.5, 4.0}, {-2.7, -1.5, -0.5, 0.0},
+                              {}, {});
 }
 
 TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
@@ -60,12 +65,13 @@ TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
   /*
    * This test checks that the normal_rng is actually generating numbers from
    * the correct distributions. Test inputs are picked from the two input
-   * initializer lists which are (in order): valid values for p1, and valid
-   * values for p2.
+   * initializer lists which are (in order): valid values for p1, valid
+   * values for p2, and valid values for p3 (not used here).
    *
    * It does so for all possible combinations of calling arguments.
    */
   check_quantiles_all_types(N, M, normal_rng_wrapper{}, build_quantiles,
                             {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
-                            {0.1, 1.0, 2.5, 4.0});
+                            {0.1, 1.0, 2.5, 4.0},
+                            {});
 }
