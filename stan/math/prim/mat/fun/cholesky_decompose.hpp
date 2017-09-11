@@ -8,6 +8,7 @@
 
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
+#include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #endif
 #include <algorithm>
 namespace stan {
@@ -31,8 +32,8 @@ namespace stan {
       check_square("cholesky_decompose", "m", m);
       check_symmetric("cholesky_decompose", "m", m);
       #ifdef STAN_GPU
-        if (m.rows()  > 70) {
-          viennacl::matrix<double>  vcl_m(m.rows(), m.cols());
+        if (m.rows()  > 70 && !stan::contains_fvar<T>::value) {
+          viennacl::matrix<T>  vcl_m(m.rows(), m.cols());
           viennacl::copy(m, vcl_m);
           viennacl::linalg::lu_factorize(vcl_m);
           Eigen::Matrix<double, -1, -1> m_l(m.rows(), m.cols());
