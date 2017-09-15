@@ -10,6 +10,10 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION == 106400
+#  include <boost/serialization/array_wrapper.hpp>
+#endif
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
