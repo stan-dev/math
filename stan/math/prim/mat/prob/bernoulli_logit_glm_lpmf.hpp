@@ -21,10 +21,12 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
-namespace stan {
-  namespace math {
+namespace stan
+{
+namespace math
+{
 
-    /**
+/**
      * Returns the log PMF of the Generalized Linear Model (GLM)
      * with Bernoulli distribution and logit link function.
      * If containers are supplied, returns the log sum of the probabilities.
@@ -42,130 +44,138 @@ namespace stan {
      * @throw std::invalid_argument if container sizes mismatch.
      */
 
-    template <bool propto,
-              typename T_n,
-              typename T_x,
-              typename T_beta,
-              typename T_alpha>
-    typename return_type<T_x, T_beta, T_alpha>::type
-    bernoulli_logit_glm_lpmf(const T_n& n,
-                             const T_x& x,
-                             const T_beta& beta,
-                             const T_alpha& alpha) {
-      static const std::string function = "bernoulli_logit_glm_lpmf";
-      typedef typename stan::partials_return_type<T_n,
-                                                  T_x,
-                                                  T_beta,
-                                                  T_alpha>::type
-        T_partials_return;
+template <bool propto,
+          typename T_n,
+          typename T_x,
+          typename T_beta,
+          typename T_alpha>
+typename return_type<T_x, T_beta, T_alpha>::type
+bernoulli_logit_glm_lpmf(const T_n &n,
+                         const T_x &x,
+                         const T_beta &beta,
+                         const T_alpha &alpha)
+{
+  static const std::string function = "bernoulli_logit_glm_lpmf";
+  typedef typename stan::partials_return_type<T_n,
+                                              T_x,
+                                              T_beta,
+                                              T_alpha>::type
+      T_partials_return;
 
-      using stan::is_constant_struct;
-      using std::exp;
+  using stan::is_constant_struct;
+  using std::exp;
 
-      if (!(stan::length(n) &&
-            stan::length(x) &&
-            stan::length(beta) &&
-            stan::length(alpha)))
-        return 0.0;
+  if (!(stan::length(n) &&
+        stan::length(x) &&
+        stan::length(beta) &&
+        stan::length(alpha)))
+    return 0.0;
 
-      T_partials_return logp(0.0);
+  T_partials_return logp(0.0);
 
-      check_bounded(function, "n", n, 0, 1);
-      check_not_nan(function, "Data matrix", x);  
-      check_not_nan(function, "Weight vector", beta);
-      check_not_nan(function, "Bias vector", alpha);
-      check_consistent_sizes(function,
-                             "Random variable", n,
-                             "Bias vector", alpha);
-      // check_consistent_sizes(function,
-      //                       "Random variable", n,
-      //                       "Data matrix", x);  // would this work?
-      //                        maybe add one more check to see that x is
-      //                        compatible with beta?
+  check_bounded(function, "n", n, 0, 1);
+  check_not_nan(function, "Data matrix", x);
+  check_not_nan(function, "Weight vector", beta);
+  check_not_nan(function, "Bias vector", alpha);
+  check_consistent_sizes(function,
+                         "Random variable", n,
+                         "Bias vector", alpha);
+  // check_consistent_sizes(function,
+  //                       "Random variable", n,
+  //                       "Data matrix", x);  // would this work?
+  //                        maybe add one more check to see that x is
+  //                        compatible with beta?
 
-      if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
-        return 0.0;
+  if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
+    return 0.0;
 
-      scalar_seq_view<T_n> n_vec(n);
-      scalar_seq_view<T_beta> beta_vec(beta);
-      scalar_seq_view<T_alpha> alpha_vec(alpha);
-      
-      const size_t N = max_size(n, alpha);
-      // do we also want to check
-      // anything about x here? and in the next line?
-      const size_t M = beta.size();
-      
-      operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
-      
-      const bool constant_x = is_constant_struct<T_x>::value;
-      const bool constant_beta = is_constant_struct<T_beta>::value;
-      const bool constant_alpha = is_constant_struct<T_alpha>::value;
-      
-      Matrix<double, Dynamic, 1> beta_dbl(M, 1);
-      Matrix<double, Dynamic, Dynamic> x_dbl(N, M);
-      for (size_t m = 0; m < M; m++) {
-        beta_dbl[m] = value_of(beta_vec[m]);
-      }
+  scalar_seq_view<T_n> n_vec(n);
+  scalar_seq_view<T_beta> beta_vec(beta);
+  scalar_seq_view<T_alpha> alpha_vec(alpha);
 
-      for (size_t n = 0; n < N; n++) {  // could we vectorise this loop?
-        for (size_t m = 0; m < M; m++) {
-          x_dbl(n, m) = value_of(x(n, m));  
-        }
-        const int n_int = value_of(n_vec[n]);
-        const T_partials_return theta_dbl = (x_dbl.row(n)* beta_dbl)[0] +
-                                             value_of(alpha_vec[n]);
+  const size_t N = max_size(n, alpha);
+  // do we also want to check
+  // anything about x here? and in the next line?
+  const size_t M = beta.size();
 
-        const int sign = 2 * n_int - 1;
-        const T_partials_return ntheta = sign * theta_dbl;
-        const T_partials_return exp_m_ntheta = exp(-ntheta);
+  operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
 
-        // Handle extreme values gracefully using Taylor approximations.
-        static const double cutoff = 20.0;
-        if (ntheta > cutoff)
-          logp -= exp_m_ntheta;
-        else if (ntheta < -cutoff)
-          logp += ntheta;
-        else
-          logp -= log1p(exp_m_ntheta);
+  const bool constant_x = is_constant_struct<T_x>::value;
+  const bool constant_beta = is_constant_struct<T_beta>::value;
+  const bool constant_alpha = is_constant_struct<T_alpha>::value;
 
-        if (!(constant_x && constant_beta && constant_alpha)) {
-          static const double cutoff = 20.0;  // do we really need this line?
-          T_partials_return theta_derivative;
-          if (ntheta > cutoff)
-            theta_derivative = - exp_m_ntheta;
-          else if (ntheta < -cutoff)
-            theta_derivative = sign;
-          else
-            theta_derivative = sign * exp_m_ntheta
-              / (exp_m_ntheta + 1);
-          if (!constant_beta) {
-              ops_partials.edge2_.partials_.col(0) += theta_derivative *
-                                                      x_dbl.row(n).transpose();  
-          }
-          if (!constant_x) {
-            ops_partials.edge1_.partials_.row(n).noalias() += theta_derivative *
-                                                              beta_dbl.transpose();  
-          }
-          if (!constant_alpha) {
-            ops_partials.edge3_.partials_[n] += theta_derivative;
-          }
-        }
-      }
-    return ops_partials.build(logp);
+  Matrix<double, Dynamic, 1> beta_dbl(M, 1);
+  Matrix<double, Dynamic, Dynamic> x_dbl(N, M);
+  for (size_t m = 0; m < M; m++)
+  {
+    beta_dbl[m] = value_of(beta_vec[m]);
+  }
+
+  for (size_t n = 0; n < N; n++)
+  { // could we vectorise this loop?
+    for (size_t m = 0; m < M; m++)
+    {
+      x_dbl(n, m) = value_of(x(n, m));
     }
+    const int n_int = value_of(n_vec[n]);
+    const T_partials_return theta_dbl = (x_dbl.row(n) * beta_dbl)[0] +
+                                        value_of(alpha_vec[n]);
 
-    template <typename T_n,
-              typename T_x,
-              typename T_beta,
-              typename T_alpha>
-    inline
-    typename return_type<T_x, T_beta, T_alpha>::type
-    bernoulli_logit_glm_lpmf(const T_n& n,
-                             const T_x& x,
-                             const T_beta& beta,
-                             const T_alpha& alpha) {
-      return bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha);
+    const int sign = 2 * n_int - 1;
+    const T_partials_return ntheta = sign * theta_dbl;
+    const T_partials_return exp_m_ntheta = exp(-ntheta);
+
+    // Handle extreme values gracefully using Taylor approximations.
+    static const double cutoff = 20.0;
+    if (ntheta > cutoff)
+      logp -= exp_m_ntheta;
+    else if (ntheta < -cutoff)
+      logp += ntheta;
+    else
+      logp -= log1p(exp_m_ntheta);
+
+    if (!(constant_x && constant_beta && constant_alpha))
+    {
+      static const double cutoff = 20.0; // do we really need this line?
+      T_partials_return theta_derivative;
+      if (ntheta > cutoff)
+        theta_derivative = -exp_m_ntheta;
+      else if (ntheta < -cutoff)
+        theta_derivative = sign;
+      else
+        theta_derivative = sign * exp_m_ntheta / (exp_m_ntheta + 1);
+      if (!constant_beta)
+      {
+        ops_partials.edge2_.partials_.col(0) += theta_derivative *
+                                                x_dbl.row(n).transpose();
+      }
+      if (!constant_x)
+      {
+        ops_partials.edge1_.partials_.row(n).noalias() += theta_derivative *
+                                                          beta_dbl.transpose();
+      }
+      if (!constant_alpha)
+      {
+        ops_partials.edge3_.partials_[n] += theta_derivative;
+      }
     }
   }
+  return ops_partials.build(logp);
+}
+
+template <typename T_n,
+          typename T_x,
+          typename T_beta,
+          typename T_alpha>
+inline
+    typename return_type<T_x, T_beta, T_alpha>::type
+    bernoulli_logit_glm_lpmf(const T_n &n,
+                             const T_x &x,
+                             const T_beta &beta,
+                             const T_alpha &alpha)
+{
+  return bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha);
+}
+}
 }
 #endif
