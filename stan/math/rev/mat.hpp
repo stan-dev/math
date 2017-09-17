@@ -17,6 +17,8 @@
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
 #include <stan/math/rev/mat/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
+#include <stan/math/rev/mat/fun/covariance.hpp>
+#include <stan/math/rev/mat/fun/correlation.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
