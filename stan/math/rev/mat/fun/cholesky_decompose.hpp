@@ -8,8 +8,8 @@
 #include <stan/math/rev/mat/fun/cholesky_decompose_gpu.hpp>
 #endif
 //
-#include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
@@ -18,8 +18,6 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <algorithm>
-
-
 
 namespace stan {
   namespace math {
@@ -276,7 +274,7 @@ namespace stan {
       #endif
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
-      // cholesky_b  lock
+      // cholesky_block
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       if (L_A.rows() <= 35) {
