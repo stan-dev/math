@@ -251,7 +251,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       // NOTE: This should be replaced by some check that comes from a user
-      
+
       #ifdef STAN_GPU
         if (L_A.rows()  > 70) {
           L_A = L_A.selfadjointView<Eigen::Lower>();
@@ -262,13 +262,15 @@ namespace stan {
           // TODO(Steve/Sean): Where should this check go?
           // check_pos_definite("cholesky_decompose", "m", L_A);
           L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
-          for (int i = 0; i < L_A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
+          for (int i = 0; i < L_A.rows(); i++) {
+           L_A.col(i) /= std::sqrt(L_A(i, i));
+          }
         } else {
           Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
           check_pos_definite("cholesky_decompose", "m", L_factor);
         }
       #else
-      
+
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
         check_pos_definite("cholesky_decompose", "m", L_factor);
       #endif
@@ -308,7 +310,7 @@ namespace stan {
               L.coeffRef(k, j).vi_ = dummy;
           }
       #endif
- 
+
       } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);

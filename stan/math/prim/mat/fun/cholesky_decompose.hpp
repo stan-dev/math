@@ -9,7 +9,7 @@
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
-#include <stan/math/prim/mat/fun/sqrt.hpp>
+#include <stan/math/prim/mat/fun/cholesky_decompose_gpu.hpp>
 #endif
 #include <algorithm>
 namespace stan {
@@ -37,7 +37,6 @@ namespace stan {
       llt.compute(m);
       check_pos_definite("cholesky_decompose", "m", llt);
       return llt.matrixL();
-
     }
 
   }

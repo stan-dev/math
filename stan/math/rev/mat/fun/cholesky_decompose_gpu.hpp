@@ -14,21 +14,16 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <algorithm>
-#include <iostream>
-#include <string>
-#include <fstream>
+#include <vector>
 
 namespace stan {
   namespace math {
 
     class cholesky_gpu : public vari {
     public:
-
       int M_;
       vari** variRefA_;
       vari** variRefL_;
-
-    
       viennacl::ocl::program & stan_prog =
         viennacl::ocl::current_context().add_program(custom_kernels.c_str(),
         "custom_kernels");
@@ -82,7 +77,6 @@ namespace stan {
        *
        */
       virtual void chain() {
-
         using Eigen::MatrixXd;
         using Eigen::Lower;
         using Eigen::Block;
@@ -96,17 +90,16 @@ namespace stan {
         L.setZero();
 
         int parts;
-        if(M_ > 2500){
+        if (M_ > 2500) {
           parts = 64;
         } else {
           parts = 32;
         }
-        //need to setup a smarter way of doing this
         int remainder = M_ % parts;
         int part_size_fixed = M_ / parts;
         int repeat = 1;
         int sizePad;
-        
+
         size_t pos = 0;
         for (size_type j = 0; j < M_; ++j) {
           for (size_type i = j; i < M_; ++i) {
@@ -119,14 +112,14 @@ namespace stan {
         viennacl::matrix<double>  vcl_L(M_, M_);
         viennacl::matrix<double>  vcl_temp(M_, M_);
         viennacl::matrix<double>  vcl_Lbar(M_, M_);
-        
+
         viennacl::copy(L, vcl_L);
         viennacl::copy(Lbar, vcl_Lbar);
         vcl_L =  viennacl::trans(vcl_L);
-        vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar); 
+        vcl_Lbar =  viennacl::linalg::prod(vcl_L, vcl_Lbar);
 
         stan_kernel_mul.global_work_size(0, vcl_Lbar.internal_size1());
-        stan_kernel_mul.global_work_size(1, vcl_Lbar.internal_size2());		
+        stan_kernel_mul.global_work_size(1, vcl_Lbar.internal_size2());
 
         stan_kernel_mul.local_work_size(0, 32);
         stan_kernel_mul.local_work_size(1, 32);
@@ -135,20 +128,20 @@ namespace stan {
           stan_kernel_mul(
             vcl_Lbar,
             static_cast<cl_uint>(vcl_Lbar.size1()),
-            static_cast<cl_uint>(vcl_Lbar.size2()), 
+            static_cast<cl_uint>(vcl_Lbar.size2()),
             static_cast<cl_uint>(vcl_Lbar.internal_size2())));
 
         viennacl::matrix<double>  vcl_temp2(M_, M_ * 2);
         std::vector<int> stl_sizes(parts);
         viennacl::vector<int> vcl_sizes(parts);
-        
-        for(int i = 0; i < parts; i++){
-          if(i < remainder)
+
+        for (int i = 0; i < parts; i++) {
+          if (i < remainder)
             stl_sizes[i] = part_size_fixed + 1;
           else
             stl_sizes[i] = part_size_fixed;
         }
-        
+
         viennacl::copy(stl_sizes, vcl_sizes);
 
         stan_kernel_inv1.global_work_size(0, parts);
@@ -156,17 +149,13 @@ namespace stan {
 
         viennacl::ocl::enqueue(
           stan_kernel_inv1(
-            vcl_L,vcl_temp,
+            vcl_L, vcl_temp,
             static_cast<cl_uint>(remainder),
             static_cast<cl_uint>(part_size_fixed),
             static_cast<cl_uint>(vcl_L.size2()),
-            static_cast<cl_uint>(vcl_L.internal_size2())
-          )
-        );
-        
+            static_cast<cl_uint>(vcl_L.internal_size2())));
 
-        for(int pp = parts; pp > 1; pp /= 2){
-
+        for (int pp = parts; pp > 1; pp /= 2) {
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
           stan_kernel_inv2.global_work_size(0, sizePad);
           stan_kernel_inv2.global_work_size(1, sizePad / 4);
@@ -188,9 +177,7 @@ namespace stan {
               static_cast<cl_uint>(remainder),
               static_cast<cl_uint>(part_size_fixed),
               static_cast<cl_uint>(vcl_L.size2()),
-              static_cast<cl_uint>(vcl_L.internal_size2())
-            )
-          );
+              static_cast<cl_uint>(vcl_L.internal_size2())));
           viennacl::ocl::enqueue(
             stan_kernel_inv3(
               vcl_L, vcl_sizes, vcl_temp2,
@@ -198,9 +185,7 @@ namespace stan {
               static_cast<cl_uint>(remainder),
               static_cast<cl_uint>(part_size_fixed),
               static_cast<cl_uint>(vcl_L.size2()),
-              static_cast<cl_uint>(vcl_L.internal_size2())
-            )
-          );
+              static_cast<cl_uint>(vcl_L.internal_size2())));
           repeat *= 2;
         }
 
@@ -210,27 +195,21 @@ namespace stan {
 
         stan_kernel_diag.global_work_size(0, vcl_Lbar.internal_size1());
         stan_kernel_diag.global_work_size(1, vcl_Lbar.internal_size2());
-        stan_kernel_diag.local_work_size(0,32);
-        stan_kernel_diag.local_work_size(1,32);
+        stan_kernel_diag.local_work_size(0, 32);
+        stan_kernel_diag.local_work_size(1, 32);
 
         viennacl::ocl::enqueue(
           stan_kernel_diag(
             vcl_Lbar,
             static_cast<cl_uint>(vcl_Lbar.size1()),
             static_cast<cl_uint>(vcl_Lbar.size2()),
-            static_cast<cl_uint>(vcl_Lbar.internal_size2())
-          )
-        );
-
+            static_cast<cl_uint>(vcl_Lbar.internal_size2())));
         viennacl::copy(vcl_Lbar, Lbar);
-
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
             variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
-
       }
-    
     };
     /**
      * Reverse mode specialization of cholesky decomposition
