@@ -27,8 +27,9 @@ namespace stan {
      *   if m is not positive definite (if m has more than 0 elements)
      */
     template <typename T>
-    typename boost::disable_if_c<stan::contains_fvar<T>::value,
-         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >::type
+    typename boost::disable_if_c<stan::contains_fvar<T>::value || 
+      stan::is_fvar<T>::value,
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >::type
     cholesky_decompose_gpu(const Eigen::Matrix
                        <T, Eigen::Dynamic, Eigen::Dynamic>& m) {
       check_square("cholesky_decompose", "m", m);
@@ -41,7 +42,7 @@ namespace stan {
       // TODO(Steve/Sean): Where should this check go?
       // check_pos_definite("cholesky_decompose", "m", L_A);
       // STEVE LOOK HERE, NEED TO REMOVE DOUBLE 
-      m_l = Eigen::MatrixXd(m_l.triangularView<Eigen::Upper>()).transpose();
+      m_l = m_l.template triangularView<Eigen::Upper>().transpose();
       for (int i = 0; i < m_l.rows(); i++) m_l.col(i) /= std::sqrt(m_l(i, i));
       return m_l;
       //NOTE: (Steve/Sean) we need a check for positive definite in this call
