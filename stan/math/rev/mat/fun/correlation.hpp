@@ -60,10 +60,10 @@ namespace stan {
 
       //Ensure there are enough observations
       if(nrows <= 1)
-	invalid_argument<Matrix<T,Dynamic,Dynamic> >
+	invalid_argument<int>
 	    ("corr"
 	     , "x"
-	     , x
+	     , nrows
 	     , "Too few observations to compute correlation"
 	     );	
       
@@ -72,10 +72,10 @@ namespace stan {
       //Append columns provided they have the right dimensionality
       for(int i = 0; i < x.size(); ++i){
 	if(x[i].rows() != nrows)
-	  invalid_argument<Matrix<T,Dynamic,1> >
+	  invalid_argument<unsigned int>
 	    ("corr"
 	     , "x"
-	     , x
+	     , x[i].rows()
 	     , "Column vectors not all of same length"
 	     );
 	
@@ -92,10 +92,10 @@ namespace stan {
 
       //Ensure there are enough observations to compute covariance
       if(x.size() <= 1)
-	invalid_argument<Matrix<T,Dynamic,Dynamic> >
+	invalid_argument<unsigned int>
 	    ("corr"
 	     , "x"
-	     , x
+	     , x.size()
 	     , "Too few observations to compute correlation"
 	     );
       
@@ -104,10 +104,10 @@ namespace stan {
       //Append rows provided they have the right dimensionality
       for(int i = 0; i < x.size(); ++i){
 	if(x[i].cols() != ncols)
-	  invalid_argument<Matrix<T,Dynamic,1> >
+	  invalid_argument<unsigned int>
 	    ("corr"
 	     , "x"
-	     , x
+	     , x[i].cols()
 	     , "Column vectors not all of same length"
 	     );
 	    
