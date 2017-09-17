@@ -45,22 +45,22 @@ namespace stan {
 
       //Ensure there are enough observations
       if(nrows <= 1)
-	invalid_argument<Matrix<T,Dynamic,Dynamic> >
-	    ("cov"
-	     , "x"
-	     , x
-	     , "Too few observations to compute covariance"
-	     );	
+	invalid_argument<unsigned int>
+	  ("cov"
+	   , "x"
+	   , nrows
+	   , "Too few observations to compute covariance"
+	   );	
       
       Matrix<T,Dynamic,Dynamic> mat(nrows, x.size());
 
       //Append columns provided they have the right dimensionality
-      for(int i = 0; i < x.size(); ++i){
+      for(unsigned int i = 0; i < x.size(); ++i){
 	if(x[i].rows() != nrows)
-	  invalid_argument<Matrix<T,Dynamic,1> >
+	  invalid_argument<unsigned int>
 	    ("cov"
 	     , "x"
-	     , x
+	     , x[i].rows()
 	     , "Column vectors not all of same length"
 	     );
 	
@@ -77,23 +77,23 @@ namespace stan {
 
       //Ensure there are enough observations to compute covariance
       if(x.size() <= 1)
-	invalid_argument<Matrix<T,Dynamic,Dynamic> >
-	    ("cov"
-	     , "x"
-	     , x
-	     , "Too few observations to compute covariance"
-	     );
+	invalid_argument<unsigned int>
+	  ("cov"
+	   ,"x"
+	   , x.size()
+	   , "Too few observations to compute covariance"
+	   );
       
       Matrix<T,Dynamic,Dynamic> mat(x.size(), ncols);
 
       //Append rows provided they have the right dimensionality
-      for(int i = 0; i < x.size(); ++i){
+      for(unsigned int i = 0; i < x.size(); ++i){
 	if(x[i].cols() != ncols)
-	  invalid_argument<Matrix<T,Dynamic,1> >
+	  invalid_argument<unsigned int>
 	    ("cov"
 	     , "x"
-	     , x
-	     , "Column vectors not all of same length"
+	     , x[i].cols()
+	     , "Row vectors not all of same length"
 	     );
 	    
 	mat.row(i) = x[i].row(0); 
