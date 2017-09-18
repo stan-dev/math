@@ -2,6 +2,10 @@
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/fun/ViennaCL.hpp>
+#include <stan/math/rev/mat/fun/cholesky_decompose_gpu.hpp>
+#endif
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
@@ -140,7 +144,7 @@ namespace stan {
       vari** variRefA_;
       vari** variRefL_;
 
-      /** 
+      /**
        * Constructor for cholesky function.
        *
        * Stores varis for A Instantiates and stores varis for L Instantiates
@@ -176,7 +180,7 @@ namespace stan {
         }
       }
 
-      /** 
+      /**
        * Reverse mode differentiation algorithm refernce:
        *
        * Mike Giles. An extended collection of matrix derivative results for
@@ -244,9 +248,30 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
-      check_pos_definite("cholesky_decompose", "m", L_factor);
+      // NOTE: This should be replaced by some check that comes from a user
 
+      #ifdef STAN_GPU
+        if (L_A.rows()  > 70) {
+          L_A = L_A.selfadjointView<Eigen::Lower>();
+          viennacl::matrix<double>  vcl_L_A(L_A.rows(), L_A.cols());
+          viennacl::copy(L_A, vcl_L_A);
+          viennacl::linalg::lu_factorize(vcl_L_A);
+          viennacl::copy(vcl_L_A, L_A);
+          // TODO(Steve/Sean): Where should this check go?
+          // check_pos_definite("cholesky_decompose", "m", L_A);
+          L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
+          for (int i = 0; i < L_A.rows(); i++) {
+           L_A.col(i) /= std::sqrt(L_A(i, i));
+          }
+        } else {
+          Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
+          check_pos_definite("cholesky_decompose", "m", L_factor);
+        }
+      #else
+
+        Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
+        check_pos_definite("cholesky_decompose", "m", L_factor);
+      #endif
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
       // cholesky_block
@@ -268,6 +293,22 @@ namespace stan {
           accum += j;
           accum_i = accum;
         }
+
+      #ifdef STAN_GPU
+        } else if (L_A.rows()  > 70) {
+          using stan::math::cholesky_gpu;
+          cholesky_gpu *baseVari
+            = new cholesky_gpu(A, L_A);
+          size_t pos = 0;
+          for (size_type j = 0; j < L.cols(); ++j) {
+            for (size_type i = j; i < L.cols(); ++i) {
+              L.coeffRef(i, j).vi_ = baseVari->variRefL_[pos++];
+            }
+            for (size_type k = 0; k < j; ++k)
+              L.coeffRef(k, j).vi_ = dummy;
+          }
+      #endif
+
       } else {
         cholesky_block *baseVari
           = new cholesky_block(A, L_A);

@@ -6,6 +6,12 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/fun/ViennaCL.hpp>
+#include <stan/math/prim/scal/meta/contains_fvar.hpp>
+#include <stan/math/prim/mat/fun/cholesky_decompose_gpu.hpp>
+#endif
+#include <algorithm>
 namespace stan {
   namespace math {
 
@@ -36,3 +42,5 @@ namespace stan {
   }
 }
 #endif
+
+
