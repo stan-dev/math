@@ -9,7 +9,6 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
-#include <stan/math/prim/mat/fun/sqrt.hpp>
 #include <algorithm>
 
 namespace stan {
@@ -43,7 +42,7 @@ namespace stan {
       // check_pos_definite("cholesky_decompose", "m", L_A);
       m_l = m_l.template triangularView<Eigen::Upper>().transpose();
       for (int i = 0; i < m_l.rows(); i++) {
-        m_l.col(i) /= stan::math::sqrt(m_l(i, i));
+        m_l.col(i) /= sqrt(m_l(i, i));
       }
       return m_l;
     }
