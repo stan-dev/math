@@ -2,12 +2,10 @@
 #define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// NOTE: for GPU
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ViennaCL.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose_gpu.hpp>
 #endif
-//
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
