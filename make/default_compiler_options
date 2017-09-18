@@ -12,8 +12,17 @@ AR = ar
 # CPPFLAGS are used for both C and C++ compilation
 CPPFLAGS = -DNO_FPRINTF_OUTPUT -pipe
 # CXXFLAGS are just used for C++
-CXXFLAGS = -Wall -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(VIENNACL) -isystem $(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
+CXXFLAGS = -Wall -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(VIENNACL) -isystem $(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -D STAN_GPU
 GTEST_CXXFLAGS = -DGTEST_USE_OWN_TR1_TUPLE
 LDLIBS =
 EXE =
 WINE =
+POST_LDLIBS =
+
+###
+# Add the -lOpenCL flag to the end
+##
+POST_LDLIBS =
+ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
+    POST_LDLIBS = -lOpenCL
+endif
