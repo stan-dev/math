@@ -43,7 +43,7 @@ void assert_matches_quantiles(const std::vector<double>& samples, const std::vec
   }
 
   std::vector<int> counts(K);
-  int current_index = 0;
+  size_t current_index = 0;
   for (int i=0; i<N; ++i) {
     while (mysamples[i] >= quantiles[current_index]) {
       ++current_index;
