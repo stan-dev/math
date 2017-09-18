@@ -18,6 +18,11 @@ LDLIBS =
 EXE =
 WINE =
 
+###
+# Add the -lOpenCL flag to the end
+##
+POST_LDLIBS =
 ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
-    LDFLAGS += -lOpenCL
+    POST_LDLIBS = -lOpenCL
 endif
+

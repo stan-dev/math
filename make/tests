@@ -11,14 +11,6 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 ##
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
-###
-# Add the -lOpenCL flag to the end
-##
-POST_LDLIBS =
-ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
-    POST_LDLIBS = -lOpenCL
-endif
-
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
