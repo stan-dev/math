@@ -1,4 +1,7 @@
 /*
+ * The original code on which this file is based is from John Cook,
+ * which is licensed under the 2-clause BSD license, reproduced below:
+ *
  * Copyright (c) 2015, John D. Cook
  * All rights reserved.
  *
@@ -6,50 +9,19 @@
  *
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * Neither the name of Columbia University nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_CONSTANTS_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_CONSTANTS_HPP
 
-#ifndef DOUBLE_EXPONENTIAL_INTEGRATION_CONSTANTS_H
-#define DOUBLE_EXPONENTIAL_INTEGRATION_CONSTANTS_H
 
-/*
-The double exponential rule is based on the observation that the trapezoid rule converges
-very rapidly for functions on the entire real line that go to zero like exp( - exp(t) ).
-The change of variables x = tanh( pi sinh(t) /2) transforms an integral over [-1, 1]
-into an integral with integrand suited to the double exponential rule.
-
-The transformed integral is infinite, but we truncate the domain of integration to [-3, 3].
-The limit '3' was chosen for two reasons: for t = 3, the transformed x values
-are nearly equal to 1 for 12 or more significant figures.  Also, for t = 3, the
-smallest weights are 12 orders of magnitude smaller than the largest weights; setting
-the cutoff larger than 3 would not have a significant impact on the integral value
-unless there is a strong singularity at one of the end points.
-
-The change of variables x(t) is an odd function, i.e. x(-t) = -x(t), and so we need only
-store the positive x values.  Also, the derivative w(t) = x'(t) is even, i.e. w(-t) = w(t),
-and so we need only store the weights corresponding to positive values of x.
-
-The integration first applies the trapezoid rule to [-3, 3] in steps of size 1.
-Then it subsequently cuts the step size in half each time, comparing the results.
-Integration stops when subsequent iterations are close enough together or the maximum
-integration points have been used.
-By cutting h in half, the previous integral can be reused; we only need evaluate the
-integrand at the newly added points.
-
-Finally, note that we're not strictly using the trapezoid rule: we don't treat the
-end points differently.  This is because we assume the values at the ends of the interval
-hardly matter due to the rapid decay of the integrand.
-
-All values below were calculated with Mathematica.
-*/
 namespace stan {
 
   namespace math {
 
-    static const double doubleExponentialAbcissas[] =
+    static const double de_abcissas[] =
     {
         // 1st layer abcissas: transformed 0, 1, 2, 3
         0.00000000000000000000,
@@ -253,7 +225,7 @@ namespace stan {
         0.99999999999992987953
     }; // end abcissas
 
-    static const double doubleExponentialWeights[] =
+    static const double de_weights[] =
     {
         // First layer weights
         1.5707963267948966192,
