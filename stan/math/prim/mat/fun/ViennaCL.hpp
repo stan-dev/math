@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_VIENNACL_HPP
 
 #ifdef STAN_GPU
+  #include <string>
   #ifndef VIENNACL_WITH_OPENCL
     #define VIENNACL_WITH_OPENCL 1
   #endif
@@ -17,7 +18,8 @@
   #include <viennacl/linalg/lu.hpp>
   #include <viennacl/linalg/ilu_operations.hpp>
 
-  static std::string load_kernel_source = "stan/math/prim/mat/fun/custom_kernels.cl";
+  static std::string load_kernel_source =
+   "stan/math/prim/mat/fun/custom_kernels.cl";
   static  std::ifstream in(load_kernel_source,
     std::ios::in | std::ios::binary);
   static std::string custom_kernels =
