@@ -28,7 +28,7 @@ namespace stan {
     template <typename T>
     typename boost::disable_if_c<stan::contains_fvar<T>::value ||
       stan::is_fvar<T>::value,
-      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type 
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
     cholesky_decompose_gpu(const Eigen::Matrix
                        <T, Eigen::Dynamic, Eigen::Dynamic>& m) {
       check_square("cholesky_decompose", "m", m);
