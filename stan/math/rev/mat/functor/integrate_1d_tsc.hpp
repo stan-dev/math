@@ -12,8 +12,7 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/rev/mat/functor/de_integrator.hpp>
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
+#include <functional>
 #include <cmath>
 #include <ostream>
 #include <vector>
@@ -33,8 +32,8 @@ namespace stan {
      * integrated and the second one is either an extra scalar or vector
      * being passed to f.
      * @param g a functor with signature
-     * double (double, std::vector<T_param>, int, std::ostream*) or with
-     * signature double (double, T_param, int, std::ostream*) where the
+     * double (double, std::vector<T_param>, int, std::ostream&) or with
+     * signature double (double, T_param, int, std::ostream&) where the
      * first argument is onebeing integrated and the second one is
      * either an extra scalar or vector being passed to f and the
      * third one selects which component of the gradient vector
@@ -51,12 +50,12 @@ namespace stan {
     inline typename scalar_type<T_param>::type
     integrate_1d_tsc_tscg(const F& f,  const G& g,  const double a,
                           const double b, const T_param& param,
-                          std::ostream* msgs, const double tre = 1e-6,
+                          std::ostream& msgs, const double tre = 1e-6,
                           const double tae = 1e-6) {
       check_finite("integrate_1d_tsc", "lower limit", a);
       check_finite("integrate_1d_tsc", "upper limit", b);
 
-      using boost::lambda::_1;
+      using std::placeholders::_1;
 
       // hard case, we want a normalizing factor
       if (!is_constant_struct<T_param>::value) {
@@ -66,15 +65,16 @@ namespace stan {
         auto value_of_param = value_of(param);
 
         for (size_t n = 0; n < N; n++)
-          grad[n] =
-            de_integrator(boost::bind<double>(g, _1, value_of_param,
-                                              static_cast<int>(n+1),
-                                              msgs),
-                          a, b, tre, tae);
+          grad[n] = de_integrator(std::bind<double>(g, _1,
+                                                    value_of_param,
+                                                    static_cast<int>
+                                                    (n+1),
+                                                    std::ref(msgs)),
+                                  a, b, tre, tae);
 
-        double val_ = de_integrator(boost::bind<double>(f, _1,
-                                                        value_of_param,
-                                                        msgs),
+        double val_ = de_integrator(std::bind<double>(f, _1,
+                                                      value_of_param,
+                                                      std::ref(msgs)),
                                     a, b, tre, tae);
 
         operands_and_partials<T_param> ops_partials(param);
@@ -85,20 +85,20 @@ namespace stan {
       // easy case, here we are calculating a normalizing constant,
       // not a normalizing factor, so g doesn't matter at all
       } else {
-        return de_integrator(boost::bind<double>(f, _1, value_of(param),
-                                                 msgs),
+        return de_integrator(std::bind<double>(f, _1, value_of(param),
+                                               std::ref(msgs)),
                              a, b, tre, tae);
       }
     }
 
     /**
-     * Calculate gradient of f(x, param, std::ostream*)
+     * Calculate gradient of f(x, param, std::ostream&)
      * with respect to param_n (which must be an element of param)
      */
     template <typename F, typename T_param>
     inline double
     gradient_of_f(const F& f, const double x, const T_param& param,
-                  const var& param_n, std::ostream* msgs) {
+                  const var& param_n, std::ostream& msgs) {
       set_zero_all_adjoints_nested();
       f(x, param, msgs).grad();
       return param_n.adj();
@@ -110,8 +110,8 @@ namespace stan {
      *
      * @tparam T Type of f.
      * @param f a functor with signature
-     * double (double, std::vector<T_param>, std::ostream*) or with
-     * signature double (double, T_param, std::ostream*) where the first
+     * double (double, std::vector<T_param>, std::ostream&) or with
+     * signature double (double, T_param, std::ostream&) where the first
      * argument is one being integrated and the second one is either
      * an extra scalar or vector being passed to f.
      * @param a lower limit of integration, must be double type.
@@ -125,16 +125,16 @@ namespace stan {
     template <typename F, typename T_param>
     inline typename scalar_type<T_param>::type
     integrate_1d_tsc(const F& f, const double a, const double b,
-                     const T_param& param, std::ostream* msgs,
+                     const T_param& param, std::ostream& msgs,
                      const double tre = 1e-6, const double tae = 1e-6) {
-      using boost::lambda::_1;
+      using std::placeholders::_1;
 
       stan::math::check_finite("integrate_1d_tsc", "lower limit", a);
       stan::math::check_finite("integrate_1d_tsc", "upper limit", b);
 
-      double val_ = de_integrator(boost::bind<double>(f, _1,
-                                                      value_of(param),
-                                                      msgs),
+      double val_ = de_integrator(std::bind<double>(f, _1,
+                                                    value_of(param),
+                                                    std::ref(msgs)),
                                   a, b, tre, tae);
 
       if (!is_constant_struct<T_param>::value) {
@@ -151,11 +151,11 @@ namespace stan {
             clean_param_vec(clean_param);
 
           for (size_t n = 0; n < N; n++)
-            results[n] =
-              de_integrator(
-                boost::bind<double>(gradient_of_f<F, clean_T_param>, f,
-                                    _1, clean_param, clean_param_vec[n],
-                                    msgs), a, b, tre, tae);
+            results[n] = de_integrator(
+              std::bind<double>(gradient_of_f<F, clean_T_param>, f,
+                                _1, clean_param, clean_param_vec[n],
+                                std::ref(msgs)),
+              a, b, tre, tae);
         } catch (const std::exception& e) {
           recover_memory_nested();
           throw;

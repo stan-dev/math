@@ -21,8 +21,7 @@ namespace stan {
 
   namespace math {
 
-    static const double de_abcissas[] =
-    {
+    static const double de_abcissas[] = {
         // 1st layer abcissas: transformed 0, 1, 2, 3
         0.00000000000000000000,
         0.95136796407274694573,
@@ -223,10 +222,9 @@ namespace stan {
         0.99999999999953722654,
         0.99999999999981720098,
         0.99999999999992987953
-    }; // end abcissas
+    };
 
-    static const double de_weights[] =
-    {
+    static const double de_weights[] = {
         // First layer weights
         1.5707963267948966192,
         0.230022394514788685,
@@ -427,8 +425,8 @@ namespace stan {
         1.3542512912336274432e-11,
         5.5182369468174885821e-12,
         2.1835922099233609052e-12
-    }; // end weights
+    };
   }
 }
 
-#endif // include guard
+#endif
