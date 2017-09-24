@@ -88,7 +88,8 @@ namespace stan {
         } else {
           cdf_log += log1m(0.5 * exp(-scaled_diff));
 
-          const T_partials_return rep_deriv = inv(2.0 * exp(scaled_diff) - 1.0);
+          const T_partials_return rep_deriv = inv(2.0
+                                                    * exp(scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
             ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
           if (!is_constant_struct<T_loc>::value)
