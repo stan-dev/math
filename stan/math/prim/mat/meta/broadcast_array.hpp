@@ -12,15 +12,11 @@ namespace stan {
       class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C>> {
       public:
         empty_broadcast_array() {}
-        ViewElt& operator[] (int /*i*/) {
-          throw std::logic_error("Don't do this");
-        }
-        Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/) {
-          throw std::logic_error("Don't do this");
-        }
-        Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/) {
-          throw std::logic_error("Don't do this");
-        }
+        // We provide stub methods for the empty_broadcast_array which should
+        // never be called.
+        ViewElt& operator[](int /*i*/);
+        Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/);
+        Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/);
       };
     }
   }
