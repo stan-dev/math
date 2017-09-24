@@ -89,7 +89,7 @@ namespace stan {
         const T_partials_return phi_dbl = value_of(phi_vec[i]);
 
         const T_partials_return p_dbl = phi_dbl / (mu_dbl + phi_dbl);
-        const T_partials_return d_dbl = 1.0 / ((mu_dbl + phi_dbl)
+        const T_partials_return d_dbl = inv((mu_dbl + phi_dbl)
                                                * (mu_dbl + phi_dbl));
 
         const T_partials_return P_i =

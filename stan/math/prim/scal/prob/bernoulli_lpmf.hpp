@@ -103,9 +103,9 @@ namespace stan {
 
           if (!is_constant_struct<T_prob>::value) {
             if (n_int == 1)
-              ops_partials.edge1_.partials_[n] += 1.0 / theta_dbl;
+              ops_partials.edge1_.partials_[n] += inv(theta_dbl);
             else
-              ops_partials.edge1_.partials_[n] += 1.0 / (theta_dbl - 1);
+              ops_partials.edge1_.partials_[n] += inv(theta_dbl - 1);
           }
         }
       }

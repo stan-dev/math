@@ -42,7 +42,7 @@ namespace stan {
         by shape and rate (inverse scale)
       */
       variate_generator<RNG&, gamma_distribution<> >
-        gamma_rng(rng, gamma_distribution<>(alpha, 1.0 / beta));
+        gamma_rng(rng, gamma_distribution<>(alpha, inv(beta)));
       return gamma_rng();
     }
 
