@@ -88,7 +88,7 @@ namespace stan {
         if (include_summand<propto, T_scale>::value)
           log_sigma[i] = log(value_of(sigma_vec[i]));
         if (!is_constant_struct<T_scale>::value)
-          inv_sigma_squared[i] = inv_sigma[i] * inv_sigma[i];
+          inv_sigma_squared[i] = inv_square(sigma_dbl);
       }
 
       for (size_t n = 0; n < N; n++) {
