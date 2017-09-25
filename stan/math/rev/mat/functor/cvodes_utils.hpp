@@ -6,6 +6,7 @@
 #include <cvodes/cvodes_dense.h>
 #include <nvector/nvector_serial.h>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace stan {
