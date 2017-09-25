@@ -44,7 +44,6 @@
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
 #include <string>
 
 namespace stan {
@@ -55,23 +54,24 @@ namespace stan {
       // Lewandowski, Kurowicka, and Joe (2009) theorem 5
       T_shape constant;
       const int Km1 = K - 1;
+      using stan::math::lgamma;
       if (eta == 1.0) {
         // C++ integer division is appropriate in this block
-        Eigen::VectorXd numerator(Km1 / 2);
-        for (int k = 1; k <= numerator.rows(); k++)
-          numerator(k - 1) = lgamma(2.0 * k);
-        constant = sum(numerator);
+        Eigen::VectorXd denominator(Km1 / 2);
+        for (int k = 1; k <= denominator.rows(); k++)
+          denominator(k - 1) = lgamma(2.0 * k);
+        constant = -denominator.sum();
         if ((K % 2) == 1)
-          constant += 0.25 * (K * K - 1) * LOG_PI
+          constant -= 0.25 * (K * K - 1) * LOG_PI
             - 0.25 * (Km1 * Km1) * LOG_TWO - Km1 * lgamma(0.5 * (K + 1));
         else
-          constant += 0.25 * K * (K - 2) * LOG_PI
+          constant -= 0.25 * K * (K - 2) * LOG_PI
             + 0.25 * (3 * K * K - 4 * K) * LOG_TWO
             + K * lgamma(0.5 * K) - Km1 * lgamma(static_cast<double>(K));
       } else {
-        constant = -Km1 * lgamma(eta + 0.5 * Km1);
+        constant = Km1 * lgamma(eta + 0.5 * Km1);
         for (int k = 1; k <= Km1; k++)
-          constant += 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
+          constant -= 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
       }
       return constant;
     }

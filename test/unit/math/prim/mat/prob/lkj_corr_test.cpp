@@ -1,4 +1,5 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -130,3 +131,33 @@ TEST(ProbDistributionsLkjCorrCholesky,testHalf) {
                   stan::math::lkj_corr_cholesky_log(L, eta));
 }
 
+TEST(ProbDistributionsLkjCorrCholesky,testConstant) {
+  boost::random::mt19937 rng;
+  unsigned int K = 4;
+  double eta = stan::math::uniform_rng(0,2,rng);
+  double f = stan::math::do_lkj_constant(eta, K);
+  double s = 0;
+  double g = 0;
+  for (unsigned int k = 1; k < K; k++) {
+    s += (2 * eta - 2 + K - k) * (K - k);
+    g += (K - k) * stan::math::lbeta(eta + 0.5 * (K - k - 1),
+                                     eta + 0.5 * (K - k - 1));
+  }
+  g += s * stan::math::log(2.0); // equation 16 in LKJ article
+  EXPECT_FLOAT_EQ(f, -g);
+}
+
+TEST(ProbDistributionsLkjCorrCholesky,testVolume) {
+  unsigned int K = 4;
+  double eta = 1;
+  double f = stan::math::do_lkj_constant(eta, K);
+  double s = 0;
+  double g = 0;
+  for (unsigned int k = 1; k < K; k++) {
+    s += (2 * eta - 2 + K - k) * (K - k);
+    g += (K - k) * stan::math::lbeta(eta + 0.5 * (K - k - 1),
+                                     eta + 0.5 * (K - k - 1));
+  }
+  g += s * stan::math::log(2.0); // equation 16 in LKJ article
+  EXPECT_FLOAT_EQ(f, -g);
+}
