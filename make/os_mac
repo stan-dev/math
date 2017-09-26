@@ -11,7 +11,6 @@ endif
 
 ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wno-unknown-warning-option
-  CXXFLAGS += -Wno-unused-function
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
 endif
