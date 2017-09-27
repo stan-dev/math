@@ -200,6 +200,7 @@
 #include <stan/math/prim/mat/fun/singular_values.hpp>
 #include <stan/math/prim/mat/fun/sinh.hpp>
 #include <stan/math/prim/mat/fun/size.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/prim/mat/fun/sort_asc.hpp>
 #include <stan/math/prim/mat/fun/sort_desc.hpp>
