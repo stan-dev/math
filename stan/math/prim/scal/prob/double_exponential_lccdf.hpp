@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -47,7 +48,7 @@ namespace stan {
 
       T_partials_return ccdf_log(0.0);
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
+      if (size_zero(y, mu, sigma))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

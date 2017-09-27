@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -36,7 +37,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::log;
 
-      if (!(stan::length(y) && stan::length(sigma)))
+      if (size_zero(y, sigma))
         return 0.0;
 
       T_partials_return logp(0.0);

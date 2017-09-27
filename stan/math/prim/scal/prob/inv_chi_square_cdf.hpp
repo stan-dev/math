@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -47,7 +48,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      if (!(stan::length(y) && stan::length(nu)))
+      if (size_zero(y, nu))
         return 1.0;
 
       static const std::string function = "inv_chi_square_cdf";

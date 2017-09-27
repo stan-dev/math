@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -57,7 +58,7 @@ namespace stan {
 
       static const std::string function = "binomial_logit_lpmf";
 
-      if (!(stan::length(n) && stan::length(N) && stan::length(alpha)))
+      if (size_zero(n, N, alpha))
         return 0.0;
 
       T_partials_return logp = 0;

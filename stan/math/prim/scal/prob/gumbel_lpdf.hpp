@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -49,7 +50,7 @@ namespace stan {
       using std::exp;
       using stan::is_constant_struct;
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(beta)))
+      if (size_zero(y, mu, beta))
         return 0.0;
 
       T_partials_return logp(0.0);

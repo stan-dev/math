@@ -38,6 +38,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -91,8 +92,7 @@ namespace stan {
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)
-            && stan::length(tau) && stan::length(delta)))
+      if (size_zero(y, alpha, beta, tau, delta))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,

@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -68,8 +69,7 @@ namespace stan {
       using stan::math::include_summand;
 
       // check if any vectors are zero length
-      if (!(stan::length(y_bar) && stan::length(s_squared)
-            && stan::length(n_obs) && stan::length(mu) && stan::length(sigma)))
+      if (size_zero(y_bar, s_squared, n_obs, mu,sigma))
         return 0.0;
 
       // set up return value accumulator

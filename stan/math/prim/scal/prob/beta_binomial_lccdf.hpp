@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
@@ -52,8 +53,7 @@ namespace stan {
                                                   T_size2>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(N) && stan::length(alpha)
-            && stan::length(beta)))
+      if (size_zero(n, N, alpha, beta))
         return 0.0;
 
       T_partials_return P(0.0);

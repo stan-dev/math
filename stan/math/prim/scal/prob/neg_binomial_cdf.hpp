@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -34,7 +35,7 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(n, alpha, beta))
         return 1.0;
 
       T_partials_return P(1.0);

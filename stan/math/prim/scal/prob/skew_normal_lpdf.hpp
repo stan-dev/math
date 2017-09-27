@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
@@ -38,8 +39,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::exp;
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
-            && stan::length(alpha)))
+      if (size_zero(y, mu, sigma, alpha))
         return 0.0;
 
       T_partials_return logp(0.0);
