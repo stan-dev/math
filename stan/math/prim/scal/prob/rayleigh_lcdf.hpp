@@ -55,7 +55,7 @@ namespace stan {
 
       VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
       for (size_t i = 0; i < length(sigma); i++) {
-        inv_sigma[i] = inv(value_of(sigma_vec[i]));
+        inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
       }
 
       for (size_t n = 0; n < N; n++) {

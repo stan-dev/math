@@ -37,8 +37,8 @@ namespace stan {
       check_positive(function, "Scale parameter", sigma);
 
       variate_generator<RNG&, weibull_distribution<> >
-        weibull_rng(rng, weibull_distribution<>(alpha, inv(sigma)));
-      return inv(weibull_rng());
+        weibull_rng(rng, weibull_distribution<>(alpha, 1.0/sigma));
+      return 1.0 / weibull_rng();
     }
 
   }

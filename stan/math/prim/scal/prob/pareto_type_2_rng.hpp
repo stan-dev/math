@@ -27,7 +27,7 @@ namespace stan {
 
       check_positive(function, "scale parameter", lambda);
       double uniform_01 = uniform_rng(0.0, 1.0, rng);
-      return (std::pow(1.0 - uniform_01, -inv(alpha)) - 1.0) * lambda + mu;
+      return (std::pow(1.0 - uniform_01, -1.0 / alpha) - 1.0) * lambda + mu;
     }
 
   }

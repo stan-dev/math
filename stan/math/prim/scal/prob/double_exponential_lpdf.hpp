@@ -84,11 +84,11 @@ namespace stan {
       for (size_t i = 0; i < length(sigma); i++) {
         const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
-          inv_sigma[i] = inv(sigma_dbl);
+          inv_sigma[i] = 1.0 / sigma_dbl;
         if (include_summand<propto, T_scale>::value)
           log_sigma[i] = log(value_of(sigma_vec[i]));
         if (!is_constant_struct<T_scale>::value)
-          inv_sigma_squared[i] = inv_square(sigma_dbl);
+          inv_sigma_squared[i] = inv_sigma[i] * inv_sigma[i];
       }
 
       for (size_t n = 0; n < N; n++) {

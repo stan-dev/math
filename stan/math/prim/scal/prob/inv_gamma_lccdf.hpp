@@ -97,7 +97,7 @@ namespace stan {
           return ops_partials.build(negative_infinity());
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
-        const T_partials_return y_inv_dbl = inv(y_dbl);
+        const T_partials_return y_inv_dbl = 1.0 / y_dbl;
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
         const T_partials_return beta_dbl = value_of(beta_vec[n]);
 

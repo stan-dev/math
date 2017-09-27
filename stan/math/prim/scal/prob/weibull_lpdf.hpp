@@ -96,7 +96,7 @@ namespace stan {
                     T_partials_return, T_scale> inv_sigma(length(sigma));
       for (size_t i = 0; i < length(sigma); i++)
         if (include_summand<propto, T_y, T_shape, T_scale>::value)
-          inv_sigma[i] = inv(value_of(sigma_vec[i]));
+          inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
 
       VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                     T_partials_return, T_y, T_shape, T_scale>
@@ -122,14 +122,14 @@ namespace stan {
           logp -= y_div_sigma_pow_alpha[n];
 
         if (!is_constant_struct<T_y>::value) {
-          const T_partials_return inv_y = inv(value_of(y_vec[n]));
+          const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
           ops_partials.edge1_.partials_[n]
             += (alpha_dbl - 1.0) * inv_y
             - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
         }
         if (!is_constant_struct<T_shape>::value)
           ops_partials.edge2_.partials_[n]
-            += inv(alpha_dbl)
+            += 1.0/alpha_dbl
             + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge3_.partials_[n]
