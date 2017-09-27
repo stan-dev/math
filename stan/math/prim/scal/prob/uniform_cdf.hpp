@@ -64,12 +64,12 @@ namespace stan {
         cdf *= cdf_;
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_;
+          ops_partials.edge1_.partials_[n] += inv(b_min_a) / cdf_;
         if (!is_constant_struct<T_low>::value)
           ops_partials.edge2_.partials_[n] += (y_dbl - beta_dbl) / b_min_a
             / b_min_a / cdf_;
         if (!is_constant_struct<T_high>::value)
-          ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
+          ops_partials.edge3_.partials_[n] -= inv(b_min_a);
       }
 
       if (!is_constant_struct<T_y>::value) {

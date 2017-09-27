@@ -102,12 +102,12 @@ namespace stan {
           continue;
         }
 
-        const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
+        const T_partials_return sigma_inv = inv(value_of(sigma_vec[n]));
         const T_partials_return t = (value_of(y_vec[n]) - value_of(mu_vec[n]))
           * sigma_inv;
         const T_partials_return nu_dbl = value_of(nu_vec[n]);
         const T_partials_return q = nu_dbl / (t * t);
-        const T_partials_return r = 1.0 / (1.0 + q);
+        const T_partials_return r = inv(1.0 + q);
         const T_partials_return J = 2 * r * r * q / t;
         const T_partials_return betaNuHalf = exp(lbeta(0.5, 0.5 * nu_dbl));
         T_partials_return zJacobian = t > 0 ? - 0.5 : 0.5;

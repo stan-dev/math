@@ -98,7 +98,7 @@ namespace stan {
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n]
             += -lambda_dbl
-            + deriv_logerfc * -1.0 / (sigma_dbl * std::sqrt(2.0));
+            + deriv_logerfc * -inv(sigma_dbl * std::sqrt(2.0));
         if (!is_constant_struct<T_loc>::value)
           ops_partials.edge2_.partials_[n]
             += lambda_dbl
@@ -112,7 +112,7 @@ namespace stan {
                + y_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0)));
         if (!is_constant_struct<T_inv_scale>::value)
           ops_partials.edge4_.partials_[n]
-            += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl
+            += inv(lambda_dbl) + lambda_dbl * sigma_dbl * sigma_dbl
             + mu_dbl - y_dbl + deriv_logerfc * sigma_dbl / std::sqrt(2.0);
       }
       return ops_partials.build(logp);

@@ -42,7 +42,7 @@ namespace stan {
 
       double rng_from_gamma =
         variate_generator<RNG&, gamma_distribution<> >
-        (rng, gamma_distribution<>(alpha, 1.0 / beta))();
+        (rng, gamma_distribution<>(alpha, inv(beta)))();
 
       // same as the constraints for poisson_rng
       check_less(function,

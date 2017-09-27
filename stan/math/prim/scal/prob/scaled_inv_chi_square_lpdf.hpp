@@ -98,7 +98,7 @@ namespace stan {
                     T_partials_return, T_y> inv_y(length(y));
       for (size_t i = 0; i < length(y); i++)
         if (include_summand<propto, T_dof, T_y, T_scale>::value)
-          inv_y[i] = 1.0 / value_of(y_vec[i]);
+          inv_y[i] = inv(value_of(y_vec[i]));
 
       VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
                     T_partials_return, T_scale> log_s(length(s));
