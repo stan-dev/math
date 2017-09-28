@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 #include <string>
 
