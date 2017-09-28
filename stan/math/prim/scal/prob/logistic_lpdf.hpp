@@ -65,7 +65,7 @@ namespace stan {
       VectorBuilder<include_summand<propto, T_scale>::value,
                     T_partials_return, T_scale> log_sigma(length(sigma));
       for (size_t i = 0; i < length(sigma); i++) {
-        inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
+        inv_sigma[i] = inv(value_of(sigma_vec[i]));
         if (include_summand<propto, T_scale>::value)
           log_sigma[i] = log(value_of(sigma_vec[i]));
       }
@@ -97,7 +97,7 @@ namespace stan {
           exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
         T_partials_return inv_1p_exp_y_minus_mu_div_sigma(0);
         if (contains_nonconstant_struct<T_y, T_scale>::value)
-          inv_1p_exp_y_minus_mu_div_sigma = 1 / (1 + exp(y_minus_mu_div_sigma));
+          inv_1p_exp_y_minus_mu_div_sigma = inv(1 + exp(y_minus_mu_div_sigma));
 
         if (include_summand<propto, T_y, T_loc, T_scale>::value)
           logp -= y_minus_mu_div_sigma;

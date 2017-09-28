@@ -83,7 +83,7 @@ namespace stan {
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
         const T_partials_return exp_scaled_diff = exp(scaled_diff);
-        const T_partials_return inv_sigma = 1.0 / sigma_dbl;
+        const T_partials_return inv_sigma = inv(sigma_dbl);
 
         if (y_dbl < mu_dbl) {
           if (!is_constant_struct<T_y>::value)

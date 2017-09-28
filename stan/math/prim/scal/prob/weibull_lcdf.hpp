@@ -75,7 +75,7 @@ namespace stan {
 
         cdf_log += log(cdf_);
 
-        const T_partials_return rep_deriv = pow_ / (1.0 / exp_ - 1.0);
+        const T_partials_return rep_deriv = pow_ / (inv(exp_) - 1.0);
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
         if (!is_constant_struct<T_shape>::value)

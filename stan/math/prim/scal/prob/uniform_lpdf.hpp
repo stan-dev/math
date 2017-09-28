@@ -86,7 +86,7 @@ namespace stan {
       for (size_t i = 0; i < max_size(alpha, beta); i++)
         if (include_summand<propto, T_low, T_high>::value)
           inv_beta_minus_alpha[i]
-            = 1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+            = inv(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
       VectorBuilder<include_summand<propto, T_low, T_high>::value,
                     T_partials_return, T_low, T_high>

@@ -38,8 +38,8 @@ namespace stan {
       check_positive_finite(function, "Scale parameter", beta);
 
       variate_generator<RNG&, gamma_distribution<> >
-        gamma_rng(rng, gamma_distribution<>(alpha, 1 / beta));
-      return 1 / gamma_rng();
+        gamma_rng(rng, gamma_distribution<>(alpha, inv(beta)));
+      return inv(gamma_rng());
     }
 
   }
