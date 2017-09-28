@@ -44,10 +44,10 @@ namespace stan {
 
       using std::exp;
 
-      T_partials_return cdf(1.0);
-
       if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
-        return cdf;
+        return 0.0;
+
+      T_partials_return cdf(1.0);
 
       check_not_nan(function, "Random variable", y);
       check_finite(function, "Location parameter", mu);
