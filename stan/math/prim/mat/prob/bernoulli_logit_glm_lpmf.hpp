@@ -75,32 +75,34 @@ namespace stan {
       if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
         return 0.0;
 
-      scalar_seq_view<T_n> n_vec(n);
-      scalar_seq_view<T_beta> beta_vec(beta);
-
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
-
-      operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
-
+      
+      Matrix<double, Dynamic, 1> signs(N,1);
+      {
+        scalar_seq_view<T_n> n_vec(n);
+        for (size_t n = 0; n < N; ++n) {
+          signs[n] = 2 * n_vec[n] - 1;
+        }
+      }
       Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
-      for (size_t m = 0; m < M; ++m) {
-        beta_dbl[m] = value_of(beta_vec[m]);
+      {
+        scalar_seq_view<T_beta> beta_vec(beta);
+        for (size_t m = 0; m < M; ++m) {
+          beta_dbl[m] = value_of(beta_vec[m]);
+        }
       }
       Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
-      Matrix<T_partials_return, Dynamic, 1> theta_dbl = x_dbl * beta_dbl + 
-        Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha);
-      Matrix<double, Dynamic, 1> signs(N,1);
-      for (size_t n = 0; n < N; ++n) {
-        signs[n] = 2 * n_vec[n] - 1;
-      }
+
       Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array() * 
-        theta_dbl.array();
+        (x_dbl * beta_dbl + Matrix<double, Dynamic, 1>::Ones(N, 1) * 
+        value_of(alpha)).array();
       Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
 
       static const double cutoff = 20.0;
       for (size_t n = 0; n < N; ++n) {
-        // Handle extreme values gracefully using Taylor approximations.
+        // Compute the log-density and handle extreme values gracefully
+        // using Taylor approximations.
         if (ntheta[n] > cutoff)
           logp -= exp_m_ntheta[n];
         else if (ntheta[n] < -cutoff)
@@ -109,6 +111,8 @@ namespace stan {
           logp -= log1p(exp_m_ntheta[n]);
       }
       
+      // Compute the necessary derivatives.
+      operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
             && is_constant_struct<T_alpha>::value)) {
         Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
