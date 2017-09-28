@@ -8,7 +8,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 typedef std::chrono::high_resolution_clock::time_point TimeVar;
-#define duration(a) std::chrono::duration_cast<std::chrono::nanoseconds>(a).count()
+#define duration(a) std::chrono::duration_cast<std::chrono::microseconds>(a).count()
 #define timeNow() std::chrono::high_resolution_clock::now()
 
 //  We check that the values of the new regression match those of one built
@@ -93,7 +93,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars)
 
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
-/*
+
+
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   const int R = 30000;
   const int C = 1000;  
@@ -102,28 +103,41 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
   for (size_t i = 0; i < R; i++) {
     n[i] = rand()%2;
   }
-  Matrix<double, Dynamic, Dynamic> xreal =  Eigen::MatrixXd::Random(R, C);
-  Matrix<double, Dynamic, 1> betareal =  Eigen::MatrixXd::Random(C, 1);
-  Matrix<double, 1, 1> alphareal =  Eigen::MatrixXd::Random(1, 1);
-  Matrix<double, Dynamic, 1> alpharealvec =  Matrix<double, R, 1>::Ones() * alphareal;
-  Matrix<var, Dynamic, 1> beta = betareal;
-  Matrix<var, Dynamic, 1> theta(R, 1);
   
-  TimeVar t1 = timeNow();
-  theta = xreal * beta + alpharealvec;
-  var lp = stan::math::bernoulli_logit_lpmf(n, theta);
-  lp.grad();
-  TimeVar t2 = timeNow();
-  stan::math::recover_memory();
+  int T1 = 0;
+  int T2 = 0;
+  
+  for (size_t testnumber = 0; testnumber < 30; testnumber++){
+    Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic, Dynamic>::Random(R, C);
+    Matrix<double, Dynamic, 1> betareal = Matrix<double, Dynamic, Dynamic>::Random(C, 1);
+    Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
+    Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R, 1>::Ones() * alphareal;
+    
+    Matrix<var, Dynamic, 1> beta = betareal;
+    Matrix<var, Dynamic, 1> theta(R, 1);
 
   
-  Matrix<var,Dynamic,1> beta2 = betareal;
+    TimeVar t1 = timeNow();
+    theta = (xreal * beta) + alpharealvec;                
+    var lp = stan::math::bernoulli_logit_lpmf(n, theta);
+
+    lp.grad();
+    TimeVar t2 = timeNow();
+
+    stan::math::recover_memory();
+
+    Matrix<var, Dynamic, 1> beta2 = betareal;
+    
+    TimeVar t3 = timeNow();
+    var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, xreal, beta2, alphareal[0]);
+    lp2.grad();
+    TimeVar t4 = timeNow();
+    stan::math::recover_memory();
+    T1 += duration(t2 - t1);
+    T2 += duration(t4 - t3);
+
+  }
   
-  TimeVar t3 = timeNow();
-  var lp2 = stan::math::bernoulli_logit_glm_lpmf(n, xreal, beta2, alphareal[0]);
-  lp2.grad();
-  TimeVar t4 = timeNow();
-  
-  std::cout << "Existing Primitives:" << std::endl << duration(t2-t1) << std::endl  << "New Primitives:" << std::endl << duration(t4-t3) << std::endl;    
+  std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New Primitives:" << std::endl << T2 << std::endl;    
 }
-*/
+

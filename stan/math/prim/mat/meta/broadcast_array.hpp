@@ -15,6 +15,7 @@ namespace stan {
         // We provide stub methods for the empty_broadcast_array which should
         // never be called.
         ViewElt& operator[](int /*i*/);
+        void operator=(Eigen::Matrix<ViewElt, R, C> /*A*/);
         Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/);
         Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/);
       };
