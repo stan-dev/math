@@ -16,8 +16,6 @@ test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
 	$(LINK.cpp) -o $@ $^
 
 
-
-
 ##
 # Rule for generating dependencies.
 ##
@@ -80,22 +78,10 @@ test-headers: $(HEADER_TESTS)
 ##
 # Test generator for distribution tests
 ##
-test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
-	@mkdir -p $(dir $@)
-	$(LINK.cpp) $< $(OUTPUT_OPTION)
+test/prob/%_generated_test.cpp:
+	python test/prob/gen.py $(shell echo "$@" | sed 's,_generated_test.cpp,_test.hpp,g')
 
-
-
-## FIXME: think about how to do this generally using test_types
-# test_types := v fd fv ffd ffv
-
-test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
-
-.SECONDEXPANSION:
-test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
-	$(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
-
-LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g')
+LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_generated_test.cpp,g') 
 
 .PHONY: generate-tests
 generate-tests: $(LIST_OF_GENERATED_TESTS)

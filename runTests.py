@@ -86,12 +86,7 @@ def doCommand(command):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    if j is None:
-        command = 'make generate-tests -s'
-    else:
-        command = 'make -j%d generate-tests -s' % j
-    doCommand(command)
-
+    doCommand('make -j%d generate-tests -s' % (j or 1))
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
