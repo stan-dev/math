@@ -32,8 +32,8 @@ namespace stan {
      */
     template <typename T_loc, typename T_scale, class RNG>
     inline typename VectorBuilder<true, double, T_loc, T_scale>::type
-    gumbel_rng(const T_loc &mu,
-               const T_scale &beta,
+    gumbel_rng(const T_loc& mu,
+               const T_scale& beta,
                RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;

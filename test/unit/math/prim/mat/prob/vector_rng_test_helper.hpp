@@ -21,12 +21,30 @@
 template <typename T_param>
 void assign_parameter_values(T_param& params,
                              const std::vector<double>& values) {
-  if(values.size() == 0)
+  if (values.size() == 0)
     return;
 
-  // Static cast the size here because sometimes it is unsigned (if T_param
-  // is a std::vector) and sometimes it is signed (when it is an Eigen type)
-  for (size_t i = 0; i < static_cast<size_t>(params.size()); i++) {
+  for (int i = 0; i < params.size(); i++) {
+    params[i] = values[i % values.size()];
+  }
+}
+
+/*
+ * Fill the vector-like variable params with values from the values argument.
+ *
+ * values can be shorter than params (in which cause multiple copies of values
+ * are tiled over the params vector)
+ *
+ * @param params Parameter vector to write values to
+ * @param params Values to copy into params
+ */
+template <>
+void assign_parameter_values(std::vector<double>& params,
+                             const std::vector<double>& values) {
+  if (values.size() == 0)
+    return;
+
+  for (size_t i = 0; i < params.size(); i++) {
     params[i] = values[i % values.size()];
   }
 }
@@ -39,7 +57,7 @@ void assign_parameter_values(T_param& params,
  */
 template <>
 void assign_parameter_values(double& param, const std::vector<double>& values) {
-  if(values.size() == 0)
+  if (values.size() == 0)
     return;
 
   param = values[0];
@@ -188,13 +206,13 @@ void check_dist_throws(T_generate_samples generate_samples,
     assign_parameter_values(p3, good_p3);
     EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
 
-    if(p2_is_used) {
+    if (p2_is_used) {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, { bad_value });
       EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
     }
 
-    if(p3_is_used) {
+    if (p3_is_used) {
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, { bad_value });
       EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);

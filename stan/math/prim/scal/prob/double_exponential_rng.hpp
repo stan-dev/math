@@ -33,8 +33,8 @@ namespace stan {
      */
     template <typename T_loc, typename T_scale, class RNG>
     inline typename VectorBuilder<true, double, T_loc, T_scale>::type
-    double_exponential_rng(const T_loc &mu,
-                           const T_scale &sigma,
+    double_exponential_rng(const T_loc& mu,
+                           const T_scale& sigma,
                            RNG& rng) {
       static const std::string function = "double_exponential_rng";
 
