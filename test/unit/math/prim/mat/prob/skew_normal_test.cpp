@@ -6,46 +6,42 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
 
-struct skew_normal_rng_wrapper {
+class SkewNormalTestRig : public VectorRNGTestRig {
+public:
+  SkewNormalTestRig() :
+    VectorRNGTestRig(10000, 10,
+                     {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, {},
+                     {0.1, 1.0, 2.5, 4.0}, {-2.7, -1.5, -0.5, 0.0},
+                     {-2.5, -1.7, -1.3, 0.0, 1.0, 4.8}, {}) {}
+  
   template<typename T1, typename T2, typename T3, typename T_rng>
-  auto operator()(const T1& mu, const T2& sigma, const T3& alpha,
-                  T_rng& rng) const {
+  auto generate_samples(const T1& mu, const T2& sigma, const T3& alpha,
+                        T_rng& rng) const {
     return stan::math::skew_normal_rng(mu, sigma, alpha, rng);
+  }
+
+  std::vector<double> generate_quantiles(double mu, double sigma, double alpha)
+    const {
+    std::vector<double> quantiles;
+    double K = boost::math::round(2 * std::pow(N_, 0.4));
+    boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
+    
+    for (int i = 1; i < K; ++i) {
+      double frac = i / K;
+      quantiles.push_back(quantile(dist, frac));
+    }
+    quantiles.push_back(std::numeric_limits<double>::max());
+    
+    return quantiles;
   }
 };
 
-std::vector<double> build_quantiles(int N, double mu, double sigma,
-                                    double alpha) {
-  std::vector<double> quantiles;
-  int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
-
-  for (int i = 1; i < K; ++i) {
-    double frac = static_cast<double>(i) / K;
-    quantiles.push_back(quantile(dist, frac));
-  }
-  quantiles.push_back(std::numeric_limits<double>::max());
-
-  return quantiles;
-}
-
 TEST(ProbDistributionsSkewNormal, errorCheck) {
-  check_dist_throws_all_types(skew_normal_rng_wrapper{},
-                              {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, {},
-                              {0.1, 1.0, 2.5, 4.0}, {-2.7, -1.5, -0.5, 0.0},
-                              {-2.5, -1.7, -1.3, 0.0, 1.0, 4.8}, {});
+  check_dist_throws_all_types(SkewNormalTestRig());
 }
 
 TEST(ProbDistributionsSkewNormal, chiSquareGoodnessFitTest) {
-  int N = 10000;
-  int M = 10;
-
-  check_quantiles_all_types(N, M, skew_normal_rng_wrapper{}, build_quantiles,
-                              {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
-                              {0.1, 1.0, 2.5, 4.0},
-                              {-2.5, -1.7, -1.3, 0.0, 1.0, 4.8});
+  check_quantiles_all_types(SkewNormalTestRig());
 }
 

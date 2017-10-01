@@ -7,6 +7,8 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <string>
 
 namespace stan {
@@ -37,6 +39,9 @@ namespace stan {
                     const T_scale& sigma,
                     const T_shape& alpha,
                     RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::normal_distribution;
+
       static const std::string function = "skew_normal_rng";
 
       check_finite(function, "Location parameter", mu);
@@ -55,12 +60,14 @@ namespace stan {
 
       VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
+      variate_generator<RNG&, normal_distribution<> >
+        norm_rng(rng, normal_distribution<>(0.0, 1.0));
       for (size_t n = 0; n < N; n++) {
-        double r1 = normal_rng(0.0, 1.0, rng),
-          r2 = normal_rng(0.0, 1.0, rng);
+        double r1 = norm_rng(),
+          r2 = norm_rng();
 
         if (r2 > alpha_vec[n] * r1)
-          r1 *= -1;
+          r1 = -r1;
 
         output[n] = mu_vec[n] + sigma_vec[n] * r1;
       }

@@ -55,14 +55,10 @@ namespace stan {
 
       VectorBuilder<true, double, T_loc, T_scale> output(N);
 
+      variate_generator<RNG&, uniform_01<> > rng_unit_01(rng, uniform_01<>());
       for (size_t n = 0; n < N; n++) {
-        variate_generator<RNG&, uniform_01<> > rng_unit_01(rng, uniform_01<>());
-        double a = 0;
         double laplaceRN = rng_unit_01();
-        if (0.5 - laplaceRN > 0)
-          a = 1.0;
-        else if (0.5 - laplaceRN < 0)
-          a = -1.0;
+        double a = (0.5 - laplaceRN > 0) ? 1.0 : -1.0;
         output[n] = mu_vec[n] -
           sigma_vec[n] * a * log1m(2 * abs(0.5 - laplaceRN));
       }

@@ -53,9 +53,9 @@ namespace stan {
 
       VectorBuilder<true, double, T_loc, T_scale> output(N);
 
+      variate_generator<RNG&, exponential_distribution<> >
+        exp_rng(rng, exponential_distribution<>(1));
       for (size_t n = 0; n < N; n++) {
-        variate_generator<RNG&, exponential_distribution<> >
-          exp_rng(rng, exponential_distribution<>(1));
         output[n] = mu_vec[n] - sigma_vec[n] * std::log(exp_rng() / exp_rng());
       }
 

@@ -53,9 +53,8 @@ namespace stan {
 
       VectorBuilder<true, double, T_loc, T_scale> output(N);
 
+      variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
       for (size_t n = 0; n < N; n++) {
-        variate_generator<RNG&, uniform_01<> >
-          uniform01_rng(rng, uniform_01<>());
         output[n] = mu_vec[n] -
           beta_vec[n] * std::log(-std::log(uniform01_rng()));
       }

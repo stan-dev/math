@@ -67,7 +67,6 @@ namespace stan {
 
       return output.data();
     }
-
   }
 }
 #endif

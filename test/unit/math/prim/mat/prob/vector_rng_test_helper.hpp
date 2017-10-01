@@ -9,6 +9,246 @@
 #include <vector>
 
 /*
+ * VectorRNGTestRig is an Abstract class for wrapping up random number
+ * generators in a way so that they can be tested to
+ *  1) provide interfaces to all the necessary types
+ *  2) generate the correct distributions
+ *
+ * A test rig that inherits from VectorRNGTestRig must implement
+ *  1) generate_samples
+ *  2) generate_quantiles
+ * and must initialize good_p1_, bad_p1_, good_p2_, bad_p2, good_p3_, bad_p3_
+ * (depending on how many parameters the wrapped random number generator uses)
+ *
+ * generate_samples is a wrapper around the actual random number generator. It
+ * is expected to have the signature:
+ *   T_out generate_samples(T_param1 p1, T_param2 p2, T_param3, T_rng)
+ * where T_param1, T_param2, and T_param3 can be any combination of:
+ *   double, std::vector<double>, VectorXd, or RowVectorXd
+ * and T_rng is a boost random number generator. p2 and p3 are required for the
+ * function signature, but they can be ignored if they are not needed.
+ *
+ * Each element of the output, out[i], should correspond to a random variate
+ * generated according to parameters p1[i], p2[i], and p3[i]
+ *
+ * generate_samples is expected to throw domain_errors when passed invalid
+ * values like positive infinity, negative infinity, and NaNs.
+ *
+ * generated_samples is also expected to reject incompatibly sized
+ * input vectors. These should cause invalid_argument errors.
+ *
+ * The output of generate_samples must be of
+ *   stan::length(out) == stan::length(p1) if only p1 is used
+ *   stan::length(out) == stan::max_size(p1, p2) if p1 and p2 are used
+ *   stan::length(out) == stan::max_size(p1, p2, p3) if all parameters are used
+ * It must be defined to take three arguments, but not all must be used.
+ *
+ * The generate_quantiles callable must have the signature:
+ *  std::vector<double> generate_samples(double p1, double p2, double p3)
+ * (similarly to above, ignore parameters p2 and p3 if they aren't necessary)
+ *
+ * generate_quantiles should compute the quantiles that will be compared against
+ * (using assert_matches_quantiles) empirical distributions generated with
+ * generate_samples (which will be of length N_ for each parameter combination).
+ *
+ * p1, p2, and p3 are the values of the parameters that these quantiles
+ * correspond to.
+ *
+ * good_p1_ and bad_p1_ should be initialized to lists of valid and invalid
+ * parameters for the first parameter of the tested RNG
+ *
+ * Likewise, good_p2_, bad_p2_, and good_p3_, bad_p3_ should be initialized.
+ *
+ * If testing a distribution that uses only two parameters, leave good_p3_ as
+ * a length zero vector and it will not be tested. Similarly, if good_p2_ is
+ * length zero, the second parameter will not be tested either
+ */
+class VectorRNGTestRig {
+public:
+  int N_; // Number of samples used in the quantiles tests
+  int M_; // Length of vectors for the vectorization tests
+
+  std::vector<double> good_p1_;
+  std::vector<double> bad_p1_;
+  std::vector<double> good_p2_;
+  std::vector<double> bad_p2_;
+  std::vector<double> good_p3_;
+  std::vector<double> bad_p3_;
+
+  /*
+   * This function wraps up the random number generator for testing.
+   *
+   * The tested rng can have up to three parameters. Any unused parameters can
+   * be ignored.
+   *
+   * It *must* be implemented in the child class (it isn't virtual here because
+   * C++ doesn't allow templated virtual member functions)
+   */
+  template<typename T1, typename T2, typename T3, typename T_rng>
+  auto generate_samples(const T1& p1, const T2& p2, const T3& p3,
+                        T_rng& rng) const;
+
+  /*
+   * This function builds the quantiles that we will supply to
+   * assert_matches_quantiles to test the random number generator implemented in
+   * generate_samples
+   */
+  virtual std::vector<double> generate_quantiles(double p1, double p2,
+                                                 double p3) const = 0;
+
+  VectorRNGTestRig(int N, int M,
+                   std::vector<double> good_p1,
+                   std::vector<double> bad_p1,
+                   std::vector<double> good_p2,
+                   std::vector<double> bad_p2,
+                   std::vector<double> good_p3,
+                   std::vector<double> bad_p3) : N_(N), M_(M),
+                                                 good_p1_(good_p1),
+                                                 bad_p1_(bad_p1),
+                                                 good_p2_(good_p2),
+                                                 bad_p2_(bad_p2),
+                                                 good_p3_(good_p3),
+                                                 bad_p3_(bad_p3) {
+  }
+
+  VectorRNGTestRig(int N, int M,
+                   std::vector<double> good_p1,
+                   std::vector<double> bad_p1,
+                   std::vector<double> good_p2,
+                   std::vector<double> bad_p2) : N_(N), M_(M),
+                                                 good_p1_(good_p1),
+                                                 bad_p1_(bad_p1),
+                                                 good_p2_(good_p2),
+                                                 bad_p2_(bad_p2){
+  }
+  
+  VectorRNGTestRig(int N, int M,
+                   std::vector<double> good_p1,
+                   std::vector<double> bad_p1) : N_(N), M_(M),
+                                                 good_p1_(good_p1),
+                                                 bad_p1_(bad_p1) {
+  }
+};
+
+/*
+ * call_permutations_helper is the primary function for the recursive template
+ * function call_permutations. It calls func<type[I], type[J], type[K]>(rig),
+ * and continues the recursion by decrementing K.
+ *
+ * tparam T_typelist Tuple templated with list of types to iterate through
+ * tparam T_functor Templated functor
+ * tparam T_rig Random number generator test rig
+ * tparam I Loop index for first type
+ * tparam J Loop index for second type
+ * tparam K Loop index for third type
+ */
+template<typename T_typelist, typename T_functor, typename T_rig, int I, int J, int K>
+struct call_permutations_helper {
+  void operator()(const T_functor& func, const T_rig& rig) const {
+    func.template operator()<typename std::tuple_element<I, T_typelist>::type,
+                             typename std::tuple_element<J, T_typelist>::type,
+                             typename std::tuple_element<K, T_typelist>::type>
+      (rig);
+
+    call_permutations_helper<T_typelist, T_functor, T_rig, I, J, K - 1>{}(func,
+                                                                          rig);
+  }
+};
+
+/*
+ * This edge case catches when the right-most argument has completed one
+ * iteration through all types. It computes func<type[I], type[J], type[0]>,
+ * carries from the second argument, and continues the recursion.
+ *
+ * tparam T_typelist Tuple templated with list of types to iterate through
+ * tparam T_functor Templated functor
+ * tparam T_rig Random number generator test rig
+ * tparam I Loop index for first type
+ * tparam J Loop index for second type
+ * tparam K Loop index for third type
+ */
+template<typename T_typelist, typename T_functor, typename T_rig, int I, int J>
+struct call_permutations_helper<T_typelist, T_functor, T_rig, I, J, 0> {
+  void operator()(const T_functor& func, const T_rig& rig) const {
+    func.template operator()<typename std::tuple_element<I, T_typelist>::type,
+                             typename std::tuple_element<J, T_typelist>::type,
+                             typename std::tuple_element<0, T_typelist>::type>
+      (rig);
+    
+    call_permutations_helper<T_typelist, T_functor, T_rig, I, J - 1,
+                             std::tuple_size<T_typelist>::value - 1>{}(func, rig);
+  }
+};
+
+/*
+ * This edge case catches when the second argument has completed one iteration
+ * through all types. It computes func<type[I], type[0], type[0]>, carries from
+ * the left-most argument and continues the recursion.
+ *
+ * tparam T_typelist Tuple templated with list of types to iterate through
+ * tparam T_functor Templated functor
+ * tparam T_rig Random number generator test rig
+ * tparam I Loop index for first type
+ */
+template<typename T_typelist, typename T_functor, typename T_rig, int I>
+struct call_permutations_helper<T_typelist, T_functor, T_rig, I, 0, 0> {
+  void operator()(const T_functor& func, const T_rig& rig) const {
+    func.template operator()<typename std::tuple_element<I, T_typelist>::type,
+                             typename std::tuple_element<0, T_typelist>::type,
+                             typename std::tuple_element<0, T_typelist>::type>
+      (rig);
+    
+    call_permutations_helper<T_typelist, T_functor, T_rig, I - 1,
+                             std::tuple_size<T_typelist>::value - 1,
+                             std::tuple_size<T_typelist>::value - 1>{}(func,
+                                                                       rig);
+  }
+};
+
+/*
+ * This edge case catches when all types have been iterated through for each
+ * template argument. It computes func<type[0], type[0], type[0]> and ends the
+ * recursion.
+ *
+ * tparam T_typelist Tuple templated with list of types to iterate through
+ * tparam T_functor Templated functor
+ * tparam T_rig Random number generator test rig
+ */
+template<typename T_typelist, typename T_functor, typename T_rig>
+struct call_permutations_helper<T_typelist, T_functor, T_rig, 0, 0, 0> {
+  void operator()(const T_functor& func, const T_rig& rig) const {
+    func.template operator()<typename std::tuple_element<0, T_typelist>::type,
+                             typename std::tuple_element<0, T_typelist>::type,
+                             typename std::tuple_element<0, T_typelist>::type>
+      (rig);
+  }
+};
+
+
+/*
+ * call_permutations uses template recursion to call the functor func
+ * with all 3-element permutations of the types in T_typelist
+ *
+ * Roughly, this corresponds to:
+ *  for (i in (I - 1):0) // indexes go backwards, like: I - 1, I - 2, ... 0
+ *   for (j in (J - 1):0)
+ *    for (k in (K - 1):0)
+ *     func<type[i], type[j], type[k]>(rig)
+ *
+ * tparam T_typelist Tuple templated with list of types to iterate through
+ * tparam T_functor Templated functor
+ * tparam T_rig Random number generator test rig
+ */
+template<typename T_typelist, typename T_functor, typename T_rig>
+void call_permutations(const T_functor& func, const T_rig& rig) {
+  call_permutations_helper
+    <T_typelist, T_functor, T_rig,
+     std::tuple_size<T_typelist>::value - 1,
+     std::tuple_size<T_typelist>::value - 1,
+     std::tuple_size<T_typelist>::value - 1>{}(func, rig);
+}
+
+/*
  * Fill the vector-like variable params with values from the values argument.
  *
  * values can be shorter than params (in which cause multiple copies of values
@@ -83,339 +323,170 @@ void resize_if_vector(double& v, int N) {
 }
 
 /*
- * check_dist_throws feeds the given generate_samples callable various
+ * check_dist_throws feeds rig.generate_samples various
  * combinations of valid and invalid parameters (as defined by good_p1_, bad_p1,
  * good_p2_, bad_p2_, good_p3_, and bad_p3_). For all combinations of valid
  * (good) parameters, generate_samples should throw no errors. For all
  * combinations with an invalid (bad) parameter, generate_samples should throw
  * domain_errors.
  *
- * If good_p2_ or good_p3_ are empty, then it is assumed that those parameters
+ * If rig.good_p2_ or rig.good_p3_ are empty, then it is assumed that those parameters
  * are unused and will not be tested.
  *
- * The generate_samples callable is also passed various other guaranteed invalid
+ * rig.generate_samples will also be passed various other guaranteed invalid
  * values like positive infinity, negative infinity, and NaNs (these should also
  * cause domain_errors).
  *
- * The generated_samples callable is also tested to reject incompatibly sized
- * input vectors. These should cause invalid_argument errors.
- *
- * The generate_samples callable must have the signature:
- *   T_out generate_samples(T_param1 p1, T_param2 p2, T_param3, T_rng)
- * where T_param1, T_param2, and T_param3 can be any combination of:
- *   double, std::vector<double>, VectorXd, or RowVectorXd
- * and T_rng is a boost random number generator. p2 and p3 are required for the
- * function signature, but they can be ignored if they are not needed.
- *
- * The output of generate_samples must be of
- *   stan::length(out) == stan::length(p1) if only p1 is used
- *   stan::length(out) == stan::max_size(p1, p2) if p1 and p2 are used
- *   stan::length(out) == stan::max_size(p1, p2, p3) if all parameters are used
- *
- * Each element of the output, out[i], should correspond to a random variate
- * generated according to parameters p1[i], p2[i], and p3[i]
+ * rig.generated_samples is also tested to reject incompatibly sized input
+ * vectors. These should cause invalid_argument errors.
  *
  * @tparam T_param1 Type of first parameter
  * @tparam T_param2 Type of second parameter
  * @tparam T_param3 Type of third parameter
- * @tparam T_generate_samples Type of generate_samples functor
- * @param generate_samples generate_samples functor to test
- * @param good_p1_ Valid values of first parameter
- * @param bad_p1_ Invalid values of first parameter
- * @param good_p2_ Valid values of second parameter
- * (leave empty if p2 is unused)
- * @param bad_p2_ Invalid values of second parameter
- * @param good_p3_ Valid values of third parameter
- * (leave empty if p3 is unused)
- * @param bad_p3_ Invalid values of third parameter
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
  */
-template<typename T_param1, typename T_param2, typename T_param3,
-         typename T_generate_samples>
-void check_dist_throws(T_generate_samples generate_samples,
-                       const std::vector<double>& good_p1_,
-                       const std::vector<double>& bad_p1_,
-                       const std::vector<double>& good_p2_,
-                       const std::vector<double>& bad_p2_,
-                       const std::vector<double>& good_p3_,
-                       const std::vector<double>& bad_p3_) {
-  boost::random::mt19937 rng;
+struct check_dist_throws {
+  template<typename T_param1, typename T_param2, typename T_param3, typename T_rig>
+  void operator()(const T_rig& rig) const {
+    boost::random::mt19937 rng;
 
-  T_param1 p1;
-  T_param2 p2;
-  T_param2 p3;
+    T_param1 p1;
+    T_param2 p2;
+    T_param3 p3;
 
-  bool p2_is_used = good_p2_.size() > 0;
-  bool p3_is_used = good_p3_.size() > 0;
+    bool p2_is_used = rig.good_p2_.size() > 0;
+    bool p3_is_used = rig.good_p3_.size() > 0;
 
-  resize_if_vector(p1, 5);  // No-op if p1 is a scalar
-  resize_if_vector(p2, 5);  // No-op if p2 is a scalar
-  resize_if_vector(p3, 5);  // No-op if p3 is a scalar
+    resize_if_vector(p1, 5);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 5);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 5);  // No-op if p3 is a scalar
 
-  // Make copies of the input arguments so that we can randomly shuffle them
-  // in the tests
-  std::vector<double> good_p1 = good_p1_;
-  std::vector<double> bad_p1 = bad_p1_;
-  std::vector<double> good_p2 = good_p2_;
-  std::vector<double> bad_p2 = bad_p2_;
-  std::vector<double> good_p3 = good_p3_;
-  std::vector<double> bad_p3 = bad_p3_;
+    // Make copies of the input arguments so that we can randomly shuffle them
+    // in the tests
+    std::vector<double> good_p1 = rig.good_p1_;
+    std::vector<double> bad_p1 = rig.bad_p1_;
+    std::vector<double> good_p2 = rig.good_p2_;
+    std::vector<double> bad_p2 = rig.bad_p2_;
+    std::vector<double> good_p3 = rig.good_p3_;
+    std::vector<double> bad_p3 = rig.bad_p3_;
 
-  // Try a few combinations of parameters that should work
-  for (int i = 0; i < 5; i++) {
-    std::random_shuffle(good_p1.begin(), good_p1.end());
-    std::random_shuffle(good_p2.begin(), good_p2.end());
-    std::random_shuffle(good_p3.begin(), good_p3.end());
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_NO_THROW(generate_samples(p1, p2, p3, rng));
-  }
-
-  // Now try putting incompatible values in first parameter
-  for (auto bad_p1_value : bad_p1) {
-    assign_parameter_values(p1, { bad_p1_value });
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
-  }
-
-  // Now try putting incompatible values in second parameter
-  for (auto bad_p2_value : bad_p2) {
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, { bad_p2_value });
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
-  }
-
-  // Now try putting incompatible values in third parameter
-  for (auto bad_p3_value : bad_p3) {
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, { bad_p3_value });
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
-  }
-
-  // Make sure sampler throws errors with these values
-  std::vector<double> bad_values = { stan::math::positive_infinity(),
-                                     stan::math::negative_infinity(),
-                                     stan::math::not_a_number() };
-
-  for (auto bad_value : bad_values) {
-    assign_parameter_values(p1, { bad_value });
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
-
-    if (p2_is_used) {
+    // Try a few combinations of parameters that should work
+    for (int i = 0; i < 5; i++) {
+      std::random_shuffle(good_p1.begin(), good_p1.end());
+      std::random_shuffle(good_p2.begin(), good_p2.end());
+      std::random_shuffle(good_p3.begin(), good_p3.end());
       assign_parameter_values(p1, good_p1);
-      assign_parameter_values(p2, { bad_value });
-      EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
-    }
-
-    if (p3_is_used) {
       assign_parameter_values(p2, good_p2);
-      assign_parameter_values(p3, { bad_value });
-      EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::domain_error);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_NO_THROW(rig.generate_samples(p1, p2, p3, rng));
+    }
+
+    // Now try putting incompatible values in first parameter
+    for (auto bad_p1_value : bad_p1) {
+      assign_parameter_values(p1, { bad_p1_value });
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+    }
+
+    // Now try putting incompatible values in second parameter
+    for (auto bad_p2_value : bad_p2) {
+      assign_parameter_values(p1, good_p1);
+      assign_parameter_values(p2, { bad_p2_value });
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+    }
+
+    // Now try putting incompatible values in third parameter
+    for (auto bad_p3_value : bad_p3) {
+      assign_parameter_values(p1, good_p1);
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, { bad_p3_value });
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+    }
+
+    // Make sure sampler throws errors with these values
+    std::vector<double> bad_values = { stan::math::positive_infinity(),
+                                       stan::math::negative_infinity(),
+                                       stan::math::not_a_number() };
+
+    for (auto bad_value : bad_values) {
+      assign_parameter_values(p1, { bad_value });
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+
+      if (p2_is_used) {
+        assign_parameter_values(p1, good_p1);
+        assign_parameter_values(p2, { bad_value });
+        EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+      }
+
+      if (p3_is_used) {
+        assign_parameter_values(p2, good_p2);
+        assign_parameter_values(p3, { bad_value });
+        EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+      }
+    }
+
+    // Check to make sure _rng rejects vector arguments of different lengths for
+    // all parameter pairs.
+
+    // If p1 is a scalar or the only vector, this test is skipped  
+    resize_if_vector(p1, 3);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 4);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 4);  // No-op if p3 is a scalar
+    if (stan::length(p1) != 1 &&
+        ((p2_is_used && stan::length(p2) != 1) ||
+         (p3_is_used && stan::length(p3) != 1))) {
+      assign_parameter_values(p1, good_p1);
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
+    }
+
+    // If p2 is a scalar or the only vector, this test is skipped
+    resize_if_vector(p1, 4);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 3);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 4);  // No-op if p3 is a scalar
+    if (p2_is_used && stan::length(p2) != 1 &&
+        (stan::length(p1) != 1 || (p3_is_used && stan::length(p3) != 1))) {
+      assign_parameter_values(p1, good_p1);
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
+    }
+
+    // If p3 is a scalar or the only vector, this test is skipped
+    resize_if_vector(p1, 4);  // No-op if p1 is a scalar
+    resize_if_vector(p2, 4);  // No-op if p2 is a scalar
+    resize_if_vector(p3, 3);  // No-op if p3 is a scalar
+    if (p3_is_used && stan::length(p3) != 1 &&
+        (stan::length(p1) != 1 || (p2_is_used && stan::length(p2) != 1))) {
+      assign_parameter_values(p1, good_p1);
+      assign_parameter_values(p2, good_p2);
+      assign_parameter_values(p3, good_p3);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
     }
   }
-
-  // Check to make sure _rng rejects vector arguments of different lengths for
-  // all parameter pairs.
-
-  // If p1 is a scalar or the only vector, this test is skipped  
-  resize_if_vector(p1, 3);  // No-op if p1 is a scalar
-  resize_if_vector(p2, 4);  // No-op if p2 is a scalar
-  resize_if_vector(p3, 4);  // No-op if p3 is a scalar
-  if (stan::length(p1) != 1 &&
-      ((p2_is_used && stan::length(p2) != 1) ||
-       (p3_is_used && stan::length(p3) != 1))) {
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::invalid_argument);
-  }
-
-  // If p2 is a scalar or the only vector, this test is skipped
-  resize_if_vector(p1, 4);  // No-op if p1 is a scalar
-  resize_if_vector(p2, 3);  // No-op if p2 is a scalar
-  resize_if_vector(p3, 4);  // No-op if p3 is a scalar
-  if (p2_is_used && stan::length(p2) != 1 &&
-      (stan::length(p1) != 1 || (p3_is_used && stan::length(p3) != 1))) {
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::invalid_argument);
-  }
-
-  // If p3 is a scalar or the only vector, this test is skipped
-  resize_if_vector(p1, 4);  // No-op if p1 is a scalar
-  resize_if_vector(p2, 4);  // No-op if p2 is a scalar
-  resize_if_vector(p3, 3);  // No-op if p3 is a scalar
-  if (p3_is_used && stan::length(p3) != 1 &&
-      (stan::length(p1) != 1 || (p2_is_used && stan::length(p2)))) {
-    assign_parameter_values(p1, good_p1);
-    assign_parameter_values(p2, good_p2);
-    assign_parameter_values(p3, good_p3);
-    EXPECT_THROW(generate_samples(p1, p2, p3, rng), std::invalid_argument);
-  }
-}
+};
 
 /*
- * This function calls check_dist_throws with the given generate_samples
- * callable and all combinations of double, std::vector<double>,
- * Eigen::VectorXd, and Eigen::RowVectorXd as template arguments
+ * This function calls check_dist_throws with the given test_rig
+ * and all combinations of double, std::vector<double>, Eigen::VectorXd,
+ * and Eigen::RowVectorXd as template arguments
  *
- * @tparam T_generate_samples Type of generate_samples functor
- * @param generate_samples generate_samples functor to test
- * @param good_p1 Valid values of first parameter
- * @param bad_p1 Invalid values of first parameter
- * @param good_p2 Valid values of second parameter
- * @param bad_p2 Invalid values of second parameter
- * @param good_p3 Valid values of third parameter
- * @param bad_p3 Invalid values of third parameter
+ * @tparam T_rig Test rig type for random number generator
+ * @param T_rig Test rig for random number generator
  */
-template<typename T_generate_samples>
-void check_dist_throws_all_types(T_generate_samples generate_samples,
-                                 const std::vector<double>& good_p1,
-                                 const std::vector<double>& bad_p1,
-                                 const std::vector<double>& good_p2,
-                                 const std::vector<double>& bad_p2,
-                                 const std::vector<double>& good_p3,
-                                 const std::vector<double>& bad_p3) {
+template<typename T_rig>
+void check_dist_throws_all_types(const T_rig& rig) {
   using Eigen::VectorXd;
   using Eigen::RowVectorXd;
 
-  check_dist_throws<double, double, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, std::vector<double>, double >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, VectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, RowVectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, double, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, std::vector<double>, double >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, VectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, RowVectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, double, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, std::vector<double>, double >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, VectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, RowVectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, double, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, std::vector<double>, double >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, VectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, RowVectorXd, double>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-
-  check_dist_throws<double, double, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, std::vector<double>, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, VectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, RowVectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, double, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, std::vector<double>, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, VectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, RowVectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, double, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, std::vector<double>, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, VectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, RowVectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, double, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, std::vector<double>, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, VectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, RowVectorXd, std::vector<double> >
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-
-  check_dist_throws<double, double, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, std::vector<double>, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, VectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, RowVectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, double, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, std::vector<double>, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, VectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, RowVectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, double, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, std::vector<double>, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, VectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, RowVectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, double, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, std::vector<double>, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, VectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, RowVectorXd, VectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-
-  check_dist_throws<double, double, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, std::vector<double>, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, VectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<double, RowVectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, double, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, std::vector<double>, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, VectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<std::vector<double>, RowVectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, double, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, std::vector<double>, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, VectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<VectorXd, RowVectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, double, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, std::vector<double>, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, VectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
-  check_dist_throws<RowVectorXd, RowVectorXd, RowVectorXd>
-    (generate_samples, good_p1, bad_p1, good_p2, bad_p2, good_p3, bad_p3);
+  call_permutations<std::tuple<double, std::vector<double>, VectorXd,
+                               RowVectorXd> >(check_dist_throws{}, rig);
 }
 
 /*
@@ -438,253 +509,80 @@ std::vector<double> promote_to_vector(std::vector<double> v) {
 
 /*
  * check_quantiles uses assert_matches_quantiles to check random numbers
- * generated by the callable generate_samples against the reference
- * quantiles computed with the given callable generate_quantiles.
+ * generated by rig.generate_samples against the reference quantiles computed
+ * with rig.generate_quantiles.
  *
- * If good_p2 or good_p3 are empty, then it is assumed that those parameters
- * are unused and will not be tested.
- *
- * The generate_samples callable must have the signature:
- *   T_out generate_samples(T_param1 p1, T_param2 p2, T_param3, p3, T_rng)
- * where T_param1, T_param2, and T_param3 can be any combination of:
- *   double, std::vector<double>, VectorXd, or RowVectorXd
- * and T_rng is a boost random number generator.  p2 and p3 are required for the
- * function signature, but they can be ignored if they are not needed.
- *
- * The output of generate_samples must be of
- *   stan::length(out) == stan::length(p1) if only p1 is used
- *   stan::length(out) == stan::max_size(p1, p2) if p1 and p2 are used
- *   stan::length(out) == stan::max_size(p1, p2, p3) if all parameters are used
- *
- * Each element of the output, out[i], should correspond to a random variate
- * generated according to parameters p1[i], p2[i], and p3[i]
- *
- * The generate_quantiles callable must have the signature:
- *  std::vector<double> generate_samples(int N, double p1, double p2, double p3)
- * (similarly to above, ignore parameters p2 and p3 if they aren't necessary)
- *
- * N is the number of samples that the quantiles will be compared
- * against and p1, p2, and p3 are the values of the parameters that these
- * quantiles correspond to.
- *
- * The output of generate_quantiles should be the quantiles used for comparing
- * empirical distributions used by assert_matches_quantiles
- *
- * Parameters for each of these callables are copied from the vectors good_p1,
- * good_p2, and good_p3.
+ * If rig.good_p2_ or rig.good_p3_ are empty, then it is assumed that those
+ * parameters are unused and will not be tested.
  *
  * @tparam T_param1 Type of first parameter
  * @tparam T_param2 Type of second parameter
  * @tparam T_param3 Type of third parameter
- * @tparam T_generate_samples Type of callable for generating samples
- * @tparam T_generate_quantiles Type of callable for generating quantiles
- * @param sampler sampler functor to test
- * @param good_p1 Valid values of first parameter
- * @param good_p2 Valid values of second parameter
- * @param good_p3 Valid values of third parameter
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
  */
-template<typename T_param1, typename T_param2, typename T_param3,
-         typename T_generate_samples, typename T_generate_quantiles>
-void check_quantiles(int N, int M_vec,
-                     T_generate_samples generate_samples,
-                     T_generate_quantiles generate_quantiles,
-                     const std::vector<double>& good_p1,
-                     const std::vector<double>& good_p2,
-                     const std::vector<double>& good_p3) {
-  boost::random::mt19937 rng;
-  T_param1 p1;
-  T_param2 p2;
-  T_param3 p3;
-  resize_if_vector(p1, M_vec);  // No-op if p1 is scalar
-  resize_if_vector(p2, M_vec);  // No-op if p2 is scalar
-  resize_if_vector(p3, M_vec);  // No-op if p3 is scalar
+struct check_quantiles {
+  template<typename T_param1, typename T_param2, typename T_param3,
+           typename T_rig>
+  void operator()(const T_rig& rig) const {
+    boost::random::mt19937 rng;
+    T_param1 p1;
+    T_param2 p2;
+    T_param3 p3;
+    resize_if_vector(p1, rig.M_);  // No-op if p1 is scalar
+    resize_if_vector(p2, rig.M_);  // No-op if p2 is scalar
+    resize_if_vector(p3, rig.M_);  // No-op if p3 is scalar
 
-  assign_parameter_values(p1, good_p1);
-  assign_parameter_values(p2, good_p2);
-  assign_parameter_values(p3, good_p3);
+    assign_parameter_values(p1, rig.good_p1_);
+    assign_parameter_values(p2, rig.good_p2_);
+    assign_parameter_values(p3, rig.good_p3_);
 
-  bool p2_is_used = good_p2.size() > 0;
-  bool p3_is_used = good_p3.size() > 0;
+    bool p2_is_used = rig.good_p2_.size() > 0;
+    bool p3_is_used = rig.good_p3_.size() > 0;
 
-  int M = std::max({ stan::length(p1),
-                     (p2_is_used) ? stan::length(p2) : 1,
-                     (p3_is_used) ? stan::length(p3) : 1 });
+    int M = std::max({ stan::length(p1),
+          (p2_is_used) ? stan::length(p2) : 1,
+          (p3_is_used) ? stan::length(p3) : 1 });
 
-  stan::scalar_seq_view<T_param1> p1_vec(p1);
-  stan::scalar_seq_view<T_param2> p2_vec(p2);
-  stan::scalar_seq_view<T_param3> p3_vec(p3);
+    stan::scalar_seq_view<T_param1> p1_vec(p1);
+    stan::scalar_seq_view<T_param2> p2_vec(p2);
+    stan::scalar_seq_view<T_param3> p3_vec(p3);
 
-  std::vector<std::vector<double> > samples_to_test_transpose;
-  for (int n = 0; n < N; ++n) {
-    // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote it
-    // to a std::vector
-    samples_to_test_transpose.
-      push_back(promote_to_vector(generate_samples(p1, p2, p3, rng)));
-  }
-
-  for (int m = 0; m < M; ++m) {
-    std::vector<double> samples_to_test;
-    for (int n = 0; n < N; ++n) {
-      samples_to_test.push_back(samples_to_test_transpose[n][m]);
+    std::vector<std::vector<double> > samples_to_test_transpose;
+    for (int n = 0; n < rig.N_; ++n) {
+      // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote it
+      // to a std::vector
+      samples_to_test_transpose.
+        push_back(promote_to_vector(rig.generate_samples(p1, p2, p3, rng)));
     }
-    std::vector<double> quantiles =
-      generate_quantiles(N, p1_vec[m], p2_vec[m], p3_vec[m]);
 
-    assert_matches_quantiles(samples_to_test, quantiles, 1e-6);
+    for (int m = 0; m < M; ++m) {
+      std::vector<double> samples_to_test;
+      for (int n = 0; n < rig.N_; ++n) {
+        samples_to_test.push_back(samples_to_test_transpose[n][m]);
+      }
+      std::vector<double> quantiles =
+        rig.generate_quantiles(p1_vec[m], p2_vec[m], p3_vec[m]);
+
+      assert_matches_quantiles(samples_to_test, quantiles, 1e-6);
+    }
   }
-}
+};
 
 /*
- * Call check_quantiles with the given arguments and all combinations of
+ * Call check_quantiles on the given test rig with all combinations of
  * double, std::vector<double>, Eigen::VectorXd, and Eigen::RowVectorXd
  *
- * @tparam T_generate_samples Type of callable for generating samples
- * @tparam T_generate_quantiles Type of callable for generating quantiles
- * @param sampler sampler functor to test
- * @param good_p1 Valid values of first parameter
- * @param good_p2 Valid values of second parameter
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
  */
-template<typename T_generate_samples, typename T_generate_quantiles>
-void check_quantiles_all_types(int N, int M,
-                               T_generate_samples generate_samples,
-                               T_generate_quantiles generate_quantiles,
-                               const std::vector<double>& good_p1,
-                               const std::vector<double>& good_p2,
-                               const std::vector<double>& good_p3) {
+template<typename T_rig>
+void check_quantiles_all_types(const T_rig& rig) {
   using Eigen::VectorXd;
   using Eigen::RowVectorXd;
 
-  check_quantiles<double, double, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, std::vector<double>, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, VectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, RowVectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, double, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, std::vector<double>, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, VectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, RowVectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, double, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, std::vector<double>, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, VectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, RowVectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, double, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, std::vector<double>, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, VectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, RowVectorXd, double>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-
-  check_quantiles<double, double, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, std::vector<double>, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, VectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, RowVectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, double, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, std::vector<double>, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, VectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, RowVectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, double, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, std::vector<double>, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, VectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, RowVectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, double, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, std::vector<double>, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, VectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, RowVectorXd, std::vector<double> >
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-
-  check_quantiles<double, double, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, std::vector<double>, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, VectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, RowVectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, double, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, std::vector<double>, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, VectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, RowVectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, double, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, std::vector<double>, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, VectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, RowVectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, double, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, std::vector<double>, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, VectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, RowVectorXd, VectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-
-  check_quantiles<double, double, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, std::vector<double>, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, VectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<double, RowVectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, double, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, std::vector<double>, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, VectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<std::vector<double>, RowVectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, double, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, std::vector<double>, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, VectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<VectorXd, RowVectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, double, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, std::vector<double>, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, VectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
-  check_quantiles<RowVectorXd, RowVectorXd, RowVectorXd>
-    (N, M, generate_samples, generate_quantiles, good_p1, good_p2, good_p3);
+  call_permutations<std::tuple<double, std::vector<double>, VectorXd,
+                               RowVectorXd> >(check_quantiles{}, rig);
 }
 
 #endif
