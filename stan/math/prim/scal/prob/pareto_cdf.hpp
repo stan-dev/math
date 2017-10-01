@@ -72,7 +72,7 @@ namespace stan {
 
         const T_partials_return log_dbl = log(value_of(y_min_vec[n])
                                               / value_of(y_vec[n]));
-        const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
+        const T_partials_return y_min_inv_dbl = inv(value_of(y_min_vec[n]));
         const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
 
         const T_partials_return Pn = 1.0 - exp(alpha_dbl * log_dbl);

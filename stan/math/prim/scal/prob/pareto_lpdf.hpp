@@ -75,7 +75,7 @@ namespace stan {
                     T_partials_return, T_y> inv_y(length(y));
       if (contains_nonconstant_struct<T_y, T_shape>::value) {
         for (size_t n = 0; n < length(y); n++)
-          inv_y[n] = 1 / value_of(y_vec[n]);
+          inv_y[n] = inv(value_of(y_vec[n]));
       }
 
       VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
@@ -109,7 +109,7 @@ namespace stan {
             += alpha_dbl / value_of(y_min_vec[n]);
         if (!is_constant_struct<T_shape>::value)
           ops_partials.edge3_.partials_[n]
-            += 1 / alpha_dbl + log_y_min[n] - log_y[n];
+            += inv(alpha_dbl) + log_y_min[n] - log_y[n];
       }
       return ops_partials.build(logp);
     }

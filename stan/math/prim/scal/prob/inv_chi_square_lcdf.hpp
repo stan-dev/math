@@ -102,7 +102,7 @@ namespace stan {
         }
 
         const T_partials_return y_dbl = value_of(y_vec[n]);
-        const T_partials_return y_inv_dbl = 1.0 / y_dbl;
+        const T_partials_return y_inv_dbl = inv(y_dbl);
         const T_partials_return nu_dbl = value_of(nu_vec[n]);
 
         const T_partials_return Pn = gamma_q(0.5 * nu_dbl, 0.5 * y_inv_dbl);

@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -37,8 +38,8 @@ namespace stan {
       check_positive(function, "Scale parameter", sigma);
 
       variate_generator<RNG&, weibull_distribution<> >
-        weibull_rng(rng, weibull_distribution<>(alpha, 1.0/sigma));
-      return 1.0 / weibull_rng();
+        weibull_rng(rng, weibull_distribution<>(alpha, inv(sigma)));
+      return inv(weibull_rng());
     }
 
   }

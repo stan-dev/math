@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -42,7 +43,7 @@ namespace stan {
         by shape and rate (inverse scale)
       */
       variate_generator<RNG&, gamma_distribution<> >
-        gamma_rng(rng, gamma_distribution<>(alpha, 1.0 / beta));
+        gamma_rng(rng, gamma_distribution<>(alpha, inv(beta)));
       return gamma_rng();
     }
 

@@ -77,9 +77,9 @@ namespace stan {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-        const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
+        const T_partials_return sigma_inv_vec = inv(value_of(sigma_vec[n]));
 
-        const T_partials_return Pn = 1.0 - 1.0 / (1.0 + exp(-(y_dbl - mu_dbl)
+        const T_partials_return Pn = 1.0 - inv(1.0 + exp(-(y_dbl - mu_dbl)
                                                             * sigma_inv_vec));
         P += log(Pn);
 

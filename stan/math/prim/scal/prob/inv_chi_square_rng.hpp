@@ -45,7 +45,7 @@ namespace stan {
 
       variate_generator<RNG&, chi_squared_distribution<> >
         chi_square_rng(rng, chi_squared_distribution<>(nu));
-      return 1 / chi_square_rng();
+      return inv(chi_square_rng());
     }
 
   }
