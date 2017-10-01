@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FALLING_FACTORIAL_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FALLING_FACTORIAL_HPP
 
-#include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
-#include <cmath>
+#include <boost/math/special_functions/factorials.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 
 namespace stan {
   namespace math {
@@ -51,9 +53,12 @@ namespace stan {
      */
     template<typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
-    falling_factorial(const T1 x, const T2 n) {
-      using std::exp;
-      return exp(log_falling_factorial(x, n));
+    falling_factorial(const T1& x, const T2&n) {
+      if (is_nan(x) || is_nan(n))
+        return std::numeric_limits<double>::quiet_NaN();
+      static const std::string function = "falling_factorial";
+      check_nonnegative(function, "first argument", n);
+      return boost::math::falling_factorial(x, n, boost_policy_t());
     }
 
   }
