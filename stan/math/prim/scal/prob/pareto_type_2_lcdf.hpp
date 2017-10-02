@@ -77,9 +77,9 @@ namespace stan {
           / value_of(lambda_vec[i]);
         const T_partials_return p1_pow_alpha
           = pow(temp, value_of(alpha_vec[i]));
-        cdf_log[i] = log1m(inv(p1_pow_alpha));
+        cdf_log[i] = log1m(1.0 / p1_pow_alpha);
 
-        inv_p1_pow_alpha_minus_one[i] = inv(p1_pow_alpha - 1.0);
+        inv_p1_pow_alpha_minus_one[i] = 1.0 / (p1_pow_alpha - 1.0);
 
         if (!is_constant_struct<T_shape>::value)
           log_1p_y_over_lambda[i] = log(temp);

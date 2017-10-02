@@ -33,7 +33,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -150,7 +149,7 @@ namespace stan {
         T_return_type k, K;
         T_return_type sqrt_x = sqrt(x);
         T_return_type log_x = log(x);
-        T_return_type one_over_pi_times_sqrt_x = inv(pi()) * sqrt_x;
+        T_return_type one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
 
         // calculate number of terms needed for large t:
         // if error threshold is set low enough
