@@ -31,11 +31,6 @@ TEST(AgradFwdRisingFactorial, Fvar) {
   x = rising_factorial(5, a);
   EXPECT_FLOAT_EQ(1680.0, x.val_);
   EXPECT_FLOAT_EQ(1680.0 * digamma(9), x.d_);
-  
-  //finite diff
-  EXPECT_FLOAT_EQ((stan::math::rising_factorial(5.0, 4.0 + eps)
-                  - stan::math::rising_factorial(5.0, 4.0 - eps))
-                  / (2 * eps), x.d_);
 }
 
 TEST(AgradFwdRisingFactorial, FvarFvarDouble) {

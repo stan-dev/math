@@ -31,11 +31,7 @@ TEST(AgradFwdFallingFactorial,Fvar) {
   x = falling_factorial(5, a);
   EXPECT_FLOAT_EQ(120.0, x.val_);
   EXPECT_FLOAT_EQ(120.0 * digamma(2.0),x.d_);
-  
-  //finite diff
-  EXPECT_FLOAT_EQ((stan::math::falling_factorial(5.0, 4.0 + eps)
-                  - stan::math::falling_factorial(5.0, 4.0 - eps))
-                  / (2 * eps), x.d_);
+
 }
 
 TEST(AgradFwdFallingFactorial,FvarFvarDouble) {
