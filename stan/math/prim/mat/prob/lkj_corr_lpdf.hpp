@@ -50,9 +50,10 @@ namespace stan {
   namespace math {
 
     template <typename T_shape>
-    T_shape do_lkj_constant(const T_shape& eta, const unsigned int& K) {
+    typename boost::math::tools::promote_args<double, T_shape>::type
+    do_lkj_constant(const T_shape& eta, const unsigned int& K) {
       // Lewandowski, Kurowicka, and Joe (2009) theorem 5
-      T_shape constant;
+      typename boost::math::tools::promote_args<double, T_shape>::type constant;
       const int Km1 = K - 1;
       using stan::math::lgamma;
       if (eta == 1.0) {

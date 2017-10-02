@@ -151,6 +151,7 @@ TEST(ProbDistributionsLkjCorrCholesky,testVolume) {
   unsigned int K = 4;
   double eta = 1;
   double f = stan::math::do_lkj_constant(eta, K);
+  EXPECT_FLOAT_EQ(f, stan::math::do_lkj_constant(1, K));
   double s = 0;
   double g = 0;
   for (unsigned int k = 1; k < K; k++) {
