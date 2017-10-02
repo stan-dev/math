@@ -55,7 +55,7 @@ namespace stan {
      */
     template<typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
-    falling_factorial(const T1& x, const T2&n) {
+    falling_factorial(const T1& x, const T2& n) {
       if (is_nan(x) || is_nan(n))
         return std::numeric_limits<double>::quiet_NaN();
       static const std::string function = "falling_factorial";
