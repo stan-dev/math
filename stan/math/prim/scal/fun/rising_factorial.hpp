@@ -5,6 +5,8 @@
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -57,7 +59,7 @@ namespace stan {
       if (is_nan(x) || is_nan(n))
         return std::numeric_limits<double>::quiet_NaN();
       static const std::string function = "rising_factorial";
-      check_nonnegative(function, "first argument", n);
+      check_nonnegative(function, "second argument", n);
       return boost::math::rising_factorial(x, n, boost_policy_t());
     }
   }
