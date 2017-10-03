@@ -11,20 +11,6 @@ namespace stan {
 
     template<typename T>
     inline fvar<T>
-    falling_factorial(const fvar<T>& x, const fvar<T>& n) {
-      using boost::math::digamma;
-
-      T falling_fact(falling_factorial(x.val_, n.val_));
-      return fvar<T>(falling_fact,
-                     falling_fact
-                     * (digamma(x.val_ + 1) - digamma(x.val_ - n.val_ + 1))
-                     * x.d_
-                     + falling_fact
-                     * digamma(x.val_ - n.val_ + 1) * n.d_);
-    }
-
-    template<typename T>
-    inline fvar<T>
     falling_factorial(const fvar<T>& x, int n) {
       using boost::math::digamma;
 
@@ -33,40 +19,6 @@ namespace stan {
                      falling_fact
                      * (digamma(x.val_ + 1) - digamma(x.val_ - n + 1))
                      * x.d_);
-    }
-
-    template<typename T>
-    inline fvar<T>
-    falling_factorial(const fvar<T>& x, double n) {
-      using boost::math::digamma;
-
-      T falling_fact(falling_factorial(x.val_, n));
-      return fvar<T>(falling_fact,
-                     falling_fact
-                     * (digamma(x.val_ + 1) - digamma(x.val_ - n + 1))
-                     * x.d_);
-    }
-
-    template<typename T>
-    inline fvar<T>
-    falling_factorial(int x, const fvar<T>& n) {
-      using boost::math::digamma;
-
-      T falling_fact(falling_factorial(x, n.val_));
-      return fvar<T>(falling_fact,
-                     falling_fact
-                     * digamma(x - n.val_ + 1) * n.d_);
-    }
-
-    template<typename T>
-    inline fvar<T>
-    falling_factorial(double x, const fvar<T>& n) {
-      using boost::math::digamma;
-
-      T falling_fact(falling_factorial(x, n.val_));
-      return fvar<T>(falling_fact,
-                     falling_fact
-                     * digamma(x - n.val_ + 1) * n.d_);
     }
   }
 }
