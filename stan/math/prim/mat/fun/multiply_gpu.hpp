@@ -1,0 +1,97 @@
+#ifndef STAN_MATH_PRIM_MAT_FUN_MULTIPY_GPU_HPP
+#define STAN_MATH_PRIM_MAT_FUN_MULTIPY_GPU_HPP
+
+#include  <iostream>
+#include  <string>
+#include  <map>
+#include  <Eigen/Dense>
+#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/arr/fun/matrix_gpu.hpp>
+
+/** @file stan/math/prim/mat/fun/basic_matrix.hpp
+    @brief basic_matrix - basic matrix operations: matrix transpose,  copy matrices on the GPU,  ...
+*/
+
+namespace stan {
+  namespace math {
+
+    void diagonal_multiply_with_scalar_gpu(stan::math::matrix_gpu & A,
+     double scalar) {
+      cl::Kernel kernel = stan::math::get_kernel("scalar_mul_diagonal");
+      cl::CommandQueue cmdQueue = stan::math::get_queue();
+      try {
+        int min_dim = A.M;
+        if(A.N < min_dim)
+          min_dim = A.N;
+        kernel.setArg(0, A.buffer());
+        kernel.setArg(1, scalar),
+        kernel.setArg(2, A.M);
+        kernel.setArg(3, A.N);
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(min_dim),
+          cl::NullRange,
+          NULL,
+          NULL);
+      } catch (cl::Error& e) {
+        check_ocl_error(e);
+      }
+    }
+
+    void multiply_with_scalar_gpu(stan::math::matrix_gpu & A,  double scalar) {
+      cl::Kernel kernel = stan::math::get_kernel("scalar_mul");
+      cl::CommandQueue cmdQueue = stan::math::get_queue();
+      try {
+        kernel.setArg(0, A.buffer());
+        kernel.setArg(1, scalar),
+        kernel.setArg(2, A.M);
+        kernel.setArg(3, A.N);
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(A.M, A.N),
+          cl::NullRange,
+          NULL,
+          NULL);
+      } catch (cl::Error& e) {
+        check_ocl_error(e);
+      }
+    }
+
+    void multiply_gpu(stan::math::matrix_gpu & A, stan::math::matrix_gpu & B,
+     stan::math::matrix_gpu & C ) {
+      if(A.N! = B.M) {
+        app_error("Incorrect dimensions of the matrices in matrix multiply!");
+      }
+      //square matrices
+      cl::Kernel kernel = stan::math::get_kernel("basic_multiply");
+      cl::CommandQueue cmdQueue = stan::math::get_queue();
+      try {
+
+        int Mpad = ((A.M + 15)/16)*16;
+        int Npad = ((B.N + 15)/16)*16;
+        kernel.setArg(0, A.M);
+        kernel.setArg(1, B.N);
+        kernel.setArg(2, B.M);
+        kernel.setArg(3, A.buffer());
+        kernel.setArg(4, B.buffer());
+        kernel.setArg(5, C.buffer());
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(Mpad,  Npad),
+          cl::NDRange(16, 16),
+          NULL,
+          NULL);
+
+      } catch (cl::Error& e) {
+        check_ocl_error(e);
+
+      }
+
+    }
+  }
+}
+
+#endif
