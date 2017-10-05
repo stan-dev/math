@@ -18,8 +18,8 @@ namespace stan {
 
     //transpose the matrix B and store it in matrix A
     void transpose(stan::math::matrix_gpu & dst, stan::math::matrix_gpu & src) {
-      if(!(dst.M == src.N && dst.N == src.M)) {
-        app_error("output matrix dimensions in matrix transpose!\n"
+      if(!(dst.rows == src.cols && dst.cols == src.rows)) {
+        app_error("output matrix dimensions in matrix transpose!\cols"
         "\nIf the input matrix is MxN, the output matrix should be NxM.");
       }
 
@@ -29,12 +29,12 @@ namespace stan {
       try {
         kernel.setArg(0, dst.buffer());
         kernel.setArg(1, src.buffer());
-        kernel.setArg(2, src.M);
-        kernel.setArg(3, src.N);
+        kernel.setArg(2, src.rows);
+        kernel.setArg(3, src.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(src.M, src.N),
+          cl::NDRange(src.rows, src.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -46,11 +46,11 @@ namespace stan {
     //when transpose with a single matrix is called,
     // a temporary matrix is created and used to transpose
     void transpose(stan::math::matrix_gpu & A) {
-      stan::math::matrix_gpu temp(A.N, A.M);
+      stan::math::matrix_gpu temp(A.cols, A.rows);
       stan::math::transpose(temp, A);
-      int dim_temp = A.M;
-      A.M = A.N;
-      A.N = dim_temp;
+      int dim_temp = A.rows;
+      A.rows = A.cols;
+      A.cols = dim_temp;
       stan::math::copy(A, temp);
 
     }
@@ -60,13 +60,13 @@ namespace stan {
       cl::CommandQueue cmdQueue = stan::math::get_queue();
       try {
         kernel.setArg(0, A.buffer());
-        kernel.setArg(1, A.M);
-        kernel.setArg(2, A.N);
+        kernel.setArg(1, A.rows);
+        kernel.setArg(2, A.cols);
         kernel.setArg(3, part);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -76,7 +76,7 @@ namespace stan {
     }
 
     void identity(stan::math::matrix_gpu & A) {
-      if(A.M! = A.N) {
+      if(A.rows! = A.cols) {
         app_error("Can not make an identity matrix in a non-square matrix!");
       }
       cl::Kernel kernel = stan::math::get_kernel("identity");
@@ -84,12 +84,12 @@ namespace stan {
 
       try {
         kernel.setArg(0, A.buffer());
-        kernel.setArg(1, A.M);
-        kernel.setArg(2, A.N);
+        kernel.setArg(1, A.rows);
+        kernel.setArg(2, A.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -100,8 +100,8 @@ namespace stan {
 
     void copy_triangular(stan::math::matrix_gpu & src,
      stan::math::matrix_gpu & dst, triangularity lower_upper) {
-      if(!(src.M == dst.M && src.N == dst.N)) {
-        app_error("output matrix dimensions in lower triangular copy error!\n"
+      if(!(src.rows == dst.rows && src.cols == dst.cols)) {
+        app_error("output matrix dimensions in lower triangular copy error!\cols"
         "\nThe dimensions of the input and output matrices should match.");
       }
       cl::Kernel kernel = stan::math::get_kernel("copy_triangular");
@@ -109,13 +109,13 @@ namespace stan {
       try {
         kernel.setArg(0, src.buffer());
         kernel.setArg(1, dst.buffer());
-        kernel.setArg(2, dst.M);
-        kernel.setArg(3, dst.N);
+        kernel.setArg(2, dst.rows);
+        kernel.setArg(3, dst.cols);
         kernel.setArg(4, lower_upper);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(dst.M, dst.N),
+          cl::NDRange(dst.rows, dst.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -127,7 +127,7 @@ namespace stan {
     void copy_triangular_transposed(stan::math::matrix_gpu & A,
      copy_transposed_triangular lower_upper) {
 
-      if(!(A.M == A.N)) {
+      if(!(A.rows == A.cols)) {
         app_error("The matrix in the triangular"
         "transposed copy is non-square.");
       }
@@ -135,13 +135,13 @@ namespace stan {
       cl::CommandQueue cmdQueue = stan::math::get_queue();
       try {
         kernel.setArg(0, A.buffer());
-        kernel.setArg(1, A.M);
-        kernel.setArg(2, A.N);
+        kernel.setArg(1, A.rows);
+        kernel.setArg(2, A.cols);
         kernel.setArg(3, lower_upper);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -153,7 +153,7 @@ namespace stan {
     void add(stan::math::matrix_gpu & C,
      stan::math::matrix_gpu & A, stan::math::matrix_gpu & B) {
 
-      if(!( A.M == B.M && C.M == B.M && A.N == B.N && C.N == B.N )) {
+      if(!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols )) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = stan::math::get_kernel("add");
@@ -162,12 +162,12 @@ namespace stan {
         kernel.setArg(0, C.buffer());
         kernel.setArg(1, A.buffer());
         kernel.setArg(2, B.buffer());
-        kernel.setArg(3, A.M);
-        kernel.setArg(4, A.N);
+        kernel.setArg(3, A.rows);
+        kernel.setArg(4, A.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -179,7 +179,7 @@ namespace stan {
     void subtract(stan::math::matrix_gpu & C, stan::math::matrix_gpu & A,
      stan::math::matrix_gpu & B) {
 
-      if(!( A.M == B.M && C.M == B.M && A.N == B.N && C.N == B.N )) {
+      if(!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols )) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = stan::math::get_kernel("subtract");
@@ -189,12 +189,12 @@ namespace stan {
         kernel.setArg(0, C.buffer());
         kernel.setArg(1, A.buffer());
         kernel.setArg(2, B.buffer());
-        kernel.setArg(3, A.M);
-        kernel.setArg(4, A.N);
+        kernel.setArg(3, A.rows);
+        kernel.setArg(4, A.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);

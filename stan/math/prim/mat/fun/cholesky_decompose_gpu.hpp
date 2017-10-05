@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
+#include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <Eigen/Dense>
 #include <iostream>
 #include <string>
@@ -19,12 +22,11 @@ namespace stan {
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    cholesky_gpu(stan::math::matrix_gpu & B) {
+    cholesky_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & m) {
 
-      stan::math::matrix_gpu A(B);
-      if(!(A.M  ==  A.N)) {
-        app_error("the input matrix of the decomposition is not square");
-      }
+      check_square("cholesky_decompose", "m", m);
+      check_symmetric("cholesky_decompose", "m", m);
+      stan::math::matrix_gpu A(m);
 
       cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
       cl::Kernel kernel_left = stan::math::get_kernel("cholesky_left_update");
@@ -42,13 +44,13 @@ namespace stan {
         cl::Buffer buffer_V(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);
         cl::Buffer buffer_L(ctx, CL_MEM_READ_WRITE,
-         sizeof(T) * block * A.M * 4);
+         sizeof(T) * block * A.rows * 4);
         cl::Buffer buffer_D(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);
 
         kernel_chol_block.setArg(0, A.buffer());
         kernel_chol_block.setArg(1, offset);
-        kernel_chol_block.setArg(2, A.M);
+        kernel_chol_block.setArg(2, A.rows);
         kernel_chol_block.setArg(3, block);
         kernel_chol_block.setArg(4, buffer_V);
         kernel_chol_block.setArg(5, buffer_D);
@@ -58,23 +60,23 @@ namespace stan {
         kernel_left.setArg(2, buffer_V);
         kernel_left.setArg(3, offset);
         kernel_left.setArg(4, block);
-        kernel_left.setArg(5, A.M);
+        kernel_left.setArg(5, A.rows);
 
         kernel_mid.setArg(0, buffer_L);
         kernel_mid.setArg(1, A.buffer());
         kernel_mid.setArg(2, offset);
         kernel_mid.setArg(3, block);
-        kernel_mid.setArg(4, A.M);
+        kernel_mid.setArg(4, A.rows);
 
         kernel_zero.setArg(0, A.buffer());
-        kernel_zero.setArg(1, A.M);
+        kernel_zero.setArg(1, A.rows);
 
         int threadsLeft,  leftPad;
         int threadsMid,  midPad;
-        while ((offset + block) < (A.M - block)) {
-          threadsLeft = A.M - offset - block;
+        while ((offset + block) < (A.rows - block)) {
+          threadsLeft = A.rows - offset - block;
           leftPad = ((threadsLeft + local - 1) / local) * local;
-          threadsMid = A.M - offset - block;
+          threadsMid = A.rows - offset - block;
           midPad = ((threadsMid + local - 1) / local) * local;
           kernel_left.setArg(3, offset);
           kernel_left.setArg(6, threadsLeft);
@@ -92,7 +94,7 @@ namespace stan {
           offset += block;
         }
 
-        int left = A.M - offset;
+        int left = A.rows - offset;
         if (left > 0) {
           kernel_chol_block.setArg(1, offset);
           kernel_chol_block.setArg(3, left);
@@ -100,13 +102,14 @@ namespace stan {
            cl::NullRange, cl::NDRange(left), cl::NDRange(left));
         }
       cmd_queue.enqueueNDRangeKernel(kernel_zero,
-       cl::NullRange, cl::NDRange(A.M, A.M),  cl::NullRange);
+       cl::NullRange, cl::NDRange(A.rows, A.rows),  cl::NullRange);
       } catch (cl::Error& e) {
         check_ocl_error(e);
       }
-      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A_tmp;
-      stan::math::copy(B, A_tmp);
-      return A_tmp;
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp;
+      stan::math::copy(B, m_tmp);
+      check_pos_definite("cholesky_decompose", "m", m_tmp);
+      return m_tmp;
     }
   }
 }
