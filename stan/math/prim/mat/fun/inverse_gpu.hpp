@@ -17,15 +17,15 @@
 namespace stan {
   namespace math {
     //transpose the matrix B and store it in matrix A
-    void lower_triangular_inverse(stanmathcl::Matrix & A) {
+    void lower_triangular_inverse(stan::math::matrix_gpu & A) {
       if(!(A.M == A.N)) {
         app_error("the input matrix of the inverse is not square");
       }
 
-      cl::Kernel kernel_step1 = stanmathcl::get_kernel("lower_tri_inv_step1");
-      cl::Kernel kernel_step2 = stanmathcl::get_kernel("lower_tri_inv_step2");
-      cl::Kernel kernel_step3 = stanmathcl::get_kernel("lower_tri_inv_step3");
-      cl::CommandQueue cmdQueue = stanmathcl::get_queue();
+      cl::Kernel kernel_step1 = stan::math::get_kernel("lower_tri_inv_step1");
+      cl::Kernel kernel_step2 = stan::math::get_kernel("lower_tri_inv_step2");
+      cl::Kernel kernel_step3 = stan::math::get_kernel("lower_tri_inv_step3");
+      cl::CommandQueue cmdQueue = stan::math::get_queue();
 
       try{
 
@@ -37,9 +37,9 @@ namespace stan {
         if(A.M > 2500)
           parts = 64;
 
-        stanmathcl::Matrix temp(A.M,  A.N * 2);
+        stan::math::matrix_gpu temp(A.M,  A.N * 2);
 
-        int remainder = A.M%parts;
+        int remainder = A.M % parts;
         int part_size_fixed = A.M/parts;
 
         int* stl_sizes = new int[parts];
@@ -50,7 +50,7 @@ namespace stan {
           else
             stl_sizes[i] = part_size_fixed;
         }
-        cl::Context ctx = stanmathcl::get_context();
+        cl::Context ctx = stan::math::get_context();
         cl::Buffer sizes = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(int) * parts);
 
         cmdQueue.enqueueWriteBuffer(sizes, CL_TRUE, 0,
