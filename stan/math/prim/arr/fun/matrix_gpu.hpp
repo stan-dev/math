@@ -31,21 +31,21 @@ namespace stan {
 
       public:
 
-        int M;
-        int N;
+        int rows;
+        int cols;
         cl::Buffer buffer() {
           return oclBuffer;
         }
 
         //TODO: constructors with enumerator added when
         // the matrix_gpu does not need to be READ_WRITE
-        matrix_gpu(int m,  int n) {
+        matrix_gpu(int rows,  int cols) {
           try {
             cl::Context ctx = stan::math::get_context();
             oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-             sizeof(T) * m * n);
-            this->M = m;
-            this->N = n;
+             sizeof(T) * rows * cols);
+            this->rows = rows;
+            this->cols = cols;
           } catch (cl::Error& e) {
             check_ocl_error(e);
           }
@@ -58,16 +58,16 @@ namespace stan {
             cl::CommandQueue queue = stan::math::get_queue();
             oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) *
              A.rows() * A.cols());
-            this->M = A.rows();
-            this->N = A.cols();
-            T*  Atemp =  new T[M * N];
-            for(int i = 0; i < M; i++) {
-              for(int j = 0; j < N; j++) {
-                  Atemp[i * N + j] = A(i, j);
+            this->rows = A.rows();
+            this->cols = A.cols();
+            T*  Atemp =  new T[rows * cols];
+            for(int i = 0; i < rows; i++) {
+              for(int j = 0; j < cols; j++) {
+                  Atemp[i * cols + j] = A(i, j);
               }
             }
             queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
-             sizeof(T) * M * N, Atemp);
+             sizeof(T) * rows * cols, Atemp);
             delete Atemp;
           } catch (cl::Error& e) {
             check_ocl_error(e);
@@ -78,25 +78,25 @@ namespace stan {
     template <typename T>
     void copy(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & src,
      stan::math::matrix_gpu & dst) {
-            if(src.rows() != dst.M || src.cols() != dst.N)
+            if(src.rows() != dst.rows || src.cols() != dst.cols)
             {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                 std::endl;
             }
-            int M = src.rows();
-            int N = src.cols();
+            int rows = src.rows();
+            int cols = src.cols();
             try {
               cl::Context ctx = stan::math::get_context();
               cl::CommandQueue queue = stan::math::get_queue();
               cl::Buffer buffer = dst.buffer();
-              T*  Atemp =  new T[M * N];
-              for(int i = 0; i < M; i++) {
-                for(int j = 0; j < N; j++) {
-                  Atemp[i * N + j] = src(i, j);
+              T*  Atemp =  new T[rows * cols];
+              for(int i = 0; i < rows; i++) {
+                for(int j = 0; j < cols; j++) {
+                  Atemp[i * cols + j] = src(i, j);
                 }
               }
               queue.enqueueWriteBuffer(buffer, CL_TRUE, 0,
-               sizeof(T) * M * N, Atemp);
+               sizeof(T) * rows * cols, Atemp);
               delete Atemp;
 
             } catch (cl::Error& e) {
@@ -107,26 +107,26 @@ namespace stan {
     template <typename T>
     void copy(stan::math::matrix_gpu & src,
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & dst) {
-            if(dst.rows() != src.M) {
+            if(dst.rows() != src.rows) {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                std::endl;
             }
-            if(dst.cols() != src.N) {
+            if(dst.cols() != src.cols) {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                std::endl;
             }
-            int M = dst.rows();
-            int N = dst.cols();
+            int rows = dst.rows();
+            int cols = dst.cols();
             try {
-              T*  Btemp =  new T[M * N];
+              T*  Btemp =  new T[rows * cols];
               cl::Context ctx = stan::math::get_context();
               cl::CommandQueue queue = stan::math::get_queue();
               cl::Buffer buffer = src.buffer();
               queue.enqueueReadBuffer(buffer,  CL_TRUE,  0,
-                sizeof(T) * M * N,  Btemp);
-              for(int i = 0; i < M; i++) {
-                for(int j = 0; j < N; j++) {
-                  dst(i, j) = Btemp[i * N + j];
+                sizeof(T) * rows * cols,  Btemp);
+              for(int i = 0; i < rows; i++) {
+                for(int j = 0; j < cols; j++) {
+                  dst(i, j) = Btemp[i * cols + j];
                 }
               }
               delete Btemp;
@@ -136,8 +136,8 @@ namespace stan {
     }
 
     void copy(stan::math::matrix_gpu & src,  stan::math::matrix_gpu & dst) {
-      if(!(src.M == dst.M && src.N == dst.N)) {
-        app_error("output matrix_gpu dimensions in matrix_gpu copy!\n"
+      if(!(src.rows == dst.rows && src.cols == dst.cols)) {
+        app_error("output matrix_gpu dimensions in matrix_gpu copy!\cols"
          "\nThe dimensions of the input and output matrices should match.");
       }
       cl::Kernel kernel = stan::math::get_kernel("copy");
@@ -145,12 +145,12 @@ namespace stan {
       try {
         kernel.setArg(0, src.buffer());
         kernel.setArg(1, dst.buffer());
-        kernel.setArg(2, dst.M);
-        kernel.setArg(3, dst.N);
+        kernel.setArg(2, dst.rows);
+        kernel.setArg(3, dst.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(dst.M, dst.N),
+          cl::NDRange(dst.rows, dst.cols),
           cl::NullRange,
           NULL,
           NULL);
