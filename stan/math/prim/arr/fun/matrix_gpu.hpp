@@ -50,7 +50,7 @@ namespace stan {
             check_ocl_error(e);
           }
         };
-        
+
         template <typename T>
         matrix_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
           try {
