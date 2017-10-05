@@ -1,5 +1,5 @@
-#ifndef STANMATH_ERRORS_HPP_
-#define STANMATH_ERRORS_HPP_
+#ifndef STAN_MATH_PRIM_ARR_ERR_GPU_ERRORS_HPP_
+#define STAN_MATH_PRIM_ARR_ERR_GPU_ERRORS_HPP_
 
 #include <iostream>
 #include <string>
