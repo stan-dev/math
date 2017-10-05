@@ -79,7 +79,7 @@ namespace stan {
                     T_partials_return, T_scale> inv_sigma_sq(length(sigma));
       if (include_summand<propto, T_y, T_loc, T_scale>::value) {
         for (size_t n = 0; n < length(sigma); n++)
-          inv_sigma[n] = inv(value_of(sigma_vec[n]));
+          inv_sigma[n] = 1 / value_of(sigma_vec[n]);
       }
       if (include_summand<propto, T_y, T_loc, T_scale>::value) {
         for (size_t n = 0; n < length(sigma); n++)
@@ -97,7 +97,7 @@ namespace stan {
                     T_partials_return, T_y> inv_y(length(y));
       if (!is_constant_struct<T_y>::value) {
         for (size_t n = 0; n < length(y); n++)
-          inv_y[n] = inv(value_of(y_vec[n]));
+          inv_y[n] = 1 / value_of(y_vec[n]);
       }
 
       if (include_summand<propto>::value)

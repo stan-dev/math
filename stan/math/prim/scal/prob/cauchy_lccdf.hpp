@@ -74,14 +74,14 @@ namespace stan {
       for (size_t n = 0; n < N; n++) {
         const T_partials_return y_dbl = value_of(y_vec[n]);
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
-        const T_partials_return sigma_inv_dbl = inv(value_of(sigma_vec[n]));
+        const T_partials_return sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return z = (y_dbl - mu_dbl) * sigma_inv_dbl;
 
         const T_partials_return Pn = 0.5 - atan(z) / pi();
         ccdf_log += log(Pn);
 
-        const T_partials_return rep_deriv = inv(Pn * pi()
+        const T_partials_return rep_deriv = 1.0 / (Pn * pi()
                                                    * (z * z * sigma_dbl
                                                       + sigma_dbl));
         if (!is_constant_struct<T_y>::value)

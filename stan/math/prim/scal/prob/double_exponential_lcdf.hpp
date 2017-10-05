@@ -75,7 +75,7 @@ namespace stan {
         const T_partials_return mu_dbl = value_of(mu_vec[n]);
         const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
         const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
-        const T_partials_return inv_sigma = inv(sigma_dbl);
+        const T_partials_return inv_sigma = 1.0 / sigma_dbl;
         if (y_dbl < mu_dbl) {
           cdf_log += log_half + scaled_diff;
 
@@ -88,8 +88,8 @@ namespace stan {
         } else {
           cdf_log += log1m(0.5 * exp(-scaled_diff));
 
-          const T_partials_return rep_deriv = inv(2.0
-                                                    * exp(scaled_diff) - 1.0);
+          const T_partials_return rep_deriv = 1.0
+            / (2.0 * exp(scaled_diff) - 1.0);
           if (!is_constant_struct<T_y>::value)
             ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
           if (!is_constant_struct<T_loc>::value)

@@ -131,7 +131,7 @@ namespace stan {
           if (!is_constant_struct<T_shape>::value)
             ops_partials.edge1_.partials_[i]
               += n_vec[i] / value_of(alpha_vec[i])
-              - inv(value_of(beta_vec[i]));
+              - 1.0 / value_of(beta_vec[i]);
           if (!is_constant_struct<T_inv_scale>::value)
             ops_partials.edge2_.partials_[i]
               += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);

@@ -61,7 +61,7 @@ namespace stan {
       VectorBuilder<include_summand<propto, T_scale>::value,
                     T_partials_return, T_scale> log_sigma(length(sigma));
       for (size_t i = 0; i < length(sigma); i++) {
-        inv_sigma[i] = inv(value_of(sigma_vec[i]));
+        inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
         if (include_summand<propto, T_scale>::value)
           log_sigma[i] = log(value_of(sigma_vec[i]));
       }
@@ -79,7 +79,7 @@ namespace stan {
 
         T_partials_return scaled_diff = inv_sigma[n] * y_over_sigma;
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] += inv(y_dbl) - scaled_diff;
+          ops_partials.edge1_.partials_[n] += 1.0 / y_dbl - scaled_diff;
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge2_.partials_[n]
             += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];

@@ -77,7 +77,7 @@ namespace stan {
       VectorBuilder<include_summand<propto, T_scale>::value,
                     T_partials_return, T_scale> log_beta(length(beta));
       for (size_t i = 0; i < length(beta); i++) {
-        inv_beta[i] = inv(value_of(beta_vec[i]));
+        inv_beta[i] = 1.0 / value_of(beta_vec[i]);
         if (include_summand<propto, T_scale>::value)
           log_beta[i] = log(value_of(beta_vec[i]));
       }
