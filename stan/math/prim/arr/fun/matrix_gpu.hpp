@@ -11,9 +11,9 @@
 #endif
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
-enum triangularity { LOWER = 0,  UPPER = 1,  NONE = 2 };
-enum copy_transposed_triangular { LOWER_TO_UPPER_TRIANGULAR = 0,
-  UPPER_TO_LOWER_TRIANGULAR = 1 };
+enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
+enum copy_transposed_triangular {LOWER_TO_UPPER_TRIANGULAR = 0,
+  UPPER_TO_LOWER_TRIANGULAR = 1};
 
 /*
 *  @file stan/math/prim/mat/fun/matrix_gpu.hpp
@@ -24,7 +24,7 @@ enum copy_transposed_triangular { LOWER_TO_UPPER_TRIANGULAR = 0,
 namespace stan {
   namespace math {
 
-    class matrix_gpu{
+    class matrix_gpu {
       private:
 
         cl::Buffer oclBuffer;
@@ -78,7 +78,7 @@ namespace stan {
     template <typename T>
     void copy(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & src,
      stan::math::matrix_gpu & dst) {
-            if(src.rows()! = dst.M || src.cols()! = dst.N)
+            if(src.rows() != dst.M || src.cols() != dst.N)
             {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                 std::endl;
@@ -107,11 +107,11 @@ namespace stan {
     template <typename T>
     void copy(stan::math::matrix_gpu & src,
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & dst) {
-            if(dst.rows()! = src.M) {
+            if(dst.rows() != src.M) {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                std::endl;
             }
-            if(dst.cols()! = src.N) {
+            if(dst.cols() != src.N) {
               std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
                std::endl;
             }
@@ -136,7 +136,7 @@ namespace stan {
     }
 
     void copy(stan::math::matrix_gpu & src,  stan::math::matrix_gpu & dst) {
-      if(!(src.M =  = dst.M && src.N =  = dst.N)) {
+      if(!(src.M == dst.M && src.N == dst.N)) {
         app_error("output matrix_gpu dimensions in matrix_gpu copy!\n"
          "\nThe dimensions of the input and output matrices should match.");
       }
