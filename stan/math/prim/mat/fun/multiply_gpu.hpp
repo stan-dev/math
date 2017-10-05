@@ -20,13 +20,13 @@ namespace stan {
       cl::Kernel kernel = stan::math::get_kernel("scalar_mul_diagonal");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
       try {
-        int min_dim = A.M;
-        if(A.N < min_dim)
-          min_dim = A.N;
+        int min_dim = A.rows;
+        if(A.cols < min_dim)
+          min_dim = A.cols;
         kernel.setArg(0, A.buffer());
         kernel.setArg(1, scalar),
-        kernel.setArg(2, A.M);
-        kernel.setArg(3, A.N);
+        kernel.setArg(2, A.rows);
+        kernel.setArg(3, A.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -45,12 +45,12 @@ namespace stan {
       try {
         kernel.setArg(0, A.buffer());
         kernel.setArg(1, scalar),
-        kernel.setArg(2, A.M);
-        kernel.setArg(3, A.N);
+        kernel.setArg(2, A.rows);
+        kernel.setArg(3, A.cols);
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(A.M, A.N),
+          cl::NDRange(A.rows, A.cols),
           cl::NullRange,
           NULL,
           NULL);
@@ -61,7 +61,7 @@ namespace stan {
 
     void multiply_gpu(stan::math::matrix_gpu & A, stan::math::matrix_gpu & B,
      stan::math::matrix_gpu & C ) {
-      if(A.N! = B.M) {
+      if(A.cols! = B.rows) {
         app_error("Incorrect dimensions of the matrices in matrix multiply!");
       }
       //square matrices
@@ -69,11 +69,11 @@ namespace stan {
       cl::CommandQueue cmdQueue = stan::math::get_queue();
       try {
 
-        int Mpad = ((A.M + 15)/16)*16;
-        int Npad = ((B.N + 15)/16)*16;
-        kernel.setArg(0, A.M);
-        kernel.setArg(1, B.N);
-        kernel.setArg(2, B.M);
+        int Mpad = ((A.rows + 15)/16)*16;
+        int Npad = ((B.cols + 15)/16)*16;
+        kernel.setArg(0, A.rows);
+        kernel.setArg(1, B.cols);
+        kernel.setArg(2, B.rows);
         kernel.setArg(3, A.buffer());
         kernel.setArg(4, B.buffer());
         kernel.setArg(5, C.buffer());
