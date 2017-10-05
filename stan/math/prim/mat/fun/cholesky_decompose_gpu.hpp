@@ -26,14 +26,14 @@ namespace stan {
         app_error("the input matrix of the decomposition is not square");
       }
 
-      cl::Kernel kernel_chol_block = stanmathcl::get_kernel("cholesky_block");
-      cl::Kernel kernel_left = stanmathcl::get_kernel("cholesky_left_update");
-      cl::Kernel kernel_mid = stanmathcl::get_kernel("cholesky_mid_update");
-      cl::Kernel kernel_zero = stanmathcl::get_kernel("cholesky_zero");
-      cl::CommandQueue cmd_queue = stanmathcl::get_queue();
+      cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
+      cl::Kernel kernel_left = stan::math::get_kernel("cholesky_left_update");
+      cl::Kernel kernel_mid = stan::math::get_kernel("cholesky_mid_update");
+      cl::Kernel kernel_zero = stan::math::get_kernel("cholesky_zero");
+      cl::CommandQueue cmd_queue = stan::math::get_queue();
 
       try {
-        cl::Context ctx = stanmathcl::get_context();
+        cl::Context ctx = stan::math::get_context();
         //will be managed by the library core system
         int block = 64;
         int offset = 0;
@@ -71,7 +71,7 @@ namespace stan {
 
         int threadsLeft,  leftPad;
         int threadsMid,  midPad;
-        while((offset + block) < (A.M - block)) {
+        while ((offset + block) < (A.M - block)) {
           threadsLeft = A.M - offset - block;
           leftPad = ((threadsLeft + local - 1) / local) * local;
           threadsMid = A.M - offset - block;
@@ -93,7 +93,7 @@ namespace stan {
         }
 
         int left = A.M - offset;
-        if(left > 0) {
+        if (left > 0) {
           kernel_chol_block.setArg(1, offset);
           kernel_chol_block.setArg(3, left);
           cmd_queue.enqueueNDRangeKernel(kernel_chol_block,
