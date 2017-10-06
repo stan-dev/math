@@ -3,7 +3,7 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include "stanmathcl/errors.hpp"
+#include "stan/math/prim/arr/err/check_gpu.hpp"
 #include "stan/math/prim/mat/kern_gpu/basic_matrix_kernels.hpp"
 #include "stan/math/prim/mat/kern_gpu/matrix_multiply_kernels.hpp"
 #include "stan/math/prim/mat/kern_gpu/matrix_inverse_kernels.hpp"
@@ -61,27 +61,27 @@ namespace stan {
       kernel_groups["cholesky_zero"] = "cholesky_decomposition";
       kernel_groups["dummy"] = "timing";
       //kernel group strings
-      kernel_strings["basic_matrix"] = stanmathcl::kernel_sources::transpose +
-       stanmathcl::kernel_sources::copy +
-       stanmathcl::kernel_sources::zeros;
-      kernel_strings["basic_matrix"] += stanmathcl::kernel_sources::identity +
-       stanmathcl::kernel_sources::copy_triangular +
-       stanmathcl::kernel_sources::copy_triangular_transposed;
+      kernel_strings["basic_matrix"] = stan::math::kernel_sources::transpose +
+       stan::math::kernel_sources::copy +
+       stan::math::kernel_sources::zeros;
+      kernel_strings["basic_matrix"] += stan::math::kernel_sources::identity +
+       stan::math::kernel_sources::copy_triangular +
+       stan::math::kernel_sources::copy_triangular_transposed;
       kernel_strings["basic_matrix"] +=
-       stanmathcl::kernel_sources::add +
-       stanmathcl::kernel_sources::subtract;
+       stan::math::kernel_sources::add +
+       stan::math::kernel_sources::subtract;
       kernel_strings["matrix_multiply"] =
-       stanmathcl::kernel_sources::scalar_mul_diagonal +
-       stanmathcl::kernel_sources::scalar_mul +
-       stanmathcl::kernel_sources::basic_multiply;
+       stan::math::kernel_sources::scalar_mul_diagonal +
+       stan::math::kernel_sources::scalar_mul +
+       stan::math::kernel_sources::basic_multiply;
       kernel_strings["matrix_inverse"] =
-       stanmathcl::kernel_sources::lower_tri_inv_step1 +
-       stanmathcl::kernel_sources::lower_tri_inv_step2_3;
+       stan::math::kernel_sources::lower_tri_inv_step1 +
+       stan::math::kernel_sources::lower_tri_inv_step2_3;
       kernel_strings["cholesky_decomposition"] =
-       stanmathcl::kernel_sources::cholesky_block +
-       stanmathcl::kernel_sources::cholesky_left_mid_update +
-       stanmathcl::kernel_sources::cholesky_zero;
-      kernel_strings["timing"] = stanmathcl::dummy_kernel;
+       stan::math::kernel_sources::cholesky_block +
+       stan::math::kernel_sources::cholesky_left_mid_update +
+       stan::math::kernel_sources::cholesky_zero;
+      kernel_strings["timing"] = stan::math::dummy_kernel;
 
       //note if the kernels were already compiled
       compiled_kernels["basic_matrix"] = false;
@@ -174,7 +174,7 @@ namespace stan {
 
     };
 
-    stanmathcl::ocl ocl_context_queue;
+    stan::math::ocl ocl_context_queue;
 
 
 
@@ -191,7 +191,7 @@ namespace stan {
     }
 
     void compile_kernel_group(std::string group) {
-        cl::Context ctx = stanmathcl::get_context();
+        cl::Context ctx = stan::math::get_context();
         std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
         std::string kernel_source = kernel_strings[group];
         cl::Program::Sources source(1,
@@ -203,7 +203,7 @@ namespace stan {
           cl_int err = CL_SUCCESS;
           //iterate over the kernel list and get all the kernels from this group
           for (std::map<std::string,std::string>::iterator
-           it = kernel_groups.begin(); it! = kernel_groups.end(); ++it) {
+           it = kernel_groups.begin(); it!= kernel_groups.end(); ++it) {
             if(group.compare((it->second).c_str()) == 0) {
               kernels[(it->first).c_str()] = cl::Kernel(program_,
                (it->first).c_str(), &err);
@@ -221,7 +221,7 @@ namespace stan {
 
     cl::Kernel& get_kernel(std::string name) {
       //check which kernel group the kernel is assigned to
-      cl::Context & ctx = stanmathcl::get_context();
+      cl::Context & ctx = stan::math::get_context();
       //compile the kernel group and return the kernel
       if(!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);

@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <iostream>
 #include <string>
 #include <map>
@@ -22,7 +22,7 @@ namespace stan {
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    cholesky_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & m) {
+    cholesky_decompose_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & m) {
 
       check_square("cholesky_decompose", "m", m);
       check_symmetric("cholesky_decompose", "m", m);
@@ -106,9 +106,9 @@ namespace stan {
       } catch (cl::Error& e) {
         check_ocl_error(e);
       }
-      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp;
-      stan::math::copy(B, m_tmp);
-      check_pos_definite("cholesky_decompose", "m", m_tmp);
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
+      stan::math::copy(A, m_tmp);
+      //check_pos_definite("cholesky_decompose", "m", m_tmp);
       return m_tmp;
     }
   }
