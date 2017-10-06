@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_INVERSE_GPU_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_INVERSE_GPU_HPP
 
-#include <stan/math/prim/mat/ocl_gpu.hpp>
+#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <Eigen/Dense>
 #include <iostream>
 #include <string>
@@ -18,17 +17,17 @@
 namespace stan {
   namespace math {
     //transpose the matrix B and store it in matrix A
-    template <typename T>
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    lower_triangular_inverse_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & m) {
-      check_square("cholesky_decompose", "m", m);
-      stan::math::matrix_gpu A(m);
+    void lower_triangular_inverse(stan::math::matrix_gpu & A) {
+      if(!(A.rows == A.cols)) {
+        app_error("the input matrix of the inverse is not square");
+      }
+
       cl::Kernel kernel_step1 = stan::math::get_kernel("lower_tri_inv_step1");
       cl::Kernel kernel_step2 = stan::math::get_kernel("lower_tri_inv_step2");
       cl::Kernel kernel_step3 = stan::math::get_kernel("lower_tri_inv_step3");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
 
-      try {
+      try{
 
         int parts = 32;
         //this will be managed by the library core with self-adaptive strategies
@@ -45,7 +44,7 @@ namespace stan {
 
         int* stl_sizes = new int[parts];
 
-        for (int i = 0; i < parts; i++) {
+        for(int i = 0; i < parts; i++) {
           if(i < remainder)
             stl_sizes[i] = part_size_fixed+1;
           else
@@ -113,14 +112,12 @@ namespace stan {
           repeat *= 2;
         }
 
-        delete stl_sizes;
+        delete[] stl_sizes;
       } catch (cl::Error& e) {
 
         check_ocl_error(e);
 
       }
-    stan::math::copy(A, m_tmp);
-    return m_tmp;
     }
   }
 }

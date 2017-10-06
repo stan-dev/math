@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_PRIM_ARR_BASIC_MATRIX_GPU_HPP
 #define STAN_MATH_PRIM_ARR_BASIC_MATRIX_GPU_HPP
 
-#include <stan/math/prim/mat/fun/ocl.hpp>
-#include <stan/math/prim/mat/fun/matrix.hpp>
+#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/arr/fun/matrix_gpu.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <iostream>
 #include <string>
 #include <map>
-#include <Eigen/Dense>
 
 /** @file stan/math/prim/mat/fun/basic_matrix.hpp
 *    @brief basic_matrix - basic matrix operations:
@@ -19,8 +19,7 @@ namespace stan {
     //transpose the matrix B and store it in matrix A
     void transpose(stan::math::matrix_gpu & dst, stan::math::matrix_gpu & src) {
       if(!(dst.rows == src.cols && dst.cols == src.rows)) {
-        app_error("output matrix dimensions in matrix transpose!\cols"
-        "\nIf the input matrix is MxN, the output matrix should be NxM.");
+        app_error("If the input matrix is MxN, the output matrix should be NxM.");
       }
 
       cl::Kernel kernel = stan::math::get_kernel("transpose");
@@ -76,8 +75,8 @@ namespace stan {
     }
 
     void identity(stan::math::matrix_gpu & A) {
-      if(A.rows! = A.cols) {
-        app_error("Can not make an identity matrix in a non-square matrix!");
+      if (A.rows!= A.cols) {
+        app_error("Cannot make an identity matrix in a non-square matrix!");
       }
       cl::Kernel kernel = stan::math::get_kernel("identity");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
@@ -100,9 +99,8 @@ namespace stan {
 
     void copy_triangular(stan::math::matrix_gpu & src,
      stan::math::matrix_gpu & dst, triangularity lower_upper) {
-      if(!(src.rows == dst.rows && src.cols == dst.cols)) {
-        app_error("output matrix dimensions in lower triangular copy error!\cols"
-        "\nThe dimensions of the input and output matrices should match.");
+      if (!(src.rows == dst.rows && src.cols == dst.cols)) {
+        app_error("The dimensions of the input and output matrices should match.");
       }
       cl::Kernel kernel = stan::math::get_kernel("copy_triangular");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
@@ -127,7 +125,7 @@ namespace stan {
     void copy_triangular_transposed(stan::math::matrix_gpu & A,
      copy_transposed_triangular lower_upper) {
 
-      if(!(A.rows == A.cols)) {
+      if (!(A.rows == A.cols)) {
         app_error("The matrix in the triangular"
         "transposed copy is non-square.");
       }
@@ -153,7 +151,7 @@ namespace stan {
     void add(stan::math::matrix_gpu & C,
      stan::math::matrix_gpu & A, stan::math::matrix_gpu & B) {
 
-      if(!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols )) {
+      if (!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols )) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = stan::math::get_kernel("add");
@@ -179,7 +177,7 @@ namespace stan {
     void subtract(stan::math::matrix_gpu & C, stan::math::matrix_gpu & A,
      stan::math::matrix_gpu & B) {
 
-      if(!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols )) {
+      if (!( A.rows == B.rows && C.rows == B.rows && A.cols == B.cols && C.cols == B.cols)) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = stan::math::get_kernel("subtract");
