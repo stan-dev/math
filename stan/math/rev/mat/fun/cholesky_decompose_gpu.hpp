@@ -4,7 +4,7 @@
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
-#include <stan/math/prim/arr/fun/basic_matrix_gpu.hpp>
+#include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose_gpu.hpp>
 #include <stan/math/prim/mat/fun/multiply_gpu.hpp>
 #include <stan/math/prim/mat/fun/inverse_gpu.hpp>
