@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <string>
 
 namespace stan {
@@ -53,16 +54,23 @@ namespace stan {
      * non-finite value; or if the cutpoint vector is not sorted in
      * ascending order.
      */
+
+
     template <bool propto, typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_lpmf(int y, const T_lambda& lambda,
-                         const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+    ordered_logistic_lpmf(int y, 
+                      const T_lambda& lambda,
+                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      typename boost::math::tools::promote_args<T_lambda, T_cut>::type logp_n(0.0);
+
+      using boost::math::tools::promote_args;
       using std::exp;
       using std::log;
 
       static const std::string function = "ordered_logistic";
 
       int K = c.size() + 1;
+
 
       check_bounded(function, "Random variable", y, 1, K);
       check_finite(function, "Location parameter", lambda);
@@ -73,25 +81,74 @@ namespace stan {
       check_finite(function, "Cut points parameter", c(c.size()-1));
       check_finite(function, "Cut points parameter", c(0));
 
-      // log(1 - inv_logit(lambda))
-      if (y == 1)
-        return -log1p_exp(lambda - c(0));
-
-      // log(inv_logit(lambda - c(K-3)));
-      if (y == K) {
-        return -log1p_exp(c(K-2) - lambda);
-      }
-
-      // if (2 < y < K) { ... }
-      // log(inv_logit(lambda - c(y-2)) - inv_logit(lambda - c(y-1)))
-      return log_inv_logit_diff(c(y-2) - lambda,
-                                c(y-1) - lambda);
+        if (y == 1){
+            logp_n += -log1p_exp(lambda - c[0]);
+        } else if (y == K) {
+            logp_n += -log1p_exp(c[K-2] - lambda);
+        } else {
+          logp_n += log_inv_logit_diff(c[y-2] - lambda,
+                                    c[y-1] - lambda);
+        }
+      return logp_n;
     }
 
     template <typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_lpmf(int y, const T_lambda& lambda,
-                         const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+    ordered_logistic_lpmf(int y, 
+                      const T_lambda& lambda,
+                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
+      return ordered_logistic_lpmf<false>(y, lambda, c);
+    }
+
+
+
+    template <bool propto, typename T_lambda, typename T_cut>
+    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
+    ordered_logistic_lpmf(const std::vector<int>& y, 
+                      const Eigen::Matrix<T_lambda, Eigen::Dynamic, 1>& lambda,
+                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      typename boost::math::tools::promote_args<T_lambda, T_cut>::type logp_n(0.0);
+
+      using boost::math::tools::promote_args;
+      using std::exp;
+      using std::log;
+
+      static const std::string function = "ordered_logistic";
+
+      int N = lambda.size();
+      int K = c.size() + 1;
+/*
+      for (int i = 0; i < N; ++i ){
+      check_bounded(function, "Random variable", y[i], 1, K);
+      check_finite(function, "Location parameter", lambda[i]);
+      check_greater(function, "Size of cut points parameter", c[i].size(), 0);
+      }
+      for (int i = 1; i < c.size(); ++i)
+        check_greater(function, "Cut points parameter", c(i), c(i - 1));
+
+      check_finite(function, "Cut points parameter", c(c.size()-1));
+      check_finite(function, "Cut points parameter", c(0));
+*/
+      // log(1 - inv_logit(lambda))
+
+      for (int i = 0; i < N; ++i){
+        if (y[i] == 1){
+            logp_n += -log1p_exp(lambda[i] - c[0]);
+        } else if (y[i] == K) {
+            logp_n += -log1p_exp(c[K-2] - lambda[i]);
+        } else {
+          logp_n += log_inv_logit_diff(c[y[i]-2] - lambda[i],
+                                    c[y[i]-1] - lambda[i]);
+        }
+      }
+      return logp_n;
+    }
+
+    template <typename T_lambda, typename T_cut>
+    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
+    ordered_logistic_lpmf(const std::vector<int>& y, 
+                      const Eigen::Matrix<T_lambda, Eigen::Dynamic, 1>& lambda,
+                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
