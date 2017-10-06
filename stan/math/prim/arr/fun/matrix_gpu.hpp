@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_ARR_MATRIX_GPU_HPP
 #define STAN_MATH_PRIM_ARR_MATRIX_GPU_HPP
 
-#include <stan/math/prim/mat/fun/ocl.hpp>
+#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <iostream>
 #include <string>
 #if defined(__APPLE__) || defined(__MACOSX)
@@ -9,7 +10,6 @@
 #else
 #include <CL/cl.hpp>
 #endif
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
 enum copy_transposed_triangular {LOWER_TO_UPPER_TRIANGULAR = 0,
@@ -43,7 +43,7 @@ namespace stan {
           try {
             cl::Context ctx = stan::math::get_context();
             oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-             sizeof(T) * rows * cols);
+             sizeof(double) * rows * cols);
             this->rows = rows;
             this->cols = cols;
           } catch (cl::Error& e) {
@@ -56,7 +56,8 @@ namespace stan {
           try {
             cl::Context ctx = stan::math::get_context();
             cl::CommandQueue queue = stan::math::get_queue();
-            oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) *
+            T foo;
+            oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(foo) *
              A.rows() * A.cols());
             this->rows = A.rows();
             this->cols = A.cols();
@@ -67,8 +68,8 @@ namespace stan {
               }
             }
             queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
-             sizeof(T) * rows * cols, Atemp);
-            delete Atemp;
+             sizeof(foo) * rows * cols, Atemp);
+            delete[] Atemp;
           } catch (cl::Error& e) {
             check_ocl_error(e);
           }
@@ -80,7 +81,7 @@ namespace stan {
      stan::math::matrix_gpu & dst) {
             if(src.rows() != dst.rows || src.cols() != dst.cols)
             {
-              std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
+              std::cout << "Copy (Eigen -> GPU) :Eigen and matrix_gpu sizes do no match!" <<
                 std::endl;
             }
             int rows = src.rows();
@@ -97,7 +98,7 @@ namespace stan {
               }
               queue.enqueueWriteBuffer(buffer, CL_TRUE, 0,
                sizeof(T) * rows * cols, Atemp);
-              delete Atemp;
+              delete[] Atemp;
 
             } catch (cl::Error& e) {
               check_ocl_error(e);
@@ -108,11 +109,11 @@ namespace stan {
     void copy(stan::math::matrix_gpu & src,
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & dst) {
             if(dst.rows() != src.rows) {
-              std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
+              std::cout << "Copy (GPU -> Eigen): Eigen and matrix_gpu row lengths do no match!" <<
                std::endl;
             }
             if(dst.cols() != src.cols) {
-              std::cout << "Eigen and stanmathCL matrix_gpu sizes do no match!" <<
+              std::cout << "Copy (GPU -> Eigen): Eigen and stanmathCL matrix_gpu col lengths do no match!" <<
                std::endl;
             }
             int rows = dst.rows();
@@ -129,7 +130,7 @@ namespace stan {
                   dst(i, j) = Btemp[i * cols + j];
                 }
               }
-              delete Btemp;
+              delete[] Btemp;
             } catch (cl::Error& e) {
               check_ocl_error(e);
             }
@@ -137,8 +138,7 @@ namespace stan {
 
     void copy(stan::math::matrix_gpu & src,  stan::math::matrix_gpu & dst) {
       if(!(src.rows == dst.rows && src.cols == dst.cols)) {
-        app_error("output matrix_gpu dimensions in matrix_gpu copy!\cols"
-         "\nThe dimensions of the input and output matrices should match.");
+        app_error("The dimensions of the input and output matrices should match.");
       }
       cl::Kernel kernel = stan::math::get_kernel("copy");
       cl::CommandQueue cmdQueue = stan::math::get_queue();

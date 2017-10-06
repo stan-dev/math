@@ -15,7 +15,7 @@
 namespace stan {
   namespace math {
 
-    void diagonal_multiply_with_scalar_gpu(stan::math::matrix_gpu & A,
+    void diagonal_multiply_with_scalar(stan::math::matrix_gpu & A,
      double scalar) {
       cl::Kernel kernel = stan::math::get_kernel("scalar_mul_diagonal");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
@@ -39,12 +39,12 @@ namespace stan {
       }
     }
 
-    void multiply_with_scalar_gpu(stan::math::matrix_gpu & A,  double scalar) {
+    void multiply_with_scalar(stan::math::matrix_gpu & A,  double scalar) {
       cl::Kernel kernel = stan::math::get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = stan::math::get_queue();
       try {
         kernel.setArg(0, A.buffer());
-        kernel.setArg(1, scalar),
+        kernel.setArg(1, scalar);
         kernel.setArg(2, A.rows);
         kernel.setArg(3, A.cols);
         cmdQueue.enqueueNDRangeKernel(
@@ -59,9 +59,9 @@ namespace stan {
       }
     }
 
-    void multiply_gpu(stan::math::matrix_gpu & A, stan::math::matrix_gpu & B,
+    void multiply(stan::math::matrix_gpu & A, stan::math::matrix_gpu & B,
      stan::math::matrix_gpu & C ) {
-      if(A.cols! = B.rows) {
+      if(A.cols!= B.rows) {
         app_error("Incorrect dimensions of the matrices in matrix multiply!");
       }
       //square matrices
