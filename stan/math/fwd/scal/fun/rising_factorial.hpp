@@ -8,12 +8,23 @@
 namespace stan {
   namespace math {
 
-    template<typename T>
-    inline
-    fvar<T>
-    rising_factorial(const fvar<T>& x, int n) {
-      using boost::math::digamma;
+    /**
+     * Return autodiff variable with the gradient and 
+     * result of the rising factorial function applied 
+     * to the inputs. 
+     * Will throw for NaN x and for negative n, as 
+     * implemented in primitive function.
+     *
+     * @tparam T Scalar type of autodiff variable.
+     * @param x Argument.
+     * @param n Argument
+     * @return tangent of rising factorial at arguments.
+     */
 
+
+    template<typename T>
+    inline fvar<T>
+    rising_factorial(const fvar<T>& x, int n) {
       T rising_fact(rising_factorial(x.val_, n));
       return fvar<T>(rising_fact,
                      rising_fact * x.d_

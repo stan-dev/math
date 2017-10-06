@@ -1,12 +1,11 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdRisingFactorial, Fvar) {
   using stan::math::fvar;
   using stan::math::rising_factorial;
-  using boost::math::digamma;
+  using stan::math::digamma;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = rising_factorial(a, 1);
@@ -27,7 +26,7 @@ TEST(AgradFwdRisingFactorial, Fvar) {
 TEST(AgradFwdRisingFactorial, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::rising_factorial;
-  using boost::math::digamma;
+  using stan::math::digamma;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 4.0;
@@ -40,11 +39,11 @@ TEST(AgradFwdRisingFactorial, FvarFvarDouble) {
 }
 
 struct rising_factorial_fun {
-  template <typename T0, typename T1>
+  template <typename T>
   inline 
-  typename boost::math::tools::promote_args<T0,T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  typename boost::math::tools::promote_args<T>::type
+  operator()(const T arg1,
+             int arg2) const {
     return rising_factorial(arg1,arg2);
   }
 };

@@ -3,13 +3,25 @@
 
 #include <boost/math/special_functions/factorials.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <limits>
 #include <string>
 
 namespace stan {
   namespace math {
+
+    /**
+     * Return the falling factorial function evaluated 
+     * at the inputs. 
+     * Will throw for NaN x and for negative n
+     *
+     * @tparam T Type of x argument.
+     * @param x Argument.
+     * @param n Argument
+     * @return Result of falling factorial function.
+     */
+
 
     /**
      *
@@ -53,12 +65,11 @@ namespace stan {
        \f]
      *
      */
-    template<typename T1, typename T2>
-    inline typename boost::math::tools::promote_args<T1, T2>::type
-    falling_factorial(const T1& x, const T2& n) {
-      if (is_nan(x) || is_nan(n))
-        return std::numeric_limits<double>::quiet_NaN();
+    template<typename T>
+    inline typename boost::math::tools::promote_args<T>::type
+    falling_factorial(const T& x, int n) {
       static const std::string function = "falling_factorial";
+      check_not_nan(function, "first argument", x);
       check_nonnegative(function, "second argument", n);
       return boost::math::falling_factorial(x, n, boost_policy_t());
     }

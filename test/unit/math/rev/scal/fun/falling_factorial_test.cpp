@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 
 TEST(AgradRev,falling_factorial_var_int) {
+  using stan::math::digamma;
   int a(2);
   AVAR b(4.0);
   AVAR f = stan::math::falling_factorial(b,a);
@@ -14,7 +14,7 @@ TEST(AgradRev,falling_factorial_var_int) {
   VEC g;
   f.grad(x,g);
   EXPECT_FLOAT_EQ(0, g[0]);
-  EXPECT_FLOAT_EQ((boost::math::digamma(5) - boost::math::digamma(3))
+  EXPECT_FLOAT_EQ((digamma(5) - digamma(3))
                   * 12.0, g[1]);
 
   double eps = 1e-6;
@@ -31,11 +31,11 @@ TEST(AgradRev, falling_factorial_exceptions) {
 }
 
 struct falling_factorial_fun {
-  template <typename T0, typename T1>
+  template <typename T>
   inline 
-  typename stan::return_type<T0,T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  typename stan::return_type<T>::type
+  operator()(const T& arg1,
+             int arg2) const {
     return falling_factorial(arg1,arg2);
   }
 };

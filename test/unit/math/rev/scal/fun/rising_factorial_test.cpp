@@ -4,7 +4,7 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev,rising_factorial_var_int) {
-  using boost::math::digamma;
+  using stan::math::digamma;
   int a(1);
   AVAR b(4.0);
   AVAR f = stan::math::rising_factorial(b,a);
@@ -30,11 +30,11 @@ TEST(AgradRev, rising_factorial_exceptions) {
 }
 
 struct rising_factorial_fun {
-  template <typename T0, typename T1>
+  template <typename T>
   inline 
-  typename stan::return_type<T0,T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  typename stan::return_type<T>::type
+  operator()(const T& arg1,
+             int arg2) const {
     return rising_factorial(arg1,arg2);
   }
 };

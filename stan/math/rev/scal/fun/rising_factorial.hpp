@@ -8,6 +8,18 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return tangent of the rising factorial function 
+     * applied to the inputs. 
+     * Will throw for NaN x and for negative n, as 
+     * implemented in primitive function.
+     *
+     * @tparam T Scalar type of autodiff variable.
+     * @param x Argument.
+     * @param n Argument
+     * @return tangent of rising factorial at arguments.
+     */
+
     namespace {
 
       class rising_factorial_vd_vari : public op_vd_vari {

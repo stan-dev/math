@@ -5,12 +5,12 @@
 TEST(AgradFwdFallingFactorial,Fvar) {
   using stan::math::fvar;
   using stan::math::falling_factorial;
-  using boost::math::digamma;
+  using stan::math::digamma;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = falling_factorial(a, 2);
   EXPECT_FLOAT_EQ(12.0, x.val_);
-  EXPECT_FLOAT_EQ((boost::math::digamma(5) - boost::math::digamma(3))
+  EXPECT_FLOAT_EQ((stan::math::digamma(5) - stan::math::digamma(3))
                   * 12.0, x.d_);
   
   //finite diff
@@ -39,11 +39,11 @@ TEST(AgradFwdFallingFactorial,FvarFvarDouble) {
   EXPECT_FLOAT_EQ(50, a.val_.d_);
 }
 struct falling_factorial_fun {
-  template <typename T0, typename T1>
+  template <typename T>
   inline 
-  typename boost::math::tools::promote_args<T0,T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  typename boost::math::tools::promote_args<T>::type
+  operator()(const T arg1,
+             int arg2) const {
     return falling_factorial(arg1,arg2);
   }
 };
