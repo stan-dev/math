@@ -5,32 +5,41 @@ def clean() {
     """
 }
 
+def mailDevs(String label) {
+    emailext (
+        subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+        body: """<p>${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+            <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+        recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
+}
+
+def runTests(String testPath) {
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
+}
+
 pipeline {
-    agent { label 'master' }
-    options {
-        disableConcurrentBuilds()
-    }
+    agent none
     parameters {
-        string(defaultValue: 'develop', name: 'cmdstan_pr',
+        string(defaultValue: 'downstream tests', name: 'cmdstan_pr',
           description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: 'develop', name: 'stan_pr',
+        string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
     }
     stages {
-        stage('Clean & Setup') {
-            steps {
-                clean()
-                sh "echo 'CXXFLAGS += -Werror' >> make/local"
-            }
-        }
         stage('Linting & Doc checks') {
+            agent any
             steps {
-                parallel(
-                    CppLint: { sh "make cpplint" },
-                    dependencies: { sh 'make test-math-dependencies' } ,
-                    documentation: { sh 'make doxygen' },
-                    failFast: true
-                )
+                script {
+                    clean()
+                    sh "echo 'CXXFLAGS += -Werror' >> make/local"
+                    parallel(
+                        CppLint: { sh "make cpplint" },
+                        dependencies: { sh 'make test-math-dependencies' } ,
+                        documentation: { sh 'make doxygen' },
+                        failFast: true
+                    )
+                }
             }
         }
         stage('Tests') {
@@ -40,6 +49,7 @@ pipeline {
                     agent any
                     steps { 
                         clean()
+                        sh "echo 'CXXFLAGS += -Werror' >> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
                     }
                 }
@@ -48,28 +58,19 @@ pipeline {
                     steps {
                         clean()
                         sh "echo 'CXXFLAGS += -Werror' >> make/local"
-                        sh "./runTests.py -j${env.PARALLEL} test/unit"
+                        runTests("test/unit")
+                        junit 'test/**/*.xml'
                     }
                 }
                 stage('CmdStan Upstream Tests') {
-                    when { 
-                        allOf {
-                            not { branch 'master' }
-                            not { branch 'develop' }
-                        }
-                    }
+                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "CmdStan/${params.cmdstan_pr}",
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
                 stage('Stan Upstream Tests') {
-                    when { 
-                        allOf {
-                            not { branch 'master' }
-                            not { branch 'develop' }
-                        }
-                    }
+                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "Stan Pipeline/${params.stan_pr}",
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
@@ -81,8 +82,10 @@ pipeline {
                     // changed code or makefiles
                     steps { 
                         clean()
-                        sh "./runTests.py -j${env.PARALLEL} test/prob"
+                        runTests("test/prob")
+                        junit 'test/**/*.xml'
                     }
+                    post { always { cleanWs() } }
                 }
             }
         }
@@ -97,10 +100,14 @@ pipeline {
     }
     post {
         always {
-            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-            warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
-            warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+            node('master') {
+                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+            }
         }
+        success { mailDevs("SUCCESSFUL") }
+        failure { mailDevs("FAILURE") }
     }
 }
