@@ -25,6 +25,8 @@ namespace stan {
      * which is better known as the Bessel I function. See
      * modified_bessel_first_kind.hpp for the function definition.
      *
+     * @tparam T1 type of the order (v)
+     * @tparam T2 type of argument (z)
      * @param v Order, can be a non-integer but must be at least -1
      * @param z Real non-negative number
      * @throws if either v or z is NaN
@@ -35,18 +37,17 @@ namespace stan {
     template <typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2, double>::type
     log_modified_bessel_first_kind(const T1 v, const T2 z) {
-      check_not_nan("log_modified_bessel_first_kind", "v", v);
-      check_not_nan("log_modified_bessel_first_kind", "z", z);
-      check_nonnegative("log_modified_bessel_first_kind", "z", z);
-      check_greater_or_equal("log_modified_bessel_first_kind", "v", v, -1);
+      check_not_nan("log_modified_bessel_first_kind",
+                    "first argument (order)", v);
+      check_not_nan("log_modified_bessel_first_kind",
+                    "second argument (variable)", z);
+      check_nonnegative("log_modified_bessel_first_kind",
+                        "second argument (variable)", z);
+      check_greater_or_equal("log_modified_bessel_first_kind",
+                             "first argument (order)", v, -1);
 
-      using stan::math::inv;
-      using std::log;
-      using stan::math::log_sum_exp;
-      using stan::math::log1p;
-      using stan::math::log1p_exp;
-      using stan::math::lgamma;
-      using stan::math::square;
+      using std::log;  // using stan::math::log messes everything up
+      using std::sqrt;
       using boost::math::tools::evaluate_polynomial;
 
       typedef typename boost::math::tools::promote_args<T1, T2, double>::type T;
@@ -205,7 +206,7 @@ namespace stan {
       }
       if (z > 100) {
         // Boost does something like this in asymptotic_bessel_i_large_x
-        T lim = (4 * square(v) + 10) / (8 * z);
+        T lim = (square(v) + 2.5) / (2 * z);
         lim *= lim;
         lim *= lim;
         lim /= 24;
@@ -222,21 +223,22 @@ namespace stan {
           num *= mu - 25;
           denom *= ex * 3;
           s -= num / denom;
-          s = z - log(std::sqrt(2 * z * M_PI)) + log(s);
+          s = z - log(sqrt(2 * z * M_PI)) + log(s);
           return s;
         }
       }
 
-      T log_half_z = log(0.5 * z);
-      T lgam = lgamma(v + 1.0);
+      typename boost::math::tools::promote_args<T2, double>::type log_half_z =
+        log(0.5 * z);
+      typename boost::math::tools::promote_args<T1, double>::type lgam =
+        v > -1 ? lgamma(v + 1.0) : 0;
       T lcons = (2.0 + v) * log_half_z;
       T out;
       if (v > -1) {
         out = log_sum_exp(v * log_half_z - lgam, lcons - lgamma(v + 2));
-        lgam += log(v + 1.0);
-      } else {  // lgam is currently NaN
+        lgam += log1p(v);
+      } else {
         out = lcons;
-        lgam = 0;
       }
 
       double m = 2;
