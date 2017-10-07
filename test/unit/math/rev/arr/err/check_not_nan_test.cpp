@@ -7,7 +7,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
 
   int N = 5;
-  const char* function = "check_not_nan";
+  const std::string function = "check_not_nan";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)
@@ -29,7 +29,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
 
   int N = 5;
-  const char* function = "check_not_nan";
+  const std::string function = "check_not_nan";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

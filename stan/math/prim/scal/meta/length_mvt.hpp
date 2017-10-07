@@ -1,3 +1,4 @@
+
 #ifndef STAN_MATH_PRIM_SCAL_META_LENGTH_MVT_HPP
 #define STAN_MATH_PRIM_SCAL_META_LENGTH_MVT_HPP
 
@@ -17,11 +18,10 @@ namespace stan {
    * @throw std::invalid_argument since the type is a scalar.
    */
   template <typename T>
-  size_t length_mvt(const T& ) {
+  size_t length_mvt(const T& /* unused */) {
     throw std::invalid_argument("length_mvt passed to an unrecognized type.");
     return 1U;
   }
 
 }
 #endif
-

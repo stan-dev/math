@@ -26,10 +26,10 @@ namespace stan {
      *   do not match
      */
     template <typename T_size1, typename T_size2>
-    inline void check_size_match(const char* function,
-                                 const char* name_i,
+    inline void check_size_match(const std::string& function,
+                                 const std::string& name_i,
                                  T_size1 i,
-                                 const char* name_j,
+                                 const std::string& name_j,
                                  T_size2 j) {
       if (likely(i == static_cast<T_size1>(j)))
         return;
@@ -60,12 +60,12 @@ namespace stan {
      *   do not match
      */
     template <typename T_size1, typename T_size2>
-    inline void check_size_match(const char* function,
-                                 const char* expr_i,
-                                 const char* name_i,
+    inline void check_size_match(const std::string& function,
+                                 const std::string& expr_i,
+                                 const std::string& name_i,
                                  T_size1 i,
-                                 const char* expr_j,
-                                 const char* name_j,
+                                 const std::string& expr_j,
+                                 const std::string& name_j,
                                  T_size2 j) {
       if (likely(i == static_cast<T_size1>(j)))
         return;

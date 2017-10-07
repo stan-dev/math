@@ -21,6 +21,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -31,15 +32,13 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     frechet_lpdf(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const char* function("frechet_lpdf");
+      static const std::string function = "frechet_lpdf";
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(alpha)
-            && stan::length(sigma)))
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -100,7 +99,7 @@ namespace stan {
         if (include_summand<propto, T_shape>::value)
           logp += log_alpha[n];
         if (include_summand<propto, T_y, T_shape>::value)
-          logp -= (alpha_dbl+1.0)*log_y[n];
+          logp -= (alpha_dbl + 1.0) * log_y[n];
         if (include_summand<propto, T_shape, T_scale>::value)
           logp += alpha_dbl*log_sigma[n];
         if (include_summand<propto, T_y, T_shape, T_scale>::value)
@@ -109,7 +108,7 @@ namespace stan {
         if (!is_constant_struct<T_y>::value) {
           const T_partials_return inv_y_dbl = value_of(inv_y[n]);
           ops_partials.edge1_.partials_[n]
-            += -(alpha_dbl+1.0) * inv_y_dbl
+            += -(alpha_dbl + 1.0) * inv_y_dbl
             + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
         }
         if (!is_constant_struct<T_shape>::value)

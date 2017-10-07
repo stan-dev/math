@@ -21,13 +21,14 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
      * Returns the chi square cumulative distribution function for the given
-     * variate and degrees of freedom. If given containers of matching sizes, 
+     * variate and degrees of freedom. If given containers of matching sizes,
      * returns the product of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -41,7 +42,7 @@ namespace stan {
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_cdf(const T_y& y, const T_dof& nu) {
-      static const char* function("chi_square_cdf");
+      static const std::string function = "chi_square_cdf";
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
@@ -105,7 +106,7 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-            * pow(beta_dbl * y_dbl, alpha_dbl-1) / tgamma(alpha_dbl) / Pn;
+            * pow(beta_dbl * y_dbl, alpha_dbl - 1) / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           ops_partials.edge2_.partials_[n]
             -= 0.5 * grad_reg_inc_gamma(alpha_dbl, beta_dbl

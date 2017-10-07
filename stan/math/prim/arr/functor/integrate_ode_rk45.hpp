@@ -10,6 +10,10 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION == 106400
+#  include <boost/serialization/array_wrapper.hpp>
+#endif
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
@@ -111,7 +115,7 @@ namespace stan {
       std::vector<double> ts_vec(ts.size() + 1);
       ts_vec[0] = t0;
       for (size_t n = 0; n < ts.size(); n++)
-        ts_vec[n+1] = ts[n];
+        ts_vec[n + 1] = ts[n];
 
       std::vector<std::vector<double> > y_coupled(ts_vec.size());
       coupled_ode_observer observer(y_coupled);

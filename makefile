@@ -7,19 +7,7 @@ help:
 ## Disable implicit rules.
 SUFIXES:
 
-##
-# Users should only need to set these three variables for use.
-# - CC: The compiler to use. Expecting g++ or clang++.
-# - O: Optimization level. Valid values are {0, 1, 2, 3}.
-# - AR: archiver (must specify for cross-compiling)
-# - OS_TYPE: {mac, win, linux}
-# - C++11: Compile with C++11 extensions, Valid values: {true, false}.
-##
-CC = clang++
-O = 3
-O_STANC = 0
-AR = ar
-C++11 = false
+include make/default_compiler_options
 
 ##
 # Library locations
@@ -27,17 +15,10 @@ C++11 = false
 MATH ?=
 include make/libraries
 
-##
-# Set default compiler options.
-##
-CFLAGS = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem$(CVODES)/include -Wall -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DNO_FPRINTF_OUTPUT -pipe
-CFLAGS_GTEST = -DGTEST_USE_OWN_TR1_TUPLE
-LDLIBS =
-EXE =
-WINE =
-
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
+
+CXX = $(CC)
 
 ##
 # Get information about the compiler used.
@@ -52,7 +33,7 @@ WINE =
 # These includes should update the following variables
 # based on the OS:
 #   - CFLAGS
-#   - CFLAGS_GTEST
+#   - GTEST_CXXFLAGS
 #   - EXE
 ##
 -include make/detect_os
@@ -67,18 +48,6 @@ ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOAL
   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
 endif
 
-##
-# Rule for generating dependencies.
-##
-test/%.d : stan/%.cpp
-	@mkdir -p $(dir $@)
-	@set -e; \
-	rm -f $@; \
-	$(CC) $(CFLAGS) -O$O $(TARGET_ARCH) -MM $< > $@.$$$$; \
-	sed -e 's,\($(notdir $*)\)\.o[ :]*,$(dir $@)\1\.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-
 
 .PHONY: help
 help:
@@ -87,6 +56,7 @@ help:
 	@echo '  Current configuration:'
 	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
 	@echo '  - CC (Compiler):              ' $(CC)
+	@echo '  - CC_TYPE                     ' $(CC_TYPE)
 	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
 	@echo '  - O_STANC (Opt for stanc):    ' $(O_STANC)
@@ -169,4 +139,4 @@ clean-deps:
 clean-all: clean clean-doxygen clean-deps clean-libraries
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
-	$(RM) $(wildcard test/gtest.o test/libgtest* test/prob/generate_tests$(EXE))
+	$(RM) $(wildcard test/prob/generate_tests$(EXE))

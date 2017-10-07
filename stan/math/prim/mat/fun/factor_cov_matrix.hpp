@@ -29,7 +29,8 @@ namespace stan {
       size_t K = sds.rows();
 
       sds = Sigma.diagonal().array();
-      if ( (sds <= 0.0).any() ) return false;
+      if ((sds <= 0.0).any())
+        return false;
       sds = sds.sqrt();
 
       Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);

@@ -24,6 +24,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -51,7 +52,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 1.0;
 
-      static const char* function("scaled_inv_chi_square_cdf");
+      static const std::string function = "scaled_inv_chi_square_cdf";
 
       using std::exp;
 
@@ -115,7 +116,7 @@ namespace stan {
 
         const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
         const T_partials_return gamma_p_deriv = exp(-half_nu_s2_overx_dbl)
-          * pow(half_nu_s2_overx_dbl, half_nu_dbl-1) / tgamma(half_nu_dbl);
+          * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
 
         P *= Pn;
 

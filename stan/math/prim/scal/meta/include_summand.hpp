@@ -39,18 +39,17 @@ namespace stan {
        * calculation.
        */
       enum {
-        value =  (!propto
-                  || !stan::is_constant<typename scalar_type<T1>::type>::value
-                  || !stan::is_constant<typename scalar_type<T2>::type>::value
-                  || !stan::is_constant<typename scalar_type<T3>::type>::value
-                  || !stan::is_constant<typename scalar_type<T4>::type>::value
-                  || !stan::is_constant<typename scalar_type<T5>::type>::value
-                  || !stan::is_constant<typename scalar_type<T6>::type>::value
-                  || !stan::is_constant<typename scalar_type<T7>::type>::value
-                  || !stan::is_constant<typename scalar_type<T8>::type>::value
-                  || !stan::is_constant<typename scalar_type<T9>::type>::value
-                  || !stan::is_constant<typename scalar_type<T10>::type>::value
-                  )
+        value = (!propto
+                 || !stan::is_constant<typename scalar_type<T1>::type>::value
+                 || !stan::is_constant<typename scalar_type<T2>::type>::value
+                 || !stan::is_constant<typename scalar_type<T3>::type>::value
+                 || !stan::is_constant<typename scalar_type<T4>::type>::value
+                 || !stan::is_constant<typename scalar_type<T5>::type>::value
+                 || !stan::is_constant<typename scalar_type<T6>::type>::value
+                 || !stan::is_constant<typename scalar_type<T7>::type>::value
+                 || !stan::is_constant<typename scalar_type<T8>::type>::value
+                 || !stan::is_constant<typename scalar_type<T9>::type>::value
+                 || !stan::is_constant<typename scalar_type<T10>::type>::value)
       };
     };
 

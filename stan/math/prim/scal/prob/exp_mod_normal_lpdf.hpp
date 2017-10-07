@@ -15,6 +15,7 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +26,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
     exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                        const T_inv_scale& lambda) {
-      static const char* function("exp_mod_normal_lpdf");
+      static const std::string function = "exp_mod_normal_lpdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_inv_scale>::type
         T_partials_return;
@@ -33,9 +34,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::log;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(sigma)
+      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
             && stan::length(lambda)))
         return 0.0;
 
@@ -131,4 +130,3 @@ namespace stan {
   }
 }
 #endif
-

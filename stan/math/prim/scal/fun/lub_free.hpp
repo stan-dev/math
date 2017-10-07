@@ -30,24 +30,22 @@ namespace stan {
      * positive infinity and the lower bound negative infinity,
      * this function reduces to <code>identity_free(y)</code>.
      *
-     * @tparam T Type of scalar.
-     * @param y Scalar input.
-     * @param lb Lower bound.
-     * @param ub Upper bound.
-     * @return The free scalar that transforms to the input scalar
-     * given the bounds.
+     * @tparam T type of scalar
+     * @tparam TL type of lower bound
+     * @tparam TU type of upper bound
+     * @param y constrained value
+     * @param lb lower bound
+     * @param ub upper bound
+     * @return the free scalar that transforms to the input scalar
+     *   given the bounds
      * @throw std::invalid_argument if the lower bound is greater than
      *   the upper bound, y is less than the lower bound, or y is
      *   greater than the upper bound
      */
     template <typename T, typename TL, typename TU>
-    inline
-    typename boost::math::tools::promote_args<T, TL, TU>::type
-    lub_free(const T y, TL lb, TU ub) {
-      check_bounded<T, TL, TU>
-        ("lub_free",
-         "Bounded variable",
-         y, lb, ub);
+    inline typename boost::math::tools::promote_args<T, TL, TU>::type
+    lub_free(const T& y, const TL& lb, const TU& ub) {
+      check_bounded<T, TL, TU>("lub_free", "Bounded variable", y, lb, ub);
       if (lb == -std::numeric_limits<double>::infinity())
         return ub_free(y, ub);
       if (ub == std::numeric_limits<double>::infinity())

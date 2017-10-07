@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -27,8 +28,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_cov_matrix(const char* function,
-                     const char* name,
+    check_cov_matrix(const std::string& function,
+                     const std::string& name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_pos_definite(function, name, y);
     }

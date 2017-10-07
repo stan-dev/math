@@ -26,8 +26,8 @@ namespace stan {
      */
     template <typename T_y>
     void
-    check_positive_ordered(const char* function,
-                           const char* name,
+    check_positive_ordered(const std::string& function,
+                           const std::string& name,
                            const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
       using Eigen::Dynamic;
       using Eigen::Matrix;

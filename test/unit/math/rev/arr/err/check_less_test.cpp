@@ -10,7 +10,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   using stan::math::check_less;
 
   int N = 5;
-  const char* function = "check_less";
+  const std::string function = "check_less";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

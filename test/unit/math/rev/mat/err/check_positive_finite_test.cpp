@@ -5,9 +5,9 @@ using stan::math::var;
 using stan::math::check_positive_finite;
 
 TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite_Matrix) {
-  const char* function = "check_positive_finite";
+  const std::string function = "check_positive_finite";
   Eigen::Matrix<var,Eigen::Dynamic,1> x;
-  
+
   x.resize(3);
   x << 3, 2, 1;
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
@@ -32,10 +32,10 @@ TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite_Matrix) {
   x << 2, 1, -std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
     << "check_positive_finite should throw exception on -Inf";
-  
+
   x.resize(3);
   x << 1, 2, std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error) 
+  EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
     << "check_positive_finite should throw exception on NaN";
   stan::math::recover_memory();
 }

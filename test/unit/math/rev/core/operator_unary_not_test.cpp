@@ -2,14 +2,16 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev,not_a) {
-  AVAR a(6.0);
-  EXPECT_EQ(0, !a);
-  AVAR b(0.0);
-  EXPECT_EQ(1, !b);
+void test_unary_not(double x) {
+  AVAR x_v = x;
+  EXPECT_EQ(!x, !x_v);
 }
 
-TEST(AgradRev,not_nan) {
-  stan::math::var nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_FALSE(!nan);
+TEST(AgradRev,unaryNot) {
+  test_unary_not(6.1);
+  test_unary_not(0);
+  test_unary_not(-13.2);
+  test_unary_not(std::numeric_limits<double>::infinity());
+  test_unary_not(-std::numeric_limits<double>::infinity());
+  test_unary_not(std::numeric_limits<double>::quiet_NaN());
 }

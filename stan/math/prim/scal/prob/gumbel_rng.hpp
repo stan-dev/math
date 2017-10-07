@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +37,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const char* function("gumbel_rng");
+      static const std::string function = "gumbel_rng";
 
       check_finite(function, "Location parameter", mu);
       check_positive(function, "Scale parameter", beta);

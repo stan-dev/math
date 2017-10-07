@@ -21,14 +21,13 @@ namespace stan {
      * @param y Input scalar.
      * @return Unconstrained value that produces the input when constrained.
      * @tparam T Type of scalar.
-     * @throw std::domain_error if the variable is negative.
+     * @throw std::domain_error if the variable is negative
      */
     template <typename T>
     inline
-    T positive_free(const T y) {
+    T positive_free(const T& y) {
       using std::log;
-      check_positive("positive_free",
-                     "Positive variable", y);
+      check_positive("positive_free", "Positive variable", y);
       return log(y);
     }
 

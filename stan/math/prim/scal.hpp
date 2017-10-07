@@ -387,6 +387,7 @@
 #include <stan/math/prim/scal/prob/skew_normal_log.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_rng.hpp>
+#include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf_log.hpp>

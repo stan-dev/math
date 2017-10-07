@@ -17,16 +17,15 @@ namespace stan {
      *
      * <p>\f$f^{-1}(y) = \mbox{logit}(y) = \frac{1 - y}{y}\f$.
      *
-     * @param y Scalar input.
-     * @tparam T Type of scalar.
-     * @throw std::domain_error if y is less than 0 or greater than 1.
+     * @tparam T type of constrained value
+     * @param y constrained value
+     * @return corresponding unconstrained value
+     * @throw std::domain_error if y is not in (0, 1)
      */
     template <typename T>
-    inline
-    T prob_free(const T y) {
-      check_bounded<T, double, double>
-        ("prob_free", "Probability variable",
-         y, 0, 1);
+    inline T prob_free(const T& y) {
+      check_bounded<T, double, double>("prob_free", "Probability variable",
+                                       y, 0, 1);
       return logit(y);
     }
 
