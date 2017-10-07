@@ -45,7 +45,7 @@ namespace stan {
       if (z == 0) {
        if (v == 0) return 0.0;
        if (v > 0) return -std::numeric_limits<T>::infinity();
-       return std::numeric_limits<T>::quiet_NaN();
+       return std::numeric_limits<T>::infinity();
       }
       if (stan::math::is_inf(z)) return z;
       if (z > 100) {
