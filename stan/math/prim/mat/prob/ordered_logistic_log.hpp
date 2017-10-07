@@ -52,8 +52,32 @@ namespace stan {
       return ordered_logistic_lpmf<T_lambda, T_cut>(y, lambda, c);
     }
 
+    /**
+     * Returns the (natural) log probability of the specified array 
+     * of integers given the vector of continuous locations and 
+     * specified cutpoints in an ordered logistic model.
+     *
+     * <p>Typically the continous location
+     * will be the dot product of a vector of regression coefficients
+     * and a vector of predictors for the outcome.
+     *
+     * @tparam propto True if calculating up to a proportion.
+     * @tparam T_lambda Location type.
+     * @tparam T_cut Cut-point type.
+     * @param y Array of integers
+     * @param lambda Vector of continuous location variables.
+     * @param c Positive increasing vector of cutpoints.
+     * @return Log probability of outcome given location and
+     * cutpoints.
 
-
+     * @throw std::domain_error If the outcome is not between 1 and
+     * the number of cutpoints plus 2; if the cutpoint vector is
+     * empty; if the cutpoint vector contains a non-positive,
+     * non-finite value; or if the cutpoint vector is not sorted in
+     * ascending order.
+     * @throw std::invalid_argument If y and lambda are different
+     * lengths.
+     */
     template <bool propto, typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
     ordered_logistic_log(const std::vector<int>& y,

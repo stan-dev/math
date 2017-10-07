@@ -82,9 +82,9 @@ namespace stan {
       check_finite(function, "Cut points parameter", c(0));
 
         if (y == 1) {
-            logp_n += -log1p_exp(lambda - c[0]);
+          logp_n += -log1p_exp(lambda - c[0]);
         } else if (y == K) {
-            logp_n += -log1p_exp(c[K-2] - lambda);
+          logp_n += -log1p_exp(c[K-2] - lambda);
         } else {
           logp_n += log_inv_logit_diff(c[y-2] - lambda,
                                     c[y-1] - lambda);
@@ -100,10 +100,9 @@ namespace stan {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
-
     /**
      * Returns the (natural) log probability of the specified array 
-     * of integers given the vecotr of continuous locations and 
+     * of integers given the vector of continuous locations and 
      * specified cutpoints in an ordered logistic model.
      *
      * <p>Typically the continous location
@@ -124,7 +123,7 @@ namespace stan {
      * empty; if the cutpoint vector contains a non-positive,
      * non-finite value; or if the cutpoint vector is not sorted in
      * ascending order.
-     * @throw std::invalid_argument if y and lambda are different
+     * @throw std::invalid_argument If y and lambda are different
      * lengths.
      */
     template <bool propto, typename T_lambda, typename T_cut>
@@ -161,9 +160,9 @@ namespace stan {
 
       for (int i = 0; i < N; ++i) {
         if (y[i] == 1) {
-            logp_n += -log1p_exp(lambda[i] - c[0]);
+          logp_n += -log1p_exp(lambda[i] - c[0]);
         } else if (y[i] == K) {
-            logp_n += -log1p_exp(c[K-2] - lambda[i]);
+          logp_n += -log1p_exp(c[K-2] - lambda[i]);
         } else {
           logp_n += log_inv_logit_diff(c[y[i]-2] - lambda[i],
                                     c[y[i]-1] - lambda[i]);
