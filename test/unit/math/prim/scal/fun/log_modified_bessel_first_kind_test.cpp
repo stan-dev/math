@@ -19,7 +19,7 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
 
   // code branches for z > 100 and v sufficiently small
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(.1, 100),
-                  log_modified_bessel_first_kind(.1, 100 + 1e-16));
+                  log_modified_bessel_first_kind(.1, 100 + 1e-14));
 
   // code branches when v is -1
   EXPECT_FLOAT_EQ(-0.5706479874908312,
@@ -27,9 +27,46 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
   EXPECT_FLOAT_EQ(-0.5706479874908312,
                   log_modified_bessel_first_kind(-1 + 1e-16, 1));
 
-  // integers inputs get promoted correctly
+  // code branches at v = 0
   EXPECT_FLOAT_EQ(0.235914358507179,
-                  log_modified_bessel_first_kind(0, 1));
+                  log_modified_bessel_first_kind(0, 1));  // integers promoted
+  EXPECT_FLOAT_EQ(0.235914358507179,
+                  log_modified_bessel_first_kind(1e-16, 1));
+
+  EXPECT_FLOAT_EQ(5.82456472298118,
+                  log_modified_bessel_first_kind(0, 7.75 - 5e-16));
+  EXPECT_FLOAT_EQ(5.82456472298118,
+                  log_modified_bessel_first_kind(0, 7.75));
+  EXPECT_FLOAT_EQ(5.82456472298118,
+                  log_modified_bessel_first_kind(1e-16, 7.75));
+
+  EXPECT_FLOAT_EQ(495.974007668107,
+                  log_modified_bessel_first_kind(0, 500 - 1e-13));
+  EXPECT_FLOAT_EQ(495.974007668107,
+                  log_modified_bessel_first_kind(0, 500));
+  EXPECT_FLOAT_EQ(495.974007668107,
+                  log_modified_bessel_first_kind(1e-16, 500));
+
+  // code branches at v = 1
+  EXPECT_FLOAT_EQ(-0.570647987490831,
+                  log_modified_bessel_first_kind(1, 1));  // integers promoted
+  EXPECT_FLOAT_EQ(-0.570647987490831,
+                  log_modified_bessel_first_kind(1 + 1e-16, 1));
+
+  EXPECT_FLOAT_EQ(5.75527527206771,
+                  log_modified_bessel_first_kind(1, 7.75 - 5e-16));
+  EXPECT_FLOAT_EQ(5.75527527206771,
+                  log_modified_bessel_first_kind(1, 7.75));
+  EXPECT_FLOAT_EQ(5.75527527206771,
+                  log_modified_bessel_first_kind(1 + 1e-16, 7.75));
+
+  EXPECT_FLOAT_EQ(495.973006666268,
+                  log_modified_bessel_first_kind(1, 500 - 1e-13));
+  EXPECT_FLOAT_EQ(495.973006666268,
+                  log_modified_bessel_first_kind(1, 500));
+  EXPECT_FLOAT_EQ(495.973006666268,
+                  log_modified_bessel_first_kind(1 + 1e-16, 500));
+
 
   // limiting cases
   EXPECT_EQ(0, log_modified_bessel_first_kind(0,0));
