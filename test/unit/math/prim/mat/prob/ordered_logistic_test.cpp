@@ -161,6 +161,10 @@ TEST(ProbDistributions,ordered_logistic) {
   cbad3[1] = nan;
   EXPECT_THROW(ordered_logistic_log(1,1.0,cbad3),std::domain_error);
   EXPECT_THROW(ordered_logistic_log(y,lambda,cbad3),std::domain_error);
+
+  Eigen::Matrix<double,Eigen::Dynamic,1> lambda_small(3); 
+  lambda_small << 1, 1, 1;
+  EXPECT_THROW(ordered_logistic_log(y,lambda_small,c),std::invalid_argument);
 }
 
 void expect_nan(double x) {

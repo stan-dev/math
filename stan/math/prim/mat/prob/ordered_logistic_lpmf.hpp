@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -123,6 +124,8 @@ namespace stan {
      * empty; if the cutpoint vector contains a non-positive,
      * non-finite value; or if the cutpoint vector is not sorted in
      * ascending order.
+     * @throw std::invalid_argument if y and lambda are different
+     * lengths.
      */
     template <bool propto, typename T_lambda, typename T_cut>
     typename boost::math::tools::promote_args<T_lambda, T_cut>::type
@@ -140,6 +143,8 @@ namespace stan {
 
       int N = lambda.size();
       int K = c.size() + 1;
+
+      check_consistent_sizes(function, "Integers", y, "Locations", lambda);
 
       for (int i = 0; i < N; ++i) {
       check_bounded(function, "Random variable", y[i], 1, K);
