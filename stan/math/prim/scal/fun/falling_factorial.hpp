@@ -20,10 +20,8 @@ namespace stan {
      * @param x Argument.
      * @param n Argument
      * @return Result of falling factorial function.
-     */
-
-
-    /**
+     * @throw std::domain_error if x is NaN
+     * @throw std::domain_error if n is negative
      *
        \f[
        \mbox{falling\_factorial}(x, n) =

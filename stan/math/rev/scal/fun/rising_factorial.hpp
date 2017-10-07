@@ -8,19 +8,7 @@
 namespace stan {
   namespace math {
 
-    /**
-     * Return tangent of the rising factorial function 
-     * applied to the inputs. 
-     * Will throw for NaN x and for negative n, as 
-     * implemented in primitive function.
-     *
-     * @tparam T Scalar type of autodiff variable.
-     * @param x Argument.
-     * @param n Argument
-     * @return tangent of rising factorial at arguments.
-     */
-
-    namespace {
+    namespace internal {
 
       class rising_factorial_vd_vari : public op_vd_vari {
       public:
@@ -29,15 +17,13 @@ namespace stan {
         }
         void chain() {
           avi_->adj_ += adj_ * rising_factorial(avi_->val_, bd_)
-            * (digamma(avi_->val_ + bd_)
-               - digamma(avi_->val_));
+            * (digamma(avi_->val_ + bd_) - digamma(avi_->val_));
         }
       };
     }
 
-    inline var rising_factorial(const var& a,
-                                int b) {
-      return var(new rising_factorial_vd_vari(a.vi_, b));
+    inline var rising_factorial(const var& a, int b) {
+      return var(new internal::rising_factorial_vd_vari(a.vi_, b));
     }
   }
 }
