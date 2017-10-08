@@ -69,6 +69,10 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
   EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
 
+  // complex but with zero imaginary part
+  EXPECT_FLOAT_EQ(37, var(std::complex<double>(37,0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<float>(37,0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<long double>(37,0)).val());
 }
 
 TEST_F(AgradRev,a_eq_x) {

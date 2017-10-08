@@ -194,7 +194,33 @@ namespace stan {
        */
       explicit var(std::complex<double> x) {
         assert(imag(x) == 0);
-        vi_ = new vari(std::numeric_limits<double>::quiet_NaN());
+        vi_ = new vari(real(x));
+      }
+
+      /**
+       * Construct a variable from the specified arithmetic argument
+       * by constructing a new <code>vari</code> with the argument
+       * cast to <code>double</code>, and a zero adjoint. Only works
+       * if the imaginary part is zero.
+       *
+       * @param x Value of the variable.
+       */
+      explicit var(std::complex<float> x) {
+        assert(imag(x) == 0);
+        vi_ = new vari(static_cast<double>(real(x)));
+      }
+
+      /**
+       * Construct a variable from the specified arithmetic argument
+       * by constructing a new <code>vari</code> with the argument
+       * cast to <code>double</code>, and a zero adjoint. Only works
+       * if the imaginary part is zero.
+       *
+       * @param x Value of the variable.
+       */
+      explicit var(std::complex<long double> x) {
+        assert(imag(x) == 0);
+        vi_ = new vari(static_cast<double>(real(x)));
       }
 
       /**
