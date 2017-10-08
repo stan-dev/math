@@ -7,6 +7,9 @@
 #include <boost/math/tools/config.hpp>
 #include <ostream>
 #include <vector>
+#include <complex>
+#include <cassert>
+#include <limits>
 
 namespace stan {
   namespace math {
@@ -180,6 +183,30 @@ namespace stan {
        */
       // NOLINTNEXTLINE
       var(unsigned long x) : vi_(new vari(static_cast<double>(x))) { }  // NOLINT
+
+      /**
+       * Construct a variable from the specified arithmetic argument
+       * by constructing a new <code>vari</code> with the argument
+       * cast to <code>double</code>, and a zero adjoint. Only works
+       * if the imaginary part is zero.
+       *
+       * @param x Value of the variable.
+       */
+      explicit var(std::complex<double> x) {
+        assert(imag(x) == 0);
+        vi_ = new vari(std::numeric_limits<double>::quiet_NaN());
+      }
+
+      /**
+       * This constructor does not work and really only exists to
+       * ensure that such a var is not created accidentally in
+       * testing.
+       *
+       * @param x Value of the variable.
+       */
+      explicit var(std::complex<var> x) {
+        assert(false);
+      }
 
 #ifdef _WIN64
 
