@@ -5,7 +5,7 @@
 # - AR: archiver (must specify for cross-compiling)
 ##
 CC = clang++
-O = 3
+O = 0
 O_STANC = 0
 AR = ar
 

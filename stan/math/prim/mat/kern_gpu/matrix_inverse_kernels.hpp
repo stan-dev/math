@@ -18,7 +18,7 @@ namespace stan {
   namespace math {
     namespace kernel_sources{
 
-      std::string lower_tri_inv_step1=  
+      static std::string lower_tri_inv_step1=  
     "__kernel void lower_tri_inv_step1(__global double* ap,__global double* vv, int remainder,int part_size_fixed, int M){	\n"
     "		\n"
     "	int indeks=get_global_id(0);	\n"
@@ -65,7 +65,7 @@ namespace stan {
     "    }	\n"
     "}	\n";
       
-      std::string lower_tri_inv_step2_3= 
+      static std::string lower_tri_inv_step2_3= 
     "#define WPT 4	\n"
     "#define RTS	8	\n"
     "#define TS2 32	\n"
