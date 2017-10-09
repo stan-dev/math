@@ -25,7 +25,6 @@ vector<string> lookup_argument(const string& argument, const int& ind) {
     args.push_back("int");
     args.push_back("std::vector<int>");
     args.push_back("Eigen::Matrix<int, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<int, 1, Eigen::Dynamic>");
   } else if (iequals(argument, "double")) {
     args.push_back("double");
     args.push_back("var");
@@ -33,36 +32,30 @@ vector<string> lookup_argument(const string& argument, const int& ind) {
     args.push_back("double");
     args.push_back("std::vector<double>");
     args.push_back("Eigen::Matrix<double, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<double, 1, Eigen::Dynamic>");
     if (ind == 1) {
     args.push_back("var");
     args.push_back("std::vector<var>");
     args.push_back("Eigen::Matrix<var, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<var, 1, Eigen::Dynamic>");
     }
     else if (ind == 2) {
     args.push_back("fvar<double>");
     args.push_back("std::vector<fvar<double> >");
     args.push_back("Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic>");
     }
     else if (ind == 3) {
     args.push_back("fvar<var>");
     args.push_back("std::vector<fvar<var> >");
     args.push_back("Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>");
     }
     else if (ind == 4) {
     args.push_back("fvar<fvar<double> >");
     args.push_back("std::vector<fvar<fvar<double> > >");
     args.push_back("Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic>");
     }
     else if (ind == 5) {
     args.push_back("fvar<fvar<var> >");
     args.push_back("std::vector<fvar<fvar<var> > >");
     args.push_back("Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic>");
     }
   }
   return args;
@@ -93,7 +86,7 @@ void write_includes(vector<std::ostream *>& outs, const string& include) {
     *out << "#include <test/prob/test_fixture_cdf.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_cdf_log.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_ccdf_log.hpp>" << endl;
-    *out << "#include <" << include << ">" << endl;  
+    *out << "#include <" << include << ">" << endl;
     *out << endl;
   }
 }
@@ -103,8 +96,8 @@ vector<string> tokenize_arguments(const string& arguments) {
   string delimiters = ", ";
   string args_only_string = arguments.substr(arguments.find(":") + 1);
   boost::algorithm::trim(args_only_string);
-  boost::algorithm::split(tokens, args_only_string, 
-        boost::is_any_of(delimiters), 
+  boost::algorithm::split(tokens, args_only_string,
+        boost::is_any_of(delimiters),
         boost::token_compress_on);
   return tokens;
 }
@@ -113,7 +106,7 @@ size_t size(const vector<vector<string> >& sequences) {
   if (sequences.size() == 0)
     return 0;
   size_t N = 1;
-  for (size_t n = 0; n < sequences.size(); n++) 
+  for (size_t n = 0; n < sequences.size(); n++)
     N *= sequences[n].size();
   return N;
 }
@@ -137,7 +130,7 @@ string read_file(const string& in_name) {
   in.seekg(0, std::ios::beg);
   in.read(&file[0], file.size());
   in.close();
-  
+
   return file;
 }
 
@@ -172,7 +165,7 @@ pair<string, string> read_test_name_from_file(const string& file) {
     pos = file.find("};", pos) + 2;
     boost::algorithm::trim(test_name);
     boost::algorithm::trim(fixture_name);
-    
+
     if (fixture_name.find("Test") != string::npos) {
       fixture_name += "Fixture";
       name = pair<string, string>(test_name, fixture_name);
@@ -181,7 +174,7 @@ pair<string, string> read_test_name_from_file(const string& file) {
   return name;
 }
 
-vector<vector<string> > build_argument_sequence(const string& arguments, 
+vector<vector<string> > build_argument_sequence(const string& arguments,
                                                 const int& ind) {
   vector<string> argument_list = tokenize_arguments(arguments);
   vector<vector<string> > argument_sequence;
@@ -198,17 +191,17 @@ bool check_all_double(string base, string arg) {
   vector<string> tokens;
   string delimiters = ", ";
   boost::algorithm::trim(arguments);
-  boost::algorithm::split(tokens, arguments, 
-        boost::is_any_of(delimiters), 
+  boost::algorithm::split(tokens, arguments,
+        boost::is_any_of(delimiters),
         boost::token_compress_on);
 
   for (size_t i = 0; i < tokens.size(); i++) {
-    if (tokens[i] == "1" || tokens[i] == "Eigen::Dynamic>" 
+    if (tokens[i] == "1" || tokens[i] == "Eigen::Dynamic>"
         || tokens[i] == "1>" || tokens[i] == "Eigen::Dynamic")
       result = result && true;
     else {
       temp = (tokens[i] == "double") || (tokens[i] == "std::vector<double>")
-        || (tokens[i] == "Eigen::Matrix<double") || (tokens[i] == "int") 
+        || (tokens[i] == "Eigen::Matrix<double") || (tokens[i] == "int")
         || (tokens[i] == "std::vector<int>") || (tokens[i] == "Eigen::Matrix<int");
       result = result && temp;
     }
@@ -220,8 +213,8 @@ int num_doubles(string arguments) {
   vector<string> tokens;
   string delimiters = ", ";
   boost::algorithm::trim(arguments);
-  boost::algorithm::split(tokens, arguments, 
-        boost::is_any_of(delimiters), 
+  boost::algorithm::split(tokens, arguments,
+        boost::is_any_of(delimiters),
         boost::token_compress_on);
 
   int num = 0;
@@ -235,8 +228,8 @@ int num_ints(string arguments) {
   vector<string> tokens;
   string delimiters = ", ";
   boost::algorithm::trim(arguments);
-  boost::algorithm::split(tokens, arguments, 
-        boost::is_any_of(delimiters), 
+  boost::algorithm::split(tokens, arguments,
+        boost::is_any_of(delimiters),
         boost::token_compress_on);
 
   int num = 0;
@@ -247,8 +240,8 @@ int num_ints(string arguments) {
   return num;
 }
 
-void write_types_typedef(vector<std::ostream *>& outs, string base, size_t& N, 
-                         vector<vector<string> > argument_sequence, 
+void write_types_typedef(vector<std::ostream *>& outs, string base, size_t& N,
+                         vector<vector<string> > argument_sequence,
                          const size_t depth, const int& index, const int& N_TESTS) {
   vector<string> args = argument_sequence.front();
   argument_sequence.erase(argument_sequence.begin());
@@ -289,7 +282,7 @@ void write_types_typedef(vector<std::ostream *>& outs, string base, size_t& N,
   }
 }
 
-size_t write_types(vector<std::ostream *>& outs, 
+size_t write_types(vector<std::ostream *>& outs,
                  const vector<vector<string> >& argument_sequence,
                  const int& index, const int& N_TESTS) {
   size_t N = 0;
@@ -300,7 +293,7 @@ size_t write_types(vector<std::ostream *>& outs,
   return N;
 }
 
-void write_test(vector<std::ostream *>& outs, const string& test_name, 
+void write_test(vector<std::ostream *>& outs, const string& test_name,
                 const string& fixture_name, const size_t N, const int& index,
                 const int& N_TESTS) {
   for (size_t n = 0; n < N; n++) {
@@ -344,32 +337,32 @@ void write_test_cases(vector<std::ostream *>& outs, const string& file,
   string test_name = name.first;
   string fixture_name = name.second;
 
-  size_t num_tests = write_types(outs, argument_sequence,index,N_TESTS); 
+  size_t num_tests = write_types(outs, argument_sequence,index,N_TESTS);
   write_test(outs, test_name, fixture_name, num_tests,index,N_TESTS);
 }
 
-int create_files(const int& argc, const char* argv[],const int& index, 
+int create_files(const int& argc, const char* argv[],const int& index,
                  const int& start, const int& N_TESTS) {
   if (argc != 3)
     return -1;
   string in_suffix = "_test.hpp";
 
   string in_name = argv[1];
-  
+
   size_t last_in_suffix = in_name.find_last_of(in_suffix) + 1 - in_suffix.length();
   string out_name_base = in_name.substr(0, last_in_suffix);
 
   string file = read_file(in_name);
-  
+
   string arguments = read_arguments_from_file(file);
   vector<vector<string> > argument_sequence = build_argument_sequence(arguments,index);
-  
+
   int num_tests;
   if (index == 1)
     num_tests = size(argument_sequence);
   else
-    num_tests = size(argument_sequence) - std::pow(4,num_ints(arguments)) 
-      * std::pow(4, num_doubles(arguments));
+    num_tests = size(argument_sequence) - std::pow(3,num_ints(arguments))
+      * std::pow(3, num_doubles(arguments));
 
   vector<std::ostream *> outs;
   const double BATCHES = N_TESTS > 0 ? num_tests / N_TESTS : -N_TESTS;
@@ -407,13 +400,13 @@ int create_files(const int& argc, const char* argv[],const int& index,
   return start+BATCHES;
 }
 
-/** 
+/**
  * Generate test cases.
- * 
+ *
  * @param argc Number of arguments
  * @param argv Arguments. Should contain one argument with a filename and
  * the number of tests per file or if non-positive, the number of files - 1
- * 
+ *
  * @return 0 for success, negative number otherwise.
  */
 int main(int argc, const char* argv[]) {
@@ -423,6 +416,6 @@ int main(int argc, const char* argv[]) {
   create_files(argc,argv,3,-1,N_TESTS);  // create fv tests
   create_files(argc,argv,4,-1,N_TESTS);  // create ffd tests
   create_files(argc,argv,5,-1,N_TESTS);  // create ffv tests
-  
+
   return 0;
 }
