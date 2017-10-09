@@ -95,7 +95,7 @@ namespace stan {
     //TODO: select some other platform/device than 0
     //TODO: option to turn profiling OFF
 
-    class ocl{
+    class ocl {
       private:
         std::string description_;
         cl::Context oclContext;
@@ -103,7 +103,6 @@ namespace stan {
         cl::Platform oclPlatform;
         cl::Device oclDevice;
 
-        int i;
         void init() {
           try {
             std::vector<cl::Platform> allPlatforms;

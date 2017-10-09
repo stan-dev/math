@@ -18,7 +18,7 @@ namespace stan {
   namespace math {
     namespace kernel_sources{
 
-      std::string scalar_mul_diagonal= 
+      static std::string scalar_mul_diagonal= 
       "__kernel void scalar_mul_diagonal(\n"
       "          __global double *a,\n"
       "          double scalar,\n"
@@ -31,7 +31,7 @@ namespace stan {
       "    } \n"
       "};\n";
       
-      std::string scalar_mul= 
+      static std::string scalar_mul= 
       "__kernel void scalar_mul(\n"
       "          __global double *a,\n"
       "          double scalar,\n"
@@ -45,7 +45,7 @@ namespace stan {
       "    } \n"
       "};\n";
 
-      std::string basic_multiply=
+      static std::string basic_multiply=
       " #define TS 16 \n"
       "__kernel void basic_multiply(const int M, const int N, const int K, \n"
       "                      const __global double* A, \n"

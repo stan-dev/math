@@ -18,7 +18,7 @@ namespace stan {
   namespace math {
     namespace kernel_sources{
 
-      std::string cholesky_block= 
+      static std::string cholesky_block= 
     "__kernel void cholesky_block(__global double *b,int offset,int M, int n,__global double *V, __global double *d)	\n"
     "{		\n"
     "	int f=get_local_id(0);	\n"
@@ -81,7 +81,7 @@ namespace stan {
     "	}		\n"
     "}	\n";
 
-      std::string cholesky_left_mid_update= 
+      static std::string cholesky_left_mid_update= 
     "#define TS3	16	\n"
     "__kernel void cholesky_left_update(__global double* l,__global double* ap, __global double* temp,int offset,int block,int M, int max_threads){	\n"
     "		\n"
@@ -172,7 +172,7 @@ namespace stan {
     "	}	\n"
     "}	\n";
 
-      std::string cholesky_zero= 
+      static std::string cholesky_zero= 
 
     "__kernel void cholesky_zero(__global double* A,int M){ \n"
     "		 \n"

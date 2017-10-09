@@ -16,9 +16,9 @@
 
 namespace stan {
   namespace math {
-    namespace kernel_sources{
+    namespace kernel_sources {
 
-      std::string transpose= 
+      static std::string transpose= 
       "__kernel void transpose(\n"
       "          __global double *a,\n"
       "          __global double *b,\n"
@@ -32,7 +32,7 @@ namespace stan {
       "    } \n"
       "};\n";
       
-      std::string copy= 
+      static std::string copy= 
       "__kernel void copy(\n"
       "          __global double *a,\n"
       "          __global double *b,\n"
@@ -46,7 +46,7 @@ namespace stan {
       "    } \n"
       "};\n";  
 
-      std::string zeros= 
+      static std::string zeros= 
       "__kernel void zeros(\n"
       "          __global double *a,\n"
       "          unsigned int M,\n"
@@ -65,7 +65,7 @@ namespace stan {
       "    } \n"
       "};\n";  
       
-      std::string identity= 
+      static std::string identity= 
       "__kernel void identity(\n"
       "          __global double *a,\n"
       "          unsigned int M,\n"
@@ -82,7 +82,7 @@ namespace stan {
       "    } \n"
       "};\n"; 
       
-      std::string copy_triangular= 
+      static std::string copy_triangular= 
       "__kernel void copy_triangular(\n"
       "          __global double *a,\n"
       "          __global double *b,\n"
@@ -105,7 +105,7 @@ namespace stan {
       "    } \n"
       "};\n";  
 
-      std::string copy_triangular_transposed= 
+      static std::string copy_triangular_transposed= 
       "__kernel void copy_triangular_transposed(\n"
       "          __global double *a,\n"
       "          unsigned int M,\n"
@@ -123,7 +123,7 @@ namespace stan {
       "    } \n"
       "};\n";
       
-      std::string add= 
+      static std::string add= 
       "__kernel void add(\n"
       "          __global double *c,\n"
       "          __global double *a,\n"
@@ -138,7 +138,7 @@ namespace stan {
       "    } \n"
       "};\n"; 
       
-      std::string subtract= 
+      static std::string subtract= 
       "__kernel void subtract(\n"
       "          __global double *c,\n"
       "          __global double *a,\n"
