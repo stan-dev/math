@@ -46,7 +46,7 @@ namespace stan {
       check_greater_or_equal("log_modified_bessel_first_kind",
                              "first argument (order)", v, -1);
 
-      using std::log;  // using stan::math::log messes everything up
+      using std::log;
       using std::sqrt;
       using boost::math::tools::evaluate_polynomial;
 
@@ -57,8 +57,9 @@ namespace stan {
        if (v > 0) return -std::numeric_limits<T>::infinity();
        return std::numeric_limits<T>::infinity();
       }
-      if (stan::math::is_inf(z)) return z;
-      if (v == 0) {  // WARNING: will not autodiff for v = 0 correctly
+      if (is_inf(z)) return z;
+      if (v == 0) {
+        // WARNING: will not autodiff for v = 0 correctly
         // modified from Boost's bessel_i0_imp in the double precision case,
         // which refers to:
         // Modified Bessel function of the first kind of order zero
@@ -228,10 +229,10 @@ namespace stan {
         }
       }
 
-      typename boost::math::tools::promote_args<T2, double>::type log_half_z =
-        log(0.5 * z);
-      typename boost::math::tools::promote_args<T1, double>::type lgam =
-        v > -1 ? lgamma(v + 1.0) : 0;
+      typename boost::math::tools::promote_args<T2>::type log_half_z
+        = log(0.5 * z);
+      typename boost::math::tools::promote_args<T1>::type lgam
+        = v > -1 ? lgamma(v + 1.0) : 0;
       T lcons = (2.0 + v) * log_half_z;
       T out;
       if (v > -1) {
@@ -242,7 +243,7 @@ namespace stan {
       }
 
       double m = 2;
-      T lfac = 0;
+      double lfac = 0;
       T old_out;
       do {
         lfac += log(m);

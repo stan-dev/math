@@ -120,8 +120,8 @@ namespace stan {
        * calaculated with the gradient functional using var.
        */
       template <typename F>
-        void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
-                           bool test_derivs) {
+      void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
+                         bool test_derivs) {
         Eigen::VectorXd grad_ad;
         double fx_ad;
         gradient<F>(f, x, fx_ad, grad_ad);
@@ -234,10 +234,34 @@ namespace stan {
       }
 
 
+      template <typename T, typename F>
+      void expect_throw(const F& f, const Eigen::VectorXd& x) {
+        Eigen::Matrix<T, -1, 1> x_t(x.rows());
+        for (int i = 0; i < x.rows(); ++i)
+          x_t(i) = x(i);
+        try {
+          f(x_t);
+        } catch (...) {
+          SUCCEED();
+        }
+        FAIL() << "expected function to throw, but succeeded";
+      }
+
+      template <typename F>
+      void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
+        using stan::math::var;
+        using stan::math::fvar;
+        expect_throw<var>(f, x);
+      }
+
       // test value and derivative in all functionals vs. finite diffs
       template <typename F>
       void test_functor(const F& f, const Eigen::VectorXd& x, double fx,
-                        bool test_derivs = true) {
+                        bool test_derivs, bool expect_exception) {
+        if (expect_exception) {
+          expect_all_throw(f, x);
+          return;
+        }
         test_value(f, x, fx);
         test_gradient(f, x, fx, test_derivs);
         test_gradient_fvar(f, x, fx, test_derivs);
@@ -304,7 +328,7 @@ namespace stan {
        */
       template <typename F, typename T1, typename T2>
       void test_ad(const T1& x1, const T2& x2, double fx,
-                   bool test_derivs = true) {
+                   bool test_derivs, bool expect_exception) {
         // create binder then test all autodiff/double combos
         binder_binary<F, T1, T2> f(x1, x2);
 
@@ -312,21 +336,21 @@ namespace stan {
         f.fixed1_ = true;
         f.fixed2_ = true;
         seq_writer<double> a;
-        test_functor(f, a.vector(), fx, test_derivs);
+        test_functor(f, a.vector(), fx, test_derivs, expect_exception);
 
         // test (double, autodiff) instantiation
         f.fixed1_ = true;
         f.fixed2_ = false;
         seq_writer<double> b;
         b.write(x2);
-        test_functor(f, b.vector(), fx, test_derivs);
+        test_functor(f, b.vector(), fx, test_derivs, expect_exception);
 
         // test (autodiff, double) instantiation
         f.fixed1_ = false;
         f.fixed2_ = true;
         seq_writer<double> c;
         c.write(x1);
-        test_functor(f, c.vector(), fx, test_derivs);
+        test_functor(f, c.vector(), fx, test_derivs, expect_exception);
 
         // test (autodiff, autodiff) instantiation
         f.fixed1_ = false;
@@ -334,8 +358,9 @@ namespace stan {
         seq_writer<double> d;
         d.write(x1);
         d.write(x2);
-        test_functor(f, d.vector(), fx, test_derivs);
+        test_functor(f, d.vector(), fx, test_derivs, expect_exception);
       }
+
 
       template <typename F, bool is_comparison>
       void test_common_args() {
@@ -353,9 +378,16 @@ namespace stan {
         // as results will be non-differentiable in one direction
         for (size_t i = 0; i < xs.size(); ++i) {
           for (size_t j = 0; j < xs.size(); ++j) {
-            double fx = F::apply(xs[i], xs[j]);
+            double fx;
+            bool threw_exception = false;
+            try {
+              fx = F::apply(xs[i], xs[j]);
+            } catch (...) {
+              threw_exception = true;
+            }
             test_ad<F>(xs[i], xs[j], fx,
-                       !(is_comparison && xs[i] == xs[j]));
+                       !(is_comparison && xs[i] == xs[j]),
+                       threw_exception);
           }
         }
       }
