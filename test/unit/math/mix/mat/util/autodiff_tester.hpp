@@ -244,7 +244,8 @@ namespace stan {
         } catch (...) {
           SUCCEED();
         }
-        FAIL() << "expected function to throw, but succeeded";
+        FAIL()
+          << "double throws, expect autodiff version to throw";
       }
 
       template <typename F>
@@ -252,6 +253,10 @@ namespace stan {
         using stan::math::var;
         using stan::math::fvar;
         expect_throw<var>(f, x);
+        expect_throw<fvar<double> >(f, x);
+        expect_throw<fvar<fvar<double> > >(f, x);
+        expect_throw<fvar<var> >(f, x);
+        expect_throw<fvar<fvar<var> > >(f, x);
       }
 
       // test value and derivative in all functionals vs. finite diffs
@@ -361,11 +366,36 @@ namespace stan {
         test_functor(f, d.vector(), fx, test_derivs, expect_exception);
       }
 
+      template <typename F, bool is_comparison>
+      void test_args(const std::vector<double>& xs1,
+                     const std::vector<double>& xs2) {
+        using stan::math::test::test_ad;
+
+        // avoid testing derivatives for comparisons of equal values
+        // as results will be non-differentiable in one direction
+        for (size_t i = 0; i < xs1.size(); ++i) {
+          for (size_t j = 0; j < xs2.size(); ++j) {
+            double fx;
+            bool threw_exception = false;
+            try {
+              fx = F::apply(xs1[i], xs2[j]);
+            } catch (...) {
+              threw_exception = true;
+            }
+            test_ad<F>(xs1[i], xs2[j], fx,
+                       !(is_comparison && xs1[i] == xs2[j]),
+                       threw_exception);
+          }
+        }
+      }
+
+      template <typename F, bool is_comparison>
+      void test_args(const std::vector<double>& xs) {
+        test_args<F, is_comparison>(xs, xs);
+      }
 
       template <typename F, bool is_comparison>
       void test_common_args() {
-        using stan::math::test::test_ad;
-
         std::vector<double> xs;
         xs.push_back(0.5);
         xs.push_back(0);
@@ -373,23 +403,7 @@ namespace stan {
         xs.push_back(stan::math::positive_infinity());
         xs.push_back(stan::math::negative_infinity());
         xs.push_back(stan::math::not_a_number());
-
-        // avoid testing derivatives for comparisons of equal values
-        // as results will be non-differentiable in one direction
-        for (size_t i = 0; i < xs.size(); ++i) {
-          for (size_t j = 0; j < xs.size(); ++j) {
-            double fx;
-            bool threw_exception = false;
-            try {
-              fx = F::apply(xs[i], xs[j]);
-            } catch (...) {
-              threw_exception = true;
-            }
-            test_ad<F>(xs[i], xs[j], fx,
-                       !(is_comparison && xs[i] == xs[j]),
-                       threw_exception);
-          }
-        }
+        test_args<F, is_comparison>(xs, xs);
       }
 
     }

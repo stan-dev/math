@@ -24,14 +24,15 @@ namespace stan {
     /* Log of the modified Bessel function of the first kind,
      * which is better known as the Bessel I function. See
      * modified_bessel_first_kind.hpp for the function definition.
+     * The derivatives are known to be incorrect for v = 0 because a
+     * simple constant 0 is returned.
      *
      * @tparam T1 type of the order (v)
      * @tparam T2 type of argument (z)
      * @param v Order, can be a non-integer but must be at least -1
      * @param z Real non-negative number
-     * @throws if either v or z is NaN
-     * @throws if z is negative
-     * @throws if v is less than -1
+     * @throws std::domain_error if either v or z is NaN, z is
+     * negative, or v is less than -1
      * @return log of Bessel I function
      */
     template <typename T1, typename T2>
