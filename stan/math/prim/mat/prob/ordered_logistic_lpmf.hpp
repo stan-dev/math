@@ -15,10 +15,12 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <Eigen/StdVector>
 #include <string>
 #include <vector>
 
@@ -56,13 +58,11 @@ namespace stan {
      * non-finite value; or if the cutpoint vector is not sorted in
      * ascending order.
      */
-    template <bool propto, typename T_lambda, typename T_cut>
-    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_lpmf(int y,
-                      const T_lambda& lambda,
+    template <bool propto, typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc>::type
+    ordered_logistic_lpmf(int y, const T_loc& lambda,
                       const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-        logp_n(0.0);
+      typename boost::math::tools::promote_args<T_loc>::type logp_n(0.0);
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -75,27 +75,24 @@ namespace stan {
       check_bounded(function, "Random variable", y, 1, K);
       check_finite(function, "Location parameter", lambda);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
-      for (int i = 1; i < c.size(); ++i)
-        check_greater(function, "Cut points parameter", c(i), c(i - 1));
+      check_ordered(function, "Cut-points", c);
+      check_finite(function, "Final cut-point", c(c.size()-1));
+      check_finite(function, "First cut-point", c(0));
 
-      check_finite(function, "Cut points parameter", c(c.size()-1));
-      check_finite(function, "Cut points parameter", c(0));
-
-        if (y == 1) {
-          logp_n += -log1p_exp(lambda - c[0]);
-        } else if (y == K) {
-          logp_n += -log1p_exp(c[K-2] - lambda);
-        } else {
-          logp_n += log_inv_logit_diff(c[y-2] - lambda,
-                                    c[y-1] - lambda);
-        }
+      if (y == 1) {
+        logp_n += -log1p_exp(lambda - c[0]);
+      } else if (y == K) {
+        logp_n += -log1p_exp(c[K-2] - lambda);
+      } else {
+        logp_n += log_inv_logit_diff(c[y-2] - lambda,
+                                  c[y-1] - lambda);
+      }
       return logp_n;
     }
 
-    template <typename T_lambda, typename T_cut>
-    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-    ordered_logistic_lpmf(int y,
-                      const T_lambda& lambda,
+    template <typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc>::type
+    ordered_logistic_lpmf(int y, const T_loc& lambda,
                       const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
@@ -110,7 +107,7 @@ namespace stan {
      * and a vector of predictors for the outcome.
      *
      * @tparam propto True if calculating up to a proportion.
-     * @tparam T_lambda Location type.
+     * @tparam T_loc Location type.
      * @tparam T_cut Cut-point type.
      * @param y Array of integers
      * @param lambda Vector of continuous location variables.
@@ -126,13 +123,12 @@ namespace stan {
      * @throw std::invalid_argument If y and lambda are different
      * lengths.
      */
-    template <bool propto, typename T_lambda, typename T_cut>
-    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
+    template <bool propto, typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_lambda, Eigen::Dynamic, 1>& lambda,
+                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                       const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename boost::math::tools::promote_args<T_lambda, T_cut>::type
-        logp_n(0.0);
+      typename boost::math::tools::promote_args<T_loc, T_cut>::type logp_n(0.0);
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -146,17 +142,13 @@ namespace stan {
       check_consistent_sizes(function, "Integers", y, "Locations", lambda);
 
       for (int i = 0; i < N; ++i) {
-      check_bounded(function, "Random variable", y[i], 1, K);
-      check_finite(function, "Location parameter", lambda[i]);
+        check_bounded(function, "Random variable", y[i], 1, K);
+        check_finite(function, "Location parameter", lambda[i]);
       }
-      for (int i = 1; i < c.size(); ++i)
-        check_greater(function, "Cut points parameter", c(i), c(i - 1));
-
+      check_ordered(function, "Cut-points", c);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
-      check_finite(function, "Cut points parameter", c(c.size()-1));
-      check_finite(function, "Cut points parameter", c(0));
-
-      // log(1 - inv_logit(lambda))
+      check_finite(function, "Final cut-point", c(c.size()-1));
+      check_finite(function, "First cut-point", c(0));
 
       for (int i = 0; i < N; ++i) {
         if (y[i] == 1) {
@@ -171,11 +163,92 @@ namespace stan {
       return logp_n;
     }
 
-    template <typename T_lambda, typename T_cut>
-    typename boost::math::tools::promote_args<T_lambda, T_cut>::type
+    template <typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_lambda, Eigen::Dynamic, 1>& lambda,
+                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                       const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      return ordered_logistic_lpmf<false>(y, lambda, c);
+    }
+
+    /**
+     * Returns the (natural) log probability of the specified array 
+     * of integers given the vector of continuous locations and 
+     * array of specified cutpoints in an ordered logistic model.
+     *
+     * <p>Typically the continous location
+     * will be the dot product of a vector of regression coefficients
+     * and a vector of predictors for the outcome.
+     *
+     * @tparam propto True if calculating up to a proportion.
+     * @tparam T_y Type of y variable (should be std::vector<int>).
+     * @tparam T_loc Location type.
+     * @tparam T_cut Cut-point type.
+     * @param y Array of integers
+     * @param lambda Vector of continuous location variables.
+     * @param c array of Positive increasing vectors of cutpoints.
+     * @return Log probability of outcome given location and
+     * cutpoints.
+
+     * @throw std::domain_error If the outcome is not between 1 and
+     * the number of cutpoints plus 2; if the cutpoint vector is
+     * empty; if the cutpoint vector contains a non-positive,
+     * non-finite value; or if the cutpoint vector is not sorted in
+     * ascending order.
+     * @throw std::invalid_argument If y and lambda are different
+     * lengths, or if y and the array of cutpoints are of different
+     * lengths.
+     */
+    template <bool propto, typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    ordered_logistic_lpmf(const std::vector<int>& y,
+                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                      const std::vector<Eigen::Matrix<
+                                              T_cut, Eigen::Dynamic, 1>>& c) {
+      typename boost::math::tools::promote_args<T_loc, T_cut>::type logp_n(0.0);
+
+      using boost::math::tools::promote_args;
+      using std::exp;
+      using std::log;
+
+      static const std::string function = "ordered_logistic";
+
+      int N = lambda.size();
+
+      check_consistent_sizes(function, "Integers", y, "Locations", lambda);
+      check_consistent_sizes(function, "Integers", y, "Cut-points", c);
+
+      for (int i = 0; i < N; ++i) {
+        int K = c[i].size() + 1;
+
+        check_bounded(function, "Random variable", y[i], 1, K);
+        check_finite(function, "Location parameter", lambda[i]);
+        check_greater(function, "Size of cut points parameter", c[i].size(), 0);
+        check_finite(function, "Final cut-point", c[i][c[i].size()-1]);
+        check_finite(function, "First cut-point", c[i][0]);
+        check_ordered(function, "Cut-points", c[i]);
+      }
+
+      for (int i = 0; i < N; ++i) {
+        int K = c[i].size() + 1;
+        if (y[i] == 1) {
+          logp_n += -log1p_exp(lambda[i] - c[i][0]);
+        } else if (y[i] == K) {
+          logp_n += -log1p_exp(c[i][K-2] - lambda[i]);
+        } else {
+          logp_n += log_inv_logit_diff(c[i][y[i]-2] - lambda[i],
+                                    c[i][y[i]-1] - lambda[i]);
+        }
+      }
+      return logp_n;
+    }
+
+    template <typename T_loc, typename T_cut>
+    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    ordered_logistic_lpmf(const std::vector<int>& y,
+                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                      const std::vector<Eigen::Matrix<
+                                              T_cut, Eigen::Dynamic, 1>>& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
