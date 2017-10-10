@@ -51,7 +51,6 @@ namespace stan {
      * @param c Positive increasing vector of cutpoints.
      * @return Log probability of outcome given location and
      * cutpoints.
-
      * @throw std::domain_error If the outcome is not between 1 and
      * the number of cutpoints plus 2; if the cutpoint vector is
      * empty; if the cutpoint vector contains a non-positive,
@@ -59,12 +58,11 @@ namespace stan {
      * ascending order.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(int y, const T_loc& lambda,
-                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename boost::math::tools::promote_args<T_loc>::type logp_n(0.0);
+                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      typename return_type<T_loc>::type logp_n(0.0);
 
-      using boost::math::tools::promote_args;
       using std::exp;
       using std::log;
 
@@ -80,20 +78,19 @@ namespace stan {
       check_finite(function, "First cut-point", c(0));
 
       if (y == 1) {
-        logp_n += -log1p_exp(lambda - c[0]);
+        logp_n -= log1p_exp(lambda - c[0]);
       } else if (y == K) {
-        logp_n += -log1p_exp(c[K-2] - lambda);
+        logp_n -= log1p_exp(c[K-2] - lambda);
       } else {
-        logp_n += log_inv_logit_diff(c[y-2] - lambda,
-                                  c[y-1] - lambda);
+        logp_n += log_inv_logit_diff(c[y-2] - lambda, c[y-1] - lambda);
       }
       return logp_n;
     }
 
     template <typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(int y, const T_loc& lambda,
-                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
+                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
@@ -114,7 +111,6 @@ namespace stan {
      * @param c Positive increasing vector of cutpoints.
      * @return Log probability of outcome given location and
      * cutpoints.
-
      * @throw std::domain_error If the outcome is not between 1 and
      * the number of cutpoints plus 2; if the cutpoint vector is
      * empty; if the cutpoint vector contains a non-positive,
@@ -124,13 +120,12 @@ namespace stan {
      * lengths.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename boost::math::tools::promote_args<T_loc, T_cut>::type logp_n(0.0);
+                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      typename return_type<T_loc>::type logp_n(0.0);
 
-      using boost::math::tools::promote_args;
       using std::exp;
       using std::log;
 
@@ -140,11 +135,8 @@ namespace stan {
       int K = c.size() + 1;
 
       check_consistent_sizes(function, "Integers", y, "Locations", lambda);
-
-      for (int i = 0; i < N; ++i) {
-        check_bounded(function, "Random variable", y[i], 1, K);
-        check_finite(function, "Location parameter", lambda[i]);
-      }
+      check_bounded(function, "Random variable", y, 1, K);
+      check_finite(function, "Location parameter", lambda);
       check_ordered(function, "Cut-points", c);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
       check_finite(function, "Final cut-point", c(c.size()-1));
@@ -152,9 +144,9 @@ namespace stan {
 
       for (int i = 0; i < N; ++i) {
         if (y[i] == 1) {
-          logp_n += -log1p_exp(lambda[i] - c[0]);
+          logp_n -= log1p_exp(lambda[i] - c[0]);
         } else if (y[i] == K) {
-          logp_n += -log1p_exp(c[K-2] - lambda[i]);
+          logp_n -= log1p_exp(c[K-2] - lambda[i]);
         } else {
           logp_n += log_inv_logit_diff(c[y[i]-2] - lambda[i],
                                     c[y[i]-1] - lambda[i]);
@@ -164,10 +156,10 @@ namespace stan {
     }
 
     template <typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                      const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
 
@@ -189,7 +181,6 @@ namespace stan {
      * @param c array of Positive increasing vectors of cutpoints.
      * @return Log probability of outcome given location and
      * cutpoints.
-
      * @throw std::domain_error If the outcome is not between 1 and
      * the number of cutpoints plus 2; if the cutpoint vector is
      * empty; if the cutpoint vector contains a non-positive,
@@ -200,14 +191,13 @@ namespace stan {
      * lengths.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                      const std::vector<Eigen::Matrix<
-                                              T_cut, Eigen::Dynamic, 1>>& c) {
-      typename boost::math::tools::promote_args<T_loc, T_cut>::type logp_n(0.0);
+                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                          const std::vector<Eigen::Matrix<
+                                                T_cut, Eigen::Dynamic, 1>>& c) {
+      typename return_type<T_loc>::type logp_n(0.0);
 
-      using boost::math::tools::promote_args;
       using std::exp;
       using std::log;
 
@@ -222,19 +212,19 @@ namespace stan {
         int K = c[i].size() + 1;
 
         check_bounded(function, "Random variable", y[i], 1, K);
-        check_finite(function, "Location parameter", lambda[i]);
         check_greater(function, "Size of cut points parameter", c[i].size(), 0);
-        check_finite(function, "Final cut-point", c[i][c[i].size()-1]);
-        check_finite(function, "First cut-point", c[i][0]);
         check_ordered(function, "Cut-points", c[i]);
       }
+
+        check_finite(function, "Location parameter", lambda);
+        check_finite(function, "Cut-points", c);
 
       for (int i = 0; i < N; ++i) {
         int K = c[i].size() + 1;
         if (y[i] == 1) {
-          logp_n += -log1p_exp(lambda[i] - c[i][0]);
+          logp_n -= log1p_exp(lambda[i] - c[i][0]);
         } else if (y[i] == K) {
-          logp_n += -log1p_exp(c[i][K-2] - lambda[i]);
+          logp_n -= log1p_exp(c[i][K-2] - lambda[i]);
         } else {
           logp_n += log_inv_logit_diff(c[i][y[i]-2] - lambda[i],
                                     c[i][y[i]-1] - lambda[i]);
@@ -244,14 +234,13 @@ namespace stan {
     }
 
     template <typename T_loc, typename T_cut>
-    typename boost::math::tools::promote_args<T_loc, T_cut>::type
+    typename return_type<T_loc>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
-                      const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                      const std::vector<Eigen::Matrix<
-                                              T_cut, Eigen::Dynamic, 1>>& c) {
+                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                          const std::vector<Eigen::Matrix<
+                                                T_cut, Eigen::Dynamic, 1>>& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
-
   }
 }
 #endif
