@@ -7,6 +7,8 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <iostream>
 #include <string>
 #include <map>
@@ -26,7 +28,7 @@ namespace stan {
 
       check_square("cholesky_decompose", "m", m);
       //check_symmetric("cholesky_decompose", "m", m);
-      stan::math::matrix_gpu A(m);
+      stan::math::matrix_gpu A(value_of_rec(m));
 
       cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
       cl::Kernel kernel_left = stan::math::get_kernel("cholesky_left_update");
