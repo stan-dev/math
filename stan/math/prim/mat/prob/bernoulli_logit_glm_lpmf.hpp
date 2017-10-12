@@ -53,7 +53,6 @@ namespace stan {
                                                   T_alpha>::type
         T_partials_return;
 
-      using stan::is_constant_struct;
       using std::exp;
       using Eigen::Dynamic;
       using Eigen::Matrix;
@@ -67,9 +66,11 @@ namespace stan {
       check_not_nan(function, "Matrix of independent variables", x);
       check_not_nan(function, "Weight vector", beta);
       check_not_nan(function, "Intercept", alpha);
-      check_consistent_sizes(function, "Rows in matrix of independent variables",
+      check_consistent_sizes(function,
+                             "Rows in matrix of independent variables",
                              x.col(0), "Vector of dependent variables",  n);
-      check_consistent_sizes(function, "Columns in matrix of independent variables",
+      check_consistent_sizes(function,
+                             "Columns in matrix of independent variables",
                              x.row(0), "Weight vector",  beta);
 
       if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
@@ -77,8 +78,8 @@ namespace stan {
 
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
-      
-      Matrix<double, Dynamic, 1> signs(N,1);
+
+      Matrix<double, Dynamic, 1> signs(N, 1);
       {
         scalar_seq_view<T_n> n_vec(n);
         for (size_t n = 0; n < N; ++n) {
@@ -94,10 +95,11 @@ namespace stan {
       }
       Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
 
-      Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array() * 
-        (x_dbl * beta_dbl + Matrix<double, Dynamic, 1>::Ones(N, 1) * 
-        value_of(alpha)).array();
-      Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta = (-ntheta).exp();
+      Eigen::Array<T_partials_return, Dynamic, 1> ntheta = signs.array()
+        * (x_dbl * beta_dbl + Matrix<double, Dynamic, 1>::Ones(N, 1)
+        * value_of(alpha)).array();
+      Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ntheta =
+        (-ntheta).exp();
 
       static const double cutoff = 20.0;
       for (size_t n = 0; n < N; ++n) {
@@ -110,7 +112,7 @@ namespace stan {
         else
           logp -= log1p(exp_m_ntheta[n]);
       }
-      
+
       // Compute the necessary derivatives.
       operands_and_partials<T_x, T_beta, T_alpha> ops_partials(x, beta, alpha);
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
@@ -122,19 +124,21 @@ namespace stan {
           else if (ntheta[n] < -cutoff)
             theta_derivative[n] = signs[n];
           else
-            theta_derivative[n] = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
+            theta_derivative[n] = signs[n] * exp_m_ntheta[n]
+              / (exp_m_ntheta[n] + 1);
         }
         if (!is_constant_struct<T_beta>::value) {
-          ops_partials.edge2_.partials_= x_dbl.transpose() * theta_derivative;
+          ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
         }
         if (!is_constant_struct<T_x>::value) {
-          ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
+          ops_partials.edge1_.partials_ = theta_derivative
+            * beta_dbl.transpose();
         }
         if (!is_constant_struct<T_alpha>::value) {
           ops_partials.edge3_.partials_[0] = theta_derivative.trace();
         }
       }
- 
+
       return ops_partials.build(logp);
     }
 
@@ -145,6 +149,6 @@ namespace stan {
                                  const T_alpha &alpha) {
       return bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha);
     }
-  }
-}
+  }  // namespace math
+}  // namespace stan
 #endif

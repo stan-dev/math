@@ -23,8 +23,9 @@ namespace stan {
       class empty_broadcast_array {
       public:
         empty_broadcast_array() {}
-        // We provide a stub method for the empty_broadcast_array which should
-        // never be called.
+       /**
+        * Not implemented so cannot be called.
+        */
         T& operator[] (int /*i*/);
       };
     }

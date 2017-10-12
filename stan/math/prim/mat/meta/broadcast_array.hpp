@@ -12,11 +12,21 @@ namespace stan {
       class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C>> {
       public:
         empty_broadcast_array() {}
-        // We provide stub methods for the empty_broadcast_array which should
-        // never be called.
+       /**
+        * Not implemented so cannot be called.
+        */
         ViewElt& operator[](int /*i*/);
+       /**
+        * Not implemented so cannot be called.
+        */
         void operator=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+       /**
+        * Not implemented so cannot be called.
+        */
         Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/);
+       /**
+        * Not implemented so cannot be called.
+        */
         Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/);
       };
     }
