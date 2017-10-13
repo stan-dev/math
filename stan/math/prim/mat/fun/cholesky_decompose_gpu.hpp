@@ -24,11 +24,18 @@ namespace stan {
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    cholesky_decompose_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & m) {
-
+    cholesky_decompose_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+/*      std::cout << "Cholesky\n";
+      std::cout << "m(0,0): " << m(0,0) << "\n";
+      std::cout << "m(0,1): " << m(0,1) << "\n";
+      std::cout << "m(1,0): " << m(1,0) << "\n";
+      std::cout << "m(1,1): " << m(1,1) << "\n";
+      std::cout << "INPUT: \n";
+      std::cout << m << "\n";
+*/
       check_square("cholesky_decompose", "m", m);
-      //check_symmetric("cholesky_decompose", "m", m);
-      stan::math::matrix_gpu A(value_of_rec(m));
+      check_symmetric("cholesky_decompose", "m", m);
+      stan::math::matrix_gpu A(m);
 
       cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
       cl::Kernel kernel_left = stan::math::get_kernel("cholesky_left_update");
@@ -110,7 +117,15 @@ namespace stan {
       }
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
       stan::math::copy(A, m_tmp);
-      //check_pos_definite("cholesky_decompose", "m", m_tmp);
+      m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose();
+/*      std::cout << "m_tmp(0,0): " << m_tmp(0,0) << "\n";
+      std::cout << "m_tmp(0,1): " << m_tmp(0,1) << "\n";
+      std::cout << "m_tmp(1,0): " << m_tmp(1,0) << "\n";
+      std::cout << "m_tmp(1,1): " << m_tmp(1,1) << "\n";
+    std::cout << "OUTPUT: \n";
+      std::cout << m_tmp << "\n";
+*/
+      check_pos_definite("cholesky_decompose", "m", m_tmp);
       return m_tmp;
     }
   }

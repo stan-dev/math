@@ -219,8 +219,6 @@ namespace stan {
     }
 
     cl::Kernel& get_kernel(std::string name) {
-      //check which kernel group the kernel is assigned to
-      cl::Context & ctx = stan::math::get_context();
       //compile the kernel group and return the kernel
       if(!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);
