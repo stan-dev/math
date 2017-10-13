@@ -122,9 +122,9 @@ namespace stan {
       std::cout << "m_tmp(0,1): " << m_tmp(0,1) << "\n";
       std::cout << "m_tmp(1,0): " << m_tmp(1,0) << "\n";
       std::cout << "m_tmp(1,1): " << m_tmp(1,1) << "\n";
-    std::cout << "OUTPUT: \n";
+*/    std::cout << "OUTPUT: \n";
       std::cout << m_tmp << "\n";
-*/
+
       check_pos_definite("cholesky_decompose", "m", m_tmp);
       return m_tmp;
     }
