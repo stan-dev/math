@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <Eigen/StdVector>
 #include <string>
@@ -55,8 +54,7 @@ namespace stan {
       check_finite(function, "Location parameter", lambda);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
       check_ordered(function, "Cut-points", c);
-      check_finite(function, "Final cut-point", c(c.size()-1));
-      check_finite(function, "First cut-point", c(0));
+      check_finite(function, "Cut-points", c);
 
       if (y == 1) {
         return log1m(Phi(lambda - c[0]));
@@ -117,8 +115,7 @@ namespace stan {
       check_finite(function, "Location parameter", lambda);
       check_ordered(function, "Cut-points", c);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
-      check_finite(function, "Final cut-point", c(c.size()-1));
-      check_finite(function, "First cut-point", c(0));
+      check_finite(function, "Cut-points", c);
 
       typename return_type<T_loc>::type logp_n(0.0);
 
@@ -188,7 +185,6 @@ namespace stan {
 
       for (int i = 0; i < N; ++i) {
         int K = c[i].size() + 1;
-
         check_bounded(function, "Random variable", y[i], 1, K);
         check_greater(function, "Size of cut points parameter", c[i].size(), 0);
         check_ordered(function, "Cut-points", c[i]);
@@ -201,6 +197,7 @@ namespace stan {
 
       for (int i = 0; i < N; ++i) {
         int K = c[i].size() + 1;
+
         if (y[i] == 1) {
           logp_n += log1m(Phi(lambda[i] - c[i][0]));
         } else if (y[i] == K) {

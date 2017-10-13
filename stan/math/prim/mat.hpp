@@ -289,6 +289,7 @@
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
+#include <stan/math/prim/mat/prob/ordered_probit_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
 #include <stan/math/prim/mat/prob/wishart_log.hpp>
