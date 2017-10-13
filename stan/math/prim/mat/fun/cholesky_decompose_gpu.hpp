@@ -35,6 +35,7 @@ namespace stan {
 */
       check_square("cholesky_decompose", "m", m);
       check_symmetric("cholesky_decompose", "m", m);
+      if (m.size() == 0) return m;
       stan::math::matrix_gpu A(m);
 
       cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
@@ -117,14 +118,14 @@ namespace stan {
       }
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
       stan::math::copy(A, m_tmp);
-      m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose();
+      m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose().template triangularView<Eigen::Upper>();
 /*      std::cout << "m_tmp(0,0): " << m_tmp(0,0) << "\n";
       std::cout << "m_tmp(0,1): " << m_tmp(0,1) << "\n";
       std::cout << "m_tmp(1,0): " << m_tmp(1,0) << "\n";
       std::cout << "m_tmp(1,1): " << m_tmp(1,1) << "\n";
-*/    std::cout << "OUTPUT MAT: \n";
+      std::cout << "OUTPUT MAT: \n";
       std::cout << m_tmp << "\n";
-
+*/
       check_pos_definite("cholesky_decompose", "m", m_tmp);
       m_tmp = m_tmp.template triangularView<Eigen::Lower>();
       return m_tmp;
