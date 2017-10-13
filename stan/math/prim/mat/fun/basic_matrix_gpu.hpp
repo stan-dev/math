@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 
-/** @file stan/math/prim/mat/fun/basic_matrix.hpp
+/** @file stan/math/prim/mat/fun/basic_matrix_gpu.hpp
 *    @brief basic_matrix - basic matrix operations:
 *    matrix transpose, copy matrices on the GPU,  ...
 */

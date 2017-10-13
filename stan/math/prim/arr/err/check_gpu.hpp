@@ -10,7 +10,7 @@
 #include <CL/cl.hpp>
 #endif
 
-/** @file stanmathcl/errors.hpp
+/** @file stan/math/prim/arr/err/check_gpu.hpp
 *    @brief errors - utility functions for error checks: 
 *    OpenCL and user errors (input dimensions,etc..)
 */

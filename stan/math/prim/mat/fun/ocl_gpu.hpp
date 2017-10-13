@@ -22,7 +22,7 @@
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 
 /*
-*    @file stanmathcl/ocl.hpp
+*    @file stan/math/prim/mat/fun/ocl.hpp
 *    @brief Initialization for OpenCL: find platforms, devices,
 *      create context, command queue etc.
 */
