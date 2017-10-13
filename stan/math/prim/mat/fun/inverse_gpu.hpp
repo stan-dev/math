@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 
-/** @file stanmathcl/matrix_inverse.hpp
+/** @file stan/math/prim/mat/fun/inverse_gpu.hpp
 *    @brief matrix_inverse - functions for matrix inversion:
 *     lower triangular,  upper triangular,  regular,  ...
 */

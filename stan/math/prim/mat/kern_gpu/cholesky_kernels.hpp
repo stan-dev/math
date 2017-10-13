@@ -10,7 +10,7 @@
 #endif
 
 
-/** @file stanmathcl/cholesky_kernels.hpp
+/** @file stan/math/prim/mat/kern_gpu/cholesky_kernels.hpp
     @brief 
 */
 

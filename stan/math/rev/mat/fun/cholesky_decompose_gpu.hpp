@@ -130,9 +130,11 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      L_A = L_A.selfadjointView<Eigen::Lower>();
+      //L_A = L_A.selfadjointView<Eigen::Lower>();
       L_A = stan::math::cholesky_decompose_gpu(L_A);
       check_pos_definite("cholesky_decompose", "m", L_A);
+      std::cout << "OUTPUT REV: \n";
+      std::cout << L_A << "\n";
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
       // cholesky_b  lock
