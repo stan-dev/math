@@ -131,6 +131,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       //L_A = L_A.selfadjointView<Eigen::Lower>();
+      std::cout << "OUTPUT REV: \n";
       L_A = stan::math::cholesky_decompose_gpu(L_A);
       check_pos_definite("cholesky_decompose", "m", L_A);
       std::cout << "OUTPUT REV: \n";
