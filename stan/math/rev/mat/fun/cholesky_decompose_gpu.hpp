@@ -237,6 +237,10 @@ namespace stan {
       // check_pos_definite("cholesky_decompose", "m", L_A);
       L_A = Eigen::MatrixXd(L_A.triangularView<Eigen::Upper>()).transpose();
       for (int i = 0; i < L_A.rows(); i++) L_A.col(i) /= std::sqrt(L_A(i, i));
+      L_A.triangularView<Eigen::Upper>() = L_A.transpose().triangularView<Eigen::Upper>();
+      //std::cout << "POSTWAP: \n" << m_l << "\n";
+      check_pos_definite("cholesky_decompose", "L_A", L_A);
+      L_A = L_A.triangularView<Eigen::Lower>();
       // Memory allocated in arena.
       // cholesky_scalar gradient faster for small matrices compared to
       // cholesky_b  lock

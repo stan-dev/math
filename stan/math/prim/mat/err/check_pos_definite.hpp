@@ -39,12 +39,12 @@ namespace stan {
       if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
         domain_error(function, name, "is not positive definite.", "");
 
-      Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
+/*      Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
       if (cholesky.info() != Eigen::Success
           || !cholesky.isPositive()
           || (cholesky.vectorD().array() <= 0.0).any())
         domain_error(function, name, "is not positive definite.", "");
-      check_not_nan(function, name, y);
+*/      check_not_nan(function, name, y);
     }
 
     /**

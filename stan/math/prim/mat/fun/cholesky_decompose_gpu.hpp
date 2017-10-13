@@ -38,12 +38,18 @@ namespace stan {
       viennacl::linalg::lu_factorize(vcl_m);
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_l(m.rows(), m.cols());
       viennacl::copy(vcl_m, m_l);
-      // TODO(Steve/Sean): Where should this check go?
-      // check_pos_definite("cholesky_decompose", "m", L_A);
       m_l = m_l.template triangularView<Eigen::Upper>().transpose();
       for (int i = 0; i < m_l.rows(); i++) {
         m_l.col(i) /= sqrt(m_l(i, i));
       }
+      // TODO(Steve/Sean): Where should this check go?
+      //std::cout << "PRESWAP: \n" << m_l << "\n";
+
+      m_l.template triangularView<Eigen::Upper>() = m_l.transpose().template triangularView<Eigen::Upper>();
+      //std::cout << "POSTWAP: \n" << m_l << "\n";
+      check_pos_definite("cholesky_decompose", "m_l", m_l);
+      m_l = m_l.template triangularView<Eigen::Lower>();
+      
       return m_l;
     }
 
