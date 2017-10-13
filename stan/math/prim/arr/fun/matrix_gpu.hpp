@@ -53,23 +53,25 @@ namespace stan {
         };
 
         template <typename T>
-        matrix_gpu(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A) {
+        matrix_gpu(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &A) {
           try {
             cl::Context ctx = stan::math::get_context();
             cl::CommandQueue queue = stan::math::get_queue();
             this->rows = A.rows();
             this->cols = A.cols();
             oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) *
-             rows * cols);
+             A.rows() * A.cols());
 
             double*  Atemp =  new double[rows * cols];
             for(int j = 0; j < cols; j++) {
               for(int i = 0; i < rows; i++) {
-                  Atemp[i * cols + j] = A(i, j);
+      //            std::cout << "value_of(A(i,j)): " << value_of(A(i,j)) << "\n";
+                  Atemp[i * cols + j] = value_of(A(i, j));
+      //             std::cout << "Atemp[i * cols + j]: " << Atemp[i * cols + j] << "\n";
               }
             }
             queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
-             sizeof(double) * rows * cols, Atemp);
+             sizeof(double) * A.rows() * A.cols(), Atemp);
             delete[] Atemp;
           } catch (cl::Error& e) {
             check_ocl_error(e);
@@ -94,7 +96,7 @@ namespace stan {
               double*  Atemp =  new double[rows * cols];
               for(int j = 0; j < cols; j++) {
                 for(int i = 0; i < rows; i++) {
-                  Atemp[i * cols + j] = src(i, j);
+                  Atemp[i * cols + j] = value_of(src(i, j));
                 }
               }
               queue.enqueueWriteBuffer(buffer, CL_TRUE, 0,

@@ -357,6 +357,7 @@ double test_gradient(int size, double prec) {
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
 }
+
 TEST(AgradRevMatrix,mat_cholesky) {
   using stan::math::matrix_v;
   using stan::math::transpose;
@@ -383,6 +384,29 @@ TEST(AgradRevMatrix,mat_cholesky) {
   EXPECT_NO_THROW(singular_values(X));
 }
 
+TEST(AgradRevMatrix, exception_mat_cholesky) {
+  stan::math::matrix_v m;
+
+  // not positive definite
+  m.resize(2,2);
+  m << 1.0, 2.0, 
+    2.0, 3.0;
+  EXPECT_THROW(stan::math::cholesky_decompose_gpu(m),std::domain_error);
+
+  // zero size
+  m.resize(0, 0);
+  EXPECT_NO_THROW(stan::math::cholesky_decompose_gpu(m));
+  
+  // not square
+  m.resize(2, 3);
+  EXPECT_THROW(stan::math::cholesky_decompose_gpu(m), std::invalid_argument);
+
+  // not symmetric
+  m.resize(2,2);
+  m << 1.0, 2.0,
+    3.0, 4.0;
+  EXPECT_THROW(stan::math::cholesky_decompose_gpu(m), std::domain_error);
+}
 
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
   test_gradients(9, 1e-10);
