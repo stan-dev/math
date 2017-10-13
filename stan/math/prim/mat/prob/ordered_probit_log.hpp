@@ -7,7 +7,6 @@
 namespace stan {
   namespace math {
 
-
     /**
      * Returns the (natural) log probability of the integer/s 
      * given the vector of continuous location/s and 
