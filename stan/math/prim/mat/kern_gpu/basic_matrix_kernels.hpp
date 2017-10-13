@@ -10,7 +10,7 @@
 #endif
 
 
-/** @file stanmathcl/basic_matrix_kernels.hpp
+/** @file stan/math/prim/mat/kern_gpu/basic_matrix_kernels.hpp
     @brief 
 */
 
