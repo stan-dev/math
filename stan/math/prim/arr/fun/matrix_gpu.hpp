@@ -65,9 +65,7 @@ namespace stan {
             double*  Atemp =  new double[rows * cols];
             for(int j = 0; j < cols; j++) {
               for(int i = 0; i < rows; i++) {
-      //            std::cout << "value_of(A(i,j)): " << value_of(A(i,j)) << "\n";
-                  Atemp[i * cols + j] = value_of(A(i, j));
-      //             std::cout << "Atemp[i * cols + j]: " << Atemp[i * cols + j] << "\n";
+                  Atemp[i * rows + j] = value_of(A(i, j));
               }
             }
             queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
@@ -79,8 +77,7 @@ namespace stan {
         };
     };
 
-    template <typename T>
-    void copy(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & src,
+    void copy(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> & src,
      stan::math::matrix_gpu & dst) {
             if (src.rows() != dst.rows || src.cols() != dst.cols)
             {
@@ -96,9 +93,11 @@ namespace stan {
               double*  Atemp =  new double[rows * cols];
               for(int j = 0; j < cols; j++) {
                 for(int i = 0; i < rows; i++) {
-                  Atemp[i * cols + j] = value_of(src(i, j));
+                  Atemp[i * rows + j] = value_of(src(i, j));
                 }
               }
+
+              
               queue.enqueueWriteBuffer(buffer, CL_TRUE, 0,
                sizeof(double) * rows * cols, Atemp);
               delete[] Atemp;
@@ -130,7 +129,37 @@ namespace stan {
                 sizeof(double) * dst.size(),  Btemp);
               for(int j = 0; j < cols; j++) {
                 for(int i = 0; i < rows; i++) {
-                  dst(i, j) = Btemp[i * cols + j];
+                  dst(i, j) = Btemp[i * rows + j];
+                }
+              }
+              delete[] Btemp;
+            } catch (cl::Error& e) {
+              check_ocl_error(e);
+            }
+    }
+    
+    void copy(stan::math::matrix_gpu & src,
+     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> & dst) {
+            if (dst.rows() != src.rows) {
+              std::cout << "Copy (GPU -> Eigen): Eigen and matrix_gpu row lengths do no match!" <<
+               std::endl;
+            }
+            if (dst.cols() != src.cols) {
+              std::cout << "Copy (GPU -> Eigen): Eigen and stanmathCL matrix_gpu col lengths do no match!" <<
+               std::endl;
+            }
+            int rows = dst.rows();
+            int cols = dst.cols();
+            try {
+              double*  Btemp =  new double[rows * cols];
+              cl::Context ctx = stan::math::get_context();
+              cl::CommandQueue queue = stan::math::get_queue();
+              cl::Buffer buffer = src.buffer();
+              queue.enqueueReadBuffer(buffer,  CL_TRUE,  0,
+                sizeof(double) * dst.size(),  Btemp);
+              for(int j = 0; j < cols; j++) {
+                for(int i = 0; i < rows; i++) {
+                  dst.coeffRef(i, j) = Btemp[i * rows + j];
                 }
               }
               delete[] Btemp;

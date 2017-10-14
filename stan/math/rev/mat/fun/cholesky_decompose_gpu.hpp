@@ -130,15 +130,13 @@ namespace stan {
       check_symmetric("cholesky_decompose", "A", A);
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
-      //L_A = L_A.selfadjointView<Eigen::Lower>();
-      std::cout << "OUTPUT REV: \n";
+      L_A = L_A.selfadjointView<Eigen::Lower>();
+//      std::cout << "OUTPUT REV: \n";
+//    TODO: Have the matrix stay on the GPU for this and the derivative
       L_A = stan::math::cholesky_decompose_gpu(L_A);
-      check_pos_definite("cholesky_decompose", "m", L_A);
-      std::cout << "OUTPUT REV: \n";
-      std::cout << L_A << "\n";
+//      std::cout << "OUTPUT REV: \n";
+//      std::cout << L_A << "\n";
       // Memory allocated in arena.
-      // cholesky_scalar gradient faster for small matrices compared to
-      // cholesky_b  lock
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
       cholesky_gpu *baseVari = new cholesky_gpu(A, L_A);
