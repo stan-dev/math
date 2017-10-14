@@ -1,6 +1,7 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
+#include <random>
 #include <ctime>
 #include <algorithm>
 
@@ -140,15 +141,16 @@ TEST(MathMatrix, matrix_exp_100x100) {
   using Eigen::Dynamic;
 
   int size = 100;
-  srand(1);  // set seed
+  std::random_device rd;
+  std::mt19937 mt(rd());
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-    col1 = rand() % size;
-    col2 = rand() % size;
-    while (col1 == col2) col2 = rand() % size;
-    S.col(col1) += S.col(col2) * std::pow(-1, rand());
+    col1 = mt() % size;
+    col2 = mt() % size;
+    while (col1 == col2) col2 = mt() % size;
+    S.col(col1) += S.col(col2) * std::pow(-1, mt());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements_d(size);

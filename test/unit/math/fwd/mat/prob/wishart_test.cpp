@@ -9,11 +9,11 @@ using Eigen::Matrix;
 
 TEST(ProbDistributionsWishart, fvar_double) {
   using stan::math::fvar;
-  Matrix<fvar<double>,Dynamic,Dynamic> Sigma(2,2);
-  Sigma << 1.848220, 1.899623, 
+  Matrix<fvar<double>, Dynamic, Dynamic> Sigma(2, 2);
+  Sigma << 1.848220, 1.899623,
     1.899623, 12.751941;
 
-  Matrix<fvar<double>,Dynamic,Dynamic> Y(2,2);
+  Matrix<fvar<double>, Dynamic, Dynamic> Y(2, 2);
   Y <<  2.011108, -11.20661,
     -11.206611, 112.94139;
 
@@ -23,20 +23,21 @@ TEST(ProbDistributionsWishart, fvar_double) {
   }
 
   unsigned int dof = 3;
-  
-  double lp = log(8.658e-07); // computed with MCMCpack in R
- 
-  EXPECT_NEAR(lp, stan::math::wishart_log(Y,dof,Sigma).val_, 0.01);
-  EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y,dof,Sigma).d_, 0.01);
+
+  // computed with MCMCpack in R
+  double lp = log(8.658e-07);
+
+  EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_, 0.01);
+  EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y, dof, Sigma).d_, 0.01);
 }
 
 TEST(ProbDistributionsWishart, fvar_fvar_double) {
   using stan::math::fvar;
-  Matrix<fvar<fvar<double> >,Dynamic,Dynamic> Sigma(2,2);
-  Sigma << 1.848220, 1.899623, 
+  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(2, 2);
+  Sigma << 1.848220, 1.899623,
     1.899623, 12.751941;
 
-  Matrix<fvar<fvar<double> >,Dynamic,Dynamic> Y(2,2);
+  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Y(2, 2);
   Y <<  2.011108, -11.20661,
     -11.206611, 112.94139;
 
@@ -46,9 +47,11 @@ TEST(ProbDistributionsWishart, fvar_fvar_double) {
   }
 
   unsigned int dof = 3;
-  
-  double lp = log(8.658e-07); // computed with MCMCpack in R
- 
-  EXPECT_NEAR(lp, stan::math::wishart_log(Y,dof,Sigma).val_.val_, 0.01);
-  EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y,dof,Sigma).d_.val_, 0.01);
+
+  // computed with MCMCpack in R
+  double lp = log(8.658e-07);
+
+  EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_.val_, 0.01);
+  EXPECT_NEAR(-0.76893887,
+                stan::math::wishart_log(Y, dof, Sigma).d_.val_, 0.01);
 }

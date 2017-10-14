@@ -3,94 +3,94 @@
 
 using stan::math::fvar;
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_fd_matrix_fd) {
-  stan::math::LDLT_factor<fvar<double>,-1,-1> ldlt_Ad;
-  stan::math::matrix_fd Ad(2,2);
-  stan::math::matrix_fd Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_fd_matrix_fd) {
+  stan::math::LDLT_factor<fvar<double>, -1, -1> ldlt_Ad;
+  stan::math::matrix_fd Ad(2, 2);
+  stan::math::matrix_fd Av(2, 2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_ = 1.0;
-  Ad(0,1).d_ = 1.0;
-  Ad(1,0).d_ = 1.0;
-  Ad(1,1).d_ = 1.0;
-  Av << 2.0, 3.0, 
+  Ad(0, 0).d_ = 1.0;
+  Ad(0, 1).d_ = 1.0;
+  Ad(1, 0).d_ = 1.0;
+  Ad(1, 1).d_ = 1.0;
+  Av << 2.0, 3.0,
     5.0, 7.0;
-  Av(0,0).d_ = 2.0;
-  Av(0,1).d_ = 2.0;
-  Av(1,0).d_ = 2.0;
-  Av(1,1).d_ = 2.0;
+  Av(0, 0).d_ = 2.0;
+  Av(0, 1).d_ = 2.0;
+  Av(1, 0).d_ = 2.0;
+  Av(1, 1).d_ = 2.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Ad);
-  EXPECT_FLOAT_EQ(9.0,I.val_);
-  EXPECT_FLOAT_EQ(2.0,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Ad);
+  EXPECT_FLOAT_EQ(9.0, I.val_);
+  EXPECT_FLOAT_EQ(2.0, I.d_);
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_);
-  EXPECT_FLOAT_EQ(5.04,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_);
+  EXPECT_FLOAT_EQ(5.04, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_fd_matrix_d) {
-  stan::math::LDLT_factor<fvar<double>,-1,-1> ldlt_Ad;
-  stan::math::matrix_fd Ad(2,2);
-  stan::math::matrix_d Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_fd_matrix_d) {
+  stan::math::LDLT_factor<fvar<double>, -1, -1> ldlt_Ad;
+  stan::math::matrix_fd Ad(2, 2);
+  stan::math::matrix_d Av(2, 2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_ = 1.0;
-  Ad(0,1).d_ = 1.0;
-  Ad(1,0).d_ = 1.0;
-  Ad(1,1).d_ = 1.0;
-  Av << 2.0, 3.0, 
+  Ad(0, 0).d_ = 1.0;
+  Ad(0, 1).d_ = 1.0;
+  Ad(1, 0).d_ = 1.0;
+  Ad(1, 1).d_ = 1.0;
+  Av << 2.0, 3.0,
     5.0, 7.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_);
-  EXPECT_FLOAT_EQ(-1.36,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_);
+  EXPECT_FLOAT_EQ(-1.36, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_matrix_fd) {
-  stan::math::LDLT_factor<double,-1,-1> ldlt_Ad;
-  stan::math::matrix_d Ad(2,2);
-  stan::math::matrix_fd Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_d_matrix_fd) {
+  stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
+  stan::math::matrix_d Ad(2, 2);
+  stan::math::matrix_fd Av(2, 2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Av << 2.0, 3.0, 
+  Av << 2.0, 3.0,
     5.0, 7.0;
-  Av(0,0).d_ = 2.0;
-  Av(0,1).d_ = 2.0;
-  Av(1,0).d_ = 2.0;
-  Av(1,1).d_ = 2.0;
+  Av(0, 0).d_ = 2.0;
+  Av(0, 1).d_ = 2.0;
+  Av(1, 0).d_ = 2.0;
+  Av(1, 1).d_ = 2.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_);
-  EXPECT_FLOAT_EQ(6.4,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_);
+  EXPECT_FLOAT_EQ(6.4, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_fd_vector_fd) {
-  stan::math::LDLT_factor<fvar<double>,-1,-1> ldlt_Ad;
-  stan::math::matrix_fd Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_fd_vector_fd) {
+  stan::math::LDLT_factor<fvar<double>, -1, -1> ldlt_Ad;
+  stan::math::matrix_fd Ad(2, 2);
   stan::math::vector_fd Av(2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_ = 1.0;
-  Ad(0,1).d_ = 1.0;
-  Ad(1,0).d_ = 1.0;
-  Ad(1,1).d_ = 1.0;
+  Ad(0, 0).d_ = 1.0;
+  Ad(0, 1).d_ = 1.0;
+  Ad(1, 0).d_ = 1.0;
+  Ad(1, 1).d_ = 1.0;
   Av << 2.0, 3.0;
   Av(0).d_ = 2.0;
   Av(1).d_ = 2.0;
@@ -98,40 +98,40 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_fd_vector_fd) {
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_);
-  EXPECT_FLOAT_EQ(3,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_);
+  EXPECT_FLOAT_EQ(3, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_fd_vector_d) {
-  stan::math::LDLT_factor<fvar<double>,-1,-1> ldlt_Ad;
-  stan::math::matrix_fd Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_fd_vector_d) {
+  stan::math::LDLT_factor<fvar<double>, -1, -1> ldlt_Ad;
+  stan::math::matrix_fd Ad(2, 2);
   stan::math::vector_d Av(2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_ = 1.0;
-  Ad(0,1).d_ = 1.0;
-  Ad(1,0).d_ = 1.0;
-  Ad(1,1).d_ = 1.0;
+  Ad(0, 0).d_ = 1.0;
+  Ad(0, 1).d_ = 1.0;
+  Ad(1, 0).d_ = 1.0;
+  Ad(1, 1).d_ = 1.0;
   Av << 2.0, 3.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_);
-  EXPECT_FLOAT_EQ(-1,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_);
+  EXPECT_FLOAT_EQ(-1, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_vector_fd) {
-  stan::math::LDLT_factor<double,-1,-1> ldlt_Ad;
-  stan::math::matrix_d Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_d_vector_fd) {
+  stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
+  stan::math::matrix_d Ad(2, 2);
   stan::math::vector_fd Av(2);
   fvar<double> I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
   Av << 2.0, 3.0;
   Av(0).d_ = 2.0;
@@ -140,12 +140,12 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_vector_fd) {
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_);
-  EXPECT_FLOAT_EQ(4,I.d_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_);
+  EXPECT_FLOAT_EQ(4, I.d_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,fd_exceptions) {
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, fd_exceptions) {
   using stan::math::matrix_d;
   using stan::math::vector_d;
   using stan::math::row_vector_d;
@@ -153,18 +153,18 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,fd_exceptions) {
   using stan::math::vector_fd;
   using stan::math::row_vector_fd;
 
-  matrix_fd fv1_(3,3), fv2_(4,4);
-  fv1_ << 1,2,3,4,5,6,7,8,9;
-  fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
+  matrix_fd fv1_(3, 3), fv2_(4, 4);
+  fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  fv2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
   row_vector_fd rvf1(3), rvf2(4);
   rvf1.setZero();
   rvf2.setZero();
   vector_fd vf1(3), vf2(4);
   vf1.setZero();
   vf2.setZero();
-  matrix_d fd1_(3,3), fd2_(4,4);
-  fd1_ << 1,2,3,4,5,6,7,8,9;
-  fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
+  matrix_d fd1_(3, 3), fd2_(4, 4);
+  fd1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  fd2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
   row_vector_d rvd1(3), rvd2(4);
   rvd1.setZero();
   rvd2.setZero();
@@ -172,10 +172,10 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,fd_exceptions) {
   vd1.setZero();
   vd2.setZero();
 
-  stan::math::LDLT_factor<fvar<double>,-1,-1> fv1;
-  stan::math::LDLT_factor<fvar<double>,-1,-1> fv2;
-  stan::math::LDLT_factor<double,-1,-1> fd1;
-  stan::math::LDLT_factor<double,-1,-1> fd2;
+  stan::math::LDLT_factor<fvar<double>, -1, -1> fv1;
+  stan::math::LDLT_factor<fvar<double>, -1, -1> fv2;
+  stan::math::LDLT_factor<double, -1, -1> fd1;
+  stan::math::LDLT_factor<double, -1, -1> fd2;
   fv1.compute(fv1_);
   fv2.compute(fv2_);
   fd1.compute(fd1_);
@@ -207,94 +207,94 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,fd_exceptions) {
   EXPECT_THROW(trace_inv_quad_form_ldlt(fd2, vf1), std::invalid_argument);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_ffd_matrix_ffd) {
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> ldlt_Ad;
-  stan::math::matrix_ffd Ad(2,2);
-  stan::math::matrix_ffd Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_ffd_matrix_ffd) {
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
+  stan::math::matrix_ffd Ad(2, 2);
+  stan::math::matrix_ffd Av(2, 2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_.val_ = 1.0;
-  Ad(0,1).d_.val_ = 1.0;
-  Ad(1,0).d_.val_ = 1.0;
-  Ad(1,1).d_.val_ = 1.0;
-  Av << 2.0, 3.0, 
+  Ad(0, 0).d_.val_ = 1.0;
+  Ad(0, 1).d_.val_ = 1.0;
+  Ad(1, 0).d_.val_ = 1.0;
+  Ad(1, 1).d_.val_ = 1.0;
+  Av << 2.0, 3.0,
     5.0, 7.0;
-  Av(0,0).d_.val_ = 2.0;
-  Av(0,1).d_.val_ = 2.0;
-  Av(1,0).d_.val_ = 2.0;
-  Av(1,1).d_.val_ = 2.0;
+  Av(0, 0).d_.val_ = 2.0;
+  Av(0, 1).d_.val_ = 2.0;
+  Av(1, 0).d_.val_ = 2.0;
+  Av(1, 1).d_.val_ = 2.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Ad);
-  EXPECT_FLOAT_EQ(9.0,I.val_.val_);
-  EXPECT_FLOAT_EQ(2.0,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Ad);
+  EXPECT_FLOAT_EQ(9.0, I.val_.val_);
+  EXPECT_FLOAT_EQ(2.0, I.d_.val_);
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_.val_);
-  EXPECT_FLOAT_EQ(5.04,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_.val_);
+  EXPECT_FLOAT_EQ(5.04, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_ffd_matrix_d) {
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> ldlt_Ad;
-  stan::math::matrix_ffd Ad(2,2);
-  stan::math::matrix_d Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_ffd_matrix_d) {
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
+  stan::math::matrix_ffd Ad(2, 2);
+  stan::math::matrix_d Av(2, 2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_.val_ = 1.0;
-  Ad(0,1).d_.val_ = 1.0;
-  Ad(1,0).d_.val_ = 1.0;
-  Ad(1,1).d_.val_ = 1.0;
-  Av << 2.0, 3.0, 
+  Ad(0, 0).d_.val_ = 1.0;
+  Ad(0, 1).d_.val_ = 1.0;
+  Ad(1, 0).d_.val_ = 1.0;
+  Ad(1, 1).d_.val_ = 1.0;
+  Av << 2.0, 3.0,
     5.0, 7.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_.val_);
-  EXPECT_FLOAT_EQ(-1.36,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_.val_);
+  EXPECT_FLOAT_EQ(-1.36, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_matrix_ffd) {
-  stan::math::LDLT_factor<double ,-1,-1> ldlt_Ad;
-  stan::math::matrix_d Ad(2,2);
-  stan::math::matrix_ffd Av(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_d_matrix_ffd) {
+  stan::math::LDLT_factor<double , -1, -1> ldlt_Ad;
+  stan::math::matrix_d Ad(2, 2);
+  stan::math::matrix_ffd Av(2, 2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Av << 2.0, 3.0, 
+  Av << 2.0, 3.0,
     5.0, 7.0;
-  Av(0,0).d_.val_ = 2.0;
-  Av(0,1).d_.val_ = 2.0;
-  Av(1,0).d_.val_ = 2.0;
-  Av(1,1).d_.val_ = 2.0;
+  Av(0, 0).d_.val_ = 2.0;
+  Av(0, 1).d_.val_ = 2.0;
+  Av(1, 0).d_.val_ = 2.0;
+  Av(1, 1).d_.val_ = 2.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(10.6,I.val_.val_);
-  EXPECT_FLOAT_EQ(6.4,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(10.6, I.val_.val_);
+  EXPECT_FLOAT_EQ(6.4, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_ffd_vector_ffd) {
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> ldlt_Ad;
-  stan::math::matrix_ffd Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_ffd_vector_ffd) {
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
+  stan::math::matrix_ffd Ad(2, 2);
   stan::math::vector_ffd Av(2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_.val_ = 1.0;
-  Ad(0,1).d_.val_ = 1.0;
-  Ad(1,0).d_.val_ = 1.0;
-  Ad(1,1).d_.val_ = 1.0;
+  Ad(0, 0).d_.val_ = 1.0;
+  Ad(0, 1).d_.val_ = 1.0;
+  Ad(1, 0).d_.val_ = 1.0;
+  Ad(1, 1).d_.val_ = 1.0;
   Av << 2.0, 3.0;
   Av(0).d_.val_ = 2.0;
   Av(1).d_.val_ = 2.0;
@@ -302,40 +302,40 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_ffd_vector_ffd) {
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_.val_);
-  EXPECT_FLOAT_EQ(3,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_.val_);
+  EXPECT_FLOAT_EQ(3, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_ffd_vector_d) {
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> ldlt_Ad;
-  stan::math::matrix_ffd Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_ffd_vector_d) {
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> ldlt_Ad;
+  stan::math::matrix_ffd Ad(2, 2);
   stan::math::vector_d Av(2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
-  Ad(0,0).d_.val_ = 1.0;
-  Ad(0,1).d_.val_ = 1.0;
-  Ad(1,0).d_.val_ = 1.0;
-  Ad(1,1).d_.val_ = 1.0;
+  Ad(0, 0).d_.val_ = 1.0;
+  Ad(0, 1).d_.val_ = 1.0;
+  Ad(1, 0).d_.val_ = 1.0;
+  Ad(1, 1).d_.val_ = 1.0;
   Av << 2.0, 3.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_.val_);
-  EXPECT_FLOAT_EQ(-1,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_.val_);
+  EXPECT_FLOAT_EQ(-1, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_vector_ffd) {
-  stan::math::LDLT_factor<double,-1,-1> ldlt_Ad;
-  stan::math::matrix_d Ad(2,2);
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, matrix_d_vector_ffd) {
+  stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
+  stan::math::matrix_d Ad(2, 2);
   stan::math::vector_ffd Av(2);
   fvar<fvar<double> > I;
 
-  Ad << 2.0, 3.0, 
+  Ad << 2.0, 3.0,
         3.0, 7.0;
   Av << 2.0, 3.0;
   Av(0).d_.val_ = 2.0;
@@ -344,12 +344,12 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,matrix_d_vector_ffd) {
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());
 
-  I = trace_inv_quad_form_ldlt(ldlt_Ad,Av);
-  EXPECT_FLOAT_EQ(2,I.val_.val_);
-  EXPECT_FLOAT_EQ(4,I.d_.val_);
+  I = trace_inv_quad_form_ldlt(ldlt_Ad, Av);
+  EXPECT_FLOAT_EQ(2, I.val_.val_);
+  EXPECT_FLOAT_EQ(4, I.d_.val_);
 }
 
-TEST(AgradFwdMatrixTraceInvQuadFormLDLT,ffd_exceptions) {
+TEST(AgradFwdMatrixTraceInvQuadFormLDLT, ffd_exceptions) {
   using stan::math::matrix_d;
   using stan::math::vector_d;
   using stan::math::row_vector_d;
@@ -357,18 +357,18 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,ffd_exceptions) {
   using stan::math::vector_ffd;
   using stan::math::row_vector_ffd;
 
-  matrix_ffd fv1_(3,3), fv2_(4,4);
-  fv1_ << 1,2,3,4,5,6,7,8,9;
-  fv2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
+  matrix_ffd fv1_(3, 3), fv2_(4, 4);
+  fv1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  fv2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
   row_vector_ffd rvf1(3), rvf2(4);
   rvf1.setZero();
   rvf2.setZero();
   vector_ffd vf1(3), vf2(4);
   vf1.setZero();
   vf2.setZero();
-  matrix_d fd1_(3,3), fd2_(4,4);
-  fd1_ << 1,2,3,4,5,6,7,8,9;
-  fd2_ << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
+  matrix_d fd1_(3, 3), fd2_(4, 4);
+  fd1_ << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  fd2_ << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
   row_vector_d rvd1(3), rvd2(4);
   rvd1.setZero();
   rvd2.setZero();
@@ -376,10 +376,10 @@ TEST(AgradFwdMatrixTraceInvQuadFormLDLT,ffd_exceptions) {
   vd1.setZero();
   vd2.setZero();
 
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> fv1;
-  stan::math::LDLT_factor<fvar<fvar<double> >,-1,-1> fv2;
-  stan::math::LDLT_factor<double ,-1,-1> fd1;
-  stan::math::LDLT_factor<double ,-1,-1> fd2;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> fv1;
+  stan::math::LDLT_factor<fvar<fvar<double> >, -1, -1> fv2;
+  stan::math::LDLT_factor<double , -1, -1> fd1;
+  stan::math::LDLT_factor<double , -1, -1> fd2;
   fv1.compute(fv1_);
   fv2.compute(fv2_);
   fd1.compute(fd1_);
