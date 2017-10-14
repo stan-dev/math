@@ -8,8 +8,7 @@
 #include <ostream>
 #include <vector>
 #include <complex>
-#include <cassert>
-#include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -192,9 +191,17 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      explicit var(std::complex<double> x) {
-        assert(imag(x) == 0);
-        vi_ = new vari(real(x));
+      explicit var(const std::complex<double>& x) {
+        if (imag(x) == 0) {
+          vi_ = new vari(real(x));
+        } else {
+          std::stringstream ss;
+          ss << "Imaginary part of std::complex used to construct var"
+            << " must be zero. Found real part = " << real(x) << " and "
+            << " found imaginary part = " << imag(x) << std::endl;
+          std::string msg = ss.str();
+          throw std::invalid_argument(msg);
+        }
       }
 
       /**
@@ -205,9 +212,17 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      explicit var(std::complex<float> x) {
-        assert(imag(x) == 0);
-        vi_ = new vari(static_cast<double>(real(x)));
+      explicit var(const std::complex<float>& x) {
+        if (imag(x) == 0) {
+          vi_ = new vari(static_cast<double>(real(x)));
+        } else {
+          std::stringstream ss;
+          ss << "Imaginary part of std::complex used to construct var"
+            << " must be zero. Found real part = " << real(x) << " and "
+            << " found imaginary part = " << imag(x) << std::endl;
+          std::string msg = ss.str();
+          throw std::invalid_argument(msg);
+        }
       }
 
       /**
@@ -218,9 +233,18 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      explicit var(std::complex<long double> x) {
-        assert(imag(x) == 0);
-        vi_ = new vari(static_cast<double>(real(x)));
+      explicit var(const std::complex<long double>& x) {
+        if (imag(x) == 0) {
+          vi_ = new vari(static_cast<double>(real(x)));
+        } else {
+          std::stringstream ss;
+          ss << "Imaginary part of std::complex used to construct var"
+            << " must be zero. Found real part = " << real(x) << " and "
+            << " found imaginary part = " << imag(x) << std::endl;
+          std::string msg = ss.str();
+          throw std::invalid_argument(msg);
+        }
+
       }
 
       /**
@@ -230,8 +254,11 @@ namespace stan {
        *
        * @param x Value of the variable.
        */
-      explicit var(std::complex<var> x) {
-        assert(false);
+      explicit var(const std::complex<var>& x) {
+        std::stringstream ss;
+        ss << "Stan does not support vars with complex numbers.";
+        std::string msg = ss.str();
+        throw std::invalid_argument(msg);
       }
 
 #ifdef _WIN64
