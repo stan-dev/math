@@ -9,6 +9,8 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
 #include <iostream>
 #include <string>
 #include <map>
@@ -23,8 +25,9 @@ namespace stan {
   namespace math {
 
     template <typename T>
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    cholesky_decompose_gpu(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+    typename boost::enable_if_c<boost::is_arithmetic<T>::value,
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
+    cholesky_decompose_gpu(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
 /*      std::cout << "Cholesky\n";
       std::cout << "m(0,0): " << m(0,0) << "\n";
       std::cout << "m(0,1): " << m(0,1) << "\n";
@@ -118,16 +121,14 @@ namespace stan {
       }
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
       stan::math::copy(A, m_tmp);
+      // TODO(Steve/Sean): Where should this check go?
+ //     std::cout << "PRESWAP: \n" << m_tmp << "\n";
+
       m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose().template triangularView<Eigen::Upper>();
-/*      std::cout << "m_tmp(0,0): " << m_tmp(0,0) << "\n";
-      std::cout << "m_tmp(0,1): " << m_tmp(0,1) << "\n";
-      std::cout << "m_tmp(1,0): " << m_tmp(1,0) << "\n";
-      std::cout << "m_tmp(1,1): " << m_tmp(1,1) << "\n";
-      std::cout << "OUTPUT MAT: \n";
-      std::cout << m_tmp << "\n";
-*/
-      check_pos_definite("cholesky_decompose", "m", m_tmp);
+ //     std::cout << "POSTWAP: \n" << m_tmp << "\n";
+      check_pos_definite("cholesky_decompose", "m_tmp", m_tmp);
       m_tmp = m_tmp.template triangularView<Eigen::Lower>();
+      
       return m_tmp;
     }
   }
