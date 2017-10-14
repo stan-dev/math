@@ -5,8 +5,8 @@
 # - AR: archiver (must specify for cross-compiling)
 ##
 CC = clang++
-O = 0
-O_STANC = 0
+O = 0 -g 
+O_STANC = 0 -g
 AR = ar
 
 # CPPFLAGS are used for both C and C++ compilation

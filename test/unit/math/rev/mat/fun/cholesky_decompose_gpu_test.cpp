@@ -352,8 +352,9 @@ double test_gradient(int size, double prec) {
   stan::math::gradient(functown, x, evals_ad, grads_ad);
   stan::math::finite_diff_gradient(functown, x,evals_fd, grads_fd);
 
-  for (int k = 0; k < numels; ++k) 
+  for (int k = 0; k < numels; ++k) {
     EXPECT_NEAR(grads_fd(k), grads_ad(k), prec);
+  }
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
 }
@@ -411,7 +412,7 @@ TEST(AgradRevMatrix, exception_mat_cholesky) {
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
   test_gradients(9, 1e-10);
   test_gradients_simple(10, 1e-10);
-  test_gradient(15, 1e-10);
+  test_gradient(9, 1e-10);
   test_gp_grad(20, 1e-10);
 }
 
