@@ -244,7 +244,6 @@ namespace stan {
           std::string msg = ss.str();
           throw std::invalid_argument(msg);
         }
-
       }
 
       /**
