@@ -10,7 +10,7 @@ typedef std::vector<double> VEC;
 
 VEC cgradvec(AVAR f, AVEC x) {
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   return g;
 }
 

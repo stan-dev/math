@@ -1,7 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix,value_of_rec) {
+TEST(MathMatrix, value_of_rec) {
   using stan::math::value_of_rec;
   using std::vector;
   using stan::math::var;

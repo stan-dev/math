@@ -3,7 +3,7 @@
 
 using stan::math::check_less_or_equal;
 
-TEST(ErrorHandlingScalar,CheckLessOrEqual) {
+TEST(ErrorHandlingScalar, CheckLessOrEqual) {
   const std::string function = "check_less_or_equal";
   double x = -10.0;
   double lb = 0.0;
@@ -36,7 +36,7 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual) {
     << "check_less should not throw an exception with x == -Inf and lb == -Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckLessOrEqual_nan) {
+TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
   const std::string function = "check_less_or_equal";
   double x = 10.0;
   double lb = 0.0;

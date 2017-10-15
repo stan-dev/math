@@ -5,7 +5,7 @@ using stan::math::check_finite;
 
 
 // ---------- check_finite: vector tests ----------
-TEST(ErrorHandlingScalar,CheckFinite_Vector) {
+TEST(ErrorHandlingScalar, CheckFinite_Vector) {
   const std::string function = "check_finite";
   std::vector<double> x;
 
@@ -38,7 +38,7 @@ TEST(ErrorHandlingScalar,CheckFinite_Vector) {
     << "check_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar,CheckFinite_nan) {
+TEST(ErrorHandlingScalar, CheckFinite_nan) {
   const std::string function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

@@ -1,7 +1,7 @@
 #include <stan/math/mix/arr.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix,value_of) {
+TEST(MathMatrix, value_of) {
   using stan::math::value_of;
   using std::vector;
   using stan::math::fvar;

@@ -7,76 +7,76 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using Eigen::VectorXd;
 
-TEST(ProbDistributions,Dirichlet) {
-  Matrix<double,Dynamic,1> theta(3,1);
+TEST(ProbDistributions, Dirichlet) {
+  Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  Matrix<double,Dynamic,1> alpha(3,1);
+  Matrix<double, Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
-  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta,alpha));
-  
-  Matrix<double,Dynamic,1> theta2(4,1);
+  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta, alpha));
+
+  Matrix<double, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
-  Matrix<double,Dynamic,1> alpha2(4,1);
+  Matrix<double, Dynamic, 1> alpha2(4, 1);
   alpha2 << 10.5, 11.5, 19.3, 5.1;
-  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2,alpha2));
+  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2, alpha2));
 }
 
-TEST(ProbDistributions,DirichletPropto) {
-  Matrix<double,Dynamic,1> theta(3,1);
+TEST(ProbDistributions, DirichletPropto) {
+  Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  Matrix<double,Dynamic,1> alpha(3,1);
+  Matrix<double, Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
-  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta,alpha));
-  
-  Matrix<double,Dynamic,1> theta2(4,1);
+  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta, alpha));
+
+  Matrix<double, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
-  Matrix<double,Dynamic,1> alpha2(4,1);
+  Matrix<double, Dynamic, 1> alpha2(4, 1);
   alpha2 << 10.5, 11.5, 19.3, 5.1;
-  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta2,alpha2));
+  EXPECT_FLOAT_EQ(0.0, stan::math::dirichlet_log<true>(theta2, alpha2));
 }
 
-TEST(ProbDistributions,DirichletBounds) {
-  Matrix<double,Dynamic,1> good_alpha(2,1), bad_alpha(2,1);
-  Matrix<double,Dynamic,1> good_theta(2,1), bad_theta(2,1);
+TEST(ProbDistributions, DirichletBounds) {
+  Matrix<double, Dynamic, 1> good_alpha(2, 1), bad_alpha(2, 1);
+  Matrix<double, Dynamic, 1> good_theta(2, 1), bad_theta(2, 1);
 
   good_theta << 0.25, 0.75;
   good_alpha << 2, 3;
-  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta,good_alpha));
+  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta, good_alpha));
 
   good_theta << 1.0, 0.0;
   good_alpha << 2, 3;
-  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta,good_alpha))
+  EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta, good_alpha))
     << "elements of theta can be 0";
 
 
   bad_theta << 0.25, 0.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta,good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
     << "sum of theta is not 1";
 
   bad_theta << -0.25, 1.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta,good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
     << "theta has element less than 0";
 
   bad_theta << -0.25, 1.25;
-  EXPECT_THROW(stan::math::dirichlet_log(bad_theta,good_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
     << "theta has element less than 0";
 
   bad_alpha << 0.0, 1.0;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta,bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::domain_error)
     << "alpha has element equal to 0";
 
   bad_alpha << -0.5, 1.0;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta,bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::domain_error)
     << "alpha has element less than 0";
 
-  bad_alpha = Matrix<double,Dynamic,1>(4,1);
+  bad_alpha = Matrix<double, Dynamic, 1>(4, 1);
   bad_alpha << 1, 2, 3, 4;
-  EXPECT_THROW(stan::math::dirichlet_log(good_theta,bad_alpha),
+  EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::invalid_argument)
     << "size mismatch: theta is a 2-vector, alpha is a 4-vector";
 }
@@ -105,12 +105,12 @@ void test_dirichlet3_1(VectorXd alpha) {
   std::vector<double> expect(K, N / static_cast<double>(K));
 
   for (int count = 0; count < N; ++count) {
-    Eigen::VectorXd theta = stan::math::dirichlet_rng(alpha,rng);
+    Eigen::VectorXd theta = stan::math::dirichlet_rng(alpha, rng);
     int i;
     for (i = 0; i < K-1 && theta(0) > loc[i]; ++i) ;
     ++bin[i];
   }
-  EXPECT_TRUE(chi_square(bin,expect) < quantile(complement(mydist, 1e-6)));  
+  EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));
 }
 
 void test_dirichlet3_2(VectorXd alpha) {
@@ -121,7 +121,7 @@ void test_dirichlet3_2(VectorXd alpha) {
   boost::math::chi_squared mydist(K - 1);
 
   std::vector<double> loc(K - 1);
-  for(size_t i = 0; i < loc.size(); i++)
+  for (size_t i = 0; i < loc.size(); i++)
     loc[i] = quantile(dist, (i + 1.0) / K);
 
 
@@ -131,9 +131,9 @@ void test_dirichlet3_2(VectorXd alpha) {
     expect[i] = N / K;
 
   for (int count = 0; count < N; ++count) {
-    VectorXd a = stan::math::dirichlet_rng(alpha,rng);
+    VectorXd a = stan::math::dirichlet_rng(alpha, rng);
     int i = 0;
-    while (i < K-1 && a(1) > loc[i]) 
+    while (i < K-1 && a(1) > loc[i])
       ++i;
     ++bin[i];
    }

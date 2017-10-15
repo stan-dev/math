@@ -3,12 +3,12 @@
 
 using stan::math::check_less;
 
-TEST(ErrorHandlingScalar,CheckLess_Matrix) {
+TEST(ErrorHandlingScalar, CheckLess_Matrix) {
   const std::string function = "check_less";
   double x;
   double high;
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_vec;
-  Eigen::Matrix<double,Eigen::Dynamic,1> high_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> high_vec;
   x_vec.resize(3);
   high_vec.resize(3);
 
@@ -90,12 +90,12 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
 }
 
 
-TEST(ErrorHandlingScalar,CheckLess_Matrix_one_indexed_message) {
+TEST(ErrorHandlingScalar, CheckLess_Matrix_one_indexed_message) {
   const std::string function = "check_less";
   double x;
   double high;
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_vec;
-  Eigen::Matrix<double,Eigen::Dynamic,1> high_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> high_vec;
   x_vec.resize(3);
   high_vec.resize(3);
   std::string message;
@@ -151,12 +151,12 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix_one_indexed_message) {
     << message;
 }
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
   const std::string function = "check_less";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_vec(3);
-  Eigen::Matrix<double,Eigen::Dynamic,1> low_vec(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> low_vec(3);
 
   // x_vec, low_vec
   x_vec   << -1, 0, 1;

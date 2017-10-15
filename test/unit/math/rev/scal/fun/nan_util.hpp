@@ -15,7 +15,7 @@ void test_nan_vd(const F& f,
   stan::math::var arg1_v = arg1;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,double version with first argument " << arg1_v
+  fail_msg << "Failed for var, double version with first argument " << arg1_v
            << " and second argument " << arg2;
 
   if (throws)
@@ -27,9 +27,9 @@ void test_nan_vd(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg1_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     }
   }
@@ -44,7 +44,7 @@ void test_nan_dv(const F& f,
   stan::math::var arg2_v = arg2;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for double,var version with first argument " << arg1
+  fail_msg << "Failed for double, var version with first argument " << arg1
            << " and second argument " << arg2_v;
 
   if (throws)
@@ -56,9 +56,9 @@ void test_nan_dv(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg2_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     }
   }
@@ -75,7 +75,7 @@ void test_nan_vv(const F& f,
   stan::math::var arg2_v = arg2;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,var version with first argument " << arg1_v 
+  fail_msg << "Failed for var, var version with first argument " << arg1_v
            << " and second argument " << arg2_v;
 
   if (throws)
@@ -85,11 +85,11 @@ void test_nan_vv(const F& f,
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
     if (is_grad_nan) {
-      AVEC x = createAVEC(arg1_v,arg2_v);
+      AVEC x = createAVEC(arg1_v, arg2_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(2U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(2U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     }
@@ -131,9 +131,9 @@ void test_nan_v(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg1_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size());
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size());
       EXPECT_TRUE(boost::math::isnan(g[0]));
     }
   }
@@ -162,7 +162,7 @@ void test_nan_vvv(const F& f,
   stan::math::var arg3_v = arg3;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,var,var version with first argument " 
+  fail_msg << "Failed for var, var, var version with first argument "
            << arg1_v << " second argument " << arg2_v
            << " and third argument " << arg3_v;
 
@@ -173,11 +173,11 @@ void test_nan_vvv(const F& f,
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
     if (is_grad_nan) {
-      AVEC x = createAVEC(arg1_v,arg2_v, arg3_v);
+      AVEC x = createAVEC(arg1_v, arg2_v, arg3_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(3U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(3U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -197,7 +197,7 @@ void test_nan_dvv(const F& f,
   stan::math::var arg3_v = arg3;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for double,var,var version with first argument " 
+  fail_msg << "Failed for double, var, var version with first argument "
            << arg1 << " second argument " << arg2_v
            << " and third argument " << arg3_v;
 
@@ -210,9 +210,9 @@ void test_nan_dvv(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg2_v, arg3_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(2U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(2U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     }
@@ -231,7 +231,7 @@ void test_nan_vdv(const F& f,
   stan::math::var arg3_v = arg3;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,double,var version with first argument " 
+  fail_msg << "Failed for var, double, var version with first argument "
            << arg1_v << " second argument " << arg2
            << " and third argument " << arg3_v;
 
@@ -244,9 +244,9 @@ void test_nan_vdv(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg1_v, arg3_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(2U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(2U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     }
@@ -265,7 +265,7 @@ void test_nan_vvd(const F& f,
   stan::math::var arg2_v = arg2;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,var,double version with first argument " 
+  fail_msg << "Failed for var, var, double version with first argument "
            << arg1_v << " second argument " << arg2_v
            << " and third argument " << arg3;
 
@@ -276,11 +276,11 @@ void test_nan_vvd(const F& f,
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
     if (is_grad_nan) {
-      AVEC x = createAVEC(arg1_v,arg2_v);
+      AVEC x = createAVEC(arg1_v, arg2_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(2U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(2U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     }
@@ -298,7 +298,7 @@ void test_nan_ddv(const F& f,
   stan::math::var arg3_v = arg3;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for double,double,var version with first argument " 
+  fail_msg << "Failed for double, double, var version with first argument "
            << arg1 << " second argument " << arg2
            << " and third argument " << arg3_v;
 
@@ -311,9 +311,9 @@ void test_nan_ddv(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg3_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     }
   }
@@ -330,7 +330,7 @@ void test_nan_dvd(const F& f,
   stan::math::var arg2_v = arg2;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for double,var,double version with first argument " 
+  fail_msg << "Failed for double, var, double version with first argument "
            << arg1 << " second argument " << arg2_v
            << " and third argument " << arg3;
 
@@ -343,9 +343,9 @@ void test_nan_dvd(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg2_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     }
   }
@@ -362,7 +362,7 @@ void test_nan_vdd(const F& f,
   stan::math::var arg1_v = arg1;
 
   std::ostringstream fail_msg;
-  fail_msg << "Failed for var,double,double version with first argument " 
+  fail_msg << "Failed for var, double, double version with first argument "
            << arg1_v << " second argument " << arg2
            << " and third argument " << arg3;
 
@@ -375,9 +375,9 @@ void test_nan_vdd(const F& f,
     if (is_grad_nan) {
       AVEC x = createAVEC(arg1_v);
       VEC g;
-      res.grad(x,g);
-  
-      ASSERT_EQ(1U,g.size()) << fail_msg.str();
+      res.grad(x, g);
+
+      ASSERT_EQ(1U, g.size()) << fail_msg.str();
       EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     }
   }

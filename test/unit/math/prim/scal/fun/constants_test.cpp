@@ -48,7 +48,7 @@ TEST(MathsConstants, infty_fun) {
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), stan::math::positive_infinity());
 }
 TEST(MathsConstants, neg_infty_fun) {
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), 
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   stan::math::negative_infinity());
 }
 TEST(MathsConstants, not_a_number_fun) {
@@ -59,11 +59,11 @@ TEST(MathsConstants, machine_precision_fun) {
                   stan::math::machine_precision());
 }
 TEST(MathsConstants, two_over_sqrt_pi) {
-  EXPECT_FLOAT_EQ(1.128379167,stan::math:: TWO_OVER_SQRT_PI);
+  EXPECT_FLOAT_EQ(1.128379167, stan::math:: TWO_OVER_SQRT_PI);
  }
 TEST(MathsConstants, neg_two_over_sqrt_pi){
   EXPECT_FLOAT_EQ(-stan::math:: TWO_OVER_SQRT_PI, stan::math:: NEG_TWO_OVER_SQRT_PI);
 }
 TEST(MathsConstants, inv_sqrt_two_pi){
-  EXPECT_FLOAT_EQ(.39894228040,stan::math:: INV_SQRT_TWO_PI);
+  EXPECT_FLOAT_EQ(.39894228040, stan::math:: INV_SQRT_TWO_PI);
 }

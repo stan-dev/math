@@ -123,7 +123,7 @@ TEST(MathMatrix, nonLinearEq_dbl) {
 
 TEST(MathMatrix, error_conditions) {
   using stan::math::var;
-    
+
   int n_y = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
   y << 4, 6;
@@ -157,7 +157,7 @@ TEST(MathMatrix, unsolvable_dbl) {
 
 TEST(MathMatrix, max_num_steps) {
   using stan::math::var;
-  
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;
   max_num_steps_test(y);

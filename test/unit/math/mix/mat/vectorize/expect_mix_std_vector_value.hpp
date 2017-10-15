@@ -40,6 +40,6 @@ void expect_mix_std_vector_value() {
                           fb[i][j], b[i][j]);
     }
   }
-}    
+}
 
 #endif

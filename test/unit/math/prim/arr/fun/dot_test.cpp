@@ -11,10 +11,10 @@ TEST(MathFunctions, dot) {
   y[1] = 4.45;
   y[2] = 1.03;
 
-  EXPECT_FLOAT_EQ(55.3521, stan::math::dot(x,y));
-  EXPECT_FLOAT_EQ(55.3521, stan::math::dot(y,x));
-  EXPECT_FLOAT_EQ(180.5194, stan::math::dot(x,x));
-  EXPECT_FLOAT_EQ(26.915, stan::math::dot(y,y));
+  EXPECT_FLOAT_EQ(55.3521, stan::math::dot(x, y));
+  EXPECT_FLOAT_EQ(55.3521, stan::math::dot(y, x));
+  EXPECT_FLOAT_EQ(180.5194, stan::math::dot(x, x));
+  EXPECT_FLOAT_EQ(26.915, stan::math::dot(y, y));
 }
 
 TEST(MathFunctions, dot_nan) {

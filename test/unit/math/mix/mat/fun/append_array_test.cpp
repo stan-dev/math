@@ -294,7 +294,7 @@ void checkvv() {
 template<typename T1, typename T2, typename T3>
 void check() {
   // repeat the checks a few times since they're random
-  for(int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     checkv<T1, T2, T3>();
     checkvv<T1, T2, T3>();
   }

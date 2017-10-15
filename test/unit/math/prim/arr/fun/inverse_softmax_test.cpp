@@ -5,14 +5,14 @@
 TEST(MathFunctions, inverse_softmax_exception) {
   std::vector<double> simplex(2);
   std::vector<double> y(3);
-  EXPECT_THROW(stan::math::inverse_softmax< std::vector<double> >(simplex, y), 
+  EXPECT_THROW(stan::math::inverse_softmax< std::vector<double> >(simplex, y),
                std::invalid_argument);
 }
 
 TEST(MathFunctions, inverse_softmax) {
   std::vector<double> simplex(2);
   std::vector<double> y(2);
-  
+
   simplex[0] = 0.2;
   simplex[1] = 0.8;
 
@@ -27,7 +27,7 @@ TEST(MathFunctions, inverse_softmax_nan) {
 
   std::vector<double> simplex(2);
   std::vector<double> y(2);
-  
+
   simplex[0] = nan;
   simplex[1] = nan;
 

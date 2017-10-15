@@ -9,12 +9,12 @@ TEST(ProbDistributionsBeta, error_check) {
   EXPECT_NO_THROW(stan::math::beta_rng(2.0, 1.0, rng));
   EXPECT_NO_THROW(stan::math::beta_rng(1e-10, 1e-10, rng));
 
-  EXPECT_THROW(stan::math::beta_rng(2.0,-1.0, rng),std::domain_error);
-  EXPECT_THROW(stan::math::beta_rng(-2.0, 1.0, rng),std::domain_error);
-  EXPECT_THROW(stan::math::beta_rng(-2.0,-1.0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::beta_rng(2.0, -1.0, rng), std::domain_error);
+  EXPECT_THROW(stan::math::beta_rng(-2.0, 1.0, rng), std::domain_error);
+  EXPECT_THROW(stan::math::beta_rng(-2.0, -1.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::beta_rng(stan::math::positive_infinity(), 1.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::beta_rng(2,stan::math::positive_infinity(), rng),
+  EXPECT_THROW(stan::math::beta_rng(2, stan::math::positive_infinity(), rng),
                std::domain_error);
 }
 
@@ -28,7 +28,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
     samples.push_back(stan::math::beta_rng(2.0, 1.0, rng));
   }
 
-  //Generate quantiles from boost's beta distribution
+  // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<>dist (2.0, 1.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -37,7 +37,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
 
@@ -51,7 +51,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTestSmallParameters) {
     samples.push_back(stan::math::beta_rng(0.2, 0.3, rng));
   }
 
-  //Generate quantiles from boost's beta distribution
+  // Generate quantiles from boost's beta distribution
   boost::math::beta_distribution<>dist (0.2, 0.3);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -60,6 +60,6 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTestSmallParameters) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }

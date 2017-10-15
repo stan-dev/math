@@ -51,7 +51,7 @@ TEST(MathMatrix, matrix_exp_2x2) {
 TEST(MathMatrix, matrix_exp_2x2_2) {
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
-  // Compare to result from http://comnuan.com/cmnn01015/
+  // Compare to result from http:// comnuan.com/cmnn01015/
   // Don't test derivatives, since goal is to see that
   // matrix_exp picks the right algorithm
 

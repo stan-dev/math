@@ -11,7 +11,7 @@ TEST(MathFunctions, fma_double) {
 
 TEST(MathFunctions, fma_int) {
   using stan::math::fma;
-  EXPECT_FLOAT_EQ(11.0, fma(int(3),int(2),int(5)));
+  EXPECT_FLOAT_EQ(11.0, fma(int(3), int(2), int(5)));
 }
 
 TEST(MathFunctions, fma_nan) {

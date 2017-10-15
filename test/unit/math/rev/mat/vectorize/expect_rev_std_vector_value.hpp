@@ -27,14 +27,14 @@ void expect_rev_std_vector_value() {
       for (size_t i = 0; i < vector_vector_size; ++i) {
         a.push_back(build_rev_vector<F>());
         b.push_back(build_rev_vector<F>());
-      } 
+      }
       vector<vector<var> > fb = F::template apply<vector<vector<var> > >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_val_deriv_eq(F::apply_base(a[i][j]), a[i][j], 
+      expect_val_deriv_eq(F::apply_base(a[i][j]), a[i][j],
                           fb[i][j], b[i][j]);
     }
   }
-}    
+}
 
 #endif

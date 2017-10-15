@@ -31,9 +31,9 @@ public:
     parameters.push_back(param);
     cdf.push_back(0.11143902440462770394); // expected cdf
   }
-  
-  void invalid_values(vector<size_t>& index, 
-          vector<double>& value) {    
+
+  void invalid_values(vector<size_t>& index,
+          vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1.0);
@@ -48,11 +48,11 @@ public:
     index.push_back(1U);
     value.push_back(-numeric_limits<double>::infinity());
   }
-  
+
   bool has_lower_bound() {
     return true;
   }
-  
+
   double lower_bound() {
     return 0.0;
   }
@@ -62,8 +62,8 @@ public:
   }
 
   template <typename T_y, typename T_scale, typename T2,
-            typename T3, typename T4, typename T5> 
-  typename stan::return_type<T_y, T_scale>::type 
+            typename T3, typename T4, typename T5>
+  typename stan::return_type<T_y, T_scale>::type
   cdf(const T_y& y, const T_scale& sigma, const T2&,
       const T3&, const T4&, const T5&) {
     return stan::math::rayleigh_cdf(y, sigma);
@@ -72,7 +72,7 @@ public:
 
   template <typename T_y, typename T_scale, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale>::type 
+  typename stan::return_type<T_y, T_scale>::type
   cdf_function(const T_y& y, const T_scale& sigma, const T2&,
                const T3&, const T4&, const T5&) {
     return (1.0 - exp(-0.5 * y * y / (sigma * sigma)));

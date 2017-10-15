@@ -4,12 +4,12 @@
 using stan::math::check_less_or_equal;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar,CheckLessOrEqual_Matrix) {
+TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual_Matrix) {
   const std::string function = "check_less_or_equal";
   var x;
   var high;
-  Eigen::Matrix<var,Eigen::Dynamic,1> x_vec;
-  Eigen::Matrix<var,Eigen::Dynamic,1> high_vec;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x_vec;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> high_vec;
   x_vec.resize(3);
   high_vec.resize(3);
 

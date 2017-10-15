@@ -1,9 +1,9 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDistributionsLkjCorr,testIdentity) {
+TEST(ProbDistributionsLkjCorr, testIdentity) {
   unsigned int K = 4;
-  Eigen::MatrixXd Sigma(K,K);
+  Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   srand(time(0));
@@ -16,9 +16,9 @@ TEST(ProbDistributionsLkjCorr,testIdentity) {
 }
 
 
-TEST(ProbDistributionsLkjCorr,testHalf) {
+TEST(ProbDistributionsLkjCorr, testHalf) {
   unsigned int K = 4;
-  Eigen::MatrixXd Sigma(K,K);
+  Eigen::MatrixXd Sigma(K, K);
   Sigma.setConstant(0.5);
   Sigma.diagonal().setOnes();
   double eta = rand() / double(RAND_MAX) + 0.5;
@@ -29,16 +29,16 @@ TEST(ProbDistributionsLkjCorr,testHalf) {
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
 }
 
-TEST(ProbDistributionsLkjCorr,Sigma) {
+TEST(ProbDistributionsLkjCorr, Sigma) {
   unsigned int K = 4;
-  Eigen::MatrixXd Sigma(K,K);
+  Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   double eta = rand() / double(RAND_MAX) + 0.5;
   EXPECT_NO_THROW (stan::math::lkj_corr_log(Sigma, eta));
-  
+
   EXPECT_THROW (stan::math::lkj_corr_log(Sigma, -eta), std::domain_error);
-  
+
   Sigma = Sigma * -1.0;
   EXPECT_THROW (stan::math::lkj_corr_log(Sigma, eta), std::domain_error);
   Sigma = Sigma * (0.0 / 0.0);

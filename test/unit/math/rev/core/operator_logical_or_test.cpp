@@ -9,7 +9,7 @@ void test_logical_or(double x, double y) {
   EXPECT_EQ(x || y, x_v || y_v);
 }
 
-TEST(AgradRev,unaryNot) {
+TEST(AgradRev, unaryNot) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

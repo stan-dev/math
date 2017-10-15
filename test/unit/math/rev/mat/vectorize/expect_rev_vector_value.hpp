@@ -37,8 +37,8 @@ void expect_rev_vector_value() {
       vector<VectorXvar> fe = F::template apply<vector<VectorXvar> >(e);
       EXPECT_EQ(e[i].size(), fe[i].size());
       EXPECT_EQ(e.size(), fe.size());
-      expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j), 
-                          fe[i](j), e[i](j)); 
+      expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j),
+                          fe[i](j), e[i](j));
     }
   }
 }

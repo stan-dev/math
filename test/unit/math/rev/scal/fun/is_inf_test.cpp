@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 
-TEST(AgradRev,is_inf) {
+TEST(AgradRev, is_inf) {
   using stan::math::is_inf;
 
   double infinity = std::numeric_limits<double>::infinity();

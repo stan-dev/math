@@ -11,10 +11,10 @@ TEST(ProbDistributionsWishartRng, rng) {
 
   boost::random::mt19937 rng;
 
-  MatrixXd omega(3,4);
+  MatrixXd omega(3, 4);
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
 
-  MatrixXd sigma(3,3);
+  MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0,
     2.0, 1.0, 3.0;
@@ -68,10 +68,10 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsWishart, SpecialRNGTest) {
-  //For any vector C != 0
-  //(C' * W * C) / (C' * S * C)
-  //must be chi-square distributed with df = k
-  //which has mean = k and variance = 2k
+  // For any vector C != 0
+  // (C' * W * C) / (C' * S * C)
+  // must be chi-square distributed with df = k
+  // which has mean = k and variance = 2k
 
   using stan::math::wishart_rng;
   using Eigen::MatrixXd;
@@ -79,10 +79,10 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
 
   boost::random::mt19937 rng(1234);
 
-  MatrixXd sigma(3,3);
-  MatrixXd sigma_sym(3,3);
-  
-  //wishart_rng should take only the lower part
+  MatrixXd sigma(3, 3);
+  MatrixXd sigma_sym(3, 3);
+
+  // wishart_rng should take only the lower part
   sigma << 9.0, -3.0, 1.0,
     2.0,  4.0, -1.0,
     2.0, 1.0, 3.0;
@@ -90,13 +90,13 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   sigma_sym << 9.0, 2.0, 2.0,
     2.0,  4.0, 1.0,
     2.0, 1.0, 3.0;
-  
+
   VectorXd C(3);
   C << 2, 1, 3;
-  
+
   size_t N = 1e4;
   int k = 20;
-  double tol = 0.2; //tolerance for variance
+  double tol = 0.2; // tolerance for variance
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)

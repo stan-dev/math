@@ -2,7 +2,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_negation) {
+TEST(MathFunctions, logical_negation) {
   using stan::math::logical_negation;
   EXPECT_TRUE(logical_negation(0));
   EXPECT_TRUE(logical_negation(0.0));
@@ -15,6 +15,6 @@ TEST(MathFunctions,logical_negation) {
 
 TEST(MathFunctions, logical_negation_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_FALSE(stan::math::logical_negation(nan));
 }

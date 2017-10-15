@@ -30,8 +30,8 @@ TEST_F(StanMathOdeCVode, recover_exception) {
   cvodes_ode_data<mock_throwing_ode_functor<std::logic_error>, double, double>
     ode_data_dd(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  std::vector<double> y(3,0);
-  std::vector<double> dy_dt(3,0);
+  std::vector<double> y(3, 0);
+  std::vector<double> dy_dt(3, 0);
 
   N_Vector nv_y = N_VMake_Serial(N, &y[0]);
   N_Vector nv_dy_dt = N_VMake_Serial(N, &dy_dt[0]);

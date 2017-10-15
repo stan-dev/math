@@ -2,7 +2,7 @@
 #include <vector>
 
 namespace stan {
-  
+
   namespace math {
 
     template <typename T_L, typename T_eta>

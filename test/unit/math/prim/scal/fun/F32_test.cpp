@@ -19,7 +19,7 @@ TEST(MathPrimScalFun, F32_short_polynomial) { // terminate by zero numerator, si
               1e-8);
 }
 
-TEST(MathPrimScalFun, F32_short_polynomial_undef) { // at pole, should throw 
+TEST(MathPrimScalFun, F32_short_polynomial_undef) { // at pole, should throw
   EXPECT_THROW(
               stan::math::F32(1.0, 12.0, -1.0, 10.0, -1.0, 1.0),
               std::domain_error);
@@ -38,7 +38,7 @@ TEST(MathPrimScalFun, F32_diverge_by_z) {
               std::domain_error);
 }
 
-TEST(MathPrimScalFun, F32_double_sign_flip) { // convergence, double sign flip 
+TEST(MathPrimScalFun, F32_double_sign_flip) { // convergence, double sign flip
   EXPECT_NEAR(1.03711889198028226149,
               stan::math::F32(1.0, -.5, -2.5, 10.0, 1.0, 0.3, 1e-10),
               1e-8);

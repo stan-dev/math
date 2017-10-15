@@ -8,7 +8,7 @@ TEST(ProbDistributionsDoubleExponential, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::double_exponential_rng(2.0, 1.0, rng));
 
-  EXPECT_THROW(stan::math::double_exponential_rng(2.0,-1.0, rng),
+  EXPECT_THROW(stan::math::double_exponential_rng(2.0, -1.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::double_exponential_rng(2.0,
                                                   stan::math::positive_infinity(),
@@ -29,7 +29,7 @@ TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
     samples.push_back(stan::math::double_exponential_rng(2.0, 1.0, rng));
   }
 
-  //Generate quantiles from boost's double exponential distribution
+  // Generate quantiles from boost's double exponential distribution
   boost::math::laplace_distribution<>dist (2.0, 1.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -38,6 +38,6 @@ TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }

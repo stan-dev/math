@@ -46,7 +46,7 @@ TEST_F(StanMathOde, decouple_states_dd) {
   for (int t = 0; t < T; t++)
     for (int n = 0; n < 2; n++)
       EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n])
-        << "(" << n << "," << t << "): "
+        << "(" << n << ", " << t << "): "
         << "for (double, double) the coupled system is the base system";
 }
 
@@ -108,8 +108,8 @@ TEST_F(StanMathOde, recover_exception) {
   coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double, double>
     coupled_system_dd(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
 
-  std::vector<double> y(3,0);
-  std::vector<double> dy_dt(3,0);
+  std::vector<double> y(3, 0);
+  std::vector<double> dy_dt(3, 0);
 
   double t = 10;
 

@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevErrorHandlingMatrix,CheckCovMatrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
   using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -9,8 +9,8 @@ TEST(AgradRevErrorHandlingMatrix,CheckCovMatrix) {
   using stan::math::check_cov_matrix;
 
   const std::string function = "check_cov_matrix";
-  Matrix<var,Dynamic,Dynamic> Sigma;
-  Sigma.resize(1,1);
+  Matrix<var, Dynamic, Dynamic> Sigma;
+  Sigma.resize(1, 1);
   Sigma << 1;
 
   EXPECT_NO_THROW(check_cov_matrix(function, "Sigma", Sigma))

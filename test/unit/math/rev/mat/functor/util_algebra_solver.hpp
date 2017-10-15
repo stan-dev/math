@@ -158,7 +158,7 @@ inline void
 error_conditions_test(const F& f,
                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
   using stan::math::algebra_solver;
-  
+
   int n_x = 3;
   Eigen::VectorXd x(n_x);
   x << 1, 1, 1;
@@ -216,13 +216,13 @@ error_conditions_test(const F& f,
                                   x, y, dat_bad_inf, dat_int),
                    std::domain_error,
                    "algebra_solver: continuous data is inf, but must be finite!");
-  
+
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y, dat, dat_int,
                                   0, -1, 1e-6, 1e+3),
                    std::invalid_argument,
                    "relative_tolerance");
-  
+
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y, dat, dat_int,
                                   0, 1e-6, -1, 1e+3),

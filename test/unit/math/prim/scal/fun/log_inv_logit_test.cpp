@@ -14,7 +14,7 @@ TEST(MathFunctions, log_inv_logit) {
 
 TEST(MathFunctions, log_inv_logit_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::log_inv_logit(nan));
 }

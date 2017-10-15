@@ -6,38 +6,38 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::log_softmax;
 
-TEST(ProbDistributionsCategoricalLogit,Categorical) {
-  Matrix<double,Dynamic,1> theta(3,1);
+TEST(ProbDistributionsCategoricalLogit, Categorical) {
+  Matrix<double, Dynamic, 1> theta(3, 1);
   theta << -1, 2, -10;
-  Matrix<double,Dynamic,1> theta_log_softmax = log_softmax(theta);
+  Matrix<double, Dynamic, 1> theta_log_softmax = log_softmax(theta);
 
-  EXPECT_FLOAT_EQ(theta_log_softmax[0], stan::math::categorical_logit_log(1,theta));
-  EXPECT_FLOAT_EQ(theta_log_softmax[1], stan::math::categorical_logit_log(2,theta));
-  EXPECT_FLOAT_EQ(theta_log_softmax[2], stan::math::categorical_logit_log(3,theta));
+  EXPECT_FLOAT_EQ(theta_log_softmax[0], stan::math::categorical_logit_log(1, theta));
+  EXPECT_FLOAT_EQ(theta_log_softmax[1], stan::math::categorical_logit_log(2, theta));
+  EXPECT_FLOAT_EQ(theta_log_softmax[2], stan::math::categorical_logit_log(3, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit,CategoricalVectorized) {
-  Matrix<double,Dynamic,1> theta(3);
+TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
+  Matrix<double, Dynamic, 1> theta(3);
   theta << -1, 2, -10;
 
   std::vector<int> ns(0);
-  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_log(ns,theta));
+  EXPECT_FLOAT_EQ(0.0, stan::math::categorical_logit_log(ns, theta));
 
-  Matrix<double,Dynamic,1> theta_log_softmax = log_softmax(theta);
+  Matrix<double, Dynamic, 1> theta_log_softmax = log_softmax(theta);
 
   std::vector<int> ms(3);
   ms[0] = 1;
   ms[1] = 2;
   ms[2] = 1;
   EXPECT_FLOAT_EQ(theta_log_softmax[0] + theta_log_softmax[1] + theta_log_softmax[0],
-                  stan::math::categorical_logit_log(ms,theta));
+                  stan::math::categorical_logit_log(ms, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit,Propto) {
-  Matrix<double,Dynamic,1> theta(3,1);
+TEST(ProbDistributionsCategoricalLogit, Propto) {
+  Matrix<double, Dynamic, 1> theta(3, 1);
   theta << -1, 2, 10;
-  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(1,theta));
-  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3,theta));
+  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(1, theta));
+  EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3, theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, error) {
@@ -45,7 +45,7 @@ TEST(ProbDistributionsCategoricalLogit, error) {
 
   unsigned int n = 1;
   unsigned int N = 3;
-  Matrix<double,Dynamic,1> theta(N,1);
+  Matrix<double, Dynamic, 1> theta(N, 1);
   theta << 0.3, 0.5, 0.2;
 
   EXPECT_NO_THROW(categorical_logit_log(N, theta));
@@ -67,7 +67,7 @@ TEST(ProbDistributionsCategoricalLogit, error) {
 
   theta << 0.3, 0.5, 0.2;
   EXPECT_NO_THROW(categorical_logit_log(ns, theta));
-  
+
   ns[0] = -1;
   EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
 

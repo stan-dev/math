@@ -8,8 +8,8 @@ TEST(ProbDistributionsLogistic, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::logistic_rng(4.0, 3.0, rng));
 
-  EXPECT_THROW(stan::math::logistic_rng(4.0,-3.0, rng),std::domain_error);
-  EXPECT_THROW(stan::math::logistic_rng(4.0,stan::math::positive_infinity(),
+  EXPECT_THROW(stan::math::logistic_rng(4.0, -3.0, rng), std::domain_error);
+  EXPECT_THROW(stan::math::logistic_rng(4.0, stan::math::positive_infinity(),
                                         rng),
                std::domain_error);
   EXPECT_THROW(stan::math::logistic_rng(stan::math::positive_infinity(), 3,
@@ -27,7 +27,7 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
     samples.push_back(stan::math::logistic_rng(9.0, 4.0, rng));
   }
 
-  //Generate quantiles from boost's logistic distribution
+  // Generate quantiles from boost's logistic distribution
   boost::math::logistic_distribution<>dist (9.0, 4.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -36,6 +36,6 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }

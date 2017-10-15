@@ -37,7 +37,7 @@ TEST(ErrorHandlingMatrix, checkOrdered_one_indexed_message) {
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   y.resize(3);
-  
+
   y << 0, 5, 1;
   try {
     check_ordered("check_ordered", "y", y);

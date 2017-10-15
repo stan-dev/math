@@ -10,17 +10,17 @@ TEST(SparseStuff, csr_to_dense_matrix_two_route) {
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
   a = m.sparseView();
-  
+
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
-  Eigen::Matrix<double, 2, 3> A 
+  Eigen::Matrix<double, 2, 3> A
     = stan::math::csr_to_dense_matrix(2, 3, X_w, X_v, X_u);
 
   stan::math::vector_d b(3);
   b << 22, 33, 44;
 
-  stan::math::vector_d result_sparse 
+  stan::math::vector_d result_sparse
     = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
   stan::math::vector_d result_dense = A * b;
   stan::math::vector_d result_straight_dense = m * b;
@@ -38,7 +38,7 @@ TEST(SparseStuff, csr_to_dense_matrix_two_route_sparse) {
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 0.0, 0.0, 0.0, 0.0;
   a = m.sparseView();
-  
+
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
@@ -48,7 +48,7 @@ TEST(SparseStuff, csr_to_dense_matrix_two_route_sparse) {
   stan::math::vector_d b(3);
   b << 22, 33, 44;
 
-  stan::math::vector_d result_sparse 
+  stan::math::vector_d result_sparse
     = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
   stan::math::vector_d result_dense = A * b;
   stan::math::vector_d result_straight_dense = m * b;

@@ -3,8 +3,8 @@
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 
 template <typename T_prob>
-void expect_propto(unsigned int n1, T_prob theta1, 
-                   unsigned int n2, T_prob theta2, 
+void expect_propto(unsigned int n1, T_prob theta1,
+                   unsigned int n2, T_prob theta2,
                    std::string message) {
   expect_eq_diffs(stan::math::categorical_log<false>(n1, theta1),
                   stan::math::categorical_log<false>(n2, theta2),
@@ -18,13 +18,13 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 
-TEST(AgradDistributionsCategorical,Propto) {
+TEST(AgradDistributionsCategorical, Propto) {
   unsigned int n;
-  Matrix<var,Dynamic,1> theta1(3,1);
+  Matrix<var, Dynamic, 1> theta1(3, 1);
   theta1 << 0.3, 0.5, 0.2;
-  Matrix<var,Dynamic,1> theta2(3,1);
+  Matrix<var, Dynamic, 1> theta2(3, 1);
   theta2 << 0.1, 0.2, 0.7;
-  
+
   n = 1;
   expect_propto(n, theta1,
                 n, theta2,

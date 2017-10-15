@@ -38,7 +38,7 @@ void expect_prim_matrix_value() {
   }
 
   MatrixXd fab = F::template apply<MatrixXd>(a.block(1, 1, 1, 1));
-  expect_val_eq(F::apply_base(a(1,1)), fab(0,0));
+  expect_val_eq(F::apply_base(a(1, 1)), fab(0, 0));
 }
 
 #endif

@@ -6,11 +6,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x;
   x.push_back(e);
@@ -44,8 +44,8 @@ TEST(AgradMixMath, fv_cov_exp_quad1) {
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -53,9 +53,9 @@ TEST(AgradMixMath, fv_cov_exp_quad1) {
   std::vector<Eigen::Matrix<double, 1, -1> > x_rvec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x_rvec_fv(5);
   for (size_t i = 0; i < x_rvec_d.size(); ++i) {
-    x_rvec_d[i].resize(1,5);
+    x_rvec_d[i].resize(1, 5);
     x_rvec_d[i] << 1, 2, 3, 4, 5;
-    x_rvec_fv[i].resize(1,5);
+    x_rvec_fv[i].resize(1, 5);
     x_rvec_fv[i] << 1, 2, 3, 4, 5;
   }
   EXPECT_NO_THROW(cov_exp_quad(x_vec_d, sigma, l));
@@ -84,11 +84,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x;
   x.push_back(e);
@@ -122,8 +122,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad1) {
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_ffv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_ffv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_ffv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_ffv[i] << 1, 2, 3, 4, 5;
   }
@@ -131,9 +131,9 @@ TEST(AgradMixMath, ffv_cov_exp_quad1) {
   std::vector<Eigen::Matrix<double, 1, -1> > x_rvec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x_rvec_ffv(5);
   for (size_t i = 0; i < x_rvec_d.size(); ++i) {
-    x_rvec_d[i].resize(1,5);
+    x_rvec_d[i].resize(1, 5);
     x_rvec_d[i] << 1, 2, 3, 4, 5;
-    x_rvec_ffv[i].resize(1,5);
+    x_rvec_ffv[i].resize(1, 5);
     x_rvec_ffv[i] << 1, 2, 3, 4, 5;
   }
   EXPECT_NO_THROW(cov_exp_quad(x_vec_d, sigma, l));
@@ -162,11 +162,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x;
   x.push_back(e);
@@ -214,11 +214,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2) {
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
-    x2_vec_fv[i].resize(5,1);
+    x2_vec_fv[i].resize(5, 1);
     x2_vec_fv[i] << 1, 2, 3, 4, 5;
   }
 
@@ -226,11 +226,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2) {
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x_rvec_fv(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x2_rvec_fv(5);
   for (size_t i = 0; i < x_rvec_d.size(); ++i) {
-    x_rvec_d[i].resize(1,5);
+    x_rvec_d[i].resize(1, 5);
     x_rvec_d[i] << 1, 2, 3, 4, 5;
-    x_rvec_fv[i].resize(1,5);
+    x_rvec_fv[i].resize(1, 5);
     x_rvec_fv[i] << 1, 2, 3, 4, 5;
-    x2_rvec_fv[i].resize(1,5);
+    x2_rvec_fv[i].resize(1, 5);
     x2_rvec_fv[i] << 1, 2, 3, 4, 5;
   }
 
@@ -270,11 +270,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x;
   x.push_back(e);
@@ -322,11 +322,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2) {
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_ffv(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_vec_ffv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_ffv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_ffv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_ffv[i] << 1, 2, 3, 4, 5;
-    x2_vec_ffv[i].resize(5,1);
+    x2_vec_ffv[i].resize(5, 1);
     x2_vec_ffv[i] << 1, 2, 3, 4, 5;
   }
 
@@ -334,11 +334,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2) {
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x_rvec_ffv(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x2_rvec_ffv(5);
   for (size_t i = 0; i < x_rvec_d.size(); ++i) {
-    x_rvec_d[i].resize(1,5);
+    x_rvec_d[i].resize(1, 5);
     x_rvec_d[i] << 1, 2, 3, 4, 5;
-    x_rvec_ffv[i].resize(1,5);
+    x_rvec_ffv[i].resize(1, 5);
     x_rvec_ffv[i] << 1, 2, 3, 4, 5;
-    x2_rvec_ffv[i].resize(1,5);
+    x2_rvec_ffv[i].resize(1, 5);
     x2_rvec_ffv[i] << 1, 2, 3, 4, 5;
   }
 
@@ -378,11 +378,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x_fv;
   x_fv.push_back(e);
@@ -480,11 +480,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x_fv;
   x_fv.push_back(e);
@@ -592,17 +592,17 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   double l_d_bad(-1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x_vec_d_bad(x_vec_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d_bad(x_vec_d);
   x_vec_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv_bad(x_vec_fv);
@@ -677,7 +677,7 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   double l_d(1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   fvar<var> sigma_bad(nan_d, 1.0);
   fvar<var> l_bad(nan_d, 1.0);
   double sigma_d_bad(nan_d);
@@ -686,13 +686,13 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x_vec_d_bad(x_vec_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d_bad(x_vec_d);
   x_vec_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x_vec_fv_bad(x_vec_fv);
@@ -772,12 +772,12 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   double l_d_bad(-1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   std::vector<Eigen::Matrix<double, 1, -1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(1,5);
-    x_vec_fv[i].resize(1,5);
+    x_vec_d[i].resize(1, 5);
+    x_vec_fv[i].resize(1, 5);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -857,7 +857,7 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   double l_d(1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   fvar<var> sigma_bad(nan_d, 1.0);
   fvar<var> l_bad(nan_d, 1.0);
   double sigma_d_bad(nan_d);
@@ -866,8 +866,8 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(1,5);
-    x_vec_fv[i].resize(1,5);
+    x_vec_d[i].resize(1, 5);
+    x_vec_fv[i].resize(1, 5);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -941,11 +941,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x1_fv;
   x1_fv.push_back(e);
@@ -1216,11 +1216,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> a(1.0,1.0);
-  fvar<var> b(2.0,1.0);
-  fvar<var> c(3.0,1.0);
-  fvar<var> d(4.0,1.0);
-  fvar<var> e(0.0,1.0);
+  fvar<var> a(1.0, 1.0);
+  fvar<var> b(2.0, 1.0);
+  fvar<var> c(3.0, 1.0);
+  fvar<var> d(4.0, 1.0);
+  fvar<var> e(0.0, 1.0);
 
   std::vector<fvar<var> > x1_fv;
   x1_fv.push_back(e);
@@ -1506,8 +1506,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_invalid_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_fv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_fv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -1515,19 +1515,19 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_invalid_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(5,1);
-    x2_fv[i].resize(5,1);
+    x2_d[i].resize(5, 1);
+    x2_fv[i].resize(5, 1);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_fv_bad(x2_fv);
@@ -1765,8 +1765,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_fv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_fv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -1774,19 +1774,19 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(5,1);
-    x2_fv[i].resize(5,1);
+    x2_d[i].resize(5, 1);
+    x2_fv[i].resize(5, 1);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_fv_bad(x2_fv);
@@ -2024,8 +2024,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_invalid_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_fv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_fv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -2033,19 +2033,19 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_invalid_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,5);
-    x2_fv[i].resize(1,5);
+    x2_d[i].resize(1, 5);
+    x2_fv[i].resize(1, 5);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,1, -1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,1, -1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x2_fv_bad(x2_fv);
@@ -2283,8 +2283,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_fv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_fv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -2292,13 +2292,13 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,5);
-    x2_fv[i].resize(1,5);
+    x2_d[i].resize(1, 5);
+    x2_fv[i].resize(1, 5);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,1, -1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x1_fv_bad(x1_fv);
@@ -2527,11 +2527,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x_fv;
   x_fv.push_back(e);
@@ -2629,11 +2629,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x_fv;
   x_fv.push_back(e);
@@ -2741,17 +2741,17 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   double l_d_bad(-1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x_vec_d_bad(x_vec_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d_bad(x_vec_d);
   x_vec_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_fv_bad(x_vec_fv);
@@ -2826,7 +2826,7 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   double l_d(1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   fvar<fvar<var> > sigma_bad(nan_d, 1.0);
   fvar<fvar<var> > l_bad(nan_d, 1.0);
   double sigma_d_bad(nan_d);
@@ -2835,13 +2835,13 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(5,1);
-    x_vec_fv[i].resize(5,1);
+    x_vec_d[i].resize(5, 1);
+    x_vec_fv[i].resize(5, 1);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x_vec_d_bad(x_vec_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x_vec_d_bad(x_vec_d);
   x_vec_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x_vec_fv_bad(x_vec_fv);
@@ -2921,12 +2921,12 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   double l_d_bad(-1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   std::vector<Eigen::Matrix<double, 1, -1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(1,5);
-    x_vec_fv[i].resize(1,5);
+    x_vec_d[i].resize(1, 5);
+    x_vec_fv[i].resize(1, 5);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -3006,7 +3006,7 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   double l_d(1.0);
 
   double nan_d = std::numeric_limits<double>::quiet_NaN();
-  
+
   fvar<fvar<var> > sigma_bad(nan_d, 1.0);
   fvar<fvar<var> > l_bad(nan_d, 1.0);
   double sigma_d_bad(nan_d);
@@ -3015,8 +3015,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x_vec_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x_vec_fv(5);
   for (size_t i = 0; i < x_vec_d.size(); ++i) {
-    x_vec_d[i].resize(1,5);
-    x_vec_fv[i].resize(1,5);
+    x_vec_d[i].resize(1, 5);
+    x_vec_fv[i].resize(1, 5);
     x_vec_d[i] << 1, 2, 3, 4, 5;
     x_vec_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -3090,11 +3090,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_vec_invalid_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x1_fv;
   x1_fv.push_back(e);
@@ -3365,11 +3365,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_vec_nan_values) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<fvar<var> > a(1.0,1.0);
-  fvar<fvar<var> > b(2.0,1.0);
-  fvar<fvar<var> > c(3.0,1.0);
-  fvar<fvar<var> > d(4.0,1.0);
-  fvar<fvar<var> > e(0.0,1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(2.0, 1.0);
+  fvar<fvar<var> > c(3.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(0.0, 1.0);
 
   std::vector<fvar<fvar<var> > > x1_fv;
   x1_fv.push_back(e);
@@ -3655,8 +3655,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_invalid_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_fv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_fv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -3664,19 +3664,19 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_invalid_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(5,1);
-    x2_fv[i].resize(5,1);
+    x2_d[i].resize(5, 1);
+    x2_fv[i].resize(5, 1);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_fv_bad(x2_fv);
@@ -3914,8 +3914,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_fv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_fv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -3923,19 +3923,19 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_nan_values) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(5,1);
-    x2_fv[i].resize(5,1);
+    x2_d[i].resize(5, 1);
+    x2_fv[i].resize(5, 1);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,-1, 1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, -1, 1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_fv_bad(x2_fv);
@@ -4173,8 +4173,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_fv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_fv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -4182,19 +4182,19 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,5);
-    x2_fv[i].resize(1,5);
+    x2_d[i].resize(1, 5);
+    x2_fv[i].resize(1, 5);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,1, -1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x1_fv_bad(x1_fv);
   x1_fv_bad[1](1) = nan_d;
 
-  std::vector<Eigen::Matrix<double,1, -1> > x2_d_bad(x2_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x2_d_bad(x2_d);
   x2_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x2_fv_bad(x2_fv);
@@ -4432,8 +4432,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_fv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_fv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -4441,13 +4441,13 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_nan_values) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,5);
-    x2_fv[i].resize(1,5);
+    x2_d[i].resize(1, 5);
+    x2_fv[i].resize(1, 5);
     x2_d[i] << 5, 2, 1, 4, 5;
     x2_fv[i] << 4, 2, 2, 4, 5;
   }
 
-  std::vector<Eigen::Matrix<double,1, -1> > x1_d_bad(x1_d);
+  std::vector<Eigen::Matrix<double, 1, -1> > x1_d_bad(x1_d);
   x1_d_bad[1](1) = nan_d;
 
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x1_fv_bad(x1_fv);
@@ -4684,8 +4684,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_dim_error) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_fv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_fv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -4693,8 +4693,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_dim_error) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, -1, 1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(4,1);
-    x2_fv[i].resize(4,1);
+    x2_d[i].resize(4, 1);
+    x2_fv[i].resize(4, 1);
     x2_d[i] << 5, 2, 1, 4;
     x2_fv[i] << 4, 2, 2, 4;
   }
@@ -4729,8 +4729,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_dim_error) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x1_fv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_fv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_fv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_fv[i] << 1, 2, 3, 4, 5;
   }
@@ -4738,8 +4738,8 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_dim_error) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<var>, 1, -1> > x2_fv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,4);
-    x2_fv[i].resize(1,4);
+    x2_d[i].resize(1, 4);
+    x2_fv[i].resize(1, 4);
     x2_d[i] << 5, 2, 1, 4;
     x2_fv[i] << 4, 2, 2, 4;
   }
@@ -4774,8 +4774,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_dim_error) {
   std::vector<Eigen::Matrix<double, -1, 1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x1_ffv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(5,1);
-    x1_ffv[i].resize(5,1);
+    x1_d[i].resize(5, 1);
+    x1_ffv[i].resize(5, 1);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_ffv[i] << 1, 2, 3, 4, 5;
   }
@@ -4783,8 +4783,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_dim_error) {
   std::vector<Eigen::Matrix<double, -1, 1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, -1, 1> > x2_ffv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(4,1);
-    x2_ffv[i].resize(4,1);
+    x2_d[i].resize(4, 1);
+    x2_ffv[i].resize(4, 1);
     x2_d[i] << 5, 2, 1, 4;
     x2_ffv[i] << 4, 2, 2, 4;
   }
@@ -4820,8 +4820,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_dim_error) {
   std::vector<Eigen::Matrix<double, 1, -1> > x1_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x1_ffv(5);
   for (size_t i = 0; i < x1_d.size(); ++i) {
-    x1_d[i].resize(1,5);
-    x1_ffv[i].resize(1,5);
+    x1_d[i].resize(1, 5);
+    x1_ffv[i].resize(1, 5);
     x1_d[i] << 1, 2, 3, 4, 5;
     x1_ffv[i] << 1, 2, 3, 4, 5;
   }
@@ -4829,8 +4829,8 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_dim_error) {
   std::vector<Eigen::Matrix<double, 1, -1> > x2_d(5);
   std::vector<Eigen::Matrix<fvar<fvar<var> >, 1, -1> > x2_ffv(5);
   for (size_t i = 0; i < x2_d.size(); ++i) {
-    x2_d[i].resize(1,4);
-    x2_ffv[i].resize(1,4);
+    x2_d[i].resize(1, 4);
+    x2_ffv[i].resize(1, 4);
     x2_d[i] << 5, 2, 1, 4;
     x2_ffv[i] << 4, 2, 2, 4;
   }

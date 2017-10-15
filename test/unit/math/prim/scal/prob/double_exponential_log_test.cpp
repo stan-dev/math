@@ -5,7 +5,7 @@ TEST(ProbDoubleExponential, log_matches_lpdf) {
   double y = 0.8;
   double mu = 1.1;
   double sigma = 2.3;
-  
+
   EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf(y, mu, sigma)),
                   (stan::math::double_exponential_log(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<true>(y, mu, sigma)),

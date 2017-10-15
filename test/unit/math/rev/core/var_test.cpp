@@ -18,13 +18,13 @@ TEST_F(AgradRev, ctorOverloads) {
 
   // make sure copy ctor is used rather than casting vari* to unsigned int
   EXPECT_FLOAT_EQ(12.3, var(new vari(12.3)).val());
-  
+
   // double
   EXPECT_FLOAT_EQ(3.7, var(3.7).val());
 
   // long double
   EXPECT_FLOAT_EQ(3.7, var(static_cast<long double>(3.7)).val());
-  
+
   // float
   EXPECT_FLOAT_EQ(3.7, var(static_cast<float>(3.7)).val());
 
@@ -71,35 +71,35 @@ TEST_F(AgradRev, ctorOverloads) {
 
 }
 
-TEST_F(AgradRev,a_eq_x) {
+TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
-  EXPECT_FLOAT_EQ(5.0,a.val());
+  EXPECT_FLOAT_EQ(5.0, a.val());
 }
 
-TEST_F(AgradRev,a_of_x) {
+TEST_F(AgradRev, a_of_x) {
   AVAR a(6.0);
-  EXPECT_FLOAT_EQ(6.0,a.val());
+  EXPECT_FLOAT_EQ(6.0, a.val());
 }
 
-TEST_F(AgradRev,a__a_eq_x) {
+TEST_F(AgradRev, a__a_eq_x) {
   AVAR a;
   a = 7.0;
-  EXPECT_FLOAT_EQ(7.0,a.val());
+  EXPECT_FLOAT_EQ(7.0, a.val());
 }
 
-TEST_F(AgradRev,eq_a) {
+TEST_F(AgradRev, eq_a) {
   AVAR a = 5.0;
   AVAR f = a;
   AVEC x = createAVEC(a);
   VEC dx;
-  f.grad(x,dx);
-  EXPECT_FLOAT_EQ(1.0,dx[0]);
+  f.grad(x, dx);
+  EXPECT_FLOAT_EQ(1.0, dx[0]);
 }
 
-TEST_F(AgradRev,a_ostream) {
+TEST_F(AgradRev, a_ostream) {
   AVAR a = 6.0;
   std::ostringstream os;
-  
+
   os << a;
   EXPECT_EQ ("6", os.str());
 
@@ -114,8 +114,8 @@ TEST_F(AgradRev, smart_ptrs) {
   EXPECT_FLOAT_EQ(2.0, (*a).val_);
   EXPECT_FLOAT_EQ(2.0, a->val_);
 
-  EXPECT_FLOAT_EQ(2.0,(*a.vi_).val_);
-  EXPECT_FLOAT_EQ(2.0,a.vi_->val_);
+  EXPECT_FLOAT_EQ(2.0, (*a.vi_).val_);
+  EXPECT_FLOAT_EQ(2.0, a.vi_->val_);
 }
 
 TEST_F(AgradRev, stackAllocation) {
@@ -128,15 +128,15 @@ TEST_F(AgradRev, stackAllocation) {
   var a(&ai);
   var b(&bi);
 
-  AVEC x = createAVEC(a,b);
+  AVEC x = createAVEC(a, b);
   var f = a * b;
 
   VEC g;
-  f.grad(x,g);
-  
-  EXPECT_EQ(2U,g.size());
-  EXPECT_FLOAT_EQ(2.0,g[0]);
-  EXPECT_FLOAT_EQ(1.0,g[1]);
+  f.grad(x, g);
+
+  EXPECT_EQ(2U, g.size());
+  EXPECT_FLOAT_EQ(2.0, g[0]);
+  EXPECT_FLOAT_EQ(1.0, g[1]);
 }
 
 TEST_F(AgradRev, print) {
@@ -161,11 +161,11 @@ TEST_F(AgradRev, print) {
 
 
 // should really be doing this test with a mock object using ctor
-// vari_(double,bool);  as in:
+// vari_(double, bool);  as in:
 //
 // struct nostack_test_vari : public stan::math::vari {
-//   nostack_test_vari(double x) 
-//   : stan::math::vari(x,false) {  
+//   nostack_test_vari(double x)
+//   : stan::math::vari(x, false) {
 //   }
 //   void chain() {
 //     // no op on the chain
@@ -174,21 +174,21 @@ TEST_F(AgradRev, print) {
 
 // struct both_test_vari : public stan::math::vari {
 //   both_test_vari(vari* vi, vari* bi) {
-    
+
 //   }
 // };
 
 // var foo(var y, var z) {
-//   return y * 
+//   return y *
 // }
 
 
 struct gradable {
   AVEC x_;
   AVAR f_;
-  Eigen::Matrix<double,Eigen::Dynamic,1> g_expected_;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected_;
   gradable(const AVEC& x, const AVAR& f,
-           const Eigen::Matrix<double,Eigen::Dynamic,1>& g_expected)
+           const Eigen::Matrix<double, Eigen::Dynamic, 1>& g_expected)
     : x_(x), f_(f), g_expected_(g_expected) {
   }
   void test() {
@@ -209,28 +209,28 @@ gradable setup_quad_form() {
 
   Matrix<var, Dynamic, 1> u(3);
   u << 2, 3, 5;
-  
-  Matrix<var, Dynamic, Dynamic> S(3,3);
+
+  Matrix<var, Dynamic, Dynamic> S(3, 3);
   S << 7, 11, 13,
     17, 19, 23,
     29, 31, 37;
-  
+
   vector<var> x;
   for (int i = 0; i < u.size(); ++i)
     x.push_back(u(i));
   for (int i = 0; i < S.size(); ++i)
     x.push_back(S(i));
-    
-  var f = quad_form(S,u);
 
-  Matrix<double,1,Dynamic> g_expected(12);
-  g_expected 
+  var f = quad_form(S, u);
+
+  Matrix<double, 1, Dynamic> g_expected(12);
+  g_expected
     << 322, 440, 616,
     4, 6, 10,
     6, 9, 15,
     10, 15, 25;
 
-  return gradable(x,f,g_expected);
+  return gradable(x, f, g_expected);
 }
 
 gradable setup_simple() {
@@ -240,9 +240,9 @@ gradable setup_simple() {
   x.push_back(a);
   x.push_back(b);
   AVAR f = 2 * a * b;
-  Eigen::Matrix<double,Eigen::Dynamic,1> g_expected(2);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected(2);
   g_expected << 14, 6;
-  return gradable(x,f,g_expected);
+  return gradable(x, f, g_expected);
 }
 
 
@@ -272,7 +272,7 @@ TEST_F(AgradRev, nestedGradient1) {
   using stan::math::recover_memory_nested;
   using stan::math::start_nested;
 
-  gradable g0 = setup_simple(); 
+  gradable g0 = setup_simple();
 
   start_nested();
   gradable g1 = setup_quad_form();
@@ -292,7 +292,7 @@ TEST_F(AgradRev, nestedGradient2) {
   using stan::math::recover_memory;
   using stan::math::recover_memory_nested;
   using stan::math::start_nested;
-  
+
   gradable g0 = setup_quad_form();
 
   start_nested();

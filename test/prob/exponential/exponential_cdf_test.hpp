@@ -21,8 +21,8 @@ public:
     parameters.push_back(param);
     cdf.push_back(0.99999999999999999999999996);  // expected cdf
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
     index.push_back(0U);
@@ -30,7 +30,7 @@ public:
 
     index.push_back(0U);
     value.push_back(-numeric_limits<double>::infinity());
-    
+
     // beta
     index.push_back(1U);
     value.push_back(0.0);
@@ -52,24 +52,24 @@ public:
   double lower_bound() {
     return 0.0;
   }
-  
+
   bool has_upper_bound() {
     return false;
   }
 
   template <typename T_y, typename T_inv_scale, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_inv_scale>::type 
+  typename stan::return_type<T_y, T_inv_scale>::type
   cdf(const T_y& y, const T_inv_scale& beta, const T2&,
       const T3&, const T4&, const T5&) {
     return stan::math::exponential_cdf(y, beta);
   }
-  
-  
+
+
   template <typename T_y, typename T_inv_scale, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_inv_scale>::type 
-  cdf_function(const T_y& y, const T_inv_scale& beta, 
+  typename stan::return_type<T_y, T_inv_scale>::type
+  cdf_function(const T_y& y, const T_inv_scale& beta,
                const T2&, const T3&, const T4&, const T5&) {
     using std::log;
     using std::exp;

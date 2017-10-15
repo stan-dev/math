@@ -7,9 +7,9 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/util.hpp>
 
-//calculates finite diffs for integrate_ode_rk45 with varying parameters
+// calculates finite diffs for integrate_ode_rk45 with varying parameters
 template <typename F>
-std::vector<std::vector<double> > 
+std::vector<std::vector<double> >
 finite_diff_params(const F& f,
                    const double& t_in,
                    const std::vector<double>& ts,
@@ -42,15 +42,15 @@ finite_diff_params(const F& f,
 
   std::vector<std::vector<double> > results(ts.size());
 
-  for (size_t i = 0; i < ode_res_ub.size(); i++) 
+  for (size_t i = 0; i < ode_res_ub.size(); i++)
     for (size_t j = 0; j < ode_res_ub[j].size(); j++)
       results[i].push_back((ode_res_ub[i][j] - ode_res_lb[i][j]) / (2*diff));
   return results;
 }
 
-//calculates finite diffs for integrate_ode_rk45 with varying initial positions
+// calculates finite diffs for integrate_ode_rk45 with varying initial positions
 template <typename F>
-std::vector<std::vector<double> > 
+std::vector<std::vector<double> >
 finite_diff_initial_position(const F& f,
                              const double& t_in,
                              const std::vector<double>& ts,
@@ -83,15 +83,15 @@ finite_diff_initial_position(const F& f,
 
   std::vector<std::vector<double> > results(ts.size());
 
-  for (size_t i = 0; i < ode_res_ub.size(); i++) 
+  for (size_t i = 0; i < ode_res_ub.size(); i++)
     for (size_t j = 0; j < ode_res_ub[j].size(); j++)
       results[i].push_back((ode_res_ub[i][j] - ode_res_lb[i][j]) / (2*diff));
   return results;
 }
 
- 
-//test integrate_ode_rk45 with initial positions as doubles and parameters as vars 
-//against finite differences
+
+// test integrate_ode_rk45 with initial positions as doubles and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_dv(const F& f,
                              const double& t_in,
@@ -118,7 +118,7 @@ void test_ode_finite_diff_dv(const F& f,
 
   ode_res = stan::math::integrate_ode_rk45(f, y_in, t_in,
                                            ts, theta_v, x, x_int, &msgs);
-  
+
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
       grads_eff.clear();
@@ -128,7 +128,7 @@ void test_ode_finite_diff_dv(const F& f,
         EXPECT_NEAR(grads_eff[k], finite_diff_res[k][i][j], diff2)
           << "Gradient of integrate_ode_rk45 failed with initial positions"
           << " known and parameters unknown at time index " << i
-          << ", equation index " << j 
+          << ", equation index " << j
           << ", and parameter index: " << k;
 
       stan::math::set_zero_all_adjoints();
@@ -136,8 +136,8 @@ void test_ode_finite_diff_dv(const F& f,
   }
 }
 
-//test integrate_ode_rk45 with initial positions as vars and parameters as doubles 
-//against finite differences
+// test integrate_ode_rk45 with initial positions as vars and parameters as doubles
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vd(const F& f,
                              const double& t_in,
@@ -174,7 +174,7 @@ void test_ode_finite_diff_vd(const F& f,
         EXPECT_NEAR(grads_eff[k], finite_diff_res[k][i][j], diff2)
           << "Gradient of integrate_ode_rk45 failed with initial positions"
           << " unknown and parameters known at time index " << i
-          << ", equation index " << j 
+          << ", equation index " << j
           << ", and parameter index: " << k;
 
       stan::math::set_zero_all_adjoints();
@@ -182,8 +182,8 @@ void test_ode_finite_diff_vd(const F& f,
   }
 }
 
-//test integrate_ode_rk45 with initial positions as vars and parameters as vars 
-//against finite differences
+// test integrate_ode_rk45 with initial positions as vars and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vv(const F& f,
                              const double& t_in,
@@ -236,13 +236,13 @@ void test_ode_finite_diff_vv(const F& f,
         EXPECT_NEAR(grads_eff[k+y_in.size()], finite_diff_res_p[k][i][j], diff2)
           << "Gradient of integrate_ode_rk45 failed with initial positions"
           << " unknown and parameters unknown for param at time index " << i
-          << ", equation index " << j 
+          << ", equation index " << j
           << ", and parameter index: " << k;
       for (size_t k = 0; k < y_in.size(); k++)
         EXPECT_NEAR(grads_eff[k], finite_diff_res_y[k][i][j], diff2)
           << "Gradient of integrate_ode_rk45 failed with initial positions"
           << " unknown and parameters known for initial position at time index " << i
-          << ", equation index " << j 
+          << ", equation index " << j
           << ", and parameter index: " << k;
 
       stan::math::set_zero_all_adjoints();
@@ -260,7 +260,7 @@ void test_ode_error_conditions(F& f,
                                const std::vector<int>& x_int) {
   using stan::math::integrate_ode_rk45;
   std::stringstream msgs;
-    
+
   ASSERT_NO_THROW(integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int, 0));
   ASSERT_EQ("", msgs.str());
 
@@ -270,7 +270,7 @@ void test_ode_error_conditions(F& f,
                    std::invalid_argument,
                    "initial state has size 0");
   EXPECT_EQ("", msgs.str());
-  
+
   msgs.clear();
   double t0_bad = ts[0] + 0.1;
   std::stringstream expected_msg;
@@ -335,7 +335,7 @@ void test_ode_error_conditions_nan(F& f,
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::stringstream expected_is_nan;
   expected_is_nan << "is " << nan;
-  
+
   ASSERT_NO_THROW(integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int, 0));
   ASSERT_EQ("", msgs.str());
 
@@ -349,7 +349,7 @@ void test_ode_error_conditions_nan(F& f,
                    std::domain_error,
                    expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
-  
+
   msgs.clear();
   double t0_bad = nan;
   EXPECT_THROW_MSG(integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
@@ -432,7 +432,7 @@ void test_ode_error_conditions_inf(F& f,
                    std::domain_error,
                    expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
-  
+
   msgs.clear();
   double t0_bad = inf;
   EXPECT_THROW_MSG(integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
@@ -517,7 +517,7 @@ void test_ode_error_conditions_vd(const F& f,
                                   const std::vector<double>& x,
                                   const std::vector<int>& x_int) {
   std::vector<stan::math::var> y_var;
-  for (size_t i = 0; i < y_in.size(); i++) 
+  for (size_t i = 0; i < y_in.size(); i++)
     y_var.push_back(y_in[i]);
   test_ode_error_conditions(f, t_in, ts, y_var, theta, x, x_int);
   test_ode_error_conditions_nan(f, t_in, ts, y_var, theta, x, x_int);
@@ -531,7 +531,7 @@ void test_ode_error_conditions_dv(const F& f,
                                   const std::vector<double>& x,
                                   const std::vector<int>& x_int) {
   std::vector<stan::math::var> theta_var;
-  for (size_t i = 0; i < theta.size(); i++) 
+  for (size_t i = 0; i < theta.size(); i++)
     theta_var.push_back(theta[i]);
   test_ode_error_conditions(f, t_in, ts, y_in, theta_var, x, x_int);
   test_ode_error_conditions_nan(f, t_in, ts, y_in, theta_var, x, x_int);
@@ -545,10 +545,10 @@ void test_ode_error_conditions_vv(const F& f,
                                   const std::vector<double>& x,
                                   const std::vector<int>& x_int) {
   std::vector<stan::math::var> y_var;
-  for (size_t i = 0; i < y_in.size(); i++) 
-    y_var.push_back(y_in[i]); 
+  for (size_t i = 0; i < y_in.size(); i++)
+    y_var.push_back(y_in[i]);
   std::vector<stan::math::var> theta_var;
-  for (size_t i = 0; i < theta.size(); i++) 
+  for (size_t i = 0; i < theta.size(); i++)
     theta_var.push_back(theta[i]);
   test_ode_error_conditions(f, t_in, ts, y_var, theta_var, x, x_int);
   test_ode_error_conditions_nan(f, t_in, ts, y_var, theta_var, x, x_int);

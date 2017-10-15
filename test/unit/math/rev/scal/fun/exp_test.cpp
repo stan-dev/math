@@ -3,14 +3,14 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,exp_a) {
+TEST(AgradRev, exp_a) {
   AVAR a(6.0);
   AVAR f = exp(a); // mix exp() functs w/o namespace
-  EXPECT_FLOAT_EQ(exp(6.0),f.val());
+  EXPECT_FLOAT_EQ(exp(6.0), f.val());
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(exp(6.0),g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(exp(6.0), g[0]);
 }
 
 struct exp_fun {
@@ -21,9 +21,9 @@ struct exp_fun {
   }
 };
 
-TEST(AgradRev,exp_NaN) {
+TEST(AgradRev, exp_NaN) {
   exp_fun exp_;
-  test_nan(exp_,false,true);
+  test_nan(exp_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

@@ -6,7 +6,7 @@ TEST(ProbExpModNormal, log_matches_lpmf) {
   double mu = 1.1;
   double sigma = 2.3;
   double lambda = 0.5;
-  
+
   EXPECT_FLOAT_EQ((stan::math::exp_mod_normal_lpdf(y, mu, lambda, sigma)),
                   (stan::math::exp_mod_normal_log(y, mu, lambda, sigma)));
   EXPECT_FLOAT_EQ((stan::math::exp_mod_normal_lpdf<true>(y, mu, lambda, sigma)),

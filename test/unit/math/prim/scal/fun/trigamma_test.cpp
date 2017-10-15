@@ -4,7 +4,7 @@
 
 TEST(MathFunctions, trigamma) {
   using stan::math::trigamma;
-  EXPECT_FLOAT_EQ(102.9757436100834515253246058208,trigamma(-2.1));
+  EXPECT_FLOAT_EQ(102.9757436100834515253246058208, trigamma(-2.1));
   EXPECT_FLOAT_EQ(stan::math::positive_infinity(), trigamma(-2.0));
   EXPECT_FLOAT_EQ(1.0e12, trigamma(0.000001));
   EXPECT_FLOAT_EQ(0.2616741772864245283534239, trigamma(4.3));
@@ -13,7 +13,7 @@ TEST(MathFunctions, trigamma) {
 
 TEST(MathFunctions, trigamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::trigamma(nan));
 }

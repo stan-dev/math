@@ -64,8 +64,8 @@ void sho_data_test(double t0) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   sho_value_test(harm_osc, y0, t0, ts, theta, x, x_int);
 }
@@ -98,8 +98,8 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   ASSERT_NO_THROW(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
                                     0, 1e-8, 1e-10, 1e6));
@@ -184,8 +184,8 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   ASSERT_NO_THROW(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
                                     0, 1e-8, 1e-10, 1e6));
@@ -272,8 +272,8 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   ASSERT_NO_THROW(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
                                     0, 1e-8, 1e-10, 1e6));
@@ -400,8 +400,8 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   std::string error_msg
     = "ode_system: size of state vector y (2) and derivative vector dy_dt (3) "

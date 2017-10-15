@@ -65,13 +65,13 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
-  for(int i = 1; i < K; i++)
+  for (int i = 1; i < K; i++)
     loc[i - 1] = i - 1;
 
   int count = 0;
   double bin [K];
   double expect [K];
-  for(int i = 0 ; i < K; i++)  {
+  for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
   }
@@ -88,7 +88,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
 
   double chi = 0;
 
-  for(int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
@@ -102,13 +102,13 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
-  for(int i = 1; i < K; i++)
+  for (int i = 1; i < K; i++)
     loc[i - 1] = i - 1;
 
   int count = 0;
   double bin [K];
   double expect [K];
-  for(int i = 0 ; i < K; i++)  {
+  for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
   }
@@ -125,7 +125,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
 
   double chi = 0;
 
-  for(int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
@@ -139,13 +139,13 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
-  for(int i = 1; i < K; i++)
+  for (int i = 1; i < K; i++)
     loc[i - 1] = i - 1;
 
   int count = 0;
   double bin [K];
   double expect [K];
-  for(int i = 0 ; i < K; i++)  {
+  for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
   }
@@ -162,7 +162,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
 
   double chi = 0;
 
-  for(int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
 

@@ -34,12 +34,12 @@ void expect_rev_row_vector_value() {
         d.push_back(build_rev_matrix<F>(template_vector));
         e.push_back(build_rev_matrix<F>(template_vector));
       }
-      vector<RowVectorXvar> fe = 
+      vector<RowVectorXvar> fe =
         F::template apply<vector<RowVectorXvar> >(e);
       EXPECT_EQ(e[i].size(), fe[i].size());
       EXPECT_EQ(e.size(), fe.size());
       expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j),
-                          fe[i](j), e[i](j)); 
+                          fe[i](j), e[i](j));
     }
   }
 }

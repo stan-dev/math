@@ -7,7 +7,7 @@ TEST(prob_transform, positive) {
 }
 TEST(prob_transform, positive_j) {
   double lp = 15.0;
-  EXPECT_FLOAT_EQ(exp(-1.0), stan::math::positive_constrain(-1.0,lp));
+  EXPECT_FLOAT_EQ(exp(-1.0), stan::math::positive_constrain(-1.0, lp));
   EXPECT_FLOAT_EQ(15.0 - 1.0, lp);
 }
 TEST(prob_transform, positive_f) {
@@ -20,7 +20,7 @@ TEST(prob_transform, positive_rt) {
   double x = -1.0;
   double xc = stan::math::positive_constrain(x);
   double xcf = stan::math::positive_free(xc);
-  EXPECT_FLOAT_EQ(x,xcf);
+  EXPECT_FLOAT_EQ(x, xcf);
   double xcfc = stan::math::positive_constrain(xcf);
-  EXPECT_FLOAT_EQ(xc,xcfc);
+  EXPECT_FLOAT_EQ(xc, xcfc);
 }

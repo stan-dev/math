@@ -3,7 +3,7 @@
 
 TEST(ProbLkjCorr, log_matches_lpmf) {
   unsigned int K = 4;
-  Eigen::MatrixXd Sigma(K,K);
+  Eigen::MatrixXd Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   double eta = 1.2;

@@ -2,15 +2,15 @@
 #include <gtest/gtest.h>
 
 TEST(ErrorHandlingMatrix, checkSpsdMatrixPosDef) {
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
-  
-  y.resize(3,3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
+
+  y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   EXPECT_NO_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix",
                                                 "y", y));
 
   y << 1, 2, 3, 2, 1, 2, 3, 2, 1;
-  EXPECT_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y), 
+  EXPECT_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y),
                std::domain_error);
 
   y.setZero();
@@ -18,23 +18,23 @@ TEST(ErrorHandlingMatrix, checkSpsdMatrixPosDef) {
 }
 
 TEST(ErrorHandlingMatrix, checkSpsdMatrixZero) {
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y = 
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>::Zero(3,3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y =
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 3);
   EXPECT_NO_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y));
 }
 
 TEST(ErrorHandlingMatrix, checkSpsdNotSquare) {
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y = 
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>::Zero(3,2);
-  EXPECT_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y), 
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y =
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Zero(3, 2);
+  EXPECT_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix", "y", y),
                std::invalid_argument);
 }
 
 TEST(ErrorHandlingMatrix, checkSpsdMatrixPosDef_nan) {
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  y.resize(3,3);
+  y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   EXPECT_NO_THROW(stan::math::check_spsd_matrix("checkSpsdMatrix",
                                                 "y", y));

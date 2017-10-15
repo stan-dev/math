@@ -45,7 +45,7 @@ TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
   int count = 0;
   int bin [K];
   double expect [K];
-  for(int i = 0 ; i < K; i++) {
+  for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
   }
@@ -61,7 +61,7 @@ TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
 
   double chi = 0;
 
-  for(int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));

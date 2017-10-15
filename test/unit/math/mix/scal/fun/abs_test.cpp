@@ -6,12 +6,12 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 
-TEST(AgradFwdAbs,FvarVar_1stDeriv) {
+TEST(AgradFwdAbs, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::abs;
 
-  fvar<var> x(2.0,1.0);
+  fvar<var> x(2.0, 1.0);
   fvar<var> a = abs(x);
 
   EXPECT_FLOAT_EQ(2.0, a.val_.val());
@@ -19,30 +19,30 @@ TEST(AgradFwdAbs,FvarVar_1stDeriv) {
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.val_.grad(y,g);
+  a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(1.0, g[0]);
 }
-TEST(AgradFwdAbs,FvarVar_2ndDeriv) {
+TEST(AgradFwdAbs, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::abs;
 
-  fvar<var> x(2.0,1.0);
+  fvar<var> x(2.0, 1.0);
   fvar<var> a = abs(x);
 
   AVEC z = createAVEC(x.val_);
   VEC h;
-  a.d_.grad(z,h);
+  a.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
 }
 
-TEST(AgradFwdAbs,FvarFvarVar_1stDeriv) {
+TEST(AgradFwdAbs, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::abs;
 
   fvar<fvar<var> > y;
-  y.val_ = fvar<var>(4.0,1.0);
+  y.val_ = fvar<var>(4.0, 1.0);
 
   fvar<fvar<var> > b = abs(y);
 
@@ -53,25 +53,25 @@ TEST(AgradFwdAbs,FvarFvarVar_1stDeriv) {
 
   AVEC z = createAVEC(y.val_.val_);
   VEC h;
-  b.val_.val_.grad(z,h);
+  b.val_.val_.grad(z, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
 }
-TEST(AgradFwdAbs,FvarFvarVar_2ndDeriv) {
+TEST(AgradFwdAbs, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::abs;
 
   fvar<fvar<var> > y;
-  y.val_ = fvar<var>(4.0,1.0);
+  y.val_ = fvar<var>(4.0, 1.0);
 
   fvar<fvar<var> > b = abs(y);
 
   AVEC z = createAVEC(y.val_.val_);
   VEC h;
-  b.val_.d_.grad(z,h);
+  b.val_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
 }
-TEST(AgradFwdAbs,FvarFvarVar_3rdDeriv) {
+TEST(AgradFwdAbs, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::abs;
@@ -85,7 +85,7 @@ TEST(AgradFwdAbs,FvarFvarVar_3rdDeriv) {
 
   AVEC z = createAVEC(y.val_.val_);
   VEC h;
-  b.d_.d_.grad(z,h);
+  b.d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
 }
 
@@ -97,7 +97,7 @@ struct abs_fun {
   }
 };
 
-TEST(AgradFwdAbs,abs_NaN) {
+TEST(AgradFwdAbs, abs_NaN) {
   abs_fun abs_;
-  test_nan_mix(abs_,false);
+  test_nan_mix(abs_, false);
 }

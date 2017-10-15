@@ -16,7 +16,7 @@ TEST(MathRev, squared_distance) {
   vars.push_back(v2);
   f = stan::math::squared_distance(v1, v2);
   f.grad(vars, grad_f);
-  
+
   EXPECT_FLOAT_EQ(9, f.val());
   ASSERT_EQ(2, grad_f.size());
   EXPECT_FLOAT_EQ(-6, grad_f[0]);
@@ -29,7 +29,7 @@ TEST(MathRev, squared_distance) {
   vars.push_back(v1);
   f = stan::math::squared_distance(v1, x2);
   f.grad(vars, grad_f);
-  
+
   EXPECT_FLOAT_EQ(9, f.val());
   ASSERT_EQ(1, grad_f.size());
   EXPECT_FLOAT_EQ(-6, grad_f[0]);
@@ -37,12 +37,12 @@ TEST(MathRev, squared_distance) {
   vars.clear();
 
 
-  
+
   v2 = 4;
   vars.push_back(v2);
   f = stan::math::squared_distance(x1, v2);
   f.grad(vars, grad_f);
-  
+
   EXPECT_FLOAT_EQ(9, f.val());
   ASSERT_EQ(1, grad_f.size());
   EXPECT_FLOAT_EQ(6, grad_f[0]);
@@ -55,7 +55,7 @@ TEST(MathRev, squared_distance_nan) {
   stan::math::var x_v = 1;
   double nan = std::numeric_limits<double>::quiet_NaN();
   stan::math::var nan_v = std::numeric_limits<double>::quiet_NaN();
-    
+
   EXPECT_THROW(stan::math::squared_distance(x_v, nan_v),
                std::domain_error);
   EXPECT_THROW(stan::math::squared_distance(nan_v, x_v),
@@ -82,7 +82,7 @@ TEST(MathRev, squared_distance_inf) {
   stan::math::var x_v = 1;
   double inf = std::numeric_limits<double>::infinity();
   stan::math::var inf_v = std::numeric_limits<double>::infinity();
-    
+
   EXPECT_THROW(stan::math::squared_distance(x_v, inf_v),
                std::domain_error);
   EXPECT_THROW(stan::math::squared_distance(inf_v, x_v),

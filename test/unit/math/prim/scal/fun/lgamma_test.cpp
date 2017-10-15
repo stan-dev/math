@@ -5,11 +5,11 @@
 
 TEST(MathFunctions, lgamma) {
   EXPECT_TRUE(boost::math::isinf(lgamma(0.0)));
-}  
+}
 
 TEST(MathFunctions, lgammaStanMathUsing) {
   using stan::math::lgamma;
-}  
+}
 
 TEST(MathFunctions, lgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();

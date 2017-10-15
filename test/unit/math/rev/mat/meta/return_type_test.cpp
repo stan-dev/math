@@ -20,7 +20,7 @@ TEST(MetaTraits, ReturnTypeVarMat) {
 }
 
 TEST(MetaTraits, ReturnTypeMatMultivar) {
-  //test::expect_same_type<var, return_type<vector<vector_v> >::type>();
+  // test::expect_same_type<var, return_type<vector<vector_v> >::type>();
   test::expect_same_type<var, return_type<vector<matrix_v> >::type>();
   test::expect_same_type<var, return_type<vector<matrix_v>, double>::type>();
   test::expect_same_type<var, return_type<vector<matrix_v>, var>::type>();

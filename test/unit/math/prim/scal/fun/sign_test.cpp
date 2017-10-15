@@ -15,6 +15,6 @@ TEST(MathFunctions, sign) {
 
 TEST(MathFunctions, sign_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_EQ(1, stan::math::sign(nan));
 }

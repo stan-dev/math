@@ -4,7 +4,7 @@
 using stan::math::check_greater;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar,CheckGreater) {
+TEST(AgradRevErrorHandlingScalar, CheckGreater) {
   const std::string function = "check_greater";
   var x = 10.0;
   var lb = 0.0;
@@ -18,7 +18,7 @@ TEST(AgradRevErrorHandlingScalar,CheckGreater) {
     << "check_greater should throw an exception with x < lb";
 
   x = lb;
-  EXPECT_THROW(check_greater(function, "x", x, lb),std::domain_error)
+  EXPECT_THROW(check_greater(function, "x", x, lb), std::domain_error)
     << "check_greater should throw an exception with x == lb";
 
   x = std::numeric_limits<double>::infinity();
@@ -33,7 +33,7 @@ TEST(AgradRevErrorHandlingScalar,CheckGreater) {
 
   x = std::numeric_limits<double>::infinity();
   lb = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_greater(function, "x", x, lb),std::domain_error)
+  EXPECT_THROW(check_greater(function, "x", x, lb), std::domain_error)
     << "check_greater should throw an exception with x == Inf and lb == Inf";
   stan::math::recover_memory();
 }
@@ -47,15 +47,15 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(1U,stack_size);
-  EXPECT_NO_THROW(check_greater(function,"a",a,2.0));
+  EXPECT_EQ(1U, stack_size);
+  EXPECT_NO_THROW(check_greater(function, "a", a, 2.0));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(1U,stack_size_after_call);
+  EXPECT_EQ(1U, stack_size_after_call);
 
-  EXPECT_THROW(check_greater(function,"a",a,10.0),std::domain_error);
+  EXPECT_THROW(check_greater(function, "a", a, 10.0), std::domain_error);
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(1U,stack_size_after_call);
+  EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();
 }

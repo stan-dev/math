@@ -1,14 +1,14 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ErrorHandlingScalar,CheckPositive) {
+TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   const std::string function = "check_positive";
 
   EXPECT_NO_THROW(check_positive(function, "x", 3.0));
 }
 
-TEST(ErrorHandlingScalar,CheckPositive_nan) {
+TEST(ErrorHandlingScalar, CheckPositive_nan) {
   using stan::math::check_positive;
   const std::string function = "check_positive";
 

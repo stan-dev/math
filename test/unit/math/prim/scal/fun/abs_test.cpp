@@ -30,7 +30,7 @@ TEST(MathFunctions, abs2){
 
 TEST(MathFunctions, abs_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::abs(nan));
 }

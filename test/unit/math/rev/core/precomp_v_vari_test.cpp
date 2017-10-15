@@ -6,7 +6,7 @@ TEST(StanAgradRevInternal, precomp_v_vari) {
   double value, gradient;
   AVAR x1(2);
   AVAR y;
-  
+
   value = 1;
   gradient = 4;
 

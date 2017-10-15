@@ -28,7 +28,7 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
 
   std::vector<double> ts_short;
   ts_short.push_back(1);
-  
+
   std::vector<stan::math::var> theta_v(4);
 
   theta_v[0] = 1.0;
@@ -45,5 +45,5 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
                    "Max number of iterations exceeded (100).");
 
   EXPECT_NO_THROW(stan::math::integrate_ode_rk45(f_, y0_v, t0, ts_short, theta_v, data, data_int, 0, 1E-6, 1E-6, 100));
-  
+
 }

@@ -24,7 +24,7 @@ void sho_value_test(F harm_osc,
                     std::vector<double>& theta,
                     std::vector<double>& x,
                     std::vector<int>& x_int) {
-  
+
   using stan::math::var;
   using stan::math::promote_scalar;
 
@@ -41,7 +41,7 @@ void sho_value_test(F harm_osc,
 }
 
 void sho_finite_diff_test(double t0) {
-  using stan::math::var;  
+  using stan::math::var;
   harm_osc_ode_fun harm_osc;
 
   std::vector<double> theta;
@@ -59,15 +59,15 @@ void sho_finite_diff_test(double t0) {
   std::vector<double> x;
   std::vector<int> x_int;
 
-  test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8,1e-4);
+  test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
-  sho_value_test<harm_osc_ode_fun,double,var>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_fun,var,double>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_fun,var,var>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_fun, double, var>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_fun, var, double>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_fun, var, var>(harm_osc, y0, t0, ts, theta, x, x_int);
 }
 
 void sho_data_finite_diff_test(double t0) {
-  using stan::math::var;  
+  using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
 
   std::vector<double> theta;
@@ -82,15 +82,15 @@ void sho_data_finite_diff_test(double t0) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
-  test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8,1e-4);
+  test_ode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
-  sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts, theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,var>(harm_osc, y0, t0, ts, theta, x, x_int);
-  
+  sho_value_test<harm_osc_ode_data_fun, double, var>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_data_fun, var, double>(harm_osc, y0, t0, ts, theta, x, x_int);
+  sho_value_test<harm_osc_ode_data_fun, var, var>(harm_osc, y0, t0, ts, theta, x, x_int);
+
 }
 
 

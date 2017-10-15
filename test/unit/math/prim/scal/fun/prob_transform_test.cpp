@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 TEST(prob_transform, prob) {
-  EXPECT_FLOAT_EQ(stan::math::inv_logit(-1.0), 
+  EXPECT_FLOAT_EQ(stan::math::inv_logit(-1.0),
                   stan::math::prob_constrain(-1.0));
 }
 TEST(prob_transform, prob_j) {
@@ -11,9 +11,9 @@ TEST(prob_transform, prob_j) {
   double L = 0.0;
   double U = 1.0;
   double x = -1.0;
-  EXPECT_FLOAT_EQ(L + (U - L) * stan::math::inv_logit(x), 
-                  stan::math::prob_constrain(x,lp));
-  EXPECT_FLOAT_EQ(-17.0 + log(U - L) + log(stan::math::inv_logit(x)) 
+  EXPECT_FLOAT_EQ(L + (U - L) * stan::math::inv_logit(x),
+                  stan::math::prob_constrain(x, lp));
+  EXPECT_FLOAT_EQ(-17.0 + log(U - L) + log(stan::math::inv_logit(x))
                   + log(1.0 - stan::math::inv_logit(x)),
                   lp);
 }
@@ -32,7 +32,7 @@ TEST(prob_transform, prob_rt) {
   double x = -1.0;
   double xc = stan::math::prob_constrain(x);
   double xcf = stan::math::prob_free(xc);
-  EXPECT_FLOAT_EQ(x,xcf);
+  EXPECT_FLOAT_EQ(x, xcf);
   double xcfc = stan::math::prob_constrain(xcf);
-  EXPECT_FLOAT_EQ(xc,xcfc);
+  EXPECT_FLOAT_EQ(xc, xcfc);
 }

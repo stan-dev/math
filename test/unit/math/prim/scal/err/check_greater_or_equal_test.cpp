@@ -3,7 +3,7 @@
 
 using stan::math::check_greater_or_equal;
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
   const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
@@ -36,7 +36,7 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
     << "check_greater should not throw an exception with x == Inf and lb == Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
   const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;

@@ -1,11 +1,11 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(ErrorHandlingScalar,CheckPositive) {
+TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   const std::string function = "check_positive";
 
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_mat(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << 1, 2, 3;
   for (int i = 0; i < x_mat.size(); i++) {
     EXPECT_NO_THROW(check_positive(function, "x", x_mat));
@@ -16,13 +16,13 @@ TEST(ErrorHandlingScalar,CheckPositive) {
                std::domain_error);
 }
 
-TEST(ErrorHandlingScalar,CheckPositive_nan) {
+TEST(ErrorHandlingScalar, CheckPositive_nan) {
   using stan::math::check_positive;
   const std::string function = "check_positive";
 
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_mat(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat   << 1, 2, 3;
   for (int i = 0; i < x_mat.size(); i++) {
     x_mat(i) = nan;

@@ -26,7 +26,7 @@ std::vector<double> vdouble_from_vvar(std::vector<double> vv) {
 }
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-std::vector<double> 
+std::vector<double>
 finite_diffs_multi_normal(const F& fun,
              const std::vector<T_y>& vec_y,
              const std::vector<T_mu>& vec_mu,
@@ -38,18 +38,18 @@ finite_diffs_multi_normal(const F& fun,
   std::vector<double> vec_y_plus = vdouble_from_vvar(vec_y);
   std::vector<double> vec_y_minus = vec_y_plus;
   std::vector<double> vec_mu_plus = vdouble_from_vvar(vec_mu);
-  std::vector<double> vec_mu_minus = vec_mu_plus;  
+  std::vector<double> vec_mu_minus = vec_mu_plus;
   std::vector<double> vec_sigma_plus = vdouble_from_vvar(vec_sigma);
-  std::vector<double> vec_sigma_minus = vec_sigma_plus;  
-    
+  std::vector<double> vec_sigma_minus = vec_sigma_plus;
+
   if (!stan::is_constant<T_y>::value) {
     for (size_t i = 0; i < vec_y.size(); ++i) {
       double recover_vec_y_plus = vec_y_plus[i];
       double recover_vec_y_minus = vec_y_minus[i];
       vec_y_plus[i] += epsilon;
       vec_y_minus[i] -= epsilon;
-      diffs.push_back((fun(vec_y_plus,vec_mu_plus,vec_sigma_plus) -
-                      fun(vec_y_minus,vec_mu_minus,vec_sigma_minus)) /
+      diffs.push_back((fun(vec_y_plus, vec_mu_plus, vec_sigma_plus) -
+                      fun(vec_y_minus, vec_mu_minus, vec_sigma_minus)) /
                       (2 * epsilon));
       vec_y_plus[i] = recover_vec_y_plus;
       vec_y_minus[i] = recover_vec_y_minus;
@@ -61,8 +61,8 @@ finite_diffs_multi_normal(const F& fun,
       double recover_vec_mu_minus = vec_mu_minus[i];
       vec_mu_plus[i] += epsilon;
       vec_mu_minus[i] -= epsilon;
-      diffs.push_back((fun(vec_y_plus,vec_mu_plus,vec_sigma_plus) -
-                      fun(vec_y_minus,vec_mu_minus,vec_sigma_minus)) /
+      diffs.push_back((fun(vec_y_plus, vec_mu_plus, vec_sigma_plus) -
+                      fun(vec_y_minus, vec_mu_minus, vec_sigma_minus)) /
                       (2 * epsilon));
       vec_mu_plus[i] = recover_vec_mu_plus;
       vec_mu_minus[i] = recover_vec_mu_minus;
@@ -74,8 +74,8 @@ finite_diffs_multi_normal(const F& fun,
       double recover_vec_sigma_minus = vec_sigma_minus[i];
       vec_sigma_plus[i] += epsilon;
       vec_sigma_minus[i] -= epsilon;
-      diffs.push_back((fun(vec_y_plus,vec_mu_plus,vec_sigma_plus) -
-                      fun(vec_y_minus,vec_mu_minus,vec_sigma_minus)) /
+      diffs.push_back((fun(vec_y_plus, vec_mu_plus, vec_sigma_plus) -
+                      fun(vec_y_minus, vec_mu_minus, vec_sigma_minus)) /
                       (2 * epsilon));
       vec_sigma_plus[i] = recover_vec_sigma_plus;
       vec_sigma_minus[i] = recover_vec_sigma_minus;
@@ -106,7 +106,7 @@ grad_multi_normal(const F& fun,
     for (size_t i = 0; i < vec_sigma.size(); i++)
       vec_vars.push_back(vec_sigma[i]);
   }
-  fx.grad(vec_vars,grad);
+  fx.grad(vec_vars, grad);
   return grad;
 }
 
@@ -117,8 +117,8 @@ void test_grad_multi_normal(const F& fun,
                const std::vector<T_mu> & vec_mu,
                const std::vector<T_sigma> & vec_sigma) {
   using std::fabs;
-  std::vector<double> diffs_finite = finite_diffs_multi_normal(fun,vec_y,vec_mu,vec_sigma);
-  std::vector<double> diffs_var = grad_multi_normal(fun,vec_y,vec_mu,vec_sigma);
+  std::vector<double> diffs_finite = finite_diffs_multi_normal(fun, vec_y, vec_mu, vec_sigma);
+  std::vector<double> diffs_var = grad_multi_normal(fun, vec_y, vec_mu, vec_sigma);
   EXPECT_EQ(diffs_finite.size(), diffs_var.size());
   for (size_t i = 0; i < diffs_finite.size(); ++i) {
     double tolerance = 1e-6 * fmax(fabs(diffs_finite[i]), fabs(diffs_var[i])) + 1e-14;

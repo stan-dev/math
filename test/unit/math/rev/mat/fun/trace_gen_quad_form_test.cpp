@@ -7,18 +7,18 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat) {
   using stan::math::trace_gen_quad_form;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  
-  
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -27,47 +27,47 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   // double-double-double
-  res = trace_gen_quad_form(cd,ad,bd);
+  res = trace_gen_quad_form(cd, ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // double-var-double
-  res = trace_gen_quad_form(cd,av,bd);
+  res = trace_gen_quad_form(cd, av, bd);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // double-double-var
-  res = trace_gen_quad_form(cd,ad,bv);
+  res = trace_gen_quad_form(cd, ad, bv);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // double-var-var
-  res = trace_gen_quad_form(cd,av,bv);
+  res = trace_gen_quad_form(cd, av, bv);
   EXPECT_FLOAT_EQ(26758, res.val());
 
   // var-double-double
-  res = trace_gen_quad_form(cv,ad,bd);
+  res = trace_gen_quad_form(cv, ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // var-var-double
-  res = trace_gen_quad_form(cv,av,bd);
+  res = trace_gen_quad_form(cv, av, bd);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // var-double-var
-  res = trace_gen_quad_form(cv,ad,bv);
+  res = trace_gen_quad_form(cv, ad, bv);
   EXPECT_FLOAT_EQ(26758, res.val());
-  
+
   // var-var-var
-  res = trace_gen_quad_form(cv,av,bv);
+  res = trace_gen_quad_form(cv, av, bv);
   EXPECT_FLOAT_EQ(26758, res.val());
 }
 
@@ -76,19 +76,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvd) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -97,33 +97,33 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvd) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqda(bd*cd.transpose()*bd.transpose());
   matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
   matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
-  
+
   // var-var
-  res = trace_gen_quad_form(cd,av,bd);
-  
+  res = trace_gen_quad_form(cd, av, bd);
+
   vars.clear();
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      vars.push_back(av(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(av(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqda(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_ddv) {
@@ -131,19 +131,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_ddv) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -152,31 +152,31 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_ddv) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
-  
+
   // var-var
-  res = trace_gen_quad_form(cd,ad,bv);
-  
+  res = trace_gen_quad_form(cd, ad, bv);
+
   vars.clear();
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(bv(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(bv(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdb(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdb(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdd) {
@@ -184,19 +184,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdd) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -205,30 +205,30 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdd) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
-  
-  res = trace_gen_quad_form(cv,ad,bd);
-  
+
+  res = trace_gen_quad_form(cv, ad, bd);
+
   vars.clear();
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(cv(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(cv(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdc(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdc(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvd) {
@@ -236,19 +236,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvd) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -257,37 +257,37 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvd) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqda(bd*cd.transpose()*bd.transpose());
   matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
-  
-  res = trace_gen_quad_form(cv,av,bd);
-  
+
+  res = trace_gen_quad_form(cv, av, bd);
+
   vars.clear();
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(cv(i,j));
+      vars.push_back(cv(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      vars.push_back(av(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(av(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdc(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdc(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqda(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdv) {
@@ -295,19 +295,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdv) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -316,37 +316,37 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdv) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
   matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
-  
-  res = trace_gen_quad_form(cv,ad,bv);
-  
+
+  res = trace_gen_quad_form(cv, ad, bv);
+
   vars.clear();
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(cv(i,j));
+      vars.push_back(cv(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(bv(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(bv(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdc(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdc(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdb(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdb(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvv) {
@@ -354,19 +354,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvv) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -375,37 +375,37 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvv) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqda(bd*cd.transpose()*bd.transpose());
   matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
-  
-  res = trace_gen_quad_form(cd,av,bv);
-  
+
+  res = trace_gen_quad_form(cd, av, bv);
+
   vars.clear();
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(bv(i,j));
+      vars.push_back(bv(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      vars.push_back(av(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(av(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdb(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdb(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqda(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
 TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
@@ -413,19 +413,19 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
   using stan::math::sum;
   using stan::math::matrix_v;
   using stan::math::matrix_d;
-  
-  matrix_v av(4,4);
-  matrix_d ad(4,4);
-  matrix_d bd(4,2);
-  matrix_v bv(4,2);
-  matrix_d cd(2,2);
-  matrix_v cv(2,2);
+
+  matrix_v av(4, 4);
+  matrix_d ad(4, 4);
+  matrix_d bd(4, 2);
+  matrix_v bv(4, 2);
+  matrix_d cd(2, 2);
+  matrix_v cv(2, 2);
   AVAR res;
   AVEC vars;
   VEC grad;
-  size_t i,j,pos;
-  
-  
+  size_t i, j, pos;
+
+
   bd << 100, 10,
   0,  1,
   -3, -3,
@@ -434,62 +434,62 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
   0,  1,
   -3, -3,
   5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0, 
+  ad << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0, 
+  av << 2.0,  3.0, 4.0,   5.0,
   6.0, 10.0, 2.0,   2.0,
   7.0,  2.0, 7.0,   1.0,
   8.0,  2.0, 1.0, 112.0;
-  cd.setIdentity(2,2);
-  cv.setIdentity(2,2);
-  
+  cd.setIdentity(2, 2);
+  cv.setIdentity(2, 2);
+
   matrix_d dqda(bd*cd.transpose()*bd.transpose());
   matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
   matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
-  
+
   // var-var
-  res = trace_gen_quad_form(cv,av,bv);
-  
+  res = trace_gen_quad_form(cv, av, bv);
+
   vars.clear();
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(cv(i,j));
+      vars.push_back(cv(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++)
-      vars.push_back(bv(i,j));
+      vars.push_back(bv(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      vars.push_back(av(i,j));
-  grad = cgradvec(res,vars);
+      vars.push_back(av(i, j));
+  grad = cgradvec(res, vars);
   pos = 0;
   for (i = 0; i < 2; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdc(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdc(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 2; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqdb(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqdb(i, j));
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++, pos++)
-      EXPECT_FLOAT_EQ(grad[pos], dqda(i,j));
+      EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  stan::math::matrix_d a(4,4);
-  stan::math::matrix_d b(4,2);
-  stan::math::matrix_d c(2,2);
+  stan::math::matrix_d a(4, 4);
+  stan::math::matrix_d b(4, 2);
+  stan::math::matrix_d c(2, 2);
 
   b << 100, 10,
     0,  1,
     -3, -3,
     5,  2;
-  a << 2.0,  3.0, 4.0,   5.0, 
+  a << 2.0,  3.0, 4.0,   5.0,
     6.0, 10.0, 2.0,   2.0,
     7.0,  2.0, 7.0,   1.0,
     8.0,  2.0, 1.0, 112.0;
-  c.setIdentity(2,2);  
+  c.setIdentity(2, 2);
 
   using stan::math::to_var;
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), to_var(a), to_var(b)));

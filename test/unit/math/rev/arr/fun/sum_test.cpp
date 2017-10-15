@@ -10,7 +10,7 @@ TEST(AgradRev, sum_std_vector) {
   vector<var> x;
   for (size_t i = 0; i < 6; ++i)
     x.push_back(i + 1);
-  
+
   var fx = 3.7 * sum(x);
   EXPECT_FLOAT_EQ(3.7 * 21.0, fx.val());
 

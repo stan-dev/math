@@ -3,28 +3,28 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,log_a) {
+TEST(AgradRev, log_a) {
   AVAR a(5.0);
-  AVAR f = log(a); 
-  EXPECT_FLOAT_EQ(log(5.0),f.val());
+  AVAR f = log(a);
+  EXPECT_FLOAT_EQ(log(5.0), f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(1.0/5.0,g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(1.0/5.0, g[0]);
 }
 
-TEST(AgradRev,log_inf) {
+TEST(AgradRev, log_inf) {
   AVAR a = std::numeric_limits<double>::infinity();
   EXPECT_TRUE(boost::math::isinf(log(a)));
 }
 
-TEST(AgradRev,log_0) {
+TEST(AgradRev, log_0) {
   AVAR a(0.0);
   EXPECT_TRUE(boost::math::isinf(log(a)) && (log(a) < 0.0));
 }
 
-TEST(AgradRev,log_neg){
+TEST(AgradRev, log_neg){
   AVAR a(0.0 - stan::math::EPSILON);
   EXPECT_TRUE(std::isnan(log(a)));
 }
@@ -37,9 +37,9 @@ struct log_fun {
   }
 };
 
-TEST(AgradRev,log_NaN) {
+TEST(AgradRev, log_NaN) {
   log_fun log_;
-  test_nan(log_,false,true);
+  test_nan(log_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

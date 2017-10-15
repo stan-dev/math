@@ -19,9 +19,9 @@ void test_nan_fv1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -41,9 +41,9 @@ void test_nan_fv2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -66,9 +66,9 @@ void test_nan_ffv1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -78,7 +78,7 @@ void test_nan_ffv2(const F& f,
                    const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
-  stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1,1.0),fvar<var>(1.0,1.0));
+  stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0), fvar<var>(1.0, 1.0));
 
   if (throws)
     EXPECT_THROW(f(arg1_v), std::domain_error);
@@ -88,9 +88,9 @@ void test_nan_ffv2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -113,9 +113,9 @@ void test_nan_ffv3(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -125,7 +125,7 @@ void test_nan_ffv4(const F& f,
                    const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
-  stan::math::fvar<fvar<var> > arg1_v (fvar<var>(arg1,1.0), fvar<var>(1.0,1.0));
+  stan::math::fvar<fvar<var> > arg1_v (fvar<var>(arg1, 1.0), fvar<var>(1.0, 1.0));
 
   if (throws)
     EXPECT_THROW(f(arg1_v), std::domain_error);
@@ -135,9 +135,9 @@ void test_nan_ffv4(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -173,9 +173,9 @@ void test_nan_fv_fv1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_, arg2_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -199,9 +199,9 @@ void test_nan_fv_fv2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_, arg2_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -224,9 +224,9 @@ void test_nan_fv_d1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -248,9 +248,9 @@ void test_nan_fv_d2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -272,9 +272,9 @@ void test_nan_d_fv1(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -296,9 +296,9 @@ void test_nan_d_fv2(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -326,9 +326,9 @@ void test_nan_ffv_ffv1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -357,9 +357,9 @@ void test_nan_ffv_ffv2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -388,9 +388,9 @@ void test_nan_ffv_ffv3(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -419,9 +419,9 @@ void test_nan_ffv_ffv4(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size());
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
     EXPECT_TRUE(boost::math::isnan(g[1]));
   }
@@ -447,9 +447,9 @@ void test_nan_ffv_d1(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -473,9 +473,9 @@ void test_nan_ffv_d2(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -499,9 +499,9 @@ void test_nan_ffv_d3(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -525,9 +525,9 @@ void test_nan_ffv_d4(const F& f,
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -552,9 +552,9 @@ void test_nan_d_ffv1(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -578,9 +578,9 @@ void test_nan_d_ffv2(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -604,9 +604,9 @@ void test_nan_d_ffv3(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -630,9 +630,9 @@ void test_nan_d_ffv4(const F& f,
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size());
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size());
     EXPECT_TRUE(boost::math::isnan(g[0]));
   }
 }
@@ -676,27 +676,27 @@ void test_nan_fv_fv_fv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg2_v(arg2,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg2_v(arg2, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2_v,arg3_v);
+    stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg2_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg2_v.val_, arg3_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -710,27 +710,27 @@ void test_nan_fv_fv_fv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg2_v(arg2,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg2_v(arg2, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2_v,arg3_v);
+    stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg2_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg2_v.val_, arg3_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -745,26 +745,26 @@ void test_nan_d_fv_fv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg2_v(arg2,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg2_v(arg2, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2_v,arg3_v);
+    stan::math::fvar<var> res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg2_v.val_, arg3_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -777,26 +777,26 @@ void test_nan_d_fv_fv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg2_v(arg2,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg2_v(arg2, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2_v,arg3_v);
+    stan::math::fvar<var> res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg2_v.val_, arg3_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -809,8 +809,8 @@ void test_nan_fv_d_fv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -821,14 +821,14 @@ void test_nan_fv_d_fv1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2,arg3_v);
+    stan::math::fvar<var> res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg3_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -841,8 +841,8 @@ void test_nan_fv_d_fv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -853,14 +853,14 @@ void test_nan_fv_d_fv2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2,arg3_v);
+    stan::math::fvar<var> res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg3_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg3_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -873,8 +873,8 @@ void test_nan_fv_fv_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg2_v(arg2,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -885,14 +885,14 @@ void test_nan_fv_fv_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2_v,arg3);
+    stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg2_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg2_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -905,8 +905,8 @@ void test_nan_fv_fv_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
-  fvar<var> arg2_v(arg2,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
+  fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -917,14 +917,14 @@ void test_nan_fv_fv_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2_v,arg3);
+    stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_,arg2_v.val_);
+    AVEC x = createAVEC(arg1_v.val_, arg2_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -937,7 +937,7 @@ void test_nan_fv_d_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -948,14 +948,14 @@ void test_nan_fv_d_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2,arg3);
+    stan::math::fvar<var> res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -967,7 +967,7 @@ void test_nan_fv_d_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg1_v(arg1,1.0);
+  fvar<var> arg1_v(arg1, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -978,14 +978,14 @@ void test_nan_fv_d_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1_v,arg2,arg3);
+    stan::math::fvar<var> res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -998,7 +998,7 @@ void test_nan_d_fv_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg2_v(arg2,1.0);
+  fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -1009,14 +1009,14 @@ void test_nan_d_fv_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2_v,arg3);
+    stan::math::fvar<var> res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1028,7 +1028,7 @@ void test_nan_d_fv_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg2_v(arg2,1.0);
+  fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -1039,14 +1039,14 @@ void test_nan_d_fv_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2_v,arg3);
+    stan::math::fvar<var> res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1059,7 +1059,7 @@ void test_nan_d_d_fv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -1070,14 +1070,14 @@ void test_nan_d_d_fv1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2,arg3_v);
+    stan::math::fvar<var> res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_);
     VEC g;
-    res.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1089,7 +1089,7 @@ void test_nan_d_d_fv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<var> arg3_v(arg3,1.0);
+  fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
@@ -1100,14 +1100,14 @@ void test_nan_d_d_fv2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    stan::math::fvar<var> res = f(arg1,arg2,arg3_v);
+    stan::math::fvar<var> res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_);
     VEC g;
-    res.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1119,9 +1119,9 @@ void test_nan_ffv_ffv_ffv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1132,20 +1132,20 @@ void test_nan_ffv_ffv_ffv1(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -1159,9 +1159,9 @@ void test_nan_ffv_ffv_ffv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1172,20 +1172,20 @@ void test_nan_ffv_ffv_ffv2(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -1199,9 +1199,9 @@ void test_nan_ffv_ffv_ffv3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1212,20 +1212,20 @@ void test_nan_ffv_ffv_ffv3(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -1240,9 +1240,9 @@ void test_nan_ffv_ffv_ffv4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1253,20 +1253,20 @@ void test_nan_ffv_ffv_ffv4(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1_v
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(3U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(3U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[2])) << fail_msg.str();
@@ -1280,8 +1280,8 @@ void test_nan_d_ffv_ffv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1290,20 +1290,20 @@ void test_nan_d_ffv_ffv1(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1316,8 +1316,8 @@ void test_nan_d_ffv_ffv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1326,20 +1326,20 @@ void test_nan_d_ffv_ffv2(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1352,8 +1352,8 @@ void test_nan_d_ffv_ffv3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1362,20 +1362,20 @@ void test_nan_d_ffv_ffv3(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1388,8 +1388,8 @@ void test_nan_d_ffv_ffv4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1398,20 +1398,20 @@ void test_nan_d_ffv_ffv4(const F& f,
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
             << "first argument " << arg1
-            << " second argument " << arg2_v 
+            << " second argument " << arg2_v
             << " and third argument " << arg3_v;
 
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg2_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg2_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1424,8 +1424,8 @@ void test_nan_ffv_d_ffv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1440,14 +1440,14 @@ void test_nan_ffv_d_ffv1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1460,8 +1460,8 @@ void test_nan_ffv_d_ffv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1476,14 +1476,14 @@ void test_nan_ffv_d_ffv2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1496,8 +1496,8 @@ void test_nan_ffv_d_ffv3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1512,14 +1512,14 @@ void test_nan_ffv_d_ffv3(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1532,8 +1532,8 @@ void test_nan_ffv_d_ffv4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg3_v.val_.d_ = 1.0;
@@ -1548,14 +1548,14 @@ void test_nan_ffv_d_ffv4(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg3_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg3_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1568,8 +1568,8 @@ void test_nan_ffv_ffv_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1584,14 +1584,14 @@ void test_nan_ffv_ffv_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1604,8 +1604,8 @@ void test_nan_ffv_ffv_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1620,14 +1620,14 @@ void test_nan_ffv_ffv_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1640,8 +1640,8 @@ void test_nan_ffv_ffv_d3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1656,14 +1656,14 @@ void test_nan_ffv_ffv_d3(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1676,8 +1676,8 @@ void test_nan_ffv_ffv_d4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
   arg2_v.val_.d_ = 1.0;
@@ -1692,14 +1692,14 @@ void test_nan_ffv_ffv_d4(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
-    AVEC x = createAVEC(arg1_v.val_.val_,arg2_v.val_.val_);
+    AVEC x = createAVEC(arg1_v.val_.val_, arg2_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(2U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(2U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[1])) << fail_msg.str();
   }
@@ -1712,7 +1712,7 @@ void test_nan_ffv_d_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1725,14 +1725,14 @@ void test_nan_ffv_d_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1744,7 +1744,7 @@ void test_nan_ffv_d_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1757,14 +1757,14 @@ void test_nan_ffv_d_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1776,7 +1776,7 @@ void test_nan_ffv_d_d3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1789,14 +1789,14 @@ void test_nan_ffv_d_d3(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1808,7 +1808,7 @@ void test_nan_ffv_d_d4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg1_v(arg1,1.0);
+  fvar<fvar<var> > arg1_v(arg1, 1.0);
   arg1_v.val_.d_ = 1.0;
   arg1_v.d_.d_ = 1.0;
 
@@ -1821,14 +1821,14 @@ void test_nan_ffv_d_d4(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1_v,arg2,arg3);
+    fvar<fvar<var> > res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg1_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1841,7 +1841,7 @@ void test_nan_d_ffv_d1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1854,14 +1854,14 @@ void test_nan_d_ffv_d1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1873,7 +1873,7 @@ void test_nan_d_ffv_d2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1886,14 +1886,14 @@ void test_nan_d_ffv_d2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1905,7 +1905,7 @@ void test_nan_d_ffv_d3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1918,14 +1918,14 @@ void test_nan_d_ffv_d3(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1937,7 +1937,7 @@ void test_nan_d_ffv_d4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg2_v(arg2,1.0);
+  fvar<fvar<var> > arg2_v(arg2, 1.0);
   arg2_v.val_.d_ = 1.0;
   arg2_v.d_.d_ = 1.0;
 
@@ -1950,14 +1950,14 @@ void test_nan_d_ffv_d4(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2_v,arg3);
+    fvar<fvar<var> > res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg2_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -1970,7 +1970,7 @@ void test_nan_d_d_ffv1(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -1983,14 +1983,14 @@ void test_nan_d_d_ffv1(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
     VEC g;
-    res.val_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -2002,7 +2002,7 @@ void test_nan_d_d_ffv2(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -2015,14 +2015,14 @@ void test_nan_d_d_ffv2(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
     VEC g;
-    res.d_.val_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.val_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -2034,7 +2034,7 @@ void test_nan_d_d_ffv3(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -2047,14 +2047,14 @@ void test_nan_d_d_ffv3(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
     VEC g;
-    res.val_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.val_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }
@@ -2066,7 +2066,7 @@ void test_nan_d_d_ffv4(const F& f,
                         const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
-  fvar<fvar<var> > arg3_v(arg3,1.0);
+  fvar<fvar<var> > arg3_v(arg3, 1.0);
   arg3_v.val_.d_ = 1.0;
   arg3_v.d_.d_ = 1.0;
 
@@ -2079,14 +2079,14 @@ void test_nan_d_d_ffv4(const F& f,
   if (throws)
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
   else {
-    fvar<fvar<var> > res = f(arg1,arg2,arg3_v);
+    fvar<fvar<var> > res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
 
     AVEC x = createAVEC(arg3_v.val_.val_);
     VEC g;
-    res.d_.d_.grad(x,g);
-    
-    ASSERT_EQ(1U,g.size()) << fail_msg.str();
+    res.d_.d_.grad(x, g);
+
+    ASSERT_EQ(1U, g.size()) << fail_msg.str();
     EXPECT_TRUE(boost::math::isnan(g[0])) << fail_msg.str();
   }
 }

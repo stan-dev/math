@@ -41,18 +41,18 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
 
   int bin [K];
   double expect [K];
-  for(int i = 0; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * theta(i);
   }
 
-  for(int i = 0;  i < N; i++) {
+  for (int i = 0;  i < N; i++) {
     int a = stan::math::categorical_logit_rng(beta, rng);
     bin[a - 1]++;
   }
 
   double chi = 0;
-  for(int j = 0; j < K; j++)
+  for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));

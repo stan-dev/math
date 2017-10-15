@@ -12,6 +12,6 @@ namespace test {
       EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x[n].vi_))
         << n << " is not on the stack";
   }
-  
+
 }
 #endif

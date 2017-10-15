@@ -3,29 +3,29 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,sin_var) {
+TEST(AgradRev, sin_var) {
   AVAR a = 0.49;
   AVAR f = sin(a);
   EXPECT_FLOAT_EQ((.470625888), f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(cos(0.49),g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(cos(0.49), g[0]);
 }
 
-TEST(AgradRev,sin_neg_var) {
+TEST(AgradRev, sin_neg_var) {
   AVAR a = -0.49;
   AVAR f = sin(a);
   EXPECT_FLOAT_EQ((-.470625888), f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(cos(-0.49), g[0]);
 }
 
-TEST(AgradRev,sin_boundry) {
+TEST(AgradRev, sin_boundry) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
   EXPECT_TRUE(std::isnan(sin(a)));
@@ -42,9 +42,9 @@ struct sin_fun {
   }
 };
 
-TEST(AgradRev,sin_NaN) {
+TEST(AgradRev, sin_NaN) {
   sin_fun sin_;
-  test_nan(sin_,false,true);
+  test_nan(sin_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

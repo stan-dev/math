@@ -23,9 +23,9 @@ TEST(MathFunctions, inv_Phi_inf) {
   using stan::math::inv_Phi;
   double p = 7e-311;
   const double inf = std::numeric_limits<double>::infinity();
-  EXPECT_EQ(inv_Phi(p),-inf);
+  EXPECT_EQ(inv_Phi(p), -inf);
   p = 1.0;
-  EXPECT_EQ(inv_Phi(p),inf);
+  EXPECT_EQ(inv_Phi(p), inf);
 }
 TEST(MathFunctions, inv_Phi_nan) {
   using stan::math::inv_Phi;

@@ -21,13 +21,13 @@ public:
     parameters.push_back(param);
     ccdf_log.push_back(std::log(1-0.9267752080547182469417));    // expected ccdf_log
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1.0);
-    
+
     // nu
     index.push_back(1U);
     value.push_back(0.0);
@@ -42,27 +42,27 @@ public:
   bool has_lower_bound() {
     return true;
   }
-    
+
   double lower_bound() {
     return 0.0;
   }
-  
+
   bool has_upper_bound() {
     return false;
   }
 
   template <typename T_y, typename T_dof, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T2>::type 
-  ccdf_log(const T_y& y, const T_dof& nu, 
+  typename stan::return_type<T_y, T_dof, T2>::type
+  ccdf_log(const T_y& y, const T_dof& nu,
            const T2&, const T3&, const T4&, const T5&) {
     return stan::math::chi_square_ccdf_log(y, nu);
   }
 
   template <typename T_y, typename T_dof, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T2>::type 
-  ccdf_log_function(const T_y& y, const T_dof& nu, 
+  typename stan::return_type<T_y, T_dof, T2>::type
+  ccdf_log_function(const T_y& y, const T_dof& nu,
                     const T2&, const T3&, const T4&, const T5&) {
     using stan::math::gamma_q;
     using std::log;

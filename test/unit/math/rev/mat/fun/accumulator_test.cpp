@@ -9,7 +9,7 @@ void test_sum(stan::math::accumulator<stan::math::var>& a,
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
 }
 
-TEST(AgradRevMatrix,accumulateDouble) {
+TEST(AgradRevMatrix, accumulateDouble) {
   using stan::math::accumulator;
   using stan::math::var;
 
@@ -22,12 +22,12 @@ TEST(AgradRevMatrix,accumulateDouble) {
   for (int i = 2; i <= 1000; ++i)
     a.add(var(i));
   test_sum(a, 1000);
-  
+
 }
-TEST(AgradRevMathMatrix,accumulateCollection) {
+TEST(AgradRevMathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>,
-  // Matrix<double,...>,
-  // var, vector<var>, Matrix<var,...>, 
+  // Matrix<double, ...>,
+  // var, vector<var>, Matrix<var, ...>,
   // and recursions of vector<T>
 
   using stan::math::accumulator;
@@ -46,17 +46,17 @@ TEST(AgradRevMathMatrix,accumulateCollection) {
   vector<var> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = var(pos++);
-  a.add(v);                                         
+  a.add(v);
   test_sum(a, pos-1);
 
   vector<double> d(10);
   for (size_t i = 0; i < 10; ++i)
     d[i] = pos++;
-  a.add(d);                                         
+  a.add(d);
   test_sum(a, pos-1);
 
   var x = pos++;
-  a.add(x);                        
+  a.add(x);
   test_sum(a, pos-1);
 
   int nnn = pos++;
@@ -67,7 +67,7 @@ TEST(AgradRevMathMatrix,accumulateCollection) {
   a.add(xxx);
   test_sum(a, pos-1);
 
-  vector<int> u(10);         
+  vector<int> u(10);
   for (size_t i = 0; i < 10; ++i)
     a.add(pos++);
   test_sum(a, pos-1);
@@ -82,10 +82,10 @@ TEST(AgradRevMathMatrix,accumulateCollection) {
   a.add(ww);
   test_sum(a, pos-1);
 
-  MatrixXd m(5,6);
+  MatrixXd m(5, 6);
   for (int i = 0; i < 5; ++i)
     for (int j = 0; j < 6; ++j)
-      m(i,j) = pos++;
+      m(i, j) = pos++;
   a.add(m);
   test_sum(a, pos-1);
 
@@ -105,22 +105,22 @@ TEST(AgradRevMathMatrix,accumulateCollection) {
   a.add(vvx);
   test_sum(a, pos-1);
 
-  Matrix<var,Dynamic,Dynamic> mvar(5,6);
+  Matrix<var, Dynamic, Dynamic> mvar(5, 6);
   for (int i = 0; i < 5; ++i)
     for (int j = 0; j < 6; ++j)
-      mvar(i,j) = pos++;
+      mvar(i, j) = pos++;
   a.add(mvar);
   test_sum(a, pos-1);
 
-  Matrix<var,1,Dynamic> mvvar(7);
+  Matrix<var, 1, Dynamic> mvvar(7);
   for (int i = 0; i < 7; ++i)
     mvvar(i) = pos++;
   a.add(mvvar);
   test_sum(a, pos-1);
 
-  vector<Matrix<var,Dynamic,1> > vvx_var(8);
+  vector<Matrix<var, Dynamic, 1> > vvx_var(8);
   for (size_t i = 0; i < 8; ++i) {
-    Matrix<var,Dynamic,1> vx_var(3);
+    Matrix<var, Dynamic, 1> vx_var(3);
     for (int j = 0; j < 3; ++j)
       vx_var(j) = pos++;
     vvx_var[i] = vx_var;

@@ -25,7 +25,7 @@ TEST(MathMatrix, matrix_exp_2x2) {
 TEST(MathMatrix, matrix_exp_2x2_2) {
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
-  // Compare to result from http://comnuan.com/cmnn01015/
+  // Compare to result from http:// comnuan.com/cmnn01015/
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 2), exp_m(2, 2);
 
   m << -0.999984, 0.511211,
@@ -38,7 +38,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
 }
 
 TEST(MathMatrix, matrix_exp_3x3) {
-  // example from http://www.sosmath.com/matrix/expo/expo.html
+  // example from http:// www.sosmath.com/matrix/expo/expo.html
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
   m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
@@ -94,7 +94,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
 TEST(MathMatrix, matrix_exp_exceptions) {
   using stan::math::matrix_exp;
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0,0), m2(1,2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0), m2(1, 2);
 
   EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
   EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
@@ -102,7 +102,7 @@ TEST(MathMatrix, matrix_exp_exceptions) {
 
 TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
   // Code to showcase how dealing with very small
-  // numbers ( < 1e-10) can increase the relative
+  // numbers (< 1e-10) can increase the relative
   // error. That is why the conditions for small
   // numbers are laxed (results agree within 1e-10,
   // as oppose to using relative error).

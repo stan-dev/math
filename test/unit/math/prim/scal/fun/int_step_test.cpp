@@ -27,6 +27,6 @@ TEST(MathFunctions, int_step_inf) {
 
 TEST(MathFunctions, int_step_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_EQ(0U, stan::math::int_step(nan));
 }

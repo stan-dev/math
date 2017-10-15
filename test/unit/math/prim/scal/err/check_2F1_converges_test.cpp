@@ -3,7 +3,7 @@
 
 using stan::math::check_2F1_converges;
 
-TEST(passesOnConvergentArgs,Check2F1Converges) {
+TEST(passesOnConvergentArgs, Check2F1Converges) {
   const std::string function = "check_2F1_converges";
   double a1 = 1.0;
   double a2 = 1.0;

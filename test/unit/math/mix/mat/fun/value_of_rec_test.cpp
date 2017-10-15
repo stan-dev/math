@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-TEST(AgradMixMatrix,value_of_rec) {
+TEST(AgradMixMatrix, value_of_rec) {
   using stan::math::var;
   using stan::math::fvar;
   using stan::math::value_of_rec;
@@ -17,15 +17,15 @@ TEST(AgradMixMatrix,value_of_rec) {
 
   for (size_t i = 10; i < 15; ++i)
     b_vals.push_back(i + 1);
-  
-  Eigen::Matrix<fvar<var>,2,5> fv_a;
+
+  Eigen::Matrix<fvar<var>, 2, 5> fv_a;
   ::fill(a_vals, fv_a);
-  Eigen::Matrix<fvar<var>,5,1> fv_b;
+  Eigen::Matrix<fvar<var>, 5, 1> fv_b;
   ::fill(b_vals, fv_b);
 
-  Eigen::Matrix<fvar<fvar<var> >,2,5> ffv_a;
+  Eigen::Matrix<fvar<fvar<var> >, 2, 5> ffv_a;
   ::fill(a_vals, ffv_a);
-  Eigen::Matrix<fvar<fvar<var> >,5,1> ffv_b;
+  Eigen::Matrix<fvar<fvar<var> >, 5, 1> ffv_b;
   ::fill(b_vals, ffv_b);
 
   Eigen::MatrixXd d_fv_a = value_of_rec(fv_a);
@@ -40,7 +40,7 @@ TEST(AgradMixMatrix,value_of_rec) {
 
   for (size_type i = 0; i < 2; ++i)
     for (size_type j = 0; j < 5; ++j){
-      EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_fv_a(i,j));
-      EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_ffv_a(i,j));   
+      EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_fv_a(i, j));
+      EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_ffv_a(i, j));
     }
 }

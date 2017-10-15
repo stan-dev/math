@@ -42,12 +42,12 @@ struct cvodes2coupled {
       cvode_state_(N_VMake_Serial(N_, &state_[0])),
       cvode_state_dot_(N_VMake_Serial(N_, &state_dot_[0]))
   {
-    if(S_ > 0) {
+    if (S_ > 0) {
       cvode_state_sens_     = N_VCloneVectorArray_Serial(S_, cvode_state_);
       cvode_state_sens_dot_ = N_VCloneVectorArray_Serial(S_, cvode_state_);
 
-      for(size_t s=0; s < S_ ; s++) N_VConst(RCONST(0.0), cvode_state_sens_[s]);
-      for(size_t s=0; s < S_ ; s++) N_VConst(RCONST(0.0), cvode_state_sens_dot_[s]);
+      for (size_t s=0; s < S_ ; s++) N_VConst(RCONST(0.0), cvode_state_sens_[s]);
+      for (size_t s=0; s < S_ ; s++) N_VConst(RCONST(0.0), cvode_state_sens_dot_[s]);
     }
   }
 
@@ -55,7 +55,7 @@ struct cvodes2coupled {
     // N_VDestroy_Serial should noop because
     // N_VMake_Serial sets own_data to false
     N_VDestroy_Serial(cvode_state_);
-    if(S_ > 0) {
+    if (S_ > 0) {
       N_VDestroyVectorArray_Serial(cvode_state_sens_    , S_);
       N_VDestroyVectorArray_Serial(cvode_state_sens_dot_, S_);
     }
@@ -66,8 +66,8 @@ struct cvodes2coupled {
 
     std::copy(state_.begin(), state_.end(), y_coupled.begin());
 
-    for(size_t s = 0; s < S_; s++) {
-      for(size_t n = 0; n < N_; n++) {
+    for (size_t s = 0; s < S_; s++) {
+      for (size_t n = 0; n < N_; n++) {
 	y_coupled[N_ + s * N_ + n] = NV_Ith_S(cvode_state_sens_[s], n);
       }
     }
@@ -80,8 +80,8 @@ struct cvodes2coupled {
 
     std::copy(state_dot_.begin(), state_dot_.end(), y_coupled_dot.begin());
 
-    for(size_t s = 0; s < S_; s++) {
-      for(size_t n = 0; n < N_; n++) {
+    for (size_t s = 0; s < S_; s++) {
+      for (size_t n = 0; n < N_; n++) {
 	y_coupled_dot[N_ + s * N_ + n] = NV_Ith_S(cvode_state_sens_dot_[s], n);
       }
     }
@@ -153,8 +153,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_dv) {
   cvodes_ode_data<mock_ode_functor, double, var>
     ode_data_dv(base_ode, y0_d, theta, x, x_int, &msgs);
 
-  //std::vector<double> y(3,0);
-  //std::vector<double> dy_dt(3,0);
+  // std::vector<double> y(3, 0);
+  // std::vector<double> dy_dt(3, 0);
   double t = 10;
 
   cvodes2coupled nvec(N, S);
@@ -195,8 +195,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_exception_dv) {
                       double, var>
       ode_data_dv(throwing_ode, y0_d, theta, x, x_int, &msgs);
 
-    std::vector<double> y(3,0);
-    std::vector<double> dy_dt(3,0);
+    std::vector<double> y(3, 0);
+    std::vector<double> dy_dt(3, 0);
     double t = 10;
 
     cvodes2coupled nvec(N, S);
@@ -234,12 +234,12 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vd) {
   // note: here the old test was inconsistent in that coupled_y0[0]
   // and coupled_y0[1] should have been set to 0 instead.
 
-  //coupled_y0.push_back(1.0);
-  //coupled_y0.push_back(0.5);
-  //coupled_y0.push_back(1.0);
-  //coupled_y0.push_back(3.0);
-  //coupled_y0.push_back(2.0);
-  //coupled_y0.push_back(5.0);
+  // coupled_y0.push_back(1.0);
+  // coupled_y0.push_back(0.5);
+  // coupled_y0.push_back(1.0);
+  // coupled_y0.push_back(3.0);
+  // coupled_y0.push_back(2.0);
+  // coupled_y0.push_back(5.0);
 
   y0_var.push_back(1.0);
   y0_var.push_back(0.5);
@@ -251,8 +251,8 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vd) {
 
   cvodes2coupled nvec(N, S);
 
-  //nvec.state_[0] = 2*y0_d[0]; // use this to match old expectation
-  //nvec.state_[1] = 2*y0_d[1]; // use this to match old expectation
+  // nvec.state_[0] = 2*y0_d[0]; // use this to match old expectation
+  // nvec.state_[1] = 2*y0_d[1]; // use this to match old expectation
   nvec.state_[0] = y0_d[0];
   nvec.state_[1] = y0_d[1];
   NV_Ith_S(nvec.cvode_state_sens_[0], 0) = 1.0 + 1.0;
@@ -273,8 +273,8 @@ TEST_F(StanMathRevOdeCVode, cvodes_ode_data_vd) {
 
   std::vector<double> dy_dt_coupled = nvec.get_coupled_state_dot();
 
-  //EXPECT_FLOAT_EQ(1.0, dy_dt_coupled[0]); // old expectation
-  //EXPECT_FLOAT_EQ(-2.0 - 0.15 * 1.0, dy_dt_coupled[1]); // old expectation
+  // EXPECT_FLOAT_EQ(1.0, dy_dt_coupled[0]); // old expectation
+  // EXPECT_FLOAT_EQ(-2.0 - 0.15 * 1.0, dy_dt_coupled[1]); // old expectation
   EXPECT_FLOAT_EQ(0.5, dy_dt_coupled[0]);
   EXPECT_FLOAT_EQ(-1.0 - 0.15 * 0.5, dy_dt_coupled[1]);
   EXPECT_FLOAT_EQ(0 + 1.0 * 0 + 3.0 * 1 + 0, dy_dt_coupled[2]);
@@ -297,8 +297,8 @@ TEST_F(StanMathRevOdeCVode, memory_recovery_vd) {
   cvodes_ode_data<mock_ode_functor, var, double>
     ode_data_vd(base_ode, y0_v, theta_d, x, x_int, &msgs);
 
-  //std::vector<double> y(3,0);
-  //std::vector<double> dy_dt(3,0);
+  // std::vector<double> y(3, 0);
+  // std::vector<double> dy_dt(3, 0);
   double t = 10;
 
   cvodes2coupled nvec(N, S);

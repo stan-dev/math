@@ -3,7 +3,7 @@
 
 using stan::math::check_nonnegative;
 
-TEST(ErrorHandlingScalar,CheckNonnegativeVectorized) {
+TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
   const std::string function = "check_nonnegative";
   std::vector<double> x(N);
@@ -50,7 +50,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]"));
 }
 
-TEST(ErrorHandlingScalar,CheckNonnegative_nan) {
+TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
   const std::string function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

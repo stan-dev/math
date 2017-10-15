@@ -7,13 +7,13 @@
 // instead, the top-level ::fma should be used by including <cmath>
 
 TEST(MathFunctions, fma) {
-  EXPECT_FLOAT_EQ(5.0, fma(1.0,2.0,3.0));
-  EXPECT_FLOAT_EQ(10.0, fma(2.0,3.0,4.0));
+  EXPECT_FLOAT_EQ(5.0, fma(1.0, 2.0, 3.0));
+  EXPECT_FLOAT_EQ(10.0, fma(2.0, 3.0, 4.0));
 }
 
 TEST(MathFunctions, fma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_PRED1(boost::math::isnan<double>,
                fma(1.0, 2.0, nan));
 

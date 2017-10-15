@@ -6,7 +6,7 @@
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <test/unit/util.hpp>
 
-//calculates finite diffs for integrate_ode with varying parameters
+// calculates finite diffs for integrate_ode with varying parameters
 template <typename F>
 std::vector<std::vector<double> >
 finite_diff_params(const F& f,
@@ -47,7 +47,7 @@ finite_diff_params(const F& f,
   return results;
 }
 
-//calculates finite diffs for integrate_ode with varying initial positions
+// calculates finite diffs for integrate_ode with varying initial positions
 template <typename F>
 std::vector<std::vector<double> >
 finite_diff_initial_position(const F& f,
@@ -89,8 +89,8 @@ finite_diff_initial_position(const F& f,
 }
 
 
-//test integrate_ode with initial positions as doubles and parameters as vars
-//against finite differences
+// test integrate_ode with initial positions as doubles and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_dv(const F& f,
                              const double& t_in,
@@ -135,8 +135,8 @@ void test_ode_finite_diff_dv(const F& f,
   }
 }
 
-//test integrate_ode with initial positions as vars and parameters as doubles
-//against finite differences
+// test integrate_ode with initial positions as vars and parameters as doubles
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vd(const F& f,
                              const double& t_in,
@@ -181,8 +181,8 @@ void test_ode_finite_diff_vd(const F& f,
   }
 }
 
-//test integrate_ode with initial positions as vars and parameters as vars
-//against finite differences
+// test integrate_ode with initial positions as vars and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vv(const F& f,
                              const double& t_in,

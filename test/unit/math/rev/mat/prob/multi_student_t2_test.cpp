@@ -15,10 +15,10 @@ template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 void expect_propto(T_y y1, T_dof nu1, T_loc mu1, T_scale sigma1,
                    T_y y2, T_dof nu2, T_loc mu2, T_scale sigma2,
                    std::string message = "") {
-  expect_eq_diffs(stan::math::multi_student_t_log<false>(y1,nu1,mu1,sigma1),
-                  stan::math::multi_student_t_log<false>(y2,nu2,mu2,sigma2),
-                  stan::math::multi_student_t_log<true>(y1,nu1,mu1,sigma1),
-                  stan::math::multi_student_t_log<true>(y2,nu2,mu2,sigma2),
+  expect_eq_diffs(stan::math::multi_student_t_log<false>(y1, nu1, mu1, sigma1),
+                  stan::math::multi_student_t_log<false>(y2, nu2, mu2, sigma2),
+                  stan::math::multi_student_t_log<true>(y1, nu1, mu1, sigma1),
+                  stan::math::multi_student_t_log<true>(y2, nu2, mu2, sigma2),
                   message);
 }
 
@@ -26,129 +26,129 @@ using stan::math::var;
 using stan::math::to_var;
 
 
-TEST_F(agrad_distributions_multi_student_t,Propto) {
-  expect_propto(to_var(y),to_var(nu),to_var(mu),to_var(Sigma),
-                to_var(y2),to_var(nu),to_var(mu2),to_var(Sigma2),
+TEST_F(agrad_distributions_multi_student_t, Propto) {
+  expect_propto(to_var(y), to_var(nu), to_var(mu), to_var(Sigma),
+                to_var(y2), to_var(nu), to_var(mu2), to_var(Sigma2),
                 "All vars: y, nu, mu, sigma");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoY) {
-  expect_propto(to_var(y),nu,mu,Sigma,
-                to_var(y2),nu,mu,Sigma,
+TEST_F(agrad_distributions_multi_student_t, ProptoY) {
+  expect_propto(to_var(y), nu, mu, Sigma,
+                to_var(y2), nu, mu, Sigma,
                 "var: y");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoYMu) {
-  expect_propto(to_var(y),nu,to_var(mu),Sigma,
-                to_var(y2),nu,to_var(mu2),Sigma,
+TEST_F(agrad_distributions_multi_student_t, ProptoYMu) {
+  expect_propto(to_var(y), nu, to_var(mu), Sigma,
+                to_var(y2), nu, to_var(mu2), Sigma,
                 "var: y and mu");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoYSigma) {
-  expect_propto(to_var(y),nu,mu,to_var(Sigma),
-                to_var(y2),nu,mu,to_var(Sigma2),
+TEST_F(agrad_distributions_multi_student_t, ProptoYSigma) {
+  expect_propto(to_var(y), nu, mu, to_var(Sigma),
+                to_var(y2), nu, mu, to_var(Sigma2),
                 "var: y and sigma");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoMu) {
-  expect_propto(y,nu,to_var(mu),Sigma,
-                y,nu,to_var(mu2),Sigma,
+TEST_F(agrad_distributions_multi_student_t, ProptoMu) {
+  expect_propto(y, nu, to_var(mu), Sigma,
+                y, nu, to_var(mu2), Sigma,
                 "var: mu");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoMuSigma) {
-  expect_propto(y,nu,to_var(mu),to_var(Sigma),
-                y,nu,to_var(mu2),to_var(Sigma2),
+TEST_F(agrad_distributions_multi_student_t, ProptoMuSigma) {
+  expect_propto(y, nu, to_var(mu), to_var(Sigma),
+                y, nu, to_var(mu2), to_var(Sigma2),
                 "var: mu and sigma");
 }
-TEST_F(agrad_distributions_multi_student_t,ProptoSigma) {
-  expect_propto(y,nu,mu,to_var(Sigma),
-                y,nu,mu,to_var(Sigma2),
+TEST_F(agrad_distributions_multi_student_t, ProptoSigma) {
+  expect_propto(y, nu, mu, to_var(Sigma),
+                y, nu, mu, to_var(Sigma2),
                 "var: sigma");
 }
 
 
-TEST(ProbDistributionsMultiStudentT,MultiStudentTVar) {
+TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
   using stan::math::var;
   var nu(5);
-  Matrix<var,Dynamic,1> y(3,1);
+  Matrix<var, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
-  Matrix<var,Dynamic,1> mu(3,1);
+  Matrix<var, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
-  Matrix<var,Dynamic,Dynamic> Sigma(3,3);
+  Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0,
     0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-10.213695, stan::math::multi_student_t_log(y,nu,mu,Sigma).val());
+  EXPECT_FLOAT_EQ(-10.213695, stan::math::multi_student_t_log(y, nu, mu, Sigma).val());
 }
-TEST(ProbDistributionsMultiStudentT,MultiStudentTGradientUnivariate) {
+TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
   using stan::math::var;
   using std::vector;
   using Eigen::VectorXd;
   using stan::math::multi_student_t_log;
-  
+
   var nu_var(5);
 
-  Matrix<var,Dynamic,1> y_var(1,1);
+  Matrix<var, Dynamic, 1> y_var(1, 1);
   y_var << 2.0;
 
-  Matrix<var,Dynamic,1> mu_var(1,1);
+  Matrix<var, Dynamic, 1> mu_var(1, 1);
   mu_var << 1.0;
 
-  Matrix<var,Dynamic,Dynamic> Sigma_var(1,1);
-  Sigma_var(0,0) = 9.0;
+  Matrix<var, Dynamic, Dynamic> Sigma_var(1, 1);
+  Sigma_var(0, 0) = 9.0;
 
   std::vector<var> x;
   x.push_back(y_var(0));
   x.push_back(mu_var(0));
-  x.push_back(Sigma_var(0,0));
+  x.push_back(Sigma_var(0, 0));
   x.push_back(nu_var);
 
-  var lp = stan::math::multi_student_t_log(y_var,nu_var,mu_var,Sigma_var);
+  var lp = stan::math::multi_student_t_log(y_var, nu_var, mu_var, Sigma_var);
   vector<double> grad;
-  lp.grad(x,grad);
+  lp.grad(x, grad);
 
   // ===================================
 
   double nu(5);
 
-  Matrix<double,Dynamic,1> y(1,1);
+  Matrix<double, Dynamic, 1> y(1, 1);
   y << 2.0;
 
-  Matrix<double,Dynamic,1> mu(1,1);
+  Matrix<double, Dynamic, 1> mu(1, 1);
   mu << 1.0;
 
-  Matrix<double,Dynamic,Dynamic> Sigma(1,1);
+  Matrix<double, Dynamic, Dynamic> Sigma(1, 1);
   Sigma << 9.0;
 
   double epsilon = 1e-6;
 
-  Matrix<double,Dynamic,1> y_m(1,1);
-  Matrix<double,Dynamic,1> y_p(1,1);
+  Matrix<double, Dynamic, 1> y_m(1, 1);
+  Matrix<double, Dynamic, 1> y_p(1, 1);
   y_p[0] = y[0] + epsilon;
   y_m[0] = y[0] - epsilon;
-  double grad_diff 
-    =  (multi_student_t_log(y_p,nu,mu,Sigma) - multi_student_t_log(y_m,nu,mu,Sigma)) 
+  double grad_diff
+    =  (multi_student_t_log(y_p, nu, mu, Sigma) - multi_student_t_log(y_m, nu, mu, Sigma))
     / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[0]);
 
-  Matrix<double,Dynamic,1> mu_m(1,1);
-  Matrix<double,Dynamic,1> mu_p(1,1);
+  Matrix<double, Dynamic, 1> mu_m(1, 1);
+  Matrix<double, Dynamic, 1> mu_p(1, 1);
   mu_p[0] = mu[0] + epsilon;
   mu_m[0] = mu[0] - epsilon;
-  grad_diff 
-    =  (multi_student_t_log(y,nu,mu_p,Sigma) - multi_student_t_log(y,nu,mu_m,Sigma)) 
+  grad_diff
+    =  (multi_student_t_log(y, nu, mu_p, Sigma) - multi_student_t_log(y, nu, mu_m, Sigma))
     / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[1]);
 
-  Matrix<double,Dynamic,Dynamic> Sigma_m(1,1);
-  Matrix<double,Dynamic,Dynamic> Sigma_p(1,1);
+  Matrix<double, Dynamic, Dynamic> Sigma_m(1, 1);
+  Matrix<double, Dynamic, Dynamic> Sigma_p(1, 1);
   Sigma_p(0) = Sigma(0) + epsilon;
   Sigma_m(0) = Sigma(0) - epsilon;
-  grad_diff 
-    =  (multi_student_t_log(y,nu,mu,Sigma_p) - multi_student_t_log(y,nu,mu,Sigma_m)) 
+  grad_diff
+    =  (multi_student_t_log(y, nu, mu, Sigma_p) - multi_student_t_log(y, nu, mu, Sigma_m))
     / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
 
   double nu_p(nu + epsilon);
   double nu_m(nu - epsilon);
-  grad_diff 
-    =  (multi_student_t_log(y,nu_p,mu,Sigma) - multi_student_t_log(y,nu_m,mu,Sigma)) 
+  grad_diff
+    =  (multi_student_t_log(y, nu_p, mu, Sigma) - multi_student_t_log(y, nu_m, mu, Sigma))
     / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[3]);
 }
@@ -165,9 +165,9 @@ struct multi_student_t_fun {
     using Eigen::Dynamic;
     using stan::math::var;
     T nu;
-    Matrix<T,Dynamic,1> y(K_);
-    Matrix<T,Dynamic,1> mu(K_);
-    Matrix<T,Dynamic,Dynamic> Sigma(K_,K_);
+    Matrix<T, Dynamic, 1> y(K_);
+    Matrix<T, Dynamic, 1> mu(K_);
+    Matrix<T, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
     for (int i = 0; i < K_; ++i)
       y(i) = x[pos++];
@@ -175,12 +175,12 @@ struct multi_student_t_fun {
       mu(i) = x[pos++];
     for (int j = 0; j < K_; ++j) {
       for (int i = 0; i <= j; ++i) {
-        Sigma(i,j) = x[pos++];
-        Sigma(j,i) = Sigma(i,j);
+        Sigma(i, j) = x[pos++];
+        Sigma(j, i) = Sigma(i, j);
       }
     }
     nu = x[pos++];
-    return stan::math::multi_student_t_log<false>(y,nu,mu,Sigma);
+    return stan::math::multi_student_t_log<false>(y, nu, mu, Sigma);
   }
 };
 
@@ -211,18 +211,18 @@ TEST(MultiStudentT, TestGradFunctional) {
   u[1] = -2.7;
   u[2] = 0.48;
   u[3] = 5;
-  
+
   test_grad(multi_student_t_fun(1), u);
 }
 
 template <int is_row_vec_y, int is_row_vec_mu>
 struct vectorized_multi_student_t_fun {
-  const int K_; //size of each vector and order of square matrix sigma
-  const int L_; //size of the array of eigen vectors
-  const bool dont_vectorize_y; //direct use eigen vector for y
-  const bool dont_vectorize_mu; //direct use eigen vector for mu
-  
-  vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(int K, int L, bool M = false, bool N = false) : K_(K), L_(L), 
+  const int K_; // size of each vector and order of square matrix sigma
+  const int L_; // size of the array of eigen vectors
+  const bool dont_vectorize_y; // direct use eigen vector for y
+  const bool dont_vectorize_mu; // direct use eigen vector for mu
+
+  vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(int K, int L, bool M = false, bool N = false) : K_(K), L_(L),
                                         dont_vectorize_y(M),
                                         dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
@@ -235,27 +235,27 @@ struct vectorized_multi_student_t_fun {
               const std::vector<T_mu>& mu_vec,
               const std::vector<T_sigma>& sigma_vec,
               const T_nu & nu) const {
-    vector<Matrix<T_y,is_row_vec_y,is_row_vec_y*-1> > y(L_, Matrix<T_y,is_row_vec_y,is_row_vec_y*-1> (K_));
-    vector<Matrix<T_mu,is_row_vec_mu,is_row_vec_mu*-1> > mu(L_, Matrix<T_mu,is_row_vec_mu,is_row_vec_mu*-1> (K_));
-    Matrix<T_sigma,Dynamic,Dynamic> Sigma(K_, K_);
+    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y*-1> > y(L_, Matrix<T_y, is_row_vec_y, is_row_vec_y*-1> (K_));
+    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu*-1> > mu(L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu*-1> (K_));
+    Matrix<T_sigma, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
-    for (int i = 0; i < L_; ++i) 
+    for (int i = 0; i < L_; ++i)
       for (int j = 0; j < K_; ++j)
         y[i](j) = y_vec[pos++];
 
-    pos = 0;        
-    for (int i = 0; i < L_; ++i)         
+    pos = 0;
+    for (int i = 0; i < L_; ++i)
       for (int j = 0; j < K_; ++j)
         mu[i](j) = mu_vec[pos++];
-    
+
     pos = 0;
     for (int j = 0; j < K_; ++j) {
       for (int i = 0; i <= j; ++i) {
-        Sigma(i,j) = sigma_vec[pos++];
-        Sigma(j,i) = Sigma(i,j);
+        Sigma(i, j) = sigma_vec[pos++];
+        Sigma(j, i) = Sigma(i, j);
       }
     }
-    
+
     if (dont_vectorize_y) {
       if (dont_vectorize_mu)
         return stan::math::multi_student_t_log<false>(y[0], nu, mu[0], Sigma);
@@ -326,7 +326,7 @@ void test_all() {
                                get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
     }
   }
-  
+
   {
     vector<double> y_(6), mu_(6), sigma_(6);
     // y[1]
@@ -337,7 +337,7 @@ void test_all() {
     y_[3] = 0.0;
     y_[4] = -2.0;
     y_[5] = -3.0;
-    
+
     // mu[1]
     mu_[0] = 0.0;
     mu_[1] = 1.0;
@@ -346,7 +346,7 @@ void test_all() {
     mu_[3] = 0.0;
     mu_[4] = -1.0;
     mu_[5] = -2.0;
-    
+
     // Sigma
     sigma_[0] = 1;
     sigma_[1] = -1;
@@ -354,7 +354,7 @@ void test_all() {
     sigma_[3] = -2;
     sigma_[4] = 20;
     sigma_[5] = 56;
-    
+
     test_grad_multi_student_t(vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
                            y_, mu_, sigma_, 5);
     test_grad_multi_student_t(vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
@@ -393,8 +393,8 @@ void test_all() {
     y_[0] = 1.9;
     mu_[0] = -2.7;
     sigma_[0] = 0.48;
-    
-    
+
+
     test_grad_multi_student_t(vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
                            y_, mu_, sigma_, 5);
     test_grad_multi_student_t(vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
@@ -431,19 +431,19 @@ void test_all() {
 }
 
 TEST(MultiNormal, TestGradFunctionalVectorized) {
-  test_all<1,1>();
-  test_all<1,-1>();
-  test_all<-1,1>();
-  test_all<-1,-1>();
+  test_all<1, 1>();
+  test_all<1, -1>();
+  test_all<-1, 1>();
+  test_all<-1, -1>();
 }
 
 TEST(MultiNormal, check_varis_on_stack) {
   double nu(5);
-  Matrix<double,Dynamic,1> y(3,1);
+  Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
-  Matrix<double,Dynamic,1> mu(3,1);
+  Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
-  Matrix<double,Dynamic,Dynamic> Sigma(3,3);
+  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0,
     0.0, 0.0, 5.0;

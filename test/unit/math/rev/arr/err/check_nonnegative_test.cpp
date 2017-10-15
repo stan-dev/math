@@ -4,7 +4,7 @@
 using stan::math::var;
 using stan::math::check_nonnegative;
 
-TEST(AgradRevErrorHandlingScalar,CheckNonnegativeVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
   const std::string function = "check_nonnegative";
   std::vector<var> x(N);
@@ -46,26 +46,26 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(5U,stack_size);
-  EXPECT_NO_THROW(check_nonnegative(function,"a",a));
+  EXPECT_EQ(5U, stack_size);
+  EXPECT_NO_THROW(check_nonnegative(function, "a", a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(5U,stack_size_after_call);
+  EXPECT_EQ(5U, stack_size_after_call);
 
   a[1] = std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(check_nonnegative(function,"a",a));
+  EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(6U,stack_size_after_call);
+  EXPECT_EQ(6U, stack_size_after_call);
 
   a[1] = -1.0;
-  EXPECT_THROW(check_nonnegative(function,"a",a),std::domain_error);
+  EXPECT_THROW(check_nonnegative(function, "a", a), std::domain_error);
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(7U,stack_size_after_call);
+  EXPECT_EQ(7U, stack_size_after_call);
 
   a[1] = 0.0;
-  EXPECT_NO_THROW(check_nonnegative(function,"a",a));
+  EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(8U,stack_size_after_call);
+  EXPECT_EQ(8U, stack_size_after_call);
 
   stan::math::recover_memory();
 }

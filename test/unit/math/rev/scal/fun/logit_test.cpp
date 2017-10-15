@@ -40,7 +40,7 @@ struct logit_fun {
   }
 };
 
-TEST(AgradRev,inv_logit_NaN) {
+TEST(AgradRev, inv_logit_NaN) {
   logit_fun logit_;
   test_nan(logit_, false, true);
 }

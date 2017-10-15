@@ -3,7 +3,7 @@
 
 using stan::math::check_nonnegative;
 
-TEST(ErrorHandlingScalar,CheckNonnegative) {
+TEST(ErrorHandlingScalar, CheckNonnegative) {
   const std::string function = "check_nonnegative";
   double x = 0;
 
@@ -27,7 +27,7 @@ TEST(ErrorHandlingScalar,CheckNonnegative) {
     << "check_nonnegative should throw exception on NaN: " << x;
 }
 
-TEST(ErrorHandlingScalar,CheckNonnegative_nan) {
+TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
   const std::string function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

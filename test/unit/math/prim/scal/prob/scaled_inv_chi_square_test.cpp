@@ -10,7 +10,7 @@ TEST(ProbDistributionsScaledInvChiSquare, error_check) {
 
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(-2.0, 1.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2.0,-1.0, rng),
+  EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(2.0, -1.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::scaled_inv_chi_square_rng(stan::math::positive_infinity(),
                                                      1.0, rng),
@@ -31,7 +31,7 @@ TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
     samples.push_back(stan::math::scaled_inv_chi_square_rng(2.0, 1.0, rng) / (2.0 * 1.0));
   }
 
-  //Generate quantiles from boost's inverse chi square distribution
+  // Generate quantiles from boost's inverse chi square distribution
   boost::math::inverse_chi_squared_distribution<>dist (2.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -40,6 +40,6 @@ TEST(ProbDistributionsScaledInvChiSquare, chiSquareGoodnessFitTest) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }

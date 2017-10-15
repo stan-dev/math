@@ -46,18 +46,18 @@ TEST(stack_alloc, bytes_allocated) {
   }
 }
 
-TEST(stack_alloc,is_aligned) {
+TEST(stack_alloc, is_aligned) {
   char* ptr = static_cast<char*>(malloc(1024));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,1U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,2U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,4U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,8U));
-  
-  EXPECT_FALSE(stan::math::is_aligned(ptr+1,8U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 1U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 2U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 4U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 8U));
+
+  EXPECT_FALSE(stan::math::is_aligned(ptr+1, 8U));
   free(ptr); // not very safe, but just a test
 }
 
-TEST(stack_alloc,alloc) {
+TEST(stack_alloc, alloc) {
 
   std::vector<double*> ds;
   std::vector<int*> is;
@@ -78,16 +78,16 @@ TEST(stack_alloc,alloc) {
     cs.push_back(baz);
     allocator.alloc(13);
 
-    EXPECT_FLOAT_EQ(9.0,*foo);
-    EXPECT_EQ(17,*bar);
-    EXPECT_EQ(3,*baz);
+    EXPECT_FLOAT_EQ(9.0, *foo);
+    EXPECT_EQ(17, *bar);
+    EXPECT_EQ(3, *baz);
   }
   for (int i = 0; i < 10000; ++i) {
-    EXPECT_FLOAT_EQ(9.0,*ds[i]);
-    EXPECT_EQ(17,*is[i]);
-    EXPECT_EQ(3,*cs[i]);
+    EXPECT_FLOAT_EQ(9.0, *ds[i]);
+    EXPECT_EQ(17, *is[i]);
+    EXPECT_EQ(3, *cs[i]);
   }
-  
+
   allocator.recover_all();
 
 }

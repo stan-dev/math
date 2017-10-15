@@ -9,9 +9,9 @@ void test_sum(stan::math::accumulator<T>& a,
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum());
 }
 
-TEST(MathMatrix,accumulateDouble) {
+TEST(MathMatrix, accumulateDouble) {
   using stan::math::accumulator;
-  
+
   accumulator<double> a;
   test_sum(a, 0);
 
@@ -21,9 +21,9 @@ TEST(MathMatrix,accumulateDouble) {
   for (int i = 2; i <= 1000; ++i)
     a.add(i);
   test_sum(a, 1000);
-  
+
 }
-TEST(MathMatrix,accumulateCollection) {
+TEST(MathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>
   // MatrixXd, VectorXd, and recursions of vector<T>
 
@@ -40,17 +40,17 @@ TEST(MathMatrix,accumulateCollection) {
   vector<double> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
-  a.add(v);                                         
+  a.add(v);
   test_sum(a, pos-1);
 
-  a.add(pos++);                    
+  a.add(pos++);
   test_sum(a, pos-1);
 
   double x = pos++;
-  a.add(x);                        
+  a.add(x);
   test_sum(a, pos-1);
 
-  vector<int> u(10);         
+  vector<int> u(10);
   for (size_t i = 0; i < 10; ++i)
     a.add(pos++);
   test_sum(a, pos-1);
@@ -65,10 +65,10 @@ TEST(MathMatrix,accumulateCollection) {
   a.add(ww);
   test_sum(a, pos-1);
 
-  MatrixXd m(5,6);
+  MatrixXd m(5, 6);
   for (int i = 0; i < 5; ++i)
     for (int j = 0; j < 6; ++j)
-      m(i,j) = pos++;
+      m(i, j) = pos++;
   a.add(m);
   test_sum(a, pos-1);
 

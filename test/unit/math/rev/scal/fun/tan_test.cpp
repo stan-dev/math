@@ -3,29 +3,29 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,tan_var) {
+TEST(AgradRev, tan_var) {
   AVAR a = 0.68;
   AVAR f = tan(a);
   EXPECT_FLOAT_EQ(0.80866137, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(1 + tan(0.68)*tan(0.68), g[0]);
 }
 
-TEST(AgradRev,tan_neg_var) {
+TEST(AgradRev, tan_neg_var) {
   AVAR a = -.68;
   AVAR f = tan(a);
   EXPECT_FLOAT_EQ(-0.80866137, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(1 + tan(-0.68)*tan(-0.68), g[0]);
 }
 
-TEST(AgradRev,tan_boundry) {
+TEST(AgradRev, tan_boundry) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
   EXPECT_TRUE(std::isnan(tan(a)))
@@ -44,9 +44,9 @@ struct tan_fun {
   }
 };
 
-TEST(AgradRev,tan_NaN) {
+TEST(AgradRev, tan_NaN) {
   tan_fun tan_;
-  test_nan(tan_,false,true);
+  test_nan(tan_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

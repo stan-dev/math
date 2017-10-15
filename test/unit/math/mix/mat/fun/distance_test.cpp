@@ -7,7 +7,7 @@ using stan::math::fvar;
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_fv1) {
   stan::math::vector_fv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -18,7 +18,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_fv1) {
   v2(0).d_ = 4.0;
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
-  
+
   stan::math::fvar<var> a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val());
@@ -54,7 +54,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_fv1) {
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_fv2) {
   stan::math::vector_fv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -65,7 +65,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_fv2) {
   v2(0).d_ = 4.0;
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
-  
+
   stan::math::fvar<var> a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val());
@@ -92,7 +92,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_fv2) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_fv1) {
   stan::math::row_vector_fv rv;
   stan::math::vector_fv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -140,7 +140,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_fv1) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_fv2) {
   stan::math::row_vector_fv rv;
   stan::math::vector_fv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -178,7 +178,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_fv2) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_fv1) {
   stan::math::row_vector_fv rv;
   stan::math::vector_fv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -226,7 +226,7 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_fv1) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_fv2) {
   stan::math::row_vector_fv rv;
   stan::math::vector_fv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -264,7 +264,7 @@ TEST(AgradMixMatrixDistance, special_values_fv) {
   stan::math::vector_fv v1, v2;
   v1.resize(1);
   v2.resize(1);
-  
+
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
@@ -288,7 +288,7 @@ TEST(AgradMixMatrixDistance, special_values_fv) {
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_ffv1) {
   stan::math::vector_ffv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -299,7 +299,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv1) {
   v2(0).d_ = 4.0;
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
-  
+
   stan::math::fvar<fvar<var> > a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -335,7 +335,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv1) {
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_ffv2) {
   stan::math::vector_ffv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -352,7 +352,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv2) {
   v2(0).val_.d_ = 4.0;
   v2(1).val_.d_ = 5.0;
   v2(2).val_.d_ = 6.0;
-  
+
   stan::math::fvar<fvar<var> > a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -378,7 +378,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv2) {
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_ffv3) {
   stan::math::vector_ffv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -395,7 +395,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv3) {
   v2(0).val_.d_ = 4.0;
   v2(1).val_.d_ = 5.0;
   v2(2).val_.d_ = 6.0;
-  
+
   stan::math::fvar<fvar<var> > a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -421,7 +421,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv3) {
 
 TEST(AgradMixMatrixDistance, vector_fv_vector_ffv4) {
   stan::math::vector_ffv v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -438,7 +438,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv4) {
   v2(0).val_.d_ = 4.0;
   v2(1).val_.d_ = 5.0;
   v2(2).val_.d_ = 6.0;
-  
+
   stan::math::fvar<fvar<var> > a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -465,7 +465,7 @@ TEST(AgradMixMatrixDistance, vector_fv_vector_ffv4) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv1) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -513,7 +513,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv1) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv2) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -556,7 +556,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv2) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv3) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -599,7 +599,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv3) {
 TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv4) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -643,7 +643,7 @@ TEST(AgradMixMatrixDistance, rowvector_fv_vector_ffv4) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv1) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -691,7 +691,7 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv1) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv2) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -735,7 +735,7 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv2) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv3) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -779,7 +779,7 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv3) {
 TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv4) {
   stan::math::row_vector_ffv rv;
   stan::math::vector_ffv v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -824,7 +824,7 @@ TEST(AgradMixMatrixDistance, special_values_ffv) {
   stan::math::vector_ffv v1, v2;
   v1.resize(1);
   v2.resize(1);
-  
+
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));

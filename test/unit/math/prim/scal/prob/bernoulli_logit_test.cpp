@@ -14,7 +14,7 @@ TEST(ProbDistributionsBernoulliLogit, error_check) {
 TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000; // number of samples
- 
+
   double parameter = -0.5; // logit-transformed probability
   double prob = stan::math::inv_logit(-0.5); // actual probability
 

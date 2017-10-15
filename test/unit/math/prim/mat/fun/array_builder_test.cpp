@@ -8,11 +8,11 @@ using stan::math::array_builder;
 using stan::math::to_matrix;
 using stan::math::to_row_vector;
 
-TEST(MathMatrix,arrayBuilder) {
+TEST(MathMatrix, arrayBuilder) {
 
   vector<Matrix<double, 1, Dynamic> > mEmpty
     = array_builder<Matrix<double, 1, Dynamic> >().array();
-  EXPECT_EQ(0U,mEmpty.size());
+  EXPECT_EQ(0U, mEmpty.size());
 
   vector<double> v2 =
     array_builder<double>()
@@ -28,13 +28,13 @@ TEST(MathMatrix,arrayBuilder) {
     array();
   Matrix<double, 3, 2> m32 = to_matrix(v3rv2);
 
-  EXPECT_EQ(6U,m32.size());
-  EXPECT_FLOAT_EQ(1.0, m32(0,0));
-  EXPECT_FLOAT_EQ(2.0, m32(0,1));
-  EXPECT_FLOAT_EQ(1.0, m32(1,0));
-  EXPECT_FLOAT_EQ(2.0, m32(1,1));
-  EXPECT_FLOAT_EQ(1.0, m32(2,0));
-  EXPECT_FLOAT_EQ(2.0, m32(2,1));
+  EXPECT_EQ(6U, m32.size());
+  EXPECT_FLOAT_EQ(1.0, m32(0, 0));
+  EXPECT_FLOAT_EQ(2.0, m32(0, 1));
+  EXPECT_FLOAT_EQ(1.0, m32(1, 0));
+  EXPECT_FLOAT_EQ(2.0, m32(1, 1));
+  EXPECT_FLOAT_EQ(1.0, m32(2, 0));
+  EXPECT_FLOAT_EQ(2.0, m32(2, 1));
 
 }
 

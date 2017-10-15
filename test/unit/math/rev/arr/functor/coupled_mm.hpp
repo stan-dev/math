@@ -6,14 +6,14 @@
 struct coupled_mm_ode_fun {
   template <typename T0, typename T1, typename T2>
   inline
-  std::vector<typename stan::return_type<T1,T2>::type>
+  std::vector<typename stan::return_type<T1, T2>::type>
   operator()(const T0& t_in, // initial time
-             const std::vector<T1>& y, //initial positions
+             const std::vector<T1>& y, // initial positions
              const std::vector<T2>& parms, // parameters
              const std::vector<double>& sx, // double data
              const std::vector<int>& sx_int,
              std::ostream* msgs) const { // integer data
-    std::vector<typename stan::return_type<T1,T2>::type> ydot(2);
+    std::vector<typename stan::return_type<T1, T2>::type> ydot(2);
 
     const T2 act   = parms[0];
     const T2 KmA   = parms[1];

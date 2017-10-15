@@ -8,7 +8,7 @@ TEST(ProbDistributionsInvChiSquare, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::inv_chi_square_rng(4.0, rng));
 
-  EXPECT_THROW(stan::math::inv_chi_square_rng(-4.0, rng),std::domain_error);
+  EXPECT_THROW(stan::math::inv_chi_square_rng(-4.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::inv_chi_square_rng(stan::math::positive_infinity(),
                                               rng),
                std::domain_error);
@@ -24,7 +24,7 @@ TEST(ProbDistributionsInvChiSquare, chiSquareGoodnessFitTest) {
     samples.push_back(stan::math::inv_chi_square_rng(4.0, rng));
   }
 
-  //Generate quantiles from boost's inverse chi squared distribution
+  // Generate quantiles from boost's inverse chi squared distribution
   boost::math::inverse_chi_squared_distribution<>dist (4.0);
   std::vector<double> quantiles;
   for (int i=1; i<K; ++i) {
@@ -33,6 +33,6 @@ TEST(ProbDistributionsInvChiSquare, chiSquareGoodnessFitTest) {
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
-  //Assert that they match
+  // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }

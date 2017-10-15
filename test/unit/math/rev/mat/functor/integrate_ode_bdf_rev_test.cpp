@@ -76,16 +76,16 @@ void sho_data_finite_diff_test(double t0) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   test_ode_cvode(harm_osc, t0, ts, y0, theta, x, x_int, 1e-8, 1e-4);
 
-  sho_value_test<harm_osc_ode_data_fun,double,var>(harm_osc, y0, t0, ts,
+  sho_value_test<harm_osc_ode_data_fun, double, var>(harm_osc, y0, t0, ts,
                                                    theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,double>(harm_osc, y0, t0, ts,
+  sho_value_test<harm_osc_ode_data_fun, var, double>(harm_osc, y0, t0, ts,
                                                    theta, x, x_int);
-  sho_value_test<harm_osc_ode_data_fun,var,var>(harm_osc, y0, t0, ts,
+  sho_value_test<harm_osc_ode_data_fun, var, var>(harm_osc, y0, t0, ts,
                                                 theta, x, x_int);
 }
 
@@ -138,18 +138,18 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   for (int i = 0; i < 100; i++)
     ts.push_back(t0 + 0.1 * (i + 1));
 
-  std::vector<double> x(3,1);
-  std::vector<int> x_int(2,0);
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
 
   std::string error_msg
     = "ode_system: size of state vector y (2) and derivative vector dy_dt (3)"
     " in the ODE functor do not match in size.";
 
-  sho_error_test<double,var>(harm_osc, y0, t0, ts,
+  sho_error_test<double, var>(harm_osc, y0, t0, ts,
                              theta, x, x_int, error_msg);
-  sho_error_test<var,double>(harm_osc, y0, t0, ts,
+  sho_error_test<var, double>(harm_osc, y0, t0, ts,
                              theta, x, x_int, error_msg);
-  sho_error_test<var,var>(harm_osc, y0, t0, ts,
+  sho_error_test<var, var>(harm_osc, y0, t0, ts,
                           theta, x, x_int, error_msg);
 }
 

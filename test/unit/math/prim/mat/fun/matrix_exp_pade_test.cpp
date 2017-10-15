@@ -23,7 +23,7 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
 }
 
 TEST(MathMatrix, matrix_exp_pade_3x3) {
-  // example from http://www.sosmath.com/matrix/expo/expo.html
+  // example from http:// www.sosmath.com/matrix/expo/expo.html
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
   m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
