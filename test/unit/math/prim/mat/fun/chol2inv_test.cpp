@@ -37,3 +37,18 @@ TEST(MathMatrix, chol2inv) {
     for (int i = 0; i < Y.rows(); i++)
       EXPECT_FLOAT_EQ(Y_inv(i,j), Y_inv2(i,j));
 }
+
+TEST(MathMatrix, chol2inv01) {
+  using stan::math::chol2inv;
+  using stan::math::matrix_d;
+
+  matrix_d Y(0,0);
+  matrix_d Y_inv2 = chol2inv(Y);
+  EXPECT_TRUE(0 == Y_inv2.rows());
+  EXPECT_TRUE(0 == Y_inv2.cols());
+
+  matrix_d L(1,1);
+  L(0,0) = 3.0;
+  matrix_d inv2 = chol2inv(L);
+  EXPECT_FLOAT_EQ(1/9.0, inv2(0,0));
+}
