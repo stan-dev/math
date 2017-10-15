@@ -34,7 +34,7 @@ namespace stan {
         X.coeffRef(0) = inv_square(L.coeff(0));
         return X;
       }
-      matrix_t L_inv = mdivide_left_tri_low(L, matrix_t::Identity(K,K).eval());
+      matrix_t L_inv = mdivide_left_tri_low(L, matrix_t::Identity(K, K).eval());
       matrix_t X(K, K);
       for (int k = 0; k < K; ++k) {
         X.coeffRef(k, k) = dot_self(L_inv.col(k).tail(K - k).eval());
