@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 TEST(AgradMixMatrix, value_of) {
   using stan::math::var;
@@ -47,7 +48,7 @@ TEST(AgradMixMatrix, value_of) {
   Eigen::Matrix<fvar<var>, -1, -1> d_ffv_a = value_of(ffv_a);
   Eigen::Matrix<fvar<var>, -1, -1> d_ffv_b = value_of(ffv_b);
 
-  for (size_type i = 0; i < 5; ++i){
+  for (size_type i = 0; i < 5; ++i) {
     EXPECT_FLOAT_EQ(b(i), d_b(i));
     EXPECT_FLOAT_EQ(b(i), d_v_b(i));
     EXPECT_FLOAT_EQ(b(i), d_fv_b(i).val());
@@ -55,7 +56,7 @@ TEST(AgradMixMatrix, value_of) {
   }
 
   for (size_type i = 0; i < 2; ++i)
-    for (size_type j = 0; j < 5; ++j){
+    for (size_type j = 0; j < 5; ++j) {
       EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
       EXPECT_FLOAT_EQ(a(i, j), d_v_a(i, j));
       EXPECT_FLOAT_EQ(a(i, j), d_fv_a(i, j).val());

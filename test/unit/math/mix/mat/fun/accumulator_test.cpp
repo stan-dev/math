@@ -24,10 +24,9 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
   for (int i = 2; i <= 1000; ++i)
     a.add(i);
   test_sum(a, 1000);
-
 }
-TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
 
+TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   using stan::math::accumulator;
   using std::vector;
   using stan::math::vector_fv;
@@ -97,10 +96,9 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
   for (int i = 2; i <= 1000; ++i)
     a.add(i);
   test_sum(a, 1000);
-
 }
-TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
 
+TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   using stan::math::accumulator;
   using std::vector;
   using stan::math::vector_ffv;

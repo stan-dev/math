@@ -541,7 +541,8 @@ TEST(AgradMixMatrixMinus, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, output(1, 1).d_.val().val());
   EXPECT_FLOAT_EQ(-1, output(1, 2).d_.val().val());
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(), v(0, 2).val().val());
+  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
+                      v(0, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -567,7 +568,8 @@ TEST(AgradMixMatrixMinus, ffv_matrix_2ndDeriv_1) {
 
   matrix_ffv output = minus(v);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(), v(0, 2).val().val());
+  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
+                      v(0, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -594,7 +596,8 @@ TEST(AgradMixMatrixMinus, ffv_matrix_2ndDeriv_2) {
 
   matrix_ffv output = minus(v);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(), v(0, 2).val().val());
+  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
+                      v(0, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -621,7 +624,8 @@ TEST(AgradMixMatrixMinus, ffv_matrix_3rdDeriv) {
 
   matrix_ffv output = minus(v);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(), v(0, 2).val().val());
+  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
+                      v(0, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

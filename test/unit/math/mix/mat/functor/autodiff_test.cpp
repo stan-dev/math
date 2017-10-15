@@ -1,8 +1,9 @@
-#include <iostream>
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <stdexcept>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -148,7 +149,6 @@ TEST(AgradAutoDiff, jacobian) {
 }
 
 TEST(AgradAutoDiff, hessian) {
-
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -188,7 +188,6 @@ TEST(AgradAutoDiff, hessian) {
   EXPECT_FLOAT_EQ(2 * 5, H2(0, 1));
   EXPECT_FLOAT_EQ(2 * 5, H2(1, 0));
   EXPECT_FLOAT_EQ(2 * 3, H2(1, 1));
-
 }
 
 TEST(AgradAutoDiff, GradientTraceMatrixTimesHessian) {
@@ -205,7 +204,7 @@ TEST(AgradAutoDiff, GradientTraceMatrixTimesHessian) {
   EXPECT_FLOAT_EQ(22, grad_tr_MH(1));
 }
 
-TEST(AgradAutoDiff, GradientHessian){
+TEST(AgradAutoDiff, GradientHessian) {
   norm_functor log_normal_density;
   third_order_mixed mixed_third_poly;
 
@@ -273,7 +272,7 @@ TEST(AgradAutoDiff, GradientHessian){
   for (size_t i = 0; i < 3; ++i)
     for (int j = 0; j < 3; ++j)
       for (int k = 0; k < 3; ++k) {
-        if (i == 0){
+        if (i == 0) {
           EXPECT_FLOAT_EQ(norm_hess_agrad_hessian(j, k),
                           norm_hess_analytic(j, k));
           EXPECT_FLOAT_EQ(poly_hess_agrad_hessian(j, k),

@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 TEST(AgradMixMatrixMean, fv_vector_1stDeriv) {
   using stan::math::mean;
@@ -533,7 +534,8 @@ TEST(AgradMixMatrixMean, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(97.0/3.0, output.val_.val().val());
   EXPECT_FLOAT_EQ(1.0, output.d_.val().val());
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0/3.0, h[0]);
@@ -559,7 +561,8 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_1) {
   fvar<fvar<var> > output;
   output = mean(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -585,7 +588,8 @@ TEST(AgradMixMatrixMean, ffv_matrix_2ndDeriv_2) {
   fvar<fvar<var> > output;
   output = mean(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -614,7 +618,8 @@ TEST(AgradMixMatrixMean, ffv_matrix_3rdDeriv) {
   fvar<fvar<var> > output;
   output = mean(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

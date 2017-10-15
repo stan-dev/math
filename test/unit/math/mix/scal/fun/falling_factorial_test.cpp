@@ -24,7 +24,6 @@ TEST(AgradFwdFallingFactorial, FvarVar_1stDeriv) {
   c.val_.grad(y, g);
   EXPECT_FLOAT_EQ(47, g[0]);
   EXPECT_FLOAT_EQ(0, g[1]);
-
 }
 
 TEST(AgradFwdFallingFactorial, FvarVar_2ndDeriv_x) {

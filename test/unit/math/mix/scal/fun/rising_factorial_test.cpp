@@ -25,7 +25,6 @@ TEST(AgradFwdRisingFactorial, FvarVar_1stDeriv) {
                   (digamma(5 + 3) - digamma(5)),
                   g[0]);
   EXPECT_FLOAT_EQ(0, g[1]);
-
 }
 
 TEST(AgradFwdRisingFactorial, FvarVar_2ndDeriv_x) {
@@ -140,8 +139,6 @@ TEST(AgradFwdRisingFactorial, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::rising_factorial;
-
-
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;

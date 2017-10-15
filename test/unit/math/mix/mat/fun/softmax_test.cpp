@@ -117,14 +117,18 @@ TEST(AgradMixMatrixSoftmax, ffv_1stDeriv) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
   EXPECT_EQ(3, theta3.size());
-  EXPECT_FLOAT_EQ(exp(-1)/(exp(-1) + exp(1) + exp(10.0)), theta3[0].val_.val().val());
-  EXPECT_FLOAT_EQ(exp(1)/(exp(-1) + exp(1) + exp(10.0)), theta3[1].val_.val().val());
-  EXPECT_FLOAT_EQ(exp(10)/(exp(-1) + exp(1) + exp(10.0)), theta3[2].val_.val().val());
+  EXPECT_FLOAT_EQ(exp(-1)/(exp(-1) + exp(1) + exp(10.0)),
+                  theta3[0].val_.val().val());
+  EXPECT_FLOAT_EQ(exp(1)/(exp(-1) + exp(1) + exp(10.0)),
+                  theta3[1].val_.val().val());
+  EXPECT_FLOAT_EQ(exp(10)/(exp(-1) + exp(1) + exp(10.0)),
+                  theta3[2].val_.val().val());
   EXPECT_FLOAT_EQ(1.6699081e-05, theta3[0].d_.val().val());
   EXPECT_FLOAT_EQ(-2.0605762e-09, theta3[1].d_.val().val());
   EXPECT_FLOAT_EQ(-1.6697022e-05, theta3[2].d_.val().val());
 
-  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
+  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(),
+                      x3(2).val().val());
   VEC h;
   theta3[0].val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.6699081e-05, h[0]);
@@ -147,7 +151,8 @@ TEST(AgradMixMatrixSoftmax, ffv_2ndDeriv_1) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
-  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
+  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(),
+                      x3(2).val().val());
   VEC h;
   theta3[0].val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -171,7 +176,8 @@ TEST(AgradMixMatrixSoftmax, ffv_2ndDeriv_2) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
-  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
+  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(),
+                      x3(2).val().val());
   VEC h;
   theta3[0].d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.6698525e-05, h[0]);
@@ -198,7 +204,8 @@ TEST(AgradMixMatrixSoftmax, ffv_3rdDeriv) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = softmax(x3);
 
-  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(), x3(2).val().val());
+  AVEC q = createAVEC(x3(0).val().val(), x3(1).val().val(),
+                      x3(2).val().val());
   VEC h;
   theta3[0].d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(1.669741e-05, h[0]);

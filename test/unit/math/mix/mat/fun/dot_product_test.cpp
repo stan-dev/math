@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_1stDeriv) {
   using stan::math::vector_d;
@@ -720,7 +721,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_fv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_fv;
   using stan::math::row_vector_d;
@@ -763,7 +765,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_no_exception_length_1stDeriv)
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_no_exception_length_2ndDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_fv_no_exception_length_2ndDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_fv;
   using stan::math::row_vector_d;
@@ -878,7 +881,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_fv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_fv;
   using stan::math::row_vector_d;
@@ -921,7 +925,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_no_exception_length_1stDeriv)
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_no_exception_length_2ndDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_fv_no_exception_length_2ndDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_fv;
   using stan::math::row_vector_d;
@@ -1028,7 +1033,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_fv_no_exception_length_1stDeriv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
   using stan::math::fvar;
@@ -1067,7 +1073,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_no_exception_length_1stDer
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_no_exception_length_2ndDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_fv_no_exception_length_2ndDeriv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
   using stan::math::fvar;
@@ -1261,7 +1268,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, stan::math::dot_product(vd_1, vv_2).d_.val().val());
   EXPECT_FLOAT_EQ(0, stan::math::dot_product(vv_1, vv_2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -1292,7 +1300,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_1) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1323,7 +1332,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_2) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1360,7 +1370,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_3rdDeriv) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1416,7 +1427,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, stan::math::dot_product(d1, v2).d_.val().val());
   EXPECT_FLOAT_EQ(0, stan::math::dot_product(v1, v2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -1451,7 +1463,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_1) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1486,7 +1499,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1527,7 +1541,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_3rdDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1585,7 +1600,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, stan::math::dot_product(d1, v2).d_.val().val());
   EXPECT_FLOAT_EQ(0, stan::math::dot_product(v1, v2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -1620,7 +1636,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_1) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1655,7 +1672,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1696,7 +1714,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_3rdDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1751,7 +1770,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, stan::math::dot_product(d1, v2).d_.val().val());
   EXPECT_FLOAT_EQ(0, stan::math::dot_product(v1, v2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -1781,7 +1801,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -1812,7 +1833,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -1848,7 +1870,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -2089,14 +2112,21 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_1stDeriv) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vv_1, vd_2, length).val_.val().val());
-  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vd_1, vv_2, length).val_.val().val());
-  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vv_1, vv_2, length).val_.val().val());
-  EXPECT_FLOAT_EQ(2, stan::math::dot_product(vv_1, vd_2, length).d_.val().val());
-  EXPECT_FLOAT_EQ(4, stan::math::dot_product(vd_1, vv_2, length).d_.val().val());
-  EXPECT_FLOAT_EQ(6, stan::math::dot_product(vv_1, vv_2, length).d_.val().val());
+  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vv_1,
+                                              vd_2, length).val_.val().val());
+  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vd_1,
+                                              vv_2, length).val_.val().val());
+  EXPECT_FLOAT_EQ(-2, stan::math::dot_product(vv_1,
+                                              vv_2, length).val_.val().val());
+  EXPECT_FLOAT_EQ(2, stan::math::dot_product(vv_1,
+                                              vd_2, length).d_.val().val());
+  EXPECT_FLOAT_EQ(4, stan::math::dot_product(vd_1,
+                                              vv_2, length).d_.val().val());
+  EXPECT_FLOAT_EQ(6, stan::math::dot_product(vv_1,
+                                              vv_2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2128,7 +2158,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_1) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2160,7 +2191,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_2) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2198,7 +2230,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(vv_1, vd_2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2208,7 +2241,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      vector_vector_ffv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::fvar;
@@ -2239,7 +2273,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2249,7 +2284,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_2ndDeriv_1) {
+TEST(AgradMixMatrixDotProduct,
+      vector_vector_ffv_no_exception_length_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::fvar;
@@ -2273,7 +2309,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_2ndDeriv_1)
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2283,7 +2320,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_2ndDeriv_1)
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_2ndDeriv_2) {
+TEST(AgradMixMatrixDotProduct,
+      vector_vector_ffv_no_exception_length_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::fvar;
@@ -2307,7 +2345,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_2ndDeriv_2)
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2347,7 +2386,8 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_3rdDeriv) {
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2390,7 +2430,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2426,7 +2467,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_1) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2462,7 +2504,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2504,7 +2547,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_3rdDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2514,7 +2558,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_ffv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2547,7 +2592,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_1stDeriv
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2557,7 +2603,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_1stDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv_1) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_ffv_no_exception_length_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2583,7 +2630,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2593,7 +2641,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv_2) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_ffv_no_exception_length_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2619,7 +2668,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2629,7 +2679,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_2ndDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_3rdDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_vector_ffv_no_exception_length_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2661,7 +2712,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_no_exception_length_3rdDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2704,7 +2756,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2740,7 +2793,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_1) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2776,7 +2830,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2818,7 +2873,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_3rdDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2828,7 +2884,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_ffv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2861,7 +2918,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_1stDeriv
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -2871,7 +2929,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_1stDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2897,7 +2956,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2907,7 +2967,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2933,7 +2994,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -2943,7 +3005,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_2ndDeriv
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_3rdDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      vector_rowvector_ffv_no_exception_length_3rdDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::row_vector_d;
@@ -2975,7 +3038,8 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_no_exception_length_3rdDeriv
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3014,7 +3078,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -3046,7 +3111,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_1) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3078,7 +3144,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_2) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3116,7 +3183,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_3rdDeriv) {
   d2 << 4, -2, -1;
   v2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3126,7 +3194,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_ffv_no_exception_length_1stDeriv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -3155,7 +3224,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_1stDe
   EXPECT_FLOAT_EQ(4, stan::math::dot_product(d1, v2, length).d_.val().val());
   EXPECT_FLOAT_EQ(6, stan::math::dot_product(v1, v2, length).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -3165,7 +3235,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_1stDe
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -3187,7 +3258,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDe
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3197,7 +3269,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDe
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -3219,7 +3292,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDe
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -3229,7 +3303,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_2ndDe
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_3rdDeriv) {
+TEST(AgradMixMatrixDotProduct,
+      rowvector_rowvector_ffv_no_exception_length_3rdDeriv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -3257,7 +3332,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_no_exception_length_3rdDe
   d2 << 4, -2;
   v2 << d, e, f, -e;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   stan::math::dot_product(v1, d2, length).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0, h[0]);

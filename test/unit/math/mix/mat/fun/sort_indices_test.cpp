@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 
 typedef std::vector<double> VEC;
@@ -9,193 +10,201 @@ using stan::math::sort_indices_asc;
 using stan::math::sort_indices_desc;
 
 void test_sort_indices_asc2(std::vector<double> val) {
-
   std::vector<fvar<var> > x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<var>(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i]);
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
+
 void test_sort_indices_asc4(std::vector<double> val) {
-
-
   std::vector<fvar<fvar<var> > > x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<fvar<var> >(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i]);
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
-void test_sort_indices_desc2(VEC val) {
 
+void test_sort_indices_desc2(VEC val) {
   std::vector<fvar<var> > x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<var>(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i]);
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
-void test_sort_indices_desc4(VEC val) {
 
+void test_sort_indices_desc4(VEC val) {
   std::vector<fvar<fvar<var> > > x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<fvar<var> >(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i]);
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
+
 template <typename T, int R, int C>
 void test_sort_indices_asc2(Eigen::Matrix<T, R, C> val) {
-
-
   typedef Eigen::Matrix<fvar<var>, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = fvar<var>(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
+
 template <typename T, int R, int C>
 void test_sort_indices_asc4(Eigen::Matrix<T, R, C> val) {
-
-
   typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = fvar<fvar<var> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
+
 template <typename T, int R, int C>
 void test_sort_indices_desc2(Eigen::Matrix<T, R, C> val) {
-
   typedef Eigen::Matrix<fvar<var>, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = fvar<var>(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
+
 template <typename T, int R, int C>
 void test_sort_indices_desc4(Eigen::Matrix<T, R, C> val) {
-
   typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;
 
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = fvar<fvar<var> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
+
 TEST(AgradMixSortIndices, var) {
   VEC a;
-  a.push_back(1); a.push_back(2); a.push_back(2); a.push_back(3);
+  a.push_back(1);
+  a.push_back(2);
+  a.push_back(2);
+  a.push_back(3);
   test_sort_indices_asc2(a);
   test_sort_indices_desc2(a);
 
   VEC b;
-  b.push_back(1.1); b.push_back(2.2); ; b.push_back(33.1); b.push_back(-12.1); b.push_back(33.1);
+  b.push_back(1.1);
+  b.push_back(2.2);
+  b.push_back(33.1);
+  b.push_back(-12.1);
+  b.push_back(33.1);
   test_sort_indices_asc2(b);
   test_sort_indices_desc2(b);
 
   VEC c;
-  c.push_back(1.1); c.push_back(-2); c.push_back(2.1); c.push_back(3); c.push_back(2.1);
+  c.push_back(1.1);
+  c.push_back(-2);
+  c.push_back(2.1);
+  c.push_back(3);
+  c.push_back(2.1);
   test_sort_indices_asc2(c);
   test_sort_indices_desc2(c);
 
@@ -242,17 +251,28 @@ TEST(AgradMixSortIndices, fv_no_thrown) {
 
 TEST(AgradMixSortIndices, ffv_sort) {
   VEC a;
-  a.push_back(1); a.push_back(2); a.push_back(2); a.push_back(3);
+  a.push_back(1);
+  a.push_back(2);
+  a.push_back(2);
+  a.push_back(3);
   test_sort_indices_asc4(a);
   test_sort_indices_desc4(a);
 
   VEC b;
-  b.push_back(1.1); b.push_back(2.2); ; b.push_back(33.1); b.push_back(-12.1); b.push_back(33.1);
+  b.push_back(1.1);
+  b.push_back(2.2);
+  b.push_back(33.1);
+  b.push_back(-12.1);
+  b.push_back(33.1);
   test_sort_indices_asc4(b);
   test_sort_indices_desc4(b);
 
   VEC c;
-  c.push_back(1.1); c.push_back(-2); c.push_back(2.1); c.push_back(3); c.push_back(2.1);
+  c.push_back(1.1);
+  c.push_back(-2);
+  c.push_back(2.1);
+  c.push_back(3);
+  c.push_back(2.1);
   test_sort_indices_asc4(c);
   test_sort_indices_desc4(c);
 

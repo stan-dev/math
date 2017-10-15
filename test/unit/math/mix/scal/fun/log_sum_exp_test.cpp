@@ -14,7 +14,8 @@ TEST(AgradFwdLogSumExp, FvarVar_FvarVar_1stDeriv) {
   fvar<var> a = log_sum_exp(x, z);
 
   EXPECT_FLOAT_EQ(log_sum_exp(3.0, 6.0), a.val_.val());
-  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0)) / (exp(3.0) + exp(6.0)), a.d_.val());
+  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0))
+                    / (exp(3.0) + exp(6.0)), a.d_.val());
 
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;
@@ -68,7 +69,8 @@ TEST(AgradFwdLogSumExp, FvarVar_FvarVar_2ndDeriv) {
   fvar<var> z(6.0, 1.0);
   fvar<var> a = log_sum_exp(x, z);
 
-  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0)) / (exp(3.0) + exp(6.0)), a.d_.val());
+  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0))
+                    / (exp(3.0) + exp(6.0)), a.d_.val());
 
 
   AVEC y = createAVEC(x.val_, z.val_);

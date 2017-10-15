@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 using stan::math::var;
 
@@ -55,7 +56,6 @@ TEST(AgradMixMatrixQrQ, fv1) {
   EXPECT_FLOAT_EQ(0, grads[3]);
   EXPECT_FLOAT_EQ(-0.024147265, grads[4]);
   EXPECT_FLOAT_EQ(0, grads[5]);
-
 }
 
 TEST(AgradMixMatrixQrQ, fv2) {
@@ -149,7 +149,6 @@ TEST(AgradMixMatrixQrQ, ffv1) {
   EXPECT_FLOAT_EQ(0, grads[3]);
   EXPECT_FLOAT_EQ(-0.024147265, grads[4]);
   EXPECT_FLOAT_EQ(0, grads[5]);
-
 }
 
 TEST(AgradMixMatrixQrQ, ffv2) {

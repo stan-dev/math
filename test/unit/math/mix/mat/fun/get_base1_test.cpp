@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -79,7 +80,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
       Matrix<fvar<var> , 1, Dynamic> xi
         = get_base1<fvar<var> >(x, i+1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val(), xi[j].val_.val());
-      EXPECT_FLOAT_EQ(x(i, j).val_.val(), get_base1(xi, j+1, "xi", 2).val_.val());
+      EXPECT_FLOAT_EQ(x(i, j).val_.val(),
+                      get_base1(xi, j+1, "xi", 2).val_.val());
     }
   }
   EXPECT_THROW(get_base1(x, 10, "x", 1), std::out_of_range);
@@ -97,7 +99,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_fv) {
   x << 1, 2, 3;
 
   for (size_t i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(x(i).val_.val(), get_base1(x, i+1, "x", 1).val_.val());
+    EXPECT_FLOAT_EQ(x(i).val_.val(),
+                    get_base1(x, i+1, "x", 1).val_.val());
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
@@ -109,7 +112,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_row_vector_fv) {
   x << 1, 2, 3;
 
   for (size_t i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(x(i).val_.val(), get_base1(x, i+1, "x", 1).val_.val());
+    EXPECT_FLOAT_EQ(x(i).val_.val(),
+                    get_base1(x, i+1, "x", 1).val_.val());
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
@@ -124,8 +128,10 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_fv) {
   vector<vector<vector<vector<fvar<var> > > > > x4(6, x3);
   vector<vector<vector<vector<vector<fvar<var> > > > > > x5(5, x4);
   vector<vector<vector<vector<vector<vector<fvar<var> > > > > > > x6(4, x5);
-  vector<vector<vector<vector<vector<vector<vector<fvar<var> > > > > > > > x7(3, x6);
-  vector<vector<vector<vector<vector<vector<vector<vector<fvar<var> > > > > > > > > x8(2, x7);
+  vector<vector<vector<vector<vector<vector<vector<
+                                    fvar<var> > > > > > > > x7(3, x6);
+  vector<vector<vector<vector<vector<vector<vector<
+                                    vector<fvar<var> > > > > > > > > x8(2, x7);
 
   EXPECT_EQ(x0.val_.val(), x8[0][0][0][0][0][0][0][0].val_.val());
 
@@ -149,7 +155,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_fv) {
               for (size_t i7 = 0; i7 < x8[0][0][0][0][0][0].size(); ++i7)
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
                   EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8].val_.val(),
-                                  get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1, i6+1, i7+1, i8+1,
+                                  get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1,
+                                            i6+1, i7+1, i8+1,
                                             "x8", 1).val_.val());
 }
 
@@ -228,7 +235,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
       Matrix<fvar<fvar<var> > , 1, Dynamic> xi
         = get_base1<fvar<fvar<var> > >(x, i+1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(), xi[j].val_.val_.val());
-      EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(), get_base1(xi, j+1, "xi", 2).val_.val_.val());
+      EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(),
+                      get_base1(xi, j+1, "xi", 2).val_.val_.val());
     }
   }
   EXPECT_THROW(get_base1(x, 10, "x", 1), std::out_of_range);
@@ -246,7 +254,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_ffv) {
   x << 1, 2, 3;
 
   for (size_t i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(x(i).val_.val_.val(), get_base1(x, i+1, "x", 1).val_.val_.val());
+    EXPECT_FLOAT_EQ(x(i).val_.val_.val(),
+                    get_base1(x, i+1, "x", 1).val_.val_.val());
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
@@ -258,7 +267,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_row_vector_ffv) {
   x << 1, 2, 3;
 
   for (size_t i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(x(i).val_.val_.val(), get_base1(x, i+1, "x", 1).val_.val_.val());
+    EXPECT_FLOAT_EQ(x(i).val_.val_.val(),
+                    get_base1(x, i+1, "x", 1).val_.val_.val());
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
@@ -272,9 +282,12 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_ffv) {
   vector<vector<vector<fvar<fvar<var> > > > > x3(7, x2);
   vector<vector<vector<vector<fvar<fvar<var> > > > > > x4(6, x3);
   vector<vector<vector<vector<vector<fvar<fvar<var> > > > > > > x5(5, x4);
-  vector<vector<vector<vector<vector<vector<fvar<fvar<var> > > > > > > > x6(4, x5);
-  vector<vector<vector<vector<vector<vector<vector<fvar<fvar<var> > > > > > > > > x7(3, x6);
-  vector<vector<vector<vector<vector<vector<vector<vector<fvar<fvar<var> > > > > > > > > > x8(2, x7);
+  vector<vector<vector<vector<vector<vector<fvar<
+                              fvar<var> > > > > > > > x6(4, x5);
+  vector<vector<vector<vector<vector<vector<vector<
+                              fvar<fvar<var> > > > > > > > > x7(3, x6);
+  vector<vector<vector<vector<vector<vector<vector<
+                              vector<fvar<fvar<var> > > > > > > > > > x8(2, x7);
 
   EXPECT_EQ(x0.val_.val_.val(), x8[0][0][0][0][0][0][0][0].val_.val_.val());
 
@@ -297,8 +310,10 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_ffv) {
             for (size_t i6 = 0; i6 < x8[0][0][0][0][0].size(); ++i6)
               for (size_t i7 = 0; i7 < x8[0][0][0][0][0][0].size(); ++i7)
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
-                  EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8].val_.val_.val(),
-                                  get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1, i6+1, i7+1, i8+1,
+                  EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8]
+                                  .val_.val_.val(),
+                                  get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1,
+                                            i6+1, i7+1, i8+1,
                                             "x8", 1).val_.val_.val());
 }
 

@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -109,7 +110,6 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_fv_1st_deriv) {
   EXPECT_FLOAT_EQ(0.0, h[21]);
   EXPECT_FLOAT_EQ(2414, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
-
 }
 
 TEST(AgradMixMatrixQuadForm, quad_form_mat_fv_2nd_deriv) {
@@ -208,7 +208,6 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_fv_2nd_deriv) {
   EXPECT_FLOAT_EQ(0, h[21]);
   EXPECT_FLOAT_EQ(447, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
-
 }
 
 TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_fv_1st_deriv) {
@@ -483,6 +482,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_fv_2nd_deriv) {
   EXPECT_FLOAT_EQ(444, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
 }
+
 TEST(AgradMixMatrixQuadForm, quad_form_vec_fv_1st_deriv) {
   using stan::math::quad_form;
   using stan::math::matrix_fv;
@@ -872,6 +872,7 @@ TEST(AgradMixMatrixQuadForm, quad_form_sym_vec_fv_2nd_deriv) {
   EXPECT_FLOAT_EQ(232, h[18]);
   EXPECT_FLOAT_EQ(444, h[19]);
 }
+
 TEST(AgradMixMatrixQuadForm, quad_form_sym_symmetry_fv) {
   using stan::math::quad_form_sym;
   using stan::math::matrix_fv;
@@ -1097,8 +1098,8 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_1st_deriv) {
   EXPECT_FLOAT_EQ(0.0, h[21]);
   EXPECT_FLOAT_EQ(2414, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
-
 }
+
 TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_2nd_deriv) {
   using stan::math::quad_form;
   using stan::math::matrix_ffv;
@@ -1195,7 +1196,6 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_2nd_deriv) {
   EXPECT_FLOAT_EQ(0, h[21]);
   EXPECT_FLOAT_EQ(447, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
-
 }
 
 TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_3rd_deriv) {
@@ -1318,7 +1318,6 @@ TEST(AgradMixMatrixQuadForm, quad_form_mat_ffv_3rd_deriv) {
   EXPECT_FLOAT_EQ(0, h[21]);
   EXPECT_FLOAT_EQ(16, h[22]);
   EXPECT_FLOAT_EQ(0.0, h[23]);
-
 }
 
 TEST(AgradMixMatrixQuadForm, quad_form_sym_mat_dffv_instant) {

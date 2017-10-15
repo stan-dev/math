@@ -20,8 +20,10 @@ TEST(ProbDistributions, fvar_var) {
     alpha(i).d_ = 1.0;
   }
 
-  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta, alpha).val_.val());
-  EXPECT_FLOAT_EQ(0.99344212, stan::math::dirichlet_log(theta, alpha).d_.val());
+  EXPECT_FLOAT_EQ(0.6931472,
+                  stan::math::dirichlet_log(theta, alpha).val_.val());
+  EXPECT_FLOAT_EQ(0.99344212,
+                  stan::math::dirichlet_log(theta, alpha).d_.val());
 
   Matrix<fvar<var>, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
@@ -32,8 +34,10 @@ TEST(ProbDistributions, fvar_var) {
     alpha2(i).d_ = 1.0;
   }
 
-  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2, alpha2).val_.val());
-  EXPECT_FLOAT_EQ(2017.2858, stan::math::dirichlet_log(theta2, alpha2).d_.val());
+  EXPECT_FLOAT_EQ(-43.40045,
+                  stan::math::dirichlet_log(theta2, alpha2).val_.val());
+  EXPECT_FLOAT_EQ(2017.2858,
+                  stan::math::dirichlet_log(theta2, alpha2).d_.val());
 }
 
 TEST(ProbDistributions, fvar_fvar_var) {
@@ -49,8 +53,10 @@ TEST(ProbDistributions, fvar_fvar_var) {
     alpha(i).d_ = 1.0;
   }
 
-  EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta, alpha).val_.val_.val());
-  EXPECT_FLOAT_EQ(0.99344212, stan::math::dirichlet_log(theta, alpha).d_.val_.val());
+  EXPECT_FLOAT_EQ(0.6931472,
+                  stan::math::dirichlet_log(theta, alpha).val_.val_.val());
+  EXPECT_FLOAT_EQ(0.99344212,
+                  stan::math::dirichlet_log(theta, alpha).d_.val_.val());
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
@@ -61,6 +67,8 @@ TEST(ProbDistributions, fvar_fvar_var) {
     alpha2(i).d_ = 1.0;
   }
 
-  EXPECT_FLOAT_EQ(-43.40045, stan::math::dirichlet_log(theta2, alpha2).val_.val_.val());
-  EXPECT_FLOAT_EQ(2017.2858, stan::math::dirichlet_log(theta2, alpha2).d_.val_.val());
+  EXPECT_FLOAT_EQ(-43.40045,
+                  stan::math::dirichlet_log(theta2, alpha2).val_.val_.val());
+  EXPECT_FLOAT_EQ(2017.2858,
+                  stan::math::dirichlet_log(theta2, alpha2).d_.val_.val());
 }

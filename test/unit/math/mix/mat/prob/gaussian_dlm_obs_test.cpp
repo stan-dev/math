@@ -130,11 +130,16 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU_fvar_fvar_var) {
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> m0(1);
   m0 << fvar<fvar<var> >(11.5829455171551, 1.0);
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> y(1, 10);
-  y << fvar<fvar<var> >(-0.286804393606091, 1.0), fvar<fvar<var> >(1.30654039013044, 1.0),
-    fvar<fvar<var> >(0.184631538931975, 1.0), fvar<fvar<var> >(1.76116251447979, 1.0),
-    fvar<fvar<var> >(1.64691178557684, 1.0), fvar<fvar<var> >(0.0599998209370169, 1.0),
-    fvar<fvar<var> >(-0.498099220647035, 1.0), fvar<fvar<var> >(1.77794756092381, 1.0),
-    fvar<fvar<var> >(-0.435458550812876, 1.0), fvar<fvar<var> >(1.17332931763075, 1.0);
+  y << fvar<fvar<var> >(-0.286804393606091, 1.0),
+        fvar<fvar<var> >(1.30654039013044, 1.0),
+        fvar<fvar<var> >(0.184631538931975, 1.0),
+        fvar<fvar<var> >(1.76116251447979, 1.0),
+        fvar<fvar<var> >(1.64691178557684, 1.0),
+        fvar<fvar<var> >(0.0599998209370169, 1.0),
+        fvar<fvar<var> >(-0.498099220647035, 1.0),
+        fvar<fvar<var> >(1.77794756092381, 1.0),
+        fvar<fvar<var> >(-0.435458550812876, 1.0),
+        fvar<fvar<var> >(1.17332931763075, 1.0);
   double ll_expected = -16.2484978375184;
 
   fvar<fvar<var> > lp_ref = gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0);

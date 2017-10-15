@@ -126,7 +126,8 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_.val());
-  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_.val());
+  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5)
+                    * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_.val());
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -144,7 +145,7 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_1stDeriv) {
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
-  double y (1.5);
+  double y(1.5);
 
   fvar<fvar<var> > a = atan2(x, y);
 
@@ -257,7 +258,7 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_2ndDeriv) {
   x.val_.val_ = 1.5;
   x.val_.d_ = 1.0;
 
-  double y (1.5);
+  double y(1.5);
 
   fvar<fvar<var> > a = atan2(x, y);
 
@@ -276,7 +277,7 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_3rdDeriv) {
   x.val_.d_ = 1.0;
   x.d_.val_ = 1.0;
 
-  double y (1.5);
+  double y(1.5);
 
   fvar<fvar<var> > a = atan2(x, y);
 

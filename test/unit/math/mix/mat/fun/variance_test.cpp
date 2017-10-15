@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 TEST(AgradMixMatrixVariance, fv_vector_1stDeriv) {
   using stan::math::variance;
@@ -28,7 +29,8 @@ TEST(AgradMixMatrixVariance, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(), v1(3).val(), v1(4).val(), v1(5).val());
+  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(),
+                      v1(3).val(), v1(4).val(), v1(5).val());
   VEC h;
   variance(v1).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -57,7 +59,8 @@ TEST(AgradMixMatrixVariance, fv_vector_2ndDeriv) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(), v1(3).val(), v1(4).val(), v1(5).val());
+  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(),
+                      v1(3).val(), v1(4).val(), v1(5).val());
   VEC h;
   variance(v1).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-1.0/3.0, h[0]);
@@ -103,7 +106,8 @@ TEST(AgradMixMatrixVariance, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_.val());
 
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(), v1(3).val(), v1(4).val(), v1(5).val());
+  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(),
+                      v1(3).val(), v1(4).val(), v1(5).val());
   VEC h;
   variance(v1).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -132,7 +136,8 @@ TEST(AgradMixMatrixVariance, fv_rowvector_2ndDeriv) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(), v1(3).val(), v1(4).val(), v1(5).val());
+  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val(),
+                      v1(3).val(), v1(4).val(), v1(5).val());
   VEC h;
   variance(v1).d_.grad(q, h);
   EXPECT_FLOAT_EQ(3, h[0]);
@@ -178,7 +183,8 @@ TEST(AgradMixMatrixVariance, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
-   AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(0, 2).val(), v1(1, 0).val(), v1(1, 1).val(), v1(1, 2).val());
+   AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(0, 2).val(),
+                      v1(1, 0).val(), v1(1, 1).val(), v1(1, 2).val());
   VEC h;
   variance(v1).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -206,7 +212,8 @@ TEST(AgradMixMatrixVariance, fv_matrix_2ndDeriv) {
    v1(1, 1).d_ = 2.0;
    v1(1, 2).d_ = 2.0;
 
-   AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(0, 2).val(), v1(1, 0).val(), v1(1, 1).val(), v1(1, 2).val());
+   AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(0, 2).val(),
+                      v1(1, 0).val(), v1(1, 1).val(), v1(1, 2).val());
   VEC h;
   variance(v1).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-1.0/3.0, h[0]);
@@ -313,7 +320,8 @@ TEST(AgradMixMatrixVariance, ffv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val().val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val().val());
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -342,7 +350,8 @@ TEST(AgradMixMatrixVariance, ffv_vector_2ndDeriv_1) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -365,7 +374,8 @@ TEST(AgradMixMatrixVariance, ffv_vector_2ndDeriv_2) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1.0/3.0, h[0]);
@@ -394,7 +404,8 @@ TEST(AgradMixMatrixVariance, ffv_vector_3rdDeriv) {
    v1(4).val_.d_ = 1.0;
    v1(5).val_.d_ = 1.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -440,7 +451,8 @@ TEST(AgradMixMatrixVariance, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val().val());
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_.val().val());
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -469,7 +481,8 @@ TEST(AgradMixMatrixVariance, ffv_rowvector_2ndDeriv_1) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -492,7 +505,8 @@ TEST(AgradMixMatrixVariance, ffv_rowvector_2ndDeriv_2) {
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(3, h[0]);
@@ -521,7 +535,8 @@ TEST(AgradMixMatrixVariance, ffv_rowvector_3rdDeriv) {
    v1(4).val_.d_ = 1.0;
    v1(5).val_.d_ = 1.0;
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(), v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val(),
+                      v1(3).val().val(), v1(4).val().val(), v1(5).val().val());
   VEC h;
   variance(v1).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -567,7 +582,9 @@ TEST(AgradMixMatrixVariance, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val().val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val().val());
 
-   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val(), v1(1, 2).val().val());
+   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val(), v1(1, 0).val().val(),
+                      v1(1, 1).val().val(), v1(1, 2).val().val());
   VEC h;
   variance(v1).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1, h[0]);
@@ -595,7 +612,9 @@ TEST(AgradMixMatrixVariance, ffv_matrix_2ndDeriv_1) {
    v1(1, 1).d_ = 2.0;
    v1(1, 2).d_ = 2.0;
 
-   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val(), v1(1, 2).val().val());
+   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val(), v1(1, 0).val().val(),
+                      v1(1, 1).val().val(), v1(1, 2).val().val());
   VEC h;
   variance(v1).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -617,7 +636,9 @@ TEST(AgradMixMatrixVariance, ffv_matrix_2ndDeriv_2) {
    v1(1, 1).d_ = 2.0;
    v1(1, 2).d_ = 2.0;
 
-   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val(), v1(1, 2).val().val());
+   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val(), v1(1, 0).val().val(),
+                      v1(1, 1).val().val(), v1(1, 2).val().val());
   VEC h;
   variance(v1).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1.0/3.0, h[0]);
@@ -645,7 +666,9 @@ TEST(AgradMixMatrixVariance, ffv_matrix_3rdDeriv) {
    v1(4).val_.d_ = 1.0;
    v1(5).val_.d_ = 1.0;
 
-   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val(), v1(1, 2).val().val());
+   AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val(), v1(1, 0).val().val(),
+                      v1(1, 1).val().val(), v1(1, 2).val().val());
   VEC h;
   variance(v1).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

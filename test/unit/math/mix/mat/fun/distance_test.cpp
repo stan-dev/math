@@ -1,6 +1,8 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
+#include <vector>
 
 using stan::math::var;
 using stan::math::fvar;

@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <limits>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -127,38 +128,38 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
   v2 = 0;
   output_d = divide(d1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output_d(0));
-  EXPECT_TRUE (std::isnan(output_d(1)));
+  EXPECT_TRUE(std::isnan(output_d(1)));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output_d(2));
 
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
-  EXPECT_TRUE (std::isnan(output(0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1).d_.val()));
-  EXPECT_TRUE (std::isnan(output(2).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(2).d_.val()));
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val());
-  EXPECT_TRUE (std::isnan(output(1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
-  EXPECT_TRUE (std::isnan(output(0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1).d_.val()));
-  EXPECT_TRUE (std::isnan(output(2).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(2).d_.val()));
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -268,17 +269,17 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val());
-  EXPECT_TRUE (std::isnan(output(1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
   EXPECT_TRUE(std::isnan(output(0).d_.val()));
@@ -393,27 +394,27 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val());
-  EXPECT_TRUE (std::isnan(output(0, 0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1, 0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1, 1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1, 0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1, 1).d_.val()));
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).d_.val());
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
@@ -422,15 +423,15 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val());
-  EXPECT_TRUE (std::isnan(output(0, 0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1, 0).d_.val()));
-  EXPECT_TRUE (std::isnan(output(1, 1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1, 0).d_.val()));
+  EXPECT_TRUE(std::isnan(output(1, 1).d_.val()));
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -441,7 +442,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
+                      v1(1, 0).val(), v1(1, 1).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
@@ -468,7 +470,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
   matrix_fv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
+                      v1(1, 0).val(), v1(1, 1).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
@@ -627,38 +630,40 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
   v2 = 0;
   output_d = divide(d1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output_d(0));
-  EXPECT_TRUE (std::isnan(output_d(1)));
+  EXPECT_TRUE(std::isnan(output_d(1)));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output_d(2));
 
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(2).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(2).d_.val().val()));
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val().val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).d_.val().val()));
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val().val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  output(0).d_.val().val());
+  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  output(2).d_.val().val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(2).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(2).d_.val().val()));
 
   v1 << 100, 0, -3;
   v1(0).d_ = 1.0;
@@ -820,17 +825,19 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val().val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).d_.val().val()));
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val().val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  output(0).d_.val().val());
+  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  output(2).d_.val().val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val().val());
   EXPECT_TRUE(std::isnan(output(0).d_.val().val()));
@@ -999,27 +1006,27 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1, 0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1, 1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1, 0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1, 1).d_.val().val()));
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).d_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val().val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
@@ -1028,15 +1035,15 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val_.val().val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(1, 0).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 1).val_.val().val());
-  EXPECT_TRUE (std::isnan(output(0, 0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(0, 1).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1, 0).d_.val().val()));
-  EXPECT_TRUE (std::isnan(output(1, 1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1, 0).d_.val().val()));
+  EXPECT_TRUE(std::isnan(output(1, 1).d_.val().val()));
 
   v1 << 100, 0, -3, 4;
   v1(0, 0).d_ = 1.0;
@@ -1047,7 +1054,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(1, 0).val().val(), v1(1, 1).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
@@ -1074,7 +1082,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(1, 0).val().val(), v1(1, 1).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1102,7 +1111,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(1, 0).val().val(), v1(1, 1).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
@@ -1135,7 +1145,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(1, 0).val().val(), v1(1, 1).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(1, 0).val().val(), v1(1, 1).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);

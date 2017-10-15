@@ -35,7 +35,6 @@ TEST(AgradMixMatrixTranspose, fv_matrix) {
   EXPECT_FLOAT_EQ(1.0, c(2, 1).d_.val());
   EXPECT_EQ(3, c.rows());
   EXPECT_EQ(2, c.cols());
-
 }
 TEST(AgradMixMatrixTranspose, fv_vector) {
   using stan::math::vector_fv;
@@ -110,7 +109,6 @@ TEST(AgradMixMatrixTranspose, ffv_matrix) {
   EXPECT_FLOAT_EQ(1.0, c(2, 1).d_.val().val());
   EXPECT_EQ(3, c.rows());
   EXPECT_EQ(2, c.cols());
-
 }
 TEST(AgradMixMatrixTranspose, ffv_vector) {
   using stan::math::vector_ffv;

@@ -384,7 +384,8 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1, columns_dot_product(vd_1, vv_2)(0).d_.val().val());
   EXPECT_FLOAT_EQ(0, columns_dot_product(vv_1, vv_2)(0).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   columns_dot_product(vv_1, vd_2)(0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -415,7 +416,8 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_vector_ffv_2ndDeriv_1) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   columns_dot_product(vv_1, vd_2)(0).val_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -446,7 +448,8 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_vector_ffv_2ndDeriv_2) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   columns_dot_product(vv_1, vd_2)(0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -483,7 +486,8 @@ TEST(AgradMixMatrixColumnsDotProduct, vector_vector_ffv_3rdDeriv) {
   vd_2 << 4, -2, -1;
   vv_2 << d, e, f;
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   columns_dot_product(vv_1, vd_2)(0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -581,7 +585,8 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-2, output(1).d_.val().val());
   EXPECT_FLOAT_EQ(-1, output(2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -615,7 +620,8 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_rowvector_ffv_2ndDeriv_1) {
   row_vector_ffv output;
   output = columns_dot_product(v1, d2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -649,7 +655,8 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   row_vector_ffv output;
   output = columns_dot_product(v1, d2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -690,7 +697,8 @@ TEST(AgradMixMatrixColumnsDotProduct, rowvector_rowvector_ffv_3rdDeriv) {
   row_vector_ffv output;
   output = columns_dot_product(v1, d2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -747,7 +755,8 @@ TEST(AgradMixMatrixColumnsDotProduct, matrix_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1).d_.val().val());
   EXPECT_FLOAT_EQ(0, output(2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -782,7 +791,8 @@ TEST(AgradMixMatrixColumnsDotProduct, matrix_matrix_ffv_2ndDeriv_1) {
   row_vector_ffv output;
   output = columns_dot_product(v1, v2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -817,7 +827,8 @@ TEST(AgradMixMatrixColumnsDotProduct, matrix_matrix_ffv_2ndDeriv_2) {
   row_vector_ffv output;
   output = columns_dot_product(v1, v2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -858,7 +869,8 @@ TEST(AgradMixMatrixColumnsDotProduct, matrix_matrix_ffv_3rdDeriv) {
   row_vector_ffv output;
   output = columns_dot_product(v1, v2);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);

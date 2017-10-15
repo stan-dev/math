@@ -1,7 +1,7 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <vector>
 
 std::vector<double> test_fun(double y, double mu, double sigma) {
   using stan::math::var;
@@ -30,8 +30,8 @@ TEST(ProbAgradDistributionsNormal, derivatives) {
   fvar<double> lp = normal_log<false>(0, 0, fvar<double>(1.0, 1));
   EXPECT_FLOAT_EQ(grad[2], lp.tangent());
 
-  fvar<fvar<double> > y (1.0);
-  fvar<double> x (1.0, 2.0);
+  fvar<fvar<double> > y(1.0);
+  fvar<double> x(1.0, 2.0);
   EXPECT_NO_THROW(normal_log(y, 1, 1));
   EXPECT_FLOAT_EQ(normal_log(x, 1, 1).val_, -0.918938533204672741780);
   EXPECT_FLOAT_EQ(normal_log(x, 2, 1).d_, 2);
@@ -42,9 +42,9 @@ TEST(ProbAgradDistributionsNormal, FvarVar_1stDeriv) {
   using stan::math::var;
   using stan::math::normal_log;
 
-  fvar<var> y_ (2, 1);
-  double mu (0);
-  double sigma (1);
+  fvar<var> y_(2, 1);
+  double mu(0);
+  double sigma(1);
 
   fvar<var> logp = normal_log(y_, mu, sigma);
 
@@ -52,16 +52,16 @@ TEST(ProbAgradDistributionsNormal, FvarVar_1stDeriv) {
   VEC g;
   logp.val_.grad(y, g);
   EXPECT_FLOAT_EQ(-2, g[0]);
-
 }
+
 TEST(ProbAgradDistributionsNormal, FvarVar_2ndDeriv1) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::normal_log;
 
-  double y_ (1);
-  fvar<var> mu (0, 1);
-  double sigma (1);
+  double y_(1);
+  fvar<var> mu(0, 1);
+  double sigma(1);
   fvar<var> logp = normal_log(y_, mu, sigma);
 
   AVEC y = createAVEC(mu.val_);
@@ -74,9 +74,9 @@ TEST(ProbAgradDistributionsNormal, FvarVar_2ndDeriv2) {
   using stan::math::var;
   using stan::math::normal_log;
 
-  double y_ (1);
-  double mu (0);
-  fvar<var> sigma (1, 1);
+  double y_(1);
+  double mu(0);
+  fvar<var> sigma(1, 1);
   fvar<var> logp = normal_log(y_, mu, sigma);
 
   AVEC y = createAVEC(sigma.val_);

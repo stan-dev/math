@@ -6,13 +6,13 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/foo_fun.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <vector>
 
 /**
  * This is the structure for testing mock function foo (defined in the
  * testing framework).  See README.txt for more instructions.
  */
 struct foo_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.

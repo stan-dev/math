@@ -6,15 +6,14 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <stan/math/prim/mat/fun/tan.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <vector>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <vector>
 
 /**
  * This is the structure for testing vectorized tan (defined in the
  * testing framework).
  */
 struct tan_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.

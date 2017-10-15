@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;

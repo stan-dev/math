@@ -1,10 +1,10 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_MATRIX_VALUE_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_MATRIX_VALUE_HPP
 
-#include <vector>
-#include <Eigen/Dense>
 #include <test/unit/math/mix/mat/vectorize/build_mix_matrix.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename T>
 void expect_mix_matrix_value() {

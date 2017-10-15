@@ -585,7 +585,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv1) {
   AVEC y1 = createAVEC(a.val_);
   VEC grad1;
   g[0].val_.grad(y1, grad1);
-  EXPECT_NEAR(41.01553475870347475023037358640582917147051389292162474016745, grad1[0], 1e-5);
+  EXPECT_NEAR(41.01553475870347475023037358640582917147051389292162474016745,
+              grad1[0], 1e-5);
 }
 
 TEST(ProbInternalMath, gradF32_fv_1stderiv2) {
@@ -622,7 +623,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv2) {
   AVEC y1 = createAVEC(b.val_);
   VEC grad1;
   g[1].val_.grad(y1, grad1);
-  EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111, grad1[0], 1e-5);
+  EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111,
+              grad1[0], 1e-5);
 }
 
 TEST(ProbInternalMath, gradF32_fv_1stderiv3) {
@@ -695,7 +697,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv4) {
   AVEC y1 = createAVEC(d.val_);
   VEC grad1;
   g[3].val_.grad(y1, grad1);
-  EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218, grad1[0], 1e-5);
+  EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
+              grad1[0], 1e-5);
 }
 TEST(ProbInternalMath, gradF32_fv_1stderiv5) {
   using stan::math::fvar;
@@ -731,7 +734,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv5) {
   AVEC y1 = createAVEC(e.val_);
   VEC grad1;
   g[4].val_.grad(y1, grad1);
-  EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418, grad1[0], 1e-5);
+  EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
+              grad1[0], 1e-5);
 }
 TEST(ProbInternalMath, gradF32_fv_1stderiv6) {
   using stan::math::fvar;
@@ -767,7 +771,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv6) {
   AVEC y1 = createAVEC(z.val_);
   VEC grad1;
   g[5].val_.grad(y1, grad1);
-  EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963, grad1[0], 1e-5);
+  EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963,
+              grad1[0], 1e-5);
 }
 
 TEST(ProbInternalMath, gradF32_fv_2ndderiv1) {

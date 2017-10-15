@@ -1,6 +1,8 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <limits>
+#include <algorithm>
 
 using stan::math::fvar;
 TEST(AgradMixMatrixMin, fv_vector_1stDeriv) {
@@ -434,7 +436,8 @@ TEST(AgradMixMatrixMin, ffv_rowvector_exception) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv v;
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val_.val().val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  min(v).val_.val().val());
   EXPECT_FLOAT_EQ(0, min(v).d_.val().val());
 }
 TEST(AgradMixMatrixMin, ffv_matrix_1stDeriv) {
@@ -461,7 +464,8 @@ TEST(AgradMixMatrixMin, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(-3, output.val_.val().val());
   EXPECT_FLOAT_EQ(1, output.d_.val().val());
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -486,7 +490,8 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_1) {
   fvar<fvar<var> > output;
   output = min(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -511,7 +516,8 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_2) {
   fvar<fvar<var> > output;
   output = min(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -539,7 +545,8 @@ TEST(AgradMixMatrixMin, ffv_matrix_3rdDeriv) {
   fvar<fvar<var> > output;
   output = min(v1);
 
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(), v1(0, 2).val().val());
+  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
+                      v1(0, 2).val().val());
   VEC h;
   output.d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -551,6 +558,7 @@ TEST(AgradMixMatrixMin, ffv_matrix_exception) {
   using stan::math::matrix_ffv;
 
   matrix_ffv v;
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val_.val().val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  min(v).val_.val().val());
   EXPECT_EQ(0, min(v).d_.val().val());
 }

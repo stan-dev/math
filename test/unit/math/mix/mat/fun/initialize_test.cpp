@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;

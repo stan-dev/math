@@ -67,7 +67,9 @@ TEST(ProbInternalMath, inc_beta_fv_2ndderiv2) {
   AVEC y1 = createAVEC(a_fv.val_);
   VEC grad1;
   z1.d_.grad(y1, grad1);
-  EXPECT_FLOAT_EQ(0.335835482127389894002849583279024143359450978384231290056028, grad1[0]);
+  EXPECT_FLOAT_EQ(
+      0.335835482127389894002849583279024143359450978384231290056028,
+      grad1[0]);
 }
 TEST(ProbInternalMath, inc_beta_fv_2ndderiv3) {
   using stan::math::fvar;
@@ -155,8 +157,9 @@ TEST(ProbInternalMath, inc_beta_ffv_2ndderiv2) {
   AVEC y1 = createAVEC(a_ffv.val_.val_);
   VEC grad1;
   z1.d_.val_.grad(y1, grad1);
-  EXPECT_FLOAT_EQ(0.335835482127389894002849583279024143359450978384231290056028,
-                  grad1[0]);
+  EXPECT_FLOAT_EQ(
+            0.335835482127389894002849583279024143359450978384231290056028,
+            grad1[0]);
 }
 TEST(ProbInternalMath, inc_beta_ffv_2ndderiv3) {
   using stan::math::fvar;

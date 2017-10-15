@@ -39,7 +39,8 @@ TEST(AgradMixMatrixTCrossProd, fv_3x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(40, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(60, output(2, 2).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_, Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_,
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -67,7 +68,8 @@ TEST(AgradMixMatrixTCrossProd, fv_3x3_matrix_2ndDeriv) {
    Y(2, 2).d_ = 2.0;
   matrix_fv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_, Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_,
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -102,7 +104,8 @@ TEST(AgradMixMatrixTCrossProd, fv_2x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(8, output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(4, output(1, 1).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(),
+                      Y(1, 0).val(), Y(1, 1).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(6, h[0]);
@@ -121,7 +124,8 @@ TEST(AgradMixMatrixTCrossProd, fv_2x2_matrix_2ndDeriv) {
    Y(1, 1).d_ = 2.0;
   matrix_fv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val(), Y(1, 1).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(),
+                      Y(1, 0).val(), Y(1, 1).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -219,7 +223,8 @@ TEST(AgradMixMatrixTCrossProd, fv_2x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-24, output(1, 1).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_, Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_,
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -244,7 +249,8 @@ TEST(AgradMixMatrixTCrossProd, fv_2x3_matrix_2ndDeriv) {
    Y(1, 2).d_ = 2.0;
   matrix_fv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_, Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val_,
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -278,7 +284,8 @@ TEST(AgradMixMatrixTCrossProd, fv_3x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(10, output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(8, output(1, 1).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val_, Y(1, 1).val(), Y(2, 0).val(), Y(2, 1).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val_,
+                      Y(1, 1).val(), Y(2, 0).val(), Y(2, 1).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -303,7 +310,8 @@ TEST(AgradMixMatrixTCrossProd, fv_3x2_matrix_2ndDeriv) {
    Y(2, 1).d_ = 2.0;
   matrix_fv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val_, Y(1, 1).val(), Y(2, 0).val(), Y(2, 1).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(1, 0).val_,
+                      Y(1, 1).val(), Y(2, 0).val(), Y(2, 1).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -350,7 +358,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(40, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(60, output(2, 2).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -378,7 +388,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x3_matrix_2ndDeriv_1) {
    Y(2, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -406,7 +418,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x3_matrix_2ndDeriv_2) {
    Y(2, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -443,7 +457,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x3_matrix_3rdDeriv) {
    Y(2, 2).val_.d_ = 1.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -478,7 +494,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(8, output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(4, output(1, 1).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val().val(), Y(1, 1).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(6, h[0]);
@@ -497,7 +514,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x2_matrix_2ndDeriv_1) {
    Y(1, 1).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val().val(), Y(1, 1).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -516,7 +534,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x2_matrix_2ndDeriv_2) {
    Y(1, 1).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val().val(), Y(1, 1).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -539,7 +558,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x2_matrix_3rdDeriv) {
    Y(1, 1).val_.d_ = 1.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val().val(), Y(1, 1).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -616,7 +636,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_1x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(14, output(0, 0).val_.val().val());
   EXPECT_FLOAT_EQ(24, output(0, 0).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -633,7 +654,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_1x3_matrix_2ndDeriv_1) {
    Y(0, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -650,7 +672,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_1x3_matrix_2ndDeriv_2) {
    Y(0, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -670,7 +693,8 @@ TEST(AgradMixMatrixTCrossProd, ffv_1x3_matrix_3rdDeriv) {
    Y(0, 2).val_.d_ = 1.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -701,7 +725,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x3_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(-24, output(1, 1).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -726,7 +752,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x3_matrix_2ndDeriv_1) {
    Y(1, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -751,7 +779,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x3_matrix_2ndDeriv_2) {
    Y(1, 2).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -782,7 +812,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_2x3_matrix_3rdDeriv) {
    Y(1, 2).val_.d_ = 1.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val_.val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val_.val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -816,7 +848,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x2_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(10, output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(8, output(1, 1).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val_.val(), Y(1, 1).val().val(), Y(2, 0).val().val(), Y(2, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val_.val(), Y(1, 1).val().val(),
+                      Y(2, 0).val().val(), Y(2, 1).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2, h[0]);
@@ -841,7 +875,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x2_matrix_2ndDeriv_1) {
    Y(2, 1).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val_.val(), Y(1, 1).val().val(), Y(2, 0).val().val(), Y(2, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val_.val(), Y(1, 1).val().val(),
+                      Y(2, 0).val().val(), Y(2, 1).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -867,7 +903,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x2_matrix_2ndDeriv_2) {
    Y(2, 1).d_ = 2.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val_.val(), Y(1, 1).val().val(), Y(2, 0).val().val(), Y(2, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val_.val(), Y(1, 1).val().val(),
+                      Y(2, 0).val().val(), Y(2, 1).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -899,7 +937,9 @@ TEST(AgradMixMatrixTCrossProd, ffv_3x2_matrix_3rdDeriv) {
    Y(2, 1).val_.d_ = 1.0;
   matrix_ffv output = stan::math::tcrossprod(Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(1, 0).val_.val(), Y(1, 1).val().val(), Y(2, 0).val().val(), Y(2, 1).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(1, 0).val_.val(), Y(1, 1).val().val(),
+                      Y(2, 0).val().val(), Y(2, 1).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

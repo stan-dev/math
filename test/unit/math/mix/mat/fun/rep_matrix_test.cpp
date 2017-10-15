@@ -42,7 +42,7 @@ TEST(AgradMixMatrixRepMatrix, fv_rowvector) {
   using stan::math::row_vector_fv;
 
   row_vector_fv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
    a(0).d_ = 2.0;
    a(1).d_ = 2.0;
    a(2).d_ = 2.0;
@@ -74,7 +74,7 @@ TEST(AgradMixMatrixRepMatrix, fv_exception_rowvector) {
   using stan::math::row_vector_fv;
 
   row_vector_fv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
 
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
@@ -84,7 +84,7 @@ TEST(AgradMixMatrixRepMatrix, fv_vector) {
   using stan::math::vector_fv;
 
   vector_fv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
    a(0).d_ = 2.0;
    a(1).d_ = 2.0;
    a(2).d_ = 2.0;
@@ -116,7 +116,7 @@ TEST(AgradMixMatrixRepMatrix, fv_exception_vector) {
   using stan::math::vector_fv;
 
   vector_fv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
 
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
@@ -159,7 +159,7 @@ TEST(AgradMixMatrixRepMatrix, ffv_rowvector) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
    a(0).d_ = 2.0;
    a(1).d_ = 2.0;
    a(2).d_ = 2.0;
@@ -191,7 +191,7 @@ TEST(AgradMixMatrixRepMatrix, ffv_exception_rowvector) {
   using stan::math::row_vector_ffv;
 
   row_vector_ffv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
 
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }
@@ -201,7 +201,7 @@ TEST(AgradMixMatrixRepMatrix, ffv_vector) {
   using stan::math::vector_ffv;
 
   vector_ffv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
    a(0).d_ = 2.0;
    a(1).d_ = 2.0;
    a(2).d_ = 2.0;
@@ -233,7 +233,7 @@ TEST(AgradMixMatrixRepMatrix, ffv_exception_vector) {
   using stan::math::vector_ffv;
 
   vector_ffv a(3);
-  a<<3.0, 3.0, 3.0;
+  a << 3.0, 3.0, 3.0;
 
   EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
 }

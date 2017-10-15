@@ -31,7 +31,8 @@ TEST(AgradFwdPhi, FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ(-1.3 * exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)), g[0]);
+  EXPECT_FLOAT_EQ(-1.3 * exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)),
+                  g[0]);
 }
 
 TEST(AgradFwdPhi, FvarFvarVar_1stDeriv) {

@@ -6,13 +6,13 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <vector>
 
 /**
  * This is the structure for testing vectorized digamma (defined in the
  * testing framework).
  */
 struct digamma_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.

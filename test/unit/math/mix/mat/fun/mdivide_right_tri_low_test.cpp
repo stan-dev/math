@@ -36,7 +36,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 6.0, output(0, 1).d_.val());
   EXPECT_FLOAT_EQ(1.0 / 6.0, output(0, 2).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -72,7 +73,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_2ndDeriv) {
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-3.0, h[0]);
@@ -112,7 +114,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(5.0 / 90.0, output(0, 1).d_.val());
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(0, 2).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -145,7 +148,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_2ndDeriv) {
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
@@ -265,7 +269,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(2, 2).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -309,7 +314,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_2ndDeriv) {
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-3.0, h[0]);
@@ -364,7 +370,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 9.0, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(2.0 / 6.0, output(2, 2).d_.val());
 
-  AVEC q = createAVEC(Z(0, 0).val(), Z(0, 1).val(), Z(0, 2).val(), Z(1, 0).val(), Z(1, 1).val(), Z(1, 2).val());
+  AVEC q = createAVEC(Z(0, 0).val(), Z(0, 1).val(), Z(0, 2).val(),
+                      Z(1, 0).val(), Z(1, 1).val(), Z(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -400,7 +407,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_2ndDeriv) {
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Z(0, 0).val(), Z(0, 1).val(), Z(0, 2).val(), Z(1, 0).val(), Z(1, 1).val(), Z(1, 2).val());
+  AVEC q = createAVEC(Z(0, 0).val(), Z(0, 1).val(), Z(0, 2).val(),
+                      Z(1, 0).val(), Z(1, 1).val(), Z(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -455,7 +463,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(-25.0 / 90.0, output(2, 1).d_.val());
   EXPECT_FLOAT_EQ(-3.0 / 6.0, output(2, 2).d_.val());
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -491,7 +500,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_2ndDeriv) {
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(), Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
+  AVEC q = createAVEC(Y(0, 0).val(), Y(0, 1).val(), Y(0, 2).val(),
+                      Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
@@ -577,7 +587,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 6.0, output(0, 1).d_.val().val());
   EXPECT_FLOAT_EQ(1.0 / 6.0, output(0, 2).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -587,7 +599,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1) {
+TEST(AgradMixMatrixMdivideRightTriLow,
+      ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
@@ -613,7 +626,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1)
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -623,7 +638,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1)
   EXPECT_FLOAT_EQ(0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_2ndDeriv_2) {
+TEST(AgradMixMatrixMdivideRightTriLow,
+      ffv__rowvector_ffv_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
@@ -649,7 +665,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_2ndDeriv_2)
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-3.0, h[0]);
@@ -697,7 +715,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(4.7592592, h[0]);
@@ -737,7 +757,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(5.0 / 90.0, output(0, 1).d_.val().val());
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(0, 2).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -770,7 +792,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -780,7 +804,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_2) {
+TEST(AgradMixMatrixMdivideRightTriLow,
+      ffv__rowvector_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_d;
 
@@ -803,7 +828,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
@@ -845,7 +872,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(3.7592592, h[0]);
@@ -1018,7 +1047,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(-1.0 / 6.0, output(2, 2).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -1062,7 +1093,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1106,7 +1139,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-3.0, h[0]);
@@ -1168,7 +1203,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(4.7592592, h[0]);
@@ -1223,7 +1260,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0 / 9.0, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(2.0 / 6.0, output(2, 2).d_.val().val());
 
-  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(), Z(0, 2).val().val(), Z(1, 0).val().val(), Z(1, 1).val().val(), Z(1, 2).val().val());
+  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(),
+                      Z(0, 2).val().val(), Z(1, 0).val().val(),
+                      Z(1, 1).val().val(), Z(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -1259,7 +1298,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(), Z(0, 2).val().val(), Z(1, 0).val().val(), Z(1, 1).val().val(), Z(1, 2).val().val());
+  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(),
+                      Z(0, 2).val().val(), Z(1, 0).val().val(),
+                      Z(1, 1).val().val(), Z(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -1295,7 +1336,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(), Z(0, 2).val().val(), Z(1, 0).val().val(), Z(1, 1).val().val(), Z(1, 2).val().val());
+  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(),
+                      Z(0, 2).val().val(), Z(1, 0).val().val(),
+                      Z(1, 1).val().val(), Z(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -1340,7 +1383,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_3rdDeriv) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(), Z(0, 2).val().val(), Z(1, 0).val().val(), Z(1, 1).val().val(), Z(1, 2).val().val());
+  AVEC q = createAVEC(Z(0, 0).val().val(), Z(0, 1).val().val(),
+                      Z(0, 2).val().val(), Z(1, 0).val().val(),
+                      Z(1, 1).val().val(), Z(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -1395,7 +1440,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-25.0 / 90.0, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(-3.0 / 6.0, output(2, 2).d_.val().val());
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
@@ -1431,7 +1478,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1467,7 +1516,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
@@ -1512,7 +1563,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
-  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(), Y(0, 2).val().val(), Y(1, 0).val().val(), Y(1, 1).val().val(), Y(1, 2).val().val());
+  AVEC q = createAVEC(Y(0, 0).val().val(), Y(0, 1).val().val(),
+                      Y(0, 2).val().val(), Y(1, 0).val().val(),
+                      Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(3.7592592, h[0]);

@@ -14,7 +14,8 @@ TEST(AgradFwdLogDiffExp, FvarVar_FvarVar_1stDeriv) {
   fvar<var> a = log_diff_exp(x, z);
 
   EXPECT_FLOAT_EQ(log_diff_exp(9.0, 6.0), a.val_.val());
-  EXPECT_FLOAT_EQ((1.3 * exp(9.0) - 1.0 * exp(6.0)) / (exp(9.0) - exp(6.0)), a.d_.val());
+  EXPECT_FLOAT_EQ((1.3 * exp(9.0) - 1.0 * exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  a.d_.val());
 
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;

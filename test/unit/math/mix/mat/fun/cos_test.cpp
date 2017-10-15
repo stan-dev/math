@@ -13,7 +13,6 @@
  * testing framework).
  */
 struct cos_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.

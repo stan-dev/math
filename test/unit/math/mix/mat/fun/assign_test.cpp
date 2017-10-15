@@ -146,6 +146,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[4]);
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
+
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
   using stan::math::assign;
   using Eigen::Matrix;
@@ -168,7 +169,6 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
   zzz << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
-
 }
 
 TEST(AgradMixMatrixAssign, block_fvar_var) {
@@ -405,6 +405,7 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[1]);
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
+
 TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
   using stan::math::assign;
   using Eigen::Matrix;
@@ -489,6 +490,7 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[4]);
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
+
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
   using stan::math::assign;
   using Eigen::Matrix;
@@ -511,7 +513,6 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
   zzz << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
-
 }
 
 TEST(AgradMixMatrixAssign, block_fvar_fvar_var) {
@@ -626,7 +627,8 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
   using Eigen::Dynamic;
   using stan::math::assign;
   std::vector<var> vars;
-  vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > x(2, Matrix<fvar<fvar<var> >, Dynamic, 1>(3));
+  vector<Matrix<fvar<fvar<var> >, Dynamic, 1> >
+      x(2, Matrix<fvar<fvar<var> >, Dynamic, 1>(3));
   for (size_t i = 0; i < 2; ++i)
     for (int j = 0; j < 3; ++j) {
       x[i](j) = static_cast<double>((i + 1) * (10 * j + 2));
@@ -635,7 +637,8 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
       x[i](j).d_.d_ = static_cast<double>(i+j);
       vars.push_back(x[i](j).val_.val_);
     }
-  vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > y(2, Matrix<fvar<fvar<var> >, Dynamic, 1>(3));
+  vector<Matrix<fvar<fvar<var> >, Dynamic, 1> >
+      y(2, Matrix<fvar<fvar<var> >, Dynamic, 1>(3));
 
   assign(y, x);
 

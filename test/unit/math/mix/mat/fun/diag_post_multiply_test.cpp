@@ -259,7 +259,8 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(14, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(18, output(2, 2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(2.0, h[0]);
@@ -291,7 +292,8 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -324,7 +326,8 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -362,7 +365,8 @@ TEST(AgradMixMatrixDiagPostMultiply, vector_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -433,7 +437,8 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(14, output(2, 1).d_.val().val());
   EXPECT_FLOAT_EQ(18, output(2, 2).d_.val().val());
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(2.0, h[0]);
@@ -465,7 +470,8 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_1) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -497,7 +503,8 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_2ndDeriv_2) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(4.0, h[0]);
@@ -535,7 +542,8 @@ TEST(AgradMixMatrixDiagPostMultiply, rowvector_ffv_3rdDeriv) {
 
   matrix_ffv output = stan::math::diag_post_multiply(Y, B);
 
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val(), e.val().val(), f.val().val());
+  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
+                      d.val().val(), e.val().val(), f.val().val());
   VEC h;
   output(0, 0).d_.d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);

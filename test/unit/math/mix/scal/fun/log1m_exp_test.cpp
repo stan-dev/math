@@ -33,7 +33,8 @@ TEST(AgradFwdLog1mExp, FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ(1.3 * -exp(-0.2) / (1.0 - exp(-0.2)) / (1.0 - exp(-0.2)), g[0]);
+  EXPECT_FLOAT_EQ(1.3 * -exp(-0.2) / (1.0 - exp(-0.2)) / (1.0 - exp(-0.2)),
+                  g[0]);
 }
 TEST(AgradFwdLog1mExp, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;

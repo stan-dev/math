@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;
@@ -35,7 +36,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_lower) {
   EXPECT_FLOAT_EQ(-0.5486111, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.1875, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
@@ -44,7 +46,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_lower) {
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -79,7 +82,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
@@ -88,7 +92,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_lower) {
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -125,14 +130,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_lower) {
   EXPECT_FLOAT_EQ(-0.0763888889, I(0).d_.val());
   EXPECT_FLOAT_EQ(0.0625, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -163,14 +170,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -208,12 +217,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_lower) {
   EXPECT_FLOAT_EQ(-0.7986111, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -241,12 +252,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -278,12 +291,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_lower) {
   EXPECT_FLOAT_EQ(-0.3263889, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.1875, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -315,12 +330,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_lower) {
   EXPECT_FLOAT_EQ(-0.3263889, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.1875, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -356,12 +373,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_lower) {
   EXPECT_FLOAT_EQ(0.25, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(0.25, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_);
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333333, grads[0]);
@@ -389,12 +408,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_);
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -423,10 +444,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_lower) {
   EXPECT_FLOAT_EQ(0.25, I(0).d_.val());
   EXPECT_FLOAT_EQ(0.25, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333333, grads[0]);
@@ -450,10 +473,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -488,25 +513,63 @@ TEST(AgradMixMatrixMdivideRightTri, fv_exceptions_lower) {
   vd1.setZero();
   vd2.setZero();
 
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fd2), std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fd1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fd1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fd2),
+
+               std::invalid_argument);
 }
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_lower) {
@@ -540,7 +603,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_lower) {
   EXPECT_FLOAT_EQ(-0.5486111, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.1875, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -549,7 +613,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_lower) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -584,7 +649,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -593,7 +659,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_lower) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -636,7 +703,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -645,7 +713,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_lower) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -688,7 +757,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -697,7 +767,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_lower) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.054398148148148161, grads[0]);
@@ -734,14 +805,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_lower) {
   EXPECT_FLOAT_EQ(-0.0763888889, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.0625, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -772,14 +845,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -816,14 +891,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.071759261, grads[0]);
@@ -860,14 +937,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.054398149, grads[0]);
@@ -905,12 +984,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_lower) {
   EXPECT_FLOAT_EQ(-0.7986111, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -938,12 +1019,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -975,12 +1058,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -1012,12 +1097,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.20717593, grads[0]);
@@ -1049,12 +1136,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_lower) {
   EXPECT_FLOAT_EQ(-0.3263889, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.1875, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.1388889, grads[0]);
@@ -1082,12 +1171,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -1119,12 +1210,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.1550926, grads[0]);
@@ -1156,12 +1249,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.20717593, grads[0]);
@@ -1197,12 +1292,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_lower) {
   EXPECT_FLOAT_EQ(0.25, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.25, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333333, grads[0]);
@@ -1230,12 +1327,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1267,12 +1366,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1304,12 +1405,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1338,10 +1441,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_lower) {
   EXPECT_FLOAT_EQ(0.25, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.25, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333333, grads[0]);
@@ -1365,10 +1470,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1393,10 +1500,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1421,10 +1530,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_lower) {
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1458,25 +1569,63 @@ TEST(AgradMixMatrixMdivideRightTri, ffv_exceptions_lower) {
   vd1.setZero();
   vd2.setZero();
 
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fd2), std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fv1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(fd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd2, fv1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vd1, fv2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf2, fd1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf2, fd1),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(rvf1, fd2),
+
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fd2),
+
+               std::invalid_argument);
 }
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_upper) {
@@ -1510,7 +1659,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.44444444, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
@@ -1519,7 +1669,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_upper) {
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -1554,7 +1705,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
@@ -1563,7 +1715,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_upper) {
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -1600,14 +1753,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_upper) {
   EXPECT_FLOAT_EQ(0.11111111, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.090277776, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -1638,14 +1793,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -1683,12 +1840,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_upper) {
   EXPECT_FLOAT_EQ(-0.55555556, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.6111111, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -1724,12 +1883,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_upper) {
   EXPECT_FLOAT_EQ(-0.55555556, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.6111111, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -1761,12 +1922,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.25694445, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -1798,12 +1961,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.25694445, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_);
   vars.push_back(Av(0, 1).val_);
   vars.push_back(Av(1, 0).val_);
   vars.push_back(Av(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -1839,12 +2004,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_upper) {
   EXPECT_FLOAT_EQ(0.33333333, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(0.16666667, I(1, 1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_);
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333333, grads[0]);
@@ -1872,12 +2039,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_);
   vars.push_back(Ad(0, 1).val_);
   vars.push_back(Ad(1, 0).val_);
   vars.push_back(Ad(1, 1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1906,10 +2075,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_upper) {
   EXPECT_FLOAT_EQ(0.33333333, I(0).d_.val());
   EXPECT_FLOAT_EQ(0.16666667, I(1).d_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333334, grads[0]);
@@ -1933,10 +2104,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_);
   vars.push_back(Ad(1).val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -1971,25 +2144,44 @@ TEST(AgradMixMatrixMdivideRightTri, fv_exceptions_upper) {
   vd1.setZero();
   vd2.setZero();
 
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fd2), std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fd1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fd1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fd2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fd2),
+               std::invalid_argument);
 }
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_upper) {
@@ -2023,7 +2215,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.44444444, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -2032,7 +2225,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_upper) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -2067,7 +2261,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -2076,7 +2271,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_upper) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -2119,7 +2315,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -2128,7 +2325,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_upper) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -2171,7 +2369,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
@@ -2180,7 +2379,8 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_upper) {
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_NEAR(0, grads[0], 1E-12);
@@ -2217,14 +2417,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_upper) {
   EXPECT_FLOAT_EQ(0.11111111, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.090277776, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -2255,14 +2457,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -2299,14 +2503,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.037037037, grads[0]);
@@ -2343,14 +2549,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2388,12 +2596,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_upper) {
   EXPECT_FLOAT_EQ(-0.55555558, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.6111111, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -2421,12 +2631,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -2458,12 +2670,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -2495,12 +2709,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.14814815, grads[0]);
@@ -2532,12 +2748,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.25694445, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.22222222, grads[0]);
@@ -2569,12 +2787,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_upper) {
   EXPECT_FLOAT_EQ(-0.22222222, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.25694445, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -2606,12 +2826,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.14814815, grads[0]);
@@ -2643,12 +2865,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Av(0, 0).val_.val_);
   vars.push_back(Av(0, 1).val_.val_);
   vars.push_back(Av(1, 0).val_.val_);
   vars.push_back(Av(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(-0.14814815, grads[0]);
@@ -2684,12 +2908,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_upper) {
   EXPECT_FLOAT_EQ(0.33333333, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.16666667, I(1, 1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333334, grads[0]);
@@ -2717,12 +2943,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2754,12 +2982,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2791,12 +3021,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0, 0).val_.val_);
   vars.push_back(Ad(0, 1).val_.val_);
   vars.push_back(Ad(1, 0).val_.val_);
   vars.push_back(Ad(1, 1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0, 0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2825,10 +3057,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_upper) {
   EXPECT_FLOAT_EQ(0.33333333, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.16666667, I(1).d_.val_.val());
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0.33333334, grads[0]);
@@ -2852,10 +3086,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.val_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2880,10 +3116,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).val_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2908,10 +3146,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_upper) {
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
-  std::vector<var> vars;
+
+               std::vector<var> vars;
   vars.push_back(Ad(0).val_.val_);
   vars.push_back(Ad(1).val_.val_);
-  std::vector<double> grads;
+
+               std::vector<double> grads;
 
   I(0).d_.d_.grad(vars, grads);
   EXPECT_FLOAT_EQ(0, grads[0]);
@@ -2945,23 +3185,41 @@ TEST(AgradMixMatrixMdivideRightTri, ffv_exceptions_upper) {
   vd1.setZero();
   vd2.setZero();
 
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fd2), std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fv1, fd2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(fd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd2, fv1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vd1, fv2),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(rvf2, fd1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf2, fd1),
+               std::invalid_argument);
+  EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fd2),
+               std::invalid_argument);
 }
 
