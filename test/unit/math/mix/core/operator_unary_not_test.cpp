@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 void test_unary_not(double x) {
   using stan::math::var;

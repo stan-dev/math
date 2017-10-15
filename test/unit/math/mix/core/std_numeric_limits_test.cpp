@@ -1,5 +1,6 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(AgradMixNumericLimits, All_Fvar) {
   using stan::math::fvar;
@@ -85,7 +86,8 @@ TEST(AgradMixNumericLimits, All_Fvar) {
   isnan(std::numeric_limits<fvar<fvar<var> > >::quiet_NaN().val_.val_.val());
 
   isnan(std::numeric_limits<fvar<var> >::signaling_NaN().val_.val());
-  isnan(std::numeric_limits<fvar<fvar<var> > >::signaling_NaN().val_.val_.val());
+  isnan(std::numeric_limits<fvar<fvar<var> > >::signaling_NaN()
+          .val_.val_.val());
 
   EXPECT_FLOAT_EQ(4.94066e-324,
                   std::numeric_limits<fvar<var> >::denorm_min().val_.val());

@@ -1,5 +1,6 @@
 #include <stan/math/mix/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathMatrix, value_of_rec) {
   using stan::math::value_of_rec;
@@ -23,5 +24,4 @@ TEST(MathMatrix, value_of_rec) {
 
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i]);
-
 }

@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 #include <vector>
 
 void test_logical_and(double x, double y) {

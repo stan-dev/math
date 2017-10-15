@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 void test_logical_or(double x, double y) {
   using stan::math::fvar;
