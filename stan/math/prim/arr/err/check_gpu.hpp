@@ -19,7 +19,7 @@ namespace stan {
   namespace math {
 
     //OpenCL errors - this lists all OpenCL erros, inlcuding the ones from OpenCL 2.0
-    void check_ocl_error(cl::Error& e) {   
+    void check_ocl_error(const cl::Error& e) {   
 	    std::string error_string;
       switch (e.err()) {
         case 0:
