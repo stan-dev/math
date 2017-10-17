@@ -39,16 +39,17 @@ namespace stan {
       check_square("cholesky_decompose", "m", m);
       check_symmetric("cholesky_decompose", "m", m);
       if (m.size() == 0) return m;
-      stan::math::matrix_gpu A(m);
+      
+      matrix_gpu A(m);
 
-      cl::Kernel kernel_chol_block = stan::math::get_kernel("cholesky_block");
-      cl::Kernel kernel_left = stan::math::get_kernel("cholesky_left_update");
-      cl::Kernel kernel_mid = stan::math::get_kernel("cholesky_mid_update");
-      cl::Kernel kernel_zero = stan::math::get_kernel("cholesky_zero");
-      cl::CommandQueue cmd_queue = stan::math::get_queue();
+      cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
+      cl::Kernel kernel_left = get_kernel("cholesky_left_update");
+      cl::Kernel kernel_mid = get_kernel("cholesky_mid_update");
+      cl::Kernel kernel_zero = get_kernel("cholesky_zero");
+      cl::CommandQueue cmd_queue = get_queue();
 
       try {
-        cl::Context ctx = stan::math::get_context();
+        cl::Context ctx = get_context();
         //will be managed by the library core system
         int block = 64;
         int offset = 0;
@@ -57,13 +58,13 @@ namespace stan {
         cl::Buffer buffer_V(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);
         cl::Buffer buffer_L(ctx, CL_MEM_READ_WRITE,
-         sizeof(T) * block * A.rows * 4);
+         sizeof(T) * block * A.rows() * 4);
         cl::Buffer buffer_D(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);
 
         kernel_chol_block.setArg(0, A.buffer());
         kernel_chol_block.setArg(1, offset);
-        kernel_chol_block.setArg(2, A.rows);
+        kernel_chol_block.setArg(2, A.rows());
         kernel_chol_block.setArg(3, block);
         kernel_chol_block.setArg(4, buffer_V);
         kernel_chol_block.setArg(5, buffer_D);
@@ -73,23 +74,23 @@ namespace stan {
         kernel_left.setArg(2, buffer_V);
         kernel_left.setArg(3, offset);
         kernel_left.setArg(4, block);
-        kernel_left.setArg(5, A.rows);
+        kernel_left.setArg(5, A.rows());
 
         kernel_mid.setArg(0, buffer_L);
         kernel_mid.setArg(1, A.buffer());
         kernel_mid.setArg(2, offset);
         kernel_mid.setArg(3, block);
-        kernel_mid.setArg(4, A.rows);
+        kernel_mid.setArg(4, A.rows());
 
         kernel_zero.setArg(0, A.buffer());
-        kernel_zero.setArg(1, A.rows);
+        kernel_zero.setArg(1, A.rows());
 
         int threadsLeft,  leftPad;
         int threadsMid,  midPad;
-        while ((offset + block) < (A.rows - block)) {
-          threadsLeft = A.rows - offset - block;
+        while ((offset + block) < (A.rows() - block)) {
+          threadsLeft = A.rows() - offset - block;
           leftPad = ((threadsLeft + local - 1) / local) * local;
-          threadsMid = A.rows - offset - block;
+          threadsMid = A.rows() - offset - block;
           midPad = ((threadsMid + local - 1) / local) * local;
           kernel_left.setArg(3, offset);
           kernel_left.setArg(6, threadsLeft);
@@ -107,7 +108,7 @@ namespace stan {
           offset += block;
         }
 
-        int left = A.rows - offset;
+        int left = A.rows() - offset;
         if (left > 0) {
           kernel_chol_block.setArg(1, offset);
           kernel_chol_block.setArg(3, left);
@@ -115,12 +116,12 @@ namespace stan {
            cl::NullRange, cl::NDRange(left), cl::NDRange(left));
         }
       cmd_queue.enqueueNDRangeKernel(kernel_zero,
-       cl::NullRange, cl::NDRange(A.rows, A.rows),  cl::NullRange);
-      } catch (cl::Error& e) {
+       cl::NullRange, cl::NDRange(A.rows(), A.rows()),  cl::NullRange);
+      } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
-      stan::math::copy(A, m_tmp);
+      copy(A, m_tmp);
       // TODO(Steve/Sean): Where should this check go?
  //     std::cout << "PRESWAP: \n" << m_tmp << "\n";
 

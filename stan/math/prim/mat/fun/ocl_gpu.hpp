@@ -61,27 +61,27 @@ namespace stan {
       kernel_groups["cholesky_zero"] = "cholesky_decomposition";
       kernel_groups["dummy"] = "timing";
       //kernel group strings
-      kernel_strings["basic_matrix"] = stan::math::kernel_sources::transpose +
-       stan::math::kernel_sources::copy +
-       stan::math::kernel_sources::zeros;
-      kernel_strings["basic_matrix"] += stan::math::kernel_sources::identity +
-       stan::math::kernel_sources::copy_triangular +
-       stan::math::kernel_sources::copy_triangular_transposed;
+      kernel_strings["basic_matrix"] = kernel_sources::transpose +
+       kernel_sources::copy +
+       kernel_sources::zeros;
+      kernel_strings["basic_matrix"] += kernel_sources::identity +
+       kernel_sources::copy_triangular +
+       kernel_sources::copy_triangular_transposed;
       kernel_strings["basic_matrix"] +=
-       stan::math::kernel_sources::add +
-       stan::math::kernel_sources::subtract;
+       kernel_sources::add +
+       kernel_sources::subtract;
       kernel_strings["matrix_multiply"] =
-       stan::math::kernel_sources::scalar_mul_diagonal +
-       stan::math::kernel_sources::scalar_mul +
-       stan::math::kernel_sources::basic_multiply;
+       kernel_sources::scalar_mul_diagonal +
+       kernel_sources::scalar_mul +
+       kernel_sources::basic_multiply;
       kernel_strings["matrix_inverse"] =
-       stan::math::kernel_sources::lower_tri_inv_step1 +
-       stan::math::kernel_sources::lower_tri_inv_step2_3;
+       kernel_sources::lower_tri_inv_step1 +
+       kernel_sources::lower_tri_inv_step2_3;
       kernel_strings["cholesky_decomposition"] =
-       stan::math::kernel_sources::cholesky_block +
-       stan::math::kernel_sources::cholesky_left_mid_update +
-       stan::math::kernel_sources::cholesky_zero;
-      kernel_strings["timing"] = stan::math::dummy_kernel;
+       kernel_sources::cholesky_block +
+       kernel_sources::cholesky_left_mid_update +
+       kernel_sources::cholesky_zero;
+      kernel_strings["timing"] = dummy_kernel;
 
       //note if the kernels were already compiled
       compiled_kernels["basic_matrix"] = false;
@@ -98,49 +98,49 @@ namespace stan {
     class ocl {
       private:
         std::string description_;
-        cl::Context oclContext;
-        cl::CommandQueue oclQueue;
-        cl::Platform oclPlatform;
-        cl::Device oclDevice;
+        cl::Context oclContext_;
+        cl::CommandQueue oclQueue_;
+        cl::Platform oclPlatform_;
+        cl::Device oclDevice_;
 
         void init() {
           try {
             std::vector<cl::Platform> allPlatforms;
             cl::Platform::get(&allPlatforms);
-            if(allPlatforms.size()  ==  0) {
+            if (allPlatforms.size()  ==  0) {
               std::cout << " No platforms found. " << std::endl;
               exit(1);
             }
-            oclPlatform = allPlatforms[0];
+            oclPlatform_ = allPlatforms[0];
             std::vector<cl::Device> allDevices;
-            oclPlatform.getDevices(DEVICE_FILTER, &allDevices);
-            if(allDevices.size() == 0) {
+            oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
+            if (allDevices.size() == 0) {
               std::cout<<" No devices found on the selected platform." <<
                std::endl;
               exit(1);
             }
-            oclDevice = allDevices[0];
-            description_ = "Device " + oclDevice.getInfo<CL_DEVICE_NAME>() +
-             " on the platform " + oclPlatform.getInfo<CL_PLATFORM_NAME>();
-            oclContext = cl::Context(allDevices);
-            oclQueue = cl::CommandQueue(oclContext, oclDevice,
+            oclDevice_ = allDevices[0];
+            description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>() +
+             " on the platform " + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+            oclContext_ = cl::Context(allDevices);
+            oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
              CL_QUEUE_PROFILING_ENABLE, NULL);
             init_kernel_groups();
             //compile the dummy kernel used for timing purposes
             cl::Program::Sources source(1,
              std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
-            cl::Program program_ = cl::Program(oclContext, source);
+            cl::Program program_ = cl::Program(oclContext_, source);
 
             try {
               program_.build(allDevices);
               kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
               compiled_kernels["timing"] = true;
-            } catch (cl::Error& e) {
+            } catch (const cl::Error& e) {
                 std::cout << "Building failed, " << e.what() << "(" << e.err()
                  << ")" << "\nRetrieving build log\n" <<
                  program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]);
             }
-          } catch (cl::Error& e) {
+          } catch (const cl::Error& e) {
             check_ocl_error(e);
           }
         }
@@ -149,33 +149,31 @@ namespace stan {
 
         std::string description() const {
 
-          if(initialized_ == 1) {
+          if (initialized_ == 1) {
             return description_;
           }
           return "No device selected yet.";
         }
 
         cl::Context& context() {
-          if(initialized_ == 0) {
+          if (initialized_ == 0) {
             init();
             initialized_ = 1;
           }
-          return oclContext;
+          return oclContext_;
         }
 
-        cl::CommandQueue queue() {
-          if(initialized_ == 0) {
+        cl::CommandQueue& queue() {
+          if (initialized_ == 0) {
             init();
             initialized_ = 1;
           }
-          return oclQueue;
+          return oclQueue_;
         }
 
     };
 
-    stan::math::ocl ocl_context_queue;
-
-
+    ocl ocl_context_queue;
 
     std::string get_description() {
       return ocl_context_queue.description();
@@ -185,12 +183,12 @@ namespace stan {
       return ocl_context_queue.context();
     }
 
-    cl::CommandQueue get_queue() {
+    cl::CommandQueue& get_queue() {
       return ocl_context_queue.queue();
     }
 
     void compile_kernel_group(std::string group) {
-        cl::Context ctx = stan::math::get_context();
+        cl::Context ctx = get_context();
         std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
         std::string kernel_source = kernel_strings[group];
         cl::Program::Sources source(1,
@@ -203,12 +201,12 @@ namespace stan {
           //iterate over the kernel list and get all the kernels from this group
           for (std::map<std::string,std::string>::iterator
            it = kernel_groups.begin(); it!= kernel_groups.end(); ++it) {
-            if(group.compare((it->second).c_str()) == 0) {
+            if (group.compare((it->second).c_str()) == 0) {
               kernels[(it->first).c_str()] = cl::Kernel(program_,
                (it->first).c_str(), &err);
             }
           }
-        } catch (cl::Error& e) {
+        } catch (const cl::Error& e) {
             std::cout << "Building failed, " << e.what() << "(" << e.err() <<
              ")" << "\nRetrieving build log\n" <<
               program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
@@ -220,7 +218,7 @@ namespace stan {
 
     cl::Kernel& get_kernel(std::string name) {
       //compile the kernel group and return the kernel
-      if(!compiled_kernels[kernel_groups[name]]) {
+      if (!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);
         compiled_kernels[kernel_groups[name]] = true;
       }
