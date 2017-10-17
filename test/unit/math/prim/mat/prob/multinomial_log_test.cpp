@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(ProbMultinomial, log_matches_lpmf) {
   std::vector<int> ns;

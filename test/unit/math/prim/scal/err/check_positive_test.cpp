@@ -1,5 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;

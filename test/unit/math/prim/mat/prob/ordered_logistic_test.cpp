@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <limits>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -17,7 +18,8 @@ get_simplex(double lambda,
   theta(0) = 1.0 - inv_logit(lambda - c(0));
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = inv_logit(lambda - c(k - 1)) - inv_logit(lambda - c(k));
-  theta(K-1) = inv_logit(lambda - c(K-2)); // - 0.0
+  // - 0.0
+  theta(K-1) = inv_logit(lambda - c(K-2));
   return theta;
 }
 
@@ -86,7 +88,8 @@ TEST(ProbDistributions, ordered_logistic) {
   for (int k = 1; k <= K; ++k)
     EXPECT_NO_THROW(ordered_logistic_log(k, lambda, c));
 
-  Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero; // init size zero
+  // init size zero
+  Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
   EXPECT_EQ(0, c_zero.size());
   EXPECT_THROW(ordered_logistic_log(1, lambda, c_zero), std::domain_error);
 
@@ -151,7 +154,6 @@ TEST(ProbDistributionOrderedLogistic, error_check) {
     inf;
   EXPECT_THROW(stan::math::ordered_logistic_rng(4.0, c, rng),
                std::domain_error);
-
 }
 
 TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
@@ -181,8 +183,8 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
     }
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * prob(i);

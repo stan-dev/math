@@ -66,6 +66,5 @@ TEST(MathFunctions, inc_beta_ddb) {
                                     digamma(large_a),
                                     digamma(large_a + large_b)))
     << "reasonable values for a, b, x";
-
 }
 

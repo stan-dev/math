@@ -1,5 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 TEST(ErrorHandlingMatrix, checkLowerTriangular) {
   using stan::math::check_lower_triangular;
@@ -16,8 +18,6 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular) {
   y(0, 1) = 1;
   EXPECT_THROW(check_lower_triangular("checkLowerTriangular", "y", y),
                std::domain_error);
-
-
 
   y.resize(2, 2);
   y << 1, 0, 2, 3;
@@ -45,7 +45,6 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular) {
   y(0, 2) = 3;
 }
 
-
 TEST(ErrorHandlingMatrix, checkLowerTriangular_one_indexed_message) {
   using stan::math::check_lower_triangular;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -64,7 +63,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("[1, 3]"))
+  EXPECT_NE(std::string::npos, message.find("[1,3]"))
     << message;
 }
 
@@ -84,8 +83,6 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_nan) {
   y(0, 1) = nan;
   EXPECT_THROW(check_lower_triangular("checkLowerTriangular", "y", y),
                std::domain_error);
-
-
 
   y.resize(2, 2);
   y << nan, 0, nan, nan;

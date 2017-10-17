@@ -1,6 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 TEST(MathFunctions, sumZeroSize) {
   std::vector<double> x;

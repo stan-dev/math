@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/meta/seq_view.hpp>
+#include <vector>
 
 using stan::math::matrix_d;
 using stan::math::vector_d;
@@ -46,7 +47,8 @@ TEST(matrixTest, seq_view_double_double) {
 TEST(matrixTest, seq_view_double_matrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
-  seq_view<double, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > view_m(m);
+  seq_view<double, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
+    view_m(m);
   EXPECT_EQ(6, view_m.size());
   for (int i = 0; i < 6; ++i)
     EXPECT_FLOAT_EQ(i+1, view_m[i]);
@@ -70,5 +72,4 @@ TEST(matrixTest, seq_view_double_int) {
   x[1] = 1;
   x[2] = 4;
   seq_view<double, std::vector<int> > view_x(x);
-
 }

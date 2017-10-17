@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <vector>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -55,22 +57,34 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.92867-6.81839, stan::math::multi_student_t_log(vec_y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839, stan::math::multi_student_t_log(vec_y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839, stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839, stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+                  stan::math::multi_student_t_log(vec_y, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+                  stan::math::multi_student_t_log(vec_y_t, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+                  stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+                stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t, Sigma));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-9.167054-6.81839, stan::math::multi_student_t_log(vec_y, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839, stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839, stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839, stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+                  stan::math::multi_student_t_log(vec_y, nu, mu, Sigma));
+  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+                  stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
+  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+                  stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+                  stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-5.528012-6.81839, stan::math::multi_student_t_log(y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839, stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839, stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839, stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+                  stan::math::multi_student_t_log(y, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+                  stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+                  stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+                  stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
 }
 TEST(ProbDistributionsMultiStudentT, Sigma) {
   Matrix<double, Dynamic, 1> y(3, 1);
@@ -84,7 +98,8 @@ TEST(ProbDistributionsMultiStudentT, Sigma) {
   double nu = 4.0;
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 
-  Sigma(0, 1) = 10; // non-symmetric
+  // non-symmetric
+  Sigma(0, 1) = 10;
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::domain_error);
 }
 
@@ -262,7 +277,7 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::students_t_distribution<>dist (3.0);
+  boost::math::students_t_distribution<>dist(3.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -270,8 +285,8 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
@@ -308,7 +323,7 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::students_t_distribution<>dist (3.0);
+  boost::math::students_t_distribution<>dist(3.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -316,8 +331,8 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;

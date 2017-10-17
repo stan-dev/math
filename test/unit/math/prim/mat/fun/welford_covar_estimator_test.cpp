@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 
 TEST(ProbWelfordCovarEstimator, restart) {
-
   const int n = 10;
   Eigen::VectorXd q = Eigen::VectorXd::Ones(n);
 
@@ -22,11 +21,9 @@ TEST(ProbWelfordCovarEstimator, restart) {
 
   for (int i = 0; i < n; ++i)
     EXPECT_EQ(0, mean(i));
-
 }
 
 TEST(ProbWelfordCovarEstimator, num_samples) {
-
   const int n = 10;
   Eigen::VectorXd q = Eigen::VectorXd::Ones(n);
 
@@ -38,11 +35,9 @@ TEST(ProbWelfordCovarEstimator, num_samples) {
     estimator.add_sample(q);
 
   EXPECT_EQ(n_learn, estimator.num_samples());
-
 }
 
 TEST(ProbWelfordCovarEstimator, sample_mean) {
-
   const int n = 10;
   const int n_learn = 10;
 
@@ -58,11 +53,9 @@ TEST(ProbWelfordCovarEstimator, sample_mean) {
 
   for (int i = 0; i < n; ++i)
     EXPECT_EQ(9.0 / 2.0, mean(i));
-
 }
 
 TEST(ProbWelfordCovarEstimator, sample_covariance) {
-
   const int n = 10;
   const int n_learn = 10;
 
@@ -79,5 +72,4 @@ TEST(ProbWelfordCovarEstimator, sample_covariance) {
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < n; ++j)
       EXPECT_EQ(55.0 / 6.0, covar(i, j));
-
 }

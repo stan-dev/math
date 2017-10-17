@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, value_of) {
   using stan::math::value_of;
@@ -14,5 +15,4 @@ TEST(MathFunctions, value_of_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::value_of(nan));
-
 }

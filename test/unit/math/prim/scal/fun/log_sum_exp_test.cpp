@@ -2,6 +2,8 @@
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 void test_log_sum_exp(double a, double b) {
   using std::log;

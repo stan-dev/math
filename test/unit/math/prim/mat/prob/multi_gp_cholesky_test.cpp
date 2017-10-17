@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -9,7 +10,9 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholesky) {
   mu.setZero();
 
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+       -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -34,7 +37,9 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholesky) {
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorL) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+       -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -47,13 +52,13 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorL) {
   w << 1.0, 0.5, 1.5;
 
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
-
-  // TODO
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+       -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -69,20 +74,26 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
 
   // negative w
   w(0, 0) = -2.5;
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
 
   // non-finite values
   w(0, 0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
   w(0, 0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
   w(0, 0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+       -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -98,9 +109,12 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
 
   // non-finite values
   y(0, 0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
   y(0, 0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
   y(0, 0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW (stan::math::multi_gp_cholesky_log(y, L, w), std::domain_error);
+  EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
+                std::domain_error);
 }

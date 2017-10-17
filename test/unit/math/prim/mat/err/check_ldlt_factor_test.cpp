@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, CheckLDLTFactor_nan) {
   using stan::math::check_ldlt_factor;

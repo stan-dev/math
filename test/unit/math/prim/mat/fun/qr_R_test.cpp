@@ -18,8 +18,8 @@ TEST(MathMatrix, qr_R) {
   Q = qr_Q(m1);
   R = qr_R(m1);
   m2 = Q * R;
-  for (unsigned int i=0; i<m1.rows(); i++) {
-    for (unsigned int j=0; j<m1.cols(); j++) {
+  for (unsigned int i = 0; i < m1.rows(); i++) {
+    for (unsigned int j = 0; j < m1.cols(); j++) {
       EXPECT_NEAR(m1(i, j), m2(i, j), 1e-12);
     }
   }

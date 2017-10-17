@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat/meta/value_type.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathMeta, index_type) {
   using Eigen::Matrix;
@@ -17,5 +18,6 @@ TEST(MathMeta, index_type) {
                    value_type<Matrix<double, 1, Dynamic> >::type>();
 
   expect_same_type<Matrix<double, 1, Dynamic>,
-                   value_type<std::vector<Matrix<double, 1, Dynamic> > >::type>();
+                   value_type<std::vector<Matrix<double,
+                                                  1, Dynamic> > >::type>();
 }

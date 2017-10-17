@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(ProbCategoricalLogit, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3, 1);
@@ -27,8 +28,10 @@ TEST(ProbCategoricalLogit, log_matches_lpmf) {
 
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<true, double>(ns, theta)),
                   (stan::math::categorical_logit_log<true, double>(ns, theta)));
-  EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<false, double>(ns, theta)),
-                  (stan::math::categorical_logit_log<false, double>(ns, theta)));
+  EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<false,
+                                                      double>(ns, theta)),
+                  (stan::math::categorical_logit_log<false,
+                                                      double>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<double>(ns, theta)),
                   (stan::math::categorical_logit_log<double>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf(ns, theta)),

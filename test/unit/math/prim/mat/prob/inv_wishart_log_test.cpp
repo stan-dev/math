@@ -20,8 +20,12 @@ TEST(ProbInvWishart, log_matches_lpmf) {
                   (stan::math::inv_wishart_log<true>(Y, dof, Sigma)));
   EXPECT_FLOAT_EQ((stan::math::inv_wishart_lpdf<false>(Y, dof, Sigma)),
                   (stan::math::inv_wishart_log<false>(Y, dof, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::inv_wishart_lpdf<true, double, double>(Y, dof, Sigma)),
-                  (stan::math::inv_wishart_log<true, double, double>(Y, dof, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::inv_wishart_lpdf<false, double, double>(Y, dof, Sigma)),
-                  (stan::math::inv_wishart_log<false, double, double>(Y, dof, Sigma)));
+  EXPECT_FLOAT_EQ((stan::math::inv_wishart_lpdf<true, double, double>
+                                                        (Y, dof, Sigma)),
+                  (stan::math::inv_wishart_log<true, double, double>
+                                                        (Y, dof, Sigma)));
+  EXPECT_FLOAT_EQ((stan::math::inv_wishart_lpdf<false, double, double>
+                                                        (Y, dof, Sigma)),
+                  (stan::math::inv_wishart_log<false, double, double>
+                                                        (Y, dof, Sigma)));
 }

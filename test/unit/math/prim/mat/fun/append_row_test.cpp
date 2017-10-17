@@ -76,7 +76,8 @@ TEST(MathMatrix, append_row) {
 
 
   MatrixXd m32b(2, 3);
-  m32b = m32*1.101; // ensure some different values
+  // ensure some different values
+  m32b = m32*1.101;
   mat = append_row(m32, m32b);
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 3; j++)

@@ -1,6 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 TEST(MathFunctions, inverse_softmax_exception) {
   std::vector<double> simplex(2);

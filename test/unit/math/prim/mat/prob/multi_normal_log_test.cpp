@@ -16,11 +16,28 @@ TEST(ProbMultiNormal, log_matches_lpmf) {
                   (stan::math::multi_normal_log<true>(y, mu, Sigma)));
   EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<false>(y, mu, Sigma)),
                   (stan::math::multi_normal_log<false>(y, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<true, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)),
-                  (stan::math::multi_normal_log<true, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<false, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)),
-                  (stan::math::multi_normal_log<false, Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)),
-                  (stan::math::multi_normal_log<Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd>(y, mu, Sigma)));
-
+  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<true, Eigen::VectorXd,
+                                                       Eigen::VectorXd,
+                                                       Eigen::MatrixXd>
+                                                            (y, mu, Sigma)),
+                  (stan::math::multi_normal_log<true, Eigen::VectorXd,
+                                                      Eigen::VectorXd,
+                                                      Eigen::MatrixXd>
+                                                            (y, mu, Sigma)));
+  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<false, Eigen::VectorXd,
+                                                        Eigen::VectorXd,
+                                                        Eigen::MatrixXd>
+                                                            (y, mu, Sigma)),
+                  (stan::math::multi_normal_log<false, Eigen::VectorXd,
+                                                       Eigen::VectorXd,
+                                                       Eigen::MatrixXd>
+                                                            (y, mu, Sigma)));
+  EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<Eigen::VectorXd,
+                                                 Eigen::VectorXd,
+                                                 Eigen::MatrixXd>
+                                                              (y, mu, Sigma)),
+                  (stan::math::multi_normal_log<Eigen::VectorXd,
+                                                 Eigen::VectorXd,
+                                                 Eigen::MatrixXd>
+                                                            (y, mu, Sigma)));
 }

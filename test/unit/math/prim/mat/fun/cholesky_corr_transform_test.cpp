@@ -34,7 +34,9 @@ TEST(ProbTransform, CholeskyCorrelation4) {
 }
 
 void
-test_cholesky_correlation_values(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& L) {
+test_cholesky_correlation_values(const Eigen::Matrix<double,
+                                                      Eigen::Dynamic,
+                                                      Eigen::Dynamic>& L) {
   using std::vector;
   using stan::math::cholesky_corr_constrain;
   using stan::math::cholesky_corr_free;

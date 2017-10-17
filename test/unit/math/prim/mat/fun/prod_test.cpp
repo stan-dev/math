@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathMatrix, prod_vector_int) {
   using stan::math::prod;

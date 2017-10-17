@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, checkCovMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

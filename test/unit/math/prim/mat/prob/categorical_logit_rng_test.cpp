@@ -1,8 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <limits>
 
 using Eigen::VectorXd;
 using stan::math::softmax;
@@ -39,8 +39,8 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
   VectorXd theta = softmax(beta);
   boost::math::chi_squared mydist(K - 1);
 
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * theta(i);

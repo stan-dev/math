@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, binary_log_loss) {
   EXPECT_FLOAT_EQ(0.0, stan::math::binary_log_loss(0, 0.0));

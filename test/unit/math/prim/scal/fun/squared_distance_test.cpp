@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, squared_distance) {
   double x1 = 1;
@@ -35,5 +36,4 @@ TEST(MathFunctions, squared_distance_inf) {
   EXPECT_THROW(stan::math::squared_distance(inf, inf),
                std::domain_error);
 }
-
 

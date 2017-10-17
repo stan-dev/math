@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> const_t1;
 typedef std::vector<const_t1> const_t2;

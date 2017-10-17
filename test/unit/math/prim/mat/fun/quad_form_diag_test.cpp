@@ -7,7 +7,6 @@ using Eigen::Dynamic;
 using stan::math::quad_form_diag;
 
 TEST(MathMatrix, quadFormDiag) {
-
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 

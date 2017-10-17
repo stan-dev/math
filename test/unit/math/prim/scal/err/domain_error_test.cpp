@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <string>
 #include <sstream>
 
 const std::string function_ = "function";
@@ -60,7 +61,6 @@ public:
       FAIL() << "expecting call to domain_error<> to throw a domain_error, "
              << "but threw a different type";
     }
-
   }
 };
 

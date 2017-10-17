@@ -1,5 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 TEST(ErrorHandlingMatrix, checkSymmetric) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -29,9 +31,9 @@ TEST(ErrorHandlingMatrix, checkSymmetric_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("[1, 2]"))
+  EXPECT_NE(std::string::npos, message.find("[1,2]"))
     << message;
-  EXPECT_NE(std::string::npos, message.find("[2, 1]"))
+  EXPECT_NE(std::string::npos, message.find("[2,1]"))
     << message;
 }
 
@@ -61,5 +63,4 @@ TEST(ErrorHandlingMatrix, checkSymmetric_non_square) {
   EXPECT_THROW(stan::math::check_symmetric("checkSymmetric",
                                            "y", y),
                std::invalid_argument);
-
 }

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <random>
 
 TEST(MathMatrix, matrix_exp_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
@@ -57,19 +58,18 @@ TEST(MathMatrix, matrix_exp_3x3_2) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using std::rand;
-
   int size = 100;
-  srand(1);  // set seed
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S =
     Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
+  std::random_device rd;
+  std::mt19937 mt(rd());
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-     col1 = rand() % size;
-     col2 = rand() % size;
-     while (col1 == col2) col2 = rand() % size;
-     S.col(col1) += S.col(col2) * std::pow(-1, rand());
+     col1 = rd() % size;
+     col2 = rd() % size;
+     while (col1 == col2) col2 = rd() % size;
+     S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S_inv =
     stan::math::mdivide_right(I, S);

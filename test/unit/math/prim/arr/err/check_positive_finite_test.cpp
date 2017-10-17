@@ -1,5 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <string>
+#include <limits>
 
 using stan::math::check_positive_finite;
 
@@ -8,9 +11,9 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
   std::vector<double> x;
 
   x.clear();
-  x.push_back (1.5);
-  x.push_back (0.1);
-  x.push_back (1);
+  x.push_back(1.5);
+  x.push_back(0.1);
+  x.push_back(1);
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x";
 

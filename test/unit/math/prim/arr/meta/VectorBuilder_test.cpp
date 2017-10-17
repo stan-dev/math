@@ -1,5 +1,6 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_false) {
   using std::vector;

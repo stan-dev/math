@@ -6,5 +6,5 @@ TEST(MetaTraits, isConstantStruct) {
   EXPECT_TRUE(is_constant_struct<int>::value);
   EXPECT_TRUE(is_constant_struct<double>::value);
   EXPECT_TRUE(is_constant_struct<float>::value);
-  EXPECT_TRUE(is_constant_struct<long>::value);
+  EXPECT_TRUE(is_constant_struct<int64>::value);
 }

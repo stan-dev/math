@@ -1,5 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_corr_matrix;
 
@@ -30,7 +32,7 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("(1, 1)"))
+  EXPECT_NE(std::string::npos, message.find("(1,1)"))
     << message;
 
   EXPECT_EQ(std::string::npos, message.find("(0, 0)"))

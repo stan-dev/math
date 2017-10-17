@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, log1m) {
   EXPECT_FLOAT_EQ(stan::math::log1p(-0.1), stan::math::log1m(0.1));
@@ -11,7 +12,6 @@ TEST(MathFunctions, log1mOverflow) {
               stan::math::log1m(1.0));
     EXPECT_EQ(-std::numeric_limits<double>::infinity(),
               stan::math::log1m(1));
-
 }
 
 TEST(MathFunctions, log1m_exception) {

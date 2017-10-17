@@ -1,5 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <algorithm>
+#include <vector>
 
 TEST(MathMatrix, max) {
   using stan::math::max;

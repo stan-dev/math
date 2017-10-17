@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(ProbDistributionsCategorical, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3, 1);

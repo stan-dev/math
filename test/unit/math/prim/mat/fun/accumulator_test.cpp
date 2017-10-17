@@ -21,7 +21,6 @@ TEST(MathMatrix, accumulateDouble) {
   for (int i = 2; i <= 1000; ++i)
     a.add(i);
   test_sum(a, 1000);
-
 }
 TEST(MathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>

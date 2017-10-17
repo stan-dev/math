@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::math::to_matrix;
 using stan::math::to_vector;
@@ -12,7 +13,6 @@ using Eigen::Matrix;
 using std::vector;
 
 TEST(MathMatrix, conversions_1) {
-
   Matrix<double, Dynamic, Dynamic> a1(3, 2);
   a1 << 1.1, 2.53,
         3.98, 4.1,
@@ -172,7 +172,7 @@ TEST(MathMatrix, conversions_1) {
 
   // vector to_vector(row_vector)
   c2 = to_vector(d1);
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     EXPECT_EQ(c2(i), d1(i));
 
   // vector to_vector(vector)
@@ -204,7 +204,7 @@ TEST(MathMatrix, conversions_1) {
 
   // row_vector to_row_vector(vector)
   d2 = to_row_vector(c1);
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     EXPECT_EQ(d2(i), c1(i));
 
   // row_vector to_row_vector(row_vector)
@@ -267,8 +267,8 @@ TEST(MathMatrix, conversions_1) {
   expect_matrix_eq(d1, to_row_vector(to_vector(d1)));
 }
 TEST(MathMatrix, conversions_2) {
-
-  vector< vector < vector <double> > > a1(3, vector < vector<double> >(2, vector <double>(4)));
+  vector< vector < vector <double> > >
+    a1(3, vector < vector<double> >(2, vector <double>(4)));
   a1[0][0][0] = 11.341;
   a1[0][1][0] = 12.734;
   a1[1][0][0] = 13.5433;

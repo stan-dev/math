@@ -17,10 +17,25 @@ TEST(ProbMultiStudentT, log_matches_lpmf) {
                   (stan::math::multi_student_t_log<true>(y, nu, mu, Sigma)));
   EXPECT_FLOAT_EQ((stan::math::multi_student_t_lpdf<false>(y, nu, mu, Sigma)),
                   (stan::math::multi_student_t_log<false>(y, nu, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_student_t_lpdf<true, Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)),
-                  (stan::math::multi_student_t_log<true, Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_student_t_lpdf<false, Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)),
-                  (stan::math::multi_student_t_log<false, Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)));
-  EXPECT_FLOAT_EQ((stan::math::multi_student_t_lpdf<Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)),
-                  (stan::math::multi_student_t_log<Eigen::VectorXd, double, Eigen::VectorXd, Eigen::MatrixXd>(y, nu, mu, Sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::multi_student_t_lpdf<true, Eigen::VectorXd, double,
+                                            Eigen::VectorXd, Eigen::MatrixXd>
+                                                          (y, nu, mu, Sigma)),
+    (stan::math::multi_student_t_log<true, Eigen::VectorXd, double,
+                                            Eigen::VectorXd, Eigen::MatrixXd>
+                                                          (y, nu, mu, Sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::multi_student_t_lpdf<false, Eigen::VectorXd, double,
+                                             Eigen::VectorXd, Eigen::MatrixXd>
+                                                           (y, nu, mu, Sigma)),
+    (stan::math::multi_student_t_log<false, Eigen::VectorXd, double,
+                                             Eigen::VectorXd, Eigen::MatrixXd>
+                                                           (y, nu, mu, Sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::multi_student_t_lpdf<Eigen::VectorXd, double,
+                                      Eigen::VectorXd, Eigen::MatrixXd>
+                                                           (y, nu, mu, Sigma)),
+    (stan::math::multi_student_t_log<Eigen::VectorXd, double,
+                                      Eigen::VectorXd, Eigen::MatrixXd>
+                                                           (y, nu, mu, Sigma)));
 }

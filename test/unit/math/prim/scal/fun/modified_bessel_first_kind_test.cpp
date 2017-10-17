@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, modified_bessel_first_kind) {
   using stan::math::modified_bessel_first_kind;
@@ -16,5 +17,6 @@ TEST(MathFunctions, modified_bessel_first_kind) {
 TEST(MathFunctions, modified_bessel_first_kind_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::modified_bessel_first_kind(1, nan), std::domain_error);
+  EXPECT_THROW(stan::math::modified_bessel_first_kind(1, nan),
+                std::domain_error);
 }

@@ -1,5 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
@@ -13,7 +16,6 @@ TEST(ErrorHandlingScalar, CheckPositive) {
   for (size_t i = 0; i < x.size(); i++) {
     EXPECT_NO_THROW(check_positive(function, "x", x));
   }
-
 }
 
 TEST(ErrorHandlingScalar, CheckPositive_nan) {

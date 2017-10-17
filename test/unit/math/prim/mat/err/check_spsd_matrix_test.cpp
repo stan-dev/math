@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, checkSpsdMatrixPosDef) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

@@ -18,7 +18,7 @@ void expect_type(S s) {
 // fail:  expect_same_type<int, double>()
 template <typename T, typename S>
 void expect_same_type() {
-  EXPECT_TRUE((boost::is_same<S, T>::value ));
+  EXPECT_TRUE((boost::is_same<S, T>::value));
 }
 
 // E is expected value of promote_scalar_type<T, S>::type

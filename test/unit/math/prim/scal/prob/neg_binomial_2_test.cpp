@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <string>
 
 TEST(ProbDistributionsNegBinomial, error_check) {
   boost::random::mt19937 rng;
@@ -59,7 +60,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (1.1, 1.1/(1.1+2.4));
+  boost::math::negative_binomial_distribution<>dist(1.1, 1.1/(1.1+2.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -67,8 +68,8 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
@@ -96,7 +97,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (0.6, 0.6/(0.6+2.4));
+  boost::math::negative_binomial_distribution<>dist(0.6, 0.6/(0.6+2.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -104,8 +105,8 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
@@ -133,7 +134,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (30, 30/(30+60.4));
+  boost::math::negative_binomial_distribution<>dist(30, 30/(30+60.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -141,8 +142,8 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
@@ -170,7 +171,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::negative_binomial_distribution<>dist (80, 80/(80+30.4));
+  boost::math::negative_binomial_distribution<>dist(80, 80/(80+30.4));
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -178,8 +179,8 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++)  {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
@@ -210,6 +211,6 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
   for (int n = 0; n < 10; ++n) {
     phi *= 10;
     double logp = stan::math::neg_binomial_2_log<false>(N, mu, phi);
-    EXPECT_TRUE(logp < 0);
+    EXPECT_LT(logp, 0);
   }
 }

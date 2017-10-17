@@ -123,7 +123,6 @@ TEST(AgradRevMatrix, multiply_int) {
   vec << 1, 2, 3, 4;
   vector_d t_vec(4);
   assign(t_vec, multiply(vec, d_int));
-
 }
 
 TEST(AgradRevMatrix, multiply_vector_int) {

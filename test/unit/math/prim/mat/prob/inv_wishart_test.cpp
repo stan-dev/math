@@ -44,7 +44,8 @@ TEST(ProbDistributionsInvWishart, LowerTriangular) {
 
   EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y_sym, dof, Sigma));
   EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y, dof, Sigma_sym));
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y_sym, dof, Sigma_sym));
+  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma),
+            inv_wishart_log(Y_sym, dof, Sigma_sym));
 }
 TEST(ProbDistributionsInvWishart, InvWishart) {
   Matrix<double, Dynamic, Dynamic> Y(3, 3);

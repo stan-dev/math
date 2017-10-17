@@ -1,5 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 TEST(ErrorHandlingMatrix, checkMatchingSizesMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

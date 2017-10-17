@@ -1,6 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 TEST(MathFunctions, scaled_add) {
   std::vector<double> x(3), y(3);

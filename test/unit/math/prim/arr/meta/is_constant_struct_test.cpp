@@ -1,5 +1,6 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, isConstantStruct) {
   using stan::is_constant_struct;

@@ -1,6 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <limits>
+#include <string>
 
 const std::string function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
@@ -31,12 +33,14 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
   y.resize(0, 0);
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::invalid_argument,
-                   "function: y must have a positive size, but is 0; dimension size expression = rows");
+                   "function: y must have a positive size, but is 0; "
+                    "dimension size expression = rows");
 
   y.resize(2, 3);
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::invalid_argument,
-                   "function: Expecting a square matrix; rows of y (2) and columns of y (3) must match in size");
+                   "function: Expecting a square matrix; "
+                    "rows of y (2) and columns of y (3) must match in size");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
@@ -74,11 +78,11 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
         // } else {
         //   expected_msg << "function: y is not symmetric. "
         //                << "y[" << j + 1 << ", " << i + 1 << "] = " << y(j, i)
-        //                << ", but y[" << i + 1 << ", " << j + 1 << "] = " << y(i, j);
+        //                << ", but y[" << i + 1 << ", " << j + 1 << "] = "
+        //                << y(i, j);
         // }
         EXPECT_THROW(check_pos_semidefinite(function, "y", y),
                      std::domain_error);  // , expected_msg.str());
       }
     }
-
 }

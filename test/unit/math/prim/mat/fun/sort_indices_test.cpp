@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 template <typename T>
 void test_sort_indices_asc() {
@@ -72,7 +73,6 @@ void test_sort_indices_desc() {
   T z;
   EXPECT_NO_THROW(sort_indices_desc(z));
   EXPECT_EQ(idx_t(0), z.size());
-
 }
 
 TEST(MathMatrix, sort_indices_desc) {

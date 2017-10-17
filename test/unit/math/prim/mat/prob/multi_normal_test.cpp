@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <limits>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -50,22 +52,34 @@ TEST(ProbDistributionsMultiNormal, Vectorized) {
     0.0, 0.0, 5.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_log(vec_y, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_log(vec_y_t, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_log(vec_y, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_log(vec_y_t, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_log(vec_y, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_log(vec_y_t, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_log(vec_y, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_log(vec_y_t, vec_mu_t, Sigma));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_log(vec_y, mu, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_log(vec_y_t, mu, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_log(vec_y, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_log(vec_y_t, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_log(vec_y, mu, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_log(vec_y_t, mu, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_log(vec_y, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_log(vec_y_t, mu_t, Sigma));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_log(y, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_log(y_t, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_log(y, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_log(y_t, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_log(y, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_log(y_t, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_log(y, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_log(y_t, vec_mu_t, Sigma));
 }
 TEST(ProbDistributionsMultiNormal, Sigma) {
   Matrix<double, Dynamic, 1> y(2, 1);
@@ -74,11 +88,11 @@ TEST(ProbDistributionsMultiNormal, Sigma) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 9.0, -3.0, -3.0, 4.0;
-  EXPECT_NO_THROW (stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, Mu) {
   Matrix<double, Dynamic, 1> y(3, 1);
@@ -89,14 +103,14 @@ TEST(ProbDistributionsMultiNormal, Mu) {
   Sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0,
     0.0, 0.0, 5.0;
-  EXPECT_NO_THROW (stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   mu(0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
   mu(0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
   mu(0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
   Matrix<double, 1, Dynamic> y(1, 3);
@@ -117,16 +131,16 @@ TEST(ProbDistributionsMultiNormal, SigmaMultiRow) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 9.0, -3.0, -3.0, 4.0;
-  EXPECT_NO_THROW (stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
   Matrix<double, Dynamic, 1> z(2, 1);
 
   // wrong dimensions
   z << 2.0, -2.0;
-  EXPECT_THROW (stan::math::multi_normal_log(z, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(z, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MuMultiRow) {
   Matrix<double, 1, Dynamic> y(1, 3);
@@ -137,14 +151,14 @@ TEST(ProbDistributionsMultiNormal, MuMultiRow) {
   Sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0,
     0.0, 0.0, 5.0;
-  EXPECT_NO_THROW (stan::math::multi_normal_log(y, mu, Sigma));
+  EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   mu(0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
   mu(0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
   mu(0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW (stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, SizeMismatch) {
   Matrix<double, 1, Dynamic> y(1, 3);
@@ -154,7 +168,8 @@ TEST(ProbDistributionsMultiNormal, SizeMismatch) {
   Matrix<double, Dynamic, Dynamic> Sigma(2, 3);
   Sigma << 9.0, -3.0, 0.0,
     -3.0,  4.0, 0.0;
-  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma), std::invalid_argument);
+  EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma),
+               std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultiNormal, error_check) {
@@ -173,7 +188,8 @@ TEST(ProbDistributionsMultiNormal, error_check) {
   mu << stan::math::positive_infinity(),
     -2.0,
     11.0;
-  EXPECT_THROW(stan::math::multi_normal_rng(mu, sigma, rng), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_rng(mu, sigma, rng),
+               std::domain_error);
 
   mu << 2.0,
     -2.0,
@@ -181,8 +197,8 @@ TEST(ProbDistributionsMultiNormal, error_check) {
   sigma << 9.0, -3.0, 0.0,
     3.0,  4.0, 0.0,
     -2.0, 1.0, 3.0;
-  EXPECT_THROW(stan::math::multi_normal_rng(mu, sigma, rng), std::domain_error);
-
+  EXPECT_THROW(stan::math::multi_normal_rng(mu, sigma, rng),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
@@ -197,7 +213,7 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (2.0, 3.0);
+  boost::math::normal_distribution<>dist(2.0, 3.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -205,8 +221,8 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
@@ -240,7 +256,7 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (-2.0, 2.0);
+  boost::math::normal_distribution<>dist(-2.0, 2.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -248,8 +264,8 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
@@ -283,7 +299,7 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (11.0, 4.0);
+  boost::math::normal_distribution<>dist(11.0, 4.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -291,8 +307,8 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;

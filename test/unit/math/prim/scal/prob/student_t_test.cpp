@@ -3,6 +3,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
+#include <limits>
+#include <vector>
 
 TEST(ProbDistributionsStudentT, error_check) {
   boost::random::mt19937 rng;
@@ -21,7 +23,6 @@ TEST(ProbDistributionsStudentT, error_check) {
   EXPECT_THROW(stan::math::student_t_rng(3, 2, stan::math::positive_infinity(),
                                          rng),
                std::domain_error);
-
 }
 
 TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
@@ -30,14 +31,15 @@ TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
   std::vector<double> samples;
-  for (int i=0; i<N; ++i) {
-    samples.push_back((stan::math::student_t_rng(3.0, 2.0, 2.0, rng) - 2.0) / 2.0);
+  for (int i = 0; i < N; ++i) {
+    samples.push_back((stan::math::student_t_rng(3.0, 2.0, 2.0, rng) - 2.0)
+                                                                      / 2.0);
   }
 
   // Generate quantiles from boost's student t distribution
-  boost::math::students_t_distribution<>dist (3.0);
+  boost::math::students_t_distribution<>dist(3.0);
   std::vector<double> quantiles;
-  for (int i=1; i<K; ++i) {
+  for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
     quantiles.push_back(quantile(dist, frac));
   }

@@ -1,5 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <algorithm>
+#include <vector>
 
 TEST(MathMatrix, min) {
   using stan::math::min;
@@ -83,6 +86,5 @@ TEST(MathMatrix, min_exception) {
   EXPECT_NO_THROW(stan::math::min(m_nz));
   EXPECT_NO_THROW(stan::math::min(v_nz));
   EXPECT_NO_THROW(stan::math::min(rv_nz));
-
 }
 

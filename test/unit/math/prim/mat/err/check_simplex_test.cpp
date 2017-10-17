@@ -1,6 +1,8 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <limits>
+#include <string>
 
 TEST(ErrorHandlingMatrix, checkSimplex) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y(2);

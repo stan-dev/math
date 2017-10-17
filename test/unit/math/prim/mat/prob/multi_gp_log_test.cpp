@@ -6,7 +6,9 @@ TEST(ProbMultiGp, log_matches_lpmf) {
   mu.setZero();
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+       -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -24,10 +26,16 @@ TEST(ProbMultiGp, log_matches_lpmf) {
                   (stan::math::multi_gp_log<true>(y, Sigma, w)));
   EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<false>(y, Sigma, w)),
                   (stan::math::multi_gp_log<false>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<true, double, double, double>(y, Sigma, w)),
-                  (stan::math::multi_gp_log<true, double, double, double>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<false, double, double, double>(y, Sigma, w)),
-                  (stan::math::multi_gp_log<false, double, double, double>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<double, double, double>(y, Sigma, w)),
-                  (stan::math::multi_gp_log<double, double, double>(y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<true, double, double, double>
+                                                              (y, Sigma, w)),
+                  (stan::math::multi_gp_log<true, double, double, double>
+                                                              (y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<false, double, double, double>
+                                                              (y, Sigma, w)),
+                  (stan::math::multi_gp_log<false, double, double, double>
+                                                              (y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<double, double, double>
+                                                              (y, Sigma, w)),
+                  (stan::math::multi_gp_log<double, double, double>
+                                                              (y, Sigma, w)));
 }

@@ -7,7 +7,6 @@ using Eigen::Dynamic;
 using stan::math::diag_post_multiply;
 
 TEST(MathMatrix, diagPostMultiply) {
-
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 
@@ -38,7 +37,6 @@ TEST(MathMatrix, diagPostMultiply2) {
   Matrix<double, 1, Dynamic> rv(2);
   rv << 10, 100;
   expect_matrix_eq(m * v_m, diag_post_multiply(m, rv));
-
 }
 
 TEST(MathMatrix, diagPostMultiplyException) {

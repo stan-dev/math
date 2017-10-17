@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <vector>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -77,8 +79,6 @@ TEST(ProbDistributionsCategorical, error) {
   ns[1] = 1;
   ns[2] = 12;
   EXPECT_THROW(categorical_log(ns, theta), std::domain_error);
-
-
 }
 
 TEST(ProbDistributionsCategorical, error_check) {
@@ -113,8 +113,8 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
   }
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * theta(i);

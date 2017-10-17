@@ -66,7 +66,6 @@ TEST(ProbTransform, choleskyFactorLogJacobian) {
     7, 8, 9;
   cholesky_factor_constrain(x, 4, 3, lp);
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
-
 }
 TEST(ProbTransform, choleskyFactorConstrainError) {
   using Eigen::Matrix;

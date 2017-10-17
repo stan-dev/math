@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, checkCorrCholeskyMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -73,8 +74,6 @@ TEST(ErrorHandlingMatrix, checkCorrCholeskyMatrix) {
                std::domain_error);
 }
 
-
-
 TEST(ErrorHandlingMatrix, checkCorrCholeskyMatrix_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -106,7 +105,6 @@ TEST(ErrorHandlingMatrix, checkCorrCholeskyMatrix_nan) {
       sqrt(0.5), sqrt(0.5), 0,
       sqrt(0.25), sqrt(0.25), sqrt(0.5);
   }
-
 }
 
 

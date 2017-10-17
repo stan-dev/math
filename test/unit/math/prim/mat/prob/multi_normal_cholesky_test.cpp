@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -51,22 +52,34 @@ TEST(ProbDistributionsMultiNormalCholesky, Vectorized) {
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_cholesky_log(vec_y, vec_mu, L));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_cholesky_log(vec_y_t, vec_mu, L));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_cholesky_log(vec_y, vec_mu_t, L));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_cholesky_log(vec_y_t, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_cholesky_log(vec_y, vec_mu, L));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_cholesky_log(vec_y_t, vec_mu, L));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_cholesky_log(vec_y, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_cholesky_log(vec_y_t, vec_mu_t, L));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_cholesky_log(vec_y, mu, L));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_cholesky_log(vec_y_t, mu, L));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_cholesky_log(vec_y, mu_t, L));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_cholesky_log(vec_y_t, mu_t, L));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_cholesky_log(vec_y, mu, L));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_cholesky_log(vec_y_t, mu, L));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_cholesky_log(vec_y, mu_t, L));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_cholesky_log(vec_y_t, mu_t, L));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_cholesky_log(y, vec_mu, L));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_cholesky_log(y_t, vec_mu, L));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_cholesky_log(y, vec_mu_t, L));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_cholesky_log(y_t, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_cholesky_log(y, vec_mu, L));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_cholesky_log(y_t, vec_mu, L));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_cholesky_log(y, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_cholesky_log(y_t, vec_mu_t, L));
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, MultiNormalOneRow) {
@@ -100,10 +113,12 @@ TEST(ProbDistributionsMultiNormalCholesky, error_check) {
   mu << stan::math::positive_infinity(),
     -2.0,
     11.0;
-  EXPECT_THROW(stan::math::multi_normal_cholesky_rng(mu, sigma, rng), std::domain_error);
+  EXPECT_THROW(stan::math::multi_normal_cholesky_rng(mu, sigma, rng),
+                std::domain_error);
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, marginalOneChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMultiNormalCholesky,
+      marginalOneChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
@@ -116,7 +131,7 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalOneChiSquareGoodnessFitTest) 
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (2.0, 3.0);
+  boost::math::normal_distribution<>dist(2.0, 3.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -124,8 +139,8 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalOneChiSquareGoodnessFitTest) 
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
@@ -147,7 +162,8 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalOneChiSquareGoodnessFitTest) 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, marginalTwoChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMultiNormalCholesky,
+      marginalTwoChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
@@ -160,7 +176,7 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalTwoChiSquareGoodnessFitTest) 
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (-2.0, 2.0);
+  boost::math::normal_distribution<>dist(-2.0, 2.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -168,8 +184,8 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalTwoChiSquareGoodnessFitTest) 
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
@@ -191,7 +207,8 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalTwoChiSquareGoodnessFitTest) 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsMultiNormalCholesky, marginalThreeChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMultiNormalCholesky,
+      marginalThreeChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
@@ -204,7 +221,7 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalThreeChiSquareGoodnessFitTest
     11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::normal_distribution<>dist (11.0, 4.0);
+  boost::math::normal_distribution<>dist(11.0, 4.0);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -212,8 +229,8 @@ TEST(ProbDistributionsMultiNormalCholesky, marginalThreeChiSquareGoodnessFitTest
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;

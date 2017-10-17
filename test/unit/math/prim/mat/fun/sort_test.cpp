@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include <stdexcept>
+#include <vector>
 
 template <typename T>
 void test_sort_asc() {

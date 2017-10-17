@@ -7,7 +7,6 @@ using Eigen::Dynamic;
 using stan::math::diag_pre_multiply;
 
 TEST(MathMatrix, diagPreMultiply) {
-
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 

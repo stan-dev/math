@@ -1,5 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 using stan::math::check_ordered;
 

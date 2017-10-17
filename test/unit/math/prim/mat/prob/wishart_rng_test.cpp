@@ -3,6 +3,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <vector>
 
 
 TEST(ProbDistributionsWishartRng, rng) {
@@ -96,7 +97,8 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
 
   size_t N = 1e4;
   int k = 20;
-  double tol = 0.2; // tolerance for variance
+  // tolerance for variance
+  double tol = 0.2;
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)

@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, fma_double) {
   using stan::math::fma;
@@ -11,7 +12,9 @@ TEST(MathFunctions, fma_double) {
 
 TEST(MathFunctions, fma_int) {
   using stan::math::fma;
-  EXPECT_FLOAT_EQ(11.0, fma(int(3), int(2), int(5)));
+  EXPECT_FLOAT_EQ(11.0, fma(static_cast<int>(3),
+                            static_cast<int>(2),
+                            static_cast<int>(5)));
 }
 
 TEST(MathFunctions, fma_nan) {

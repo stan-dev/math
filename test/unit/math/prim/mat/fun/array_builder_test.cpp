@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using std::vector;
 using Eigen::Dynamic;
@@ -9,7 +10,6 @@ using stan::math::to_matrix;
 using stan::math::to_row_vector;
 
 TEST(MathMatrix, arrayBuilder) {
-
   vector<Matrix<double, 1, Dynamic> > mEmpty
     = array_builder<Matrix<double, 1, Dynamic> >().array();
   EXPECT_EQ(0U, mEmpty.size());
@@ -35,6 +35,5 @@ TEST(MathMatrix, arrayBuilder) {
   EXPECT_FLOAT_EQ(2.0, m32(1, 1));
   EXPECT_FLOAT_EQ(1.0, m32(2, 0));
   EXPECT_FLOAT_EQ(2.0, m32(2, 1));
-
 }
 

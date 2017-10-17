@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <algorithm>
+#include <random>
 
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
@@ -44,18 +45,18 @@ TEST(MathMatrix, matrix_exp_pade_3x3_2) {
 TEST(MathMatrix, matrix_exp_100x100) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
-  using std::rand;
 
   int size = 100;
-  srand(1);  // set seed
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
+  std::random_device rd;
+  std::mt19937 mt(rd());
   for (int i = 0; i < 5 * size; i++) {
-      col1 = rand() % size;
-      col2 = rand() % size;
-      while (col1 == col2) col2 = rand() % size;
-      S.col(col1) += S.col(col2) * std::pow(-1, rand());
+      col1 = rd() % size;
+      col2 = rd() % size;
+      while (col1 == col2) col2 = rd() % size;
+      S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements(size);

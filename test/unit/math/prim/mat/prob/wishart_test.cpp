@@ -56,7 +56,8 @@ TEST(ProbDistributionsWishart, 2x2) {
 
   unsigned int dof = 3;
 
-  double lp = log(8.658e-07); // computed with MCMCpack in R
+  // computed with MCMCpack in R
+  double lp = log(8.658e-07);
 
   EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma), 0.01);
 }

@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <vector>
 
 using std::vector;
 using stan::math::promote_elements;

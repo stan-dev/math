@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
   stan::math::vector_d y;

@@ -11,7 +11,7 @@ void expect_prim_scalar_value() {
   vector<int> int_valid_inputs = F::int_valid_inputs();
   for (size_t i = 0; i < int_valid_inputs.size(); ++i) {
     int input = int_valid_inputs[i];
-    double exp_v = F::apply_base(double(input));
+    double exp_v = F::apply_base(static_cast<double>(input));
     double v = F::template apply<double>(input);
     expect_val_eq(exp_v, v);
   }

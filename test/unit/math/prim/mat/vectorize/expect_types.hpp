@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_TYPES_HPP
 
 #include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F>
 void expect_int_types() {

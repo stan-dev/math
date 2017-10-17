@@ -19,5 +19,4 @@ TEST(MathMatrix, col_exception) {
   using stan::math::col;
   EXPECT_THROW(col(m1, 5), std::out_of_range);
   EXPECT_THROW(col(m1, 0), std::out_of_range);
-
 }

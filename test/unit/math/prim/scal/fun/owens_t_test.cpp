@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/owens_t.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, owens_t) {
   double a = 1.0;

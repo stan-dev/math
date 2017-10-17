@@ -14,7 +14,7 @@ TEST(prob_transform, positive_f) {
   EXPECT_FLOAT_EQ(log(0.5), stan::math::positive_free(0.5));
 }
 TEST(prob_transform, positive_f_exception) {
-  EXPECT_THROW (stan::math::positive_free(-1.0), std::domain_error);
+  EXPECT_THROW(stan::math::positive_free(-1.0), std::domain_error);
 }
 TEST(prob_transform, positive_rt) {
   double x = -1.0;

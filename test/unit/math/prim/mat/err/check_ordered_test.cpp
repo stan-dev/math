@@ -1,5 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_ordered;
 
@@ -16,14 +18,16 @@ TEST(ErrorHandlingMatrix, checkOrdered) {
   y << -10, 10, std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
-  y << -std::numeric_limits<double>::infinity(), 10, std::numeric_limits<double>::infinity();
+  y << -std::numeric_limits<double>::infinity(), 10,
+        std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
   y << 0, 0, 0;
   EXPECT_THROW(check_ordered("check_ordered", "y", y),
                std::domain_error);
 
-  y << 0, std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity();
+  y << 0, std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_ordered("check_ordered", "y", y),
                std::domain_error);
 

@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -50,22 +51,34 @@ TEST(ProbDistributionsMultiNormalPrec, Vectorized) {
   Sigma = Sigma.inverse();
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_prec_log(vec_y, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_prec_log(vec_y_t, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_prec_log(vec_y, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-11.928077-6.5378327, stan::math::multi_normal_prec_log(vec_y_t, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_prec_log(vec_y, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_prec_log(vec_y_t, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_prec_log(vec_y, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-11.928077-6.5378327,
+                  stan::math::multi_normal_prec_log(vec_y_t, vec_mu_t, Sigma));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_prec_log(vec_y, mu, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_prec_log(vec_y_t, mu, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_prec_log(vec_y, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-10.44027-6.537833, stan::math::multi_normal_prec_log(vec_y_t, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_prec_log(vec_y, mu, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_prec_log(vec_y_t, mu, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_prec_log(vec_y, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-10.44027-6.537833,
+                  stan::math::multi_normal_prec_log(vec_y_t, mu_t, Sigma));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_prec_log(y, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_prec_log(y_t, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_prec_log(y, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-6.26954-6.537833, stan::math::multi_normal_prec_log(y_t, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_prec_log(y, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_prec_log(y_t, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_prec_log(y, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-6.26954-6.537833,
+                  stan::math::multi_normal_prec_log(y_t, vec_mu_t, Sigma));
 }
 /*
 TEST(ProbDistributionsMultiNormalPrec, MultiNormalOneRow) {

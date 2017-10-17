@@ -74,7 +74,8 @@ TEST(MathMatrix, append_col) {
   }
 
   MatrixXd m23b(2, 3);
-  m23b = m23*1.101; // ensure some different values
+  // ensure some different values
+  m23b = m23*1.101;
   mat = append_col(m23, m23b);
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 3; j++)

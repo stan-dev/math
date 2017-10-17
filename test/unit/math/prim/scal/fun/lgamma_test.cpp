@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, lgamma) {
   EXPECT_TRUE(boost::math::isinf(lgamma(0.0)));

@@ -1,3 +1,6 @@
+#include <vector>
+#include <string>
+
 int mock_throwing_ode_functor_count = 0;
 
 template <typename E>
@@ -5,7 +8,7 @@ struct mock_throwing_ode_functor {
   const std::string msg_;
   const int N_;  // throw on the N_th call
 
-  mock_throwing_ode_functor(std::string msg)
+  explicit mock_throwing_ode_functor(std::string msg)
     : msg_(msg), N_(1) {
     mock_throwing_ode_functor_count = 0;
   }

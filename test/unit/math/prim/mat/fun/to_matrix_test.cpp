@@ -209,7 +209,8 @@ TEST(ToMatrixRowVector, answers) {
 void test_to_matrix_2darray_answers(int m, int n) {
   std::vector<std::vector<double> > vec(m, std::vector<double>(n));
   std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
-  if (m == 0) n = 0; // Any vec (0, C) will become (0, 0)
+  // Any vec (0, C) will become (0, 0)
+  if (m == 0) n = 0;
   Eigen::MatrixXd a(m, n);
 
   for (int i = 0; i < m; ++i) {

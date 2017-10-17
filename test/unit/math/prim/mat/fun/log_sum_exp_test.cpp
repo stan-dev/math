@@ -34,6 +34,5 @@ TEST(MathFunctions, log_sum_exp) {
   Matrix<double, Dynamic, Dynamic> m_trivial(1, 1);
   m_trivial << 2;
   EXPECT_FLOAT_EQ(2, log_sum_exp(m_trivial));
-
 }
 

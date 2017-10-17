@@ -2,7 +2,8 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 
-TEST(MathPrimScalFun, grad_reg_inc_gamma_1) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_1) {
   double alpha = 1.1;
   double z = 0.2;
   double g = boost::math::tgamma(alpha);
@@ -11,8 +12,8 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_1) { // converge
               stan::math::grad_reg_inc_gamma(alpha, z, g, dig, 1e-10),
               1e-8);
 }
-
-TEST(MathPrimScalFun, grad_reg_inc_gamma_2) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_2) {
   double alpha = 1.1;
   double z = 2.0;
   double g = boost::math::tgamma(alpha);
@@ -21,8 +22,8 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_2) { // converge
               stan::math::grad_reg_inc_gamma(alpha, z, g, dig, 1e-10),
               1e-8);
 }
-
-TEST(MathPrimScalFun, grad_reg_inc_gamma_3) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_3) {
   double alpha = 2.5;
   double z = 1.3;
   double g = boost::math::tgamma(alpha);
@@ -31,8 +32,8 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_3) { // converge
               stan::math::grad_reg_inc_gamma(alpha, z, g, dig, 1e-10),
               1e-8);
 }
-
-TEST(MathPrimScalFun, grad_reg_inc_gamma_4) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_4) {
   double alpha = 2.5;
   double z = 30;
   double g = boost::math::tgamma(alpha);
@@ -41,8 +42,8 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_4) { // converge
               stan::math::grad_reg_inc_gamma(alpha, z, g, dig, 1e-10),
               1e-8);
 }
-
-TEST(MathPrimScalFun, grad_reg_inc_gamma_5) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_5) {
   double alpha = 9;
   double z = 10;
   double g = boost::math::tgamma(alpha);
@@ -51,8 +52,8 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_5) { // converge
               stan::math::grad_reg_inc_gamma(alpha, z, g, dig, 1e-10),
               4e-7);
 }
-
-TEST(MathPrimScalFun, grad_reg_inc_gamma_6) { // converge
+// converge
+TEST(MathPrimScalFun, grad_reg_inc_gamma_6) {
   double alpha = 10.0;
   double z = 9.0;
   double g = boost::math::tgamma(alpha);

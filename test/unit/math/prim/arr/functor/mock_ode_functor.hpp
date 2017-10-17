@@ -1,3 +1,5 @@
+#include <vector>
+
 struct mock_ode_functor {
   template <typename T0, typename T1, typename T2>
   inline

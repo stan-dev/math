@@ -41,6 +41,5 @@ TEST(MathFunctions, inc_beta_ddz) {
     << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, large_b, large_z))
     << "reasonable values for a, b, x";
-
 }
 

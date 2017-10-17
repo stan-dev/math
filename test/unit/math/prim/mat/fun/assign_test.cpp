@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <string>
 
 template <int N>
 void test_print_mat_size(const std::string& expected) {
@@ -67,8 +68,6 @@ TEST(MathMatrixAssign, matSizeMismatch) {
                    " right-hand side cols (3) must match in size");
 }
 
-
-
 TEST(MathMatrixAssign, test_int) {
   using stan::math::assign;
   int a;
@@ -127,8 +126,6 @@ TEST(MathMatrixAssign, vectorDouble) {
   for (size_t i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(ns[i], x[i]);
 }
-
-
 
 TEST(MathMatrixAssign, eigenRowVectorDoubleToDouble) {
   using stan::math::assign;
@@ -254,7 +251,6 @@ TEST(MathMatrixAssign, eigenMatrixShapeMismatch) {
   zzz << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
-
 }
 
 TEST(MathMatrix, block) {

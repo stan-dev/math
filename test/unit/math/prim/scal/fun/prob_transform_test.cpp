@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(prob_transform, prob) {
   EXPECT_FLOAT_EQ(stan::math::inv_logit(-1.0),
@@ -25,8 +26,8 @@ TEST(prob_transform, prob_f) {
                   stan::math::prob_free(y));
 }
 TEST(prob_transform, prob_f_exception) {
-  EXPECT_THROW (stan::math::prob_free(1.1), std::domain_error);
-  EXPECT_THROW (stan::math::prob_free(-0.1), std::domain_error);
+  EXPECT_THROW(stan::math::prob_free(1.1), std::domain_error);
+  EXPECT_THROW(stan::math::prob_free(-0.1), std::domain_error);
 }
 TEST(prob_transform, prob_rt) {
   double x = -1.0;

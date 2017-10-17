@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -53,12 +54,14 @@ TEST(ProbDistributionsMatrixNormal, ErrorSigma) {
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   Sigma(0, 1) = Sigma(1, 0);
 
   // non-spd
   Sigma(0, 0) = -3.0;
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   Sigma(0, 0) = 9.0;
 }
 
@@ -85,12 +88,14 @@ TEST(ProbDistributionsMatrixNormal, ErrorD) {
 
   // non-symmetric
   D(0, 1) = -2.5;
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   D(0, 1) = Sigma(1, 0);
 
   // non-spd
   D(0, 0) = -3.0;
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   D(0, 0) = 1.0;
 }
 
@@ -117,9 +122,12 @@ TEST(ProbDistributionsMatrixNormal, ErrorY) {
 
   // non-finite values
   y(0, 0) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   y(0, 0) = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
   y(0, 0) = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW (stan::math::matrix_normal_prec_log(y, mu, D, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::matrix_normal_prec_log(y, mu, D, Sigma),
+                std::domain_error);
 }

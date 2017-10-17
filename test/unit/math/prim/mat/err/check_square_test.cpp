@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(ErrorHandlingMatrix, checkSquareMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -48,5 +49,4 @@ TEST(ErrorHandlingMatrix, checkSquareMatrix_0_size) {
   EXPECT_THROW(stan::math::check_square("checkSquareMatrix",
                                         "y", y),
                std::invalid_argument);
-
 }

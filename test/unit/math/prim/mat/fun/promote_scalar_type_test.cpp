@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathFunctionsPromoteScalar, TypeMatrix) {
   using std::vector;

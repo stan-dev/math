@@ -26,7 +26,8 @@ TEST(ProbDistributionsLkjCorr, testHalf) {
   Sigma.diagonal().setOnes();
   double eta = stan::math::uniform_rng(0, 2, rng);
   double f = stan::math::do_lkj_constant(eta, K);
-  EXPECT_FLOAT_EQ(f + (eta - 1.0) * log(0.3125), stan::math::lkj_corr_log(Sigma, eta));
+  EXPECT_FLOAT_EQ(f + (eta - 1.0) * log(0.3125),
+                  stan::math::lkj_corr_log(Sigma, eta));
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
@@ -39,18 +40,19 @@ TEST(ProbDistributionsLkjCorr, Sigma) {
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   double eta = stan::math::uniform_rng(0, 2, rng);
-  EXPECT_NO_THROW (stan::math::lkj_corr_log(Sigma, eta));
+  EXPECT_NO_THROW(stan::math::lkj_corr_log(Sigma, eta));
 
-  EXPECT_THROW (stan::math::lkj_corr_log(Sigma, -eta), std::domain_error);
+  EXPECT_THROW(stan::math::lkj_corr_log(Sigma, -eta), std::domain_error);
 
   Sigma = Sigma * -1.0;
-  EXPECT_THROW (stan::math::lkj_corr_log(Sigma, eta), std::domain_error);
+  EXPECT_THROW(stan::math::lkj_corr_log(Sigma, eta), std::domain_error);
   Sigma = Sigma * (0.0 / 0.0);
-  EXPECT_THROW (stan::math::lkj_corr_log(Sigma, eta), std::domain_error);
+  EXPECT_THROW(stan::math::lkj_corr_log(Sigma, eta), std::domain_error);
 
   Sigma.setConstant(0.5);
   Sigma.diagonal().setOnes();
-  EXPECT_THROW (stan::math::lkj_corr_cholesky_log(Sigma, eta), std::domain_error);
+  EXPECT_THROW(stan::math::lkj_corr_cholesky_log(Sigma, eta),
+                std::domain_error);
 }
 
 TEST(ProbDistributionsLKJCorr, error_check) {
@@ -58,7 +60,8 @@ TEST(ProbDistributionsLKJCorr, error_check) {
   EXPECT_NO_THROW(stan::math::lkj_corr_cholesky_rng(5, 1.0, rng));
   EXPECT_NO_THROW(stan::math::lkj_corr_rng(5, 1.0, rng));
 
-  EXPECT_THROW(stan::math::lkj_corr_cholesky_rng(5, -1.0, rng), std::domain_error);
+  EXPECT_THROW(stan::math::lkj_corr_cholesky_rng(5, -1.0, rng),
+                std::domain_error);
   EXPECT_THROW(stan::math::lkj_corr_rng(5, -1.0, rng), std::domain_error);
 }
 
@@ -66,7 +69,7 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::beta_distribution<>dist (2.5, 2.5);
+  boost::math::beta_distribution<>dist(2.5, 2.5);
   boost::math::chi_squared mydist(K-1);
 
   double loc[K - 1];
@@ -74,10 +77,9 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin [K];
-  double expect [K];
-  for (int i = 0 ; i < K; i++)
-  {
+  int bin[K];
+  double expect[K];
+  for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
   }
