@@ -114,7 +114,7 @@ namespace stan {
         * value_of(alpha));
       Matrix<T_partials_return, Dynamic, 1> exp_theta =
         theta_dbl.array().exp().matrix();
-        
+
       for (size_t i = 0; i < N; i++) {
         // Compute the log-density and handle extreme values gracefully
         // using Taylor approximations.
