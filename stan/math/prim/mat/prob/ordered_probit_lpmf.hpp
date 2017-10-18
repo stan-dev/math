@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
+#include <Eigen/Dense>
 #include <string>
 #include <vector>
 
