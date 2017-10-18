@@ -257,7 +257,6 @@
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
-//#include <stan/math/prim/mat/prob/gaussian_linear_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_log.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_rng.hpp>
