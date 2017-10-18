@@ -52,6 +52,7 @@ pipeline {
             agent any
             steps {
                 script {
+                    retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
                     sh setupCC()
