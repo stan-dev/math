@@ -246,20 +246,6 @@ namespace stan {
         }
       }
 
-      /**
-       * This constructor does not work and really only exists to
-       * ensure that such a var is not created accidentally in
-       * testing.
-       *
-       * @param x Value of the variable.
-       */
-      explicit var(const std::complex<var>& x) {
-        std::stringstream ss;
-        ss << "Stan does not support vars with complex numbers.";
-        std::string msg = ss.str();
-        throw std::invalid_argument(msg);
-      }
-
 #ifdef _WIN64
 
       // these two ctors are for Win64 to enable 64-bit signed
