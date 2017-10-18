@@ -38,7 +38,7 @@ namespace stan {
      * @deprecated use <code>ordered_logistic_lpmf</code>
      */
     template <bool propto, typename T_y, typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
       return ordered_logistic_lpmf<propto>(y, lambda, c);
     }
@@ -47,7 +47,7 @@ namespace stan {
      * @deprecated use <code>ordered_logistic_lpmf</code>
      */
     template <typename T_y, typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
       return ordered_logistic_lpmf(y, lambda, c);
     }

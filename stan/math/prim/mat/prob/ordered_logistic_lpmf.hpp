@@ -58,10 +58,10 @@ namespace stan {
      * ascending order.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(int y, const T_loc& lambda,
                           const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename return_type<T_loc>::type logp_n(0.0);
+      typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       using std::exp;
       using std::log;
@@ -88,7 +88,7 @@ namespace stan {
     }
 
     template <typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(int y, const T_loc& lambda,
                           const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
       return ordered_logistic_lpmf<false>(y, lambda, c);
@@ -120,11 +120,11 @@ namespace stan {
      * lengths.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename return_type<T_loc>::type logp_n(0.0);
+      typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       using std::exp;
       using std::log;
@@ -156,7 +156,7 @@ namespace stan {
     }
 
     template <typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
@@ -191,12 +191,12 @@ namespace stan {
      * lengths.
      */
     template <bool propto, typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
                                                 T_cut, Eigen::Dynamic, 1>>& c) {
-      typename return_type<T_loc>::type logp_n(0.0);
+      typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       using std::exp;
       using std::log;
@@ -234,7 +234,7 @@ namespace stan {
     }
 
     template <typename T_loc, typename T_cut>
-    typename return_type<T_loc>::type
+    typename return_type<T_loc, T_cut>::type
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
