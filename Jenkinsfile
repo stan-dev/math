@@ -1,21 +1,41 @@
-def clean() {
+def setupCC(Boolean failOnError = true) {
+    errorStr = failOnError ? "-Werror " : ""
+    "echo CC=${env.CXX} ${errorStr}> make/local"
+}
+
+def setup(Boolean failOnError = true) {
     sh """
         git clean -xffd
-        echo 'CC=${env.CXX}' > make/local
+        ${setupCC(failOnError)}
     """
 }
 
-def mailDevs(String label) {
+def mailBuildResults(String label, additionalEmails='') {
     emailext (
         subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """<p>${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-            <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-        recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+        body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
+        recipientProviders: [[$class: 'RequesterRecipientProvider']],
+        to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
     )
 }
 
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
+}
+
+def updateUpstream(String upstreamRepo) {
+    if (env.BRANCH_NAME == 'develop') {
+        node('master') {
+            retry(3) {
+                checkout scm
+            }
+            sh """
+                curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
+                sh create-${upstreamRepo}-pull-request.sh
+            """
+            deleteDir()
+        }
+    }
 }
 
 pipeline {
@@ -26,13 +46,15 @@ pipeline {
         string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
     }
+    options { skipDefaultCheckout() }
     stages {
         stage('Linting & Doc checks') {
             agent any
             steps {
                 script {
-                    clean()
-                    sh "echo 'CXXFLAGS += -Werror' >> make/local"
+                    setup(false)
+                    stash 'MathSetup'
+                    sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
                         dependencies: { sh 'make test-math-dependencies' } ,
@@ -40,6 +62,7 @@ pipeline {
                         failFast: true
                     )
                 }
+                post { always { deleteDir() } }
             }
         }
         stage('Tests') {
@@ -48,19 +71,21 @@ pipeline {
                 stage('Headers') {
                     agent any
                     steps { 
-                        clean()
-                        sh "echo 'CXXFLAGS += -Werror' >> make/local"
+                        unstash 'MathSetup'
+                        sh setupCC()
                         sh "make -j${env.PARALLEL} test-headers"
                     }
+                    post { always { deleteDir() } }
                 }
                 stage('Unit') {
                     agent any
                     steps {
-                        clean()
-                        sh "echo 'CXXFLAGS += -Werror' >> make/local"
+                        unstash 'MathSetup'
+                        sh setupCC()
                         runTests("test/unit")
-                        junit 'test/**/*.xml'
+                        retry(2) { junit 'test/**/*.xml' }
                     }
+                    post { always { deleteDir() } }
                 }
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
@@ -81,20 +106,13 @@ pipeline {
                     // XXX Add conditional back in so we don't run this if we haven't
                     // changed code or makefiles
                     steps { 
-                        clean()
+                        unstash 'MathSetup'
+                        sh setupCC(false)
                         runTests("test/prob")
-                        junit 'test/**/*.xml'
+                        retry(2) { junit 'test/**/*.xml' }
                     }
-                    post { always { cleanWs() } }
+                    post { always { deleteDir() } }
                 }
-            }
-        }
-        stage('Update Stan Upstream') {
-           agent none
-            when { branch "develop" }
-            steps {
-                sh "curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-stan-pull-request.sh"
-                sh "sh create-stan-pull-request.sh"
             }
         }
     }
@@ -107,7 +125,11 @@ pipeline {
                 warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
             }
         }
-        success { mailDevs("SUCCESSFUL") }
-        failure { mailDevs("FAILURE") }
+        success {
+            updateUpstream('stan')
+            mailBuildResults("SUCCESSFUL")
+        }
+        unstable { mailBuildResults("UNSTABLE", "stan-buildbot@googlegroups.com") }
+        failure { mailBuildResults("FAILURE", "stan-buildbot@googlegroups.com") }
     }
 }
