@@ -14,8 +14,8 @@ namespace stan {
     template <class RNG>
     inline int
     ordered_probit_rng(double eta,
-                         const Eigen::Matrix<double, Eigen::Dynamic, 1>& c,
-                         RNG& rng) {
+                       const Eigen::VectorXd& c,
+                       RNG& rng) {
       static const std::string function = "ordered_probit";
 
       check_finite(function, "Location parameter", eta);
