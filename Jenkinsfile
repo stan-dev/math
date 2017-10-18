@@ -63,8 +63,8 @@ pipeline {
                         failFast: true
                     )
                 }
-                post { always { deleteDir() } }
             }
+            post { always { deleteDir() } }
         }
         stage('Tests') {
             failFast true
