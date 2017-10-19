@@ -105,7 +105,7 @@ TEST(ProbDistributionsNormalLinearGLM, glm_matches_normal_linear_vars)
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 
-
+/*
 TEST(ProbDistributionsNormalLinearGLM, glm_matches_normal_linear_speed) {
   const int R = 30000;
   const int C = 1000;  
@@ -156,4 +156,4 @@ TEST(ProbDistributionsNormalLinearGLM, glm_matches_normal_linear_speed) {
   
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New Primitives:" << std::endl << T2 << std::endl;    
 }
-
+*/
