@@ -86,18 +86,17 @@ namespace stan {
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
 
-      Array<double, Dynamic, 1> inv_sigma(N, 1);
-      Array<double, Dynamic, 1> log_sigma(N, 1);
-      Array<double, Dynamic, 1> n_dbl(N, 1);
+      Array<T_partials_return, Dynamic, 1> sigma_dbl(N, 1);
+      Array<T_partials_return, Dynamic, 1> n_dbl(N, 1);
       {
         scalar_seq_view<T_n> n_vec(n);
         scalar_seq_view<T_scale> sigma_vec(sigma);
         for (size_t n = 0; n < N; ++n) {
-          inv_sigma[n] = 1/value_of(sigma_vec[n]);
-          log_sigma[n] = log(value_of(sigma_vec[n]));
+          sigma_dbl[n] = value_of(sigma_vec[n]);
           n_dbl[n] = n_vec[n];
         }
       }
+      Array<double, Dynamic, 1> inv_sigma = 1/sigma_dbl;
       Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
       {
         scalar_seq_view<T_beta> beta_vec(beta);
@@ -107,7 +106,8 @@ namespace stan {
       }
       Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
 
-      Array<T_partials_return, Dynamic, 1> mu_dbl = (x_dbl * beta_dbl + Matrix<double, Dynamic, 1>::Ones(N, 1)
+      Array<T_partials_return, Dynamic, 1> mu_dbl = (x_dbl * beta_dbl
+        + Matrix<double, Dynamic, 1>::Ones(N, 1)
         * value_of(alpha)).array();
       Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma =
         (n_dbl - mu_dbl) * inv_sigma;
@@ -117,12 +117,13 @@ namespace stan {
       if (include_summand<propto>::value)
         logp += NEG_LOG_SQRT_TWO_PI * N;
       if (include_summand<propto, T_scale>::value)
-        logp -= log_sigma.sum();
+        logp -= sigma_dbl.log().sum();
       if (include_summand<propto, T_n, T_x, T_beta, T_alpha, T_scale>::value)
         logp -= 0.5 * n_minus_mu_over_sigma_squared.sum();
-        
+
       // Compute the necessary derivatives.
-      operands_and_partials<T_x, T_beta, T_alpha, T_scale> ops_partials(x, beta, alpha, sigma);
+      operands_and_partials<T_x, T_beta, T_alpha, T_scale> ops_partials(x, beta,
+        alpha, sigma);
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
             && is_constant_struct<T_alpha>::value)) {
         Matrix<T_partials_return, Dynamic, 1> mu_derivative = (inv_sigma
