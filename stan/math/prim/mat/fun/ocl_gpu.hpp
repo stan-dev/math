@@ -4,10 +4,6 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 #include "stan/math/prim/arr/err/check_gpu.hpp"
-#include "stan/math/prim/mat/kern_gpu/basic_matrix_kernels.hpp"
-#include "stan/math/prim/mat/kern_gpu/matrix_multiply_kernels.hpp"
-#include "stan/math/prim/mat/kern_gpu/matrix_inverse_kernels.hpp"
-#include "stan/math/prim/mat/kern_gpu/cholesky_kernels.hpp"
 
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenCL/cl.hpp>
@@ -15,6 +11,7 @@
 #include <CL/cl.hpp>
 #endif
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <vector>
@@ -60,28 +57,34 @@ namespace stan {
       kernel_groups["cholesky_mid_update"] = "cholesky_decomposition";
       kernel_groups["cholesky_zero"] = "cholesky_decomposition";
       kernel_groups["dummy"] = "timing";
+      
+      
+      
       //kernel group strings
-      kernel_strings["basic_matrix"] = kernel_sources::transpose +
-       kernel_sources::copy +
-       kernel_sources::zeros;
-      kernel_strings["basic_matrix"] += kernel_sources::identity +
-       kernel_sources::copy_triangular +
-       kernel_sources::copy_triangular_transposed;
-      kernel_strings["basic_matrix"] +=
-       kernel_sources::add +
-       kernel_sources::subtract;
-      kernel_strings["matrix_multiply"] =
-       kernel_sources::scalar_mul_diagonal +
-       kernel_sources::scalar_mul +
-       kernel_sources::basic_multiply;
-      kernel_strings["matrix_inverse"] =
-       kernel_sources::lower_tri_inv_step1 +
-       kernel_sources::lower_tri_inv_step2_3;
-      kernel_strings["cholesky_decomposition"] =
-       kernel_sources::cholesky_block +
-       kernel_sources::cholesky_left_mid_update +
-       kernel_sources::cholesky_zero;
-      kernel_strings["timing"] = dummy_kernel;
+      //the dummy kernel is the only one not included in files
+      //so it is treated before the loop that iterates 
+      //through  kernels to load all 
+      
+      kernel_strings["timing"] = dummy_kernel;      
+      
+      
+      std::string load_kernel_source;
+      std::ifstream t;
+      std::stringstream buffer;
+      
+      for (std::map<std::string,std::string>::iterator
+           it = kernel_groups.begin(); it!= kernel_groups.end(); ++it) {
+            
+            //if the group file was not loaded yet
+            if(kernel_strings.find(it->second)==kernel_strings.end()){
+                load_kernel_source= "stan/math/prim/mat/kern_gpu/"+it->second+".cl";
+                t= std::ifstream(load_kernel_source);
+                buffer.str(std::string());
+                buffer << t.rdbuf();
+                kernel_strings[it->second]=buffer.str();
+            }            
+                        
+      }
 
       //note if the kernels were already compiled
       compiled_kernels["basic_matrix"] = false;
