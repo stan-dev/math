@@ -36,24 +36,24 @@ namespace stan {
       std::cout << "INPUT: \n";
       std::cout << m << "\n";
 */
-      check_square("cholesky_decompose", "m", m);
-      check_symmetric("cholesky_decompose", "m", m);
-      if (m.size() == 0) return m;
+         
       
+      if (m.size() == 0) return m;
+      //
       matrix_gpu A(m);
-
+      
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::Kernel kernel_left = get_kernel("cholesky_left_update");
       cl::Kernel kernel_mid = get_kernel("cholesky_mid_update");
       cl::Kernel kernel_zero = get_kernel("cholesky_zero");
       cl::CommandQueue cmd_queue = get_queue();
-
+      
       try {
         cl::Context ctx = get_context();
         //will be managed by the library core system
         int block = 64;
         int offset = 0;
-        int local = 16;
+        int local = 32;
 
         cl::Buffer buffer_V(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);
@@ -107,29 +107,32 @@ namespace stan {
            cl::NDRange(local, local));
           offset += block;
         }
-
+        
+        
+        
         int left = A.rows() - offset;
         if (left > 0) {
+          
           kernel_chol_block.setArg(1, offset);
           kernel_chol_block.setArg(3, left);
           cmd_queue.enqueueNDRangeKernel(kernel_chol_block,
            cl::NullRange, cl::NDRange(left), cl::NDRange(left));
+           
         }
+       
       cmd_queue.enqueueNDRangeKernel(kernel_zero,
        cl::NullRange, cl::NDRange(A.rows(), A.rows()),  cl::NullRange);
+      
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
       copy(A, m_tmp);
-      // TODO(Steve/Sean): Where should this check go?
- //     std::cout << "PRESWAP: \n" << m_tmp << "\n";
-
+            
       m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose().template triangularView<Eigen::Upper>();
- //     std::cout << "POSTWAP: \n" << m_tmp << "\n";
-      check_pos_definite("cholesky_decompose", "m_tmp", m_tmp);
+
       m_tmp = m_tmp.template triangularView<Eigen::Lower>();
-      
+            
       return m_tmp;
     }
   }
