@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_true) {
   using stan::VectorBuilder;
@@ -11,11 +12,13 @@ TEST(MetaTraits, VectorBuilder_false_true) {
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
 
-  VectorBuilder<false, double, Matrix<var, Dynamic, 1> > dvv3(length(a_vector));
+  VectorBuilder<false, double, Matrix<var, Dynamic, 1> >
+                                                  dvv3(length(a_vector));
   EXPECT_THROW(dvv3[0], std::logic_error);
   EXPECT_THROW(dvv3.data(), std::logic_error);
 
-  VectorBuilder<false, double, Matrix<var, 1, Dynamic> > dvv4(length(a_row_vector));
+  VectorBuilder<false, double, Matrix<var, 1, Dynamic> >
+                                                  dvv4(length(a_row_vector));
   EXPECT_THROW(dvv4[0], std::logic_error);
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
@@ -41,7 +44,8 @@ TEST(MetaTraits, VectorBuilder_true_true) {
   EXPECT_NO_THROW(data3 = dvv3.data());
   EXPECT_EQ(length(a_vector), data3.size());
 
-  VectorBuilder<true, double, Matrix<var, 1, Dynamic> > dvv4(length(a_row_vector));
+  VectorBuilder<true, double, Matrix<var, 1, Dynamic> >
+                                                  dvv4(length(a_row_vector));
   dvv4[0] = 0.0;
   dvv4[1] = 1.0;
   dvv4[2] = 2.0;

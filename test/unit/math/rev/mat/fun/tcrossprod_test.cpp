@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 void test_tcrossprod(const stan::math::matrix_v& L) {
   using stan::math::matrix_v;

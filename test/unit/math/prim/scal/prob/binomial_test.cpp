@@ -9,15 +9,16 @@ TEST(ProbDistributionBinomiali, error_check) {
   EXPECT_THROW(stan::math::binomial_rng(-4, 0.6, rng), std::domain_error);
   EXPECT_THROW(stan::math::binomial_rng(4, -0.6, rng), std::domain_error);
   EXPECT_THROW(stan::math::binomial_rng(4, 2.6, rng), std::domain_error);
-  EXPECT_THROW(stan::math::binomial_rng(4, stan::math::positive_infinity(), rng),
-               std::domain_error);
+  EXPECT_THROW(
+    stan::math::binomial_rng(4, stan::math::positive_infinity(), rng),
+    std::domain_error);
 }
 
 TEST(ProbDistributionsBinomial, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::binomial_distribution<>dist (100, 0.6);
+  boost::math::binomial_distribution<>dist(100, 0.6);
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -25,8 +26,8 @@ TEST(ProbDistributionsBinomial, chiSquareGoodnessFitTest) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  int bin [K];
-  double expect [K];
+  int bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);

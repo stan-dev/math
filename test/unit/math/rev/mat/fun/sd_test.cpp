@@ -1,8 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, sd_eq) {
   using stan::math::sd;
@@ -146,12 +146,14 @@ TEST(AgradRevMatrix, sd_matrix_exception) {
   EXPECT_THROW(sd(v), std::invalid_argument);
 }
 TEST(AgradRevMatrix, sdStdVector) {
-  using stan::math::sd; // should use arg-dep lookup (and for sqrt)
+  // should use arg-dep lookup (and for sqrt)
+  using stan::math::sd;
 
   AVEC y1 = createAVEC(0.5, 2.0, 3.5);
   AVAR f1 = sd(y1);
   VEC grad1 = cgrad(f1, y1[0], y1[1], y1[2]);
-  double f1_val = f1.val(); // save before cleaned out
+  // save before cleaned out
+  double f1_val = f1.val();
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;

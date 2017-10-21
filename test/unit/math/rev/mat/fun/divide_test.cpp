@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <limits>
 
 TEST(AgradRevMatrix, divide_scalar) {
   using stan::math::divide;
@@ -22,9 +23,12 @@ TEST(AgradRevMatrix, divide_scalar) {
   v2 = 0;
 
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), divide(d1, d2));
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), divide(d1, v2).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), divide(v1, d2).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), divide(v1, v2).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  divide(d1, v2).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  divide(v1, d2).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  divide(v1, v2).val());
 
   d1 = 0;
   v1 = 0;
@@ -75,22 +79,22 @@ TEST(AgradRevMatrix, divide_vector) {
   v2 = 0;
   output_d = divide(d1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output_d(0));
-  EXPECT_TRUE (std::isnan(output_d(1)));
+  EXPECT_TRUE(std::isnan(output_d(1)));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output_d(2));
 
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).val());
-  EXPECT_TRUE (std::isnan(output(1).val()));
+  EXPECT_TRUE(std::isnan(output(1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(2).val());
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).val());
-  EXPECT_TRUE (std::isnan(output(1).val()));
+  EXPECT_TRUE(std::isnan(output(1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(2).val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).val());
-  EXPECT_TRUE (std::isnan(output(1).val()));
+  EXPECT_TRUE(std::isnan(output(1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(2).val());
 }
 TEST(AgradRevMatrix, divide_rowvector) {
@@ -143,12 +147,12 @@ TEST(AgradRevMatrix, divide_rowvector) {
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).val());
-  EXPECT_TRUE (std::isnan(output(1).val()));
+  EXPECT_TRUE(std::isnan(output(1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(2).val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).val());
-  EXPECT_TRUE (std::isnan(output(1).val()));
+  EXPECT_TRUE(std::isnan(output(1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(2).val());
 }
 TEST(AgradRevMatrix, divide_matrix) {
@@ -201,19 +205,20 @@ TEST(AgradRevMatrix, divide_matrix) {
 
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0, 0).val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val()));
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(1, 0).val());
+  EXPECT_TRUE(std::isnan(output(0, 1).val()));
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
+                  output(1, 0).val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1, 1).val());
 
   output = divide(v1, d2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0, 0).val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(1, 0).val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1, 1).val());
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0, 0).val());
-  EXPECT_TRUE (std::isnan(output(0, 1).val()));
+  EXPECT_TRUE(std::isnan(output(0, 1).val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(1, 0).val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1, 1).val());
 }

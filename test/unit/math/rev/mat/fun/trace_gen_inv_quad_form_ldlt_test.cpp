@@ -1059,11 +1059,18 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   ldlt_av.compute(av);
   ldlt_ad.compute(ad);
 
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bv));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bd));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bv));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bd));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bv));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bd));
-  test::check_varis_on_stack(stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_ad, bv));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bv));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_av, bd));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bv));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cv, ldlt_ad, bd));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bv));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_av, bd));
+  test::check_varis_on_stack(
+    stan::math::trace_gen_inv_quad_form_ldlt(cd, ldlt_ad, bv));
 }

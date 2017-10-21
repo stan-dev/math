@@ -4,8 +4,8 @@
 // ********* here because it's only used for testing **********
 // ********* superseded by version in autodiff.hpp for API ****
 
-#include <vector>
 #include <stan/math/rev/mat.hpp>
+#include <vector>
 
 namespace stan {
 

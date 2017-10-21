@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <string>
 
 TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
   using stan::math::var;

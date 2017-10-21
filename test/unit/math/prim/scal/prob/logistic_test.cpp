@@ -3,6 +3,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
+#include <limits>
+#include <vector>
 
 TEST(ProbDistributionsLogistic, error_check) {
   boost::random::mt19937 rng;
@@ -23,14 +25,14 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   int K = boost::math::round(2 * std::pow(N, 0.4));
 
   std::vector<double> samples;
-  for (int i=0; i<N; ++i) {
+  for (int i = 0; i < N; ++i) {
     samples.push_back(stan::math::logistic_rng(9.0, 4.0, rng));
   }
 
   // Generate quantiles from boost's logistic distribution
-  boost::math::logistic_distribution<>dist (9.0, 4.0);
+  boost::math::logistic_distribution<>dist(9.0, 4.0);
   std::vector<double> quantiles;
-  for (int i=1; i<K; ++i) {
+  for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
     quantiles.push_back(quantile(dist, frac));
   }

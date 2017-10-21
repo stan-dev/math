@@ -1,8 +1,9 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <cmath>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <cmath>
+#include <vector>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;

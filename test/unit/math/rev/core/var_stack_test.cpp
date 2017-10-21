@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 struct foo : public stan::math::chainable_alloc {
   std::vector<double> x_;
@@ -47,7 +48,8 @@ TEST(AgradRev, varStack) {
 TEST(AgradRev, recoverMemoryLogicError) {
   stan::math::start_nested();
   EXPECT_THROW(stan::math::recover_memory(), std::logic_error);
-  stan::math::recover_memory_nested(); // clean up for next test
+  // clean up for next test
+  stan::math::recover_memory_nested();
 }
 
 TEST(AgradRev, recoverMemoryNestedLogicError) {

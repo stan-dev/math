@@ -3,27 +3,28 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 void test_sort_asc(VEC val) {
   using stan::math::sort_asc;
   using stan::math::sort_asc;
 
   AVEC x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(AVAR(val[i]));
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val());
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
 void test_sort_desc(VEC val) {
@@ -31,21 +32,21 @@ void test_sort_desc(VEC val) {
   using stan::math::sort_desc;
 
   AVEC x;
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(AVAR(val[i]));
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i<val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val());
 
-  for (size_t i=0U; i<val.size(); i++)
-    for (size_t j=0U; j<val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
-        EXPECT_FALSE(x_sorted[i]==x[j]);
+        EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
 template <typename T, int R, int C>
@@ -59,21 +60,21 @@ void test_sort_asc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = AVAR(val[i]);
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val());
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
 
 template <typename T, int R, int C>
@@ -87,38 +88,49 @@ void test_sort_desc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     x.data()[i] = AVAR(val[i]);
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i<size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val());
 
-  for (size_t i=0U; i<size; i++)
-    for (size_t j=0U; j<size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
-        EXPECT_FALSE(x_sorted.data()[i]==x.data()[j]);
+        EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
 
 
 
 TEST(AgradRev, sort) {
   VEC a;
-  a.push_back(1); a.push_back(2); a.push_back(2); a.push_back(3);
+  a.push_back(1);
+  a.push_back(2);
+  a.push_back(2);
+  a.push_back(3);
   test_sort_asc(a);
   test_sort_desc(a);
 
   VEC b;
-  b.push_back(1.1); b.push_back(2.2); ; b.push_back(33.1); b.push_back(-12.1); b.push_back(33.1);
+  b.push_back(1.1);
+  b.push_back(2.2);
+  b.push_back(33.1);
+  b.push_back(-12.1);
+  b.push_back(33.1);
   test_sort_asc(b);
   test_sort_desc(b);
 
   VEC c;
-  c.push_back(1.1); c.push_back(-2); c.push_back(2.1); c.push_back(3); c.push_back(2.1);
+  c.push_back(1.1);
+  c.push_back(-2);
+  c.push_back(2.1);
+  c.push_back(3);
+  c.push_back(2.1);
   test_sort_asc(c);
   test_sort_desc(c);
 

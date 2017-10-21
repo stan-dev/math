@@ -52,7 +52,7 @@ TEST(ProbDistributionsLkjCorr, Sigma) {
   Sigma.setConstant(0.5);
   Sigma.diagonal().setOnes();
   EXPECT_THROW(stan::math::lkj_corr_cholesky_log(Sigma, eta),
-                std::domain_error);
+               std::domain_error);
 }
 
 TEST(ProbDistributionsLKJCorr, error_check) {
@@ -131,4 +131,3 @@ TEST(ProbDistributionsLkjCorrCholesky, testHalf) {
   EXPECT_FLOAT_EQ(f - 0.4904146,
                   stan::math::lkj_corr_cholesky_log(L, eta));
 }
-

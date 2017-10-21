@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, trace_inv_quad_form_ldlt_mat) {
   using stan::math::matrix_v;
@@ -447,7 +448,9 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   ldlt_av.compute(to_var(a));
   ldlt_a.compute(a);
 
-  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_av, to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_av,
+                                                                  to_var(b)));
   test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_av, b));
-  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_a, to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_inv_quad_form_ldlt(ldlt_a,
+                                                                  to_var(b)));
 }

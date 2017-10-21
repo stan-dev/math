@@ -136,7 +136,8 @@ TEST(AgradRevMatrix, distance_vv) {
 
   vector_v a(3), b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }
@@ -163,7 +164,8 @@ TEST(AgradRevMatrix, distance_dv) {
   vector_d a(3);
   vector_v b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }
@@ -186,7 +188,8 @@ TEST(AgradRevMatrix, distance_vd) {
   vector_v a(3);
   vector_d b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }

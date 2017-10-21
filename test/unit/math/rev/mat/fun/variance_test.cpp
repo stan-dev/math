@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, varianceZeroBoundaryCase) {
   using stan::math::variance;
@@ -133,12 +134,14 @@ TEST(AgradRevMatrix, variance_matrix_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradRevMatrix, varianceStdVector) {
-  using stan::math::variance; // should use arg-dep lookup
+  // should use arg-dep lookup
+  using stan::math::variance;
 
   AVEC y1 = createAVEC(0.5, 2.0, 3.5);
   AVAR f1 = variance(y1);
   VEC grad1 = cgrad(f1, y1[0], y1[1], y1[2]);
-  double f1_val = f1.val(); // save before cleaned out
+  // save before cleaned out
+  double f1_val = f1.val();
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;

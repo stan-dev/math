@@ -36,7 +36,6 @@ TEST(AgradRevMatrix, inverse_spd_grad) {
 
   for (size_t k = 0; k < 2; ++k) {
     for (size_t l = 0; l < 2; ++l) {
-
       matrix_v ad(2, 2);
       ad << 2.0, 3.0,
       3.0, 7.0;

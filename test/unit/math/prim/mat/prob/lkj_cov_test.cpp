@@ -17,7 +17,6 @@ TEST(ProbDistributionsLkjCorr, testIdentity) {
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
 }
 
-
 TEST(ProbDistributionsLkjCorr, testHalf) {
   std::random_device rd;
   std::mt19937 mt(rd());

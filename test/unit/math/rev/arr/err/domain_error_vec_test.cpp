@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
 const std::string function_ = "function";
 const std::string y_name_ = "y";

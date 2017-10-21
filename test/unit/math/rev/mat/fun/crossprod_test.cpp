@@ -39,7 +39,6 @@ TEST(AgradRevMatrix, crossprod) {
   matrix_v K(0, 0);
   test_crossprod(K);
   //  test_tcrossprod_grad(K, K.rows(), K.cols());
-
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::matrix_v;

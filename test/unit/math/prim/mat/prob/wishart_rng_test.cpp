@@ -17,8 +17,8 @@ TEST(ProbDistributionsWishartRng, rng) {
 
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    2.0, 1.0, 3.0;
+          -3.0,  4.0, 0.0,
+         c 2.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);
@@ -48,14 +48,15 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 2.0,
-    -3.0,  4.0, 0.0,
-    2.0, 0.0, 3.0;
+          -3.0,  4.0, 0.0,
+           2.0, 0.0, 3.0;
   int N = 10000;
 
 
   double avg = 0;
   double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
-    + digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
@@ -85,12 +86,12 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
 
   // wishart_rng should take only the lower part
   sigma << 9.0, -3.0, 1.0,
-    2.0,  4.0, -1.0,
-    2.0, 1.0, 3.0;
+           2.0,  4.0, -1.0,
+           2.0, 1.0, 3.0;
 
   sigma_sym << 9.0, 2.0, 2.0,
-    2.0,  4.0, 1.0,
-    2.0, 1.0, 3.0;
+               2.0,  4.0, 1.0,
+               2.0, 1.0, 3.0;
 
   VectorXd C(3);
   C << 2, 1, 3;

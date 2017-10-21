@@ -2,6 +2,7 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <vector>
 
 using stan::return_type;
 using stan::math::var;

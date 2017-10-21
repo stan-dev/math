@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 // test sum of first n numbers for sum of a
 void test_sum(stan::math::accumulator<stan::math::var>& a,
@@ -22,7 +22,6 @@ TEST(AgradRevMatrix, accumulateDouble) {
   for (int i = 2; i <= 1000; ++i)
     a.add(var(i));
   test_sum(a, 1000);
-
 }
 TEST(AgradRevMathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>,

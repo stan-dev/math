@@ -133,7 +133,8 @@ TEST(AgradRevMatrix, dot_product_rowvector_rowvector_exception) {
 TEST(AgradRevMatrix, dot_product_vv) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -157,7 +158,8 @@ TEST(AgradRevMatrix, dot_product_dv) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -173,7 +175,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -188,7 +191,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
 TEST(AgradRevMatrix, dot_product_vv_vec) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -212,7 +216,8 @@ TEST(AgradRevMatrix, dot_product_dv_vec) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -228,7 +233,8 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }

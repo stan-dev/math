@@ -13,12 +13,11 @@ TEST(ProbDistributionBetaBinomial, error_check) {
                std::domain_error);
   EXPECT_THROW(stan::math::beta_binomial_rng(4, 0.6, -2, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::beta_binomial_rng(4,
-                                             stan::math::positive_infinity(),
-                                             2, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::beta_binomial_rng(4, 0.6,
-                                             stan::math::positive_infinity(),
-                                             rng),
-               std::domain_error);
+  EXPECT_THROW(
+    stan::math::beta_binomial_rng(4, stan::math::positive_infinity(), 2, rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::beta_binomial_rng(4, 0.6, stan::math::positive_infinity(),
+                                  rng),
+    std::domain_error);
 }

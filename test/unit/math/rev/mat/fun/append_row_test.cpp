@@ -126,7 +126,8 @@ TEST(MathMatrix, append_row_different_types) {
          15, 16;
 
   MatrixXd m32b(2, 3);
-  m32b = m32*1.101; // ensure some different values
+  // ensure some different values
+  m32b = m32*1.101;
 
   MatrixXd m23(2, 3);
   m23 << 21, 22, 23,
@@ -159,7 +160,8 @@ TEST(MathMatrix, append_row_different_types) {
          15, 16;
 
   MatrixXd vm32b(2, 3);
-  vm32b = vm32*1.101; // ensure some different values
+  // ensure some different values
+  vm32b = vm32*1.101;
 
   MatrixXd vm23(2, 3);
   vm23 << 21, 22, 23,

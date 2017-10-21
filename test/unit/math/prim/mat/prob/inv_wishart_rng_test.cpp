@@ -14,8 +14,8 @@ TEST(ProbDistributionsInvWishartRng, rng) {
 
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    2.0, 1.0, 3.0;
+          -3.0, 4.0, 0.0,
+           2.0, 1.0, 3.0;
   EXPECT_NO_THROW(inv_wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(inv_wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(inv_wishart_rng(-1, sigma, rng), std::domain_error);
@@ -44,8 +44,8 @@ TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0, 4.0, 1.0,
+           0.0, 1.0, 3.0;
   int N = 10000;
 
   MatrixXd siginv(3, 3);
@@ -53,7 +53,8 @@ TEST(ProbDistributionsInvWishart, chiSquareGoodnessFitTest) {
   int count = 0;
   double avg = 0;
   double expect = sigma.rows() * log(2.0) + log(determinant(siginv))
-    + digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   while (count < N) {

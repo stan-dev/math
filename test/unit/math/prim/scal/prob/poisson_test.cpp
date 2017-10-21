@@ -21,14 +21,15 @@ TEST(ProbDistributionsPoisson, error_check) {
 
   EXPECT_NO_THROW(stan::math::poisson_log_rng(log(1e9), rng));
 
-  EXPECT_THROW(stan::math::poisson_log_rng(log(pow(2.0, 31)), rng), std::domain_error);
+  EXPECT_THROW(stan::math::poisson_log_rng(log(pow(2.0, 31)), rng),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::poisson_distribution<>dist (5);
+  boost::math::poisson_distribution<>dist(5);
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -36,8 +37,8 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
@@ -67,7 +68,7 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::poisson_distribution<>dist (5);
+  boost::math::poisson_distribution<>dist(5);
   boost::math::chi_squared mydist(K-1);
 
   int loc[K - 1];
@@ -75,8 +76,8 @@ TEST(ProbDistributionsPoisson, chiSquareGoodnessFitTest2) {
     loc[i - 1] = i - 1;
 
   int count = 0;
-  double bin [K];
-  double expect [K];
+  double bin[K];
+  double expect[K];
   for (int i = 0 ; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);

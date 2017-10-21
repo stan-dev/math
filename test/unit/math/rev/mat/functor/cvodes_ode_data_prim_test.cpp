@@ -4,6 +4,8 @@
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
+#include <string>
+#include <vector>
 
 struct StanMathOdeCVode : public ::testing::Test {
   void SetUp() {

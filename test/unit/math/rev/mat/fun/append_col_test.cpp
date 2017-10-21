@@ -1,8 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <iostream>
 
 using stan::math::sum;
 using stan::math::append_col;
@@ -132,7 +132,8 @@ TEST(MathMatrix, append_col_different_types) {
          24, 25, 26;
 
   MatrixXd m23b(2, 3);
-  m23b = m23*1.101; // ensure some different values
+  // ensure some different values
+  m23b = m23*1.101;
 
   VectorXd v3(3);
   v3 << 31,
@@ -165,7 +166,8 @@ TEST(MathMatrix, append_col_different_types) {
          24, 25, 26;
 
   MatrixXd vm23b(2, 3);
-  vm23b = m23*1.101; // ensure some different values
+  // ensure some different values
+  vm23b = m23*1.101;
 
   VectorXd vv3(3);
   vv3 << 31,

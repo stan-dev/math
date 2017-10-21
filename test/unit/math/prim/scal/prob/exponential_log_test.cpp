@@ -11,10 +11,13 @@ TEST(ProbExponential, log_matches_lpdf) {
                   (stan::math::exponential_log<true>(y, beta)));
   EXPECT_FLOAT_EQ((stan::math::exponential_lpdf<false>(y, beta)),
                   (stan::math::exponential_log<false>(y, beta)));
-  EXPECT_FLOAT_EQ((stan::math::exponential_lpdf<true, double, double>(y, beta)),
-                  (stan::math::exponential_log<true, double, double>(y, beta)));
-  EXPECT_FLOAT_EQ((stan::math::exponential_lpdf<false, double, double>(y, beta)),
-                  (stan::math::exponential_log<false, double, double>(y, beta)));
-  EXPECT_FLOAT_EQ((stan::math::exponential_lpdf<double, double>(y, beta)),
-                  (stan::math::exponential_log<double, double>(y, beta)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::exponential_lpdf<true, double, double>(y, beta)),
+    (stan::math::exponential_log<true, double, double>(y, beta)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::exponential_lpdf<false, double, double>(y, beta)),
+    (stan::math::exponential_log<false, double, double>(y, beta)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::exponential_lpdf<double, double>(y, beta)),
+    (stan::math::exponential_log<double, double>(y, beta)));
 }

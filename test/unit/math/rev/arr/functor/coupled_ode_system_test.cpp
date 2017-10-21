@@ -4,6 +4,8 @@
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
+#include <vector>
+#include <string>
 
 struct StanAgradRevOde : public ::testing::Test {
   void SetUp() {
@@ -110,7 +112,8 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
   std::vector<double> state = coupled_system_dv.initial_state();
   for (size_t n = 0; n < N; n++)
     EXPECT_FLOAT_EQ(y0_d[n], state[n])
-      << "we don't need derivatives of y0; initial state gets the initial values";
+      << "we don't need derivatives of y0; "
+      << "initial state gets the initial values";
   for (size_t n = N; n < state.size(); n++)
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }

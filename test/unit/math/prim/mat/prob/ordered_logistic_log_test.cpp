@@ -14,16 +14,13 @@ TEST(ProbOrderedLogistic, log_matches_lpmf) {
                   (stan::math::ordered_logistic_log<true>(3, lambda, c)));
   EXPECT_FLOAT_EQ((stan::math::ordered_logistic_lpmf<false>(3, lambda, c)),
                   (stan::math::ordered_logistic_log<false>(3, lambda, c)));
-  EXPECT_FLOAT_EQ((stan::math::ordered_logistic_lpmf<true, double, double>
-                                                              (3, lambda, c)),
-                  (stan::math::ordered_logistic_log<true, double, double>
-                                                              (3, lambda, c)));
-  EXPECT_FLOAT_EQ((stan::math::ordered_logistic_lpmf<false, double, double>
-                                                              (3, lambda, c)),
-                  (stan::math::ordered_logistic_log<false, double, double>
-                                                              (3, lambda, c)));
-  EXPECT_FLOAT_EQ((stan::math::ordered_logistic_lpmf<double, double>
-                                                              (3, lambda, c)),
-                  (stan::math::ordered_logistic_log<double, double>
-                                                              (3, lambda, c)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::ordered_logistic_lpmf<true, double, double>(3, lambda, c)),
+    (stan::math::ordered_logistic_log<true, double, double>(3, lambda, c)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::ordered_logistic_lpmf<false, double, double>(3, lambda, c)),
+    (stan::math::ordered_logistic_log<false, double, double>(3, lambda, c)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::ordered_logistic_lpmf<double, double>(3, lambda, c)),
+    (stan::math::ordered_logistic_log<double, double>(3, lambda, c)));
 }

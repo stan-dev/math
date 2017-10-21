@@ -1,5 +1,8 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 using stan::math::var;
 using stan::math::check_nonnegative;
@@ -24,7 +27,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
 
   x.assign(N, -std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative(vector) should throw an exception with x = -Inf: " << x[0];
+    << "check_nonnegative(vector) should throw an exception with x = -Inf: "
+    << x[0];
 
   x.assign(N, std::numeric_limits<double>::quiet_NaN());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)

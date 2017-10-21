@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, mv_squaredNorm) {
   using stan::math::matrix_v;
@@ -52,7 +53,8 @@ TEST(AgradRevMatrix, mv_lp_norm) {
   EXPECT_FLOAT_EQ(-1.0, g[0]);
   EXPECT_FLOAT_EQ(1.0, g[1]);
   EXPECT_FLOAT_EQ(1.0, g[2]);
-  EXPECT_FLOAT_EQ(0.0, g[3]); // ? depends on impl here, could be -1 or 1
+  // ? depends on impl here, could be -1 or 1
+  EXPECT_FLOAT_EQ(0.0, g[3]);
 }
 TEST(AgradRevMatrix, mv_lp_norm_inf) {
   using stan::math::matrix_v;
@@ -116,5 +118,5 @@ TEST(AgradRevMatrix, UserCase1) {
     assign(lp__, (lp__ - (0.5 * dot_product(vk, vk))));
   }
 
-  EXPECT_TRUE(lp__.val() != 0);
+  EXPECT_NE(lp__.val(), 0);
 }

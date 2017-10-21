@@ -11,20 +11,20 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(1e8, 1, rng));
 
   EXPECT_THROW(stan::math::neg_binomial_2_rng(0, -2, rng),
-                 std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::neg_binomial_2_rng(6, -2, rng),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::neg_binomial_2_rng(-6, -0.1, rng),
-                   std::domain_error);
-  EXPECT_THROW(stan::math::neg_binomial_2_rng(
-                 stan::math::positive_infinity(), 2, rng),
-                 std::domain_error);
-  EXPECT_THROW(stan::math::neg_binomial_2_rng(
-                 stan::math::positive_infinity(), 6, rng),
-                 std::domain_error);
-  EXPECT_THROW(stan::math::neg_binomial_2_rng(2,
-                 stan::math::positive_infinity(), rng),
-                 std::domain_error);
+               std::domain_error);
+  EXPECT_THROW(
+    stan::math::neg_binomial_2_rng(stan::math::positive_infinity(), 2, rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::neg_binomial_2_rng(stan::math::positive_infinity(), 6, rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::neg_binomial_2_rng(2, stan::math::positive_infinity(), rng),
+    std::domain_error);
 
   std::string error_msg;
 

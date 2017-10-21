@@ -153,8 +153,8 @@ TEST(AgradRevMatrix, subtract_matrix_matrix) {
   matrix_v output;
   matrix_d md_1(2, 2), md_2(2, 2);
   matrix_v mv_1(2, 2), mv_2(2, 2);
-  matrix_d md_mis (2, 3);
-  matrix_v mv_mis (1, 1);
+  matrix_d md_mis(2, 3);
+  matrix_v mv_mis(1, 1);
 
   md_1 << -10, 1, 10, 0;
   mv_1 << -10, 1, 10, 0;

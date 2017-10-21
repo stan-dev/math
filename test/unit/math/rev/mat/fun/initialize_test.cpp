@@ -14,7 +14,6 @@ TEST(MathMatrix, initializeVar) {
 
   initialize(a, 13.2);      // template 2
   EXPECT_FLOAT_EQ(13.2, a.val());
-
 }
 
 TEST(MathMatrix, initMatrix) {

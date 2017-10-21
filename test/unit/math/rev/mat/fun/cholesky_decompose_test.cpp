@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <vector>
 
 template<typename T_x>
 std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
@@ -18,7 +19,8 @@ Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp,
                                     T len,
                                     T jitter) {
   std::vector<double> test_inp = fill_vec(inp);
-  Eigen::Matrix<T, -1, -1> test_mat_dense = stan::math::cov_exp_quad(test_inp, alpha, len);
+  Eigen::Matrix<T, -1, -1> test_mat_dense
+                              = stan::math::cov_exp_quad(test_inp, alpha, len);
   for (int i = 0; i < inp.rows(); ++i)
     test_mat_dense(i, i) = test_mat_dense(i, i) + jitter;
   return test_mat_dense;
@@ -26,7 +28,8 @@ Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp,
 
 struct gp_chol {
   Eigen::VectorXd inp, mean, y;
-  gp_chol(Eigen::VectorXd inp_, Eigen::VectorXd mean_, Eigen::VectorXd y_) : inp(inp_), mean(mean_), y(y_) { }
+  gp_chol(Eigen::VectorXd inp_, Eigen::VectorXd mean_,
+          Eigen::VectorXd y_) : inp(inp_), mean(mean_), y(y_) { }
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     Eigen::Matrix<T, -1, -1> x_c = create_mat(inp, x[0], x[1], x[2]);
@@ -70,7 +73,7 @@ struct chol_functor_mult_scal {
 };
 
 
-struct chol_functor_2 {
+  explicit struct chol_functor_2 {
   int K;
   chol_functor_2(int K_) : K(K_) { }
   template <typename T>
@@ -150,7 +153,7 @@ void test_gradients(int size, double prec) {
   int numels = size + size * (size - 1) / 2;
   Eigen::Matrix<double, -1, 1> x(numels);
   for (int i = 0; i < numels; ++i)
-      x(i) = i % 10 / 100.0 ;
+      x(i) = i % 10 / 100.0;
 
   for (size_t i = 0; i < static_cast<size_t>(size); ++i) {
     for (size_t j = 0; j < static_cast<size_t>(size); ++j) {

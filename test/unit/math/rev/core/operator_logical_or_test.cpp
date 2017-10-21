@@ -2,6 +2,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 void test_logical_or(double x, double y) {
   AVAR x_v = x;

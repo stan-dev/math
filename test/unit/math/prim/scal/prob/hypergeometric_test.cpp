@@ -23,7 +23,7 @@ TEST(ProbDistributionsHypergeometric, chiSquareGoodnessFitTest) {
   int N = 10000;
   int num_draws = 10;
   int K = num_draws;
-  boost::math::hypergeometric_distribution<>dist (15, num_draws, 25);
+  boost::math::hypergeometric_distribution<>dist(15, num_draws, 25);
   boost::math::chi_squared mydist(K-1);
 
   std::vector<int> loc(K - 1);

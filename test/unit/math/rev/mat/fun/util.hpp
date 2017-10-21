@@ -1,10 +1,10 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_FUN_UTIL_HPP
 #define TEST_UNIT_MATH_REV_MAT_FUN_UTIL_HPP
 
-#include <vector>
 #include <test/unit/math/rev/arr/fun/util.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 typedef stan::math::index_type<Eigen::Matrix<double, -1, -1> >::type size_type;
 
@@ -13,19 +13,16 @@ typedef stan::math::index_type<Eigen::Matrix<double, -1, -1> >::type size_type;
 
 template<typename T, int R, int C>
 void fill(const std::vector<double>& contents,
-          Eigen::Matrix<T, R, C>& M){
-
+          Eigen::Matrix<T, R, C>& M) {
   size_t ij = 0;
   for (int j = 0; j < C; ++j)
     for (int i = 0; i < R; ++i)
       M(i, j) = T(contents[ij++]);
-
 }
 
 template<typename T>
 void create_vec(const std::vector<double>& vals,
-                std::vector<T>& created_vars){
-
+                std::vector<T>& created_vars) {
   for (size_t i = 0; i < vals.size(); ++i)
     created_vars.push_back(T(vals[i]));
 }
@@ -42,7 +39,8 @@ struct third_order_mixed {
 
 
 Eigen::Matrix<double, 3, 3>
-third_order_mixed_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
+third_order_mixed_hess(const Eigen::Matrix<double,
+                                           Eigen::Dynamic, 1>& inp_vec) {
   Eigen::Matrix<double, 3, 3> hess;
 
   double x = inp_vec(0);
@@ -63,7 +61,7 @@ third_order_mixed_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
 }
 
 Eigen::Matrix<double, 3, 3>
-norm_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
+norm_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
 
@@ -80,7 +78,8 @@ norm_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
 }
 
 std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
-third_order_mixed_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
+third_order_mixed_grad_hess(const Eigen::Matrix<double,
+                                                Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
   std::vector<Matrix<double, Dynamic, Dynamic> >grad_hess_ret;
@@ -111,7 +110,7 @@ third_order_mixed_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_
 }
 
 std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
-norm_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec){
+norm_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 

@@ -12,7 +12,7 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholesky) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0,
        11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -39,14 +39,14 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorL) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0,
        11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-  -3.0,  4.0, 0.0,  0.0, 0.0,
-  0.0,  0.0, 5.0,  1.0, 0.0,
-  0.0,  0.0, 1.0, 10.0, 0.0,
-  0.0,  0.0, 0.0,  0.0, 2.0;
+          -3.0,  4.0, 0.0,  0.0, 0.0,
+           0.0,  0.0, 5.0,  1.0, 0.0,
+           0.0,  0.0, 1.0, 10.0, 0.0,
+           0.0,  0.0, 0.0,  0.0, 2.0;
 
   Matrix<double, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -58,14 +58,14 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0,
        11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-  -3.0,  4.0, 0.0,  0.0, 0.0,
-  0.0,  0.0, 5.0,  1.0, 0.0,
-  0.0,  0.0, 1.0, 10.0, 0.0,
-  0.0,  0.0, 0.0,  0.0, 2.0;
+          -3.0,  4.0, 0.0,  0.0, 0.0,
+           0.0,  0.0, 5.0,  1.0, 0.0,
+           0.0,  0.0, 1.0, 10.0, 0.0,
+           0.0,  0.0, 0.0,  0.0, 2.0;
 
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
@@ -93,14 +93,14 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0,
        11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-  -3.0,  4.0, 0.0,  0.0, 0.0,
-  0.0,  0.0, 5.0,  1.0, 0.0,
-  0.0,  0.0, 1.0, 10.0, 0.0,
-  0.0,  0.0, 0.0,  0.0, 2.0;
+          -3.0,  4.0, 0.0,  0.0, 0.0,
+           0.0,  0.0, 5.0,  1.0, 0.0,
+           0.0,  0.0, 1.0, 10.0, 0.0,
+           0.0,  0.0, 0.0,  0.0, 2.0;
 
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 

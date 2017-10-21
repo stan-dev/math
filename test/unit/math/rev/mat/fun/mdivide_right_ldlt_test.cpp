@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
   using stan::math::var;
@@ -271,5 +272,6 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
 
   test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, ldlt_A));
   test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, ldlt_Ad));
-  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(value_of(b), ldlt_A));
+  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(value_of(b),
+                                                            ldlt_A));
 }

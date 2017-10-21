@@ -15,8 +15,8 @@ TEST(ProbDistributionsMultiNormalCholesky, NotVectorized) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_cholesky_log(y, mu, L));
 }
@@ -47,8 +47,8 @@ TEST(ProbDistributionsMultiNormalCholesky, Vectorized) {
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 10.0, -3.0, 0.0,
-    -3.0,  5.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  5.0, 0.0,
+           0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
   // y and mu vectorized
@@ -89,8 +89,8 @@ TEST(ProbDistributionsMultiNormalCholesky, MultiNormalOneRow) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_cholesky_log(y, mu, L));
 }
@@ -100,13 +100,13 @@ TEST(ProbDistributionsMultiNormalCholesky, error_check) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
 
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
   EXPECT_NO_THROW(stan::math::multi_normal_cholesky_rng(mu, L, rng));
 
@@ -114,7 +114,7 @@ TEST(ProbDistributionsMultiNormalCholesky, error_check) {
     -2.0,
     11.0;
   EXPECT_THROW(stan::math::multi_normal_cholesky_rng(mu, sigma, rng),
-                std::domain_error);
+               std::domain_error);
 }
 
 TEST(ProbDistributionsMultiNormalCholesky,
@@ -122,13 +122,13 @@ TEST(ProbDistributionsMultiNormalCholesky,
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(2.0, 3.0);
@@ -167,13 +167,13 @@ TEST(ProbDistributionsMultiNormalCholesky,
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(-2.0, 2.0);
@@ -212,13 +212,13 @@ TEST(ProbDistributionsMultiNormalCholesky,
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 16.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 16.0;
   Matrix<double, Dynamic, Dynamic> L = sigma.llt().matrixL();
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(11.0, 4.0);

@@ -12,15 +12,14 @@ TEST(ProbDistributionsSkewNormal, error_check) {
 
   EXPECT_THROW(stan::math::skew_normal_rng(10.0, -2.0, 1.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::skew_normal_rng(stan::math::positive_infinity(),
-                                           2.0, 1.0, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::skew_normal_rng(10, 2,
-                                           stan::math::positive_infinity(),
-                                           rng),
-               std::domain_error);
+  EXPECT_THROW(
+    stan::math::skew_normal_rng(stan::math::positive_infinity(), 2.0, 1.0,
+                                rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::skew_normal_rng(10, 2, stan::math::positive_infinity(), rng),
+    std::domain_error);
 }
-
 
 TEST(ProbDistributionsSkewNormal, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;

@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
+#include <string>
 
 template <typename T_prob, typename T_prior_sample_size>
 void expect_propto(T_prob theta, T_prior_sample_size alpha,

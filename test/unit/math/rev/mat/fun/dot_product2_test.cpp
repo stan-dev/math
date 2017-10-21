@@ -2,11 +2,13 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, dot_product_vv) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -30,7 +32,8 @@ TEST(AgradRevMatrix, dot_product_dv) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -46,7 +49,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -61,7 +65,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
 TEST(AgradRevMatrix, dot_product_vv_vec) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -85,7 +90,8 @@ TEST(AgradRevMatrix, dot_product_dv_vec) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -101,7 +107,8 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -211,7 +218,8 @@ TEST(AgradRevMatrix, softmax) {
   EXPECT_FLOAT_EQ(exp(10)/(exp(-1) + exp(1) + exp(10.0)), theta3[2].val());
 }
 TEST(AgradRevMatrix, meanStdVector) {
-  using stan::math::mean; // should use arg-dep lookup
+  // should use arg-dep lookup
+  using stan::math::mean;
   AVEC x(0);
   EXPECT_THROW(mean(x),
                std::invalid_argument);
@@ -228,12 +236,14 @@ TEST(AgradRevMatrix, meanStdVector) {
   EXPECT_EQ(2U, grad.size());
 }
 TEST(AgradRevMatrix, varianceStdVector) {
-  using stan::math::variance; // should use arg-dep lookup
+  // should use arg-dep lookup
+  using stan::math::variance;
 
   AVEC y1 = createAVEC(0.5, 2.0, 3.5);
   AVAR f1 = variance(y1);
   VEC grad1 = cgrad(f1, y1[0], y1[1], y1[2]);
-  double f1_val = f1.val(); // save before cleaned out
+  // save before cleaned out
+  double f1_val = f1.val();
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
@@ -253,12 +263,14 @@ TEST(AgradRevMatrix, varianceStdVector) {
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
 }
 TEST(AgradRevMatrix, sdStdVector) {
-  using stan::math::sd; // should use arg-dep lookup (and for sqrt)
+  // should use arg-dep lookup (and for sqrt)
+  using stan::math::sd;
 
   AVEC y1 = createAVEC(0.5, 2.0, 3.5);
   AVAR f1 = sd(y1);
   VEC grad1 = cgrad(f1, y1[0], y1[1], y1[2]);
-  double f1_val = f1.val(); // save before cleaned out
+  // save before cleaned out
+  double f1_val = f1.val();
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
@@ -372,7 +384,7 @@ TEST(AgradRevMatrix, UserCase1) {
     assign(lp__, (lp__ - (0.5 * dot_product(vk, vk))));
   }
 
-  EXPECT_TRUE(lp__.val() != 0);
+  EXPECT_NE(lp__.val(), 0);
 }
 
 TEST(AgradRevMatrix, prod) {
@@ -406,7 +418,6 @@ TEST(AgradRevMatrix, prod) {
   f.grad(x, g);
   EXPECT_FLOAT_EQ(3.0, g[0]);
   EXPECT_FLOAT_EQ(2.0, g[1]);
-
 }
 TEST(AgradRevMatrix, diagMatrix) {
   using stan::math::diag_matrix;
@@ -937,7 +948,6 @@ TEST(AgradRevMatrix, crossprod) {
   matrix_v K(0, 0);
   test_crossprod(K);
   //  test_tcrossprod_grad(K, K.rows(), K.cols());
-
 }
 
 template <typename T>
@@ -1089,8 +1099,6 @@ TEST(AgradRevMatrix, promoteElts) {
   for (int i = 0; i < 3; ++i)
     for (int j = 0; j < 4; ++j)
       EXPECT_FLOAT_EQ(A(i, j), D(i, j).val());
-
-
 }
 
 

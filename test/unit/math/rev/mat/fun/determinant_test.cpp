@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, determinant) {
   using stan::math::matrix_v;
@@ -68,7 +69,8 @@ TEST(AgradRevMatrix, determinant3by3) {
     for (int j = 0; j < 9; ++j)
       Z(i, j) = i * j + 1;
   AVAR h = determinant(Z);
-  h = h; // supresses set but not used warning
+  // supresses set but not used warning
+  h = h;
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v X(2, 2);

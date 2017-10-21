@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
 void expect_propto(T_y W1, T_dof nu1, T_scale S1,
@@ -95,19 +96,29 @@ TEST(Wishart, check_varis_on_stack) {
   S << 1.848220, 1.899623,
     1.899623, 12.751941;
 
-  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W), to_var(nu), to_var(S)));
-  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W), to_var(nu), S));
-  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W), nu, to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W),
+                                                            to_var(nu),
+                                                            to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W),
+                                                            to_var(nu), S));
+  test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W), nu,
+                                                            to_var(S)));
   test::check_varis_on_stack(stan::math::wishart_log<false>(to_var(W), nu, S));
-  test::check_varis_on_stack(stan::math::wishart_log<false>(W, to_var(nu), to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<false>(W, to_var(nu),
+                                                            to_var(S)));
   test::check_varis_on_stack(stan::math::wishart_log<false>(W, to_var(nu), S));
   test::check_varis_on_stack(stan::math::wishart_log<false>(W, nu, to_var(S)));
 
-  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W), to_var(nu), to_var(S)));
-  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W), to_var(nu), S));
-  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W), nu, to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W),
+                                                           to_var(nu),
+                                                           to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W),
+                                                           to_var(nu), S));
+  test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W), nu,
+                                                           to_var(S)));
   test::check_varis_on_stack(stan::math::wishart_log<true>(to_var(W), nu, S));
-  test::check_varis_on_stack(stan::math::wishart_log<true>(W, to_var(nu), to_var(S)));
+  test::check_varis_on_stack(stan::math::wishart_log<true>(W, to_var(nu),
+                                                           to_var(S)));
   test::check_varis_on_stack(stan::math::wishart_log<true>(W, to_var(nu), S));
   test::check_varis_on_stack(stan::math::wishart_log<true>(W, nu, to_var(S)));
 }

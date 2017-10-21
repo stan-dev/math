@@ -1,5 +1,6 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 
 TEST(StanAgradRevInternal, precomputed_gradients) {
@@ -17,7 +18,8 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
   gradients[0] = 4;
   gradients[1] = 5;
 
-  EXPECT_NO_THROW(y = stan::math::precomputed_gradients(value, vars, gradients));
+  EXPECT_NO_THROW(y = stan::math::precomputed_gradients(value, vars,
+                                                        gradients));
   EXPECT_FLOAT_EQ(value, y.val());
 
   std::vector<double> g;

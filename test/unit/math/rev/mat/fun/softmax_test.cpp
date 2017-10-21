@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, softmaxLeak) {
   // FIXME: very brittle test depending on unrelated constants of
@@ -23,7 +24,7 @@ TEST(AgradRevMatrix, softmaxLeak) {
     Matrix<var, Dynamic, 1> theta = softmax(x);
   }
   // test is greater than because leak is on heap, not stack
-  EXPECT_TRUE(stan::math::ChainableStack::memalloc_.bytes_allocated() > 200000);
+  EXPECT_GT(stan::math::ChainableStack::memalloc_.bytes_allocated(), 200000);
 }
 
 TEST(AgradRevMatrix, softmax) {

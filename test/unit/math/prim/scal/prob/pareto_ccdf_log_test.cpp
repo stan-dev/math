@@ -8,10 +8,7 @@ TEST(ProbPareto, ccdf_log_matches_lccdf) {
 
   EXPECT_FLOAT_EQ((stan::math::pareto_lccdf(y, y_min, alpha)),
                   (stan::math::pareto_ccdf_log(y, y_min, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_lccdf<double,
-                                            double,
-                                            double>(y, y_min, alpha)),
-                  (stan::math::pareto_ccdf_log<double,
-                                               double,
-                                               double>(y, y_min, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_lccdf<double, double, double>(y, y_min, alpha)),
+    (stan::math::pareto_ccdf_log<double, double, double>(y, y_min, alpha)));
 }

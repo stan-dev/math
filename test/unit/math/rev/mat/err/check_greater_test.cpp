@@ -1,5 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_greater;
 using stan::math::var;
@@ -44,7 +46,8 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterMatrix) {
   x_vec   << -1, 0,  std::numeric_limits<double>::infinity();
   low_vec << -2, -1, std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_greater(function, "x", x_vec, low_vec), std::domain_error)
-    << "check_greater: matrix<3, 1>, matrix<3, 1>, both bound and value infinity";
+    << "check_greater: matrix<3, 1>, matrix<3, 1>, "
+    << "both bound and value infinity";
 
   x_vec   << -1, 0,  1;
   low_vec << -2, -1, -std::numeric_limits<double>::infinity();

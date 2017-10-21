@@ -20,7 +20,6 @@ TEST(MathMatrix, getAssignRowVar) {
   EXPECT_FLOAT_EQ(10.0, m(0, 0).val());
   EXPECT_FLOAT_EQ(100.0, m(0, 1).val());
   EXPECT_FLOAT_EQ(1000.0, m(0, 2).val());
-
 }
 
 TEST(AgradRevMatrix, assign) {

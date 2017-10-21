@@ -16,8 +16,8 @@ TEST(MathMatrix, qr_R) {
 
   stan::math::matrix_v m2(3, 2);
   m2 = qr_Q(m1) * qr_R(m1);
-  for (unsigned int i=0; i<m1.rows(); i++) {
-    for (unsigned int j=0; j<m1.cols(); j++) {
+  for (unsigned int i = 0; i < m1.rows(); i++) {
+    for (unsigned int j = 0; j < m1.cols(); j++) {
       EXPECT_NEAR(m1(i, j).val(), m2(i, j).val(), 1e-8);
     }
   }

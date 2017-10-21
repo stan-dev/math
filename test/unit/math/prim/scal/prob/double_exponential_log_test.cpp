@@ -12,26 +12,19 @@ TEST(ProbDoubleExponential, log_matches_lpdf) {
                   (stan::math::double_exponential_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<false>(y, mu, sigma)),
                   (stan::math::double_exponential_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<true,
-                                                       double,
-                                                       double,
-                                                       double>(y, mu, sigma)),
-                  (stan::math::double_exponential_log<true,
-                                                       double,
-                                                       double,
-                                                       double>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<false,
-                                                       double,
-                                                       double,
-                                                       double>(y, mu, sigma)),
-                  (stan::math::double_exponential_log<false,
-                                                       double,
-                                                       double,
-                                                       double>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<double,
-                                                       double,
-                                                       double>(y, mu, sigma)),
-                  (stan::math::double_exponential_log<double,
-                                                       double,
-                                                       double>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::double_exponential_lpdf<true, double, double, double>
+                                                              (y, mu, sigma)),
+    (stan::math::double_exponential_log<true, double, double, double>
+                                                              (y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::double_exponential_lpdf<false, double, double, double>
+                                                              (y, mu, sigma)),
+    (stan::math::double_exponential_log<false, double, double, double>
+                                                              (y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::double_exponential_lpdf<double, double, double>
+                                                              (y, mu, sigma)),
+    (stan::math::double_exponential_log<double, double, double>
+                                                              (y, mu, sigma)));
 }

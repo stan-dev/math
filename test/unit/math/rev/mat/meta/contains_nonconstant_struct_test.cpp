@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::length;
 
@@ -31,6 +32,8 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_TRUE(contains_nonconstant_struct<var_v2>::value);
   EXPECT_TRUE(contains_nonconstant_struct<var_v3>::value);
 
-  bool temp = contains_nonconstant_struct<var_v3, var_v2, var_v1, double, int>::value;
+  bool temp
+        = contains_nonconstant_struct<var_v3, var_v2,
+                                      var_v1, double, int>::value;
   EXPECT_TRUE(temp);
 }

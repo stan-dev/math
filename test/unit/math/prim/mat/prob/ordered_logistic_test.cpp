@@ -140,18 +140,18 @@ TEST(ProbDistributionOrderedLogistic, error_check) {
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd c(4);
   c << -2,
-    2.0,
-    5,
-    10;
+        2.0,
+        5,
+        10;
   EXPECT_NO_THROW(stan::math::ordered_logistic_rng(4.0, c, rng));
 
   EXPECT_THROW(stan::math::ordered_logistic_rng(stan::math::positive_infinity(),
                                                 c, rng),
                std::domain_error);
   c << -inf,
-    2.0,
-    -5,
-    inf;
+        2.0,
+       -5,
+        inf;
   EXPECT_THROW(stan::math::ordered_logistic_rng(4.0, c, rng),
                std::domain_error);
 }
@@ -163,8 +163,8 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
   double eta = 1.0;
   Eigen::VectorXd theta(3);
   theta << -0.4,
-    4.0,
-    6.2;
+            4.0,
+            6.2;
   Eigen::VectorXd prob(4);
   prob(0) = 1 - inv_logit(eta - theta(0));
   prob(1) = inv_logit(eta - theta(0)) - inv_logit(eta - theta(1));

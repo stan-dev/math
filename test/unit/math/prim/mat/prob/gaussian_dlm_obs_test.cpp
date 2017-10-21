@@ -180,15 +180,13 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesF) {
               std::invalid_argument);
   // finite and NaN
   Matrix<double, Dynamic, Dynamic> FF_inf = FF;
-  FF_inf(0, 0) =
-              std::numeric_limits<double>::infinity();
+  FF_inf(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF_inf, GG, V, W, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF_inf, GG, V_vec, W, m0, C0),
               std::domain_error);
   Matrix<double, Dynamic, Dynamic> FF_nan = FF;
-  FF_nan(0, 0) =
-              std::numeric_limits<double>::quiet_NaN();
+  FF_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF_nan, GG, V, W, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF_nan, GG, V_vec, W, m0, C0),
@@ -209,15 +207,13 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesG) {
               std::invalid_argument);
   // finite and NaN
   Matrix<double, Dynamic, Dynamic> GG_inf = GG;
-  GG_inf(0, 0) =
-              std::numeric_limits<double>::infinity();
+  GG_inf(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG_inf, V, W, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG_inf, V_vec, W, m0, C0),
               std::domain_error);
   Matrix<double, Dynamic, Dynamic> GG_nan = GG;
-  GG_nan(0, 0) =
-              std::numeric_limits<double>::quiet_NaN();
+  GG_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG_nan, V, W, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG_nan, V_vec, W, m0, C0),
@@ -241,15 +237,13 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesW) {
               std::domain_error);
   // finite and NaN
   Matrix<double, Dynamic, Dynamic> W_infinite = W;
-  W_infinite(0, 0) =
-              std::numeric_limits<double>::infinity();
+  W_infinite(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W_infinite, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W_infinite, m0, C0),
               std::domain_error);
   Matrix<double, Dynamic, Dynamic> W_nan = W;
-  W_nan(0, 0) =
-              std::numeric_limits<double>::quiet_NaN();
+  W_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W_nan, m0, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W_nan, m0, C0),
@@ -287,13 +281,11 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVMatrix) {
               std::domain_error);
   // finite and NaN
   Matrix<double, Dynamic, Dynamic> V_infinite = V;
-  V_infinite(0, 0) =
-              std::numeric_limits<double>::infinity();
+  V_infinite(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_infinite, W, m0, C0),
               std::domain_error);
   Matrix<double, Dynamic, Dynamic> V_nan = V;
-  V_nan(0, 0) =
-              std::numeric_limits<double>::quiet_NaN();
+  V_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_nan, W, m0, C0),
               std::domain_error);
   // wrong size
@@ -318,13 +310,11 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVVector) {
               std::invalid_argument);
   // finite and NaN
   Matrix<double, Dynamic, Dynamic> V_infinite = V_vec;
-  V_infinite(0) =
-              std::numeric_limits<double>::infinity();
+  V_infinite(0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_infinite, W, m0, C0),
               std::domain_error);
   Matrix<double, Dynamic, Dynamic> V_nan = V_vec;
-  V_nan(0) =
-              std::numeric_limits<double>::quiet_NaN();
+  V_nan(0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_nan, W, m0, C0),
               std::domain_error);
   // wrong size
@@ -348,15 +338,13 @@ TEST_F(ProbDistributionsGaussianDLMInputs, Policiesm0) {
               std::invalid_argument);
   // finite and NaN
   Matrix<double, Dynamic, 1> m0_inf = m0;
-  m0_inf(0) =
-              std::numeric_limits<double>::infinity();
+  m0_inf(0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W, m0_inf, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W, m0_inf, C0),
               std::domain_error);
   Matrix<double, Dynamic, 1> m0_nan = m0;
-  m0_nan(0) =
-              std::numeric_limits<double>::quiet_NaN();
+  m0_nan(0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W, m0_nan, C0),
               std::domain_error);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W, m0_nan, C0),

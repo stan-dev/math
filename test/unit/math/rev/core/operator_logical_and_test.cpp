@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 void test_logical_and(double x, double y) {
   using stan::math::var;

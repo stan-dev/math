@@ -3,6 +3,8 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>  // only used for stack tests
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
+#include <string>
+#include <vector>
 
 struct AgradRev : public testing::Test {
   void SetUp() {
@@ -35,19 +37,19 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_FLOAT_EQ(3, var(static_cast<char>(3)).val());
 
   // short
-  EXPECT_FLOAT_EQ(1, var(static_cast<short>(1)).val());
+  EXPECT_FLOAT_EQ(1, var(static_cast<int16_t>(1)).val());
 
   // int
   EXPECT_FLOAT_EQ(37, var(static_cast<int>(37)).val());
 
   // long
-  EXPECT_FLOAT_EQ(37, var(static_cast<long>(37)).val());
+  EXPECT_FLOAT_EQ(37, var(static_cast<int32_t>(37)).val());
 
   // unsigned char
   EXPECT_FLOAT_EQ(37, var(static_cast<unsigned char>(37)).val());
 
   // unsigned short
-  EXPECT_FLOAT_EQ(37, var(static_cast<unsigned short>(37)).val());
+  EXPECT_FLOAT_EQ(37, var(static_cast<uint16_t>(37)).val());
 
   // unsigned int
   EXPECT_FLOAT_EQ(37, var(static_cast<unsigned int>(37)).val());
@@ -56,10 +58,10 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_FLOAT_EQ(0, var(static_cast<unsigned int>(0)).val());
 
   // unsigned long
-  EXPECT_FLOAT_EQ(37, var(static_cast<unsigned long>(37)).val());
+  EXPECT_FLOAT_EQ(37, var(static_cast<uint32_t>(37)).val());
 
   // unsigned long (test for conflict with pointer)
-  EXPECT_FLOAT_EQ(0, var(static_cast<unsigned long>(0)).val());
+  EXPECT_FLOAT_EQ(0, var(static_cast<uint32_t>(0)).val());
 
   // size_t
   EXPECT_FLOAT_EQ(37, var(static_cast<size_t>(37)).val());
@@ -68,7 +70,6 @@ TEST_F(AgradRev, ctorOverloads) {
   // ptrdiff_t
   EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
   EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
-
 }
 
 TEST_F(AgradRev, a_eq_x) {
@@ -101,12 +102,12 @@ TEST_F(AgradRev, a_ostream) {
   std::ostringstream os;
 
   os << a;
-  EXPECT_EQ ("6", os.str());
+  EXPECT_EQ("6", os.str());
 
   os.str("");
   a = 10.5;
   os << a;
-  EXPECT_EQ ("10.5", os.str());
+  EXPECT_EQ("10.5", os.str());
 }
 
 TEST_F(AgradRev, smart_ptrs) {

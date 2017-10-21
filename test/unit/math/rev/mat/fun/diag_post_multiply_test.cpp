@@ -1,8 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <test/unit/math/rev/mat/fun/expect_matrix_eq.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 using Eigen::Matrix;
 using Eigen::Dynamic;
@@ -73,7 +73,6 @@ TEST(MathMatrix, diagPreMultiply2_dv) {
   Matrix<var, Dynamic, Dynamic> v_m_times_m2 = m2 * v_m;
 
   expect_matrix_eq(v_m_times_m2, diag_post_multiply(m1, v));
-
 }
 
 
@@ -147,7 +146,8 @@ TEST(MathMatrix, diagPostMultiplyGrad_vd) {
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
-  Matrix<var, Dynamic, Dynamic> v_m(3, 3);  // OK to use var, just for comparison
+  // OK to use var, just for comparison
+  Matrix<var, Dynamic, Dynamic> v_m(3, 3);
   v_m <<
     1, 0, 0,
     0, 2, 0,
@@ -190,7 +190,8 @@ TEST(MathMatrix, diagPostMultiplyGrad_dv) {
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
-  Matrix<var, Dynamic, Dynamic> v_m(3, 3);  // OK to use var, just for comparison
+  // OK to use var, just for comparison
+  Matrix<var, Dynamic, Dynamic> v_m(3, 3);
   v_m <<
     1, 0, 0,
     0, 2, 0,

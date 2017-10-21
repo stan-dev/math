@@ -135,7 +135,8 @@ TEST(AgradRevMatrix, squared_distance_vv) {
 
   vector_v a(3), b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }
@@ -162,7 +163,8 @@ TEST(AgradRevMatrix, squared_distance_dv) {
   vector_d a(3);
   vector_v b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }
@@ -185,7 +187,8 @@ TEST(AgradRevMatrix, squared_distance_vd) {
   vector_v a(3);
   vector_d b(3);
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a(i+1) = i;
     b(i+1) = i + 2;
   }
@@ -208,7 +211,8 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   v1 << 1, 3, -5;
   v2 << 4, -2, -1;
 
-  test::check_varis_on_stack(stan::math::squared_distance(to_var(v1), to_var(v2)));
+  test::check_varis_on_stack(stan::math::squared_distance(to_var(v1),
+                                                          to_var(v2)));
   test::check_varis_on_stack(stan::math::squared_distance(to_var(v1), v2));
   test::check_varis_on_stack(stan::math::squared_distance(v1, to_var(v2)));
 }

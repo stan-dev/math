@@ -21,7 +21,6 @@ TEST(MathMatrix, matrix_exp_pade_1x1) {
 
 TEST(MathMatrix, matrix_exp_pade_2x2) {
   using stan::math::matrix_v;
-
   // example from Moler & Van Loan, 2003
   for (size_t k = 0; k < 2; k++) {
     for (size_t l = 0; l < 2; l++) {
@@ -102,17 +101,17 @@ TEST(MathMatrix, matrix_exp_25x25) {
   using stan::math::var;
 
   int size = 25;
+  boost::random::mt19937 rng;
 
   // Randomly construct input matrix
-  srand(1);
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-    col1 = rand() % size;
-    col2 = rand() % size;
-    while (col1 == col2) col2 = rand() % size;
-    S.col(col1) += S.col(col2) * std::pow(-1, rand());
+    col1 = rng % size;
+    col2 = rng % size;
+    while (col1 == col2) col2 = rng % size;
+    S.col(col1) += S.col(col2) * std::pow(-1, rng);
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, Dynamic, Dynamic> diag_elements(1, size);

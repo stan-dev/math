@@ -5,7 +5,8 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
-  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>(); // DO NOT DELETE, allocated on the vari stack
+  // DO NOT DELETE, allocated on the vari stack
+  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>();
   EXPECT_EQ(0U, alloc->N_);
 #ifdef EIGEN_NO_DEBUG
   EXPECT_NO_THROW(alloc->log_abs_det());
@@ -33,7 +34,8 @@ TEST(AgradRevMatrix, LDLT_alloc_constructor) {
   Eigen::Matrix<var, -1, -1> A(2, 2);
   A << 2, 1, 1, 2;
 
-  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>(A); // DO NOT DELETE, allocated on the vari stack
+  // DO NOT DELETE, allocated on the vari stack
+  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>(A);
 
   EXPECT_EQ(2U, alloc->N_);
   EXPECT_FLOAT_EQ(1.0986122886681096, alloc->log_abs_det());
@@ -56,7 +58,8 @@ TEST(AgradRevMatrix, LDLT_alloc_compute) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
-  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>(); // DO NOT DELETE, allocated on the vari stack
+  // DO NOT DELETE, allocated on the vari stack
+  LDLT_alloc<-1, -1> *alloc = new LDLT_alloc<-1, -1>();
 
   Eigen::Matrix<var, -1, -1> A(2, 2);
   A << 2, 1, 1, 2;

@@ -16,8 +16,8 @@ TEST(ProbDistributionsMultiNormal, NotVectorized) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma));
 }
 
@@ -48,8 +48,8 @@ TEST(ProbDistributionsMultiNormal, Vectorized) {
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 10.0, -3.0, 0.0,
-    -3.0,  5.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  5.0, 0.0,
+           0.0, 0.0, 5.0;
 
   // y and mu vectorized
   EXPECT_FLOAT_EQ(-11.928077-6.5378327,
@@ -101,8 +101,8 @@ TEST(ProbDistributionsMultiNormal, Mu) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   mu(0) = std::numeric_limits<double>::infinity();
@@ -119,8 +119,8 @@ TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma));
 }
 
@@ -149,8 +149,8 @@ TEST(ProbDistributionsMultiNormal, MuMultiRow) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   EXPECT_NO_THROW(stan::math::multi_normal_log(y, mu, Sigma));
 
   mu(0) = std::numeric_limits<double>::infinity();
@@ -167,7 +167,7 @@ TEST(ProbDistributionsMultiNormal, SizeMismatch) {
   mu << 1.0, -1.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0;
+          -3.0,  4.0, 0.0;
   EXPECT_THROW(stan::math::multi_normal_log(y, mu, Sigma),
                std::invalid_argument);
 }
@@ -176,13 +176,13 @@ TEST(ProbDistributionsMultiNormal, error_check) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
 
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, sigma, rng));
 
   mu << stan::math::positive_infinity(),
@@ -192,11 +192,11 @@ TEST(ProbDistributionsMultiNormal, error_check) {
                std::domain_error);
 
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   sigma << 9.0, -3.0, 0.0,
-    3.0,  4.0, 0.0,
-    -2.0, 1.0, 3.0;
+           3.0,  4.0, 0.0,
+          -2.0, 1.0, 3.0;
   EXPECT_THROW(stan::math::multi_normal_rng(mu, sigma, rng),
                std::domain_error);
 }
@@ -205,12 +205,12 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(2.0, 3.0);
@@ -248,12 +248,12 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 3.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 3.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(-2.0, 2.0);
@@ -291,12 +291,12 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 1.0,
-    0.0, 1.0, 16.0;
+          -3.0,  4.0, 1.0,
+           0.0, 1.0, 16.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0,
-    -2.0,
-    11.0;
+       -2.0,
+        11.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<>dist(11.0, 4.0);

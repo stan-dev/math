@@ -9,8 +9,9 @@ TEST(ProbBetaBinomial, ccdf_log_matches_lccdf) {
 
   EXPECT_FLOAT_EQ((stan::math::beta_binomial_lccdf(n, N, alpha, beta)),
                   (stan::math::beta_binomial_ccdf_log(n, N, alpha, beta)));
-  EXPECT_FLOAT_EQ((stan::math::beta_binomial_lccdf<int, int, double, double>
-                                                          (n, N, alpha, beta)),
-                  (stan::math::beta_binomial_ccdf_log<int, int, double, double>
-                                                          (n, N, alpha, beta)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::beta_binomial_lccdf<int, int, double, double>
+                                                        (n, N, alpha, beta)),
+    (stan::math::beta_binomial_ccdf_log<int, int, double, double>
+                                                        (n, N, alpha, beta)));
 }

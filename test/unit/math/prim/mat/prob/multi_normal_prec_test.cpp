@@ -13,8 +13,8 @@ TEST(ProbDistributionsMultiNormalPrec, NotVectorized) {
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.inverse();
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_prec_log(y, mu, L));
 }
@@ -46,8 +46,8 @@ TEST(ProbDistributionsMultiNormalPrec, Vectorized) {
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 10.0, -3.0, 0.0,
-    -3.0,  5.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  5.0, 0.0,
+           0.0, 0.0, 5.0;
   Sigma = Sigma.inverse();
 
   // y and mu vectorized

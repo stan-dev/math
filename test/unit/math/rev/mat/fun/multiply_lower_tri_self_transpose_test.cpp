@@ -3,8 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
-stan::math::matrix_v generate_large_L_tri_mat(){
+stan::math::matrix_v generate_large_L_tri_mat() {
   using stan::math::matrix_v;
   using stan::math::matrix_d;
 

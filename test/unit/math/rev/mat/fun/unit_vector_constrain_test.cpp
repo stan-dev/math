@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <limits>
+#include <vector>
 
 std::vector<double>
 unit_vector_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl,

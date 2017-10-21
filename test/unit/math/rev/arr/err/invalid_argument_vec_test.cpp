@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
 const std::string function_ = "function";
 const std::string y_name_ = "y";
@@ -44,24 +45,28 @@ public:
     try {
       stan::math::invalid_argument_vec<T>
         (function_, y_name_, y, index_, msg1_, msg2_);
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument, "
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw nothing";
     } catch(std::invalid_argument& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument, "
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw a different type";
     }
 
     try {
       stan::math::invalid_argument_vec<T>
         (function_, y_name_, y, index_, msg1_);
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument, "
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw nothing";
     } catch(std::invalid_argument& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument, "
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw a different type";
     }
   }

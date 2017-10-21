@@ -1,5 +1,8 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
+#include <string>
 
 using stan::math::var;
 using stan::math::check_positive_finite;
@@ -9,9 +12,9 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
   std::vector<var> x;
 
   x.clear();
-  x.push_back (1.5);
-  x.push_back (0.1);
-  x.push_back (1);
+  x.push_back(1.5);
+  x.push_back(0.1);
+  x.push_back(1);
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x";
 

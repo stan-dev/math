@@ -8,7 +8,8 @@ TEST(AgradRev, multiple_grads) {
     AVAR a = 2.0;
     AVAR b = 3.0 * a;
     AVAR c = sin(a) * b;
-    c = c; // fixes warning regarding unused variable
+    // fixes warning regarding unused variable
+    c = c;
 
     AVAR nothing;
   }

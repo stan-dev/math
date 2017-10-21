@@ -4,6 +4,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <vector>
 
 namespace test {
 

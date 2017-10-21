@@ -1,5 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::var;

@@ -105,10 +105,11 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv) {
           if (k >= l) {
             Ad_tmp.setZero();
             Ad_tmp(k, l) = 1.0;
-            Cd = -mdivide_left_tri<Eigen::Lower>(Ad, multiply(Ad_tmp, mdivide_left_tri<Eigen::Lower>(Ad, Bd)));
+            Cd = -mdivide_left_tri<Eigen::Lower>(
+                        Ad, multiply(Ad_tmp, mdivide_left_tri<Eigen::Lower>
+                                                                    (Ad, Bd)));
             EXPECT_NEAR(Cd(i, j), g[k + l*Ad_tmp.rows()], 1.0E-12);
-          }
-          else {
+          } else {
             EXPECT_NEAR(0.0, g[k + l*Ad_tmp.rows()], 1.0E-12);
           }
         }
@@ -200,10 +201,12 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd) {
           if (k >= l) {
             Ad_tmp.setZero();
             Ad_tmp(k, l) = 1.0;
-            Cd = -mdivide_left_tri<Eigen::Lower>(Ad, multiply(Ad_tmp, mdivide_left_tri<Eigen::Lower>(Ad, Bd)));
+            Cd = -mdivide_left_tri<Eigen::Lower>(
+                                      Ad,
+                                      multiply(Ad_tmp,
+                                      mdivide_left_tri<Eigen::Lower>(Ad, Bd)));
             EXPECT_NEAR(Cd(i, j), g[k + l*Ad_tmp.rows()], 1.0E-12);
-          }
-          else {
+          } else {
             EXPECT_NEAR(0.0, g[k + l*Ad_tmp.rows()], 1.0E-12);
           }
         }
@@ -250,10 +253,12 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv) {
           if (k <= l) {
             Ad_tmp.setZero();
             Ad_tmp(k, l) = 1.0;
-            Cd = -mdivide_left_tri<Eigen::Upper>(Ad, multiply(Ad_tmp, mdivide_left_tri<Eigen::Upper>(Ad, Bd)));
+            Cd = -mdivide_left_tri<Eigen::Upper>(
+                                      Ad,
+                                      multiply(Ad_tmp,
+                                      mdivide_left_tri<Eigen::Upper>(Ad, Bd)));
             EXPECT_NEAR(Cd(i, j), g[k + l*Ad_tmp.rows()], 1.0E-12);
-          }
-          else {
+          } else {
             EXPECT_NEAR(0.0, g[k + l*Ad_tmp.rows()], 1.0E-12);
           }
         }
@@ -345,10 +350,12 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vd) {
           if (k <= l) {
             Ad_tmp.setZero();
             Ad_tmp(k, l) = 1.0;
-            Cd = -mdivide_left_tri<Eigen::Upper>(Ad, multiply(Ad_tmp, mdivide_left_tri<Eigen::Upper>(Ad, Bd)));
+            Cd = -mdivide_left_tri<Eigen::Upper>(
+                                      Ad,
+                                      multiply(Ad_tmp,
+                                      mdivide_left_tri<Eigen::Upper>(Ad, Bd)));
             EXPECT_NEAR(Cd(i, j), g[k + l*Ad_tmp.rows()], 1.0E-12);
-          }
-          else {
+          } else {
             EXPECT_NEAR(0.0, g[k + l*Ad_tmp.rows()], 1.0E-12);
           }
         }
@@ -364,7 +371,9 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
     5.0, 7.0;
 
   test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(A, A));
-  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(A, value_of(A)));
-  test::check_varis_on_stack(stan::math::mdivide_left_tri<Eigen::Lower>(value_of(A), A));
+  test::check_varis_on_stack(
+    stan::math::mdivide_left_tri<Eigen::Lower>(A, value_of(A)));
+  test::check_varis_on_stack(
+    stan::math::mdivide_left_tri<Eigen::Lower>(value_of(A), A));
 }
 

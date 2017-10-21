@@ -1,5 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::var;
@@ -11,7 +13,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   vector<var> a;
   vector<var> b;
 
-  for (int i = 0; i < N; ++i){
+  for (int i = 0; i < N; ++i) {
     b.push_back(var(i+1));
     a.push_back(var(i));
   }

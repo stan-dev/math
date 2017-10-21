@@ -179,7 +179,6 @@ void pull_vals(int N, int M, int K,
   for (int k = 0; k < K; ++k)
     for (int m = 0; m < M; ++m)
       B(m, k) = x(pos++);
-
 }
 
 TEST(AgradRevMatrix, multiply_scalar_scalar) {
@@ -200,7 +199,6 @@ TEST(AgradRevMatrix, multiply_scalar_scalar) {
   EXPECT_FLOAT_EQ(6.0, multiply(AVAR(3), AVAR(2)).val());
   EXPECT_FLOAT_EQ(6.0, multiply(3.0, AVAR(2)).val());
   EXPECT_FLOAT_EQ(6.0, multiply(AVAR(3), 2.0).val());
-
 }
 TEST(AgradRevMatrix, multiply_vector_scalar) {
   using stan::math::vector_d;
@@ -668,7 +666,8 @@ TEST(AgradRevMatrix, multiply_scalar_matrix_vc) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_int) {
-  using stan::math::multiply; // test namespace resolution
+  // test namespace resolution
+  using stan::math::multiply;
   using stan::math::multiply;
   using stan::math::vector_d;
   using stan::math::vector_v;

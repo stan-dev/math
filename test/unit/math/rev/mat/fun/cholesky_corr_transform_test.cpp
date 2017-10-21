@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 void
 test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
@@ -40,8 +41,9 @@ test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
   double det_J = J.determinant();
   double log_det_J = log(fabs(det_J));
 
-  EXPECT_FLOAT_EQ(log_det_J, lp.val()) << "J = " << J << std::endl << "det_J = " << det_J;
-
+  EXPECT_FLOAT_EQ(log_det_J, lp.val())
+    << "J = " << J << std::endl
+    << "det_J = " << det_J;
 }
 
 TEST(probTransform, choleskyCorrJacobian) {

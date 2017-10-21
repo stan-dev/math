@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <limits>
+#include <string>
 
 
 template <typename F>
@@ -16,7 +18,6 @@ void sho_value_test(F harm_osc,
                     std::vector<double>& theta,
                     std::vector<double>& x,
                     std::vector<int>& x_int) {
-
   std::vector<std::vector<double> >  ode_res_vd
     = stan::math::integrate_ode_bdf(harm_osc, y0, t0,
                                     ts, theta, x, x_int,

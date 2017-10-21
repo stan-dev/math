@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
+#include <vector>
 
 TEST(ProbDistributionsBernoulli, error_check) {
   boost::random::mt19937 rng;
@@ -22,7 +23,7 @@ TEST(ProbDistributionsBernoulli, chiSquareGoodnessFitTest) {
   expected.push_back(N * 0.4);
 
   std::vector<int> counts(2);
-  for (int i=0; i<N; ++i) {
+  for (int i = 0; i < N; ++i) {
     ++counts[stan::math::bernoulli_rng(0.4, rng)];
   }
 

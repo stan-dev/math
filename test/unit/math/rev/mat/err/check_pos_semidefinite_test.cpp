@@ -1,5 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   using stan::math::var;

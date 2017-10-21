@@ -13,8 +13,7 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles)
-{
+TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 1, 0, 1;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -27,25 +26,35 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles)
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
 
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<true>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<true, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<false, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::bernoulli_logit_glm_lpmf<Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf(n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf<true>(n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf<true>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf<false>(n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf<false>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>
+                                                        (n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf<true, Matrix<int, Dynamic, 1>>
+                                                        (n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>
+                                                        (n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf<false, Matrix<int, Dynamic, 1>>
+                                                        (n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>
+                                                        (n, theta)),
+    (stan::math::bernoulli_logit_glm_lpmf<Matrix<int, Dynamic, 1>>
+                                                        (n, x, beta, alpha)));
 }
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars)
-{
-
+TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 1, 0, 1;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -77,15 +86,12 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars)
 
   EXPECT_FLOAT_EQ(lp.val(),
                   lp2.val());
-  for (size_t i = 0; i < 2; i++)
-  {
+  for (size_t i = 0; i < 2; i++) {
     EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
   }
   EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-  for (size_t j = 0; j < 3; j++)
-  {
-    for (size_t i = 0; i < 2; i++)
-    {
+  for (size_t j = 0; j < 3; j++) {
+    for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
     }
   }

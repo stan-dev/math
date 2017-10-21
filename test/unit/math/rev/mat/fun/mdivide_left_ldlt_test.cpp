@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 std::vector<double> finite_differences(const size_t row, const size_t col,
                                          const stan::math::matrix_d A,

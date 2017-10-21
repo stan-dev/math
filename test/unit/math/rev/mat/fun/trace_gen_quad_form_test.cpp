@@ -492,11 +492,16 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   c.setIdentity(2, 2);
 
   using stan::math::to_var;
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), to_var(a), to_var(b)));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), to_var(a), b));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a, to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c),
+                                                             to_var(a),
+                                                             to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c),
+                                                             to_var(a), b));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a,
+                                                             to_var(b)));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a, b));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a), to_var(b)));
+  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a),
+                                                             to_var(b)));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a), b));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, a, to_var(b)));
 }

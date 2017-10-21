@@ -14,15 +14,15 @@ TEST(ProbDistributionsStudentT, error_check) {
                std::domain_error);
   EXPECT_THROW(stan::math::student_t_rng(-3.0, 2.0, 2.0, rng),
                std::domain_error);
-  EXPECT_THROW(stan::math::student_t_rng(stan::math::positive_infinity(), 2.0,
-                                         2.0, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::student_t_rng(3, stan::math::positive_infinity(),
-                                         2.0, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::student_t_rng(3, 2, stan::math::positive_infinity(),
-                                         rng),
-               std::domain_error);
+  EXPECT_THROW(
+    stan::math::student_t_rng(stan::math::positive_infinity(), 2.0, 2.0, rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::student_t_rng(3, stan::math::positive_infinity(), 2.0, rng),
+    std::domain_error);
+  EXPECT_THROW(
+    stan::math::student_t_rng(3, 2, stan::math::positive_infinity(), rng),
+    std::domain_error);
 }
 
 TEST(ProbDistributionsStudentT, chiSquareGoodnessFitTest) {

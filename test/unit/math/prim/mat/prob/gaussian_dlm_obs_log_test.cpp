@@ -20,38 +20,32 @@ TEST(ProbGaussianDlmObs, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> C0(1, 1);
   C0 << 65.2373490156606;
 
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf<true, double, double,
-                                                    double, double, double,
-                                                    double, double>
-                                                      (y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log<true, double, double,
-                                                    double, double, double,
-                                                    double, double>
-                                                      (y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf<false, double, double,
-                                                    double, double, double,
-                                                    double, double>
-                                                      (y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log<false, double, double,
-                                                    double, double, double,
-                                                    double, double>
-                                                      (y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf<double, double, double,
-                                                     double, double, double,
-                                                     double>
-                                                      (y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log<double, double, double,
-                                                    double, double, double,
-                                                    double>
-                                                      (y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf(y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log(y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf<true>
-                                                    (y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log<true>
-                                                    (y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf<false>
-                                                     (y, F, G, V, W, m0, C0)),
-                  (stan::math::gaussian_dlm_obs_log<false>
-                                                     (y, F, G, V, W, m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf<true, double, double, double, double,
+                                       double, double, double>(y, F, G, V, W,
+                                                               m0, C0)),
+    (stan::math::gaussian_dlm_obs_log<true, double, double, double, double,
+                                       double, double, double>(y, F, G, V, W,
+                                                               m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf<false, double, double, double, double,
+                                       double, double, double>(y, F, G, V, W,
+                                                               m0, C0)),
+    (stan::math::gaussian_dlm_obs_log<false, double, double, double, double,
+                                      double, double, double>(y, F, G, V, W,
+                                                              m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf<double, double, double, double, double,
+                                       double, double>(y, F, G, V, W, m0, C0)),
+    (stan::math::gaussian_dlm_obs_log<double, double, double, double, double,
+                                      double, double>(y, F, G, V, W, m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf(y, F, G, V, W, m0, C0)),
+    (stan::math::gaussian_dlm_obs_log(y, F, G, V, W, m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf<true>(y, F, G, V, W, m0, C0)),
+    (stan::math::gaussian_dlm_obs_log<true>(y, F, G, V, W, m0, C0)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0)),
+    (stan::math::gaussian_dlm_obs_log<false>(y, F, G, V, W, m0, C0)));
 }
