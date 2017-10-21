@@ -9,6 +9,7 @@
 #include <vector>
 #include <complex>
 #include <string>
+#include <exception>
 
 namespace stan {
   namespace math {
