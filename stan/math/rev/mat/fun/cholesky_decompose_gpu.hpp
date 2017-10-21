@@ -92,20 +92,6 @@ namespace stan {
         stan::math::matrix_gpu Lbar_gpu(Lbar);  
         stan::math::matrix_gpu Lbar_temp_gpu(M_,M_);
         
-        /***The CPU version of the derivative **/
-        /* If this is here and the result of this CPU derivative is not used, the tests pass, otherwise NaN is returend for some weird reason*/
-        /* */        
-        L.transposeInPlace();
-        Lbar = (L * Lbar);
-        
-        Lbar.triangularView<Eigen::StrictlyUpper>() = Lbar.transpose().triangularView<Eigen::StrictlyUpper>();
-        L.triangularView<Eigen::Upper>().solveInPlace(Lbar);
-        L.triangularView<Eigen::Upper>().solveInPlace(Lbar.transpose());
-        
-        Lbar.transposeInPlace();
-        Lbar.diagonal() *= 0.5;
-        /****/
-        
         stan::math::transpose(L_gpu);
         stan::math::multiply(L_gpu, Lbar_gpu, Lbar_temp_gpu);
         stan::math::copy_triangular_transposed(Lbar_temp_gpu,
@@ -120,18 +106,7 @@ namespace stan {
         stan::math::transpose(Lbar_temp_gpu);
         stan::math::diagonal_multiply_with_scalar(Lbar_temp_gpu,0.5);
         stan::math::copy(Lbar_temp_gpu, Lbar1);
-        /*
-        double err=0, diff=0;
-        for(int i=0;i<M_;i++){
-          for(int j=0;j<M_;j++){
-            diff=fabs(Lbar1(i,j)-Lbar(i,j));
-            if(diff>err){
-              err=diff;
-            }
-          }
-        }
-        std::cout << "MERR: " << err << std::endl;
-        */
+                
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
