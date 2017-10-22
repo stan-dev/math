@@ -10,8 +10,9 @@ TEST(ProbDistributionsMultiGP, fvar_double) {
   mu.setZero();
 
   Matrix<fvar<double>, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0,
-        11.0, 0.0, -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<fvar<double>, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
@@ -51,8 +52,9 @@ TEST(ProbDistributionsMultiGP, fvar_fvar_double) {
   mu.setZero();
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0,
-        -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0,
+       11.0, 2.0, -5.0, 11.0, 0.0,
+      -2.0, 11.0, 2.0, -2.0, -11.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(5, 5);
   Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,

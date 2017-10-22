@@ -147,10 +147,10 @@ TEST(MathMatrix, matrix_exp_100x100) {
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-    col1 = mt() % size;
-    col2 = mt() % size;
-    while (col1 == col2) col2 = mt() % size;
-    S.col(col1) += S.col(col2) * std::pow(-1, mt());
+    col1 = rd() % size;
+    col2 = rd() % size;
+    while (col1 == col2) col2 = rd() % size;
+    S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements_d(size);

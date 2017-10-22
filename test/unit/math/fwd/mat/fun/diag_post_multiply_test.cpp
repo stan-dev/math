@@ -261,7 +261,8 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff1) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, ff2) {
   matrix_d m(2, 2);
-  m << 1, 10, 100, 1000;
+  m << 1, 10,
+       100, 1000;
   vector_d v(2);
   v << 2, 3;
   test_fwd_diag_post_multiply(m, v);
@@ -269,7 +270,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff2) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, ff3) {
   matrix_d m(3, 3);
-  m << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
+  m << 1, 10, 100,
+       1000, 2, -4,
+       8, -16, 32;
   vector_d v(3);
   v << -1.7, 111.2, -29.3;
   test_fwd_diag_post_multiply(m, v);
@@ -277,7 +280,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff3) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, exceptions) {
   matrix_d m(3, 3);
-  m << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
+  m << 1, 10, 100,
+       1000, 2, -4,
+       8, -16, 32;
 
   vector_d v(2);
   v << -1.7, 111.2;
@@ -286,7 +291,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, exceptions) {
   v << -1.7, 111.2;
 
   matrix_fd mf(3, 3);
-  mf << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
+  mf << 1, 10, 100,
+        1000, 2, -4,
+        8, -16, 32;
 
   vector_fd vf(2);
   vf << -1.7, 111.2;
@@ -313,7 +320,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -335,7 +344,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
+  Y << a, b, c,
+       b, c, d,
+       d, e, f;
 
   vector_d A(3);
   A << 1, 2, 3;
@@ -384,7 +395,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -406,7 +419,9 @@ TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
+  Y << a, b, c,
+       b, c, d,
+       d, e, f;
 
   row_vector_d A(3);
   A << 1, 2, 3;

@@ -8,9 +8,13 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_fd) {
   using stan::math::vector_d;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
   matrix_fd Y(3, 3);
-  Y << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Y << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
    Y(0, 0).d_ = 2.0;
    Y(0, 1).d_ = 2.0;
    Y(0, 2).d_ = 2.0;
@@ -68,9 +72,13 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_fd) {
   using stan::math::row_vector_d;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
   matrix_fd Y(3, 3);
-  Y << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Y << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
    Y(0, 0).d_ = 2.0;
    Y(0, 1).d_ = 2.0;
    Y(0, 2).d_ = 2.0;
@@ -129,7 +137,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -151,7 +161,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
+  Y << a, b, c,
+       b, c, d,
+       d, e, f;
 
   vector_d A(3);
   A << 1, 2, 3;
@@ -199,7 +211,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Z << 1, 2, 3,
+       2, 3, 4,
+       4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -221,7 +235,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
+  Y << a, b, c,
+       b, c, d,
+       d, e, f;
 
   row_vector_d A(3);
   A << 1, 2, 3;

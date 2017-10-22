@@ -105,8 +105,8 @@ TEST(AgradFwdMatrixCumulativeSum, ffd) {
   using stan::math::fvar;
   using stan::math::cumulative_sum;
 
-  EXPECT_FLOAT_EQ(0, cumulative_sum(
-                        std::vector<fvar<fvar<double> > >(0)).size());
+  EXPECT_FLOAT_EQ(0,
+                  cumulative_sum(std::vector<fvar<fvar<double> > >(0)).size());
 
   Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> a;
   EXPECT_FLOAT_EQ(0, cumulative_sum(a).size());
