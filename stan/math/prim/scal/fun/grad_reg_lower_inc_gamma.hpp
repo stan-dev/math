@@ -16,6 +16,9 @@ namespace stan {
   namespace math {
 
     /**
+     * Computes the gradient of the lower regularized incomplete
+     * gamma function.
+     *
      * The lower incomlete gamma function
      * derivative w.r.t it's first parameter (a) seems to have no
      * standard source.  It also appears to have no widely known
@@ -94,19 +97,19 @@ namespace stan {
      *
      */
     template <typename T1, typename T2>
-    typename boost::math::tools::promote_args<T1, T2>::type
+    typename return_type<T1, T2>::type
     grad_reg_lower_inc_gamma(const T1& a, const T2& z,
                              double precision = 1e-10, int max_steps = 1e5) {
       using std::exp;
       using std::log;
       using std::pow;
-      typedef typename boost::math::tools::promote_args<T1, T2>::type TP;
+      typedef typename return_type<T1, T2>::type TP;
 
       if (is_nan(a)) return std::numeric_limits<TP>::quiet_NaN();
       if (is_nan(z)) return std::numeric_limits<TP>::quiet_NaN();
 
-      if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0) ||
-          a < sqrt(-756 - z * z + 60 * z)) {
+      if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
+          || a < sqrt(-756 - z * z + 60 * z)) {
         T1 tg = tgamma(a);
         T1 dig = digamma(a);
         return -grad_reg_inc_gamma(a, z, tg, dig, max_steps, precision);
