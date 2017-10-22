@@ -310,8 +310,8 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_ffv) {
             for (size_t i6 = 0; i6 < x8[0][0][0][0][0].size(); ++i6)
               for (size_t i7 = 0; i7 < x8[0][0][0][0][0][0].size(); ++i7)
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
-                  EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8]
-                                  .val_.val_.val(),
+                  EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8].val_.val_
+                                                                         .val(),
                                   get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1,
                                             i6+1, i7+1, i8+1,
                                             "x8", 1).val_.val_.val());

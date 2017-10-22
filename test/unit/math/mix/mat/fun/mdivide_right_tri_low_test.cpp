@@ -600,7 +600,7 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow,
-      ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1) {
+     ffv__rowvector_ffv_matrix_ffv_2ndDeriv_1) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
@@ -639,7 +639,7 @@ TEST(AgradMixMatrixMdivideRightTriLow,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow,
-      ffv__rowvector_ffv_matrix_ffv_2ndDeriv_2) {
+     ffv__rowvector_ffv_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 

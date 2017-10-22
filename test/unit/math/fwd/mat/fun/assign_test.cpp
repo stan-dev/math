@@ -71,7 +71,9 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
   EXPECT_THROW(assign(x, zz), std::invalid_argument);
 
   Matrix<fvar<double>, Dynamic, Dynamic> zzz(3, 1);
-  zzz << 1, 2, 3;
+  zzz << 1,
+         2,
+         3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
 
   Matrix<fvar<double>, Dynamic, Dynamic> zzzz(1, 3);
@@ -84,7 +86,9 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
   using Eigen::Dynamic;
 
   Matrix<fvar<double>, Dynamic, Dynamic> y(3, 2);
-  y << 1.2, 100, -5.1, 12, 1000, -5100;
+  y << 1.2, 100,
+      -5.1, 12,
+       1000, -5100;
   y(0, 0).d_ = 1.0;
   y(0, 1).d_ = 2.0;
   y(1, 0).d_ = 3.0;
@@ -112,7 +116,8 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
   using Eigen::Dynamic;
 
   Matrix<fvar<double>, Dynamic, Dynamic> x(2, 3);
-  x << 1, 2, 3, 4, 5, 6;
+  x << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<double>, 1, Dynamic> z(6);
   z << 1, 2, 3, 4, 5, 6;
@@ -125,7 +130,12 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
   EXPECT_THROW(assign(zz, x), std::invalid_argument);
 
   Matrix<fvar<double>, Dynamic, Dynamic> zzz(6, 1);
-  zzz << 1, 2, 3, 4, 5, 6;
+  zzz << 1,
+         2,
+         3,
+         4,
+         5,
+         6;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
 }
@@ -137,7 +147,8 @@ TEST(AgradFwdMatrixAssign, block) {
   using stan::math::assign;
 
   Matrix<fvar<double>, Dynamic, Dynamic> m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
+  m << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<double>, 1, Dynamic> rv(3);
   rv << 10, 100, 1000;
@@ -236,7 +247,8 @@ TEST(AgradFwdMatrixAssign, get_assign_row_fvar_double) {
   using stan::math::assign;
 
   Matrix<fvar<double>, Dynamic, Dynamic> m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
+  m << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<double>, 1, Dynamic> rv(3);
   rv << 10, 100, 1000;
@@ -281,7 +293,7 @@ TEST(AgradFwdMatrixAssign, vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign,
-        eigen_row_vector_fvar_fvar_double_to_fvar_fvar_double) {
+     eigen_row_vector_fvar_fvar_double_to_fvar_fvar_double) {
   using stan::math::assign;
   using Eigen::Matrix;
   using Eigen::Dynamic;
@@ -343,7 +355,9 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {
   using Eigen::Dynamic;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> y(3, 2);
-  y << 1.2, 100, -5.1, 12, 1000, -5100;
+  y << 1.2, 100,
+      -5.1, 12,
+      1000, -5100;
   y(0, 0).val_.d_ = 1.0;
   y(0, 1).val_.d_ = 2.0;
   y(1, 0).val_.d_ = 3.0;
@@ -385,7 +399,8 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
   using Eigen::Dynamic;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> x(2, 3);
-  x << 1, 2, 3, 4, 5, 6;
+  x << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<fvar<double> >, 1, Dynamic> z(6);
   z << 1, 2, 3, 4, 5, 6;
@@ -398,7 +413,12 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
   EXPECT_THROW(assign(zz, x), std::invalid_argument);
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> zzz(6, 1);
-  zzz << 1, 2, 3, 4, 5, 6;
+  zzz << 1,
+         2,
+         3,
+         4,
+         5,
+         6;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
 }
@@ -410,7 +430,8 @@ TEST(AgradFwdMatrixAssign, block_fvar_fvar_double) {
   using stan::math::assign;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
+  m << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<fvar<double> >, 1, Dynamic> rv(3);
   rv << 10, 100, 1000;
@@ -452,8 +473,9 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
   using std::vector;
   using stan::math::assign;
   vector<vector<vector<fvar<fvar<double> > > > >
-    x(4, vector<vector<fvar<fvar<double> > > >
-                        (3, vector<fvar<fvar<double> > >(2)));
+    x(4,
+      vector<vector<fvar<fvar<double> > > >(3,
+                                            vector<fvar<fvar<double> > >(2)));
   for (size_t k = 0; k < 4; ++k)
     for (size_t i = 0; i < 3; ++i)
       for (size_t j = 0; j < 2; ++j) {
@@ -464,8 +486,9 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
       }
 
   vector<vector<vector<fvar<fvar<double> > > > >
-    y(4, vector<vector<fvar<fvar<double> > > >
-                        (3, vector<fvar<fvar<double> > >(2)));
+    y(4,
+      vector<vector<fvar<fvar<double> > > >(3,
+                                            vector<fvar<fvar<double> > >(2)));
 
   assign(y, x);
   EXPECT_EQ(4U, y.size());
@@ -522,7 +545,8 @@ TEST(AgradFwdMatrixAssign, get_assign_row_fvar_fvar_double) {
   using stan::math::assign;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
+  m << 1, 2, 3,
+       4, 5, 6;
 
   Matrix<fvar<fvar<double> >, 1, Dynamic> rv(3);
   rv << 10, 100, 1000;

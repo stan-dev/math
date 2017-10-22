@@ -152,7 +152,7 @@ void test_cumulative_sum4() {
   EXPECT_FLOAT_EQ(6.0, h[1].d_.val().val());
   EXPECT_FLOAT_EQ(9.0, h[2].d_.val().val());
   grad = cgrad(h[2].val().val(), g[0].val().val(),
-                g[1].val().val(), g[2].val().val());
+               g[1].val().val(), g[2].val().val());
   EXPECT_EQ(3U, grad.size());
   EXPECT_FLOAT_EQ(1.0, grad[0]);
   EXPECT_FLOAT_EQ(1.0, grad[1]);

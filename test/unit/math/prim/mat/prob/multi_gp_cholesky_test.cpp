@@ -80,13 +80,13 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
   // non-finite values
   w(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
   w(0, 0) = -std::numeric_limits<double>::infinity();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
   w(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
@@ -110,11 +110,11 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
   // non-finite values
   y(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
   y(0, 0) = -std::numeric_limits<double>::infinity();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
   y(0, 0) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(stan::math::multi_gp_cholesky_log(y, L, w),
-                std::domain_error);
+               std::domain_error);
 }

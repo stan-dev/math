@@ -123,17 +123,17 @@ void test_nan_ffd(const F& f,
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error) << fail_msg3.str();
   } else {
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2_v).val_.val_))
-                                                            << fail_msg1.str();
+      << fail_msg1.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2).val_.val_))
-                                                            << fail_msg2.str();
+      << fail_msg2.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1, arg2_v).val_.val_))
-                                                            << fail_msg3.str();
+      << fail_msg3.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2_v).val_.d_))
-                                                            << fail_msg1.str();
+      << fail_msg1.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2).val_.d_)) << fail_msg2.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1, arg2_v).val_.d_)) << fail_msg3.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2_v).d_.val_))
-                                                            << fail_msg1.str();
+      << fail_msg1.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2).d_.val_)) << fail_msg2.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1, arg2_v).d_.val_)) << fail_msg3.str();
     EXPECT_TRUE(boost::math::isnan(f(arg1_v, arg2_v).d_.d_)) << fail_msg1.str();

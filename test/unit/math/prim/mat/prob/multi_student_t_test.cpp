@@ -64,7 +64,8 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   EXPECT_FLOAT_EQ(-8.92867-6.81839,
                   stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
   EXPECT_FLOAT_EQ(-8.92867-6.81839,
-                stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t, Sigma));
+                  stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t,
+                                                  Sigma));
 
   // y vectorized
   EXPECT_FLOAT_EQ(-9.167054-6.81839,

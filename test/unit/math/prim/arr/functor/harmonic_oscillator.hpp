@@ -54,7 +54,7 @@ struct harm_osc_ode_data_fun {
     std::vector<typename stan::return_type<T1, T2>::type> res;
     res.push_back(x.at(0) * y_in.at(1) + x_int.at(0));
     res.push_back(-x.at(1) * y_in.at(0) - x.at(2) * theta.at(0)
-                    * y_in.at(1) + x_int.at(1));
+                           * y_in.at(1) + x_int.at(1));
 
     return res;
   }

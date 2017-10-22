@@ -38,8 +38,8 @@ void test_log_mix_3xfvar_var_D1(double theta,
   double lambda2_deriv = 1 / deriv_denom * exp(lambda2_fv.val_.val())
     * (1 - theta_fv.val_.val());
   double deriv = theta_deriv * theta_fv.d_.val()
-             + lambda2_deriv * lambda2_fv.d_.val()
-             + lambda1_deriv * lambda1_fv.d_.val();
+                             + lambda2_deriv * lambda2_fv.d_.val()
+                             + lambda1_deriv * lambda1_fv.d_.val();
 
   VEC g = cgrad(res.val_, theta_fv.val_, lambda1_fv.val_,
      lambda2_fv.val_);
@@ -86,32 +86,32 @@ VEC log_mix_D3(double theta, double lambda1, double lambda2,
         double one_m_t = 1 - theta;
         double one_m_t_prod_exp_lam2_m_lam1 = one_m_t * exp_lam2_m_lam1;
         double t_plus_one_m_t_prod_exp_lam2_m_lam1
-          = theta + one_m_t_prod_exp_lam2_m_lam1;
+                = theta + one_m_t_prod_exp_lam2_m_lam1;
         var lam2_m_lam1_v = lambda2_v - lambda1_v;
         var exp_lam2_m_lam1_v = exp(lam2_m_lam1_v);
         var one_m_exp_lam2_m_lam1_v = 1 - exp_lam2_m_lam1_v;
         var one_m_t_v = 1 - theta_v;
         var one_m_t_prod_exp_lam2_m_lam1_v = one_m_t_v * exp_lam2_m_lam1_v;
         var t_plus_one_m_t_prod_exp_lam2_m_lam1_v
-          = theta_v + one_m_t_prod_exp_lam2_m_lam1_v;
+            = theta_v + one_m_t_prod_exp_lam2_m_lam1_v;
         d_theta
           = one_m_exp_lam2_m_lam1
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1;
         d_lambda1
           = theta
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1;
         d_lambda2
           = one_m_t_prod_exp_lam2_m_lam1
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1;
         d_theta_v
           = one_m_exp_lam2_m_lam1_v
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
         d_lambda1_v
           = theta_v
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
         d_lambda2_v
           = one_m_t_prod_exp_lam2_m_lam1_v
-          / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
+            / t_plus_one_m_t_prod_exp_lam2_m_lam1_v;
         d2_theta
           = lambda1_d * (1.0 / t_plus_one_m_t_prod_exp_lam2_m_lam1
                           - d_lambda1 * d_theta)
@@ -182,7 +182,7 @@ VEC log_mix_D3(double theta, double lambda1, double lambda2,
           = lambda1_d * (exp_lam1_m_lam2 / one_m_t_plus_t_prod_exp_lam1_m_lam2
                             - d_lambda1 * d_theta)
           - lambda2_d * (1.0 / one_m_t_plus_t_prod_exp_lam1_m_lam2 + d_lambda2
-                            * d_theta)
+                             * d_theta)
           - theta_d * pow(d_theta, 2.0);
         d2_lambda1
           = lambda1_d * (d_lambda1 - pow(d_lambda1, 2.0))
@@ -193,35 +193,35 @@ VEC log_mix_D3(double theta, double lambda1, double lambda2,
           = lambda2_d * (d_lambda2 - pow(d_lambda2, 2.0))
           - lambda1_d * d_lambda1 * d_lambda2
           - theta_d * (1.0 / one_m_t_plus_t_prod_exp_lam1_m_lam2 + d_theta
-                            * d_lambda2);
+                           * d_lambda2);
         d2_theta_v
           = lambda1_d * (exp_lam1_m_lam2_v
               / one_m_t_plus_t_prod_exp_lam1_m_lam2_v - d_lambda1_v * d_theta_v)
           - lambda2_d * (1.0 / one_m_t_plus_t_prod_exp_lam1_m_lam2_v
-                            + d_lambda2_v * d_theta_v)
+                             + d_lambda2_v * d_theta_v)
           - theta_d * pow(d_theta_v, 2.0);
         d2_lambda1_v
           = lambda1_d * (d_lambda1_v - pow(d_lambda1_v, 2.0))
           - lambda2_d * d_lambda1_v * d_lambda2_v
           + theta_d * (exp_lam1_m_lam2_v / one_m_t_plus_t_prod_exp_lam1_m_lam2_v
-                            - d_lambda1_v * d_theta_v);
+                    - d_lambda1_v * d_theta_v);
         d2_lambda2_v
           = lambda2_d * (d_lambda2_v - pow(d_lambda2_v, 2.0))
           - lambda1_d * d_lambda1_v * d_lambda2_v
           - theta_d * (1.0 / one_m_t_plus_t_prod_exp_lam1_m_lam2_v
-                            + d_theta_v * d_lambda2_v);
+                           + d_theta_v * d_lambda2_v);
       }
 
     double deriv
       = d_theta * theta_d + d_lambda2 * lambda2_d
-               + d_lambda1 * lambda1_d;
+                + d_lambda1 * lambda1_d;
     double deriv_2
       = d2_theta * theta_d2 + d2_lambda1 * lambda1_d2
-      + d2_lambda2 * lambda2_d2;
+                 + d2_lambda2 * lambda2_d2;
 
     var deriv_2_v
       = d2_theta_v * theta_d2 + d2_lambda1_v * lambda1_d2
-      + d2_lambda2_v * lambda2_d2;
+                   + d2_lambda2_v * lambda2_d2;
 
     VEC d1_d2_d3;
     VEC d3 = cgrad(deriv_2_v, theta_v, lambda1_v, lambda2_v);
@@ -503,7 +503,7 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_1_D3(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1, lambda2_ffv),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -557,7 +557,7 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_2_D3(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1_ffv, lambda2),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -596,7 +596,7 @@ void test_log_mix_2xdouble_fvar_fvar_var_theta_D2(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1, lambda2),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -710,7 +710,7 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_1_D2(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1, lambda2_ffv),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -762,7 +762,7 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_2_D2(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1_ffv, lambda2),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -868,7 +868,7 @@ void test_log_mix_3xfvar_fvar_var_D3(double theta,
   theta_ffv_invalid.d_.val_ = theta_d;
 
   EXPECT_THROW(log_mix(theta_ffv_invalid, lambda1_ffv, lambda2_ffv),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -904,7 +904,7 @@ void test_log_mix_3xfvar_fvar_var_D2(double theta,
                           lambda2_ffv.val_.val_.val());
 
   VEC g2_func = cgrad(res.d_.val_, theta_ffv.val_.val_, lambda1_ffv.val_.val_,
-     lambda2_ffv.val_.val_);
+                      lambda2_ffv.val_.val_);
 
   VEC auto_calc = log_mix_D3(theta, lambda1, lambda2,
                              theta_d, lambda1_d, lambda2_d,
@@ -956,7 +956,7 @@ void test_log_mix_2xfvar_var_lam_2_double(double theta,
   fvar<var> theta_fv_invalid(-1.0, theta_d);
 
   EXPECT_THROW(log_mix(theta_fv_invalid, lambda1_fv, lambda2),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -995,7 +995,7 @@ void test_log_mix_2xfvar_var_lam_1_double(double theta,
   fvar<var> theta_fv_invalid(-1.0, theta_d);
 
   EXPECT_THROW(log_mix(theta_fv_invalid, lambda1, lambda2_fv),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 
@@ -1063,7 +1063,7 @@ void test_log_mix_2xdouble_theta_fvar_var(double theta,
   fvar<var> theta_fv_invalid(-1.0, theta_d);
 
   EXPECT_THROW(log_mix(theta_fv_invalid, lambda1, lambda2),
-                std::domain_error);
+               std::domain_error);
   stan::math::recover_memory();
 }
 

@@ -36,7 +36,8 @@ TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_fd) {
   stan::math::matrix_fd m;
 
   m.resize(2, 2);
-  m << 1.0, 2.0, 2.0, 3.0;
+  m << 1.0, 2.0,
+       2.0, 3.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 
   m.resize(0, 0);
@@ -47,7 +48,8 @@ TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_fd) {
 
   // not symmetric
   m.resize(2, 2);
-  m << 1.0, 2.0, 3.0, 4.0;
+  m << 1.0, 2.0,
+       3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 
@@ -55,7 +57,8 @@ TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_ffd) {
   stan::math::matrix_ffd m;
 
   m.resize(2, 2);
-  m << 1.0, 2.0, 2.0, 3.0;
+  m << 1.0, 2.0,
+       2.0, 3.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 
   m.resize(0, 0);
@@ -66,13 +69,15 @@ TEST(AgradFwdMatrixCholeskyDecompose, exception_mat_ffd) {
 
   // not symmetric
   m.resize(2, 2);
-  m << 1.0, 2.0, 3.0, 4.0;
+  m << 1.0, 2.0,
+       3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 
 TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
   stan::math::matrix_fd m0(2, 2);
-  m0 << 2, 1, 1, 2;
+  m0 << 2, 1,
+        1, 2;
   m0(0, 0).d_ = 1.0;
   m0(0, 1).d_ = 1.0;
   m0(1, 0).d_ = 1.0;
@@ -94,7 +99,8 @@ TEST(AgradFwdMatrixCholeskyDecompose, mat_fd) {
 
 TEST(AgradFwdMatrixCholeskyDecompose, mat_ffd) {
   stan::math::matrix_ffd m0(2, 2);
-  m0 << 4, 1, 1, 4;
+  m0 << 4, 1,
+        1, 4;
   m0(0, 0).d_ = 1.0;
   m0(0, 1).d_ = 1.0;
   m0(1, 0).d_ = 1.0;

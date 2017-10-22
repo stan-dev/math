@@ -22,7 +22,9 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_double) {
            0.0,  0.0, 0.0,  0.0, 2.0;
 
   Matrix<fvar<double>, Dynamic, 1> w(3, 1);
-  w << 1.0, 0.5, 1.5;
+  w << 1.0,
+       0.5,
+       1.5;
 
   for (int i = 0; i < 5; i++) {
     mu(i).d_ = 1.0;
@@ -66,7 +68,9 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_double) {
            0.0,  0.0, 0.0,  0.0, 2.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> w(3, 1);
-  w << 1.0, 0.5, 1.5;
+  w << 1.0,
+       0.5,
+       1.5;
 
   for (int i = 0; i < 5; i++) {
     mu(i).d_.val_ = 1.0;
@@ -89,7 +93,7 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_double) {
   }
 
   EXPECT_FLOAT_EQ(lp_ref.val_.val_,
-                    stan::math::multi_gp_cholesky_log(y, L, w).val_.val_);
+                  stan::math::multi_gp_cholesky_log(y, L, w).val_.val_);
   EXPECT_FLOAT_EQ(-74.572952,
-                    stan::math::multi_gp_cholesky_log(y, L, w).d_.val_);
+                  stan::math::multi_gp_cholesky_log(y, L, w).d_.val_);
 }

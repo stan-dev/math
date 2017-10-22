@@ -7,6 +7,6 @@ TEST(MetaTraits, containsNonconstantStruct) {
   using std::vector;
   EXPECT_FALSE(contains_nonconstant_struct<vector<double> >::value);
   EXPECT_FALSE(contains_nonconstant_struct<vector<vector<double> > >::value);
-  EXPECT_FALSE(contains_nonconstant_struct
-                                  <vector<vector<vector<double> > > >::value);
+  EXPECT_FALSE(
+    contains_nonconstant_struct<vector<vector<vector<double> > > >::value);
 }

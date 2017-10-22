@@ -65,18 +65,20 @@ TEST(RevMath, cov_exp_quad_vvv) {
       double sq_l = stan::math::square(l.val());
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
       EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+        stan::math::square(sigma.val()) * exp_val,
+        cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[1])
+      EXPECT_FLOAT_EQ(
+        sigma.val() * sigma.val() * exp_val * sq_distance/(sq_l * l.val()),
+        grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * -distance/sq_l, grad[2])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -distance/sq_l,
+                      grad[2])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * distance/sq_l, grad[3])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * distance/sq_l,
+                      grad[3])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -111,23 +113,22 @@ TEST(RevMath, cov_exp_quad_vvd) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l);
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * -distance/sq_l, grad[1])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * -distance/sq_l,
+                      grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * distance/sq_l, grad[2])
+      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val * distance/sq_l,
+                      grad[2])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
     }
   }
 }
-
 
 TEST(RevMath, cov_exp_quad_vdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
@@ -155,17 +156,17 @@ TEST(RevMath, cov_exp_quad_vdv) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l.val());
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[0])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance/(sq_l * l.val()),
+                      grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * -distance/sq_l, grad[1])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -distance/sq_l,
+                      grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * distance/sq_l, grad[2])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * distance/sq_l,
+                      grad[2])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -198,14 +199,14 @@ TEST(RevMath, cov_exp_quad_vdd) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l);
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * -distance/sq_l, grad[0])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * -distance/sq_l,
+                      grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * distance/sq_l, grad[1])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * distance/sq_l,
+                      grad[1])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -238,13 +239,14 @@ TEST(RevMath, cov_exp_quad_dvv) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l.val());
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[1])
+      EXPECT_FLOAT_EQ(
+        sigma.val() * sigma.val() * exp_val * sq_distance/(sq_l * l.val()),
+        grad[1])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -276,8 +278,8 @@ TEST(RevMath, cov_exp_quad_dvd) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l);
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
@@ -313,8 +315,8 @@ TEST(RevMath, cov_exp_quad_ddv) {
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[0]);
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance/(sq_l * l.val()),
+                      grad[0]);
 
       stan::math::recover_memory();
     }
@@ -366,23 +368,20 @@ TEST(RevMath, cov_exp_quad_vector_vvv) {
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[1])
+      EXPECT_FLOAT_EQ(
+        sigma.val() * sigma.val() * exp_val * sq_distance/(sq_l * l.val()),
+        grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](0).val() - x[j](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
                       grad[2])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](1).val() - x[j](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
                       grad[3])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](0).val() - x[i](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
                       grad[4])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](1).val() - x[i](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
                       grad[5])
         << "index: (" << i << ", " << j << ")";
 
@@ -435,20 +434,16 @@ TEST(RevMath, cov_exp_quad_vector_vvd) {
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](0).val() - x[j](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
                       grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](1).val() - x[j](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
                       grad[2])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](0).val() - x[i](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
                       grad[3])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](1).val() - x[i](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
                       grad[4])
         << "index: (" << i << ", " << j << ")";
 
@@ -499,23 +494,19 @@ TEST(RevMath, cov_exp_quad_vector_vdv) {
       EXPECT_FLOAT_EQ(
         stan::math::square(sigma) * exp_val, cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[0])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance/(sq_l * l.val()),
+                      grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](0).val() - x[j](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
                       grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](1).val() - x[j](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
                       grad[2])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](0).val() - x[i](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
                       grad[3])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](1).val() - x[i](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
                       grad[4])
         << "index: (" << i << ", " << j << ")";
 
@@ -545,7 +536,6 @@ TEST(RevMath, cov_exp_quad_vector_vdd) {
       x[1] = x1;
       x[2] = x2;
 
-
       EXPECT_NO_THROW(cov = stan::math::cov_exp_quad(x, sigma, l));
 
       std::vector<double> grad;
@@ -565,20 +555,16 @@ TEST(RevMath, cov_exp_quad_vector_vdd) {
       EXPECT_FLOAT_EQ(
         stan::math::square(sigma) * exp_val, cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](0).val() - x[j](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](0).val() - x[j](0).val()) / sq_l,
                       grad[0])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[i](1).val() - x[j](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[i](1).val() - x[j](1).val()) / sq_l,
                       grad[1])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](0).val() - x[i](0).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](0).val() - x[i](0).val()) / sq_l,
                       grad[2])
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(-cov(i, j).val()
-                      * (x[j](1).val() - x[i](1).val()) / sq_l,
+      EXPECT_FLOAT_EQ(-cov(i, j).val() * (x[j](1).val() - x[i](1).val()) / sq_l,
                       grad[3])
         << "index: (" << i << ", " << j << ")";
 
@@ -637,8 +623,8 @@ TEST(RevMath, cov_exp_quad_vector_dvv) {
 
       double sq_l = stan::math::square(l.val());
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val,
                       grad[0])
@@ -693,8 +679,8 @@ TEST(RevMath, cov_exp_quad_vector_dvd) {
       double sq_distance = stan::math::square(distance);
       double sq_l = stan::math::square(l);
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
-      EXPECT_FLOAT_EQ(
-        stan::math::square(sigma.val()) * exp_val, cov(i, j).val())
+      EXPECT_FLOAT_EQ(stan::math::square(sigma.val()) * exp_val,
+                      cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
       EXPECT_FLOAT_EQ(2 * sigma.val() * exp_val, grad[0])
         << "index: (" << i << ", " << j << ")";
@@ -740,8 +726,8 @@ TEST(RevMath, cov_exp_quad_vector_ddv) {
       double exp_val = exp(sq_distance / (-2.0 * sq_l));
       EXPECT_FLOAT_EQ(stan::math::square(sigma) * exp_val, cov(i, j).val())
         << "index: (" << i << ", " << j << ")";
-      EXPECT_FLOAT_EQ(sigma * sigma * exp_val
-                      * sq_distance/(sq_l * l.val()), grad[0])
+      EXPECT_FLOAT_EQ(sigma * sigma * exp_val * sq_distance/(sq_l * l.val()),
+                      grad[0])
         << "index: (" << i << ", " << j << ")";
 
       stan::math::recover_memory();
@@ -924,7 +910,7 @@ TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
         sigma.val() * sigma.val()
                     * exp(squared_distance(x2_vec[i], x2_rvec[j]).val()
                                               / (- 2.0 * l.val() * l.val())),
-                      cov3(i, j).val())
+        cov3(i, j).val())
         << "index: (" << i << ", " << j << ")";
 
   Eigen::Matrix<var, -1, -1> cov4;

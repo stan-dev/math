@@ -21,7 +21,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
   fvar<double> g_b;
 
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a,
-                                  dig_b, dig_sum, beta_ab);
+                                dig_b, dig_sum, beta_ab);
   EXPECT_FLOAT_EQ(-0.36651629442883944183907601651838247842001142107486495485,
                   g_a.val_);
   EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,
@@ -48,7 +48,7 @@ TEST(ProbInternalMath, grad_reg_inc_beta_ffd) {
   fvar<fvar<double> > g_b;
 
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a,
-                                  dig_b, dig_sum, beta_ab);
+                                dig_b, dig_sum, beta_ab);
   EXPECT_FLOAT_EQ(-0.36651629442883944183907601651838247842001142107486495485,
                   g_a.val_.val_);
   EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,

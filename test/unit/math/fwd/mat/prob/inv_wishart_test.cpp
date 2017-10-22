@@ -17,13 +17,13 @@ TEST(ProbDistributionsInvWishart, fvar_double) {
 
   Matrix<fvar<double>, Dynamic, Dynamic> Y(3, 3);
   Y <<  12.147233, -11.9036079, 1.0910458,
-    -11.903608,  16.7585782, 0.8530256,
-    1.091046,   0.8530256, 2.5786609;
+       -11.903608, 16.7585782, 0.8530256,
+        1.091046, 0.8530256, 2.5786609;
 
   Matrix<fvar<double>, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 7.785215,  3.0597878,  1.1071663,
-    3.059788, 10.3515035, -0.1232598,
-    1.107166, -0.1232598,  7.7623386;
+           3.059788, 10.3515035, -0.1232598,
+           1.107166, -0.1232598,  7.7623386;
 
   double dof = 4.0;
   double log_p = log(2.008407e-08);
@@ -36,7 +36,7 @@ TEST(ProbDistributionsInvWishart, fvar_double) {
 
   EXPECT_NEAR(log_p, stan::math::inv_wishart_log(Y, dof, Sigma).val_, 0.01);
   EXPECT_NEAR(-1.4893348387330674,
-                stan::math::inv_wishart_log(Y, dof, Sigma).d_, 0.01);
+              stan::math::inv_wishart_log(Y, dof, Sigma).d_, 0.01);
 }
 
 TEST(ProbDistributionsInvWishart, fvar_fvar_double) {
@@ -44,13 +44,13 @@ TEST(ProbDistributionsInvWishart, fvar_fvar_double) {
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Y(3, 3);
   Y <<  12.147233, -11.9036079, 1.0910458,
-    -11.903608,  16.7585782, 0.8530256,
-    1.091046,   0.8530256, 2.5786609;
+       -11.903608, 16.7585782, 0.8530256,
+        1.091046, 0.8530256, 2.5786609;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 7.785215,  3.0597878,  1.1071663,
-    3.059788, 10.3515035, -0.1232598,
-    1.107166, -0.1232598,  7.7623386;
+           3.059788, 10.3515035, -0.1232598,
+           1.107166, -0.1232598,  7.7623386;
 
   double dof = 4.0;
   double log_p = log(2.008407e-08);
@@ -62,8 +62,8 @@ TEST(ProbDistributionsInvWishart, fvar_fvar_double) {
     }
 
   EXPECT_NEAR(log_p,
-                stan::math::inv_wishart_log(Y, dof, Sigma).val_.val_, 0.01);
+              stan::math::inv_wishart_log(Y, dof, Sigma).val_.val_, 0.01);
   EXPECT_NEAR(-1.4893348387330674,
-                stan::math::inv_wishart_log(Y, dof, Sigma).d_.val_, 0.01);
+              stan::math::inv_wishart_log(Y, dof, Sigma).d_.val_, 0.01);
 }
 

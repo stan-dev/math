@@ -34,7 +34,7 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   b2 = 1.1;
   z = 1.0;
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
 
   // a1 is too big
   a1 = 40.0;
@@ -44,7 +44,7 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   b2 = 10.0;
   z = 1.0;
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
 
   a1 = 5.0;
   a2 = 0.0;
@@ -62,7 +62,7 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   // outside of radius of convergence for current implementation.
   z = 1.3;
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;
@@ -90,9 +90,9 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   // limits of range?
   z = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;
@@ -102,9 +102,9 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   // limits of range?
   z = -1.0 * std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z),
-                std::domain_error);
+               std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;

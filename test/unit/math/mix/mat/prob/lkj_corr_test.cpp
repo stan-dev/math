@@ -42,7 +42,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
   fvar<var> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<var> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
-                   stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val());
+                  stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val());
   EXPECT_FLOAT_EQ(6.7766843,
                   stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val());
   eta = 1.0;

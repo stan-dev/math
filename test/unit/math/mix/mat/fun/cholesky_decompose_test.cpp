@@ -51,8 +51,8 @@ void test_hessians(int size) {
       stan::math::hessian(functowns[i][j], x, evals_ad(i, j),
                           grads_ad[i][j], hess_ad[i][j]);
       stan::math::finite_diff_hessian(functowns[i][j], x,
-                                       evals_fd(i, j), grads_fd[i][j],
-                                       hess_fd[i][j]);
+                                      evals_fd(i, j), grads_fd[i][j],
+                                      hess_fd[i][j]);
       for (int m = 0; m < numels; ++m)
         for (int n = 0; n < numels; ++n)
           EXPECT_NEAR(hess_fd[i][j](m, n), hess_ad[i][j](m, n), 1e-08);
@@ -93,7 +93,7 @@ void test_grad_hessians(int size) {
   for (size_t i = 0; i < static_cast<size_t>(size); ++i)
     for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
       stan::math::grad_hessian(functowns[i][j], x, evals_ad(i, j),
-                                hess_ad[i][j], grad_hess_ad[i][j]);
+                               hess_ad[i][j], grad_hess_ad[i][j]);
       stan::math::finite_diff_grad_hessian(functowns[i][j], x,
                                            evals_fd(i, j), hess_fd[i][j],
                                            grad_hess_fd[i][j]);
@@ -111,7 +111,7 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_fv) {
 
   m.resize(2, 2);
   m << 1.0, 2.0,
-    2.0, 3.0;
+       2.0, 3.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 
   m.resize(0, 0);
@@ -123,7 +123,7 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_fv) {
   // not symmetric
   m.resize(2, 2);
   m << 1.0, 2.0,
-    3.0, 4.0;
+       3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 
@@ -132,7 +132,7 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_ffv) {
 
   m.resize(2, 2);
   m << 1.0, 2.0,
-    2.0, 3.0;
+       2.0, 3.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 
   m.resize(0, 0);
@@ -144,7 +144,7 @@ TEST(AgradMixMatrixCholeskyDecompose, exception_mat_ffv) {
   // not symmetric
   m.resize(2, 2);
   m << 1.0, 2.0,
-    3.0, 4.0;
+       3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 

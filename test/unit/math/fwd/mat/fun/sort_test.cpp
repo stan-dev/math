@@ -360,22 +360,22 @@ TEST(MathMatrix, sortDescStdVecNan) {
 
 TEST(MathMatrix, sortAscEigenVecNan) {
   test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
-  test_sort_asc_throws<Eigen::Matrix<
-                            stan::math::fvar<fvar<double> >, -1, 1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
+                                     -1, 1> >();
 }
 TEST(MathMatrix, sortAscEigenRowVecNan) {
   test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
-  test_sort_asc_throws<Eigen::Matrix<
-                            stan::math::fvar<fvar<double> >, 1, -1> >();
+  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
+                                     1, -1> >();
 }
 
 TEST(MathMatrix, sortDescEigenVecNan) {
   test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
-  test_sort_desc_throws<Eigen::Matrix<
-                            stan::math::fvar<fvar<double> >, -1, 1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
+                                      -1, 1> >();
 }
 TEST(MathMatrix, sortDescEigenRowVecNan) {
   test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
-  test_sort_desc_throws<Eigen::Matrix<
-                            stan::math::fvar<fvar<double> >, 1, -1> >();
+  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
+                                      1, -1> >();
 }

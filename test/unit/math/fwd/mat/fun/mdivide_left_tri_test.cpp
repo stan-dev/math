@@ -11,13 +11,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_matrix_fd_lower) {
   matrix_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -44,7 +44,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_vector_fd_lower) {
   vector_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -70,13 +70,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_matrix_d_lower) {
   matrix_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
 
   I = mdivide_left_tri<Eigen::Lower>(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_);
@@ -100,7 +100,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_vector_d_lower) {
   vector_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -124,9 +124,9 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_matrix_fd_lower) {
   matrix_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -153,7 +153,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_vector_fd_lower) {
   vector_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -194,53 +194,53 @@ TEST(AgradFwdMatrixMdivideLeftTri, fd_exceptions_lower) {
   vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, vd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, vd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_ffd_lower) {
@@ -252,13 +252,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_ffd_lower) {
   matrix_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -284,7 +284,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_vector_ffd_lower) {
   vector_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -309,13 +309,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_d_lower) {
   matrix_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
 
   I = mdivide_left_tri<Eigen::Lower>(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val_);
@@ -338,7 +338,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_vector_d_lower) {
   vector_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -361,9 +361,9 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_matrix_ffd_lower) {
   matrix_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -389,7 +389,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_vector_ffd_lower) {
   vector_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -430,53 +430,53 @@ TEST(AgradFwdMatrixMdivideLeftTri, ffd_exceptions_lower) {
   vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv1, vd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fv2, vd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Lower>(fd2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_matrix_fd_upper) {
@@ -488,13 +488,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_matrix_fd_upper) {
   matrix_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -520,7 +520,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_vector_fd_upper) {
   vector_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -545,13 +545,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_matrix_d_upper) {
   matrix_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
 
   I = mdivide_left_tri<Eigen::Upper>(Av, Ad);
   EXPECT_FLOAT_EQ(0.25, I(0, 0).val_);
@@ -574,7 +574,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_vector_d_upper) {
   vector_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -597,9 +597,9 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_matrix_fd_upper) {
   matrix_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -625,7 +625,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_vector_fd_upper) {
   vector_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -666,53 +666,53 @@ TEST(AgradFwdMatrixMdivideLeftTri, fd_exceptions_upper) {
   vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, vd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, vd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_ffd_upper) {
@@ -724,13 +724,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_ffd_upper) {
   matrix_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -756,7 +756,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_vector_ffd_upper) {
   vector_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -781,13 +781,13 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_matrix_d_upper) {
   matrix_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
 
   I = mdivide_left_tri<Eigen::Upper>(Av, Ad);
   EXPECT_FLOAT_EQ(0.25, I(0, 0).val_.val_);
@@ -810,7 +810,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_vector_d_upper) {
   vector_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -833,9 +833,9 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_matrix_ffd_upper) {
   matrix_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Ad << 2.0, 3.0,
-    5.0, 7.0;
+        5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -861,7 +861,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_d_vector_ffd_upper) {
   vector_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -902,53 +902,53 @@ TEST(AgradFwdMatrixMdivideLeftTri, ffd_exceptions_upper) {
   vd2.setZero();
 
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, fd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, fv2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv1, vd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvd2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, rvd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fv2, vd1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd1, vf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, rvf2),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, rvf1),
-                std::invalid_argument);
+               std::invalid_argument);
   EXPECT_THROW(mdivide_left_tri<Eigen::Upper>(fd2, vf1),
-                std::invalid_argument);
+               std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_upper) {
@@ -959,7 +959,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_upper) {
   matrix_fd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -983,7 +983,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_upper) {
   matrix_ffd I;
 
   Av << 3.0, 1.0,
-    0.0, 4.0;
+        0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1007,7 +1007,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_fd_lower) {
   matrix_fd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -1031,7 +1031,7 @@ TEST(AgradFwdMatrixMdivideLeftTri, matrix_ffd_lower) {
   matrix_ffd I;
 
   Av << 3.0, 0.0,
-    1.0, 4.0;
+        1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;

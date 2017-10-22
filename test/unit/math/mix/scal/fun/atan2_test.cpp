@@ -127,7 +127,7 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_.val());
   EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5)
-                    * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_.val());
+                       * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_.val());
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;

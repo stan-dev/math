@@ -80,7 +80,7 @@ void test_nan_ffv2(const F& f,
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
-                                fvar<var>(1.0, 1.0));
+                                      fvar<var>(1.0, 1.0));
 
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
@@ -128,7 +128,7 @@ void test_nan_ffv4(const F& f,
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
-                                fvar<var>(1.0, 1.0));
+                                      fvar<var>(1.0, 1.0));
 
   if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);

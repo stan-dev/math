@@ -14,22 +14,20 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix) {
   i = 2;
   y.resize(3);
   EXPECT_NO_THROW(
-            stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                               "i", y, i));
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i));
   i = 3;
   EXPECT_NO_THROW(
-            stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                               "i", y, i));
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i));
 
   y.resize(2);
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                                  "i", y, i),
-               std::out_of_range);
+  EXPECT_THROW(
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i),
+    std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                                  "i", y, i),
-               std::out_of_range);
+  EXPECT_THROW(
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i),
+    std::out_of_range);
 }
 
 TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix_nan) {
@@ -44,20 +42,18 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix_nan) {
   i = 2;
   y.resize(3);
   EXPECT_NO_THROW(
-            stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                               "i", y, i));
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i));
   i = 3;
   EXPECT_NO_THROW(
-            stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                               "i", y, i));
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i));
 
   y.resize(2);
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                                  "i", y, i),
-               std::out_of_range);
+  EXPECT_THROW(
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i),
+    std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
-                                                  "i", y, i),
-               std::out_of_range);
+  EXPECT_THROW(
+    stan::math::check_std_vector_index("checkStdVectorIndexMatrix", "i", y, i),
+    std::out_of_range);
 }

@@ -29,10 +29,9 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite) {
   EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_1));
 
   y.resize(3, 3);
-  y <<
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1;
+  y << 1, 0, 0,
+       0, 1, 0,
+       0, 0, 1;
   EXPECT_NO_THROW(check_pos_definite(function, "y", y));
 
   Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_2(y);
@@ -49,7 +48,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
 
   y.resize(3, 4);
   expected_msg << "Expecting a square matrix; rows of y (3) and columns of "
-                  "y (4) must match in size";
+               << "y (4) must match in size";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),
                    std::invalid_argument,
                    expected_msg.str());
@@ -92,10 +91,9 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_symmetric) {
   std::string expected_msg;
 
   y.resize(3, 3);
-  y <<
-    1, 0, 0,
-    0, 1, 0.5,
-    0, 0, 1;
+  y << 1, 0, 0,
+       0, 1, 0.5,
+       0, 0, 1;
 
   expected_msg = "y is not symmetric. y[2,3] = 0.5, but y[3,2] = 0";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y),

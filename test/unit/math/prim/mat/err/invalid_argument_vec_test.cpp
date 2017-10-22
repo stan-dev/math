@@ -94,13 +94,13 @@ TEST_F(ErrorHandlingScalar_invalid_argument_vec, one_indexed) {
     stan::math::invalid_argument_vec
       (function_, y_name_, y, n, msg1_, msg2_);
     FAIL() << "expecting call to invalid_argument_vec<> "
-             << "to throw a invalid_argument, "
+           << "to throw a invalid_argument, "
            << "but threw nothing";
   } catch(std::invalid_argument& e) {
     message = e.what();
   } catch(...) {
     FAIL() << "expecting call to invalid_argument_vec<> "
-             << "to throw a invalid_argument, "
+           << "to throw a invalid_argument, "
            << "but threw a different type";
   }
   EXPECT_NE(std::string::npos, message.find("[6]"));

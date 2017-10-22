@@ -296,9 +296,8 @@ TEST(AgradFwdMatrixCrossProd, 2x3_matrix_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(2, 3);
-  Y << a, b,
-       c, d,
-       e, f;
+  Y << a, b, c,
+       d, e, f;
   matrix_ffd output = stan::math::crossprod(Y);
 
   EXPECT_FLOAT_EQ(2, output(0, 0).val_.val());

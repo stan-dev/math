@@ -48,7 +48,7 @@ TEST(AgradFiniteDiff, gradient) {
 
   stan::math::gradient(norm, norm_vec, norm_eval, grad_norm);
   stan::math::finite_diff_gradient(norm, norm_vec, norm_fin_diff_eval,
-                                    finite_diff_norm);
+                                   finite_diff_norm);
 
   for (int i = 0; i < 3; ++i) {
     EXPECT_NEAR(grad_norm(i), finite_diff_norm(i), 1e-12);
@@ -91,8 +91,8 @@ TEST(AgradFiniteDiff, hessian) {
 
   stan::math::hessian(norm, norm_vec, norm_eval, grad_norm, H_norm);
   stan::math::finite_diff_hessian(norm, norm_vec,
-                                   norm_fin_diff_eval, fin_diff_grad_norm,
-                                   fin_diff_H_norm);
+                                  norm_fin_diff_eval, fin_diff_grad_norm,
+                                  fin_diff_H_norm);
 
   EXPECT_FLOAT_EQ(norm_eval, norm_fin_diff_eval);
   Matrix<double, 3, 3> an_H_norm = norm_hess(norm_vec);
@@ -131,7 +131,7 @@ TEST(AgradFiniteDiff, grad_hessian) {
   Matrix<double, Dynamic, Dynamic> fin_diff_H_f;
   std::vector<Matrix<double, Dynamic, Dynamic> > fin_diff_grad_H_f;
   stan::math::finite_diff_grad_hessian(f, f_vec, f_fin_diff_eval, fin_diff_H_f,
-                                        fin_diff_grad_H_f);
+                                       fin_diff_grad_H_f);
 
   std::vector<Matrix<double, Dynamic, Dynamic> > an_grad_H_f =
     third_order_mixed_grad_hess(f_vec);
@@ -147,8 +147,8 @@ TEST(AgradFiniteDiff, grad_hessian) {
   Matrix<double, Dynamic, Dynamic> fin_diff_H_norm;
   std::vector<Matrix<double, Dynamic, Dynamic> > fin_diff_grad_H_norm;
   stan::math::finite_diff_grad_hessian(norm, norm_vec,
-                                        norm_fin_diff_eval, fin_diff_H_norm,
-                                        fin_diff_grad_H_norm);
+                                       norm_fin_diff_eval, fin_diff_H_norm,
+                                       fin_diff_grad_H_norm);
 
   std::vector<Matrix<double, Dynamic, Dynamic> > an_grad_H_norm =
     norm_grad_hess(norm_vec);
@@ -206,7 +206,7 @@ TEST(AgradFiniteDiff, gradientZeroOneArg) {
 
   stan::math::gradient(sum_f, z_sum_vec, z_grad_eval_sum, z_grad_sum);
   stan::math::finite_diff_gradient(sum_f, z_sum_vec, f_z_grad_eval_sum,
-                                    f_z_grad_sum);
+                                   f_z_grad_sum);
 }
 
 TEST(AgradFiniteDiff, hessianZeroOneArg) {

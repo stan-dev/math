@@ -16,8 +16,8 @@ TEST(ProbDistributionsMultiNormal, fvar_double) {
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<double>, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0,  4.0, 0.0,
+           0.0, 0.0, 5.0;
   for (int i = 0; i < 3; i++) {
     y(i).d_ = 1.0;
     mu(i).d_ = 1.0;
@@ -37,8 +37,8 @@ TEST(ProbDistributionsMultiNormal, fvar_fvar_double) {
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+          -3.0, 4.0, 0.0,
+           0.0, 0.0, 5.0;
   for (int i = 0; i < 3; i++) {
     y(i).d_ = 1.0;
     mu(i).d_ = 1.0;
@@ -46,7 +46,7 @@ TEST(ProbDistributionsMultiNormal, fvar_fvar_double) {
       Sigma(i, j).d_ = 1.0;
   }
   EXPECT_FLOAT_EQ(-11.73908,
-                    stan::math::multi_normal_log(y, mu, Sigma).val_.val_);
+                  stan::math::multi_normal_log(y, mu, Sigma).val_.val_);
   EXPECT_FLOAT_EQ(0.54899865,
-                    stan::math::multi_normal_log(y, mu, Sigma).d_.val_);
+                  stan::math::multi_normal_log(y, mu, Sigma).d_.val_);
 }

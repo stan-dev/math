@@ -35,26 +35,26 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
   low_vec << -2, 0, 0;
   EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
     << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
-       "should pass for index 1";
+    << "should pass for index 1";
 
   x_vec   << -1, 0,  1;
   low_vec << -2, -1, std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                std::domain_error)
     << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
-       "should fail with infinity";
+    << "should fail with infinity";
 
   x_vec   << -1, 0,  std::numeric_limits<double>::infinity();
   low_vec << -2, -1, std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
     << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, both bound and "
-       "value infinity";
+    << "value infinity";
 
   x_vec   << -1, 0,  1;
   low_vec << -2, -1, -std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
     << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, should pass with "
-       "-infinity";
+    << "-infinity";
 
   // x_vec, low
   x_vec   << -1, 0, 1;

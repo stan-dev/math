@@ -73,8 +73,8 @@ TEST_F(StanMathOde, initial_state_dd) {
   std::vector<double> state  = coupled_system_dd.initial_state();
   for (int n = 0; n < N; n++)
     EXPECT_FLOAT_EQ(y0_d[n], state[n])
-      <<
-      "we don't need derivatives of y0; initial state gets the initial values";
+      << "we don't need derivatives of y0; "
+      << "initial state gets the initial values";
   for (size_t n = N; n < state.size(); n++)
     EXPECT_FLOAT_EQ(0.0, state[n]);
 }
@@ -109,8 +109,9 @@ TEST_F(StanMathOde, recover_exception) {
   std::vector<double> theta_v(M, 0.0);
 
   coupled_ode_system<mock_throwing_ode_functor<std::logic_error>,
-  double, double>
-    coupled_system_dd(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
+                     double, double> coupled_system_dd(throwing_ode, y0_d,
+                                                       theta_v, x, x_int,
+                                                       &msgs);
 
   std::vector<double> y(3, 0);
   std::vector<double> dy_dt(3, 0);

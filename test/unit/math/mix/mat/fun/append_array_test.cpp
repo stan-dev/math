@@ -246,9 +246,9 @@ void checkv() {
   std::mt19937 mt(rd());
 
   int r1 = rd() % 5,
-    r2 = rd() % 5 + 1,
-    r3 = rd() % 5 + 1,
-    r4 = rd() % 5;
+      r2 = rd() % 5 + 1,
+      r3 = rd() % 5 + 1,
+      r4 = rd() % 5;
 
   build(r1, r2, r3, x);
   build(r4, r2, r3, y);
@@ -279,10 +279,10 @@ void checkvv() {
   std::mt19937 mt(rd());
 
   int r1 = rd() % 5,
-    r2 = rd() % 5 + 1,
-    r3 = rd() % 5 + 1,
-    r4 = rd() % 5 + 1,
-    r5 = rd() % 5;
+      r2 = rd() % 5 + 1,
+      r3 = rd() % 5 + 1,
+      r4 = rd() % 5 + 1,
+      r5 = rd() % 5;
 
   build(r1, r2, r3, r4, x);
   build(r5, r2, r3, r4, y);

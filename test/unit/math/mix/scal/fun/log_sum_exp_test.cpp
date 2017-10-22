@@ -14,8 +14,8 @@ TEST(AgradFwdLogSumExp, FvarVar_FvarVar_1stDeriv) {
   fvar<var> a = log_sum_exp(x, z);
 
   EXPECT_FLOAT_EQ(log_sum_exp(3.0, 6.0), a.val_.val());
-  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0))
-                    / (exp(3.0) + exp(6.0)), a.d_.val());
+  EXPECT_FLOAT_EQ((1.3 * exp(3.0) + 1.0 * exp(6.0)) / (exp(3.0) + exp(6.0)),
+                  a.d_.val());
 
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;
@@ -76,12 +76,16 @@ TEST(AgradFwdLogSumExp, FvarVar_FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ((1.3 * exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0)
-                   * (1.3* exp(3.0) + exp(6.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[0]);
-  EXPECT_FLOAT_EQ((exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0)
-                   * (1.3* exp(3.0) + exp(6.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[1]);
+  EXPECT_FLOAT_EQ(
+    (1.3 * exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0)
+                    * (1.3 * exp(3.0) + exp(6.0))) / (exp(3.0) + exp(6.0))
+                    / (exp(3.0) + exp(6.0)),
+    g[0]);
+  EXPECT_FLOAT_EQ(
+    (exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0)
+              * (1.3* exp(3.0) + exp(6.0))) / (exp(3.0) + exp(6.0))
+              / (exp(3.0) + exp(6.0)),
+    g[1]);
 }
 TEST(AgradFwdLogSumExp, FvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
@@ -96,8 +100,10 @@ TEST(AgradFwdLogSumExp, FvarVar_Double_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ(1.3 * (exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0) * exp(3.0))
-                  / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)), g[0]);
+  EXPECT_FLOAT_EQ(
+    1.3 * (exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0) * exp(3.0))
+                    / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[0]);
 }
 TEST(AgradFwdLogSumExp, Double_FvarVar_2ndDeriv) {
   using stan::math::fvar;
@@ -112,8 +118,10 @@ TEST(AgradFwdLogSumExp, Double_FvarVar_2ndDeriv) {
   AVEC y = createAVEC(z.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ((exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0) * exp(6.0))
-                  / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)), g[0]);
+  EXPECT_FLOAT_EQ(
+    (exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0) * exp(6.0))
+              / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[0]);
 }
 TEST(AgradFwdLogSumExp, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -207,9 +215,10 @@ TEST(AgradFwdLogSumExp, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ((exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0)
-                   * (exp(3.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[0]);
+  EXPECT_FLOAT_EQ(
+    (exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0) * (exp(3.0)))
+              / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[0]);
   EXPECT_FLOAT_EQ(-0.045176659, g[1]);
 }
 TEST(AgradFwdLogSumExp, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
@@ -232,9 +241,10 @@ TEST(AgradFwdLogSumExp, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   VEC g;
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(-0.045176659, g[0]);
-  EXPECT_FLOAT_EQ((exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0)
-                   * (exp(6.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[1]);
+  EXPECT_FLOAT_EQ(
+    (exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0) * (exp(6.0)))
+              / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[1]);
 }
 TEST(AgradFwdLogSumExp, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
@@ -252,9 +262,10 @@ TEST(AgradFwdLogSumExp, FvarFvarVar_Double_2ndDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ((exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0)
-                   * (exp(3.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[0]);
+  EXPECT_FLOAT_EQ(
+    (exp(3.0) * (exp(3.0) + exp(6.0)) - exp(3.0) * (exp(3.0)))
+              / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[0]);
 }
 TEST(AgradFwdLogSumExp, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
@@ -272,9 +283,10 @@ TEST(AgradFwdLogSumExp, Double_FvarFvarVar_2ndDeriv) {
   AVEC p = createAVEC(y.val_.val_);
   VEC g;
   a.d_.val_.grad(p, g);
-  EXPECT_FLOAT_EQ((exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0)
-                   * (exp(6.0))) / (exp(3.0) + exp(6.0))
-                  / (exp(3.0) + exp(6.0)), g[0]);
+  EXPECT_FLOAT_EQ(
+    (exp(6.0) * (exp(3.0) + exp(6.0)) - exp(6.0) * (exp(6.0)))
+              / (exp(3.0) + exp(6.0)) / (exp(3.0) + exp(6.0)),
+    g[0]);
 }
 TEST(AgradFwdLogSumExp, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;

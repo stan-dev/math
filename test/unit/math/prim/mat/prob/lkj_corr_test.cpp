@@ -61,7 +61,7 @@ TEST(ProbDistributionsLKJCorr, error_check) {
   EXPECT_NO_THROW(stan::math::lkj_corr_rng(5, 1.0, rng));
 
   EXPECT_THROW(stan::math::lkj_corr_cholesky_rng(5, -1.0, rng),
-                std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::lkj_corr_rng(5, -1.0, rng), std::domain_error);
 }
 

@@ -428,10 +428,10 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_vector) {
 
   output = divide(v1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
-                    output(0).val_.val());
+                  output(0).val_.val());
   EXPECT_TRUE(std::isnan(output(1).val_.val()));
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
-                    output(2).val_.val());
+                  output(2).val_.val());
   EXPECT_TRUE(std::isnan(output(0).d_.val()));
   EXPECT_TRUE(std::isnan(output(1).d_.val()));
   EXPECT_TRUE(std::isnan(output(2).d_.val()));
@@ -544,7 +544,8 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_matrix) {
   b.d_.val_ = 1.0;
   c.d_.val_ = 1.0;
   d.d_.val_ = 1.0;
-  d1 << 100, 0, -3, 4;
+  d1 << 100, 0,
+       -3, 4;
   v1 << a, b, c, d;
   d2 = -2;
   v2.val_.val_ = -2;

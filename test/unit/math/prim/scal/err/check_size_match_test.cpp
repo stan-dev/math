@@ -31,9 +31,9 @@ TEST(ErrorHandlingMatrix, checkSizeMatch) {
   y = 2;
   EXPECT_NO_THROW(check_size_match("checkSizeMatch", "x", x, "y", y));
   EXPECT_NO_THROW(check_size_match("checkSizeMatch", "expr_x ", "x", x,
-                                    "expr_y ", "y", y));
+                                   "expr_y ", "y", y));
   EXPECT_NO_THROW(check_size_match("checkSizeMatch", "y", y, "x", x));
   EXPECT_NO_THROW(check_size_match("checkSizeMatch", "expr_y ", "y", y,
-                                    "expr_x", "x", x));
+                                   "expr_x", "x", x));
 }
 

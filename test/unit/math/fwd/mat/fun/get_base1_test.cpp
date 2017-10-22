@@ -46,7 +46,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_fd) {
     for (size_t n = 1; n <= N; ++n) {
       fvar<double>  expected = x[m - 1][n - 1];
       fvar<double>  found = get_base1(get_base1(x, m, "x[m]", 1),
-                               n, "x[m][n]", 2);
+                                      n, "x[m][n]", 2);
       EXPECT_FLOAT_EQ(expected.val_, found.val_);
     }
   }
@@ -75,7 +75,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_fd) {
       EXPECT_FLOAT_EQ(x(i, j).val_,
                       get_base1(x, i+1, j+1, "x", 1).val_);
       EXPECT_FLOAT_EQ(x(i, j).val_,
-          get_base1(x, i+1, "x", 1)(0, j).val_);
+                      get_base1(x, i+1, "x", 1)(0, j).val_);
       Matrix<fvar<double> , 1, Dynamic> xi
         = get_base1<fvar<double> >(x, i+1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_, xi[j].val_);
@@ -153,7 +153,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_8_fd) {
                 for (size_t i8 = 0; i8 < x8[0][0][0][0][0][0][0].size(); ++i8)
                   EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8].val_,
                                   get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1,
-                                              i6+1, i7+1, i8+1, "x8", 1).val_);
+                                            i6+1, i7+1, i8+1, "x8", 1).val_);
 }
 
 
@@ -199,7 +199,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_ffd) {
     for (size_t n = 1; n <= N; ++n) {
       fvar<fvar<double> >  expected = x[m - 1][n - 1];
       fvar<fvar<double> >  found = get_base1(get_base1(x, m, "x[m]", 1),
-                               n, "x[m][n]", 2);
+                                             n, "x[m][n]", 2);
       EXPECT_FLOAT_EQ(expected.val_.val_, found.val_.val_);
     }
   }
@@ -228,7 +228,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_ffd) {
       EXPECT_FLOAT_EQ(x(i, j).val_.val_,
                       get_base1(x, i+1, j+1, "x", 1).val_.val_);
       EXPECT_FLOAT_EQ(x(i, j).val_.val_,
-          get_base1(x, i+1, "x", 1)(0, j).val_.val_);
+                      get_base1(x, i+1, "x", 1)(0, j).val_.val_);
       Matrix<fvar<fvar<double> > , 1, Dynamic> xi
         = get_base1<fvar<fvar<double> > >(x, i+1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val_, xi[j].val_.val_);
@@ -307,5 +307,5 @@ TEST(AgradFwdMatrixGetBase1, get_base1_8_ffd) {
                   EXPECT_FLOAT_EQ(x8[i1][i2][i3][i4][i5][i6][i7][i8].val_.val_,
                                   get_base1(x8, i1+1, i2+1, i3+1, i4+1, i5+1,
                                               i6+1, i7+1, i8+1, "x8", 1)
-                                  .val_.val_);
+                                              .val_.val_);
 }

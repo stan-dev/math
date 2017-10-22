@@ -36,7 +36,6 @@ std::string pull_msg(std::vector<T_x1> x1,
   return message;
 }
 
-
 TEST(MathPrimMat, vec_double_cov_exp_quad1) {
   double sigma = 0.2;
   double l = 5;
@@ -387,17 +386,14 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
     << msg3;
 
-
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
                                         std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l_bad),
                                         std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
@@ -448,8 +444,6 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
     << msg3;
 
-
-
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
@@ -461,7 +455,6 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
@@ -474,7 +467,6 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad_2, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_3, sigma_bad, l_bad),
@@ -517,7 +509,6 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
     << msg3;
 
-
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
@@ -562,14 +553,12 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma, l_bad),
@@ -606,8 +595,6 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
     << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
     << msg3;
-
-
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
@@ -652,14 +639,12 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_2, sigma_bad, l_bad),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_vec_2, sigma, l_bad),
@@ -688,21 +673,18 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x1_bad, x2_bad, sigma, l),
                 std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1_bad, x_vec_2, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_vec_2_bad, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1_bad, x_vec_2_bad, sigma, l),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1, x_rvec_2_bad, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_rvec_2_bad, sigma, l),
                std::domain_error);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1_bad, x_rvec_2, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_1_bad, x_vec_2, sigma, l),
@@ -789,7 +771,6 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_mixed_cov_exp_quad2) {
                std::invalid_argument);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_1, x_rvec_1, sigma, l),
                std::invalid_argument);
-
   EXPECT_THROW(stan::math::cov_exp_quad(x_rvec_2, x_vec_2, sigma, l),
                std::invalid_argument);
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_2, x_rvec_2, sigma, l),
