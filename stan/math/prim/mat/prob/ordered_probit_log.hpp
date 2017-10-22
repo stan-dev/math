@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
+#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LOG_HPP
+#define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LOG_HPP
 
-#include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
+#include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
@@ -10,7 +10,7 @@ namespace stan {
     /**
      * Returns the (natural) log probability of the integer/s 
      * given the vector of continuous location/s and 
-     * specified cutpoints in an ordered logistic model.
+     * specified cutpoints in an ordered probit model.
      *
      * <p>Typically the continous location
      * will be the dot product of a vector of regression coefficients
@@ -35,22 +35,23 @@ namespace stan {
      * @throw std::invalid_argument if array y and array of vectors
      * c are different lengths.
      *
-     * @deprecated use <code>ordered_logistic_lpmf</code>
+     * @deprecated use <code>ordered_probit_lpmf</code>
      */
     template <bool propto, typename T_y, typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
-      return ordered_logistic_lpmf<propto>(y, lambda, c);
+    ordered_probit_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
+      return ordered_probit_lpmf<propto>(y, lambda, c);
     }
 
     /**
-     * @deprecated use <code>ordered_logistic_lpmf</code>
+     * @deprecated use <code>ordered_probit_lpmf</code>
      */
     template <typename T_y, typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
-      return ordered_logistic_lpmf(y, lambda, c);
+    ordered_probit_log(const T_y& y, const T_loc& lambda, const T_cut& c) {
+      return ordered_probit_lpmf(y, lambda, c);
     }
+
   }
 }
 #endif

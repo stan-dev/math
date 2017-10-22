@@ -1,43 +1,25 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
-#define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
+#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
+#define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/log1m_exp.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/prob/categorical_rng.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <Eigen/StdVector>
+#include <Eigen/Dense>
 #include <string>
 #include <vector>
 
 namespace stan {
   namespace math {
 
-    template <typename T>
-    inline T log_inv_logit_diff(const T& alpha, const T& beta) {
-      using std::exp;
-      return beta + log1m_exp(alpha - beta) - log1p_exp(alpha)
-        - log1p_exp(beta);
-    }
-
     /**
      * Returns the (natural) log probability of the specified integer
      * outcome given the continuous location and specified cutpoints
-     * in an ordered logistic model.
+     * in an ordered probit model.
      *
      * <p>Typically the continous location
      * will be the dot product of a vector of regression coefficients
@@ -59,14 +41,12 @@ namespace stan {
      */
     template <bool propto, typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(int y, const T_loc& lambda,
-                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename return_type<T_loc, T_cut>::type logp_n(0.0);
-
+    ordered_probit_lpmf(int y, const T_loc& lambda,
+                        const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const std::string function = "ordered_probit";
 
       int K = c.size() + 1;
 
@@ -74,30 +54,28 @@ namespace stan {
       check_finite(function, "Location parameter", lambda);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
       check_ordered(function, "Cut-points", c);
-      check_finite(function, "Final cut-point", c(c.size()-1));
-      check_finite(function, "First cut-point", c(0));
+      check_finite(function, "Cut-points", c);
 
       if (y == 1) {
-        logp_n -= log1p_exp(lambda - c[0]);
+        return log1m(Phi(lambda - c[0]));
       } else if (y == K) {
-        logp_n -= log1p_exp(c[K-2] - lambda);
+        return log(Phi(lambda - c[K-2]));
       } else {
-        logp_n += log_inv_logit_diff(c[y-2] - lambda, c[y-1] - lambda);
+        return log(Phi(lambda - c[y-2]) - Phi(lambda - c[y-1]));
       }
-      return logp_n;
     }
 
     template <typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(int y, const T_loc& lambda,
-                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
-      return ordered_logistic_lpmf<false>(y, lambda, c);
+    ordered_probit_lpmf(int y, const T_loc& lambda,
+                        const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c)  {
+      return ordered_probit_lpmf<false>(y, lambda, c);
     }
 
     /**
      * Returns the (natural) log probability of the specified array 
      * of integers given the vector of continuous locations and 
-     * specified cutpoints in an ordered logistic model.
+     * specified cutpoints in an ordered probit model.
      *
      * <p>Typically the continous location
      * will be the dot product of a vector of regression coefficients
@@ -121,15 +99,13 @@ namespace stan {
      */
     template <bool propto, typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(const std::vector<int>& y,
-                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      typename return_type<T_loc, T_cut>::type logp_n(0.0);
-
+    ordered_probit_lpmf(const std::vector<int>& y,
+                        const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                        const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const std::string function = "ordered_probit";
 
       int N = lambda.size();
       int K = c.size() + 1;
@@ -139,17 +115,18 @@ namespace stan {
       check_finite(function, "Location parameter", lambda);
       check_ordered(function, "Cut-points", c);
       check_greater(function, "Size of cut points parameter", c.size(), 0);
-      check_finite(function, "Final cut-point", c(c.size()-1));
-      check_finite(function, "First cut-point", c(0));
+      check_finite(function, "Cut-points", c);
+
+      typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       for (int i = 0; i < N; ++i) {
         if (y[i] == 1) {
-          logp_n -= log1p_exp(lambda[i] - c[0]);
+          logp_n += log1m(Phi(lambda[i] - c[0]));
         } else if (y[i] == K) {
-          logp_n -= log1p_exp(c[K-2] - lambda[i]);
+          logp_n += log(Phi(lambda[i] - c[K-2]));
         } else {
-          logp_n += log_inv_logit_diff(c[y[i]-2] - lambda[i],
-                                    c[y[i]-1] - lambda[i]);
+          logp_n += log(Phi(lambda[i] - c[y[i]-2])
+                          - Phi(lambda[i] - c[y[i]-1]));
         }
       }
       return logp_n;
@@ -157,16 +134,16 @@ namespace stan {
 
     template <typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(const std::vector<int>& y,
-                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                          const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-      return ordered_logistic_lpmf<false>(y, lambda, c);
+    ordered_probit_lpmf(const std::vector<int>& y,
+                        const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                        const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
+      return ordered_probit_lpmf<false>(y, lambda, c);
     }
 
     /**
      * Returns the (natural) log probability of the specified array 
      * of integers given the vector of continuous locations and 
-     * array of specified cutpoints in an ordered logistic model.
+     * array of specified cutpoints in an ordered probit model.
      *
      * <p>Typically the continous location
      * will be the dot product of a vector of regression coefficients
@@ -192,16 +169,14 @@ namespace stan {
      */
     template <bool propto, typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(const std::vector<int>& y,
-                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                          const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
-      typename return_type<T_loc, T_cut>::type logp_n(0.0);
-
+    ordered_probit_lpmf(const std::vector<int>& y,
+                        const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                        const std::vector<Eigen::Matrix<
+                                              T_cut, Eigen::Dynamic, 1>>& c) {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const std::string function = "ordered_probit";
 
       int N = lambda.size();
 
@@ -210,24 +185,26 @@ namespace stan {
 
       for (int i = 0; i < N; ++i) {
         int K = c[i].size() + 1;
-
         check_bounded(function, "Random variable", y[i], 1, K);
         check_greater(function, "Size of cut points parameter", c[i].size(), 0);
         check_ordered(function, "Cut-points", c[i]);
       }
 
-        check_finite(function, "Location parameter", lambda);
-        check_finite(function, "Cut-points", c);
+      check_finite(function, "Location parameter", lambda);
+      check_finite(function, "Cut-points", c);
+
+      typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       for (int i = 0; i < N; ++i) {
         int K = c[i].size() + 1;
+
         if (y[i] == 1) {
-          logp_n -= log1p_exp(lambda[i] - c[i][0]);
+          logp_n += log1m(Phi(lambda[i] - c[i][0]));
         } else if (y[i] == K) {
-          logp_n -= log1p_exp(c[i][K-2] - lambda[i]);
+          logp_n += log(Phi(lambda[i] - c[i][K-2]));
         } else {
-          logp_n += log_inv_logit_diff(c[i][y[i]-2] - lambda[i],
-                                    c[i][y[i]-1] - lambda[i]);
+          logp_n += log(Phi(lambda[i] - c[i][y[i]-2])
+                          - Phi(lambda[i] - c[i][y[i]-1]));
         }
       }
       return logp_n;
@@ -235,11 +212,11 @@ namespace stan {
 
     template <typename T_loc, typename T_cut>
     typename return_type<T_loc, T_cut>::type
-    ordered_logistic_lpmf(const std::vector<int>& y,
-                          const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-                          const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
-      return ordered_logistic_lpmf<false>(y, lambda, c);
+    ordered_probit_lpmf(const std::vector<int>& y,
+                        const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
+                        const std::vector<Eigen::Matrix<
+                                              T_cut, Eigen::Dynamic, 1>>& c) {
+      return ordered_probit_lpmf<false>(y, lambda, c);
     }
   }
 }
