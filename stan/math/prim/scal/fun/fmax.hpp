@@ -18,8 +18,10 @@ namespace stan {
     template <typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
     fmax(const T1& x, const T2& y) {
-      if (is_nan(x)) return y;
-      if (is_nan(y)) return x;
+      if (is_nan(x))
+        return y;
+      if (is_nan(y))
+        return x;
       return x > y ? x : y;
     }
 

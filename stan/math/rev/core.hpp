@@ -21,6 +21,8 @@
 #include <stan/math/rev/core/operator_greater_than_or_equal.hpp>
 #include <stan/math/rev/core/operator_less_than.hpp>
 #include <stan/math/rev/core/operator_less_than_or_equal.hpp>
+#include <stan/math/rev/core/operator_logical_and.hpp>
+#include <stan/math/rev/core/operator_logical_or.hpp>
 #include <stan/math/rev/core/operator_minus_equal.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_multiply_equal.hpp>

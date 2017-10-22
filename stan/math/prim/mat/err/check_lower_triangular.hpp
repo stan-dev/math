@@ -29,8 +29,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_lower_triangular(const char* function,
-                           const char* name,
+    check_lower_triangular(const std::string& function,
+                           const std::string& name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       for (int n = 1; n < y.cols(); ++n) {
         for (int m = 0; m < n && m < y.rows(); ++m) {

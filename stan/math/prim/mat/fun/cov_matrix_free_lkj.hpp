@@ -40,7 +40,7 @@ namespace stan {
       check_nonzero_size("cov_matrix_free_lkj", "y", y);
       check_square("cov_matrix_free_lkj", "y", y);
       size_type k = y.rows();
-      size_type k_choose_2 = (k * (k-1)) / 2;
+      size_type k_choose_2 = (k * (k - 1)) / 2;
       Array<T, Dynamic, 1> cpcs(k_choose_2);
       Array<T, Dynamic, 1> sds(k);
       bool successful = factor_cov_matrix(y, cpcs, sds);

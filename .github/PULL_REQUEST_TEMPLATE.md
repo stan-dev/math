@@ -14,8 +14,6 @@
 
 #### Documentation:
 
-#### Reviewer Suggestions: 
-
 #### Copyright and Licensing
 
 Please list the copyright holder for the work you are submitting (this will be you or your assignee, such as a university or company):

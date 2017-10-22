@@ -6,6 +6,7 @@
 #include <cvodes/cvodes_dense.h>
 #include <nvector/nvector_serial.h>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace stan {
@@ -14,9 +15,9 @@ namespace stan {
     // no-op error handler to silence CVodes error output;  errors handled
     // directly by Stan
     extern "C"
-    inline void cvodes_silent_err_handler(int error_code, const char *module,
-                                   const char *function, char *msg,
-                                   void *eh_data) {
+    inline void cvodes_silent_err_handler(int error_code, const char* module,
+                                          const char* function, char *msg,
+                                          void *eh_data) {
     }
 
     inline void cvodes_check_flag(int flag, const std::string& func_name) {

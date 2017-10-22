@@ -17,6 +17,7 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -55,7 +56,7 @@ namespace stan {
                 const T_dof& nu,
                 const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>&
                 S) {
-      static const char* function("wishart_lpdf");
+      static const std::string function = "wishart_lpdf";
 
       using boost::math::tools::promote_args;
       using Eigen::Dynamic;
@@ -65,7 +66,7 @@ namespace stan {
       typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k
         = W.rows();
       typename promote_args<T_y, T_dof, T_scale>::type lp(0.0);
-      check_greater(function, "Degrees of freedom parameter", nu, k-1);
+      check_greater(function, "Degrees of freedom parameter", nu, k - 1);
       check_square(function, "random variable", W);
       check_square(function, "scale parameter", S);
       check_size_match(function,

@@ -1,28 +1,11 @@
 #include <stan/math/rev/mat.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
-
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
-#include <test/unit/math/prim/arr/functor/lorenz.hpp>
 #include <test/unit/util.hpp>
-
 #include <iostream>
 #include <sstream>
 #include <vector>
-
-template <typename F>
-void sho_death_test(F harm_osc,
-                    std::vector<double>& y0,
-                    double t0,
-                    std::vector<double>& ts,
-                    std::vector<double>& theta,
-                    std::vector<double>& x,
-                    std::vector<int>& x_int) {
-  EXPECT_DEATH(stan::math::integrate_ode_bdf(harm_osc, y0, t0,
-                                             ts, theta, x, x_int,
-                                             1e-8, 1e-10, 1e6, 0),
-               "");
-}
 
 
 template <typename F>
@@ -146,7 +129,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
                    std::domain_error,
                    "times is not a valid ordered vector");
 
-  
+
   // TODO(carpenter): g++6 failure
   std::vector<double> theta_bad;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad,
@@ -398,4 +381,33 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
                      std::domain_error,
                      expected_is_neg_inf.str());
   }
+}
+
+TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
+  using stan::math::integrate_ode_bdf;
+  harm_osc_ode_wrong_size_1_fun harm_osc;
+
+  std::vector<double> theta;
+  theta.push_back(0.15);
+
+  std::vector<double> y0;
+  y0.push_back(1.0);
+  y0.push_back(0.0);
+
+  double t0 = 0;
+
+  std::vector<double> ts;
+  for (int i = 0; i < 100; i++)
+    ts.push_back(t0 + 0.1 * (i + 1));
+
+  std::vector<double> x(3,1);
+  std::vector<int> x_int(2,0);
+
+  std::string error_msg
+    = "ode_system: size of state vector y (2) and derivative vector dy_dt (3) "
+    "in the ODE functor do not match in size.";
+  EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x,
+                                     x_int, 0, 1e-8, 1e-10, 1e6),
+                   std::runtime_error,
+                   error_msg);
 }

@@ -31,7 +31,7 @@ namespace stan {
         return y;
       y[0] = exp(x[0]);
       for (size_type i = 1; i < k; ++i)
-        y[i] = y[i-1] + exp(x[i]);
+        y[i] = y[i - 1] + exp(x[i]);
       return y;
     }
 

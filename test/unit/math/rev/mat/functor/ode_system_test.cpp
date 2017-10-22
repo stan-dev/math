@@ -32,6 +32,8 @@ struct StanMathRevOdeSystem : public ::testing::Test {
   std::vector<double> y0;
   std::vector<double> theta;
   harm_osc_ode_fun ode_rhs;
+  harm_osc_ode_wrong_size_1_fun ode_wrong_size_1_rhs;
+  harm_osc_ode_wrong_size_2_fun ode_wrong_size_2_rhs;
   size_t N;
   size_t M;
   Eigen::MatrixXd Jy_ref;
@@ -44,12 +46,28 @@ struct StanMathRevOdeSystem : public ::testing::Test {
 TEST_F(StanMathRevOdeSystem, ode_system_rhs) {
   stan::math::ode_system<harm_osc_ode_fun> ode_system(ode_rhs, theta, x, x_int, &msgs);
 
-  std::vector<double> dy_dt;
+  Eigen::VectorXd dy_dt(N);
 
   ode_system(t0, y0, dy_dt);
 
   EXPECT_FLOAT_EQ( 2.0, dy_dt[0]);
   EXPECT_FLOAT_EQ(-2.0, dy_dt[1]);
+}
+
+TEST_F(StanMathRevOdeSystem, ode_system_rhs_wrong_size) {
+  Eigen::VectorXd dy_dt(N);
+
+  stan::math::ode_system<harm_osc_ode_wrong_size_1_fun>
+    ode_system1(ode_wrong_size_1_rhs, theta, x, x_int, &msgs);
+  EXPECT_THROW_MSG(ode_system1(t0, y0, dy_dt),
+                   std::runtime_error,
+                   "ode_system: size of state vector y (2) and derivative vector dy_dt (3) in the ODE functor do not match in size.");
+
+  stan::math::ode_system<harm_osc_ode_wrong_size_2_fun>
+    ode_system2(ode_wrong_size_2_rhs, theta, x, x_int, &msgs);
+  EXPECT_THROW_MSG(ode_system2(t0, y0, dy_dt),
+                   std::runtime_error,
+                   "ode_system: size of state vector y (2) and derivative vector dy_dt (1) in the ODE functor do not match in size.");
 }
 
 // ************ jacobian wrt to states ************************
@@ -219,4 +237,3 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_Mv_Mm_Mm) {
     for(size_t j = 0; j < M; j++)
       EXPECT_FLOAT_EQ(Jtheta_ref(i,j), Jtheta(i,j));
 }
-

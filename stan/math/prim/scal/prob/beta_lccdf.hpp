@@ -26,13 +26,14 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the beta log complementary cumulative distribution function for 
-     * the given probability, success, and failure parameters. Given matching 
+     * Returns the beta log complementary cumulative distribution function for
+     * the given probability, success, and failure parameters. Given matching
      * containers returns the log sum of probabilities.
      *
      * @tparam T_y type of probability parameter
@@ -54,11 +55,10 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(alpha)
-              && stan::length(beta) ) )
+      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
-      static const char* function("beta_lccdf");
+      static const std::string function = "beta_lccdf";
 
       using boost::math::tools::promote_args;
 
@@ -122,8 +122,8 @@ namespace stan {
         ccdf_log += log(Pn);
 
         if (!is_constant_struct<T_y>::value)
-          ops_partials.edge1_.partials_[n] -= pow(1-y_dbl, beta_dbl-1)
-            * pow(y_dbl, alpha_dbl-1) / betafunc_dbl / Pn;
+          ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, beta_dbl - 1)
+            * pow(y_dbl, alpha_dbl - 1) / betafunc_dbl / Pn;
 
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;

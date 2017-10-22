@@ -44,6 +44,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_log.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -56,7 +57,7 @@ namespace stan {
     lkj_corr_cholesky_lpdf(const Eigen::Matrix
                           <T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
                           const T_shape& eta) {
-      static const char* function("lkj_corr_cholesky_lpdf");
+      static const std::string function = "lkj_corr_cholesky_lpdf";
 
       using boost::math::tools::promote_args;
 
@@ -78,8 +79,8 @@ namespace stan {
         Eigen::Matrix<lp_ret, Eigen::Dynamic, 1> values(Km1);
         for (int k = 0; k < Km1; k++)
           values(k) = (Km1 - k - 1) * log_diagonals(k);
-        if ( (eta == 1.0) &&
-             stan::is_constant<typename stan::scalar_type<T_shape> >::value) {
+        if ((eta == 1.0) &&
+            stan::is_constant<typename stan::scalar_type<T_shape> >::value) {
           lp += sum(values);
           return(lp);
         }

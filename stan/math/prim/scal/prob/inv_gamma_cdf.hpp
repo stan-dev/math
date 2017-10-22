@@ -26,6 +26,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -55,7 +56,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 1.0;
 
-      static const char* function("inv_gamma_cdf");
+      static const std::string function = "inv_gamma_cdf";
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -122,7 +123,7 @@ namespace stan {
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += beta_dbl * y_inv_dbl * y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl) * pow(beta_dbl
-                                               * y_inv_dbl, alpha_dbl-1)
+                                               * y_inv_dbl, alpha_dbl - 1)
             / tgamma(alpha_dbl) / Pn;
         if (!is_constant_struct<T_shape>::value)
           ops_partials.edge2_.partials_[n]
@@ -132,7 +133,7 @@ namespace stan {
         if (!is_constant_struct<T_scale>::value)
           ops_partials.edge3_.partials_[n] += - y_inv_dbl
             * exp(-beta_dbl * y_inv_dbl)
-            * pow(beta_dbl * y_inv_dbl, alpha_dbl-1)
+            * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1)
             / tgamma(alpha_dbl) / Pn;
       }
 

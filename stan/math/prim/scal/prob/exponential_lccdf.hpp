@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -27,13 +28,12 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 
-      static const char* function("exponential_lccdf");
+      static const std::string function = "exponential_lccdf";
 
       using boost::math::tools::promote_args;
 
       T_partials_return ccdf_log(0.0);
-      if (!(stan::length(y)
-            && stan::length(beta)))
+      if (!(stan::length(y) && stan::length(beta)))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

@@ -26,9 +26,13 @@ namespace stan {
            typename T4 = double, typename T5 = double, typename T6 = double,
            typename T7 = double>
   class VectorBuilder {
-  public:
+  private:
+    typedef
     VectorBuilderHelper<T1, used,
-                        contains_vector<T2, T3, T4, T5, T6, T7>::value> a;
+                        contains_vector<T2, T3, T4, T5, T6, T7>::value> helper;
+  public:
+    typedef typename helper::type type;
+    helper a;
 
     explicit VectorBuilder(size_t n) : a(n) { }
 
@@ -36,9 +40,7 @@ namespace stan {
       return a[i];
     }
 
-    inline typename
-    VectorBuilderHelper<T1, used,
-                        contains_vector<T2, T3, T4, T5, T6, T7>::value>::type
+    inline type
     data() {
       return a.data();
     }

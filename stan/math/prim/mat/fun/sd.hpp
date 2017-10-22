@@ -21,7 +21,8 @@ namespace stan {
     typename boost::math::tools::promote_args<T>::type
     sd(const std::vector<T>& v) {
       check_nonzero_size("sd", "v", v);
-      if (v.size() == 1) return 0.0;
+      if (v.size() == 1)
+        return 0.0;
       return sqrt(variance(v));
     }
 
@@ -36,7 +37,8 @@ namespace stan {
     typename boost::math::tools::promote_args<T>::type
     sd(const Eigen::Matrix<T, R, C>& m) {
       check_nonzero_size("sd", "m", m);
-      if (m.size() == 1) return 0.0;
+      if (m.size() == 1)
+        return 0.0;
       return sqrt(variance(m));
     }
 

@@ -17,6 +17,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -27,10 +28,10 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(y_min) && stan::length(alpha) ) )
+      if (!(stan::length(y) && stan::length(y_min) && stan::length(alpha)))
         return 1.0;
 
-      static const char* function("pareto_cdf");
+      static const std::string function = "pareto_cdf";
 
       using std::log;
       using std::exp;

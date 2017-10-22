@@ -6,12 +6,17 @@
 ##
 ifneq (,$(findstring clang++,$(CC)))
   CC_TYPE ?= clang++
+  # Clang often seems to find the wrong gcc installation, especially on travis.
+  # To deal with that we force it to use llvm's bundled libc++ replacement for
+  # gcc's stdlibc++ here. Plus it's better to rely on just one compiler if we
+  # can.
+  CXXFLAGS += -stdlib=libc++
 endif
 ifneq (,$(findstring mingw32-g++,$(CC)))
   CC_TYPE ?= mingw32-g++
 endif
 ifneq (,$(findstring i686-w64-mingw32-g++,$(CC)))
-  CFLAGS += -m32
+  CXXFLAGS += -m32
 endif
 ifneq (,$(findstring g++,$(CC)))
   CC_TYPE ?= g++

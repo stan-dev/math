@@ -12,9 +12,7 @@ namespace stan {
     // real[] to_array_1d(row_vector)
     // real[] to_array_1d(vector)
     template <typename T, int R, int C>
-    inline std::vector<T> to_array_1d(
-      const Eigen::Matrix<T, R, C> & matrix
-    ) {
+    inline std::vector<T> to_array_1d(const Eigen::Matrix<T, R, C>& matrix) {
       const T* datap = matrix.data();
       int size = matrix.size();
       std::vector<T> result(size);
@@ -26,14 +24,14 @@ namespace stan {
     // real[] to_array_1d(...)
     template <typename T>
     inline std::vector<T>
-    to_array_1d(const std::vector<T> & x) {
+    to_array_1d(const std::vector<T>& x) {
       return x;
     }
 
     // real[] to_array_1d(...)
     template <typename T>
     inline std::vector<typename scalar_type<T>::type>
-    to_array_1d(const std::vector< std::vector<T> > & x) {
+    to_array_1d(const std::vector< std::vector<T> >& x) {
       size_t size1 = x.size();
       size_t size2 = 0;
       if (size1 != 0)

@@ -31,8 +31,8 @@ namespace stan {
 
           avi_->adj_ += adj_ * d_a;
           bvi_->adj_ += adj_ * d_b;
-          cvi_->adj_ += adj_ * std::pow((1-cvi_->val_), bvi_->val_-1)
-            * std::pow(cvi_->val_, avi_->val_-1)
+          cvi_->adj_ += adj_ * std::pow(1 - cvi_->val_, bvi_->val_ - 1)
+            * std::pow(cvi_->val_, avi_->val_ - 1)
             / std::exp(lbeta(avi_->val_, bvi_->val_));
         }
       };

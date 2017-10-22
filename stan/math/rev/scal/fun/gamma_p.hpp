@@ -26,7 +26,8 @@ namespace stan {
           using boost::math::lgamma;
           // return zero derivative as gamma_p is flat
           // to machine precision for b / a > 10
-          if (std::fabs(bvi_->val_ / avi_->val_) > 10 ) return;
+          if (std::fabs(bvi_->val_ / avi_->val_) > 10)
+            return;
 
           avi_->adj_ += adj_
             * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_, 1.0e-10);
@@ -63,7 +64,7 @@ namespace stan {
         void chain() {
           // return zero derivative as gamma_p is flat to
           // machine precision for b / a > 10
-          if (std::fabs(bvi_->val_ / ad_) > 10 )
+          if (std::fabs(bvi_->val_ / ad_) > 10)
             return;
           bvi_->adj_ += adj_
             * (std::exp(-bvi_->val_) * std::pow(bvi_->val_, ad_ - 1.0)

@@ -6,27 +6,46 @@
 namespace stan {
   namespace math {
 
+    /**
+     * Return the product of the two arguments.
+     *
+     * @tparam value and tangent type for variables
+     * @param[in] x first argument
+     * @param[in] y second argument
+     * @return product of arguments
+     */
     template <typename T>
-    inline
-    fvar<T>
-    operator*(const fvar<T>& x1, const fvar<T>& x2) {
-      return fvar<T>(x1.val_ * x2.val_,
-                     x1.d_ * x2.val_ + x1.val_ * x2.d_);
+    inline fvar<T> operator*(const fvar<T>& x, const fvar<T>& y) {
+      return fvar<T>(x.val_ * y.val_,
+                     x.d_ * y.val_ + x.val_ * y.d_);
     }
 
+    /**
+     * Return the product of the two arguments.
+     *
+     * @tparam value and tangent type for variables
+     * @param[in] x first argument
+     * @param[in] y second argument
+     * @return product of arguments
+     */
     template <typename T>
-    inline
-    fvar<T>
-    operator*(double x1, const fvar<T>& x2) {
-      return fvar<T>(x1 * x2.val_, x1 * x2.d_);
+    inline fvar<T> operator*(double x, const fvar<T>& y) {
+      return fvar<T>(x * y.val_, x * y.d_);
     }
 
+    /**
+     * Return the product of the two arguments.
+     *
+     * @tparam value and tangent type for variables
+     * @param[in] x first argument
+     * @param[in] y second argument
+     * @return product of arguments
+     */
     template <typename T>
-    inline
-    fvar<T>
-    operator*(const fvar<T>& x1, double x2) {
-      return fvar<T>(x1.val_ * x2, x1.d_ * x2);
+    inline fvar<T> operator*(const fvar<T>& x, double y) {
+      return fvar<T>(x.val_ * y, x.d_ * y);
     }
+
   }
 }
 #endif

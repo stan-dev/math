@@ -28,9 +28,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if (!(stan::length(y)
-            && stan::length(mu)
-            && stan::length(kappa)))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(kappa)))
         return 0.0;
 
       using stan::is_constant_struct;

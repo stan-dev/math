@@ -17,12 +17,13 @@
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the log PMF of the logit-parametrized Bernoulli distribution. If 
+     * Returns the log PMF of the logit-parametrized Bernoulli distribution. If
      * containers are supplied, returns the log sum of the probabilities.
      *
      * @tparam T_n type of integer parameter
@@ -36,15 +37,14 @@ namespace stan {
     template <bool propto, typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
-      static const char* function("bernoulli_logit_lpmf");
+      static const std::string function = "bernoulli_logit_lpmf";
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
       using stan::is_constant_struct;
       using std::exp;
 
-      if (!(stan::length(n)
-            && stan::length(theta)))
+      if (!(stan::length(n) && stan::length(theta)))
         return 0.0;
 
       T_partials_return logp(0.0);
@@ -64,10 +64,9 @@ namespace stan {
       operands_and_partials<T_prob> ops_partials(theta);
 
       for (size_t n = 0; n < N; n++) {
-        const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        const int sign = 2*n_int-1;
+        const int sign = 2 * n_vec[n] - 1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
 
@@ -81,7 +80,6 @@ namespace stan {
           logp -= log1p(exp_m_ntheta);
 
         if (!is_constant_struct<T_prob>::value) {
-          static const double cutoff = 20.0;
           if (ntheta > cutoff)
             ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
           else if (ntheta < -cutoff)

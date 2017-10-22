@@ -21,13 +21,13 @@ namespace stan {
     // vector to_vector(real[])
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, 1>
-    to_vector(const std::vector<T> & vec) {
+    to_vector(const std::vector<T>& vec) {
       return Eigen::Matrix<T, Eigen::Dynamic, 1>::Map(vec.data(), vec.size());
     }
 
     // vector to_vector(int[])
     inline Eigen::Matrix<double, Eigen::Dynamic, 1>
-    to_vector(const std::vector<int> & vec) {
+    to_vector(const std::vector<int>& vec) {
       int R = vec.size();
       Eigen::Matrix<double, Eigen::Dynamic, 1> result(R);
       for (int i=0; i < R; i++)

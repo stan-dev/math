@@ -24,6 +24,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -40,7 +41,7 @@ namespace stan {
             && stan::length(sigma)))
         return 1.0;
 
-      static const char* function("student_t_cdf");
+      static const std::string function = "student_t_cdf";
 
       using std::exp;
 
@@ -145,14 +146,14 @@ namespace stan {
 
         } else {
           T_partials_return z = 1.0 - inc_beta((T_partials_return)0.5,
-                                               0.5*nu_dbl, r);
+                                               0.5 * nu_dbl, r);
 
           zJacobian *= -1;
 
           const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
-          T_partials_return d_ibeta = pow(1.0-r, 0.5*nu_dbl-1) * pow(r, -0.5)
-            / betaNuHalf;
+          T_partials_return d_ibeta = pow(1.0 - r, 0.5 * nu_dbl - 1)
+            * pow(r, -0.5) / betaNuHalf;
 
           P *= Pn;
 

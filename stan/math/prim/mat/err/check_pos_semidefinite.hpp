@@ -10,6 +10,7 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <sstream>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -31,8 +32,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_pos_semidefinite(const char* function,
-                           const char* name,
+    check_pos_semidefinite(const std::string& function,
+                           const std::string& name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_symmetric(function, name, y);
       check_positive_size(function, name, "rows", y.rows());
