@@ -29,7 +29,7 @@ namespace stan {
 
       try{
 
-        int parts = 4;
+        int parts = 32;
         //this will be managed by the library core with self-adaptive strategies
         if (A.rows() < 65)
           parts = 1;
