@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/scal/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <cmath>
+#include <limits>
 
 TEST(AgradRev, cosh_var) {
   AVAR a = 0.68;
@@ -35,7 +36,7 @@ TEST(AgradRev, cosh_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_TRUE(boost::math::isinf(g[0]) && (g[0] > 0));
+  EXPECT_EQ(boost::math::isinf(g[0]), (g[0] > 0));
 }
 
 TEST(AgradRev, cosh_neg_inf) {
@@ -47,7 +48,7 @@ TEST(AgradRev, cosh_neg_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_TRUE(boost::math::isinf(g[0]) && (g[0] < 0));
+  EXPECT_EQ(boost::math::isinf(g[0]), (g[0] < 0));
 }
 
 struct cosh_fun {

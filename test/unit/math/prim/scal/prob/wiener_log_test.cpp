@@ -17,7 +17,7 @@ TEST(ProbWiener, log_matches_lpdf) {
   EXPECT_FLOAT_EQ(
     (stan::math::wiener_lpdf<true, double, double, double, double, double>
                                                 (y, alpha, tau, beta, delta)),
-    (stan::math::wiener_log<true, double, double double, double, double>
+    (stan::math::wiener_log<true, double, double, double, double, double>
                                                 (y, alpha, tau, beta, delta)));
   EXPECT_FLOAT_EQ(
     (stan::math::wiener_lpdf<false, double, double, double, double, double>

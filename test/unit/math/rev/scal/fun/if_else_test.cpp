@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
 
 TEST(AgradRev, if_else) {
   using stan::math::var;

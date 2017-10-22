@@ -29,7 +29,6 @@ void test_log_inv_logit(const double x) {
   // test value
   EXPECT_FLOAT_EQ(log(inv_logit(x)),
                   log_inv_logit(var(x)).val());
-
 }
 TEST(AgradRev, log_inv_logit) {
   test_log_inv_logit(-7.2);

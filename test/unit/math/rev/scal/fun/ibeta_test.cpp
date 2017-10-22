@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/beta.hpp>
+#include <limits>
 
 TEST(AgradRev, ibeta_vvv) {
   using stan::math::var;

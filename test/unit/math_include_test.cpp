@@ -1,9 +1,9 @@
 #include <stan/math.hpp>
+#include <boost/math/tools/promotion.hpp>
+#include <gtest/gtest.h>
+#include <Eigen/Dense>
 #include <cmath>
 #include <vector>
-#include <boost/math/tools/promotion.hpp>
-#include <Eigen/Dense>
-#include <gtest/gtest.h>
 
 // This test fixture swallows output to std::cout
 class Math : public ::testing::Test {
@@ -75,14 +75,15 @@ TEST_F(Math, paper_example_3) {
   EXPECT_FLOAT_EQ(-1.323482, lp.val());
 }
 
-namespace paper {  // paper_example_4: remove 'paper::' when including in the paper
+// paper_example_4: remove 'paper::' when including in the paper
+namespace paper {
 using Eigen::Matrix;
 using Eigen::Dynamic;
 
 struct normal_ll {
   const Matrix<double, Dynamic, 1> y_;
 
-  normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
+  explicit normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
 
   template <typename T>
   T operator()(const Matrix<T, Dynamic, 1>& theta) const {
@@ -120,7 +121,7 @@ namespace paper_example_5 {
   struct functor {
     const Matrix<double, Dynamic, 1> y_;
 
-    functor(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
+    explicit functor(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
 
     template <typename T>
     Matrix<T, Dynamic, 1> operator()(const Matrix<T, Dynamic, 1>& theta) const {

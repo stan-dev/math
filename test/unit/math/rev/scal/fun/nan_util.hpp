@@ -4,6 +4,7 @@
 #include <test/unit/math/rev/arr/fun/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 template <typename F>
 void test_nan_vd(const F& f,
@@ -18,9 +19,9 @@ void test_nan_vd(const F& f,
   fail_msg << "Failed for var, double version with first argument " << arg1_v
            << " and second argument " << arg2;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v, arg2), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1_v, arg2);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -47,9 +48,9 @@ void test_nan_dv(const F& f,
   fail_msg << "Failed for double, var version with first argument " << arg1
            << " and second argument " << arg2_v;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1, arg2_v), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -69,7 +70,6 @@ void test_nan_vv(const F& f,
                  const double& arg2,
                  const bool& throws,
                  const bool& is_grad_nan) {
-
   stan::math::var res;
   stan::math::var arg1_v = arg1;
   stan::math::var arg2_v = arg2;
@@ -78,9 +78,9 @@ void test_nan_vv(const F& f,
   fail_msg << "Failed for var, var version with first argument " << arg1_v
            << " and second argument " << arg2_v;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1_v, arg2_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -102,7 +102,6 @@ void test_nan(const F& f,
               const double& arg2,
               const bool& throws,
               const bool& is_grad_nan) {
-
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_vd(f, nan, arg2, throws, is_grad_nan);
   test_nan_vd(f, arg1, nan, throws, is_grad_nan);
@@ -122,9 +121,9 @@ void test_nan_v(const F& f,
                 const bool& is_grad_nan) {
   stan::math::var res;
   stan::math::var arg1_v = arg1;
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
-  else {
+  } else {
     res = f(arg1_v);
     EXPECT_TRUE(boost::math::isnan(res.val()));
 
@@ -143,7 +142,6 @@ template <typename F>
 void test_nan(const F& f,
               const bool& throws,
               const bool& is_grad_nan) {
-
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_v(f, nan, throws, is_grad_nan);
 }
@@ -166,9 +164,10 @@ void test_nan_vvv(const F& f,
            << arg1_v << " second argument " << arg2_v
            << " and third argument " << arg3_v;
 
-  if (throws)
-    EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
-  else {
+  if (throws) {
+    EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
+      << fail_msg.str();
+  } else {
     res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -201,9 +200,9 @@ void test_nan_dvv(const F& f,
            << arg1 << " second argument " << arg2_v
            << " and third argument " << arg3_v;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -235,9 +234,9 @@ void test_nan_vdv(const F& f,
            << arg1_v << " second argument " << arg2
            << " and third argument " << arg3_v;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1_v, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -269,9 +268,9 @@ void test_nan_vvd(const F& f,
            << arg1_v << " second argument " << arg2_v
            << " and third argument " << arg3;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1_v, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -302,9 +301,9 @@ void test_nan_ddv(const F& f,
            << arg1 << " second argument " << arg2
            << " and third argument " << arg3_v;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1, arg2, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -334,9 +333,9 @@ void test_nan_dvd(const F& f,
            << arg1 << " second argument " << arg2_v
            << " and third argument " << arg3;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1, arg2_v, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -366,9 +365,9 @@ void test_nan_vdd(const F& f,
            << arg1_v << " second argument " << arg2
            << " and third argument " << arg3;
 
-  if (throws)
+  if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
-  else {
+  } else {
     res = f(arg1_v, arg2, arg3);
     EXPECT_TRUE(boost::math::isnan(res.val())) << fail_msg.str();
 
@@ -389,7 +388,6 @@ void test_nan(const F& f,
               const double& arg3,
               const bool& throws,
               const bool& is_grad_nan) {
-
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_vvv(f, nan, arg2, arg3, throws, is_grad_nan);
   test_nan_vvv(f, arg1, nan, arg3, throws, is_grad_nan);

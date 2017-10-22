@@ -3,6 +3,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, atan_1) {
   AVAR a = 1;

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, fdim_vv) {
   using stan::math::fdim;
@@ -54,7 +55,8 @@ TEST(AgradRev, fdim_vd) {
   AVAR infinityavar = std::numeric_limits<AVAR>::infinity();
   double infinitydouble = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(0.0, fdim(infinityavar, infinitydouble).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), fdim(infinityavar, b).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  fdim(infinityavar, b).val());
   EXPECT_FLOAT_EQ(0.0, fdim(a, infinitydouble).val());
 }
 
@@ -73,7 +75,8 @@ TEST(AgradRev, fdim_vd_2) {
   AVAR infinityavar = std::numeric_limits<AVAR>::infinity();
   double infinitydouble = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(0.0, fdim(infinityavar, infinitydouble).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), fdim(infinityavar, b).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  fdim(infinityavar, b).val());
   EXPECT_FLOAT_EQ(0.0, fdim(a, infinitydouble).val());
 }
 TEST(AgradRev, fdim_dv) {
@@ -91,7 +94,8 @@ TEST(AgradRev, fdim_dv) {
   AVAR infinityavar = std::numeric_limits<AVAR>::infinity();
   double infinitydouble = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(0.0, fdim(infinitydouble, infinityavar).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), fdim(infinitydouble, b).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  fdim(infinitydouble, b).val());
   EXPECT_FLOAT_EQ(0.0, fdim(a, infinityavar).val());
 }
 TEST(AgradRev, fdim_dv_2) {
@@ -109,7 +113,8 @@ TEST(AgradRev, fdim_dv_2) {
   AVAR infinityavar = std::numeric_limits<AVAR>::infinity();
   double infinitydouble = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(0.0, fdim(infinitydouble, infinityavar).val());
-  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), fdim(infinitydouble, b).val());
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
+                  fdim(infinitydouble, b).val());
   EXPECT_FLOAT_EQ(0.0, fdim(a, infinityavar).val());
 }
 

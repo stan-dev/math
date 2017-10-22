@@ -23,10 +23,12 @@ TEST(AgradRev, log_diff_exp_vv) {
 
   x = createAVEC(a, b);
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-                  grad_f[0]);
-  EXPECT_FLOAT_EQ(std::exp(10.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-                  grad_f[1]);
+  EXPECT_FLOAT_EQ(
+    std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+    grad_f[0]);
+  EXPECT_FLOAT_EQ(
+    std::exp(10.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+    grad_f[1]);
 }
 
 TEST(AgradRev, log_diff_exp_vd) {
@@ -49,8 +51,9 @@ TEST(AgradRev, log_diff_exp_vd) {
 
   x = createAVEC(a);
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-                   grad_f[0]);
+  EXPECT_FLOAT_EQ(
+    std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+    grad_f[0]);
 }
 
 TEST(AgradRev, log_diff_exp_dv) {
@@ -72,7 +75,8 @@ TEST(AgradRev, log_diff_exp_dv) {
 
   x = createAVEC(b);
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(0, grad_f[0]); // 1/(1-exp(1000-10)) explodes to 1/-inf = 0
+  // 1/(1-exp(1000-10)) explodes to 1/-inf = 0
+  EXPECT_FLOAT_EQ(0, grad_f[0]);
 }
 
 void test_log_diff_exp_2_vv(double a_val,
@@ -128,7 +132,6 @@ void test_log_diff_exp_2_vd(double a_val,
   EXPECT_EQ(1U, g.size());
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
-
 }
 void test_log_diff_exp_2_dv(double a,
                            double b_val) {
@@ -154,7 +157,6 @@ void test_log_diff_exp_2_dv(double a,
   EXPECT_EQ(1U, g.size());
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
-
 }
 
 void test_log_diff_exp_2(double a, double b) {

@@ -17,10 +17,12 @@ TEST(AgradRev, modified_bessel_second_kind_int_var) {
 
   a = 1;
   b = -3.0;
-  EXPECT_THROW(stan::math::modified_bessel_second_kind(a, b), std::domain_error);
+  EXPECT_THROW(stan::math::modified_bessel_second_kind(a, b),
+               std::domain_error);
 
   a = -1;
-  EXPECT_THROW(stan::math::modified_bessel_second_kind(a, b), std::domain_error);
+  EXPECT_THROW(stan::math::modified_bessel_second_kind(a, b),
+               std::domain_error);
 }
 
 struct modified_bessel_second_kind_fun {

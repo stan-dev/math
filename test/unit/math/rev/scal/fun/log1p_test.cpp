@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <stdexcept>
+#include <limits>
 
 TEST(AgradRev, log1p) {
   AVAR a = 0.1;

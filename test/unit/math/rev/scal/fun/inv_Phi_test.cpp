@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
+#include <limits>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::var;

@@ -5,7 +5,8 @@
 
 TEST(AgradRev, exp_a) {
   AVAR a(6.0);
-  AVAR f = exp(a); // mix exp() functs w/o namespace
+  // mix exp() functs w/o namespace
+  AVAR f = exp(a);
   EXPECT_FLOAT_EQ(exp(6.0), f.val());
   AVEC x = createAVEC(a);
   VEC g;

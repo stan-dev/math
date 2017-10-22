@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, asin_var) {
   AVAR a = 0.68;
@@ -43,7 +44,7 @@ TEST(AgradRev, asin_out_of_bounds1) {
   VEC g;
   f.grad(x, g);
   EXPECT_TRUE(std::isnan(asin(a)));
-  EXPECT_TRUE(g.size() == 1);
+  EXPECT_EQ(g.size(), 1);
   EXPECT_TRUE(std::isnan(g[0]));
 }
 TEST(AgradRev, asin_out_of_bounds2) {
@@ -53,7 +54,7 @@ TEST(AgradRev, asin_out_of_bounds2) {
   VEC g;
   f.grad(x, g);
   EXPECT_TRUE(std::isnan(asin(a)));
-  EXPECT_TRUE(g.size() == 1);
+  EXPECT_EQ(g.size(), 1);
   EXPECT_TRUE(std::isnan(g[0]));
 }
 

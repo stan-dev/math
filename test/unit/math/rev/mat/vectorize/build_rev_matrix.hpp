@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_BUILD_REV_MATRIX_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 template <typename F, int R, int C>
 static inline Eigen::Matrix<stan::math::var, R, C>

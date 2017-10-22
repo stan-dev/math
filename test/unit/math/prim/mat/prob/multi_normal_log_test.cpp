@@ -9,7 +9,7 @@ TEST(ProbMultiNormal, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0,
           -3.0,  4.0, 0.0,
-          c0.0, 0.0, 5.0;
+           0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf(y, mu, Sigma)),
                   (stan::math::multi_normal_log(y, mu, Sigma)));
   EXPECT_FLOAT_EQ((stan::math::multi_normal_lpdf<true>(y, mu, Sigma)),

@@ -73,9 +73,9 @@ struct chol_functor_mult_scal {
 };
 
 
-  explicit struct chol_functor_2 {
+struct chol_functor_2 {
   int K;
-  chol_functor_2(int K_) : K(K_) { }
+  explicit chol_functor_2(int K_) : K(K_) { }
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;

@@ -85,7 +85,6 @@ struct atan2_fun {
 TEST(AgradRev, atan2_nan) {
   atan2_fun atan2_;
   test_nan(atan2_, 3.0, 5.0, false, true);
-
 }
 
 TEST(AgradRev, check_varis_on_stack) {

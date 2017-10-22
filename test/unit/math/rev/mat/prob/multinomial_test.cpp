@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <string>
+#include <vector>
 
 template <typename T_prob>
 void expect_propto(std::vector<int>& ns1, T_prob theta1,

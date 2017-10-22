@@ -26,7 +26,8 @@ void test_log1p_exp(double val) {
   EXPECT_EQ(1U, g.size());
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
-  EXPECT_FLOAT_EQ(g2[0], 1.0/(1.0 + exp(-val))); // analytic deriv
+  // analytic deriv
+  EXPECT_FLOAT_EQ(g2[0], 1.0/(1.0 + exp(-val)));
   EXPECT_FLOAT_EQ(f2.val(), f_val);
 }
 

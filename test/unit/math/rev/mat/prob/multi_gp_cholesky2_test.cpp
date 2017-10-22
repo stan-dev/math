@@ -1,10 +1,11 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/prim/mat/prob/agrad_distributions_multi_gp_cholesky.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <string>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -33,7 +34,6 @@ TEST_F(agrad_distributions_multi_gp_cholesky, ProptoY) {
   expect_propto(to_var(y), L, w,
                 to_var(y2), L, w,
                 "var: y");
-
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoYMu) {
   expect_propto(to_var(y), L, to_var(w),
@@ -75,7 +75,8 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
           -3.0,  4.0, 0.0,
            0.0, 0.0, 5.0;
   Matrix<var, Dynamic, Dynamic> L = Sigma.llt().matrixL();
-  EXPECT_FLOAT_EQ(-46.087162, stan::math::multi_gp_cholesky_log(y, L, w).val());
+  EXPECT_FLOAT_EQ(-46.087162,
+                  stan::math::multi_gp_cholesky_log(y, L, w).val());
 }
 
 TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
@@ -225,19 +226,33 @@ TEST(ProbDistributionsMultiGPCholesky, check_varis_on_stack) {
            0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), L, to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(to_var(y), L, w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<true>(y, L, to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(to_var(y), to_var(L), w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(to_var(y), L, to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(to_var(y), L, w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(y, to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(y, to_var(L), w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<true>(y, L, to_var(w)));
 
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), L, to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(to_var(y), L, w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, to_var(L), to_var(w)));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, to_var(L), w));
-  test::check_varis_on_stack(stan::math::multi_gp_cholesky_log<false>(y, L, to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(to_var(y), to_var(L), w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(to_var(y), L, to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(to_var(y), L, w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(y, to_var(L), to_var(w)));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(y, to_var(L), w));
+  test::check_varis_on_stack(
+    stan::math::multi_gp_cholesky_log<false>(y, L, to_var(w)));
 }

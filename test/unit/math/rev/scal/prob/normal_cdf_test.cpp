@@ -1,44 +1,62 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
 TEST(normal_cdf, tails) {
   using stan::math::var;
   using stan::math::normal_cdf;
 
-  EXPECT_FLOAT_EQ(1, 4.60535300958196e-308 / normal_cdf(var(-37.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  4.60535300958196e-308 / normal_cdf(var(-37.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 5.72557122252458e-300 / normal_cdf(var(-37), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 5.54472571307484e-292 / normal_cdf(var(-36.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  5.54472571307484e-292 / normal_cdf(var(-36.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 4.18262406579728e-284 / normal_cdf(var(-36), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 2.45769154066194e-276 / normal_cdf(var(-35.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  2.45769154066194e-276 / normal_cdf(var(-35.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.12491070647241e-268 / normal_cdf(var(-35), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 4.01072896657726e-261 / normal_cdf(var(-34.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  4.01072896657726e-261 / normal_cdf(var(-34.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.11389878557438e-253 / normal_cdf(var(-34), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 2.40983869512039e-246 / normal_cdf(var(-33.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  2.40983869512039e-246 / normal_cdf(var(-33.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 4.06118562091586e-239 / normal_cdf(var(-33), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 5.33142435967881e-232 / normal_cdf(var(-32.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  5.33142435967881e-232 / normal_cdf(var(-32.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 5.4520806035124e-225 / normal_cdf(var(-32), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 4.34323260103177e-218 / normal_cdf(var(-31.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  4.34323260103177e-218 / normal_cdf(var(-31.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 2.6952500812005e-211 / normal_cdf(var(-31), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 1.30293791317808e-204 / normal_cdf(var(-30.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  1.30293791317808e-204 / normal_cdf(var(-30.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 4.90671392714819e-198 / normal_cdf(var(-30), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 1.43947455222918e-191 / normal_cdf(var(-29.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  1.43947455222918e-191 / normal_cdf(var(-29.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 3.28978526670438e-185 / normal_cdf(var(-29), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 5.85714125380634e-179 / normal_cdf(var(-28.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  5.85714125380634e-179 / normal_cdf(var(-28.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 8.12386946965943e-173 / normal_cdf(var(-28), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 8.77817055687808e-167 / normal_cdf(var(-27.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  8.77817055687808e-167 / normal_cdf(var(-27.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 7.38948100688502e-161 / normal_cdf(var(-27), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 4.84616266030332e-155 / normal_cdf(var(-26.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  4.84616266030332e-155 / normal_cdf(var(-26.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 2.47606331550339e-149 / normal_cdf(var(-26), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 9.85623651896393e-144 / normal_cdf(var(-25.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  9.85623651896393e-144 / normal_cdf(var(-25.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 3.05669670638256e-138 / normal_cdf(var(-25), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 7.38570686148941e-133 / normal_cdf(var(-24.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  7.38570686148941e-133 / normal_cdf(var(-24.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.3903921185497e-127 / normal_cdf(var(-24), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 2.03936756324998e-122 / normal_cdf(var(-23.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  2.03936756324998e-122 / normal_cdf(var(-23.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 2.33063700622065e-117 / normal_cdf(var(-23), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 2.07531079906636e-112 / normal_cdf(var(-22.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  2.07531079906636e-112 / normal_cdf(var(-22.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.43989243514508e-107 / normal_cdf(var(-22), 0, 1).val());
-  EXPECT_FLOAT_EQ(1, 7.78439707718263e-103 / normal_cdf(var(-21.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1,
+                  7.78439707718263e-103 / normal_cdf(var(-21.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 3.27927801897904e-98 / normal_cdf(var(-21), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.0764673258791e-93 / normal_cdf(var(-20.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 2.75362411860623e-89 / normal_cdf(var(-20), 0, 1).val());
@@ -112,7 +130,8 @@ void test_value_and_derivatives(double expected_val,
   using stan::math::var;
   using stan::math::normal_cdf;
   std::stringstream msg_ss;
-  msg_ss << "parameters: (" << y_dbl << ", " << mu_dbl << ", " << sigma_dbl << ")";
+  msg_ss << "parameters: (" << y_dbl << ", " << mu_dbl << ", "
+         << sigma_dbl << ")";
   std::string msg = msg_ss.str();
 
   SCOPED_TRACE(msg);

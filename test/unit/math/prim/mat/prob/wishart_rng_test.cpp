@@ -18,7 +18,7 @@ TEST(ProbDistributionsWishartRng, rng) {
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
           -3.0,  4.0, 0.0,
-         c 2.0, 1.0, 3.0;
+           2.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);

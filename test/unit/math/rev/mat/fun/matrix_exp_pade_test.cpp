@@ -5,6 +5,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <algorithm>
 #include <vector>
+#include <random>
 
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   stan::math::matrix_v m1(1, 1), m2(1, 1), m1_exp;
@@ -101,17 +102,19 @@ TEST(MathMatrix, matrix_exp_25x25) {
   using stan::math::var;
 
   int size = 25;
-  boost::random::mt19937 rng;
+
+  std::random_device rd;
+  std::mt19937 mt(rd());
 
   // Randomly construct input matrix
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-    col1 = rng % size;
-    col2 = rng % size;
-    while (col1 == col2) col2 = rng % size;
-    S.col(col1) += S.col(col2) * std::pow(-1, rng);
+    col1 = rd() % size;
+    col2 = rd() % size;
+    while (col1 == col2) col2 = rd() % size;
+    S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, Dynamic, Dynamic> diag_elements(1, size);

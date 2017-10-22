@@ -79,7 +79,7 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   b1 = 1.0;
   b2 = 1.0;
   // checking negative z, this is fine
-  z = -0.999999999999
+  z = -0.999999999999;
   EXPECT_NO_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z));
 
   a1 = 1.0;

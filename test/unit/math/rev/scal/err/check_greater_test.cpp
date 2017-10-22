@@ -1,5 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_greater;
 using stan::math::var;

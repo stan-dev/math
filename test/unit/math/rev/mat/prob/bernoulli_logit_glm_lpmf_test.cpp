@@ -1,15 +1,12 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <chrono>
+// For speed comparisons
+// #include <chrono>
 
 using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
-
-typedef std::chrono::high_resolution_clock::time_point TimeVar;
-#define duration(a) std::chrono::duration_cast<std::chrono::microseconds>(a).count()
-#define timeNow() std::chrono::high_resolution_clock::now()
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
@@ -102,6 +99,11 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 
 /*
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_speed) {
+
+  typedef std::chrono::high_resolution_clock::time_point TimeVar;
+  #define duration(a) std::chrono::duration_cast<std::chrono::microseconds>(a).count()
+  #define timeNow() std::chrono::high_resolution_clock::now()
+
   const int R = 30000;
   const int C = 1000;
 

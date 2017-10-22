@@ -23,5 +23,5 @@ TEST(ProbAgradDistributionsNormal, fwd) {
                   normal_log<false>(fvar<double>(0), fvar<double>(0), 1).val());
   EXPECT_FLOAT_EQ(-0.918938533204673,
                   normal_log<false>(fvar<double>(0), fvar<double>(0),
-                                        fvar<double>(1)).val());
+                                    fvar<double>(1)).val());
 }

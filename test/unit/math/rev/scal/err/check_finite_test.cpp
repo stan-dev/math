@@ -1,5 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 TEST(AgradRevErrorHandlingScalar, CheckFinite) {
   using stan::math::var;

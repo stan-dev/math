@@ -67,13 +67,13 @@ TEST(stack_alloc, alloc) {
 
   for (int i = 0; i < 100000; ++i) {
     allocator.alloc(1317);
-    double* foo = reinterpret_cast<double*>allocator.alloc(sizeof(double));
+    double* foo = reinterpret_cast<double*>(allocator.alloc(sizeof(double)));
     *foo = 9.0;
     ds.push_back(foo);
-    int* bar = reinterpret_cast<int*>allocator.alloc(sizeof(int));
+    int* bar = reinterpret_cast<int*>(allocator.alloc(sizeof(int)));
     *bar = 17;
     is.push_back(bar);
-    char* baz = reinterpret_cast<char*>allocator.alloc(sizeof(char));
+    char* baz = reinterpret_cast<char*>(allocator.alloc(sizeof(char)));
     *baz = 3;
     cs.push_back(baz);
     allocator.alloc(13);

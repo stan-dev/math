@@ -44,7 +44,7 @@ TEST(AgradRev, acos_out_of_bounds1) {
   VEC g;
   f.grad(x, g);
   EXPECT_TRUE(std::isnan(acos(a)));
-  EXPECT_TRUE(g.size() == 1);
+  EXPECT_EQ(g.size(), 1);
   EXPECT_TRUE(std::isnan(g[0]));
 }
 
@@ -55,7 +55,7 @@ TEST(AgradRev, acos_out_of_bounds2) {
   VEC g;
   f.grad(x, g);
   EXPECT_TRUE(std::isnan(acos(a)));
-  EXPECT_TRUE(g.size() == 1);
+  EXPECT_EQ(g.size(), 1);
   EXPECT_TRUE(std::isnan(g[0]));
 }
 
