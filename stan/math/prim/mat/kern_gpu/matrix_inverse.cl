@@ -59,6 +59,7 @@ __kernel void lower_tri_inv_step2(__global double* ap,__global int* sizes,__glob
 	
 	for (int r=(n+1)*repeat;r<(n+2)*repeat;r++)	
 		part_size2+= sizes[r];	
+    
 	int sizeM=repeat*(part_size_fixed+1);	
 	offset_i=(n+1)*repeat*part_size_fixed;offset_j=n*repeat*part_size_fixed;	
 	if (((n+1)*repeat)<=remainder)	
@@ -93,13 +94,13 @@ __kernel void lower_tri_inv_step2(__global double* ap,__global int* sizes,__glob
 			const int tiledRow = TS2*t + row;	
 			const int tiledCol = TS2*t + col;	
 				
-			if (i<part_size2 && (tiledCol+w*RTS)<part_size1){	
+			if (i<part_size2 && (tiledCol+w*RTS)<part_size1 && (tiledCol+offset_j+part_size1+w*RTS)<M  && (i+offset_i)<M){	
 				Asub[col+w*RTS][row] = ap[(i+offset_i)*M+tiledCol+offset_j+part_size1+w*RTS];	
 			}else{	
 				Asub[col+w*RTS][row] = 0.0;	
 			}	
 					
-			if ((j+w*RTS)<part_size1 && tiledRow<part_size2){	
+			if ((j+w*RTS)<part_size1 && tiledRow<part_size2 && tiledRow+offset_i && (j+offset_j+w*RTS)<M ){	
 				Bsub[col+w*RTS][row] = ap[(tiledRow+offset_i)*M+j+offset_j+w*RTS];	
 			}else{			
 				Bsub[col+w*RTS][row] = 0.0;	
@@ -168,12 +169,12 @@ __kernel void lower_tri_inv_step3(__global double* ap,__global int* sizes,__glob
 		for (int w=0; w<WPT; w++) {	
 			const int tiledRow = TS2*t + row;	
 			const int tiledCol = TS2*t + col;	
-			if (i<part_size2 && (tiledCol+w*RTS)<part_size1 ){	
+			if (i<part_size2 && (tiledCol+w*RTS)<part_size1 && (i)<M && (tiledCol+w*RTS)<M ){	
 				Asub[col+w*RTS][row] = MM[(n/2)*(sizeM)*(sizeM)+i*part_size1+tiledCol+w*RTS];	
 			}else{	
 				Asub[col+w*RTS][row] = 0.0;	
 			}	
-			if ((j+w*RTS)<part_size1 && (j+offset_j+w*RTS)<M ){	
+			if ((j+w*RTS)<part_size1 && (j+offset_j+w*RTS)<M && (tiledRow+offset_i-part_size1)<M && (j+offset_j+w*RTS)<M ){	
 				Bsub[col+w*RTS][row] = ap[(tiledRow+offset_i-part_size1)*M+j+offset_j+w*RTS];	
 			}else{			
 				Bsub[col+w*RTS][row] = 0.0;	
