@@ -3,9 +3,8 @@
 
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
+#include <stan/math/prim/mat/err/check_gpu.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -28,15 +27,6 @@ namespace stan {
     typename boost::enable_if_c<boost::is_arithmetic<T>::value,
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
     cholesky_decompose_gpu(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-/*      std::cout << "Cholesky\n";
-      std::cout << "m(0,0): " << m(0,0) << "\n";
-      std::cout << "m(0,1): " << m(0,1) << "\n";
-      std::cout << "m(1,0): " << m(1,0) << "\n";
-      std::cout << "m(1,1): " << m(1,1) << "\n";
-      std::cout << "INPUT: \n";
-      std::cout << m << "\n";
-*/
-         
       
       if (m.size() == 0) return m;
       //
@@ -126,11 +116,16 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      
+      copy_triangular_transposed(A,LOWER_TO_UPPER_TRIANGULAR);
+      
+      check_nan_gpu("cholesky_decompose_gpu", "A", A);
+      check_diagonal_zeros("cholesky_decompose_gpu", "A", A);
+      
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> m_tmp(m.rows(), m.cols());
+      
       copy(A, m_tmp);
-            
-      m_tmp.template triangularView<Eigen::Upper>() = m_tmp.transpose().template triangularView<Eigen::Upper>();
-
+      
       m_tmp = m_tmp.template triangularView<Eigen::Lower>();
             
       return m_tmp;
