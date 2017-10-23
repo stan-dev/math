@@ -24,7 +24,7 @@ enum copy_transposed_triangular {LOWER_TO_UPPER_TRIANGULAR = 0,
 
 namespace stan {
   namespace math {
-
+    
     enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
     enum copy_transposed_triangular {LOWER_TO_UPPER_TRIANGULAR = 0,
       UPPER_TO_LOWER_TRIANGULAR = 1};

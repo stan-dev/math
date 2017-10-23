@@ -80,7 +80,7 @@ __kernel void cholesky_left_update(__global double* l,__global double* ap, __glo
 		const int tiledRow = TS3*t + row;
 		const int tiledCol = TS3*t + col;
 	
-		if (i<max_threads && tiledCol<block){
+		if (i<max_threads && tiledCol<block && (+offset+block)<M && (offset+tiledCol)<M){
 			Asub[col][row] = ap[(i+offset+block)*M+offset+tiledCol];
 		}else{
 			Asub[col][row] = 0.0;
@@ -97,7 +97,7 @@ __kernel void cholesky_left_update(__global double* l,__global double* ap, __glo
 		}
 		barrier(CLK_LOCAL_MEM_FENCE);		
 	}
-	if (i<max_threads && j<block){
+	if (i<max_threads && j<block && i<M && j<M){
 		l[i*block+j]=sum;
 	}	
 }
@@ -122,13 +122,13 @@ __kernel void cholesky_mid_update(__global double* l,__global double* ap,int off
 		const int tiledRow = TS3*t + row;
 		const int tiledCol = TS3*t + col;
 		
-		if (i<max_threads && tiledCol<max_threads){
+		if (i<max_threads && tiledCol<max_threads && i<M && tiledCol<M){
 			Asub[col][row] = l[i*block+tiledCol];
 		}else{
 			Asub[col][row] = 0.0;
 		}
 		
-		if (j<max_threads && tiledRow<block){
+		if (j<max_threads && tiledRow<block && j<M && tiledRow<M){
 			Bsub[row][col] = l[j*block+tiledRow ];
 		}else{		
 			Bsub[row][col] = 0.0;

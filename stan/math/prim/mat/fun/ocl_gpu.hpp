@@ -3,7 +3,7 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include "stan/math/prim/arr/err/check_gpu.hpp"
+#include "stan/math/prim/arr/err/check_opencl.hpp"
 
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenCL/cl.hpp>
@@ -56,9 +56,11 @@ namespace stan {
       kernel_groups["cholesky_left_update"] = "cholesky_decomposition";
       kernel_groups["cholesky_mid_update"] = "cholesky_decomposition";
       kernel_groups["cholesky_zero"] = "cholesky_decomposition";
+      kernel_groups["check_nan"] = "check_gpu";
+      kernel_groups["check_diagonal_zeros"] = "check_gpu";
+      
       kernel_groups["dummy"] = "timing";
-      
-      
+           
       
       //kernel group strings
       //the dummy kernel is the only one not included in files
@@ -92,6 +94,7 @@ namespace stan {
       compiled_kernels["timing"] = false;
       compiled_kernels["matrix_inverse"] = false;
       compiled_kernels["cholesky_decomposition"] = false;
+      compiled_kernels["check_gpu"] = false;
 
     }
 
