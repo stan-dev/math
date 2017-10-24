@@ -79,7 +79,7 @@ namespace stan {
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
 
-      Matrix<double, Dynamic, 1> signs(N, 1);
+      Matrix<T_partials_return, Dynamic, 1> signs(N, 1);
       {
         scalar_seq_view<T_n> n_vec(n);
         for (size_t n = 0; n < N; ++n) {
