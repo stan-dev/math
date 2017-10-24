@@ -1,4 +1,4 @@
-
+R"=====(
 __kernel void check_nan(__global double *A, int rows, int cols, __global int *flag) {	
   const int i = get_global_id(0); 
   const int j = get_global_id(1); 
@@ -17,4 +17,4 @@ __kernel void check_diagonal_zeros(__global double *A, int rows, int cols, __glo
   }
   
 }
-
+)====="

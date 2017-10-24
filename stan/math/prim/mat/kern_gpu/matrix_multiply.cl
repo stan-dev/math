@@ -1,3 +1,4 @@
+R"=====(
 __kernel void scalar_mul_diagonal(
           __global double *a,
           double scalar,
@@ -79,3 +80,4 @@ __kernel void basic_multiply(const int M, const int N, const int K,
      C[globalRow*N + globalCol] = acc;  
     } 
  } 
+)====="

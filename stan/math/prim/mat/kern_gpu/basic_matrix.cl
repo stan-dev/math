@@ -1,3 +1,4 @@
+R"=====(
 __kernel void transpose(
           __global double *a,
           __global double *b,
@@ -125,3 +126,4 @@ __kernel void subtract(
      c[i*N+j] = a[i*N+j]-b[i*N+j];
     } 
 };
+)====="
