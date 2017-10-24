@@ -16,7 +16,6 @@
 //CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
 namespace stan {
   namespace math {
-    //transpose the matrix B and store it in matrix A
     void lower_triangular_inverse(matrix_gpu & A) {
       if (A.rows() != A.cols()) {
         app_error("the input matrix of the inverse is not square");
