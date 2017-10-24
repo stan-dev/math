@@ -31,6 +31,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_doubles
 
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf(n, theta, phi)),
                   (stan::math::neg_binomial_2_log_glm_lpmf(n, x, beta, alpha, phi)));
+
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf<true>(n, theta, phi)),
                   (stan::math::neg_binomial_2_log_glm_lpmf<true>(n, x, beta, alpha, phi)));
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_log_lpmf<false>(n, theta, phi)),
@@ -90,7 +91,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars)
   EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
   for (size_t j = 0; j < 3; j++)
   {
-    EXPECT_FLOAT_EQ(phi[i].adj(), phi2[i].adj());
+    EXPECT_FLOAT_EQ(phi[j].adj(), phi2[j].adj());
     for (size_t i = 0; i < 2; i++)
     {
       EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
@@ -101,7 +102,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars)
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 
-/*
+
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) {
   const int R = 30000;
   const int C = 1000;  
@@ -119,7 +120,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) 
     Matrix<double, Dynamic, 1> betareal = Matrix<double, Dynamic, Dynamic>::Random(C, 1);
     Matrix<double, 1, 1> alphareal = Matrix<double, 1, 1>::Random(1, 1);
     Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R, 1>::Ones() * alphareal;
-    Matrix<double, Dynamic, 1> phireal = Matrix<double, Dynamic, Dynamic>::Random(R, 1);
+    Matrix<double, Dynamic, 1> phireal = Matrix<double, Dynamic, Dynamic>::Random(R, 1) + Matrix<double, Dynamic, 1>::Ones(R, 1);  // We want phireal to be positive.
     
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> phi = phireal;
@@ -150,5 +151,5 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) 
   
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New Primitives:" << std::endl << T2 << std::endl;    
 }
-*/
+
 

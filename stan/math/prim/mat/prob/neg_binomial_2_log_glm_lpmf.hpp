@@ -90,9 +90,9 @@ namespace stan {
                              "Columns in matrix of independent variables",
                              x.row(0), "Weight vector",  beta);
 
-      if (!include_summand<propto, T_x, T_beta, T_alpha>::value)
+      if (!include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
         return 0.0;
-
+      
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
 
@@ -100,12 +100,13 @@ namespace stan {
       Array<T_partials_return, Dynamic, 1> phi_arr(N, 1);
       {
         scalar_seq_view<T_n> n_vec(n);
-        scalar_seq_view<T_precision> phi_vec(n);
+        scalar_seq_view<T_precision> phi_vec(phi);
         for (size_t n = 0; n < N; ++n) {
           n_arr[n] = n_vec[n];
           phi_arr[n] = value_of(phi_vec[n]);
         }
       }
+                                         
       Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
       {
         scalar_seq_view<T_beta> beta_vec(beta);
@@ -114,35 +115,50 @@ namespace stan {
         }
       }
       Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
-
+      
       Array<T_partials_return, Dynamic, 1> theta_dbl = (x_dbl * beta_dbl
       + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha)).array();
       Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
       Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi =
-        theta_dbl.binaryExpr(log_phi, std::ref(log_sum_exp));
+        theta_dbl.binaryExpr(log_phi,
+                             [](T_partials_return xx, T_partials_return yy) {
+                               return log_sum_exp(xx, yy);
+                             });
       Array<T_partials_return, Dynamic, 1> n_plus_phi = n_arr + phi_arr;
 
       // Compute the log-density.
+      
       if (include_summand<propto>::value)
-        logp -= (n_vec
+        logp -= (n_arr
           + Array<double, Dynamic, 1>::Ones(N, 1))
-          .unaryExpr(std::ref(lgamma)).sum();
+          .unaryExpr([](T_partials_return xx) {
+            return lgamma(xx); 
+          }).sum();
       if (include_summand<propto, T_precision>::value)
-        logp += phi_arr.binaryExpr(phi_arr, std::ref(multiply_log))
-                  - phi_arr.unaryExpr(std::ref(lgamma)).sum();
+        logp += (phi_arr.binaryExpr(phi_arr, [](T_partials_return xx,
+                                               T_partials_return yy) {
+                                              return multiply_log(xx, yy);
+                                            })
+                - phi_arr.unaryExpr([](T_partials_return xx) {
+                                      return lgamma(xx);
+                                    })).sum();
       if (include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
         logp -= (n_plus_phi * logsumexp_eta_logphi).sum();
       if (include_summand<propto, T_x, T_beta, T_alpha>::value)
         logp += (n_arr * theta_dbl).sum();
       if (include_summand<propto, T_precision>::value)
-        logp += n_plus_phi.unaryExpr(std::ref(lgamma)).sum();
+        logp += n_plus_phi.unaryExpr([](T_partials_return xx) {
+          return lgamma(xx);
+        }).sum();
+
 
       // Compute the necessary derivatives.
       operands_and_partials<T_x, T_beta,T_alpha,
                             T_precision> ops_partials(x, beta, alpha, phi);
+                                  
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
             && is_constant_struct<T_alpha>::value
-            && is_constant_struct<T_precision>)) {
+            && is_constant_struct<T_precision>::value)) {
         Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
         theta_derivative = (n_arr - (n_plus_phi / (phi_arr / (theta_dbl.exp())
           + Array<double, Dynamic, 1>::Ones(N, 1)))).matrix();
@@ -159,10 +175,15 @@ namespace stan {
         if (!is_constant_struct<T_precision>::value) {
           ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
             - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-            - logsumexp_eta_logphi - phi.unaryExpr(std::ref(digamma))
-            + n_plus_phi.unaryExpr(std::ref(digamma))).matrix();
+            - logsumexp_eta_logphi - phi_arr.unaryExpr([](T_partials_return xx) {
+                                                     return digamma(xx);
+                                                   })
+            + n_plus_phi.unaryExpr([](T_partials_return xx) {
+                                     return digamma(xx);
+                                   })).matrix();
         }
       }
+      
       return ops_partials.build(logp);
     }
 
