@@ -101,7 +101,7 @@ __kernel void lower_tri_inv_step2(__global double* ap,__global int* sizes,__glob
 				Asub[col+w*RTS][row] = 0.0;	
 			}	
 					
-			if ((j+w*RTS)<part_size1 && tiledRow<part_size2 && tiledRow+offset_i && (j+offset_j+w*RTS)<M ){	
+			if ((j+w*RTS)<part_size1 && tiledRow<part_size2 && (tiledRow+offset_i)<M && (j+offset_j+w*RTS)<M ){	
 				Bsub[col+w*RTS][row] = ap[(tiledRow+offset_i)*M+j+offset_j+w*RTS];	
 			}else{			
 				Bsub[col+w*RTS][row] = 0.0;	
@@ -119,7 +119,7 @@ __kernel void lower_tri_inv_step2(__global double* ap,__global int* sizes,__glob
 	}	
 	
 	for (int w=0; w<WPT; w++) {	
-		if (i<part_size2&&(j+w*RTS)<part_size1){	
+		if (i<part_size2&&(j+w*RTS)<part_size1 && i< sizeM && (j+w*RTS)<sizeM){	
 			MM[(n/2)*(sizeM)*(sizeM)+i*part_size1+j+w*RTS]=acc[w];	
 		}	
 	}	
@@ -170,12 +170,12 @@ __kernel void lower_tri_inv_step3(__global double* ap,__global int* sizes,__glob
 		for (int w=0; w<WPT; w++) {	
 			const int tiledRow = TS2*t + row;	
 			const int tiledCol = TS2*t + col;	
-			if (i<part_size2 && (tiledCol+w*RTS)<part_size1 && (i)<M && (tiledCol+w*RTS)<M ){	
+			if (i<part_size2 && (tiledCol+w*RTS)<part_size1 && (i)<sizeM && (tiledCol+w*RTS)<sizeM ){	
 				Asub[col+w*RTS][row] = MM[(n/2)*(sizeM)*(sizeM)+i*part_size1+tiledCol+w*RTS];	
 			}else{	
 				Asub[col+w*RTS][row] = 0.0;	
 			}	
-			if ((j+w*RTS)<part_size1 && (j+offset_j+w*RTS)<M && (tiledRow+offset_i-part_size1)<M && (j+offset_j+w*RTS)<M ){	
+			if ((j+w*RTS)<part_size1 && (j+offset_j+w*RTS)<M && (tiledRow+offset_i-part_size1)<M ){	
 				Bsub[col+w*RTS][row] = ap[(tiledRow+offset_i-part_size1)*M+j+offset_j+w*RTS];	
 			}else{			
 				Bsub[col+w*RTS][row] = 0.0;	
@@ -191,7 +191,7 @@ __kernel void lower_tri_inv_step3(__global double* ap,__global int* sizes,__glob
 		barrier(CLK_LOCAL_MEM_FENCE);			
 	}	
 	for (int w=0; w<WPT; w++) {	
-		if (i<part_size2&&(j+w*RTS)<part_size1){	
+		if (i<part_size2&&(j+w*RTS)<part_size1 && (i+offset_i)<M && (j+offset_j+w*RTS)<M){	
 			ap[(i+offset_i)*M+j+offset_j+w*RTS]=-acc[w];	
 		}	
 	}	

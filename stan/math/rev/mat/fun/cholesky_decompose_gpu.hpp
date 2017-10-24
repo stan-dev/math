@@ -88,29 +88,35 @@ namespace stan {
             ++pos;
           }
         }
-        stan::math::matrix_gpu L_gpu(L);
-        stan::math::matrix_gpu Lbar_gpu(Lbar);  
-        stan::math::matrix_gpu Lbar_temp_gpu(M_,M_);
         
-        stan::math::transpose(L_gpu);
-        stan::math::multiply(L_gpu, Lbar_gpu, Lbar_temp_gpu);
-        stan::math::copy_triangular_transposed(Lbar_temp_gpu,
-              LOWER_TO_UPPER_TRIANGULAR);        
-        stan::math::transpose(L_gpu);
-        stan::math::lower_triangular_inverse(L_gpu);
-        stan::math::transpose(L_gpu);
-        stan::math::transpose(Lbar_temp_gpu);
-        stan::math::multiply(L_gpu,Lbar_temp_gpu,Lbar_gpu);
-        stan::math::transpose(Lbar_gpu);
-        stan::math::multiply(L_gpu,Lbar_gpu,Lbar_temp_gpu);
-        stan::math::transpose(Lbar_temp_gpu);
-        stan::math::diagonal_multiply_with_scalar(Lbar_temp_gpu,0.5);
-        stan::math::copy(Lbar_temp_gpu, Lbar1);
-                
+        matrix_gpu L_gpu(L);
+        matrix_gpu L1_gpu(M_,M_);
+        matrix_gpu Lbar_gpu(Lbar);
+        matrix_gpu Lbar_temp_gpu(M_,M_);
+           
+        transpose(L1_gpu, L_gpu);
+        multiply(L1_gpu,Lbar_gpu,Lbar_temp_gpu);
+        copy_triangular_transposed(Lbar_temp_gpu,
+              LOWER_TO_UPPER_TRIANGULAR);  
+              
+        zeros(L1_gpu, LOWER);
+        transpose(L_gpu, L1_gpu);       
+        lower_triangular_inverse(L_gpu);
+        transpose(L1_gpu, L_gpu); 
+        
+        multiply(L1_gpu, Lbar_temp_gpu, Lbar_gpu);
+        transpose(Lbar_temp_gpu, Lbar_gpu);
+        multiply(L1_gpu, Lbar_temp_gpu, Lbar_gpu);
+        
+        transpose(Lbar_temp_gpu, Lbar_gpu);
+        diagonal_multiply_with_scalar(Lbar_temp_gpu,0.5);
+        
+        copy(Lbar_temp_gpu,Lbar);        
+        
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
-            variRefA_[pos++]->adj_ += Lbar1.coeffRef(i, j);
+            variRefA_[pos++]->adj_ += Lbar.coeffRef(i, j);
       }
     };
     /**

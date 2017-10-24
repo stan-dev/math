@@ -21,7 +21,7 @@ __kernel void copy(
     int i = get_global_id(0); 
     int j = get_global_id(1); 
     if ( i < M && j < N ){ 
-     a[i*N+j] = b[i*N+j];
+     b[i*N+j] = a[i*N+j];
     } 
 };  
 
@@ -34,9 +34,9 @@ __kernel void zeros(
     int i = get_global_id(0); 
     int j = get_global_id(1); 
     if ( i < M && j < N ){ 
-     if ( part==0 && i<j ){ 
+     if ( part==0 && j<i ){ 
        a[i*N+j] = 0;
-     }else if ( part==1 && i>j ){   
+     }else if ( part==1 && j>i ){   
        a[i*N+j] = 0;
      }else if ( part==2 ){   
        a[i*N+j] = 0;
@@ -93,8 +93,8 @@ __kernel void copy_triangular_transposed(
     if ( i < M && j < N ){ 
      if ( lower_to_upper && j>i){ 
        a[j*N+i]=a[i*N+j];  
-     }else if ( !lower_to_upper && j<i){ 
-       a[j*N+i]=a[i*N+j];  
+     }else if ( !lower_to_upper && j>i){ 
+       a[i*N+j]=a[j*N+i];  
      } 
     } 
 };
