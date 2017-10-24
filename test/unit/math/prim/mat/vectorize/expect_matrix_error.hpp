@@ -17,13 +17,13 @@ void expect_matrix_error() {
     for (int j = 0; j < a.cols(); ++j)
       a(i, j) = invalid_inputs[j];
   EXPECT_THROW(F::template apply<matrix_t>(a), std::exception);
-  EXPECT_THROW(F::template apply<matrix_t>(a.block(1, 1, 1, 1)), 
+  EXPECT_THROW(F::template apply<matrix_t>(a.block(1, 1, 1, 1)),
                std::exception);
 
   vector<matrix_t> d;
   d.push_back(a);
   d.push_back(a);
-  EXPECT_THROW(F::template apply<vector<matrix_t> >(d), 
+  EXPECT_THROW(F::template apply<vector<matrix_t> >(d),
                std::exception);
 }
 

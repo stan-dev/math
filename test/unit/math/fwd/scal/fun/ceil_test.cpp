@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdCeil,Fvar) {
+TEST(AgradFwdCeil, Fvar) {
   using stan::math::fvar;
   using std::ceil;
 
-  fvar<double> x(0.5,1.0);
-  fvar<double> y(2.0,2.0);
+  fvar<double> x(0.5, 1.0);
+  fvar<double> y(2.0, 2.0);
 
   fvar<double> a = ceil(x);
   EXPECT_FLOAT_EQ(ceil(0.5), a.val_);
@@ -23,7 +23,7 @@ TEST(AgradFwdCeil,Fvar) {
 }
 
 
-TEST(AgradFwdCeil,FvarFvarDouble) {
+TEST(AgradFwdCeil, FvarFvarDouble) {
   using stan::math::fvar;
   using std::ceil;
 
@@ -58,7 +58,7 @@ struct ceil_fun {
   }
 };
 
-TEST(AgradFwdCeil,ceil_NaN) {
+TEST(AgradFwdCeil, ceil_NaN) {
   ceil_fun ceil_;
-  test_nan_fwd(ceil_,false);
+  test_nan_fwd(ceil_, false);
 }

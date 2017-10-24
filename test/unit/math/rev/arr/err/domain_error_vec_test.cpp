@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
 const std::string function_ = "function";
 const std::string y_name_ = "y";
@@ -44,24 +45,24 @@ public:
     try {
       stan::math::domain_error_vec<T>
         (function_, y_name_, y, index_, msg1_, msg2_);
-      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error, "
              << "but threw nothing";
     } catch(std::domain_error& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error, "
              << "but threw a different type";
     }
 
     try {
       stan::math::domain_error_vec<T>
         (function_, y_name_, y, index_, msg1_);
-      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error, "
              << "but threw nothing";
     } catch(std::domain_error& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error_vec<> to throw a domain_error, "
              << "but threw a different type";
     }
   }

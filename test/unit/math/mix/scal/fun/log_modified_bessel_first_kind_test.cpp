@@ -1,4 +1,5 @@
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
+#include <vector>
 
 struct log_modified_bessel_first_kind_f {
   template <typename T1, typename T2>

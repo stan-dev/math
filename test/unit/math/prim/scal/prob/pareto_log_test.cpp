@@ -12,10 +12,13 @@ TEST(ProbPareto, log_matches_lpdf) {
                   (stan::math::pareto_log<true>(y, y_min, alpha)));
   EXPECT_FLOAT_EQ((stan::math::pareto_lpdf<false>(y, y_min, alpha)),
                   (stan::math::pareto_log<false>(y, y_min, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_lpdf<true, double, double, double>(y, y_min, alpha)),
-                  (stan::math::pareto_log<true, double, double, double>(y, y_min, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_lpdf<false, double, double, double>(y, y_min, alpha)),
-                  (stan::math::pareto_log<false, double, double, double>(y, y_min, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_lpdf<double, double, double>(y, y_min, alpha)),
-                  (stan::math::pareto_log<double, double, double>(y, y_min, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_lpdf<true, double, double, double>(y, y_min, alpha)),
+    (stan::math::pareto_log<true, double, double, double>(y, y_min, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_lpdf<false, double, double, double>(y, y_min, alpha)),
+    (stan::math::pareto_log<false, double, double, double>(y, y_min, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_lpdf<double, double, double>(y, y_min, alpha)),
+    (stan::math::pareto_log<double, double, double>(y, y_min, alpha)));
 }

@@ -1,16 +1,19 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <string>
+#include <limits>
 
 using stan::math::check_positive_finite;
 
-TEST(ErrorHandlingScalar,CheckPositiveFinite_Vector) {
+TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
   const std::string function = "check_positive_finite";
   std::vector<double> x;
 
   x.clear();
-  x.push_back (1.5);
-  x.push_back (0.1);
-  x.push_back (1);
+  x.push_back(1.5);
+  x.push_back(0.1);
+  x.push_back(1);
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
     << "check_positive_finite should be true with finite x";
 
@@ -50,7 +53,7 @@ TEST(ErrorHandlingScalar,CheckPositiveFinite_Vector) {
     << "check_positive_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar,CheckPositiveFinite_nan) {
+TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
   const std::string function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

@@ -7,7 +7,7 @@ TEST(MathMatrix, divide) {
   stan::math::matrix_d m0;
 
   using stan::math::divide;
-  EXPECT_NO_THROW(divide(v0,2.0));
-  EXPECT_NO_THROW(divide(rv0,2.0));
-  EXPECT_NO_THROW(divide(m0,2.0));
+  EXPECT_NO_THROW(divide(v0, 2.0));
+  EXPECT_NO_THROW(divide(rv0, 2.0));
+  EXPECT_NO_THROW(divide(m0, 2.0));
 }

@@ -35,11 +35,11 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-3.34108104263468429556956520337231251605487161479989511157723); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
-    
+
     // mu
     index.push_back(1U);
     value.push_back(numeric_limits<double>::infinity());
@@ -60,25 +60,25 @@ public:
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& beta,
            const T3&, const T4&, const T5&) {
     return stan::math::gumbel_log(y, mu, beta);
   }
 
-  template <bool propto, 
+  template <bool propto,
             typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& beta,
            const T3&, const T4&, const T5&) {
     return stan::math::gumbel_log<propto>(y, mu, beta);
   }
-  
-  
+
+
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob_function(const T_y& y, const T_loc& mu, const T_scale& beta,
                         const T3&, const T4&, const T5&) {
 

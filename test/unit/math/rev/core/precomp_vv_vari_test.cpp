@@ -6,15 +6,15 @@ TEST(StanAgradRevInternal, precomp_vv_vari) {
   double value, gradient1, gradient2;
   AVAR x1(2), x2(3);
   AVAR y;
-  
+
   value = 1;
   gradient1 = 4;
   gradient2 = 5;
 
   AVEC vars = createAVEC(x1, x2);
 
-  EXPECT_NO_THROW(y 
-      = stan::math::var(new stan::math::precomp_vv_vari(value, 
+  EXPECT_NO_THROW(y
+      = stan::math::var(new stan::math::precomp_vv_vari(value,
           x1.vi_, x2.vi_, gradient1, gradient2)));
   EXPECT_FLOAT_EQ(value, y.val());
 

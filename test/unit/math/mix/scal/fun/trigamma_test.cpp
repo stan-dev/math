@@ -6,9 +6,9 @@
 TEST(AgradFwdTrigamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::trigamma;  
-  
-  fvar<var> x(0.5,1.3);
+  using stan::math::trigamma;
+
+  fvar<var> x(0.5, 1.3);
   fvar<var> a = trigamma(x);
 
   EXPECT_FLOAT_EQ(4.9348022005446793094, a.val_.val());
@@ -16,20 +16,20 @@ TEST(AgradFwdTrigamma, FvarVar_1stDeriv) {
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.val_.grad(y,g);
+  a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(-16.8288, g[0]);
 }
 TEST(AgradFwdTrigamma, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::trigamma;  
-  
-  fvar<var> x(0.5,1.3);
+  using stan::math::trigamma;
+
+  fvar<var> x(0.5, 1.3);
   fvar<var> a = trigamma(x);
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.d_.grad(y,g);
+  a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(126.63182, g[0]);
 }
 TEST(AgradFwdTrigamma, FvarFvarDouble) {
@@ -75,7 +75,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.val_.grad(p,g);
+  a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(-16.8288, g[0]);
 
   fvar<fvar<var> > y;
@@ -90,7 +90,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.val_.val_.grad(q,r);
+  b.val_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(-16.8288, r[0]);
 }
 TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
@@ -106,7 +106,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.d_.grad(p,g);
+  a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(97.409088, g[0]);
 
   fvar<fvar<var> > y;
@@ -117,7 +117,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.d_.val_.grad(q,r);
+  b.d_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(97.409088, r[0]);
 }
 TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
@@ -134,7 +134,7 @@ TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.d_.d_.grad(p,g);
+  a.d_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(-771.47424982666722519053592192, g[0]);
 }
 
@@ -146,7 +146,7 @@ struct trigamma_fun {
   }
 };
 
-TEST(AgradFwdTrigamma,trigamma_NaN) {
+TEST(AgradFwdTrigamma, trigamma_NaN) {
   trigamma_fun trigamma_;
-  test_nan_mix(trigamma_,false);
+  test_nan_mix(trigamma_, false);
 }

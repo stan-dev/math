@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/bessel.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, log_modified_bessel_first_kind) {
   using stan::math::log_modified_bessel_first_kind;
@@ -9,7 +10,7 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
   using std::log;
 
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(sqrt(3), sqrt(2)),
-                  log(boost::math::cyl_bessel_i( sqrt(3), sqrt(2))));
+                  log(boost::math::cyl_bessel_i(sqrt(3), sqrt(2))));
 
   EXPECT_FLOAT_EQ(log_modified_bessel_first_kind(0.5, 10),
                   log(sqrt(2 / (M_PI * 10)) * std::sinh(10)));
@@ -69,11 +70,11 @@ TEST(MathFunctions, log_modified_bessel_first_kind) {
 
 
   // limiting cases
-  EXPECT_EQ(0, log_modified_bessel_first_kind(0,0));
+  EXPECT_EQ(0, log_modified_bessel_first_kind(0, 0));
   EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            log_modified_bessel_first_kind(1,0));
+            log_modified_bessel_first_kind(1, 0));
   EXPECT_EQ(std::numeric_limits<double>::infinity(),
-            log_modified_bessel_first_kind(-0.1,0));
+            log_modified_bessel_first_kind(-0.1, 0));
 }
 
 TEST(MathFunctions, log_modified_bessel_first_kind_throw) {

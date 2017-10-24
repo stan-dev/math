@@ -1,18 +1,21 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 using stan::math::check_finite;
 
 
 // ---------- check_finite: vector tests ----------
-TEST(ErrorHandlingScalar,CheckFinite_Vector) {
+TEST(ErrorHandlingScalar, CheckFinite_Vector) {
   const std::string function = "check_finite";
   std::vector<double> x;
 
   x.clear();
-  x.push_back (-1);
-  x.push_back (0);
-  x.push_back (1);
+  x.push_back(-1);
+  x.push_back(0);
+  x.push_back(1);
   ASSERT_NO_THROW(check_finite(function, "x", x))
     << "check_finite should be true with finite x";
 
@@ -38,14 +41,14 @@ TEST(ErrorHandlingScalar,CheckFinite_Vector) {
     << "check_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar,CheckFinite_nan) {
+TEST(ErrorHandlingScalar, CheckFinite_nan) {
   const std::string function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x;
-  x.push_back (nan);
-  x.push_back (0);
-  x.push_back (1);
+  x.push_back(nan);
+  x.push_back(0);
+  x.push_back(1);
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error);
 
   x[0] = 1.0;

@@ -6,6 +6,8 @@
 #include <test/unit/math/mix/mat/seq_writer.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace stan {
   namespace math {
@@ -278,7 +280,7 @@ namespace stan {
 
       /**
        * Structure to adapt a two-argument function specified as a
-       * class with a static apply(,) method that returns a scalar to
+       * class with a static apply(, ) method that returns a scalar to
        * a function that operates on an Eigen vector with templated
        * scalar type and returns a scalar of the same type.
        *
@@ -287,7 +289,7 @@ namespace stan {
        * instantiated to doubles and the remaining arguments being
        * templated on the functor argument scalar type.
        *
-       * @tparam F class with static apply(,) method
+       * @tparam F class with static apply(, ) method
        * @tparam T1 type of first argument with double scalars
        * @tparam T2 type of second argument with double scalars
        */
