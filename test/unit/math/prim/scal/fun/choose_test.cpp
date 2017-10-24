@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/binomial.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 int round_to_int(double x) {
   return static_cast<int>(x < 0 ? x - 0.5 : x + 0.5);
@@ -41,6 +42,5 @@ TEST(MathFunctions, choose_nan) {
   EXPECT_THROW(choose(2, nan), std::domain_error);
   EXPECT_THROW(choose(nan, 2), std::domain_error);
   EXPECT_THROW(choose(nan, nan), std::domain_error);
-
 }
 

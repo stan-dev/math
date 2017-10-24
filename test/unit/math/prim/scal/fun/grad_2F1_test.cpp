@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <vector>
 #include <stan/math/prim/scal.hpp>
+#include <vector>
 
 TEST(MathPrimScalFun, grad2F1_1) {
   double a1 = 1.0;
@@ -11,7 +11,7 @@ TEST(MathPrimScalFun, grad2F1_1) {
   double grad_a1;
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
-  EXPECT_NEAR( 2.290726829685388, grad_a1, 1e-8);
+  EXPECT_NEAR(2.290726829685388, grad_a1, 1e-8);
   EXPECT_NEAR(-2.290726829685388, grad_b1, 1e-8);
 }
 
@@ -24,7 +24,7 @@ TEST(MathPrimScalFun, grad2F1_2) {
   double grad_a1;
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z, 1e-11);
-  EXPECT_NEAR( 6.825270649241036, grad_a1, 1e-8);
+  EXPECT_NEAR(6.825270649241036, grad_a1, 1e-8);
   EXPECT_NEAR(-0.382716049382716, grad_b1, 1e-8);
 }
 
@@ -38,7 +38,7 @@ TEST(MathPrimScalFun, grad2F1_3) {
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
   EXPECT_NEAR(-0.04921317604093563, grad_a1, 1e-8);
-  EXPECT_NEAR( 0.00118482743834665, grad_b1, 1e-8);
+  EXPECT_NEAR(0.00118482743834665, grad_b1, 1e-8);
 }
 
 TEST(MathPrimScalFun, grad2F1_4) {
@@ -77,12 +77,12 @@ TEST(MathPrimScalFun, grad2F1_6) {
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
   EXPECT_NEAR(-0.01443822031245647, grad_a1, 1e-8);
-  EXPECT_NEAR( 0.00136986255602642, grad_b1, 1e-8);
+  EXPECT_NEAR(0.00136986255602642, grad_b1, 1e-8);
 }
 
 
 TEST(MathPrimScalFun, grad2F1_7) {
-  double a1 = 1.0;  
+  double a1 = 1.0;
   double a2 = -0.5;
   double b1 = 10.0;
   double z = 0.3;
@@ -91,11 +91,11 @@ TEST(MathPrimScalFun, grad2F1_7) {
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
   EXPECT_NEAR(-0.0153218866216130, grad_a1, 1e-8);
-  EXPECT_NEAR( 0.0015413242328729, grad_b1, 1e-8);
+  EXPECT_NEAR(0.0015413242328729, grad_b1, 1e-8);
 }
 
 TEST(MathPrimScalFun, grad2F1_8) {
-  double a1 = -.5;  
+  double a1 = -.5;
   double a2 = -4.5;
   double b1 = 11.0;
   double z = 0.3;
@@ -108,7 +108,7 @@ TEST(MathPrimScalFun, grad2F1_8) {
 }
 
 TEST(MathPrimScalFun, grad2F1_9) {
-  double a1 = -.5;  
+  double a1 = -.5;
   double a2 = -4.5;
   double b1 = -3.2;
   double z = 0.9;
@@ -116,7 +116,7 @@ TEST(MathPrimScalFun, grad2F1_9) {
   double grad_a1;
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
-  EXPECT_NEAR( 0.85880025358111, grad_a1, 1e-8);
+  EXPECT_NEAR(0.85880025358111, grad_a1, 1e-8);
   EXPECT_NEAR(-4.19010422485256, grad_b1, 1e-8);
 }
 
@@ -129,7 +129,7 @@ TEST(MathPrimScalFun, grad2F1_10) {
   double grad_a1;
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
-  EXPECT_NEAR( 0.4617734323582945, grad_a1, 1e-8);
+  EXPECT_NEAR(0.4617734323582945, grad_a1, 1e-8);
   EXPECT_NEAR(-0.4617734323582945, grad_b1, 1e-8);
 }
 

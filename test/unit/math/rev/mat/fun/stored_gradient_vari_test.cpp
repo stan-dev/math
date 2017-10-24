@@ -1,20 +1,26 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(StoredGradientVari, propagate3) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs
-    = (vari**) stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(vari*));
-  var xs1 = 1; // value not used here
-  var xs2 = 4; // value not used here
-  var xs3 = 9; // value not used here
+    = reinterpret_cast<vari**>(
+              stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(vari*)));
+  // value not used here
+  var xs1 = 1;
+  // value not used here
+  var xs2 = 4;
+  // value not used here
+  var xs3 = 9;
   xs[0] = xs1.vi_;
   xs[1] = xs2.vi_;
   xs[2] = xs3.vi_;
-  double* partials = (double*) stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(double));
+  double* partials
+    = reinterpret_cast<double*>(
+              stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(double)));
   partials[0] = 10;
   partials[1] = 100;
   partials[2] = 1000;
@@ -41,7 +47,7 @@ TEST(StoredGradientVari, propagate0) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = 0;
-  double* partials = (double*) 0;
+  double* partials = reinterpret_cast<double*>(0);
 
   var sum = var(new stan::math::stored_gradient_vari(-14.7, 0, xs, partials));
   EXPECT_FLOAT_EQ(-14.7, sum.val());
@@ -63,14 +69,19 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs
-    = (vari**) stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(vari*));
-  var xs1 = 1; // value not used here
-  var xs2 = 4; // value not used here
-  var xs3 = 9; // value not used here
+    = reinterpret_cast<vari**>(
+              stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(vari*)));
+  // value not used here
+  var xs1 = 1;
+  // value not used here
+  var xs2 = 4;
+  // value not used here
+  var xs3 = 9;
   xs[0] = xs1.vi_;
   xs[1] = xs2.vi_;
   xs[2] = xs3.vi_;
-  double* partials = (double*) stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(double));
+  double* partials = reinterpret_cast<double*>(
+              stan::math::ChainableStack::memalloc_.alloc(3 * sizeof(double)));
   partials[0] = 10;
   partials[1] = 100;
   partials[2] = 1000;

@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, abs) {
   using stan::math::abs;
@@ -17,20 +18,20 @@ TEST(MathFunctions, abs) {
   y = -1.3;
   EXPECT_FLOAT_EQ(1.3, abs(y));
 
-  int z = 10; // promoted to double by abs(double)
+  // promoted to double by abs(double)
+  int z = 10;
   EXPECT_FLOAT_EQ(10.0, abs(z));
-
 }
 
-TEST(MathFunctions, abs2){
-  double yy=0;
-  yy=0;
+TEST(MathFunctions, abs2) {
+  double yy = 0;
+  yy = 0;
   EXPECT_FLOAT_EQ(0, stan::math::abs(yy));
 }
 
 TEST(MathFunctions, abs_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_PRED1(boost::math::isnan<double>,
                stan::math::abs(nan));
 }

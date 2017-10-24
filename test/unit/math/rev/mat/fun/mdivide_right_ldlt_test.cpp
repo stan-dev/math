@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
   using stan::math::var;
@@ -14,7 +15,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
   using std::vector;
 
   row_vector_v b(5);
-  matrix_v A(5,5);
+  matrix_v A(5, 5);
   row_vector_v x, x_basic;
   row_vector_d x_val, x_basic_val;
   row_vector_d expected(5);
@@ -32,7 +33,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    LDLT_factor<var,-1,-1> ldlt_A;
+    LDLT_factor<var, -1, -1> ldlt_A;
     ldlt_A.compute(A);
     ASSERT_TRUE(ldlt_A.success());
     x = mdivide_right_ldlt(b, ldlt_A);
@@ -62,7 +63,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    x_basic = mdivide_right_spd(b,A);
+    x_basic = mdivide_right_spd(b, A);
     x_basic_val = value_of(x_basic);
     ASSERT_EQ(expected.size(), x_basic_val.size());
     for (int n = 0; n < expected.size(); n++) {
@@ -102,7 +103,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vd) {
   using stan::math::value_of;
 
   row_vector_v b(5);
-  matrix_d A(5,5);
+  matrix_d A(5, 5);
   row_vector_v x, x_basic;
   row_vector_d x_val, x_basic_val;
   row_vector_d expected(5);
@@ -120,7 +121,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vd) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    LDLT_factor<double,-1,-1> ldlt_A;
+    LDLT_factor<double, -1, -1> ldlt_A;
     ldlt_A.compute(A);
     ASSERT_TRUE(ldlt_A.success());
     x = mdivide_right_ldlt(b, ldlt_A);
@@ -147,7 +148,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vd) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    x_basic = mdivide_right_spd(b ,stan::math::to_var(A));
+    x_basic = mdivide_right_spd(b , stan::math::to_var(A));
     x_basic_val = value_of(x_basic);
     ASSERT_EQ(expected.size(), x_basic_val.size());
     for (int n = 0; n < expected.size(); n++) {
@@ -183,7 +184,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
   using std::vector;
 
   row_vector_d b(5);
-  matrix_v A(5,5);
+  matrix_v A(5, 5);
   row_vector_v x, x_basic;
   row_vector_d x_val, x_basic_val;
   row_vector_d expected(5);
@@ -201,7 +202,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    LDLT_factor<var,-1,-1> ldlt_A;
+    LDLT_factor<var, -1, -1> ldlt_A;
     ldlt_A.compute(A);
     ASSERT_TRUE(ldlt_A.success());
     x = mdivide_right_ldlt(b, ldlt_A);
@@ -228,7 +229,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
      -9, 0,  20,  2,  5,
       7, 4,  2,  20, -5,
       5, 4,  5, -5,  20;
-    x_basic = mdivide_right_spd(stan::math::to_var(b),A);
+    x_basic = mdivide_right_spd(stan::math::to_var(b), A);
     x_basic_val = value_of(x_basic);
     ASSERT_EQ(expected.size(), x_basic_val.size());
     for (int n = 0; n < expected.size(); n++) {
@@ -271,5 +272,6 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
 
   test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, ldlt_A));
   test::check_varis_on_stack(stan::math::mdivide_right_ldlt(b, ldlt_Ad));
-  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(value_of(b), ldlt_A));
+  test::check_varis_on_stack(stan::math::mdivide_right_ldlt(value_of(b),
+                                                            ldlt_A));
 }

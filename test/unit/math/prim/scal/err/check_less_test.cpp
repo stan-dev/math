@@ -1,9 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_less;
 
-TEST(ErrorHandlingScalar,CheckLess) {
+TEST(ErrorHandlingScalar, CheckLess) {
   const std::string function = "check_less";
   double x = -10.0;
   double lb = 0.0;
@@ -34,7 +36,7 @@ TEST(ErrorHandlingScalar,CheckLess) {
     << "check_less should throw an exception with x == -Inf and lb == -Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
   const std::string function = "check_less";
   double x = 10.0;
   double lb = 0.0;

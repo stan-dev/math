@@ -3,26 +3,26 @@
 #include <boost/math/special_functions/erf.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdErfc,Fvar) {
+TEST(AgradFwdErfc, Fvar) {
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;
   using boost::math::erfc;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
 
   fvar<double> a = erfc(x);
   EXPECT_FLOAT_EQ(erfc(0.5), a.val_);
-  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) 
+  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5)
                   / sqrt(boost::math::constants::pi<double>()), a.d_);
 
  fvar<double> b = erfc(-x);
   EXPECT_FLOAT_EQ(erfc(-0.5), b.val_);
-  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5) 
+  EXPECT_FLOAT_EQ(2 * exp(-0.5 * 0.5)
                   / sqrt(boost::math::constants::pi<double>()), b.d_);
 }
 
-TEST(AgradFwdErfc,FvarFvarDouble) {
+TEST(AgradFwdErfc, FvarFvarDouble) {
   using stan::math::fvar;
   using std::exp;
   using std::sqrt;
@@ -35,7 +35,7 @@ TEST(AgradFwdErfc,FvarFvarDouble) {
   fvar<fvar<double> > a = erfc(x);
 
   EXPECT_FLOAT_EQ(erfc(0.5), a.val_.val_);
-  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) / 
+  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) /
                   sqrt(boost::math::constants::pi<double>()), a.val_.d_);
   EXPECT_FLOAT_EQ(0, a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
@@ -47,7 +47,7 @@ TEST(AgradFwdErfc,FvarFvarDouble) {
   a = erfc(y);
   EXPECT_FLOAT_EQ(erfc(0.5), a.val_.val_);
   EXPECT_FLOAT_EQ(0, a.val_.d_);
-  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) / 
+  EXPECT_FLOAT_EQ(-2 * exp(-0.5 * 0.5) /
                   sqrt(boost::math::constants::pi<double>()), a.d_.val_);
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
@@ -60,7 +60,7 @@ struct erfc_fun {
   }
 };
 
-TEST(AgradFwdErfc,erfc_NaN) {
+TEST(AgradFwdErfc, erfc_NaN) {
   erfc_fun erfc_;
-  test_nan_fwd(erfc_,false);
+  test_nan_fwd(erfc_, false);
 }

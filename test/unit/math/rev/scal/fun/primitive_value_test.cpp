@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-TEST(AgradRev,primitiveValue) {
+TEST(AgradRev, primitiveValue) {
   using stan::math::var;
   using stan::math::primitive_value;
 
@@ -10,6 +10,6 @@ TEST(AgradRev,primitiveValue) {
   EXPECT_FLOAT_EQ(5.0, primitive_value(a));
 
   // make sure all work together
-  EXPECT_FLOAT_EQ(5.0, primitive_value(5.0)); 
+  EXPECT_FLOAT_EQ(5.0, primitive_value(5.0));
   EXPECT_EQ(5, primitive_value(5));
 }

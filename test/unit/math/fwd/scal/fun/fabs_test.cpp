@@ -1,8 +1,9 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
-TEST(AgradFwdFabs,Fvar) {
+TEST(AgradFwdFabs, Fvar) {
   using stan::math::fvar;
   using std::fabs;
   using std::isnan;
@@ -47,7 +48,7 @@ TEST(AgradFwdFabs,Fvar) {
   EXPECT_FLOAT_EQ(0.0, j.d_);
 }
 
-TEST(AgradFwdFabs,FvarFvarDouble) {
+TEST(AgradFwdFabs, FvarFvarDouble) {
   using stan::math::fvar;
   using std::fabs;
 
@@ -64,7 +65,7 @@ TEST(AgradFwdFabs,FvarFvarDouble) {
 
   fvar<fvar<double> > y;
   y.val_.val_ = 1.5;
-  y.d_.val_ = 2.0;  
+  y.d_.val_ = 2.0;
 
   a = fabs(y);
   EXPECT_FLOAT_EQ(fabs(1.5), a.val_.val_);
@@ -82,7 +83,7 @@ struct fabs_fun {
   }
 };
 
-TEST(AgradFwdFabs,fabs_NaN) {
+TEST(AgradFwdFabs, fabs_NaN) {
   fabs_fun fabs_;
-  test_nan_fwd(fabs_,false);
+  test_nan_fwd(fabs_, false);
 }

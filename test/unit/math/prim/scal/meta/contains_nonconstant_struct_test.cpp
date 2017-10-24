@@ -7,5 +7,5 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_FALSE(contains_nonconstant_struct<int>::value);
   EXPECT_FALSE(contains_nonconstant_struct<double>::value);
   EXPECT_FALSE(contains_nonconstant_struct<float>::value);
-  EXPECT_FALSE(contains_nonconstant_struct<long>::value);
+  EXPECT_FALSE(contains_nonconstant_struct<int32_t>::value);
 }

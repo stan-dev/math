@@ -112,7 +112,7 @@ size_t size(const vector<vector<string> >& sequences) {
 }
 
 bool is_argument_list(const string& line) {
-  size_t comment = line.find("//");
+  size_t comment = line.find("// ");
   if (comment == string::npos)
     return false;
   size_t keyword = line.find("Arguments:", comment+1);
@@ -179,7 +179,7 @@ vector<vector<string> > build_argument_sequence(const string& arguments,
   vector<string> argument_list = tokenize_arguments(arguments);
   vector<vector<string> > argument_sequence;
   for (size_t n = 0; n < argument_list.size(); n++)
-    argument_sequence.push_back(lookup_argument(argument_list[n],ind));
+    argument_sequence.push_back(lookup_argument(argument_list[n], ind));
   return argument_sequence;
 }
 
@@ -263,7 +263,7 @@ void write_types_typedef(vector<std::ostream *>& outs, string base, size_t& N,
         *out << "> type_v_" << N << ";" << endl;
         N++;
       } else {
-        if (check_all_double(base,args[n]) == false) {
+        if (check_all_double(base, args[n]) == false) {
           *out << "typedef boost::mpl::vector<" << base << args[n] << extra_args;
           if (extra_args.size() == 0)
             *out << " ";
@@ -287,7 +287,7 @@ size_t write_types(vector<std::ostream *>& outs,
                  const int& index, const int& N_TESTS) {
   size_t N = 0;
   write_types_typedef(outs, "", N, argument_sequence,
-                      argument_sequence.size(),index,N_TESTS);
+                      argument_sequence.size(), index, N_TESTS);
   for (size_t n = 0; n < outs.size(); n++)
     *outs[n] << endl;
   return N;
@@ -337,11 +337,11 @@ void write_test_cases(vector<std::ostream *>& outs, const string& file,
   string test_name = name.first;
   string fixture_name = name.second;
 
-  size_t num_tests = write_types(outs, argument_sequence,index,N_TESTS);
-  write_test(outs, test_name, fixture_name, num_tests,index,N_TESTS);
+  size_t num_tests = write_types(outs, argument_sequence, index, N_TESTS);
+  write_test(outs, test_name, fixture_name, num_tests, index, N_TESTS);
 }
 
-int create_files(const int& argc, const char* argv[],const int& index,
+int create_files(const int& argc, const char* argv[], const int& index,
                  const int& start, const int& N_TESTS) {
   if (argc != 3)
     return -1;
@@ -355,13 +355,13 @@ int create_files(const int& argc, const char* argv[],const int& index,
   string file = read_file(in_name);
 
   string arguments = read_arguments_from_file(file);
-  vector<vector<string> > argument_sequence = build_argument_sequence(arguments,index);
+  vector<vector<string> > argument_sequence = build_argument_sequence(arguments, index);
 
   int num_tests;
   if (index == 1)
     num_tests = size(argument_sequence);
   else
-    num_tests = size(argument_sequence) - std::pow(3,num_ints(arguments))
+    num_tests = size(argument_sequence) - std::pow(3, num_ints(arguments))
       * std::pow(3, num_doubles(arguments));
 
   vector<std::ostream *> outs;
@@ -385,10 +385,10 @@ int create_files(const int& argc, const char* argv[],const int& index,
   }
 
   write_includes(outs, in_name);
-  if(N_TESTS > 0)
-    write_test_cases(outs, file, argument_sequence,index,N_TESTS);
-  else if(num_tests > 0)
-    write_test_cases(outs, file, argument_sequence,index,ceil(num_tests / BATCHES));
+  if (N_TESTS > 0)
+    write_test_cases(outs, file, argument_sequence, index, N_TESTS);
+  else if (num_tests > 0)
+    write_test_cases(outs, file, argument_sequence, index, ceil(num_tests / BATCHES));
 
 
   for (size_t n = 0; n < outs.size(); n++) {
@@ -411,11 +411,11 @@ int create_files(const int& argc, const char* argv[],const int& index,
  */
 int main(int argc, const char* argv[]) {
   int N_TESTS = atoi(argv[2]);
-  create_files(argc,argv,1,-1,N_TESTS);  // create var tests
-  create_files(argc,argv,2,-1,N_TESTS);  // create fd tests
-  create_files(argc,argv,3,-1,N_TESTS);  // create fv tests
-  create_files(argc,argv,4,-1,N_TESTS);  // create ffd tests
-  create_files(argc,argv,5,-1,N_TESTS);  // create ffv tests
+  create_files(argc, argv, 1, -1, N_TESTS);  // create var tests
+  create_files(argc, argv, 2, -1, N_TESTS);  // create fd tests
+  create_files(argc, argv, 3, -1, N_TESTS);  // create fv tests
+  create_files(argc, argv, 4, -1, N_TESTS);  // create ffd tests
+  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
 
   return 0;
 }

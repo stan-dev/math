@@ -6,7 +6,7 @@ Instructions for implementing and testing a vectorized function
   For an example, see: test/unit/math/prim/mat/vectorize/foo_fun.hpp
 
     *  Define a struct definining the function for scalars which works
-       for all of the scalar types (prim, rev, fwd, and mix);  
+       for all of the scalar types (prim, rev, fwd, and mix);
        see struct foo_fun in foo_fun.hpp
 
     *  Define the actual function in terms of the struct.
@@ -24,6 +24,6 @@ Instructions for implementing and testing a vectorized function
       * T appply(const T&);
 
       * double apply_base(int)
-    
+
 *** WARNING ***
 The tests presuppose that all of the scalar possibilities ***have already been tested***.  These tests only test that nothing gets messed up by the vectorization.

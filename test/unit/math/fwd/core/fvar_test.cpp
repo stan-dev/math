@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
-#include <sstream>
 #include <stan/math/fwd/core.hpp>
+#include <sstream>
+#include <limits>
 
-TEST(AgradFwdFvar,Fvar) {
+TEST(AgradFwdFvar, Fvar) {
   using stan::math::fvar;
 
   fvar<double> a;
@@ -35,7 +36,7 @@ TEST(AgradFwdFvar,Fvar) {
   fvar<double> f(nan);
   EXPECT_TRUE(boost::math::isnan(f.val_));
   EXPECT_TRUE(boost::math::isnan(f.d_));
-  
+
   fvar<double> g(nan, 1);
   EXPECT_TRUE(boost::math::isnan(g.val_));
   EXPECT_TRUE(boost::math::isnan(g.d_));

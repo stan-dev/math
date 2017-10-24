@@ -3,17 +3,17 @@
 #include <boost/math/special_functions/atanh.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdAtanh,Fvar) {
+TEST(AgradFwdAtanh, Fvar) {
   using stan::math::fvar;
   using boost::math::atanh;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
 
   fvar<double> a = atanh(x);
   EXPECT_FLOAT_EQ(atanh(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / (1 - 0.5 * 0.5), a.d_);
 
-  fvar<double> y(-0.9,1.0);
+  fvar<double> y(-0.9, 1.0);
 
   fvar<double> b = atanh(y);
   EXPECT_FLOAT_EQ(atanh(-0.9), b.val_);
@@ -21,7 +21,7 @@ TEST(AgradFwdAtanh,Fvar) {
 }
 
 
-TEST(AgradFwdAtanh,FvarFvarDouble) {
+TEST(AgradFwdAtanh, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::atanh;
 
@@ -56,7 +56,7 @@ struct atanh_fun {
   }
 };
 
-TEST(AgradFwdAtanh,atanh_NaN) {
+TEST(AgradFwdAtanh, atanh_NaN) {
   atanh_fun atanh_;
-  test_nan_fwd(atanh_,false);
+  test_nan_fwd(atanh_, false);
 }

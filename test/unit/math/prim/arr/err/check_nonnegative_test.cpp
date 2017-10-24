@@ -1,9 +1,12 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <string>
+#include <limits>
 
 using stan::math::check_nonnegative;
 
-TEST(ErrorHandlingScalar,CheckNonnegativeVectorized) {
+TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
   const std::string function = "check_nonnegative";
   std::vector<double> x(N);
@@ -20,10 +23,10 @@ TEST(ErrorHandlingScalar,CheckNonnegativeVectorized) {
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
     << "check_nonnegative should throw exception with x = " << x[0];
 
-
   x.assign(N, -std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative(vector) should throw an exception with x = -Inf: " << x[0];
+    << "check_nonnegative(vector) should throw an exception with x = -Inf: "
+    << x[0];
 
   x.assign(N, std::numeric_limits<double>::quiet_NaN());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
@@ -50,7 +53,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]"));
 }
 
-TEST(ErrorHandlingScalar,CheckNonnegative_nan) {
+TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
   const std::string function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

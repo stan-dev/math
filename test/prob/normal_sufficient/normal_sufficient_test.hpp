@@ -11,7 +11,7 @@ public:
                     vector<double>& log_prob) {
     vector<double> param(5);
 
-    //observed values: -0.1, 0.1
+    // observed values: -0.1, 0.1
     param[0] = 0;           // y_bar
     param[1] = 0.02;           // s_squared
     param[2] = 2;           // n_obs
@@ -20,7 +20,7 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-4.52356581482502); // expected log_prob
 
-    //observed values: 0, 1
+    // observed values: 0, 1
     param[0] = 0.5;           // y_bar
     param[1] = 0.5;           // s_squared
     param[2] = 2;           // n_obs
@@ -30,7 +30,7 @@ public:
     log_prob.push_back(-2.33787706640935); // expected log_prob
 
 
-    //observed values: 0, 2
+    // observed values: 0, 2
     param[0] = 1;           // y_bar
     param[1] = 2;           // s_squared
     param[2] = 2;           // n_obs
@@ -39,7 +39,7 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-2.83787706640935); // expected log_prob
 
-    //observed values: 1, 2
+    // observed values: 1, 2
     param[0] = 1.5;           // y_bar
     param[1] = 0.5;           // s_squared
     param[2] = 2;           // n_obs
@@ -101,7 +101,7 @@ public:
     using stan::math::pi;
     using stan::math::square;
     typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type lp(0.0);
-    if (include_summand<true,T_scale>::value)
+    if (include_summand<true, T_scale>::value)
       lp -= n_obs * log(sigma);
 
       lp -= (s_squared + n_obs * pow(y_bar - mu, 2)) / (2 * pow(sigma, 2));
