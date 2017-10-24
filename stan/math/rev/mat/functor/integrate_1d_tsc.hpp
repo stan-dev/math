@@ -22,7 +22,11 @@ namespace stan {
   namespace math {
 
     /**
-     * Return the numeric integral of a function f given its gradient g.
+     * Return the numerical integral of a function f given its gradient
+     * g.
+     *
+     * This function uses the algorithm of integrate_1d_tscg for
+     * numerical integration.
      *
      * @tparam T Type of f.
      * @tparam G Type of g.
@@ -34,21 +38,21 @@ namespace stan {
      * @param g a functor with signature
      * double (double, std::vector<T_param>, int, std::ostream&) or with
      * signature double (double, T_param, int, std::ostream&) where the
-     * first argument is onebeing integrated and the second one is
+     * first argument is being integrated and the second one is
      * either an extra scalar or vector being passed to f and the
      * third one selects which component of the gradient vector
      * is to be returned.
-     * @param a lower limit of integration, must be double type.
-     * @param b upper limit of integration, must be double type.
+     * @param a lower limit of integration, must be a finite double.
+     * @param b upper limit of integration, must be a finite double.
      * @param tre target relative error.
      * @param tae target absolute error.
-     * @param param aditional parameters to be passed to f.
+     * @param param additional parameters to be passed to f.
      * @param msgs stream.
      * @return numeric integral of function f.
      */
     template <typename F, typename G, typename T_param>
     inline typename scalar_type<T_param>::type
-    integrate_1d_tsc_tscg(const F& f,  const G& g,  const double a,
+    integrate_1d_tscg(const F& f,  const G& g,  const double a,
                           const double b, const T_param& param,
                           std::ostream& msgs, const double tre = 1e-6,
                           const double tae = 1e-6) {
@@ -84,11 +88,10 @@ namespace stan {
         return ops_partials.build(val_);
       // easy case, here we are calculating a normalizing constant,
       // not a normalizing factor, so g doesn't matter at all
-      } else {
-        return de_integrator(std::bind<double>(f, _1, value_of(param),
-                                               std::ref(msgs)),
-                             a, b, tre, tae);
       }
+      return de_integrator(std::bind<double>(f, _1, value_of(param),
+                                               std::ref(msgs)),
+                           a, b, tre, tae);
     }
 
     /**
@@ -105,8 +108,26 @@ namespace stan {
     }
 
     /**
-     * Return the numeric integral of a function f with its
-     * gradients being infered automatically (but slowly).
+     * Return the numerical integral of a function f with its
+     * gradients being inferred automatically (but slowly).
+     *
+     * The numerical integration algorithm used is the Tanh-sinh
+     * quadrature method (also known as Double Exponential
+     * Transformation) which was proposed by Hidetosi Takahasi and
+     * Masatake Mori in 1974
+     *
+     * The implementation of integration used is given John D. Cook with
+     * the slight modification of adding a relative tolerance error. See
+     * www.codeproject.com/kb/recipes/fastnumericalintegration.aspx
+     * www.johndcook.com/blog/double_exponential_integration/
+     *
+     * Such implementation assumes f to be smooth with no discontinuity
+     * in the function nor in any of its derivatives.
+     *
+     * The integration is terminated when both relative and absolute
+     * tolerance are reached or when a predefined number of iterations
+     * is reached (such termination condition was designed to target
+     * floating point).
      *
      * @tparam T Type of f.
      * @param f a functor with signature
@@ -118,7 +139,7 @@ namespace stan {
      * @param b upper limit of integration, must be double type.
      * @param tre target relative error.
      * @param tae target absolute error.
-     * @param param aditional parameters to be passed to f.
+     * @param param additional parameters to be passed to f.
      * @param msgs stream.
      * @return numeric integral of function f.
      */
@@ -177,3 +198,4 @@ namespace stan {
 }
 
 #endif
+

@@ -121,7 +121,7 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
 
   g3 ig3;
   stan::math::set_zero_all_adjoints();
-  integrate_1d_tsc_tscg(if3, ig3, 0., 1.1, vec, msgs).grad();
+  integrate_1d_tscg(if3, ig3, 0., 1.1, vec, msgs).grad();
   EXPECT_FLOAT_EQ((p1 - p2)/2e-6, a.adj());
   }
 }

@@ -32,7 +32,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
 
-#include "de_integrator_constants.hpp"
+#include <stan/math/rev/mat/functor/de_integrator_constants.hpp>
 #include <cmath>
 #include <cfloat>
 
@@ -79,21 +79,19 @@ namespace stan {
       double h = 1.0;
       double previous_delta, current_delta = DBL_MAX;
 
-      integral = f(c * de_abcissas[0] + d)
-                 * de_weights[0];
+      integral = f(c * de_abcissas[0] + d) * de_weights[0];
+
       int i;
       for (i = offsets[0]; i != offsets[1]; ++i)
-        integral += de_weights[i]
-                    * (f(c * de_abcissas[i] + d)
-                       + f(-c * de_abcissas[i] + d));
+        integral += de_weights[i] * (f(c * de_abcissas[i] + d)
+                                     + f(-c * de_abcissas[i] + d));
 
       for (int level = 1; level != num_levels; ++level) {
         h *= 0.5;
         new_contribution = 0.0;
         for (i = offsets[level]; i != offsets[level+1]; ++i)
-          new_contribution += de_weights[i]
-                              * (f(c * de_abcissas[i] + d)
-                                 + f(-c * de_abcissas[i] + d));
+          new_contribution += de_weights[i] * (f(c * de_abcissas[i] + d)
+                                          + f(-c * de_abcissas[i] + d));
         new_contribution *= h;
 
         // difference in consecutive integral estimates
