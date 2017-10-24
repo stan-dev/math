@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
@@ -225,7 +226,7 @@ namespace stan {
           num *= mu - 25;
           denom *= ex * 3;
           s -= num / denom;
-          s = z - log(sqrt(2 * z * M_PI)) + log(s);
+          s = z - log(sqrt(2 * z * pi())) + log(s);
           return s;
         }
       }
