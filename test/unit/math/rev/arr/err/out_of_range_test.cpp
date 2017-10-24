@@ -1,10 +1,12 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <string>
+#include <vector>
 
-const char* function_ = "function";
-const char* msg1_ = "error_message1 ";
-const char* msg2_ = "error_message2 ";
+const std::string function_ = "function";
+const std::string msg1_ = "error_message1 ";
+const std::string msg2_ = "error_message2 ";
 
 class ErrorHandlingScalar_out_of_range : public ::testing::Test {
 public:
@@ -44,7 +46,7 @@ public:
   template <class T>
   void test_throw(T y, size_t i) {
     using stan::math::out_of_range;
-    
+
     EXPECT_THROW_MSG(out_of_range(function_, y.size(), i, msg1_, msg2_),
                      std::out_of_range,
                      expected_message_with_2_messages(y, i));
@@ -61,7 +63,7 @@ public:
 
 TEST_F(ErrorHandlingScalar_out_of_range, var) {
   std::vector<stan::math::var> y(4);
-  
+
   test_throw(y, 0);
   test_throw(y, 5);
 }

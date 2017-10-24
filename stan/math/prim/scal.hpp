@@ -127,6 +127,7 @@
 #include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log_mix.hpp>
+#include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/logical_and.hpp>
@@ -386,6 +387,7 @@
 #include <stan/math/prim/scal/prob/skew_normal_log.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/skew_normal_rng.hpp>
+#include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf.hpp>
 #include <stan/math/prim/scal/prob/student_t_cdf_log.hpp>

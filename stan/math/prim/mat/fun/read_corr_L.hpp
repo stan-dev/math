@@ -36,7 +36,7 @@ namespace stan {
     read_corr_L(const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
                 size_t K) {
       Eigen::Array<T, Eigen::Dynamic, 1> temp;
-      Eigen::Array<T, Eigen::Dynamic, 1> acc(K-1);
+      Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
       acc.setOnes();
       // Cholesky factor of correlation matrix
       Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> L(K, K);
@@ -52,11 +52,11 @@ namespace stan {
         position += pull;
         pull--;
         temp = CPCs.segment(position, pull);
-        L(i, i) = sqrt(acc(i-1));
+        L(i, i) = sqrt(acc(i - 1));
         L.col(i).tail(pull) = temp * acc.tail(pull).sqrt();
         acc.tail(pull) *= T(1.0) - temp.square();
       }
-      L(K-1, K-1) = sqrt(acc(K-2));
+      L(K - 1, K - 1) = sqrt(acc(K - 2));
       return L.matrix();
     }
 

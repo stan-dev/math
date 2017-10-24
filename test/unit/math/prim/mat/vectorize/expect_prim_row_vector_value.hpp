@@ -12,7 +12,7 @@ void expect_prim_row_vector_value() {
 
   std::vector<double> valid_inputs = F::valid_inputs();
 
-  RowVectorXd c = 
+  RowVectorXd c =
     RowVectorXd::Map(valid_inputs.data(), valid_inputs.size());
 
   RowVectorXd fc = F::template apply<RowVectorXd>(c);

@@ -21,13 +21,13 @@ namespace stan {
     // row_vector to_row_vector(real[])
     template <typename T>
     inline Eigen::Matrix<T, 1, Eigen::Dynamic>
-    to_row_vector(const std::vector<T> & vec) {
+    to_row_vector(const std::vector<T>& vec) {
       return Eigen::Matrix<T, 1, Eigen::Dynamic>::Map(vec.data(), vec.size());
     }
 
     // row_vector to_row_vector(int[])
     inline Eigen::Matrix<double, 1, Eigen::Dynamic>
-    to_row_vector(const std::vector<int> & vec) {
+    to_row_vector(const std::vector<int>& vec) {
       int C = vec.size();
       Eigen::Matrix<double, 1, Eigen::Dynamic> result(C);
       for (int i=0; i < C; i++)

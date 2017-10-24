@@ -1,8 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <iostream>
 
 using stan::math::sum;
 using stan::math::append_col;
@@ -14,9 +14,9 @@ using Eigen::MatrixXd;
 using Eigen::RowVectorXd;
 
 TEST(AgradRevMatrix, append_col_matrix) {
-  matrix_v a(2,2);
-  matrix_v a_square(2,2);
-  MatrixXd b(2,2);
+  matrix_v a(2, 2);
+  matrix_v a_square(2, 2);
+  MatrixXd b(2, 2);
 
   a << 2.0, 3.0,
        9.0, -1.0;
@@ -27,7 +27,7 @@ TEST(AgradRevMatrix, append_col_matrix) {
   AVEC x;
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
-      x.push_back(a(i,j));
+      x.push_back(a(i, j));
       a_square(i, j) = square(a(i, j));
     }
   }
@@ -95,13 +95,13 @@ TEST(AgradRevMatrix, append_col_row_vector) {
 }
 
 template <typename T, int R, int C>
-void correct_type_row_vector(const Eigen::Matrix<T,R,C>& x) {
+void correct_type_row_vector(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(1, R);
 }
 
 template <typename T, int R, int C>
-void correct_type_matrix(const Eigen::Matrix<T,R,C>& x) {
+void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }
@@ -132,7 +132,8 @@ TEST(MathMatrix, append_col_different_types) {
          24, 25, 26;
 
   MatrixXd m23b(2, 3);
-  m23b = m23*1.101; //ensure some different values
+  // ensure some different values
+  m23b = m23*1.101;
 
   VectorXd v3(3);
   v3 << 31,
@@ -165,7 +166,8 @@ TEST(MathMatrix, append_col_different_types) {
          24, 25, 26;
 
   MatrixXd vm23b(2, 3);
-  vm23b = m23*1.101; //ensure some different values
+  // ensure some different values
+  vm23b = m23*1.101;
 
   VectorXd vv3(3);
   vv3 << 31,
@@ -224,15 +226,15 @@ TEST(MathMatrix, append_col_different_types) {
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::to_var;
-  stan::math::matrix_d a(2,2);
-  stan::math::matrix_d b(2,2);
+  stan::math::matrix_d a(2, 2);
+  stan::math::matrix_d b(2, 2);
 
   a << 2.0, 3.0,
        9.0, -1.0;
 
   b << 4.0, 3.0,
        0.0, 1.0;
-  
+
   test::check_varis_on_stack(stan::math::append_col(to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::append_col(to_var(a), b));
   test::check_varis_on_stack(stan::math::append_col(a, to_var(b)));

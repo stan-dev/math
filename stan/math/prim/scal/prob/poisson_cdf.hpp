@@ -18,6 +18,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -26,7 +27,7 @@ namespace stan {
     template <typename T_n, typename T_rate>
     typename return_type<T_rate>::type
     poisson_cdf(const T_n& n, const T_rate& lambda) {
-      static const char* function("poisson_cdf");
+      static const std::string function = "poisson_cdf";
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 
@@ -66,13 +67,13 @@ namespace stan {
 
         const T_partials_return n_dbl = value_of(n_vec[i]);
         const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-        const T_partials_return Pi = gamma_q(n_dbl+1, lambda_dbl);
+        const T_partials_return Pi = gamma_q(n_dbl + 1, lambda_dbl);
 
         P *= Pi;
 
         if (!is_constant_struct<T_rate>::value)
           ops_partials.edge1_.partials_[i] -= exp(-lambda_dbl)
-            * pow(lambda_dbl, n_dbl) / tgamma(n_dbl+1) / Pi;
+            * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
       }
 
       if (!is_constant_struct<T_rate>::value) {

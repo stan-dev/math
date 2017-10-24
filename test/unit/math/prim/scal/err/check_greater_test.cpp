@@ -1,16 +1,18 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_greater;
 
-TEST(ErrorHandlingScalar,CheckGreater) {
-  const char* function = "check_greater";
+TEST(ErrorHandlingScalar, CheckGreater) {
+  const std::string function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
- 
-  EXPECT_NO_THROW(check_greater(function, "x", x, lb)) 
+
+  EXPECT_NO_THROW(check_greater(function, "x", x, lb))
     << "check_greater should be true with x > lb";
-  
+
   x = -1.0;
   EXPECT_THROW(check_greater(function, "x", x, lb), std::domain_error)
     << "check_greater should throw an exception with x < lb";
@@ -34,8 +36,8 @@ TEST(ErrorHandlingScalar,CheckGreater) {
     << "check_greater should throw an exception with x == Inf and lb == Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckGreater_nan) {
-  const char* function = "check_greater";
+TEST(ErrorHandlingScalar, CheckGreater_nan) {
+  const std::string function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -47,4 +49,3 @@ TEST(ErrorHandlingScalar,CheckGreater_nan) {
   EXPECT_THROW(check_greater(function, "x", nan, nan),
                std::domain_error);
 }
- 

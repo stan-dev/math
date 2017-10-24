@@ -23,13 +23,14 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
 
     /**
      * Returns the inverse chi square cumulative distribution function for the
-     * given variate and degrees of freedom. If given containers of matching 
+     * given variate and degrees of freedom. If given containers of matching
      * sizes, returns the product of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -46,9 +47,10 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 
-      if ( !( stan::length(y) && stan::length(nu) ) ) return 1.0;
+      if (!(stan::length(y) && stan::length(nu)))
+        return 1.0;
 
-      static const char* function("inv_chi_square_cdf");
+      static const std::string function = "inv_chi_square_cdf";
 
       using boost::math::tools::promote_args;
       using std::exp;
@@ -108,8 +110,8 @@ namespace stan {
 
         if (!is_constant_struct<T_y>::value)
           ops_partials.edge1_.partials_[n] += 0.5 * y_inv_dbl * y_inv_dbl
-            * exp(-0.5*y_inv_dbl) * pow(0.5*y_inv_dbl, 0.5*nu_dbl-1)
-            / tgamma(0.5*nu_dbl) / Pn;
+            * exp(-0.5 * y_inv_dbl) * pow(0.5 * y_inv_dbl, 0.5*nu_dbl - 1)
+            / tgamma(0.5 * nu_dbl) / Pn;
         if (!is_constant_struct<T_dof>::value)
           ops_partials.edge2_.partials_[n]
             += 0.5 * grad_reg_inc_gamma(0.5 * nu_dbl,

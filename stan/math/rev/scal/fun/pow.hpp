@@ -2,7 +2,11 @@
 #define STAN_MATH_REV_SCAL_FUN_POW_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/inv.hpp>
+#include <stan/math/rev/scal/fun/inv_sqrt.hpp>
+#include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
+#include <stan/math/rev/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 #include <limits>
@@ -22,7 +26,8 @@ namespace stan {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
-            if (avi_->val_ == 0.0) return;  // partials zero, avoids 0 & log(0)
+            if (avi_->val_ == 0.0)
+              return;  // partials zero, avoids 0 & log(0)
             avi_->adj_ += adj_ * bvi_->val_ * val_ / avi_->val_;
             bvi_->adj_ += adj_ * std::log(avi_->val_) * val_;
           }
@@ -39,7 +44,8 @@ namespace stan {
                        || is_nan(bd_))) {
             avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
-            if (avi_->val_ == 0.0) return;  // partials zero, avoids 0 & log(0)
+            if (avi_->val_ == 0.0)
+              return;  // partials zero, avoids 0 & log(0)
             avi_->adj_ += adj_ * bd_ * val_ / avi_->val_;
           }
         }
@@ -55,7 +61,8 @@ namespace stan {
                        || is_nan(ad_))) {
             bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
           } else {
-            if (ad_ == 0.0) return;  // partials zero, avoids 0 & log(0)
+            if (ad_ == 0.0)
+              return;  // partials zero, avoids 0 & log(0)
             bvi_->adj_ += adj_ * std::log(ad_) * val_;
           }
         }
@@ -122,7 +129,13 @@ namespace stan {
       if (exponent == 1.0)
         return base;
       if (exponent == 2.0)
-        return base * base;  // FIXME: use square()
+        return square(base);
+      if (exponent == -2.0)
+        return inv_square(base);
+      if (exponent == -1.0)
+        return inv(base);
+      if (exponent == -0.5)
+        return inv_sqrt(base);
       return var(new pow_vd_vari(base.vi_, exponent));
     }
 

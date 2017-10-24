@@ -43,6 +43,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -52,7 +53,7 @@ namespace stan {
     lkj_corr_cholesky_rng(size_t K,
                           double eta,
                           RNG& rng) {
-      static const char* function("lkj_corr_cholesky_rng");
+      static const std::string function = "lkj_corr_cholesky_rng";
 
       check_positive(function, "Shape parameter", eta);
 

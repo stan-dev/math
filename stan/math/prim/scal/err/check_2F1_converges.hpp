@@ -5,9 +5,10 @@
 #include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <cmath>
-#include <stdexcept>
-#include <sstream>
 #include <limits>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -33,9 +34,9 @@ namespace stan {
      *   does not meet convergence conditions, or if any coefficient is NaN.
      */
     template <typename T_a1, typename T_a2, typename T_b1, typename T_z>
-    inline void check_2F1_converges(const char* function,
-      const T_a1& a1, const T_a2& a2, const T_b1& b1, const T_z& z
-    ) {
+    inline void check_2F1_converges(const std::string& function,
+                                    const T_a1& a1, const T_a2& a2,
+                                    const T_b1& b1, const T_z& z) {
       using std::floor;
       using std::fabs;
 
@@ -58,9 +59,10 @@ namespace stan {
 
       bool is_undefined = is_nonpositive_integer(b1) && fabs(b1) <= num_terms;
 
-      if (is_polynomial && !is_undefined) return;
-      if (fabs(z) < 1.0 && !is_undefined) return;
-      if (fabs(z) == 1.0 && !is_undefined && b1 > a1 + a2) return;
+      if (!is_undefined && (is_polynomial
+                            || fabs(z) < 1
+                            || (fabs(z) == 1 && b1 > a1 + a2)))
+        return;
 
       std::stringstream msg;
       msg << "called from function '" << function << "', "

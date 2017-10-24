@@ -33,7 +33,7 @@ CXX = $(CC)
 # These includes should update the following variables
 # based on the OS:
 #   - CFLAGS
-#   - CFLAGS_GTEST
+#   - GTEST_CXXFLAGS
 #   - EXE
 ##
 -include make/detect_os
@@ -47,18 +47,6 @@ include make/cpplint  # cpplint
 ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOALS)))
   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
 endif
-
-##
-# Rule for generating dependencies.
-##
-test/%.d : stan/%.cpp
-	@mkdir -p $(dir $@)
-	@set -e; \
-	rm -f $@; \
-	$(COMPILE.C) -O$O $(TARGET_ARCH) -MM $< > $@.$$$$; \
-	sed -e 's,\($(notdir $*)\)\.o[ :]*,$(dir $@)\1\.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
 
 
 .PHONY: help
@@ -151,4 +139,4 @@ clean-deps:
 clean-all: clean clean-doxygen clean-deps clean-libraries
 	@echo '  removing generated test files'
 	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
-	$(RM) $(wildcard test/gtest.o test/libgtest* test/prob/generate_tests$(EXE))
+	$(RM) $(wildcard test/prob/generate_tests$(EXE))

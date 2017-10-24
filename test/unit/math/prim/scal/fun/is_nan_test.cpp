@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, is_nan) {
   using stan::math::is_nan;

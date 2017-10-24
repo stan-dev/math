@@ -1,10 +1,10 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat/functor/gradient.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <stdexcept>
-#include <stan/math/rev/mat/functor/gradient.hpp>
 
 using std::cos;
 using std::sin;

@@ -3,12 +3,12 @@
 #include <boost/math/special_functions/cbrt.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdCbrt,Fvar) {
+TEST(AgradFwdCbrt, Fvar) {
   using stan::math::fvar;
   using boost::math::cbrt;
   using std::isnan;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
   fvar<double> a = cbrt(x);
 
   EXPECT_FLOAT_EQ(cbrt(0.5), a.val_);
@@ -30,14 +30,14 @@ TEST(AgradFwdCbrt,Fvar) {
   EXPECT_FLOAT_EQ(-3 * cbrt(-0.5) + 5 * 0.5, e.val_);
   EXPECT_FLOAT_EQ(3 / (3 * cbrt(-0.5) * cbrt(-0.5)) + 5, e.d_);
 
-  fvar<double> y(0.0,1.0);
+  fvar<double> y(0.0, 1.0);
   fvar<double> f = cbrt(y);
   EXPECT_FLOAT_EQ(cbrt(0.0), f.val_);
   isnan(f.d_);
 }
 
 
-TEST(AgradFwdCbrt,FvarFvarDouble) {
+TEST(AgradFwdCbrt, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::cbrt;
 
@@ -72,7 +72,7 @@ struct cbrt_fun {
   }
 };
 
-TEST(AgradFwdCbrt,cbrt_NaN) {
+TEST(AgradFwdCbrt, cbrt_NaN) {
   cbrt_fun cbrt_;
-  test_nan_fwd(cbrt_,false);
+  test_nan_fwd(cbrt_, false);
 }

@@ -1,65 +1,65 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
-TEST(AgradRev,abs_var) {
+TEST(AgradRev, abs_var) {
   AVAR a = 0.68;
   AVAR f = abs(a);
   EXPECT_FLOAT_EQ(0.68, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(1.0, g[0]);
 }
 
-TEST(AgradRev,abs_var_2) {
+TEST(AgradRev, abs_var_2) {
   AVAR a = -0.68;
   AVAR f = abs(a);
   EXPECT_FLOAT_EQ(0.68, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(-1.0, g[0]);
 }
 
-TEST(AgradRev,abs_var_3) {
+TEST(AgradRev, abs_var_3) {
   AVAR a = 0.0;
   AVAR f = abs(a);
   EXPECT_FLOAT_EQ(0.0, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_EQ(1U,g.size());
+  f.grad(x, g);
+  EXPECT_EQ(1U, g.size());
   EXPECT_FLOAT_EQ(0.0, g[0]);
 }
 
-TEST(AgradRev,abs_inf) {
+TEST(AgradRev, abs_inf) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
   AVAR f = abs(a);
-  EXPECT_FLOAT_EQ(inf,f.val());
+  EXPECT_FLOAT_EQ(inf, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(1.0,g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(1.0, g[0]);
 }
 
-TEST(AgradRev,abs_neg_inf) {
+TEST(AgradRev, abs_neg_inf) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = -inf;
   AVAR f = abs(a);
-  EXPECT_FLOAT_EQ(inf,f.val());
+  EXPECT_FLOAT_EQ(inf, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(-1.0,g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(-1.0, g[0]);
 }
 
 struct abs_fun {
@@ -70,9 +70,9 @@ struct abs_fun {
   }
 };
 
-TEST(AgradRev,abs_NaN) {
+TEST(AgradRev, abs_NaN) {
   abs_fun abs_;
-  test_nan(abs_,false,true);
+  test_nan(abs_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

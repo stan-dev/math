@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -29,13 +30,11 @@ namespace stan {
         typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
         T_partials_return;
 
-      if ( !( stan::length(y)
-              && stan::length(mu)
-              && stan::length(lambda)
-              && stan::length(alpha) ) )
+      if (!(stan::length(y) && stan::length(mu) && stan::length(lambda)
+            && stan::length(alpha)))
         return 0.0;
 
-      static const char* function("pareto_type_2_lccdf");
+      static const std::string function = "pareto_type_2_lccdf";
 
       using std::log;
 

@@ -1,5 +1,6 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 
 TEST(StanAgradRevInternal, precomputed_gradients) {
@@ -8,7 +9,7 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
   std::vector<double> gradients;
   stan::math::var x1(2), x2(3);
   stan::math::var y;
-  
+
   value = 1;
   vars.resize(2);
   vars[0] = x1;
@@ -17,7 +18,8 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
   gradients[0] = 4;
   gradients[1] = 5;
 
-  EXPECT_NO_THROW(y = stan::math::precomputed_gradients(value, vars, gradients));
+  EXPECT_NO_THROW(y = stan::math::precomputed_gradients(value, vars,
+                                                        gradients));
   EXPECT_FLOAT_EQ(value, y.val());
 
   std::vector<double> g;
@@ -64,7 +66,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari) {
   gradients.push_back(4);
   gradients.push_back(5);
 
-  stan::math::precomputed_gradients_vari vi(value, vars, gradients);  
+  stan::math::precomputed_gradients_vari vi(value, vars, gradients);
   EXPECT_FLOAT_EQ(value, vi.val_);
   EXPECT_FLOAT_EQ(0, vi.adj_);
 
@@ -88,7 +90,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
   double value;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
-  
+
   value = 1;
   vars.resize(1);
   vars[0] = 0;

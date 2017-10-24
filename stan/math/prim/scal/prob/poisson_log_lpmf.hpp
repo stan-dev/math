@@ -20,6 +20,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -32,12 +33,11 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_log_rate>::type
         T_partials_return;
 
-      static const char* function("poisson_log_lpmf");
+      static const std::string function = "poisson_log_lpmf";
 
       using std::exp;
 
-      if (!(stan::length(n)
-            && stan::length(alpha)))
+      if (!(stan::length(n) && stan::length(alpha)))
         return 0.0;
 
       T_partials_return logp(0.0);

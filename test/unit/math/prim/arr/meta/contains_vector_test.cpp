@@ -1,5 +1,6 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, contains_vector) {
   using stan::contains_vector;

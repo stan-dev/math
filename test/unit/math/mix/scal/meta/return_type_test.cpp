@@ -19,9 +19,12 @@ TEST(MetaTraits, ReturnTypeMix) {
   test::expect_same_type<fvar<fvar<var> >,
                          return_type<fvar<fvar<var> > >::type>();
   test::expect_same_type<fvar<fvar<var> >,
-                         return_type<fvar<fvar<var> >, fvar<fvar<var> > >::type>();
+                         return_type<fvar<fvar<var> >,
+                         fvar<fvar<var> > >::type>();
   test::expect_same_type<fvar<fvar<var> >,
-                         return_type<fvar<fvar<var> >, fvar<fvar<var> >, fvar<fvar<var> > >::type>();
+                         return_type<fvar<fvar<var> >,
+                         fvar<fvar<var> >, fvar<fvar<var> > >::type>();
   test::expect_same_type<fvar<fvar<var> >,
-                         return_type<fvar<fvar<var> >, fvar<fvar<var> >, var >::type>();
+                         return_type<fvar<fvar<var> >,
+                         fvar<fvar<var> >, var >::type>();
 }

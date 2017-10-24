@@ -12,7 +12,7 @@ TEST(AgradFwdMatrixSD, fd_vector) {
 
   vector_d d1(6);
   vector_fd v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -21,12 +21,12 @@ TEST(AgradFwdMatrixSD, fd_vector) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
   EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
-  
+
   d1.resize(1);
   v1.resize(1);
   EXPECT_FLOAT_EQ(0.0, sd(d1));
@@ -55,7 +55,7 @@ TEST(AgradFwdMatrixSD, fd_rowvector) {
 
   row_vector_d d1(6);
   row_vector_fd v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -64,9 +64,9 @@ TEST(AgradFwdMatrixSD, fd_rowvector) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
   EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
 
@@ -83,7 +83,7 @@ TEST(AgradFwdMatrixSD, fd_rowvector_exception) {
 
   row_vector_d d;
   row_vector_fd v;
-  
+
   EXPECT_THROW(sd(d), std::invalid_argument);
   EXPECT_THROW(sd(v), std::invalid_argument);
 }
@@ -92,13 +92,13 @@ TEST(AgradFwdMatrixSD, fd_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
 
-  matrix_d v(1,1);
+  matrix_d v(1, 1);
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
   matrix_d d1(2, 3);
   matrix_fd v1(2, 3);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -107,7 +107,7 @@ TEST(AgradFwdMatrixSD, fd_matrix) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
   EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
@@ -150,7 +150,7 @@ TEST(AgradFwdMatrixSD, ffd_vector) {
 
   vector_d d1(6);
   vector_ffd v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -159,12 +159,12 @@ TEST(AgradFwdMatrixSD, ffd_vector) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());
-  
+
   d1.resize(1);
   v1.resize(1);
   EXPECT_FLOAT_EQ(0.0, sd(d1));
@@ -193,7 +193,7 @@ TEST(AgradFwdMatrixSD, ffd_rowvector) {
 
   row_vector_d d1(6);
   row_vector_ffd v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -202,9 +202,9 @@ TEST(AgradFwdMatrixSD, ffd_rowvector) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());
 
@@ -221,7 +221,7 @@ TEST(AgradFwdMatrixSD, ffd_rowvector_exception) {
 
   row_vector_d d;
   row_vector_ffd v;
-  
+
   EXPECT_THROW(sd(d), std::invalid_argument);
   EXPECT_THROW(sd(v), std::invalid_argument);
 }
@@ -230,13 +230,13 @@ TEST(AgradFwdMatrixSD, ffd_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
 
-  matrix_d v(1,1);
+  matrix_d v(1, 1);
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
   matrix_d d1(2, 3);
   matrix_ffd v1(2, 3);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
    v1(0).d_ = 1.0;
@@ -245,7 +245,7 @@ TEST(AgradFwdMatrixSD, ffd_matrix) {
    v1(3).d_ = 2.0;
    v1(4).d_ = 2.0;
    v1(5).d_ = 2.0;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());

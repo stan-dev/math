@@ -1,16 +1,18 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_greater_or_equal;
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
-  const char* function = "check_greater_or_equal";
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
+  const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
- 
-  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb)) 
+
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb))
     << "check_greater_or_equal should be true with x > lb";
-  
+
   x = -1.0;
   EXPECT_THROW(check_greater_or_equal(function, "x", x, lb),
                std::domain_error)
@@ -33,11 +35,12 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual) {
   x = std::numeric_limits<double>::infinity();
   lb = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, lb))
-    << "check_greater should not throw an exception with x == Inf and lb == Inf";
+    << "check_greater should not throw an exception with "
+    << "x == Inf and lb == Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
-  const char* function = "check_greater_or_equal";
+TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
+  const std::string function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -49,4 +52,3 @@ TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
   EXPECT_THROW(check_greater_or_equal(function, "x", nan, nan),
                std::domain_error);
 }
- 

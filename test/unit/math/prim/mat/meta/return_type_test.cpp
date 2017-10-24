@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <vector>
 
 using stan::return_type;
 using std::vector;

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdLogDiffExp,Fvar) {
+TEST(AgradFwdLogDiffExp, Fvar) {
   using stan::math::fvar;
   using stan::math::log_diff_exp;
   using std::exp;
@@ -34,7 +34,7 @@ TEST(AgradFwdLogDiffExp, AgradFvar_exception) {
   EXPECT_NO_THROW(log_diff_exp(3, fvar<double>(4)));
 }
 
-TEST(AgradFwdLogDiffExp,FvarFvarDouble) {
+TEST(AgradFwdLogDiffExp, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::log_diff_exp;
   using std::exp;
@@ -47,9 +47,9 @@ TEST(AgradFwdLogDiffExp,FvarFvarDouble) {
   y.val_.val_ = 6.0;
   y.d_.val_ = 1.0;
 
-  fvar<fvar<double> > a = log_diff_exp(x,y);
+  fvar<fvar<double> > a = log_diff_exp(x, y);
 
-  EXPECT_FLOAT_EQ(log_diff_exp(9.0,6.0), a.val_.val_);
+  EXPECT_FLOAT_EQ(log_diff_exp(9.0, 6.0), a.val_.val_);
   EXPECT_FLOAT_EQ(exp(9.0) / (exp(9.0) - exp(6.0)), a.val_.d_);
   EXPECT_FLOAT_EQ(-exp(6.0) / (exp(9.0) - exp(6.0)), a.d_.val_);
   EXPECT_FLOAT_EQ(0.055141006, a.d_.d_);
@@ -57,15 +57,15 @@ TEST(AgradFwdLogDiffExp,FvarFvarDouble) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline 
-  typename boost::math::tools::promote_args<T0,T1>::type
+  inline
+  typename boost::math::tools::promote_args<T0, T1>::type
   operator()(const T0 arg1,
              const T1 arg2) const {
-    return log_diff_exp(arg1,arg2);
+    return log_diff_exp(arg1, arg2);
   }
 };
 
 TEST(AgradFwdLogDiffExp, nan) {
   log_diff_exp_fun log_diff_exp_;
-  test_nan_fwd(log_diff_exp_,3.0,5.0,false);
+  test_nan_fwd(log_diff_exp_, 3.0, 5.0, false);
 }
