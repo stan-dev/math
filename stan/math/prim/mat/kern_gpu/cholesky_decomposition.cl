@@ -1,3 +1,4 @@
+R"=====(
 __kernel void cholesky_block(__global double *b,int offset,int M, int n,__global double *V, __global double *d) {	
 	int f=get_local_id(0);
 	int arrSize=n;
@@ -159,3 +160,4 @@ __kernel void cholesky_zero(__global double* A,int M){
 		A[i*M+j]=0.0;	
     }
 }
+)====="

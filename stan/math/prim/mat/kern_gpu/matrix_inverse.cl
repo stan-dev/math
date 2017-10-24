@@ -1,3 +1,4 @@
+R"=====(
 __kernel void lower_tri_inv_step1(__global double* ap,__global double* vv, int remainder,int part_size_fixed, int M){	
 		
 	int indeks=get_global_id(0);	
@@ -196,3 +197,4 @@ __kernel void lower_tri_inv_step3(__global double* ap,__global int* sizes,__glob
 	}	
 	
 } 
+)====="

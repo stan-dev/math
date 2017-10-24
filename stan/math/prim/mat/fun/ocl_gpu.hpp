@@ -68,26 +68,22 @@ namespace stan {
       //through  kernels to load all 
       
       kernel_strings["timing"] = dummy_kernel;      
+      kernel_strings["check_gpu"] = 
+      #include <stan/math/prim/mat/kern_gpu/check_gpu.cl>
+        ;      
+      kernel_strings["cholesky_decomposition"] = 
+      #include <stan/math/prim/mat/kern_gpu/cholesky_decomposition.cl>
+        ;
+      kernel_strings["matrix_inverse"] = 
+      #include <stan/math/prim/mat/kern_gpu/matrix_inverse.cl>
+        ;     
+      kernel_strings["matrix_multiply"] = 
+      #include <stan/math/prim/mat/kern_gpu/matrix_multiply.cl>
+        ; 
+      kernel_strings["basic_matrix"] = 
+      #include <stan/math/prim/mat/kern_gpu/basic_matrix.cl>
+        ; 
       
-      
-      std::string load_kernel_source;
-      std::ifstream t;
-      std::stringstream buffer;
-      
-      for (std::map<std::string,std::string>::iterator
-           it = kernel_groups.begin(); it!= kernel_groups.end(); ++it) {
-            
-            //if the group file was not loaded yet
-            if(kernel_strings.find(it->second)==kernel_strings.end()){
-                load_kernel_source= "stan/math/prim/mat/kern_gpu/"+it->second+".cl";
-                t= std::ifstream(load_kernel_source);
-                buffer.str(std::string());
-                buffer << t.rdbuf();
-                kernel_strings[it->second]=buffer.str();
-            }            
-                        
-      }
-
       //note if the kernels were already compiled
       compiled_kernels["basic_matrix"] = false;
       compiled_kernels["matrix_multiply"] = false;
