@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
-
-#include <sstream>
-#include <vector>
-
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <test/unit/util.hpp>
+#include <sstream>
+#include <vector>
+#include <limits>
+#include <string>
 
-/* define algebraic functions whicg get solved */
+/* define algebraic functions which get solved */
 
 struct simple_eq_functor {
   template <typename T0, typename T1>
@@ -110,7 +110,7 @@ simple_eq_test(const F& f,
                bool tuning = false,
                double rel_tol = 1e-10,
                double fun_tol = 1e-6,
-               long int max_steps = 1e+3) {
+               int32_t max_steps = 1e+3) {
   using stan::math::algebra_solver;
   using stan::math::var;
 
@@ -124,7 +124,8 @@ simple_eq_test(const F& f,
 
   if (tuning == false)
     theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int);
-  else theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int,
+  else
+    theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int,
                               0, rel_tol, fun_tol, max_steps);
 
   EXPECT_EQ(20, theta(0));
@@ -158,7 +159,7 @@ inline void
 error_conditions_test(const F& f,
                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
   using stan::math::algebra_solver;
-  
+
   int n_x = 3;
   Eigen::VectorXd x(n_x);
   x << 1, 1, 1;
@@ -201,28 +202,31 @@ error_conditions_test(const F& f,
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x_bad_inf, y, dat, dat_int),
                    std::domain_error,
-                   "algebra_solver: initial guess is inf, but must be finite!");
+                   "algebra_solver: initial guess is inf, but must "
+                   "be finite!");
 
   matrix y_bad_inf(3);
   y_bad_inf << inf, 1, 1;
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y_bad_inf, dat, dat_int),
                    std::domain_error,
-                   "algebra_solver: parameter vector is inf, but must be finite!");
+                   "algebra_solver: parameter vector is inf, but must "
+                   "be finite!");
 
   std::vector<double> dat_bad_inf(1);
   dat_bad_inf[0] = inf;
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y, dat_bad_inf, dat_int),
                    std::domain_error,
-                   "algebra_solver: continuous data is inf, but must be finite!");
-  
+                   "algebra_solver: continuous data is inf, but must "
+                   "be finite!");
+
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y, dat, dat_int,
                                   0, -1, 1e-6, 1e+3),
                    std::invalid_argument,
                    "relative_tolerance");
-  
+
   EXPECT_THROW_MSG(algebra_solver(f,
                                   x, y, dat, dat_int,
                                   0, 1e-6, -1, 1e+3),

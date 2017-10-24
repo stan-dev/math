@@ -1,6 +1,8 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <string>
+#include <vector>
 
 const std::string function_ = "function";
 const std::string msg1_ = "error_message1 ";

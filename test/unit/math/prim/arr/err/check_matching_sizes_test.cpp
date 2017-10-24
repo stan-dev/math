@@ -1,5 +1,7 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <vector>
 
 TEST(ErrorHandling, checkMatchingSizes) {
   std::vector<double> a;

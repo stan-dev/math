@@ -6,18 +6,18 @@
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <vector>
 
 /**
  * This is the structure for testing vectorized digamma (defined in the
  * testing framework).
  */
 struct digamma_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.
    *
-   * This is the version that's being tested.  
+   * This is the version that's being tested.
    *
    * WARNING:  assumes that the scalar values for all instantiations
    * (prim, rev, fwd, mix) ***have already been tested***.
@@ -40,7 +40,7 @@ struct digamma_test {
    * Redundant definition of function from stan::math to apply to an
    * integer and return a double.
    *
-   * This function delegates to apply(), defined above, directly.  
+   * This function delegates to apply(), defined above, directly.
    *
    * WARNING:  this is *not an independent test*.
    */

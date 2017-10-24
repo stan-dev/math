@@ -1,7 +1,8 @@
 #include <stan/math/mix/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
-TEST(MathMatrix,value_of) {
+TEST(MathMatrix, value_of) {
   using stan::math::value_of;
   using std::vector;
   using stan::math::fvar;
@@ -22,5 +23,4 @@ TEST(MathMatrix,value_of) {
 
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i].val_.val());
-
 }

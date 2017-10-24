@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   using stan::math::operands_and_partials;
@@ -104,7 +105,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   operands_and_partials<matrix_v > o4(v_mat);
   o4.edge1_.partials_ += d_mat;
   o4.edge1_.partials_vec_[1] += d_mat;
-  o4.edge1_.partials_vec_[27] += d_mat; // Should affect the same vars as the call above
+  // Should affect the same vars as the call above
+  o4.edge1_.partials_vec_[27] += d_mat;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -160,7 +162,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
 
   operands_and_partials<std::vector<matrix_v> > o4(v_mat_vec);
   o4.edge1_.partials_vec_[0] += d_mat;
-  o4.edge1_.partials_vec_[1] += d_mat; // Should NOT affect the same vars as the call above
+  // Should NOT affect the same vars as the call above
+  o4.edge1_.partials_vec_[1] += d_mat;
   o4.edge1_.partials_vec_[1] += d_mat;
 
   std::vector<double> grad;
@@ -226,7 +229,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
   EXPECT_FLOAT_EQ(40.0, grad[3]);
 }
 
-// XXX Test mixed - operands_and_partials<std::vector<matrix_v>, vector_d, vector_v>
+// XXX Test mixed - operands_and_partials<std::vector<matrix_v>,
+//                                        vector_d, vector_v>
 TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   using stan::math::operands_and_partials;
   using stan::math::var;

@@ -2,14 +2,14 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdLog1mInvLogit,Fvar) {
+TEST(AgradFwdLog1mInvLogit, Fvar) {
   using stan::math::fvar;
   using stan::math::log1m_inv_logit;
   using std::exp;
 
-  fvar<double> x(0.5,1.0);
-  fvar<double> y(-1.0,2.0);
-  fvar<double> z(0.0,3.0);
+  fvar<double> x(0.5, 1.0);
+  fvar<double> y(-1.0, 2.0);
+  fvar<double> z(0.0, 3.0);
 
   fvar<double> a = log1m_inv_logit(x);
   EXPECT_FLOAT_EQ(log1m_inv_logit(0.5), a.val_);
@@ -24,7 +24,7 @@ TEST(AgradFwdLog1mInvLogit,Fvar) {
   EXPECT_FLOAT_EQ(-3.0 * exp(0.0) / (1 + exp(0.0)), c.d_);
 }
 
-TEST(AgradFwdLog1mInvLogit,FvarFvarDouble) {
+TEST(AgradFwdLog1mInvLogit, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::log1m_inv_logit;
   using std::exp;
@@ -59,7 +59,7 @@ struct log1m_inv_logit_fun {
   }
 };
 
-TEST(AgradFwdLog1mInvLogit,log1m_inv_logit_NaN) {
+TEST(AgradFwdLog1mInvLogit, log1m_inv_logit_NaN) {
   log1m_inv_logit_fun log1m_inv_logit_;
-  test_nan_fwd(log1m_inv_logit_,false);
+  test_nan_fwd(log1m_inv_logit_, false);
 }

@@ -2,7 +2,11 @@
 #define STAN_MATH_REV_SCAL_FUN_POW_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/inv.hpp>
+#include <stan/math/rev/scal/fun/inv_sqrt.hpp>
+#include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
+#include <stan/math/rev/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 #include <limits>
@@ -125,7 +129,13 @@ namespace stan {
       if (exponent == 1.0)
         return base;
       if (exponent == 2.0)
-        return base * base;  // FIXME: use square()
+        return square(base);
+      if (exponent == -2.0)
+        return inv_square(base);
+      if (exponent == -1.0)
+        return inv(base);
+      if (exponent == -0.5)
+        return inv_sqrt(base);
       return var(new pow_vd_vari(base.vi_, exponent));
     }
 

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
+#include <vector>
 
 TEST(MetaTraits, VectorSeqView) {
   using Eigen::VectorXd;

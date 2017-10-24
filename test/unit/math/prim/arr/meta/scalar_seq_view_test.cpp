@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
+#include <vector>
 
 TEST(MetaTraits, ScalarSeqViewArray) {
   using stan::scalar_seq_view;

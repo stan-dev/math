@@ -29,7 +29,7 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-3.0); // expected log_prob
   }
- 
+
   void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // n
@@ -42,25 +42,25 @@ public:
 
   template <class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob(const T_n& n, const T_rate& alpha, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::poisson_log_log(n, alpha);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob(const T_n& n, const T_rate& alpha, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::poisson_log_log<propto>(n, alpha);
   }
-  
-  
+
+
   template <class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob_function(const T_n& n, const T_rate& alpha, const T2&,
                     const T3&, const T4&, const T5&) {
     using std::exp;
@@ -71,10 +71,10 @@ public:
 
     if (alpha == -std::numeric_limits<double>::infinity())
       return n == 0 ? 0 : LOG_ZERO;
-    
+
     if (alpha == std::numeric_limits<double>::infinity())
       return LOG_ZERO;
-    
+
     return -lgamma(n + 1.0) + n * alpha - exp(alpha);
   }
 };

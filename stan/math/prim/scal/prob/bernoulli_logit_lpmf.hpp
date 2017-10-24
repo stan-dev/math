@@ -64,10 +64,9 @@ namespace stan {
       operands_and_partials<T_prob> ops_partials(theta);
 
       for (size_t n = 0; n < N; n++) {
-        const int n_int = value_of(n_vec[n]);
         const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-        const int sign = 2 * n_int - 1;
+        const int sign = 2 * n_vec[n] - 1;
         const T_partials_return ntheta = sign * theta_dbl;
         const T_partials_return exp_m_ntheta = exp(-ntheta);
 
@@ -81,7 +80,6 @@ namespace stan {
           logp -= log1p(exp_m_ntheta);
 
         if (!is_constant_struct<T_prob>::value) {
-          static const double cutoff = 20.0;
           if (ntheta > cutoff)
             ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
           else if (ntheta < -cutoff)
