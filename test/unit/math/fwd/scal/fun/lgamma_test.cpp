@@ -4,19 +4,19 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdLgamma,Fvar) {
+TEST(AgradFwdLgamma, Fvar) {
   using stan::math::fvar;
   using boost::math::lgamma;
   using boost::math::digamma;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
 
   fvar<double> a = lgamma(x);
   EXPECT_FLOAT_EQ(lgamma(0.5), a.val_);
   EXPECT_FLOAT_EQ(digamma(0.5), a.d_);
 }
 
-TEST(AgradFwdLgamma,FvarFvarDouble) {
+TEST(AgradFwdLgamma, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::lgamma;
   using boost::math::digamma;
@@ -51,7 +51,7 @@ struct lgamma_fun {
   }
 };
 
-TEST(AgradFwdLgamma,lgamma_NaN) {
+TEST(AgradFwdLgamma, lgamma_NaN) {
   lgamma_fun lgamma_;
-  test_nan_fwd(lgamma_,false);
+  test_nan_fwd(lgamma_, false);
 }

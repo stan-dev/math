@@ -25,8 +25,8 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-25.74462604188692758825580639457); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // y
     index.push_back(0U);
@@ -60,30 +60,30 @@ public:
   }
 
 
-  template <class T_y, class T_loc, class T_scale, class T_shape, 
+  template <class T_y, class T_loc, class T_scale, class T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape,T_loc>::type 
-  log_prob(const T_y& y, const T_loc& mu, const T_scale& lambda, 
+  typename stan::return_type<T_y, T_scale, T_shape, T_loc>::type
+  log_prob(const T_y& y, const T_loc& mu, const T_scale& lambda,
            const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_log(y, mu, lambda, alpha);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_y, class T_loc, class T_scale, class T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type 
+  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& lambda,
            const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_log<propto>(y, mu, lambda, alpha);
   }
-  
+
 
   template <class T_y, class T_loc, class T_scale, class T_shape,
             typename T4, typename T5>
   typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& lambda, 
+  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& lambda,
                     const T_shape& alpha, const T4&, const T5&) {
-    
+
     return log(alpha) - log(lambda) - (alpha + 1.0) * log1p((y - mu) / lambda);
   }
 };

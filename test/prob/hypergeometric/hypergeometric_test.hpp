@@ -19,13 +19,13 @@ public:
     log_prob.push_back(-4.119424246619123763935); // expected log_prob
 
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // n
     index.push_back(0U);
     value.push_back(-1);
-    
+
     // N
     index.push_back(1U);
     value.push_back(-1);
@@ -41,13 +41,13 @@ public:
 
   template <class T_n, class T_N, class T_a, class T_b,
             typename T4, typename T5>
-  typename stan::return_type<T_n,T_N,T_a,T_b>::type 
+  typename stan::return_type<T_n, T_N, T_a, T_b>::type
   log_prob(const T_n& n, const T_N& N, const T_a& a, const T_b& b,
            const T4&, const T5&) {
     return stan::math::hypergeometric_log(n, N, a, b);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_n, class T_N, class T_a, class T_b,
             typename T4, typename T5>
   double
@@ -55,16 +55,16 @@ public:
            const T4&, const T5&) {
     return stan::math::hypergeometric_log<propto>(n, N, a, b);
   }
-  
+
 
   template <class T_n, class T_N, class T_a, class T_b,
             typename T4, typename T5>
   double log_prob_function(const T_n& n, const T_N& N, const T_a& a, const T_b& b,
                         const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
-    
-    return binomial_coefficient_log(a, n) 
-      + binomial_coefficient_log(b, N-n) 
+
+    return binomial_coefficient_log(a, n)
+      + binomial_coefficient_log(b, N-n)
       - binomial_coefficient_log(a+b, N);
   }
 };

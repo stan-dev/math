@@ -3,6 +3,7 @@
 
 #include <stan/math/mix/mat.hpp>
 #include <stdexcept>
+#include <vector>
 
 namespace stan {
   namespace math {

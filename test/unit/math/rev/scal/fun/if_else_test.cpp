@@ -2,20 +2,21 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
 
-TEST(AgradRev,if_else) {
+TEST(AgradRev, if_else) {
   using stan::math::var;
   using stan::math::if_else;
   using stan::math::if_else;
-  
-  EXPECT_FLOAT_EQ(1.0,if_else(true,var(1.0),var(2.0)).val());
-  EXPECT_FLOAT_EQ(2.0,if_else(false,var(1.0),var(2.0)).val());
 
-  EXPECT_FLOAT_EQ(1.0,if_else(true,1.0,var(2.0)).val());
-  EXPECT_FLOAT_EQ(2.0,if_else(false,1.0,var(2.0)).val());
+  EXPECT_FLOAT_EQ(1.0, if_else(true, var(1.0), var(2.0)).val());
+  EXPECT_FLOAT_EQ(2.0, if_else(false, var(1.0), var(2.0)).val());
 
-  EXPECT_FLOAT_EQ(1.0,if_else(true,var(1.0),2.0).val());
-  EXPECT_FLOAT_EQ(2.0,if_else(false,var(1.0),2.0).val());
+  EXPECT_FLOAT_EQ(1.0, if_else(true, 1.0, var(2.0)).val());
+  EXPECT_FLOAT_EQ(2.0, if_else(false, 1.0, var(2.0)).val());
+
+  EXPECT_FLOAT_EQ(1.0, if_else(true, var(1.0), 2.0).val());
+  EXPECT_FLOAT_EQ(2.0, if_else(false, var(1.0), 2.0).val());
 }
 
 TEST(AgradRev, if_else_nan) {

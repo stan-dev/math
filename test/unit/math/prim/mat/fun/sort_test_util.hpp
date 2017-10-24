@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 template <typename C>
 void test_sort_asc_throws() {

@@ -1,12 +1,11 @@
 #include <gtest/gtest.h>
-
-#include <sstream>
-#include <vector>
-
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <test/unit/util.hpp>
+#include <sstream>
+#include <vector>
+#include <limits>
 
-//calculates finite diffs for integrate_ode with varying parameters
+// calculates finite diffs for integrate_ode with varying parameters
 template <typename F>
 std::vector<std::vector<double> >
 finite_diff_params(const F& f,
@@ -47,7 +46,7 @@ finite_diff_params(const F& f,
   return results;
 }
 
-//calculates finite diffs for integrate_ode with varying initial positions
+// calculates finite diffs for integrate_ode with varying initial positions
 template <typename F>
 std::vector<std::vector<double> >
 finite_diff_initial_position(const F& f,
@@ -89,8 +88,8 @@ finite_diff_initial_position(const F& f,
 }
 
 
-//test integrate_ode with initial positions as doubles and parameters as vars
-//against finite differences
+// test integrate_ode with initial positions as doubles and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_dv(const F& f,
                              const double& t_in,
@@ -105,7 +104,8 @@ void test_ode_finite_diff_dv(const F& f,
 
   std::vector<std::vector<std::vector<double> > > finite_diff_res(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
-    finite_diff_res[i] = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res[i] = finite_diff_params(f, t_in, ts, y_in, theta, x, x_int,
+                                            i, diff);
 
   std::vector<double> grads_eff;
 
@@ -135,8 +135,8 @@ void test_ode_finite_diff_dv(const F& f,
   }
 }
 
-//test integrate_ode with initial positions as vars and parameters as doubles
-//against finite differences
+// test integrate_ode with initial positions as vars and parameters as doubles
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vd(const F& f,
                              const double& t_in,
@@ -151,7 +151,8 @@ void test_ode_finite_diff_vd(const F& f,
 
   std::vector<std::vector<std::vector<double> > > finite_diff_res(y_in.size());
   for (size_t i = 0; i < y_in.size(); i++)
-    finite_diff_res[i] = finite_diff_initial_position(f, t_in, ts, y_in, theta, x, x_int, i, diff);
+    finite_diff_res[i] = finite_diff_initial_position(f, t_in, ts, y_in, theta,
+                                                      x, x_int, i, diff);
 
   std::vector<double> grads_eff;
 
@@ -181,8 +182,8 @@ void test_ode_finite_diff_vd(const F& f,
   }
 }
 
-//test integrate_ode with initial positions as vars and parameters as vars
-//against finite differences
+// test integrate_ode with initial positions as vars and parameters as vars
+// against finite differences
 template <typename F>
 void test_ode_finite_diff_vv(const F& f,
                              const double& t_in,
@@ -193,15 +194,17 @@ void test_ode_finite_diff_vv(const F& f,
                              const std::vector<int>& x_int,
                              const double& diff,
                              const double& diff2) {
-
   std::stringstream msgs;
 
-  std::vector<std::vector<std::vector<double> > > finite_diff_res_y(y_in.size());
+  std::vector<std::vector<std::vector<double> > >
+                                            finite_diff_res_y(y_in.size());
   for (size_t i = 0; i < y_in.size(); i++)
     finite_diff_res_y[i] = finite_diff_initial_position(f, t_in, ts, y_in,
-                                                        theta, x, x_int, i, diff);
+                                                        theta, x, x_int, i,
+                                                        diff);
 
-  std::vector<std::vector<std::vector<double> > > finite_diff_res_p(theta.size());
+  std::vector<std::vector<std::vector<double> > >
+                                            finite_diff_res_p(theta.size());
   for (size_t i = 0; i < theta.size(); i++)
     finite_diff_res_p[i] = finite_diff_params(f, t_in, ts, y_in, theta, x,
                                               x_int, i, diff);
@@ -240,8 +243,8 @@ void test_ode_finite_diff_vv(const F& f,
       for (size_t k = 0; k < y_in.size(); k++)
         EXPECT_NEAR(grads_eff[k], finite_diff_res_y[k][i][j], diff2)
           << "Gradient of integrate_ode failed with initial positions"
-          << " unknown and parameters known for initial position at time index " << i
-          << ", equation index " << j
+          << " unknown and parameters known for initial position at time index "
+          << i << ", equation index " << j
           << ", and parameter index: " << k;
 
       stan::math::set_zero_all_adjoints();

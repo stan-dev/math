@@ -10,7 +10,7 @@ TEST(AgradFwdRound, FvarVar_1stDeriv) {
   using stan::math::var;
   using boost::math::round;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = round(x);
 
   EXPECT_FLOAT_EQ(round(1.5), a.val_.val());
@@ -18,7 +18,7 @@ TEST(AgradFwdRound, FvarVar_1stDeriv) {
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.val_.grad(y,g);
+  a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradFwdRound, FvarVar_2ndDeriv) {
@@ -26,12 +26,12 @@ TEST(AgradFwdRound, FvarVar_2ndDeriv) {
   using stan::math::var;
   using boost::math::round;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = round(x);
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.d_.grad(y,g);
+  a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 
@@ -53,7 +53,7 @@ TEST(AgradFwdRound, FvarFvarVar_1stDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.val_.grad(p,g);
+  a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 
   fvar<fvar<var> > y;
@@ -68,7 +68,7 @@ TEST(AgradFwdRound, FvarFvarVar_1stDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.val_.val_.grad(q,r);
+  b.val_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdRound, FvarFvarVar_2ndDeriv) {
@@ -84,7 +84,7 @@ TEST(AgradFwdRound, FvarFvarVar_2ndDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.d_.grad(p,g);
+  a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 
   fvar<fvar<var> > y;
@@ -95,7 +95,7 @@ TEST(AgradFwdRound, FvarFvarVar_2ndDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.d_.val_.grad(q,r);
+  b.d_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdRound, FvarFvarVar_3rdDeriv) {
@@ -112,7 +112,7 @@ TEST(AgradFwdRound, FvarFvarVar_3rdDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.d_.d_.grad(q,r);
+  b.d_.d_.grad(q, r);
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 
@@ -124,7 +124,7 @@ struct round_fun {
   }
 };
 
-TEST(AgradFwdRound,round_NaN) {
+TEST(AgradFwdRound, round_NaN) {
   round_fun round_;
-  test_nan_mix(round_,false);
+  test_nan_mix(round_, false);
 }

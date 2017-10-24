@@ -2,14 +2,14 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdLog10,Fvar) {
+TEST(AgradFwdLog10, Fvar) {
   using stan::math::fvar;
   using std::log;
   using std::isnan;
   using std::log10;
 
-  fvar<double> x(0.5,1.0);
-  
+  fvar<double> x(0.5, 1.0);
+
   fvar<double> a = log10(x);
   EXPECT_FLOAT_EQ(log10(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / (0.5 * log(10)), a.d_);
@@ -26,18 +26,18 @@ TEST(AgradFwdLog10,Fvar) {
   EXPECT_FLOAT_EQ(-3 * log10(0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(-3 / (0.5 * log(10)) + 5, d.d_);
 
-  fvar<double> y(-0.5,1.0);
+  fvar<double> y(-0.5, 1.0);
   fvar<double> e = log10(y);
   isnan(e.val_);
   isnan(e.d_);
 
-  fvar<double> z(0.0,1.0);
+  fvar<double> z(0.0, 1.0);
   fvar<double> f = log10(z);
   isnan(f.val_);
   isnan(f.d_);
 }
 
-TEST(AgradFwdLog10,FvarFvarDouble) {
+TEST(AgradFwdLog10, FvarFvarDouble) {
   using stan::math::fvar;
   using std::log;
 
@@ -71,7 +71,7 @@ struct log10_fun {
   }
 };
 
-TEST(AgradFwdLog10,log10_NaN) {
+TEST(AgradFwdLog10, log10_NaN) {
   log10_fun log10_;
-  test_nan_fwd(log10_,false);
+  test_nan_fwd(log10_, false);
 }

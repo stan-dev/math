@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, int_step_double) {
   using stan::math::int_step;
@@ -13,9 +14,9 @@ TEST(MathFunctions, int_step_double) {
 TEST(MathFunctions, int_step_int) {
   using stan::math::int_step;
 
-  EXPECT_EQ(0U, int_step(int(-1)));
-  EXPECT_EQ(0U, int_step(int(0)));
-  EXPECT_EQ(1U, int_step(int(100)));
+  EXPECT_EQ(0U, int_step(static_cast<int>(-1)));
+  EXPECT_EQ(0U, int_step(static_cast<int>(0)));
+  EXPECT_EQ(1U, int_step(static_cast<int>(100)));
 }
 
 TEST(MathFunctions, int_step_inf) {
@@ -27,6 +28,6 @@ TEST(MathFunctions, int_step_inf) {
 
 TEST(MathFunctions, int_step_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_EQ(0U, stan::math::int_step(nan));
 }
