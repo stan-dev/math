@@ -1,10 +1,10 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
-TEST(AgradFwdAbs,Fvar) {
+TEST(AgradFwdAbs, Fvar) {
   using stan::math::fvar;
   using std::abs;
   using std::isnan;
@@ -49,7 +49,7 @@ TEST(AgradFwdAbs,Fvar) {
   EXPECT_FLOAT_EQ(0.0, h.d_);
 }
 
-TEST(AgradFwdAbs,FvarFvarDouble) {
+TEST(AgradFwdAbs, FvarFvarDouble) {
   using stan::math::fvar;
   using std::abs;
 
@@ -73,7 +73,7 @@ struct abs_fun {
   }
 };
 
-TEST(AgradFwdAbs,abs_NaN) {
+TEST(AgradFwdAbs, abs_NaN) {
   abs_fun abs_;
-  test_nan_fwd(abs_,false);
+  test_nan_fwd(abs_, false);
 }

@@ -17,65 +17,65 @@ public:
     param[2] = 20;           // phi
     parameters.push_back(param);
     cdf.push_back(0.0264752601628231235); // expected cdf
-    
+
     param[0] = 7;          // n
     param[1] = 15;          // mu
     param[2] = 10;           // phi
     parameters.push_back(param);
     cdf.push_back(0.091899254171238523026); // expected cdf
-    
+
     param[0] = 0;          // n
     param[1] = 15;          // mu
     param[2] = 10;           // phi
     parameters.push_back(param);
     cdf.push_back(0.0001048576000000001529); // expected cdf
-    
+
     param[0] = 1;          // n
     param[1] = 15;          // mu
     param[2] = 10;           // phi
     parameters.push_back(param);
     cdf.push_back(0.00073400320000000126002); // expected cdf
-    
+
     param[0] = 0;          // n
     param[1] = 10;          // mu
     param[2] = 1;           // phi
     parameters.push_back(param);
     cdf.push_back(0.090909090909090897736); // expected cdf
-    
+
     param[0] = -1;          // n
     param[1] = 10;          // mu
     param[2] = 1;           // phi
     parameters.push_back(param);
     cdf.push_back(0); // expected cdf
-    
+
     param[0] = -89;          // n
     param[1] = 10;          // mu
     param[2] = 1;           // phi
     parameters.push_back(param);
     cdf.push_back(0); // expected cdf
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
 
     // mu
     index.push_back(1U);
     value.push_back(-1);
-      
+
     // phi
     index.push_back(2U);
     value.push_back(-1);
-      
+
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
-  
+
   template <typename T_n, typename T_location, typename T_precision,
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_location, T_precision>::type
@@ -95,9 +95,9 @@ public:
     using std::exp;
     using stan::math::binomial_coefficient_log;
     using stan::math::multiply_log;
-    
+
     typename stan::return_type<T_location, T_precision>::type cdf(0);
-    
+
     for (int n = 0; n <= nn; n++) {
       typename stan::return_type<T_location, T_precision>::type lp(0);
       if (n != 0)
@@ -106,8 +106,8 @@ public:
       lp +=  multiply_log(n, mu) + multiply_log(phi, phi) - (n+phi)*log(mu + phi);
       cdf += exp(lp);
     }
-      
+
     return cdf;
-      
+
   }
 };

@@ -1,12 +1,14 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
 
 using stan::math::check_finite;
 
 // ---------- check_finite: matrix tests ----------
-TEST(ErrorHandlingScalar,CheckFinite_Matrix) {
+TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
   const std::string function = "check_finite";
-  Eigen::Matrix<double,Eigen::Dynamic,1> x;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
   x << -1, 0, 1;
@@ -30,9 +32,9 @@ TEST(ErrorHandlingScalar,CheckFinite_Matrix) {
 }
 
 
-TEST(ErrorHandlingScalar,CheckFinite_Matrix_one_indexed_message) {
+TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
   const std::string function = "check_finite";
-  Eigen::Matrix<double,Eigen::Dynamic,1> x;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
 
   x.resize(3);
@@ -50,11 +52,11 @@ TEST(ErrorHandlingScalar,CheckFinite_Matrix_one_indexed_message) {
     << message;
 }
 
-TEST(ErrorHandlingScalar,CheckFinite_nan) {
+TEST(ErrorHandlingScalar, CheckFinite_nan) {
   const std::string function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_mat(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << nan, 0, 1;
   EXPECT_THROW(check_finite(function, "x_mat", x_mat),
                std::domain_error);

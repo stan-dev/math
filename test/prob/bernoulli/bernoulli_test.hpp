@@ -32,8 +32,8 @@ public:
     parameters.push_back(param);
     log_prob.push_back(log(0.99)); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // y
     index.push_back(0U);
@@ -52,25 +52,25 @@ public:
 
   template <class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob(const T_n& n, const T_prob& theta, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::bernoulli_log(n, theta);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob(const T_n& n, const T_prob& theta, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::bernoulli_log<propto>(n, theta);
   }
-  
-  
+
+
   template <class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob_function(const T_n& n, const T_prob& theta, const T2&,
                     const T3&, const T4&, const T5&) {
     using std::log;
@@ -83,7 +83,7 @@ public:
   }
 };
 
-TEST(ProbDistributionsBernoulliCDF,Values) {
+TEST(ProbDistributionsBernoulliCDF, Values) {
     EXPECT_FLOAT_EQ(1, stan::math::bernoulli_cdf(1, 0.57));
     EXPECT_FLOAT_EQ(1 - 0.57, stan::math::bernoulli_cdf(0, 0.57));
 }

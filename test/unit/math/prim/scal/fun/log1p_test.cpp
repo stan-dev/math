@@ -1,8 +1,8 @@
 #include <stan/math/prim/scal.hpp>
-#include <limits>
-#include <stdexcept>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stdexcept>
 
 
 TEST(MathFunctions, log1p) {

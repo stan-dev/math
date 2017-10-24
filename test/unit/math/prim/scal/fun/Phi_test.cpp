@@ -1,11 +1,14 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, Phi) {
   EXPECT_EQ(0.5 + 0.5 * boost::math::erf(0.0), stan::math::Phi(0.0));
-  EXPECT_FLOAT_EQ(0.5 + 0.5 * boost::math::erf(0.9/std::sqrt(2.0)), stan::math::Phi(0.9));
-  EXPECT_EQ(0.5 + 0.5 * boost::math::erf(-5.0/std::sqrt(2.0)), stan::math::Phi(-5.0));
+  EXPECT_FLOAT_EQ(0.5 + 0.5 * boost::math::erf(0.9/std::sqrt(2.0)),
+                  stan::math::Phi(0.9));
+  EXPECT_EQ(0.5 + 0.5 * boost::math::erf(-5.0/std::sqrt(2.0)),
+            stan::math::Phi(-5.0));
 }
 
 // tests calculating using R 3.0.2 Snow Leopard build (6558)

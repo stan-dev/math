@@ -2,15 +2,15 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdAcos,Fvar) {
+TEST(AgradFwdAcos, Fvar) {
   using stan::math::fvar;
   using std::acos;
   using std::sqrt;
   using std::isnan;
   using stan::math::NEGATIVE_INFTY;
 
-  fvar<double> x(0.5,1.0);
-  
+  fvar<double> x(0.5, 1.0);
+
   fvar<double> a = acos(x);
   EXPECT_FLOAT_EQ(acos(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / -sqrt(1 - 0.5 * 0.5), a.d_);
@@ -39,18 +39,18 @@ TEST(AgradFwdAcos,Fvar) {
   EXPECT_FLOAT_EQ(acos(1.0), f.val_);
   EXPECT_FLOAT_EQ(NEGATIVE_INFTY, f.d_);
 
-  fvar<double> z2(1.0+stan::math::EPSILON,1.0);
+  fvar<double> z2(1.0+stan::math::EPSILON, 1.0);
   fvar<double> f2 = acos(z2);
   EXPECT_TRUE(boost::math::isnan(f2.val_));
   EXPECT_TRUE(boost::math::isnan(f2.d_));
 
-  fvar<double> z3(-1.0-stan::math::EPSILON,1.0);
+  fvar<double> z3(-1.0-stan::math::EPSILON, 1.0);
   fvar<double> f3 = acos(z3);
   EXPECT_TRUE(boost::math::isnan(f3.val_));
   EXPECT_TRUE(boost::math::isnan(f3.d_));
 }
 
-TEST(AgradFwdAcos,FvarFvarDouble) {
+TEST(AgradFwdAcos, FvarFvarDouble) {
   using stan::math::fvar;
   using std::acos;
 
@@ -85,7 +85,7 @@ struct acos_fun {
   }
 };
 
-TEST(AgradFwdAcos,acos_NaN) {
+TEST(AgradFwdAcos, acos_NaN) {
   acos_fun acos_;
-  test_nan_fwd(acos_,false);
+  test_nan_fwd(acos_, false);
 }

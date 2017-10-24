@@ -29,11 +29,11 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-1.0);       // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
-    
+
     // alpha
     index.push_back(1U);
     value.push_back(0.0);
@@ -63,31 +63,31 @@ public:
 
   template <typename T_y, typename T_shape, typename T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
+  typename stan::return_type<T_y, T_shape, T_inv_scale>::type
   log_prob(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
            const T3&, const T4&, const T5&) {
     return stan::math::gamma_log(y, alpha, beta);
   }
 
-  template <bool propto, 
+  template <bool propto,
       typename T_y, typename T_shape, typename T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
+  typename stan::return_type<T_y, T_shape, T_inv_scale>::type
   log_prob(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
            const T3&, const T4&, const T5&) {
     return stan::math::gamma_log<propto>(y, alpha, beta);
   }
-  
-  
+
+
   template <typename T_y, typename T_shape, typename T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
-  log_prob_function(const T_y& y, const T_shape& alpha, 
+  typename stan::return_type<T_y, T_shape, T_inv_scale>::type
+  log_prob_function(const T_y& y, const T_shape& alpha,
                         const T_inv_scale& beta,
                         const T3&, const T4&, const T5&) {
     using stan::math::multiply_log;
-    
-    return -lgamma(alpha) + multiply_log(alpha,beta) 
-      + multiply_log(alpha-1.0,y) - beta * y;
+
+    return -lgamma(alpha) + multiply_log(alpha, beta)
+      + multiply_log(alpha-1.0, y) - beta * y;
   }
 };

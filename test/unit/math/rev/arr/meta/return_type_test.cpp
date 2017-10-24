@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <vector>
 
 using stan::return_type;
 using stan::math::var;

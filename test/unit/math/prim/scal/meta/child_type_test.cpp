@@ -5,5 +5,5 @@
 TEST(MathMeta, value_type) {
   using stan::math::child_type;
 
-  expect_same_type<double,child_type<double>::type>();
+  expect_same_type<double, child_type<double>::type>();
 }

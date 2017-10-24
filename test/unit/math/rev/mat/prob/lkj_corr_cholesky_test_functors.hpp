@@ -2,12 +2,13 @@
 #include <vector>
 
 namespace stan {
-  
+
   namespace math {
 
     template <typename T_L, typename T_eta>
     typename return_type<T_eta, T_L>::type
-    lkj_corr_cholesky_uc(Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta, int K) {
+    lkj_corr_cholesky_uc(Eigen::Matrix<T_L, Eigen::Dynamic, 1> L,
+                         T_eta eta, int K) {
       using math::lkj_corr_cholesky_log;
       using math::cholesky_corr_constrain;
       using math::positive_constrain;
@@ -24,7 +25,7 @@ namespace stan {
     struct lkj_corr_cholesky_cd {
       int K;
       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> L_def;
-      lkj_corr_cholesky_cd(int K_) : K(K_) {
+      explicit lkj_corr_cholesky_cd(int K_) : K(K_) {
         using math::cholesky_corr_constrain;
         int k_choose_2 = K * (K - 1) / 2;
         Eigen::Matrix<double, Eigen::Dynamic, 1> L_uc(k_choose_2);
@@ -46,7 +47,7 @@ namespace stan {
     struct lkj_corr_cholesky_dc {
       int K;
       double eta_c;
-      lkj_corr_cholesky_dc(int K_) : K(K_) {
+      explicit lkj_corr_cholesky_dc(int K_) : K(K_) {
         using math::positive_constrain;
         eta_c = positive_constrain(0.5);
       }
@@ -63,7 +64,7 @@ namespace stan {
 
     struct lkj_corr_cholesky_dd {
       int K;
-      lkj_corr_cholesky_dd(int K_) : K(K_) { }
+      explicit lkj_corr_cholesky_dd(int K_) : K(K_) { }
       template <typename T>
       T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> vec) const {
         int k_choose_2 = K * (K - 1) / 2;

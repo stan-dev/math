@@ -8,18 +8,18 @@ class AgradFwdAsinh : public testing::Test {
   }
 };
 
-TEST_F(AgradFwdAsinh,Fvar) {
+TEST_F(AgradFwdAsinh, Fvar) {
   using stan::math::fvar;
   using boost::math::asinh;
   using std::sqrt;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
 
   fvar<double> a = asinh(x);
   EXPECT_FLOAT_EQ(asinh(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / sqrt(1 + (0.5) * (0.5)), a.d_);
 
-  fvar<double> y(-1.2,1.0);
+  fvar<double> y(-1.2, 1.0);
 
   fvar<double> b = asinh(y);
   EXPECT_FLOAT_EQ(asinh(-1.2), b.val_);
@@ -31,7 +31,7 @@ TEST_F(AgradFwdAsinh,Fvar) {
 }
 
 
-TEST_F(AgradFwdAsinh,FvarFvarDouble) {
+TEST_F(AgradFwdAsinh, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::asinh;
 
@@ -64,7 +64,7 @@ struct asinh_fun {
   }
 };
 
-TEST_F(AgradFwdAsinh,asinh_NaN) {
+TEST_F(AgradFwdAsinh, asinh_NaN) {
   asinh_fun asinh_;
-  test_nan_fwd(asinh_,false);
+  test_nan_fwd(asinh_, false);
 }

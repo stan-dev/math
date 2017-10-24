@@ -1,7 +1,8 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
-TEST(AgradFwd,asBool) {
+TEST(AgradFwd, asBool) {
   using stan::math::as_bool;
   using stan::math::fvar;
 
@@ -18,7 +19,7 @@ TEST(AgradFwd,asBool) {
   EXPECT_FALSE(as_bool(fvar<double>(0.0)));
   EXPECT_FALSE(as_bool(fvar<double>(0.0f)));
 }
-TEST(AgradFwd,as_bool_nan) {
+TEST(AgradFwd, as_bool_nan) {
   stan::math::fvar<double> nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(stan::math::as_bool(nan));
 }

@@ -23,8 +23,8 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-2.918938533204672669541); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
   }
 
@@ -36,7 +36,7 @@ public:
     return stan::math::std_normal_lpdf(y);
   }
 
-  template <bool propto, 
+  template <bool propto,
             typename T_y, typename T1, typename T2,
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_y>::type
@@ -44,11 +44,11 @@ public:
                         const T3&, const T4&, const T5&) {
     return stan::math::std_normal_lpdf<propto>(y);
   }
-  
-  
+
+
   template <typename T_y, typename T1, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y,T1,T2,T3,T4,T5>::type
+  typename stan::return_type<T_y, T1, T2, T3, T4, T5>::type
   log_prob_function(const T_y& y, const T1&, const T2&,
                     const T3&, const T4&, const T5&) {
     using stan::math::pi;
