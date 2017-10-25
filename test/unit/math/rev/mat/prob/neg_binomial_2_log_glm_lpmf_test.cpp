@@ -102,7 +102,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars)
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 
-
+/*
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) {
   const int R = 30000;
   const int C = 1000;  
@@ -151,5 +151,5 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) 
   
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New Primitives:" << std::endl << T2 << std::endl;    
 }
-
+*/
 

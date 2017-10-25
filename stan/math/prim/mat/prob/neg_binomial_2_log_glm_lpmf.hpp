@@ -157,8 +157,7 @@ namespace stan {
                             T_precision> ops_partials(x, beta, alpha, phi);
                                   
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-            && is_constant_struct<T_alpha>::value
-            && is_constant_struct<T_precision>::value)) {
+            && is_constant_struct<T_alpha>::value)) {
         Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
         theta_derivative = (n_arr - (n_plus_phi / (phi_arr / (theta_dbl.exp())
           + Array<double, Dynamic, 1>::Ones(N, 1)))).matrix();
@@ -172,18 +171,17 @@ namespace stan {
         if (!is_constant_struct<T_alpha>::value) {
           ops_partials.edge3_.partials_[0] = theta_derivative.trace();
         }
-        if (!is_constant_struct<T_precision>::value) {
-          ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
-            - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-            - logsumexp_eta_logphi - phi_arr.unaryExpr([](T_partials_return xx) {
-                                                     return digamma(xx);
-                                                   })
-            + n_plus_phi.unaryExpr([](T_partials_return xx) {
-                                     return digamma(xx);
-                                   })).matrix();
-        }
       }
-      
+      if (!is_constant_struct<T_precision>::value) {
+        ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
+          - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
+          - logsumexp_eta_logphi - phi_arr.unaryExpr([](T_partials_return xx) {
+                                                   return digamma(xx);
+                                                 })
+          + n_plus_phi.unaryExpr([](T_partials_return xx) {
+                                   return digamma(xx);
+                                 })).matrix();
+      }
       return ops_partials.build(logp);
     }
 
