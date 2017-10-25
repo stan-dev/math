@@ -15,17 +15,17 @@ public:
     param[1] = 0.75;        // Probability
     parameters.push_back(param);
     cdf.push_back(1 - param[1]); // expected cdf
-      
+
     param[0] = 1;           // Successes (out of single trial)
     param[1] = 0.75;        // Probability
     parameters.push_back(param);
     cdf.push_back(1);       // expected cdf
-      
+
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
-      
+
     // p (Probability)
     index.push_back(1U);
     value.push_back(-1e-4);
@@ -33,11 +33,11 @@ public:
     index.push_back(1U);
     value.push_back(1+1e-4);
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
@@ -54,12 +54,12 @@ public:
   template <typename T_n, typename T_prob, typename T2,
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_prob>::type
-  cdf_function(const T_n& n, const T_prob& theta,const T2&,
+  cdf_function(const T_n& n, const T_prob& theta, const T2&,
                const T3&, const T4&, const T5&) {
 
-    if(n < 0) return 0;
-    if(n < 1) return 1 - theta;
+    if (n < 0) return 0;
+    if (n < 1) return 1 - theta;
     else      return 1;
-      
+
   }
 };

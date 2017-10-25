@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <vector>
 
 
 TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
@@ -77,7 +78,8 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vd) {
   // shifting. Integrator gives plain solution.
   for (size_t t = 0; t < T; t++)
     for (size_t n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0_v[n].val(),
+      EXPECT_FLOAT_EQ(ys_coupled[t][n],
+                      // + y0_v[n].val(),
                       ys[t][n].val());
 }
 
@@ -119,7 +121,8 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
   // shifting. Integrator gives plain solution.
   for (size_t t = 0; t < T; t++)
     for (size_t n = 0; n < 2; n++)
-      EXPECT_FLOAT_EQ(ys_coupled[t][n], // + y0[n].val(),
+      EXPECT_FLOAT_EQ(ys_coupled[t][n],
+                      // + y0[n].val(),
                       ys[t][n].val());
 }
 

@@ -4,6 +4,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <vector>
 
 namespace test {
 
@@ -12,6 +13,6 @@ namespace test {
       EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x[n].vi_))
         << n << " is not on the stack";
   }
-  
+
 }
 #endif

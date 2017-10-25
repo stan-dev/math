@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdInvSquare,Fvar) {
+TEST(AgradFwdInvSquare, Fvar) {
   using stan::math::fvar;
   using stan::math::inv_square;
 
@@ -18,9 +18,9 @@ TEST(AgradFwdInvSquare,Fvar) {
   fvar<double> g = inv_square(z);
   EXPECT_FLOAT_EQ(stan::math::positive_infinity(), g.val_);
   EXPECT_FLOAT_EQ(stan::math::negative_infinity(), g.d_);
-}   
+}
 
-TEST(AgradFwdInvSquare,FvarFvarDouble) {
+TEST(AgradFwdInvSquare, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::inv_square;
   using std::log;
@@ -45,7 +45,7 @@ struct inv_square_fun {
   }
 };
 
-TEST(AgradFwdInvSquare,inv_square_NaN) {
+TEST(AgradFwdInvSquare, inv_square_NaN) {
   inv_square_fun inv_square_;
-  test_nan_fwd(inv_square_,false);
+  test_nan_fwd(inv_square_, false);
 }

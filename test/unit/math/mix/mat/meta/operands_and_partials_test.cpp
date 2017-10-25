@@ -1,5 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
   using stan::math::operands_and_partials;

@@ -3,6 +3,7 @@
 
 #include <stan/math/mix/mat.hpp>
 #include <stdexcept>
+#include <vector>
 
 namespace stan {
   namespace math {
@@ -36,7 +37,7 @@ namespace stan {
          *
          * @param data serialized data
          */
-        seq_reader(const vector_t& data) : data_(data), pos_(0) { }
+        explicit seq_reader(const vector_t& data) : data_(data), pos_(0) { }
 
         /**
          * Return the next scalar and advance the position.

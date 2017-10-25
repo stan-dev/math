@@ -8,7 +8,7 @@
 #include <test/unit/math/mix/mat/vectorize/expect_mix_vector_value.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_mix_row_vector_value.hpp>
 
-//Also will test derivatives
+// Also will test derivatives
 template <typename F>
 void expect_mix_values() {
   using stan::math::fvar;

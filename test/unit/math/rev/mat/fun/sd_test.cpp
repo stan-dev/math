@@ -1,8 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, sd_eq) {
   using stan::math::sd;
@@ -22,7 +22,7 @@ TEST(AgradRevMatrix, sd_eq) {
     EXPECT_NEAR(0.0, f.val(), 1e-12);
 
     vector<double> grad;
-    f.grad(x_std_vec,grad);
+    f.grad(x_std_vec, grad);
 
     EXPECT_EQ(size, grad.size());
     double analytic = std::sqrt(size) / size;
@@ -42,14 +42,14 @@ TEST(AgradRevMatrix, sd_vector) {
 
   vector_d d1(6);
   vector_v v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
-  
+
   d1.resize(1);
   v1.resize(1);
   EXPECT_FLOAT_EQ(0.0, sd(d1));
@@ -77,12 +77,12 @@ TEST(AgradRevMatrix, sd_rowvector) {
 
   row_vector_d d1(6);
   row_vector_v v1(6);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-                   
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
 
   d1.resize(1);
@@ -97,7 +97,7 @@ TEST(AgradRevMatrix, sd_rowvector_exception) {
 
   row_vector_d d;
   row_vector_v v;
-  
+
   EXPECT_THROW(sd(d), std::invalid_argument);
   EXPECT_THROW(sd(v), std::invalid_argument);
 }
@@ -106,16 +106,16 @@ TEST(AgradRevMatrix, sd_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
 
-  matrix_d v(1,1);
+  matrix_d v(1, 1);
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
   matrix_d d1(2, 3);
   matrix_v v1(2, 3);
-  
+
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-  
+
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
   EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
 
@@ -146,19 +146,21 @@ TEST(AgradRevMatrix, sd_matrix_exception) {
   EXPECT_THROW(sd(v), std::invalid_argument);
 }
 TEST(AgradRevMatrix, sdStdVector) {
-  using stan::math::sd; // should use arg-dep lookup (and for sqrt)
+  // should use arg-dep lookup (and for sqrt)
+  using stan::math::sd;
 
-  AVEC y1 = createAVEC(0.5,2.0,3.5);
+  AVEC y1 = createAVEC(0.5, 2.0, 3.5);
   AVAR f1 = sd(y1);
   VEC grad1 = cgrad(f1, y1[0], y1[1], y1[2]);
-  double f1_val = f1.val(); // save before cleaned out
+  // save before cleaned out
+  double f1_val = f1.val();
 
-  AVEC y2 = createAVEC(0.5,2.0,3.5);
+  AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
-  AVAR sum_sq_diff_2 
+  AVAR sum_sq_diff_2
     = (y2[0] - mean2) * (y2[0] - mean2)
     + (y2[1] - mean2) * (y2[1] - mean2)
-    + (y2[2] - mean2) * (y2[2] - mean2); 
+    + (y2[2] - mean2) * (y2[2] - mean2);
   AVAR f2 = sqrt(sum_sq_diff_2 / (3 - 1));
 
   EXPECT_EQ(f2.val(), f1_val);
@@ -179,7 +181,7 @@ TEST(AgradRevSd, finiteDiffsMatchAnalytic) {
   for (int n = 2; n <= 128; n *= 2) {
     double analytic = sqrt(n) / n;
     double epsilon = 1e-7;
-    std::vector<double> y(n,1.0);
+    std::vector<double> y(n, 1.0);
     double sd_y = 0.0;
     y[1] += epsilon;
     double sd_y_plus_epsilon = sd(y);

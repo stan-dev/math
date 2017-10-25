@@ -7,7 +7,7 @@ TEST(AgradFwdSqrt, Fvar) {
   using std::sqrt;
   using std::isnan;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
   fvar<double> a = sqrt(x);
 
   EXPECT_FLOAT_EQ(sqrt(0.5), a.val_);
@@ -25,19 +25,19 @@ TEST(AgradFwdSqrt, Fvar) {
   EXPECT_FLOAT_EQ(-3 * sqrt(0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(-3 / (2 * sqrt(0.5)) + 5, d.d_);
 
-  fvar<double> y(-0.5,1.0);
+  fvar<double> y(-0.5, 1.0);
   fvar<double> e = sqrt(-y);
   EXPECT_FLOAT_EQ(sqrt(0.5), e.val_);
-  EXPECT_FLOAT_EQ(-1 / (2 * sqrt(0.5)), e.d_); 
+  EXPECT_FLOAT_EQ(-1 / (2 * sqrt(0.5)), e.d_);
 
   fvar<double> f = sqrt(y);
   isnan(f.val_);
   isnan(f.d_);
 
-  fvar<double> z(0.0,1.0);
+  fvar<double> z(0.0, 1.0);
   fvar<double> g = sqrt(z);
   EXPECT_FLOAT_EQ(sqrt(0.0), g.val_);
-  isnan(g.d_); 
+  isnan(g.d_);
 }
 
 TEST(AgradFwdSqrt, FvarFvarDouble) {
@@ -74,7 +74,7 @@ struct sqrt_fun {
   }
 };
 
-TEST(AgradFwdSqrt,sqrt_NaN) {
+TEST(AgradFwdSqrt, sqrt_NaN) {
   sqrt_fun sqrt_;
-  test_nan_fwd(sqrt_,false);
+  test_nan_fwd(sqrt_, false);
 }

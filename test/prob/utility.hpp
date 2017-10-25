@@ -10,9 +10,9 @@ using stan::is_vector;
 using stan::is_constant_struct;
 using stan::scalar_type;
 
-typedef stan::math::index_type<Eigen::Matrix<double,1,1> >::type size_type;
+typedef stan::math::index_type<Eigen::Matrix<double, 1, 1> >::type size_type;
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 struct empty {};
 
@@ -26,7 +26,7 @@ struct is_empty<empty> {
   enum { value = true };
 };
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 namespace std {
   std::ostream& operator<<(std::ostream& os, const vector<double>& param) {
@@ -54,13 +54,13 @@ namespace std {
 }
 
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 // default template handles Eigen::Matrix
 template <typename T>
 T get_params(const vector<vector<double> >& parameters, const size_t p) {
   T param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
-    if (p < parameters[0].size()) 
+    if (p < parameters[0].size())
       param(n) = parameters[n][p];
   return param;
 }
@@ -195,7 +195,7 @@ vector<fvar<fvar<var> > > get_params<vector<fvar<fvar<var> > > >(const vector<ve
 }
 
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 // default template handles Eigen::Matrix
 template <typename T>
@@ -337,7 +337,7 @@ vector<fvar<fvar<var> > > get_params<vector<fvar<fvar<var> > > >(const vector<ve
 }
 
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 // default template handles Eigen::Matrix
 template <typename T>
 T get_repeated_params(const vector<double>& parameters, const size_t p, const size_t N_REPEAT) {
@@ -481,7 +481,7 @@ vector<fvar<fvar<var> > > get_repeated_params<vector<fvar<fvar<var> > > >(const 
   return param;
 }
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 template <typename T>
 T get_param(const vector<double>& params, const size_t n) {
@@ -496,7 +496,7 @@ empty get_param<empty>(const vector<double>& /*params*/, const size_t /*n*/) {
   return empty();
 }
 template <>
-fvar<double> get_param<fvar<double> >(const vector<double>& params, 
+fvar<double> get_param<fvar<double> >(const vector<double>& params,
                                       const size_t n) {
   fvar<double> param = 0;
   if (n < params.size()) {
@@ -506,7 +506,7 @@ fvar<double> get_param<fvar<double> >(const vector<double>& params,
   return param;
 }
 template <>
-fvar<var> get_param<fvar<var> >(const vector<double>& params, 
+fvar<var> get_param<fvar<var> >(const vector<double>& params,
                                 const size_t n) {
   fvar<var> param = 0;
   if (n < params.size()) {
@@ -516,7 +516,7 @@ fvar<var> get_param<fvar<var> >(const vector<double>& params,
   return param;
 }
 template <>
-fvar<fvar<double> > get_param<fvar<fvar<double> > >(const vector<double>& params, 
+fvar<fvar<double> > get_param<fvar<fvar<double> > >(const vector<double>& params,
                                                     const size_t n) {
   fvar<fvar<double> > param = 0;
   if (n < params.size()) {
@@ -526,7 +526,7 @@ fvar<fvar<double> > get_param<fvar<fvar<double> > >(const vector<double>& params
   return param;
 }
 template <>
-fvar<fvar<var> > get_param<fvar<fvar<var> > >(const vector<double>& params, 
+fvar<fvar<var> > get_param<fvar<fvar<var> > >(const vector<double>& params,
                                               const size_t n) {
   fvar<fvar<var> > param = 0;
   if (n < params.size()) {
@@ -536,7 +536,7 @@ fvar<fvar<var> > get_param<fvar<fvar<var> > >(const vector<double>& params,
   return param;
 }
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 template <typename T>
 typename scalar_type<T>::type
@@ -557,7 +557,7 @@ empty select_var_param<empty>(const vector<vector<double> >& /*parameters*/, con
 }
 
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 template <typename T0, typename T1, typename T2,
     typename T3, typename T4, typename T5>
 struct all_scalar {
@@ -611,7 +611,7 @@ struct any_vector {
   };
 };
 
-//------------------------------------------------------------
+// ------------------------------------------------------------
 template <typename T>
 void add_var(vector<var>& /*x*/, T& /*p*/) {
 }
@@ -685,7 +685,7 @@ void add_var<Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> >(vector<var>& x
 
 template <typename T0, typename T1, typename T2,
           typename T3, typename T4, typename T5>
-void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2, 
+void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2,
               T3& p3, T4& p4, T5& p5) {
   if (!is_constant_struct<T0>::value)
     add_var(x, p0);
@@ -700,7 +700,7 @@ void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2,
   if (!is_constant_struct<T5>::value)
     add_var(x, p5);
 }
-//------------------------------------------------------------
+// ------------------------------------------------------------
 
 
 

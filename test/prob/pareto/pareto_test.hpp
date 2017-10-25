@@ -23,11 +23,11 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-25.69864880541351226384); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // y
-    
+
     // y_min
     index.push_back(1U);
     value.push_back(0.0);
@@ -58,26 +58,26 @@ public:
 
   template <class T_y, class T_scale, class T_shape,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type 
+  typename stan::return_type<T_y, T_scale, T_shape>::type
   log_prob(const T_y& y, const T_scale& y_min, const T_shape& alpha,
            const T3&, const T4&, const T5&) {
     return stan::math::pareto_log(y, y_min, alpha);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_y, class T_scale, class T_shape,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type 
+  typename stan::return_type<T_y, T_scale, T_shape>::type
   log_prob(const T_y& y, const T_scale& y_min, const T_shape& alpha,
            const T3&, const T4&, const T5&) {
     return stan::math::pareto_log<propto>(y, y_min, alpha);
   }
-  
+
 
   template <class T_y, class T_scale, class T_shape,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type 
-  log_prob_function(const T_y& y, const T_scale& y_min, 
+  typename stan::return_type<T_y, T_scale, T_shape>::type
+  log_prob_function(const T_y& y, const T_scale& y_min,
                     const T_shape& alpha,
                     const T3&, const T4&, const T5&) {
       using stan::math::multiply_log;
@@ -85,7 +85,7 @@ public:
 
       if (y < y_min)
         return LOG_ZERO;
-      return log(alpha) + multiply_log(alpha, y_min) 
+      return log(alpha) + multiply_log(alpha, y_min)
         - multiply_log(alpha+1.0, y);
   }
 };

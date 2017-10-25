@@ -17,7 +17,7 @@
  *
  * Tests integer, scalar, standard vector, Eigen matrix, Eigen vector,
  * and Eigen row vecor cases, and nested standard vectors of Eigen
- * types. 
+ * types.
  *
  * @tparam F Test class used to define test case.
  */

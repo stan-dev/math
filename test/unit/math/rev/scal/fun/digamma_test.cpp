@@ -5,16 +5,16 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/zeta.hpp>
 
-TEST(AgradRev,digamma) {
+TEST(AgradRev, digamma) {
   AVAR a = 0.5;
   AVAR f = digamma(a);
-  EXPECT_FLOAT_EQ(boost::math::digamma(0.5),f.val());
+  EXPECT_FLOAT_EQ(boost::math::digamma(0.5), f.val());
 
   AVEC x = createAVEC(a);
   VEC grad_f;
-  f.grad(x,grad_f);
+  f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(4.9348022005446793094, grad_f[0]);
-}  
+}
 
 struct digamma_fun {
   template <typename T0>
@@ -24,9 +24,9 @@ struct digamma_fun {
   }
 };
 
-TEST(AgradRev,digamma_NaN) {
+TEST(AgradRev, digamma_NaN) {
   digamma_fun digamma_;
-  test_nan(digamma_,false,true);
+  test_nan(digamma_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

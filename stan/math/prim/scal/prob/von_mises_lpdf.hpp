@@ -9,7 +9,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/mat/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -29,7 +29,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if (size_zero(y, mu, kappa))
+      if (!(stan::length(y) && stan::length(mu) && stan::length(kappa)))
         return 0.0;
 
       using stan::is_constant_struct;
@@ -68,7 +68,7 @@ namespace stan {
         kappa_dbl[i] = value_of(kappa_vec[i]);
         if (include_summand<propto, T_scale>::value)
           log_bessel0[i]
-            = log(modified_bessel_first_kind(0, value_of(kappa_vec[i])));
+            = log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
       }
 
       operands_and_partials<T_y, T_loc, T_scale>
