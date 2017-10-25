@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include <cmath>
+#include <stan/math/memory/stack_alloc.hpp>
 #include <stdlib.h>
+#include <cmath>
 #include <utility>
 #include <vector>
-#include <stan/math/memory/stack_alloc.hpp>
 
 TEST(MemoryStackAlloc, allocArray) {
   // just an example to show how alloc_array is used
@@ -33,7 +33,7 @@ TEST(MemoryStackAlloc, allocArrayBigger) {
 }
 TEST(stack_alloc, bytes_allocated) {
   stan::math::stack_alloc allocator;
-  EXPECT_TRUE(0L <= allocator.bytes_allocated());
+  EXPECT_LE(0L, allocator.bytes_allocated());
   for (size_t n = 1; n <= 10000; ++n) {
     allocator.alloc(n);
     size_t bytes_requested = (n * (n + 1)) / 2;
@@ -46,19 +46,19 @@ TEST(stack_alloc, bytes_allocated) {
   }
 }
 
-TEST(stack_alloc,is_aligned) {
+TEST(stack_alloc, is_aligned) {
   char* ptr = static_cast<char*>(malloc(1024));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,1U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,2U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,4U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr,8U));
-  
-  EXPECT_FALSE(stan::math::is_aligned(ptr+1,8U));
-  free(ptr); // not very safe, but just a test
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 1U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 2U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 4U));
+  EXPECT_TRUE(stan::math::is_aligned(ptr, 8U));
+
+  EXPECT_FALSE(stan::math::is_aligned(ptr+1, 8U));
+  // not very safe, but just a test
+  free(ptr);
 }
 
-TEST(stack_alloc,alloc) {
-
+TEST(stack_alloc, alloc) {
   std::vector<double*> ds;
   std::vector<int*> is;
   std::vector<char*> cs;
@@ -67,29 +67,28 @@ TEST(stack_alloc,alloc) {
 
   for (int i = 0; i < 100000; ++i) {
     allocator.alloc(1317);
-    double* foo = (double*) allocator.alloc(sizeof(double));
+    double* foo = reinterpret_cast<double*>(allocator.alloc(sizeof(double)));
     *foo = 9.0;
     ds.push_back(foo);
-    int* bar = (int*) allocator.alloc(sizeof(int));
+    int* bar = reinterpret_cast<int*>(allocator.alloc(sizeof(int)));
     *bar = 17;
     is.push_back(bar);
-    char* baz = (char*) allocator.alloc(sizeof(char));
+    char* baz = reinterpret_cast<char*>(allocator.alloc(sizeof(char)));
     *baz = 3;
     cs.push_back(baz);
     allocator.alloc(13);
 
-    EXPECT_FLOAT_EQ(9.0,*foo);
-    EXPECT_EQ(17,*bar);
-    EXPECT_EQ(3,*baz);
+    EXPECT_FLOAT_EQ(9.0, *foo);
+    EXPECT_EQ(17, *bar);
+    EXPECT_EQ(3, *baz);
   }
   for (int i = 0; i < 10000; ++i) {
-    EXPECT_FLOAT_EQ(9.0,*ds[i]);
-    EXPECT_EQ(17,*is[i]);
-    EXPECT_EQ(3,*cs[i]);
+    EXPECT_FLOAT_EQ(9.0, *ds[i]);
+    EXPECT_EQ(17, *is[i]);
+    EXPECT_EQ(3, *cs[i]);
   }
-  
-  allocator.recover_all();
 
+  allocator.recover_all();
 }
 
 TEST(stack_alloc, in_stack) {

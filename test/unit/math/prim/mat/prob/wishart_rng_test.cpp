@@ -3,6 +3,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <vector>
 
 
 TEST(ProbDistributionsWishartRng, rng) {
@@ -11,13 +12,13 @@ TEST(ProbDistributionsWishartRng, rng) {
 
   boost::random::mt19937 rng;
 
-  MatrixXd omega(3,4);
+  MatrixXd omega(3, 4);
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
 
-  MatrixXd sigma(3,3);
+  MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    2.0, 1.0, 3.0;
+          -3.0,  4.0, 0.0,
+           2.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);
@@ -47,14 +48,15 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 2.0,
-    -3.0,  4.0, 0.0,
-    2.0, 0.0, 3.0;
+          -3.0,  4.0, 0.0,
+           2.0, 0.0, 3.0;
   int N = 10000;
 
 
   double avg = 0;
   double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
-    + digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
@@ -68,10 +70,10 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsWishart, SpecialRNGTest) {
-  //For any vector C != 0
-  //(C' * W * C) / (C' * S * C)
-  //must be chi-square distributed with df = k
-  //which has mean = k and variance = 2k
+  // For any vector C != 0
+  // (C' * W * C) / (C' * S * C)
+  // must be chi-square distributed with df = k
+  // which has mean = k and variance = 2k
 
   using stan::math::wishart_rng;
   using Eigen::MatrixXd;
@@ -79,24 +81,25 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
 
   boost::random::mt19937 rng(1234);
 
-  MatrixXd sigma(3,3);
-  MatrixXd sigma_sym(3,3);
-  
-  //wishart_rng should take only the lower part
+  MatrixXd sigma(3, 3);
+  MatrixXd sigma_sym(3, 3);
+
+  // wishart_rng should take only the lower part
   sigma << 9.0, -3.0, 1.0,
-    2.0,  4.0, -1.0,
-    2.0, 1.0, 3.0;
+           2.0,  4.0, -1.0,
+           2.0, 1.0, 3.0;
 
   sigma_sym << 9.0, 2.0, 2.0,
-    2.0,  4.0, 1.0,
-    2.0, 1.0, 3.0;
-  
+               2.0,  4.0, 1.0,
+               2.0, 1.0, 3.0;
+
   VectorXd C(3);
   C << 2, 1, 3;
-  
+
   size_t N = 1e4;
   int k = 20;
-  double tol = 0.2; //tolerance for variance
+  // tolerance for variance
+  double tol = 0.2;
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)

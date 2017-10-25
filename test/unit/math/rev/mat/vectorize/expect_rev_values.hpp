@@ -7,7 +7,7 @@
 #include <test/unit/math/rev/mat/vectorize/expect_rev_vector_value.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_rev_row_vector_value.hpp>
 
-//Also will test derivatives
+// Also will test derivatives
 template <typename F>
 void expect_rev_values() {
   expect_rev_scalar_value<F>();

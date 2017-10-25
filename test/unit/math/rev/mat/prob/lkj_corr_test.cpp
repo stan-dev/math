@@ -7,17 +7,17 @@
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
-TEST(ProbDistributionsLkjCorr,var) {
+TEST(ProbDistributionsLkjCorr, var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<var,Eigen::Dynamic,Eigen::Dynamic> Sigma(K,K);
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> Sigma_d(K,K);
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma_d(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
   Sigma_d.setZero();
   Sigma_d.diagonal().setOnes();
-  var eta = stan::math::uniform_rng(0,2,rng);
+  var eta = stan::math::uniform_rng(0, 2, rng);
   var f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_log(Sigma, eta).val());
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_log(Sigma_d, eta).val());
@@ -28,28 +28,30 @@ TEST(ProbDistributionsLkjCorr,var) {
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_log(Sigma, eta_d).val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky,var) {
+TEST(ProbDistributionsLkjCorrCholesky, var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<var,Eigen::Dynamic,Eigen::Dynamic> Sigma(K,K);
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> Sigma_d(K,K);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma_d(K, K);
   Sigma_d.setZero();
   Sigma_d.diagonal().setOnes();
-  var eta = stan::math::uniform_rng(0,2,rng);
+  var eta = stan::math::uniform_rng(0, 2, rng);
   var f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_cholesky_log(Sigma, eta).val());
-  EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_cholesky_log(Sigma_d, eta).val());
+  EXPECT_FLOAT_EQ(f.val(),
+                  stan::math::lkj_corr_cholesky_log(Sigma_d, eta).val());
   eta = 1.0;
   double eta_d = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_cholesky_log(Sigma, eta).val());
-  EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_cholesky_log(Sigma, eta_d).val());
+  EXPECT_FLOAT_EQ(f.val(),
+                  stan::math::lkj_corr_cholesky_log(Sigma, eta_d).val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky,gradients) {
+TEST(ProbDistributionsLkjCorrCholesky, gradients) {
   using stan::math::var;
   int dim_mat = 3;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(dim_mat);
@@ -58,9 +60,9 @@ TEST(ProbDistributionsLkjCorrCholesky,gradients) {
 
   x2(0) = 2.0;
 
-  for(int i = 0; i < dim_mat; ++i) {
+  for (int i = 0; i < dim_mat; ++i) {
     x1(i) = i / 10.0;
-    x3(i + 1) = x1(i); 
+    x3(i + 1) = x1(i);
   }
   x3(0) = 0.5;
 

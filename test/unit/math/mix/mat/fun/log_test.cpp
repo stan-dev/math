@@ -13,12 +13,11 @@
  * testing framework).
  */
 struct log_test {
-
   /**
    * Redefinition of function brought in from stan::math.  The reason
    * to do this is that it wraps it up in this static template class.
    *
-   * This is the version that's being tested.  
+   * This is the version that's being tested.
    *
    * WARNING:  assumes that the scalar values for all instantiations
    * (prim, rev, fwd, mix) ***have already been tested***.
@@ -41,7 +40,7 @@ struct log_test {
    * Redundant definition of function from stan::math to apply to an
    * integer and return a double.
    *
-   * This function delegates to apply(), defined above, directly.  
+   * This function delegates to apply(), defined above, directly.
    *
    * WARNING:  this is *not an independent test*.
    */

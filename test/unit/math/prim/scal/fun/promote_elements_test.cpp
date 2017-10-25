@@ -7,25 +7,25 @@
 using stan::math::promote_elements;
 using stan::math::var;
 
-TEST(MathFunctionsScalPromote_Elements,int2double) {
+TEST(MathFunctionsScalPromote_Elements, int2double) {
   int from;
-  promote_elements<double,int> p;
+  promote_elements<double, int> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<double, result_t>::value;
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsScalPromote_Elements,double2double) {
+TEST(MathFunctionsScalPromote_Elements, double2double) {
   double from;
-  promote_elements<double,double> p;
+  promote_elements<double, double> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<double, result_t>::value;
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsScalPromote_Elements,double2var) {
+TEST(MathFunctionsScalPromote_Elements, double2var) {
   double from;
-  promote_elements<var,double> p;
+  promote_elements<var, double> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
   bool same = boost::is_same<var, result_t>::value;
   EXPECT_TRUE(same);

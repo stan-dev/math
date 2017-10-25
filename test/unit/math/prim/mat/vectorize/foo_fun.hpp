@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
   namespace math {

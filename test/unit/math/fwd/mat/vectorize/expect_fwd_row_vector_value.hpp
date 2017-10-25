@@ -2,10 +2,10 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_ROW_VECTOR_VALUE_HPP
 
 #include <stan/math/fwd/mat.hpp>
-#include <vector>
-#include <Eigen/Dense>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_matrix.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename T>
 void expect_fwd_row_vector_value() {
@@ -28,7 +28,7 @@ void expect_fwd_row_vector_value() {
     for (size_t j = 0; j < num_inputs; ++j) {
       vector<row_vector_t> c;
       for (size_t k = 0; k < vector_vector_size; ++k)
-        if (k == i) 
+        if (k == i)
           c.push_back(build_fwd_matrix<F>(template_rv, j));
         else
           c.push_back(build_fwd_matrix<F>(template_rv));
