@@ -16,6 +16,7 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/size_zero.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,7 +30,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(kappa)))
+      if (size_zero(y, mu, kappa))
         return 0.0;
 
       using stan::is_constant_struct;
