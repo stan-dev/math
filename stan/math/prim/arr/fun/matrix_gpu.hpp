@@ -67,9 +67,9 @@ namespace stan {
           }
         }
 
-        template <typename T>  // TODO(Steve): Fix lintr warning
-        //  lintr: 'Single-parameter constructors should be marked explicit.'
-        matrix_gpu(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &A) {
+        template <typename T>
+        explicit matrix_gpu(const Eigen::Matrix<T,
+         Eigen::Dynamic, Eigen::Dynamic> &A) {
           try {
             cl::Context ctx = get_context();
             cl::CommandQueue queue = get_queue();
@@ -90,7 +90,7 @@ namespace stan {
             check_ocl_error(e);
           }
         }
-    }
+    };
 
     void copy(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> & src,
      matrix_gpu & dst) {
