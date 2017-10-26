@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/uniform_01.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <string>
 
@@ -18,8 +18,8 @@ namespace stan {
      * Return a pseudorandom double exponential variate with the given location
      * and scale using the specified random number generator.
      *
-     * mu and sigma can each be either scalars or vectors. All vector inputs
-     * must be the same length.
+     * mu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
+     * an Eigen::RowVector. Any non-scalar inputs must be the same length.
      *
      * @tparam T_loc Type of location parameter
      * @tparam T_scale Type of scale parameter
@@ -29,38 +29,32 @@ namespace stan {
      * @param rng random number generator
      * @return double exponential random variate
      * @throw std::domain_error if mu is infinite or sigma is nonpositive
-     * @throw std::invalid_argument if vector arguments are not the same length
+     * @throw std::invalid_argument if non-scalars arguments are of different
+     * lengths
      */
     template <typename T_loc, typename T_scale, class RNG>
     inline typename VectorBuilder<true, double, T_loc, T_scale>::type
-    double_exponential_rng(const T_loc& mu,
-                           const T_scale& sigma,
-                           RNG& rng) {
-      static const std::string function = "double_exponential_rng";
-
+    double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
       using boost::variate_generator;
-      using boost::random::uniform_01;
+      using boost::random::uniform_real_distribution;
       using std::abs;
+      static const std::string function = "double_exponential_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);
+      size_t N = max_size(mu, sigma);
+      VectorBuilder<true, double, T_loc, T_scale> output(N);
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
-      check_consistent_sizes(function,
-                             "Location parameter", mu,
+      check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", sigma);
 
-      size_t N = max_size(mu, sigma);
-
-      VectorBuilder<true, double, T_loc, T_scale> output(N);
-
-      variate_generator<RNG&, uniform_01<> > rng_unit_01(rng, uniform_01<>());
-      for (size_t n = 0; n < N; n++) {
-        double laplaceRN = rng_unit_01();
-        double a = (0.5 - laplaceRN > 0) ? 1.0 : -1.0;
-        output[n] = mu_vec[n] -
-          sigma_vec[n] * a * log1m(2 * abs(0.5 - laplaceRN));
+      variate_generator<RNG&, uniform_real_distribution<> >
+        z_rng(rng, uniform_real_distribution<>(-1.0, 1.0));
+      for (size_t n = 0; n < N; ++n) {
+        double z = z_rng();
+        output[n] = mu_vec[n] - sign(z) * sigma_vec[n] * log(abs(z));
       }
 
       return output.data();

@@ -15,12 +15,13 @@
 namespace stan {
   namespace math {
     /**
-     * Return a pseudorandom Exponentially modified normal variate for the
+     * Return a pseudorandom exponentially modified normal variate for the
      * given location, scale, and inverse scale using the specified random
      * number generator.
      *
-     * mu, sigma, and lambda can each be either scalars or vectors. All vector
-     * inputs must be the same length.
+     * mu, sigma, and lambda can each be a scalar, a std::vector, an
+     * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
+     * same length.
      *
      * @tparam T_loc Type of location parameter
      * @tparam T_scale Type of scale parameter
@@ -33,37 +34,32 @@ namespace stan {
      * @return Exponentially modified normal random variate
      * @throw std::domain_error if mu is infinite, sigma is nonpositive,
      * or lambda is nonpositive
-     * @throw std::invalid_argument if vector arguments are not the same length
+     * @throw std::invalid_argument if non-scalars arguments are of different
+     * lengths
      */
     template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
     inline
     typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
-    exp_mod_normal_rng(const T_loc& mu,
-                       const T_scale& sigma,
-                       const T_inv_scale& lambda,
-                       RNG& rng) {
+    exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
+                       const T_inv_scale& lambda, RNG& rng) {
       static const std::string function = "exp_mod_normal_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);
       scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+      size_t N = max_size(mu, sigma, lambda);
+      VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_positive_finite(function, "Inv_scale parameter", lambda);
-      check_consistent_sizes(function,
-                             "Location parameter", mu,
+      check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", sigma,
                              "Inv_scale Parameter", lambda);
 
-      size_t N = max_size(mu, sigma, lambda);
-
-      VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
-
-      for (size_t n = 0; n < N; n++) {
-        output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng) +
-          exponential_rng(lambda_vec[n], rng);
-      }
+      for (size_t n = 0; n < N; ++n)
+        output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
+          + exponential_rng(lambda_vec[n], rng);
 
       return output.data();
     }
