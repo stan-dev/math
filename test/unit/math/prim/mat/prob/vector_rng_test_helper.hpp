@@ -8,6 +8,8 @@
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <test/unit/math/prim/scal/meta/apply_template_permutations.hpp>
 #include <test/unit/math/prim/mat/prob/VectorRNGTestRig.hpp>
+#include <algorithm>
+#include <tuple>
 #include <vector>
 
 /*
@@ -146,7 +148,8 @@ void resize_if_vector(int& v, int N) {
  * @param T_rig Test rig for random number generator
  */
 struct check_dist_throws {
-  template<typename T_param1, typename T_param2, typename T_param3, typename T_rig>
+  template<typename T_param1, typename T_param2, typename T_param3,
+           typename T_rig>
   void operator()(const T_rig& rig) const {
     boost::random::mt19937 rng;
 
@@ -200,7 +203,7 @@ struct check_dist_throws {
     }
 
     // Now try putting incompatible values in second parameter
-    if(p2_is_used) {
+    if (p2_is_used) {
       for (auto bad_p2_value : bad_p2) {
         assign_parameter_values(p1, good_p1);
         assign_parameter_values(p2, { bad_p2_value });
@@ -210,7 +213,7 @@ struct check_dist_throws {
     }
 
     // Now try putting incompatible values in third parameter
-    if(p3_is_used) {
+    if (p3_is_used) {
       for (auto bad_p3_value : bad_p3) {
         assign_parameter_values(p1, good_p1);
         assign_parameter_values(p2, good_p2);
@@ -222,7 +225,7 @@ struct check_dist_throws {
     // Check to make sure _rng rejects vector arguments of different lengths for
     // all parameter pairs.
 
-    // If p1 is a scalar or the only vector, this test is skipped  
+    // If p1 is a scalar or the only vector, this test is skipped
     resize_if_vector(p1, 3);  // No-op if p1 is a scalar
     resize_if_vector(p2, 4);  // No-op if p2 is a scalar
     resize_if_vector(p3, 4);  // No-op if p3 is a scalar
@@ -232,7 +235,8 @@ struct check_dist_throws {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
-      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng),
+                   std::invalid_argument);
     }
 
     // If p2 is a scalar or the only vector, this test is skipped
@@ -244,7 +248,8 @@ struct check_dist_throws {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
-      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng),
+                   std::invalid_argument);
     }
 
     // If p3 is a scalar or the only vector, this test is skipped
@@ -256,7 +261,8 @@ struct check_dist_throws {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
-      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::invalid_argument);
+      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng),
+                   std::invalid_argument);
     }
   }
 };
@@ -347,8 +353,8 @@ struct check_quantiles {
 
     std::vector<std::vector<double> > samples_to_test_transpose;
     for (int n = 0; n < rig.N_; ++n) {
-      // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote it
-      // to a std::vector
+      // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote
+      // it to a std::vector
       samples_to_test_transpose.
         push_back(promote_to_vector(rig.generate_samples(p1, p2, p3, rng)));
     }

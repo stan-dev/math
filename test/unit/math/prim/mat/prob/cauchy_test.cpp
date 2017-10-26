@@ -18,7 +18,7 @@ public:
                      {1, 2, 3, 4},
                      {-2.7, -1.5, -0.5, 0.0},
                      {-3, -2, -1, 0}) {}
-  
+
   template<typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& mu, const T2& sigma, const T3& unused,
                         T_rng& rng) const {
@@ -30,13 +30,13 @@ public:
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::cauchy_distribution<> dist(mu, sigma);
-    
+
     for (int i = 1; i < K; ++i) {
       double frac = i / K;
       quantiles.push_back(quantile(dist, frac));
     }
     quantiles.push_back(std::numeric_limits<double>::max());
-    
+
     return quantiles;
   }
 };

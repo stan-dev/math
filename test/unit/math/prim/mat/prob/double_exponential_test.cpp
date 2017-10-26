@@ -24,19 +24,19 @@ public:
                         T_rng& rng) const {
     return stan::math::double_exponential_rng(mu, sigma, rng);
   }
-  
+
   std::vector<double> generate_quantiles(double mu, double sigma, double unused)
     const {
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::laplace_distribution<> dist(mu, sigma);
-    
+
     for (int i = 1; i < K; ++i) {
       double frac = i / K;
       quantiles.push_back(quantile(dist, frac));
     }
     quantiles.push_back(std::numeric_limits<double>::max());
-    
+
     return quantiles;
   }
 };

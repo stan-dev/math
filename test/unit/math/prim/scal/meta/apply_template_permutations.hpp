@@ -15,7 +15,8 @@
  * tparam J Loop index for second type
  * tparam K Loop index for third type
  */
-template<typename T_typelist, typename T_functor, typename T_param, int I, int J, int K>
+template<typename T_typelist, typename T_functor, typename T_param, int I,
+         int J, int K>
 struct apply_template_permutations_helper {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
@@ -23,8 +24,8 @@ struct apply_template_permutations_helper {
                              typename std::tuple_element<K, T_typelist>::type>
       (param);
 
-    apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J, K - 1>{}(func,
-                                                                          param);
+    apply_template_permutations_helper
+      <T_typelist, T_functor, T_param, I, J, K - 1>{}(func, param);
   }
 };
 
@@ -40,16 +41,19 @@ struct apply_template_permutations_helper {
  * tparam J Loop index for second type
  * tparam K Loop index for third type
  */
-template<typename T_typelist, typename T_functor, typename T_param, int I, int J>
-struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J, 0> {
+template<typename T_typelist, typename T_functor, typename T_param, int I,
+         int J>
+struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J,
+                                          0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
                              typename std::tuple_element<J, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type>
       (param);
-    
-    apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J - 1,
-                             std::tuple_size<T_typelist>::value - 1>{}(func, param);
+
+    apply_template_permutations_helper
+      <T_typelist, T_functor, T_param, I, J - 1,
+       std::tuple_size<T_typelist>::value - 1>{}(func, param);
   }
 };
 
@@ -64,13 +68,14 @@ struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J, 
  * tparam I Loop index for first type
  */
 template<typename T_typelist, typename T_functor, typename T_param, int I>
-struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, 0, 0> {
+struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, 0,
+                                          0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type>
       (param);
-    
+
     apply_template_permutations_helper<T_typelist, T_functor, T_param, I - 1,
                              std::tuple_size<T_typelist>::value - 1,
                              std::tuple_size<T_typelist>::value - 1>{}(func,
@@ -88,7 +93,8 @@ struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, 0, 
  * tparam T_param Parameter to pass to functor
  */
 template<typename T_typelist, typename T_functor, typename T_param>
-struct apply_template_permutations_helper<T_typelist, T_functor, T_param, 0, 0, 0> {
+struct apply_template_permutations_helper<T_typelist, T_functor, T_param, 0, 0,
+                                          0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<0, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type,

@@ -22,7 +22,7 @@ public:
                      {1, 2, 3, 4},
                      {-2.7, -1.5, -0.5, 0.0},
                      {-3, -2, -1, 0}) {}
-  
+
   template<typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& nu, const T2& mu, const T3& sigma,
                         T_rng& rng) const {
@@ -33,14 +33,14 @@ public:
     const {
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
-    
+
     boost::math::students_t_distribution<>dist(nu);
-    for (int i=1; i<K; ++i) {
+    for (int i = 1; i < K; ++i) {
       double frac = i / K;
       quantiles.push_back(quantile(dist, frac) * sigma + mu);
     }
     quantiles.push_back(std::numeric_limits<double>::max());
-    
+
     return quantiles;
   }
 };

@@ -69,8 +69,8 @@
  */
 class VectorRNGTestRig {
 public:
-  int N_; // Number of samples used in the quantiles tests
-  int M_; // Length of vectors for the vectorization tests
+  int N_;  // Number of samples used in the quantiles tests
+  int M_;  // Length of vectors for the vectorization tests
 
   std::vector<double> good_p1_;
   std::vector<int> good_p1_int_;
@@ -84,7 +84,7 @@ public:
   std::vector<int> good_p3_int_;
   std::vector<double> bad_p3_;
   std::vector<int> bad_p3_int_;
-  
+
   std::vector<double> always_bad_values_ = { stan::math::positive_infinity(),
                                              stan::math::negative_infinity(),
                                              stan::math::not_a_number() };
@@ -134,7 +134,7 @@ public:
       good_p2_(good_p2), good_p2_int_(good_p2_int),
       bad_p2_(bad_p2), bad_p2_int_(bad_p2_int) {
   }
-  
+
   VectorRNGTestRig(int N, int M,
                    std::vector<double> good_p1, std::vector<int> good_p1_int,
                    std::vector<double> bad_p1, std::vector<int> bad_p1_int)

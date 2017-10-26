@@ -15,10 +15,10 @@ public:
    * arguments.
    */
   NormalTestRig() :
-    VectorRNGTestRig(10000, // Number of samples used for quantiles tests
-                     10, // Length of vectors for vectorization tests
-                     {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8}, // Valid values for p1
-                     {-3, -2, -1, 0, 2, 6}, // Valid integer values for p1
+    VectorRNGTestRig(10000,  // Number of samples used for quantiles tests
+                     10,  // Length of vectors for vectorization tests
+                     {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},  // Valid values for p1
+                     {-3, -2, -1, 0, 2, 6},  // Valid integer values for p1
                      {},
                      {},
                      {0.1, 1.0, 2.5, 4.0},
@@ -47,13 +47,13 @@ public:
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::normal_distribution<> dist(mu, sigma);
-    
+
     for (int i = 1; i < K; ++i) {
       double frac = i / K;
       quantiles.push_back(quantile(dist, frac));
     }
     quantiles.push_back(std::numeric_limits<double>::max());
-    
+
     return quantiles;
   }
 };

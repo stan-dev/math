@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
+#include <vector>
 
 class ExpModNormalTestRig : public VectorRNGTestRig {
 public:
