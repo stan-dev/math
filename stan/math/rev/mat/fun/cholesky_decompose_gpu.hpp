@@ -88,31 +88,26 @@ namespace stan {
             ++pos;
           }
         }
-        
+
         matrix_gpu L_gpu(L);
-        matrix_gpu L1_gpu(M_,M_);
+        matrix_gpu L1_gpu(M_, M_);
         matrix_gpu Lbar_gpu(Lbar);
-        matrix_gpu Lbar_temp_gpu(M_,M_);
-           
+        matrix_gpu Lbar_temp_gpu(M_, M_);
+
         transpose(L1_gpu, L_gpu);
-        multiply(L1_gpu,Lbar_gpu,Lbar_temp_gpu);
-        copy_triangular_transposed(Lbar_temp_gpu,
-              LOWER_TO_UPPER_TRIANGULAR);  
-              
+        multiply(L1_gpu, Lbar_gpu, Lbar_temp_gpu);
+        copy_triangular_transposed(Lbar_temp_gpu, LOWER_TO_UPPER_TRIANGULAR);
         zeros(L1_gpu, LOWER);
-        transpose(L_gpu, L1_gpu);       
+        transpose(L_gpu, L1_gpu);
         lower_triangular_inverse(L_gpu);
-        transpose(L1_gpu, L_gpu); 
-        
+        transpose(L1_gpu, L_gpu);
         multiply(L1_gpu, Lbar_temp_gpu, Lbar_gpu);
         transpose(Lbar_temp_gpu, Lbar_gpu);
         multiply(L1_gpu, Lbar_temp_gpu, Lbar_gpu);
-        
         transpose(Lbar_temp_gpu, Lbar_gpu);
-        diagonal_multiply_with_scalar(Lbar_temp_gpu,0.5);
-        
-        copy(Lbar_temp_gpu,Lbar);        
-        
+        diagonal_multiply_with_scalar(Lbar_temp_gpu, 0.5);
+        copy(Lbar_temp_gpu, Lbar);
+
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
@@ -137,11 +132,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       L_A = L_A.selfadjointView<Eigen::Lower>();
-//      std::cout << "OUTPUT REV: \n";
-//    TODO: Have the matrix stay on the GPU for this and the derivative
       L_A = stan::math::cholesky_decompose_gpu(L_A);
-//      std::cout << "OUTPUT REV: \n";
-//      std::cout << L_A << "\n";
       // Memory allocated in arena.
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());

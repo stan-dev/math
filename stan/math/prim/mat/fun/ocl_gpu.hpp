@@ -30,14 +30,14 @@ namespace stan {
     void compile_kernel_group(std::string group);
 
     int initialized_ = 0;
-    std::map<std::string,std::string> kernel_groups;
-    std::map<std::string,std::string> kernel_strings;
-    std::map<std::string,cl::Kernel> kernels;
+    std::map<std::string, std::string> kernel_groups;
+    std::map<std::string, std::string> kernel_strings;
+    std::map<std::string, cl::Kernel> kernels;
     std::map<std::string, bool> compiled_kernels;
     std::string dummy_kernel = "__kernel void dummy() { };";
 
     void init_kernel_groups() {
-      //to identify the kernel group
+      // To identify the kernel group
       kernel_groups["transpose"] = "basic_matrix";
       kernel_groups["copy"] = "basic_matrix";
       kernel_groups["zeros"] = "basic_matrix";
@@ -58,44 +58,43 @@ namespace stan {
       kernel_groups["cholesky_zero"] = "cholesky_decomposition";
       kernel_groups["check_nan"] = "check_gpu";
       kernel_groups["check_diagonal_zeros"] = "check_gpu";
-      
+
       kernel_groups["dummy"] = "timing";
-           
-      
-      //kernel group strings
-      //the dummy kernel is the only one not included in files
-      //so it is treated before the loop that iterates 
-      //through  kernels to load all 
-      
-      kernel_strings["timing"] = dummy_kernel;      
-      kernel_strings["check_gpu"] = 
-      #include <stan/math/prim/mat/kern_gpu/check_gpu.cl>
-        ;      
-      kernel_strings["cholesky_decomposition"] = 
-      #include <stan/math/prim/mat/kern_gpu/cholesky_decomposition.cl>
-        ;
-      kernel_strings["matrix_inverse"] = 
-      #include <stan/math/prim/mat/kern_gpu/matrix_inverse.cl>
-        ;     
-      kernel_strings["matrix_multiply"] = 
-      #include <stan/math/prim/mat/kern_gpu/matrix_multiply.cl>
-        ; 
-      kernel_strings["basic_matrix"] = 
-      #include <stan/math/prim/mat/kern_gpu/basic_matrix.cl>
-        ; 
-      
-      //note if the kernels were already compiled
+
+
+      // Kernel group strings
+      // the dummy kernel is the only one not included in files
+      // so it is treated before the loop that iterates
+      // through  kernels to load all
+
+      kernel_strings["timing"] = dummy_kernel;
+      kernel_strings["check_gpu"] =
+      #include <stan/math/prim/mat/kern_gpu/check_gpu.cl> // NOLINT
+        ; // NOLINT
+      kernel_strings["cholesky_decomposition"] =
+      #include <stan/math/prim/mat/kern_gpu/cholesky_decomposition.cl> // NOLINT
+        ; // NOLINT
+      kernel_strings["matrix_inverse"] =
+      #include <stan/math/prim/mat/kern_gpu/matrix_inverse.cl> // NOLINT
+        ; // NOLINT
+      kernel_strings["matrix_multiply"] =
+      #include <stan/math/prim/mat/kern_gpu/matrix_multiply.cl> // NOLINT
+        ; // NOLINT
+      kernel_strings["basic_matrix"] =
+      #include <stan/math/prim/mat/kern_gpu/basic_matrix.cl> // NOLINT
+        ; // NOLINT
+
+      // Check if the kernels were already compiled
       compiled_kernels["basic_matrix"] = false;
       compiled_kernels["matrix_multiply"] = false;
       compiled_kernels["timing"] = false;
       compiled_kernels["matrix_inverse"] = false;
       compiled_kernels["cholesky_decomposition"] = false;
       compiled_kernels["check_gpu"] = false;
-
     }
 
-    //TODO: select some other platform/device than 0
-    //TODO: option to turn profiling OFF
+    // TODO(Rok): select some other platform/device than 0
+    // TODO(Rok): option to turn profiling OFF
 
     class ocl {
       private:
@@ -117,7 +116,7 @@ namespace stan {
             std::vector<cl::Device> allDevices;
             oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
             if (allDevices.size() == 0) {
-              std::cout<<" No devices found on the selected platform." <<
+              std::cout << " No devices found on the selected platform." <<
                std::endl;
               exit(1);
             }
@@ -128,7 +127,7 @@ namespace stan {
             oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
              CL_QUEUE_PROFILING_ENABLE, NULL);
             init_kernel_groups();
-            //compile the dummy kernel used for timing purposes
+            // Compile the dummy kernel used for timing purposes
             cl::Program::Sources source(1,
              std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
             cl::Program program_ = cl::Program(oclContext_, source);
@@ -148,9 +147,7 @@ namespace stan {
         }
 
       public:
-
         std::string description() const {
-
           if (initialized_ == 1) {
             return description_;
           }
@@ -172,7 +169,6 @@ namespace stan {
           }
           return oclQueue_;
         }
-
     };
 
     ocl ocl_context_queue;
@@ -196,12 +192,13 @@ namespace stan {
         cl::Program::Sources source(1,
         std::make_pair(kernel_source.c_str(), kernel_source.size()));
         cl::Program program_ = cl::Program(ctx, source);
-        try{
+        try {
           program_.build(devices);
 
           cl_int err = CL_SUCCESS;
-          //iterate over the kernel list and get all the kernels from this group
-          for (std::map<std::string,std::string>::iterator
+          // Iterate over the kernel list
+          // and get all the kernels from this group
+          for (std::map<std::string, std::string>::iterator
            it = kernel_groups.begin(); it!= kernel_groups.end(); ++it) {
             if (group.compare((it->second).c_str()) == 0) {
               kernels[(it->first).c_str()] = cl::Kernel(program_,
@@ -213,13 +210,10 @@ namespace stan {
              ")" << "\nRetrieving build log\n" <<
               program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
         }
-
-
-
     }
 
     cl::Kernel& get_kernel(std::string name) {
-      //compile the kernel group and return the kernel
+      // Compile the kernel group and return the kernel
       if (!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);
         compiled_kernels[kernel_groups[name]] = true;

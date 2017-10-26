@@ -7,13 +7,14 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 
 /** @file stan/math/prim/mat/fun/inverse_gpu.hpp
 *    @brief matrix_inverse - functions for matrix inversion:
 *     lower triangular,  upper triangular,  regular,  ...
 */
 
-//CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
+// CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
 namespace stan {
   namespace math {
     void lower_triangular_inverse(matrix_gpu & A) {
@@ -26,10 +27,8 @@ namespace stan {
       cl::Kernel kernel_step3 = get_kernel("lower_tri_inv_step3");
       cl::CommandQueue cmdQueue = get_queue();
 
-      try{
-
+      try {
         int parts = 32;
-        //this will be managed by the library core with self-adaptive strategies
         if (A.rows() < 65)
           parts = 1;
 
@@ -41,13 +40,14 @@ namespace stan {
         int remainder = A.rows() % parts;
         int part_size_fixed = A.rows()/parts;
 
-        std::vector<int> stl_sizes (parts,part_size_fixed);
-        
-        for(int i = 0; i < remainder; i++) {
+        std::vector<int> stl_sizes(parts, part_size_fixed);
+
+        for (int i = 0; i < remainder; i++) {
             stl_sizes[i]++;
         }
         cl::Context ctx = get_context();
-        cl::Buffer sizes = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(int) * parts);
+        cl::Buffer sizes = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+         sizeof(int) * parts);
 
         cmdQueue.enqueueWriteBuffer(sizes, CL_TRUE, 0,
          sizeof(int) * parts, &stl_sizes[0]);
@@ -70,7 +70,6 @@ namespace stan {
         int repeat = 1;
         int sizePad;
         for (int pp = parts; pp > 1; pp /= 2) {
-
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
 
           kernel_step2.setArg(0, A.buffer());
@@ -107,11 +106,8 @@ namespace stan {
 
           repeat *= 2;
         }
-
       } catch (const cl::Error& e) {
-
         check_ocl_error(e);
-
       }
     }
   }

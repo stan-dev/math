@@ -16,10 +16,11 @@
 namespace stan {
   namespace math {
 
-    //transpose the matrix B and store it in matrix A
+    // Transpose the matrix B and store it in matrix A
     void transpose(matrix_gpu & dst, matrix_gpu & src) {
       if ((dst.rows() != src.cols() || dst.cols() != src.rows())) {
-        app_error("If the input matrix is MxN, the output matrix should be NxM.");
+        app_error("If the input matrix is MxN,"
+        " the output matrix should be NxM.");
       }
 
       cl::Kernel kernel = get_kernel("transpose");
@@ -42,7 +43,7 @@ namespace stan {
       }
     }
 
-    //when transpose with a single matrix is called,
+    // When transpose with a single matrix is called,
     // a temporary matrix is created and used to transpose
     void transpose(matrix_gpu & A) {
       matrix_gpu temp(A.cols(), A.rows());
@@ -50,8 +51,7 @@ namespace stan {
       int dim_temp = A.rows();
       A.rows_ = A.cols();
       A.cols_ = dim_temp;
-      copy(A, temp);
-
+      stan::math::copy(A, temp); //NOLINT
     }
 
     void zeros(matrix_gpu & A, triangularity part = NONE) {
@@ -100,7 +100,8 @@ namespace stan {
     void copy_triangular(matrix_gpu & src,
      matrix_gpu & dst, triangularity lower_upper) {
       if ((src.rows() != dst.rows() || src.cols() != dst.cols())) {
-        app_error("The dimensions of the input and output matrices should match.");
+        app_error("The dimensions of the input"
+        " and output matrices should match.");
       }
       cl::Kernel kernel = get_kernel("copy_triangular");
       cl::CommandQueue cmdQueue = get_queue();
@@ -124,7 +125,6 @@ namespace stan {
 
     void copy_triangular_transposed(matrix_gpu & A,
      copy_transposed_triangular lower_upper) {
-
       if (A.rows() != A.cols()) {
         app_error("The matrix in the triangular"
         "transposed copy is non-square.");
@@ -150,8 +150,8 @@ namespace stan {
 
     void add(matrix_gpu & C,
      matrix_gpu & A, matrix_gpu & B) {
-
-      if ( A.rows() != B.rows() || C.rows() != B.rows() || A.cols() != B.cols() || C.cols() != B.cols() ) {
+      if ( A.rows() != B.rows() || C.rows() != B.rows() ||
+       A.cols() != B.cols() || C.cols() != B.cols() ) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = get_kernel("add");
@@ -176,8 +176,8 @@ namespace stan {
 
     void subtract(matrix_gpu & C, matrix_gpu & A,
      matrix_gpu & B) {
-
-      if ( A.rows() != B.rows() || C.rows() != B.rows() || A.cols() != B.cols() || C.cols() != B.cols() ) {
+      if ( A.rows() != B.rows() || C.rows() != B.rows() ||
+       A.cols() != B.cols() || C.cols() != B.cols() ) {
         app_error("The matrix dimensions in matrix addition do not match!");
       }
       cl::Kernel kernel = get_kernel("subtract");
