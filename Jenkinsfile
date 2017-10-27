@@ -121,6 +121,7 @@ pipeline {
                     steps { 
                         unstash 'MathSetup'
                         sh setupCC(false)
+                        sh "echo 'O=0' >> make/local"
                         runTests("test/prob")
                         retry(2) { junit 'test/**/*.xml' }
                     }
