@@ -78,14 +78,26 @@ namespace stan {
             oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
              sizeof(double) * A.size());
 
-            std::vector<double> Atemp(A.size());
-            for (int j = 0; j < cols_; j++) {
-              for (int i = 0; i < rows_; i++) {
-                  Atemp[i * rows_ + j] = value_of(A(i, j));
-              }
-            }
-            queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
-             sizeof(double) * A.size(), &Atemp[0]);
+            cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+             sizeof(double) * A.size());
+
+            queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
+             sizeof(double) * A.size(), A.data());
+
+            cl::Kernel kernel = get_kernel("transpose");
+
+            kernel.setArg(0, oclBuffer);
+            kernel.setArg(1, buffer_temp);
+            kernel.setArg(2, cols_);
+            kernel.setArg(3, rows_);
+
+            queue.enqueueNDRangeKernel(
+             kernel,
+             cl::NullRange,
+             cl::NDRange(cols_, rows_),
+             cl::NullRange,
+             NULL,
+             NULL);
           } catch (const cl::Error& e) {
             check_ocl_error(e);
           }
@@ -105,16 +117,25 @@ namespace stan {
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = dst.buffer();
 
-              std::vector<double> Atemp(src.size());
-              for (int j = 0; j < src.cols(); j++) {
-                for (int i = 0; i < src.rows(); i++) {
-                  Atemp[i * src.rows() + j] = value_of(src(i, j));
-                }
-              }
+              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+               sizeof(double) * src.size());
 
+              queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
+               sizeof(double) * dst.size(), src.data());
 
-              queue.enqueueWriteBuffer(buffer, CL_TRUE, 0,
-               sizeof(double) * dst.size(), &Atemp[0]);
+              cl::Kernel kernel = get_kernel("transpose");
+
+              kernel.setArg(0, buffer);
+              kernel.setArg(1, buffer_temp);
+              kernel.setArg(2, src.cols());
+              kernel.setArg(3, src.rows());
+              queue.enqueueNDRangeKernel(
+                  kernel,
+                  cl::NullRange,
+                  cl::NDRange(src.cols(), src.rows()),
+                  cl::NullRange,
+                  NULL,
+                  NULL);
             } catch (const cl::Error& e) {
               check_ocl_error(e);
             }
@@ -136,17 +157,29 @@ namespace stan {
             int rows = dst.rows();
             int cols = dst.cols();
             try {
-              std::vector<double> Btemp(dst.size());
               cl::Context ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = src.buffer();
-              queue.enqueueReadBuffer(buffer,  CL_TRUE,  0,
-                sizeof(double) * dst.size(),  &Btemp[0]);
-              for (int j = 0; j < cols; j++) {
-                for (int i = 0; i < rows; i++) {
-                  dst(i, j) = Btemp[i * rows + j];
-                }
-              }
+
+              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+                sizeof(double) * src.size());
+
+              cl::Kernel kernel = get_kernel("transpose");
+
+              kernel.setArg(0, buffer_temp);
+              kernel.setArg(1, buffer);
+              kernel.setArg(2, src.rows());
+              kernel.setArg(3, src.cols());
+              queue.enqueueNDRangeKernel(
+                  kernel,
+                  cl::NullRange,
+                  cl::NDRange(src.rows(), src.cols()),
+                  cl::NullRange,
+                  NULL,
+                  NULL);
+
+              queue.enqueueReadBuffer(buffer_temp,  CL_TRUE,  0,
+                sizeof(double) * dst.size(),  dst.data());
             } catch (const cl::Error& e) {
               check_ocl_error(e);
             }
@@ -170,13 +203,26 @@ namespace stan {
               cl::Context ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = src.buffer();
-              queue.enqueueReadBuffer(buffer,  CL_TRUE,  0,
-                sizeof(double) * dst.size(),  &Btemp[0]);
-              for (int j = 0; j < dst.cols(); j++) {
-                for (int i = 0; i < dst.rows(); i++) {
-                  dst.coeffRef(i, j) = Btemp[i * dst.rows() + j];
-                }
-              }
+
+              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+                sizeof(double) * src.size());
+
+              cl::Kernel kernel = get_kernel("transpose");
+
+              kernel.setArg(0, buffer_temp);
+              kernel.setArg(1, buffer);
+              kernel.setArg(2, src.rows());
+              kernel.setArg(3, src.cols());
+              queue.enqueueNDRangeKernel(
+                  kernel,
+                  cl::NullRange,
+                  cl::NDRange(src.rows(), src.cols()),
+                  cl::NullRange,
+                  NULL,
+                  NULL);
+
+              queue.enqueueReadBuffer(buffer_temp,  CL_TRUE,  0,
+                sizeof(double) * dst.size(),  dst.data());
             } catch (const cl::Error& e) {
               check_ocl_error(e);
             }
