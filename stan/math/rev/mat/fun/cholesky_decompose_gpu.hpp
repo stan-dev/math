@@ -62,7 +62,9 @@ namespace stan {
           }
 
       /**
-       * Reverse mode differentiation algorithm refernce:
+       * Reverse mode differentiation algorithm using a GPU
+       * 
+       * Reference:
        *
        * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
@@ -115,10 +117,7 @@ namespace stan {
       }
     };
     /**
-     * Reverse mode specialization of cholesky decomposition
-     *
-     * Internally calls Eigen::LLT rather than using
-     * stan::math::cholesky_decompose in order to use an inplace decomposition.
+     * Reverse mode specialization of cholesky decomposition on a GPU
      *
      * Note chainable stack varis are created below in Matrix<var, -1, -1>
      *
