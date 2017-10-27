@@ -1,12 +1,10 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 class AgradFwdLogit : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
-
 
 TEST_F(AgradFwdLogit, Fvar) {
   using stan::math::fvar;
@@ -60,8 +58,7 @@ TEST_F(AgradFwdLogit, FvarFvarDouble) {
 
 struct logit_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return logit(arg1);
   }
 };

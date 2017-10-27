@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog2, Fvar) {
@@ -37,7 +37,6 @@ TEST(AgradFwdLog2, Fvar) {
   isnan(f.d_);
 }
 
-
 TEST(AgradFwdLog2, FvarFvarDouble) {
   using stan::math::fvar;
   using std::log;
@@ -66,8 +65,7 @@ TEST(AgradFwdLog2, FvarFvarDouble) {
 
 struct log2_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log2(arg1);
   }
 };

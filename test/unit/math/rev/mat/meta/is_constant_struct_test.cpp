@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 
 using stan::length;

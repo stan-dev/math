@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, primitiveValue) {
   using stan::math::primitive_value;
@@ -26,5 +26,5 @@ TEST(MathFunctions, primiviteValueNaN) {
   using stan::math::primitive_value;
 
   EXPECT_TRUE(
-    isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
+      isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
 }

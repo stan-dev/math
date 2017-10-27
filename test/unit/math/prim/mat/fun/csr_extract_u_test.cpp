@@ -1,5 +1,5 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <stan/math.hpp>
 #include <vector>
 
 // Test that start of each row's values in NZE vector (w) is correctly
@@ -70,6 +70,3 @@ TEST(SparseStuff, csr_extract_u_sparse_compressed) {
   EXPECT_EQ(4, result[2]);
   EXPECT_EQ(3, result.size());
 }
-
-
-

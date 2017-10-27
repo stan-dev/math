@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <limits>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/prob/vector_rng_test_helper.hpp>
-#include <limits>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -15,7 +15,7 @@ using Eigen::Matrix;
  * pass a templated function as an argument)
  */
 struct normal_rng_wrapper {
-  template<typename T1, typename T2, typename T3>
+  template <typename T1, typename T2, typename T3>
   auto operator()(const T1& mean, const T2& sd, T3& rng) const {
     return stan::math::normal_rng(mean, sd, rng);
   }

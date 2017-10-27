@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 
 TEST(MetaTraits, partials_return_type) {
   using stan::math::fvar;
@@ -10,8 +10,8 @@ TEST(MetaTraits, partials_return_type) {
   EXPECT_EQ(3.0, c.val_.val());
   EXPECT_EQ(2.0, c.d_.val());
 
-  partials_return_type<double, double, var, fvar<fvar<var> > >::type
-    d(3.0, 2.0);
+  partials_return_type<double, double, var, fvar<fvar<var> > >::type d(3.0,
+                                                                       2.0);
   EXPECT_EQ(3.0, d.val_.val());
   EXPECT_EQ(2.0, d.d_.val());
 

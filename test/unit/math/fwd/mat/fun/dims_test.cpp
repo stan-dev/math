@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 using stan::math::fvar;
@@ -16,13 +16,16 @@ TEST(AgradFwdMatrixDims, matrix_fd) {
   EXPECT_EQ(0U, dims1.size());
 
   vector<fvar<double> > x3;
-  x3.push_back(-32.1); x3.push_back(17.9);
+  x3.push_back(-32.1);
+  x3.push_back(17.9);
   vector<int> dims3 = dims(x3);
   EXPECT_EQ(1U, dims3.size());
   EXPECT_EQ(2, dims3[0]);
 
   vector<vector<fvar<double> > > x4;
-  x4.push_back(x3);  x4.push_back(x3);   x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
   vector<int> dims4 = dims(x4);
   EXPECT_EQ(2U, dims4.size());
   EXPECT_EQ(3, dims4[0]);
@@ -47,7 +50,8 @@ TEST(AgradFwdMatrixDims, matrix_fd) {
   EXPECT_EQ(17, dims7[1]);
 
   vector<Matrix<fvar<double>, Dynamic, Dynamic> > x8;
-  x8.push_back(x5);  x8.push_back(x5);
+  x8.push_back(x5);
+  x8.push_back(x5);
   vector<int> dims8 = dims(x8);
   EXPECT_EQ(3U, dims8.size());
   EXPECT_EQ(2, dims8[0]);
@@ -67,13 +71,16 @@ TEST(AgradFwdMatrixDims, matrix_ffd) {
   EXPECT_EQ(0U, dims1.size());
 
   vector<fvar<fvar<double> > > x3;
-  x3.push_back(-32.1); x3.push_back(17.9);
+  x3.push_back(-32.1);
+  x3.push_back(17.9);
   vector<int> dims3 = dims(x3);
   EXPECT_EQ(1U, dims3.size());
   EXPECT_EQ(2, dims3[0]);
 
   vector<vector<fvar<fvar<double> > > > x4;
-  x4.push_back(x3);  x4.push_back(x3);   x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
   vector<int> dims4 = dims(x4);
   EXPECT_EQ(2U, dims4.size());
   EXPECT_EQ(3, dims4[0]);
@@ -98,7 +105,8 @@ TEST(AgradFwdMatrixDims, matrix_ffd) {
   EXPECT_EQ(17, dims7[1]);
 
   vector<Matrix<fvar<fvar<double> >, Dynamic, Dynamic> > x8;
-  x8.push_back(x5);  x8.push_back(x5);
+  x8.push_back(x5);
+  x8.push_back(x5);
   vector<int> dims8 = dims(x8);
   EXPECT_EQ(3U, dims8.size());
   EXPECT_EQ(2, dims8[0]);

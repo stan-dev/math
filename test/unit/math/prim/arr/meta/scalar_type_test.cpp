@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/arr.hpp>
 #include <test/unit/util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MetaTraits, ScalarTypeArray) {
@@ -30,7 +30,7 @@ TEST(MetaTraits, ScalarTypeArrayConstConst) {
                          scalar_type<const vector<const double> >::type>();
   test::expect_same_type<const int,
                          scalar_type<const vector<const int> >::type>();
-  test::expect_same_type<const double,
-                         scalar_type<const vector<const vector<
-                                                  const double> > >::type>();
+  test::expect_same_type<
+      const double,
+      scalar_type<const vector<const vector<const double> > >::type>();
 }

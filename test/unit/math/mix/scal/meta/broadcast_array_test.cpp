@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/rev/core/var.hpp>
 
 TEST(foo, bar) {
   using stan::math::internal::broadcast_array;

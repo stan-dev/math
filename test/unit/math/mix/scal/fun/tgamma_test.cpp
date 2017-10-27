@@ -1,8 +1,8 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -148,8 +148,7 @@ TEST(AgradFwdTgamma, FvarFvarVar_3rdDeriv) {
 
 struct tgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tgamma(arg1);
   }
 };

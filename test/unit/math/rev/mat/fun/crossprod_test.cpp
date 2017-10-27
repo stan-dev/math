@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -19,15 +19,12 @@ TEST(AgradRevMatrix, crossprod) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   test_crossprod(L);
   //  test_tcrossprod_grad(L, L.rows(), L.cols());
 
   matrix_v I(2, 2);
-  I << 3, 0,
-    4, -3;
+  I << 3, 0, 4, -3;
   test_crossprod(I);
   //  test_tcrossprod_grad(I, I.rows(), I.cols());
 
@@ -44,8 +41,6 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   test::check_varis_on_stack(stan::math::crossprod(L));
 }

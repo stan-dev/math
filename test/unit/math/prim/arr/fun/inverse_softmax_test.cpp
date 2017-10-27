@@ -1,13 +1,13 @@
-#include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(MathFunctions, inverse_softmax_exception) {
   std::vector<double> simplex(2);
   std::vector<double> y(3);
-  EXPECT_THROW(stan::math::inverse_softmax< std::vector<double> >(simplex, y),
+  EXPECT_THROW(stan::math::inverse_softmax<std::vector<double> >(simplex, y),
                std::invalid_argument);
 }
 
@@ -23,7 +23,6 @@ TEST(MathFunctions, inverse_softmax) {
   EXPECT_FLOAT_EQ(log(0.8), y[1]);
 }
 
-
 TEST(MathFunctions, inverse_softmax_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -34,9 +33,7 @@ TEST(MathFunctions, inverse_softmax_nan) {
   simplex[1] = nan;
 
   stan::math::inverse_softmax(simplex, y);
-  EXPECT_PRED1(boost::math::isnan<double>,
-               y[0]);
+  EXPECT_PRED1(boost::math::isnan<double>, y[0]);
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               y[1]);
+  EXPECT_PRED1(boost::math::isnan<double>, y[1]);
 }

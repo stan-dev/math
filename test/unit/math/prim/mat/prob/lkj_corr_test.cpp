@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbDistributionsLkjCorr, testIdentity) {
   boost::random::mt19937 rng;
@@ -16,7 +16,6 @@ TEST(ProbDistributionsLkjCorr, testIdentity) {
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
 }
-
 
 TEST(ProbDistributionsLkjCorr, testHalf) {
   boost::random::mt19937 rng;
@@ -69,8 +68,8 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::beta_distribution<>dist(2.5, 2.5);
-  boost::math::chi_squared mydist(K-1);
+  boost::math::beta_distribution<> dist(2.5, 2.5);
+  boost::math::chi_squared mydist(K - 1);
 
   double loc[K - 1];
   for (int i = 1; i < K; i++)
@@ -79,7 +78,7 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
   int count = 0;
   int bin[K];
   double expect[K];
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
   }
@@ -87,11 +86,10 @@ TEST(ProbDistributionsLKJCorr, chiSquareGoodnessFitTest) {
   while (count < N) {
     double a = 0.5 * (1.0 + stan::math::lkj_corr_rng(5, 1.0, rng)(3, 4));
     int i = 0;
-    while (i < K-1 && a > loc[i])
-  ++i;
+    while (i < K - 1 && a > loc[i]) ++i;
     ++bin[i];
     count++;
-   }
+  }
 
   double chi = 0;
 
@@ -128,6 +126,5 @@ TEST(ProbDistributionsLkjCorrCholesky, testHalf) {
                   stan::math::lkj_corr_cholesky_log(L, eta));
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
-  EXPECT_FLOAT_EQ(f - 0.4904146,
-                  stan::math::lkj_corr_cholesky_log(L, eta));
+  EXPECT_FLOAT_EQ(f - 0.4904146, stan::math::lkj_corr_cholesky_log(L, eta));
 }

@@ -14,8 +14,7 @@ void expect_matrix_error() {
   if (invalid_inputs.size() == 0) return;
   matrix_t a(3, invalid_inputs.size());
   for (int i = 0; i < a.rows(); ++i)
-    for (int j = 0; j < a.cols(); ++j)
-      a(i, j) = invalid_inputs[j];
+    for (int j = 0; j < a.cols(); ++j) a(i, j) = invalid_inputs[j];
   EXPECT_THROW(F::template apply<matrix_t>(a), std::exception);
   EXPECT_THROW(F::template apply<matrix_t>(a.block(1, 1, 1, 1)),
                std::exception);
@@ -23,8 +22,7 @@ void expect_matrix_error() {
   vector<matrix_t> d;
   d.push_back(a);
   d.push_back(a);
-  EXPECT_THROW(F::template apply<vector<matrix_t> >(d),
-               std::exception);
+  EXPECT_THROW(F::template apply<vector<matrix_t> >(d), std::exception);
 }
 
 #endif

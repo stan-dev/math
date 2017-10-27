@@ -1,12 +1,12 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <exception>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
 #include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
-#include <exception>
 
 /**
  * This is the structure for testing vectorized log1p (defined in the
@@ -43,9 +43,7 @@ struct log1p_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -65,15 +63,17 @@ struct log1p_test {
   static std::vector<double> valid_inputs() {
     // no throw in base implementation (may change in future)
     return test::math::vector_builder<double>()
-      .add(-0.5).add(0).add(7.2).build();
+        .add(-0.5)
+        .add(0)
+        .add(7.2)
+        .build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs() {
-    return test::math::vector_builder<double>()
-      .build();
+    return test::math::vector_builder<double>().build();
   }
 
   /**
@@ -81,16 +81,14 @@ struct log1p_test {
    */
   static std::vector<int> int_valid_inputs() {
     // no throw in base implementation (may change in future)
-    return test::math::vector_builder<int>()
-      .add(0).add(5).add(1000).build();
+    return test::math::vector_builder<int>().add(0).add(5).add(1000).build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs() {
-    return test::math::vector_builder<int>()
-      .add(-2).build();
+    return test::math::vector_builder<int>().add(-2).build();
   }
 };
 
@@ -98,5 +96,3 @@ INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, log1p_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, log1p_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, log1p_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, log1p_test);
-
-

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrix, value_of) {
   using stan::math::fvar;
@@ -7,12 +7,10 @@ TEST(AgradFwdMatrix, value_of) {
   using std::vector;
 
   Eigen::Matrix<double, 2, 5> a_vals;
-  for (int i = 0; i < 10; ++i)
-    a_vals(i) = i + 1;
+  for (int i = 0; i < 10; ++i) a_vals(i) = i + 1;
 
   Eigen::Matrix<double, 5, 1> b_vals;
-  for (int i = 0; i < 5; ++i)
-    b_vals(i) = 10 + i;
+  for (int i = 0; i < 5; ++i) b_vals(i) = 10 + i;
 
   Eigen::Matrix<double, 2, 5> a = a_vals;
   Eigen::Matrix<double, 5, 1> b = b_vals;

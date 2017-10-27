@@ -4,12 +4,13 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
-#include <stan/math/fwd/scal/meta/partials_type.hpp>
 #include <stan/math/fwd/scal/meta/operands_and_partials.hpp>
+#include <stan/math/fwd/scal/meta/partials_type.hpp>
 
 #include <stan/math/prim/scal.hpp>
 
 #include <stan/math/fwd/scal/fun/Phi.hpp>
+#include <stan/math/fwd/scal/fun/Phi_approx.hpp>
 #include <stan/math/fwd/scal/fun/abs.hpp>
 #include <stan/math/fwd/scal/fun/acos.hpp>
 #include <stan/math/fwd/scal/fun/acosh.hpp>
@@ -75,7 +76,6 @@
 #include <stan/math/fwd/scal/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/fwd/scal/fun/multiply_log.hpp>
 #include <stan/math/fwd/scal/fun/owens_t.hpp>
-#include <stan/math/fwd/scal/fun/Phi_approx.hpp>
 #include <stan/math/fwd/scal/fun/pow.hpp>
 #include <stan/math/fwd/scal/fun/primitive_value.hpp>
 #include <stan/math/fwd/scal/fun/rising_factorial.hpp>

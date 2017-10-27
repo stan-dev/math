@@ -1,7 +1,7 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/mix/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -16,16 +16,13 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
   Matrix<fvar<var>, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<var>, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {
     y(i).d_ = 1.0;
     mu(i).d_ = 1.0;
-    for (int j = 0; j < 3; j++)
-      Sigma(i, j).d_ = 1.0;
+    for (int j = 0; j < 3; j++) Sigma(i, j).d_ = 1.0;
   }
 
   fvar<var> lp = multi_student_t_log(y, nu, mu, Sigma);
@@ -41,16 +38,13 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
   Matrix<fvar<fvar<var> >, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {
     y(i).d_.val_ = 1.0;
     mu(i).d_.val_ = 1.0;
-    for (int j = 0; j < 3; j++)
-      Sigma(i, j).d_.val_ = 1.0;
+    for (int j = 0; j < 3; j++) Sigma(i, j).d_.val_ = 1.0;
   }
 
   fvar<fvar<var> > lp = multi_student_t_log(y, nu, mu, Sigma);

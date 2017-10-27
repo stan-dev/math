@@ -1,10 +1,8 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdDigamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -38,7 +36,6 @@ TEST(AgradFwdDigamma, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(1.3 * -16.8288, g[0]);
 }
-
 
 TEST(AgradFwdDigamma, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -124,8 +121,7 @@ TEST(AgradFwdDigamma, FvarFvarVar_3rdDeriv) {
 
 struct digamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return digamma(arg1);
   }
 };

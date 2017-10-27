@@ -1,12 +1,10 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 class AgradFwdAtan : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
-
 
 TEST_F(AgradFwdAtan, Fvar) {
   using stan::math::fvar;
@@ -30,7 +28,6 @@ TEST_F(AgradFwdAtan, Fvar) {
   EXPECT_FLOAT_EQ(-3 * atan(0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(-3 / (1 + 0.5 * 0.5) + 5, d.d_);
 }
-
 
 TEST_F(AgradFwdAtan, FvarFvarDouble) {
   using stan::math::fvar;
@@ -60,8 +57,7 @@ TEST_F(AgradFwdAtan, FvarFvarDouble) {
 
 struct atan_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atan(arg1);
   }
 };

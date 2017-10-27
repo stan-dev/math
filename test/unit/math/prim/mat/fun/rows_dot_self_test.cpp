@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, rows_dot_self) {
   using stan::math::rows_dot_self;

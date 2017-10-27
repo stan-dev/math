@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -15,7 +15,6 @@ void assert_val_grad(Eigen::Matrix<stan::math::var, R, C>& v) {
   EXPECT_FLOAT_EQ(0.0, g[1]);
   EXPECT_FLOAT_EQ(6.0, g[2]);
 }
-
 
 TEST(AgradRevMatrix, dot_self_vec) {
   using stan::math::dot_self;

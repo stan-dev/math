@@ -1,6 +1,6 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/type_traits.hpp>
+#include <stan/math/mix/scal.hpp>
 
 TEST(MetaTraits, isConstant) {
   using stan::is_constant;

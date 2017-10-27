@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(ProbDistributionsCategorical, log_matches_lpmf) {
@@ -18,7 +18,6 @@ TEST(ProbDistributionsCategorical, log_matches_lpmf) {
                   (stan::math::categorical_log<true>(1, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_lpmf<false>(1, theta)),
                   (stan::math::categorical_log<false>(1, theta)));
-
 
   std::vector<int> ns(5);
   ns[0] = 1;

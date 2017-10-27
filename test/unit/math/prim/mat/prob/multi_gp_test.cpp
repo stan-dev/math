@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -10,16 +10,12 @@ TEST(ProbDistributionsMultiGP, MultiGP) {
   mu.setZero();
 
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<double, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -27,7 +23,7 @@ TEST(ProbDistributionsMultiGP, MultiGP) {
   double lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
     Matrix<double, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<double, Dynamic, Dynamic> cSigma((1.0/w[i])*Sigma);
+    Matrix<double, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 
@@ -36,16 +32,12 @@ TEST(ProbDistributionsMultiGP, MultiGP) {
 
 TEST(ProbDistributionsMultiGP, ErrorSigma) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<double, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -63,16 +55,12 @@ TEST(ProbDistributionsMultiGP, ErrorSigma) {
 
 TEST(ProbDistributionsMultiGP, ErrorW) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<double, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -92,16 +80,12 @@ TEST(ProbDistributionsMultiGP, ErrorW) {
 
 TEST(ProbDistributionsMultiGP, ErrorY) {
   Matrix<double, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<double, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<double, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;

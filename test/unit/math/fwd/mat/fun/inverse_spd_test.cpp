@@ -1,13 +1,9 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-
+#include <stan/math/fwd/mat.hpp>
 
 class AgradFwdMatrixInverseSPD : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
-
-
 
 TEST_F(AgradFwdMatrixInverseSPD, exception_fd) {
   using stan::math::inverse_spd;
@@ -17,7 +13,6 @@ TEST_F(AgradFwdMatrixInverseSPD, exception_fd) {
   m1 << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 
-
   // non-symmetric
   stan::math::matrix_fd m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -25,9 +20,7 @@ TEST_F(AgradFwdMatrixInverseSPD, exception_fd) {
 
   // not positive definite
   stan::math::matrix_fd m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 
@@ -39,7 +32,6 @@ TEST_F(AgradFwdMatrixInverseSPD, exception_ffd) {
   m1 << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 
-
   // non-symmetric
   stan::math::matrix_ffd m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -47,18 +39,14 @@ TEST_F(AgradFwdMatrixInverseSPD, exception_ffd) {
 
   // not positive definite
   stan::math::matrix_ffd m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 TEST_F(AgradFwdMatrixInverseSPD, matrix_fd) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_fd m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -84,9 +72,7 @@ TEST_F(AgradFwdMatrixInverseSPD, matrix_ffd) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffd m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;

@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -7,8 +7,7 @@ TEST(AgradRevMatrix, mv_squaredNorm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
+  a << -1.0, 2.0, 5.0, 10.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -34,15 +33,14 @@ TEST(AgradRevMatrix, mv_norm) {
 
   // (see hypot in special_functions_test)
   VEC g = cgradvec(s, x);
-  EXPECT_FLOAT_EQ(-3.0/5.0, g[0]);
-  EXPECT_FLOAT_EQ(4.0/5.0, g[1]);
+  EXPECT_FLOAT_EQ(-3.0 / 5.0, g[0]);
+  EXPECT_FLOAT_EQ(4.0 / 5.0, g[1]);
 }
 TEST(AgradRevMatrix, mv_lp_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 0.0;
+  a << -1.0, 2.0, 5.0, 0.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -60,8 +58,7 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    -5.0, 0.0;
+  a << -1.0, 2.0, -5.0, 0.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -92,29 +89,24 @@ TEST(AgradRevMatrix, UserCase1) {
   size_t DpKm1 = 3;
 
   vector_v vk(DpKm1);
-  for (size_t k = 0; k < DpKm1; ++k)
-    vk[k] = (k + 1) * (k + 2);
+  for (size_t k = 0; k < DpKm1; ++k) vk[k] = (k + 1) * (k + 2);
 
   matrix_v L_etaprec(DpKm1, DpKm1);
   for (size_t m = 0; m < DpKm1; ++m)
-    for (size_t n = 0; n < DpKm1; ++n)
-      L_etaprec(m, n) = (m + 1) * (n + 1);
+    for (size_t n = 0; n < DpKm1; ++n) L_etaprec(m, n) = (m + 1) * (n + 1);
 
   vector_d etamu(DpKm1);
-  for (size_t k = 0; k < DpKm1; ++k)
-    etamu[k] = 10 + (k * k);
+  for (size_t k = 0; k < DpKm1; ++k) etamu[k] = 10 + (k * k);
 
   vector<vector_d> eta(H, vector_d(DpKm1));
   for (size_t h = 0; h < H; ++h)
-    for (size_t k = 0; k < DpKm1; ++k)
-      eta[h][k] = (h + 1) * (k + 10);
+    for (size_t k = 0; k < DpKm1; ++k) eta[h][k] = (h + 1) * (k + 10);
 
   AVAR lp__ = 0.0;
 
   for (size_t h = 1; h <= H; ++h) {
     assign(vk, multiply(transpose(L_etaprec),
-                        subtract(get_base1(eta, h, "eta", 1),
-                                 etamu)));
+                        subtract(get_base1(eta, h, "eta", 1), etamu)));
     assign(lp__, (lp__ - (0.5 * dot_product(vk, vk))));
   }
 

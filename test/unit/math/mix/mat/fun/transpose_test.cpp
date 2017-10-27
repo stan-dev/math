@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixTranspose, fv_matrix) {
@@ -11,14 +11,13 @@ TEST(AgradMixMatrixTranspose, fv_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_fv a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(0, 2).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
-   a(1, 2).d_ = 1.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(0, 2).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
+  a(1, 2).d_ = 1.0;
 
   matrix_fv c = transpose(a);
   EXPECT_FLOAT_EQ(-1.0, c(0, 0).val_.val());
@@ -44,9 +43,9 @@ TEST(AgradMixMatrixTranspose, fv_vector) {
 
   vector_fv a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   row_vector_fv a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -64,9 +63,9 @@ TEST(AgradMixMatrixTranspose, fv_row_vector) {
 
   row_vector_fv a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   vector_fv a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -85,14 +84,13 @@ TEST(AgradMixMatrixTranspose, ffv_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_ffv a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(0, 2).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
-   a(1, 2).d_ = 1.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(0, 2).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
+  a(1, 2).d_ = 1.0;
 
   matrix_ffv c = transpose(a);
   EXPECT_FLOAT_EQ(-1.0, c(0, 0).val_.val().val());
@@ -118,9 +116,9 @@ TEST(AgradMixMatrixTranspose, ffv_vector) {
 
   vector_ffv a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   row_vector_ffv a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -138,9 +136,9 @@ TEST(AgradMixMatrixTranspose, ffv_row_vector) {
 
   row_vector_ffv a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   vector_ffv a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());

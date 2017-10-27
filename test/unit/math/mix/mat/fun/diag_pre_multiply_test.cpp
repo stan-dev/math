@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixDiagPreMultiply, vector_fv_1stDeriv) {
@@ -11,9 +11,7 @@ TEST(AgradMixMatrixDiagPreMultiply, vector_fv_1stDeriv) {
   using stan::math::var;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    2, 3, 4,
-    4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<var> a(1.0, 2.0);
   fvar<var> b(2.0, 2.0);
@@ -113,9 +111,7 @@ TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_1stDeriv) {
   using stan::math::var;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    2, 3, 4,
-    4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<var> a(1.0, 2.0);
   fvar<var> b(2.0, 2.0);
@@ -215,9 +211,7 @@ TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_1stDeriv) {
   using stan::math::var;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    2, 3, 4,
-    4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<var> > a(1.0, 2.0);
   fvar<fvar<var> > b(2.0, 2.0);
@@ -392,9 +386,7 @@ TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_1stDeriv) {
   using stan::math::var;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    2, 3, 4,
-    4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<var> > a(1.0, 2.0);
   fvar<fvar<var> > b(2.0, 2.0);

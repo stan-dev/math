@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, subtract_v_exception) {
   stan::math::vector_d d1, d2;
@@ -80,7 +80,6 @@ TEST(MathMatrix, subtract_c_rv) {
   EXPECT_FLOAT_EQ(0.0, result(1));
   EXPECT_FLOAT_EQ(1.0, result(2));
 }
-
 
 TEST(MathMatrix, subtract_c_v) {
   stan::math::vector_d v(3);

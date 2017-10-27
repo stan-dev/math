@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -34,8 +34,7 @@ TEST(AgradMixMatrixQrQ, fv1) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_);
+      if (j < 2) vars.push_back(m1(i, j).val_);
     }
 
   EXPECT_FLOAT_EQ(0.12556578, res(0, 0).d_.val());
@@ -84,8 +83,7 @@ TEST(AgradMixMatrixQrQ, fv2) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_);
+      if (j < 2) vars.push_back(m1(i, j).val_);
     }
 
   std::vector<double> grads;
@@ -127,8 +125,7 @@ TEST(AgradMixMatrixQrQ, ffv1) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_.val_);
+      if (j < 2) vars.push_back(m1(i, j).val_.val_);
     }
 
   EXPECT_FLOAT_EQ(0.12556578, res(0, 0).d_.val_.val());
@@ -177,8 +174,7 @@ TEST(AgradMixMatrixQrQ, ffv2) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_.val_);
+      if (j < 2) vars.push_back(m1(i, j).val_.val_);
     }
 
   std::vector<double> grads;
@@ -223,8 +219,7 @@ TEST(AgradMixMatrixQrQ, ffv3) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_.val_);
+      if (j < 2) vars.push_back(m1(i, j).val_.val_);
     }
 
   std::vector<double> grads;
@@ -269,8 +264,7 @@ TEST(AgradMixMatrixQrQ, ffv4) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) {
       EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_.val_.val());
-      if (j < 2)
-        vars.push_back(m1(i, j).val_.val_);
+      if (j < 2) vars.push_back(m1(i, j).val_.val_);
     }
 
   std::vector<double> grads;

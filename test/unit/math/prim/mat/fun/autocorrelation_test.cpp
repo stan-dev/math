@@ -1,8 +1,8 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <fstream>
-#include <vector>
+#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
+#include <vector>
 
 TEST(ProbAutocorrelation, test1) {
   // ar1.csv generated in R with
@@ -11,27 +11,27 @@ TEST(ProbAutocorrelation, test1) {
   std::fstream f("test/unit/math/prim/mat/fun/ar1.csv");
   std::vector<double> y;
   for (size_t i = 0; i < 1000; ++i) {
-     double temp;
-     f >> temp;
-     y.push_back(temp);
-   }
+    double temp;
+    f >> temp;
+    y.push_back(temp);
+  }
 
-   // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
-   std::vector<double> ac;
+  // 10K 1K-length AC in 2.9s with g++ -O3 on Bob's Macbook Air
+  std::vector<double> ac;
 
-   size_t ITS = 1;  // only need one for test
-   for (size_t n = 0; n < ITS; ++n) {
-     stan::math::autocorrelation(y, ac);
-   }
+  size_t ITS = 1;  // only need one for test
+  for (size_t n = 0; n < ITS; ++n) {
+    stan::math::autocorrelation(y, ac);
+  }
 
-   EXPECT_EQ(1000U, ac.size());
+  EXPECT_EQ(1000U, ac.size());
 
-   EXPECT_NEAR(1.00, ac[0], 0.001);
-   EXPECT_NEAR(0.80, ac[1], 0.01);
-   EXPECT_NEAR(0.64, ac[2], 0.01);
-   EXPECT_NEAR(0.51, ac[3], 0.01);
-   EXPECT_NEAR(0.41, ac[4], 0.01);
-   EXPECT_NEAR(0.33, ac[5], 0.01);
+  EXPECT_NEAR(1.00, ac[0], 0.001);
+  EXPECT_NEAR(0.80, ac[1], 0.01);
+  EXPECT_NEAR(0.64, ac[2], 0.01);
+  EXPECT_NEAR(0.51, ac[3], 0.01);
+  EXPECT_NEAR(0.41, ac[4], 0.01);
+  EXPECT_NEAR(0.33, ac[5], 0.01);
 }
 
 TEST(ProbAutocorrelation, fft_next_good_size) {

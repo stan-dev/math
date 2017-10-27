@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 
 TEST(AgradMixMatrixCols, vector_fv) {
   using stan::math::vector_fv;
@@ -53,7 +53,7 @@ TEST(AgradMixMatrixCols, matrix_fv) {
   fvar<var> e(5.0, 1.0);
   fvar<var> f(0.0, 1.0);
   matrix_fv m(2, 3);
-  m <<f, a, b, c, d, e;
+  m << f, a, b, c, d, e;
   EXPECT_EQ(3U, cols(m));
 
   m.resize(5, 0);
@@ -144,7 +144,7 @@ TEST(AgradMixMatrixCols, matrix_ffv) {
   f.d_.val_ = 1.0;
 
   matrix_ffv m(2, 3);
-  m <<f, a, b, c, d, e;
+  m << f, a, b, c, d, e;
   EXPECT_EQ(3U, cols(m));
 
   m.resize(5, 0);

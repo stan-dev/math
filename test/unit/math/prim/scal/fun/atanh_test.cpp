@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
-#include <limits>
-#include <stdexcept>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
+#include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <stdexcept>
 
 TEST(MathFunctions, atanh) {
   using stan::math::atanh;
@@ -19,10 +19,8 @@ TEST(MathFunctions, atanh_exception) {
 }
 
 TEST(MathFunctions, atanh_inf_return) {
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            stan::math::atanh(-1));
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
-            stan::math::atanh(1));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), stan::math::atanh(-1));
+  EXPECT_EQ(std::numeric_limits<double>::infinity(), stan::math::atanh(1));
 }
 
 TEST(MathFunctions, atanh_nan) {

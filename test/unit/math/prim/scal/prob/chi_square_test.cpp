@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 
 TEST(ProbDistributionsChiSquare, error_check) {
@@ -11,8 +11,7 @@ TEST(ProbDistributionsChiSquare, error_check) {
   EXPECT_NO_THROW(stan::math::chi_square_rng(2.0, rng));
 
   EXPECT_THROW(stan::math::chi_square_rng(-2.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::chi_square_rng(stan::math::positive_infinity(),
-                                          rng),
+  EXPECT_THROW(stan::math::chi_square_rng(stan::math::positive_infinity(), rng),
                std::domain_error);
 }
 
@@ -27,7 +26,7 @@ TEST(ProbDistributionsChiSquare, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's Chi Square distribution
-  boost::math::chi_squared_distribution<>dist(2.0);
+  boost::math::chi_squared_distribution<> dist(2.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

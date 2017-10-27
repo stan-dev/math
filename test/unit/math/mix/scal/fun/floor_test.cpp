@@ -1,9 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdFloor, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -35,8 +33,6 @@ TEST(AgradFwdFloor, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
-
-
 
 TEST(AgradFwdFloor, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -74,7 +70,6 @@ TEST(AgradFwdFloor, FvarFvarVar_1stDeriv) {
   b.val_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(0.0, r[0]);
 }
-
 
 TEST(AgradFwdFloor, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
@@ -122,8 +117,7 @@ TEST(AgradFwdFloor, FvarFvarVar_3rdDeriv) {
 
 struct floor_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return floor(arg1);
   }
 };

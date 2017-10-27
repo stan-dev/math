@@ -1,11 +1,10 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
-
 
 TEST(ProbDistributionsWeibull, error_check) {
   boost::random::mt19937 rng;
@@ -14,8 +13,8 @@ TEST(ProbDistributionsWeibull, error_check) {
   EXPECT_THROW(stan::math::weibull_rng(-2.0, 3.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::weibull_rng(2.0, -3.0, rng), std::domain_error);
   EXPECT_THROW(
-    stan::math::weibull_rng(stan::math::positive_infinity(), 3.0, rng),
-    std::domain_error);
+      stan::math::weibull_rng(stan::math::positive_infinity(), 3.0, rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsWeibull, chiSquareGoodnessFitTest) {
@@ -29,7 +28,7 @@ TEST(ProbDistributionsWeibull, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's Weibull distribution
-  boost::math::weibull_distribution<>dist(2.0, 1.0);
+  boost::math::weibull_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

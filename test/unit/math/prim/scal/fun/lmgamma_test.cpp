@@ -1,13 +1,12 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, lmgamma) {
   unsigned int k = 1;
   double x = 2.5;
-  double result = k * (k - 1)
-                    * log(boost::math::constants::pi<double>()) / 4.0;
+  double result = k * (k - 1) * log(boost::math::constants::pi<double>()) / 4.0;
   // j = 1
   result += lgamma(x);
   EXPECT_FLOAT_EQ(result, stan::math::lmgamma(k, x));
@@ -18,13 +17,12 @@ TEST(MathFunctions, lmgamma) {
   // j = 1
   result += lgamma(x);
   // j = 2
-  result += lgamma(x + (1.0 - 2.0)/2.0);
+  result += lgamma(x + (1.0 - 2.0) / 2.0);
   EXPECT_FLOAT_EQ(result, stan::math::lmgamma(k, x));
 }
 
 TEST(MathFunctions, lmgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lmgamma(2, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lmgamma(2, nan));
 }

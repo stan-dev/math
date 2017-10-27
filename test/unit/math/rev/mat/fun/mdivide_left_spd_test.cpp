@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -12,10 +12,8 @@ TEST(AgradRevMatrix, mdivide_left_spd_val) {
   matrix_d Ad(2, 2);
   matrix_v I;
 
-  Av << 2.0, 3.0,
-    3.0, 7.0;
-  Ad << 2.0, 3.0,
-    3.0, 7.0;
+  Av << 2.0, 3.0, 3.0, 7.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
 
   I = mdivide_left_spd(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val(), 1.0E-12);
@@ -42,15 +40,12 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vv) {
   using stan::math::mdivide_left_spd;
   using stan::math::multiply;
 
-
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -65,9 +60,8 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vv) {
       }
 
       C = mdivide_left_spd(A, B);
-      AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1),
-                          B(0, 0), B(1, 0), B(0, 1), B(1, 1));
-
+      AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1), B(0, 0), B(1, 0),
+                          B(0, 1), B(1, 1));
 
       VEC g;
       C(i, j).grad(x, g);
@@ -82,7 +76,7 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vv) {
         Bd_tmp.setZero();
         Bd_tmp(k) = 1.0;
         Cd = mdivide_left_spd(Ad, Bd_tmp);
-        EXPECT_NEAR(Cd(i, j), g[4+k], 1.0E-12);
+        EXPECT_NEAR(Cd(i, j), g[4 + k], 1.0E-12);
       }
     }
   }
@@ -94,15 +88,12 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_dv) {
   using stan::math::mdivide_left_spd;
   using stan::math::multiply;
 
-
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -116,7 +107,6 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_dv) {
 
       C = mdivide_left_spd(Ad, B);
       AVEC x = createAVEC(B(0, 0), B(1, 0), B(0, 1), B(1, 1));
-
 
       VEC g;
       C(i, j).grad(x, g);
@@ -137,15 +127,12 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vd) {
   using stan::math::mdivide_left_spd;
   using stan::math::multiply;
 
-
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -159,7 +146,6 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vd) {
 
       C = mdivide_left_spd(A, Bd);
       AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1));
-
 
       VEC g;
       C(i, j).grad(x, g);
@@ -177,8 +163,7 @@ TEST(AgradRevMatrix, mdivide_left_spd_grad_vd) {
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v A(2, 2);
-  A << 2.0, 3.0,
-    3.0, 7.0;
+  A << 2.0, 3.0, 3.0, 7.0;
   test::check_varis_on_stack(stan::math::mdivide_left_spd(A, A));
   test::check_varis_on_stack(stan::math::mdivide_left_spd(A, value_of(A)));
   test::check_varis_on_stack(stan::math::mdivide_left_spd(value_of(A), A));

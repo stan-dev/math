@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -10,13 +10,11 @@ TEST(AgradMatrix, value_of_rec) {
 
   vector<double> a_vals;
 
-  for (size_t i = 0; i < 10; ++i)
-    a_vals.push_back(i + 1);
+  for (size_t i = 0; i < 10; ++i) a_vals.push_back(i + 1);
 
   vector<double> b_vals;
 
-  for (size_t i = 10; i < 15; ++i)
-    b_vals.push_back(i + 1);
+  for (size_t i = 10; i < 15; ++i) b_vals.push_back(i + 1);
 
   Eigen::Matrix<double, 2, 5> a;
   ::fill(a_vals, a);

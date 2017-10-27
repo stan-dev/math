@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixRow, fd_v) {
   using stan::math::row;
@@ -8,12 +8,12 @@ TEST(AgradFwdMatrixRow, fd_v) {
 
   matrix_fd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   row_vector_fd z = row(y, 1);
   EXPECT_EQ(3, z.size());
   EXPECT_FLOAT_EQ(1.0, z[0].val_);
@@ -32,12 +32,12 @@ TEST(AgradFwdMatrixRow, fd_v_exc0) {
 
   matrix_fd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   EXPECT_THROW(row(y, 0), std::out_of_range);
   EXPECT_THROW(row(y, 7), std::out_of_range);
 }
@@ -47,12 +47,12 @@ TEST(AgradFwdMatrixRow, fd_v_excHigh) {
 
   matrix_fd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   EXPECT_THROW(row(y, 0), std::out_of_range);
   EXPECT_THROW(row(y, 5), std::out_of_range);
 }
@@ -63,12 +63,12 @@ TEST(AgradFwdMatrixRow, ffd_v) {
 
   matrix_ffd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   row_vector_ffd z = row(y, 1);
   EXPECT_EQ(3, z.size());
   EXPECT_FLOAT_EQ(1.0, z[0].val_.val());
@@ -87,12 +87,12 @@ TEST(AgradFwdMatrixRow, ffd_v_exc0) {
 
   matrix_ffd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   EXPECT_THROW(row(y, 0), std::out_of_range);
   EXPECT_THROW(row(y, 7), std::out_of_range);
 }
@@ -102,12 +102,12 @@ TEST(AgradFwdMatrixRow, ffd_v_excHigh) {
 
   matrix_ffd y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
   EXPECT_THROW(row(y, 0), std::out_of_range);
   EXPECT_THROW(row(y, 5), std::out_of_range);
 }

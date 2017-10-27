@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 
 TEST(MetaTraits, partials_type) {
   using stan::math::fvar;

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ProbWelfordVarEstimator, restart) {
   const int n = 10;
@@ -9,8 +9,7 @@ TEST(ProbWelfordVarEstimator, restart) {
 
   stan::math::welford_var_estimator estimator(n);
 
-  for (int i = 0; i < n_learn; ++i)
-    estimator.add_sample(q);
+  for (int i = 0; i < n_learn; ++i) estimator.add_sample(q);
 
   estimator.restart();
 
@@ -19,8 +18,7 @@ TEST(ProbWelfordVarEstimator, restart) {
   Eigen::VectorXd mean(n);
   estimator.sample_mean(mean);
 
-  for (int i = 0; i < n; ++i)
-    EXPECT_EQ(0, mean(i));
+  for (int i = 0; i < n; ++i) EXPECT_EQ(0, mean(i));
 }
 
 TEST(ProbWelfordVarEstimator, num_samples) {
@@ -31,8 +29,7 @@ TEST(ProbWelfordVarEstimator, num_samples) {
 
   stan::math::welford_var_estimator estimator(n);
 
-  for (int i = 0; i < n_learn; ++i)
-    estimator.add_sample(q);
+  for (int i = 0; i < n_learn; ++i) estimator.add_sample(q);
 
   EXPECT_EQ(n_learn, estimator.num_samples());
 }
@@ -50,8 +47,7 @@ TEST(ProbWelfordVarEstimator, sample_mean) {
   Eigen::VectorXd mean(n);
   estimator.sample_mean(mean);
 
-  for (int i = 0; i < n; ++i)
-  EXPECT_EQ(9.0 / 2.0, mean(i));
+  for (int i = 0; i < n; ++i) EXPECT_EQ(9.0 / 2.0, mean(i));
 }
 
 TEST(ProbWelfordVarEstimator, sample_variance) {
@@ -67,6 +63,5 @@ TEST(ProbWelfordVarEstimator, sample_variance) {
   Eigen::VectorXd var(n);
   estimator.sample_variance(var);
 
-  for (int i = 0; i < n; ++i)
-    EXPECT_EQ(55.0 / 6.0, var(i));
+  for (int i = 0; i < n; ++i) EXPECT_EQ(55.0 / 6.0, var(i));
 }

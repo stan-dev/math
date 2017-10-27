@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <vector>
 
 TEST(ProbDistributionsHypergeometric, error_check) {
@@ -23,17 +23,16 @@ TEST(ProbDistributionsHypergeometric, chiSquareGoodnessFitTest) {
   int N = 10000;
   int num_draws = 10;
   int K = num_draws;
-  boost::math::hypergeometric_distribution<>dist(15, num_draws, 25);
-  boost::math::chi_squared mydist(K-1);
+  boost::math::hypergeometric_distribution<> dist(15, num_draws, 25);
+  boost::math::chi_squared mydist(K - 1);
 
   std::vector<int> loc(K - 1);
-  for (int i = 1; i < K; i++)
-    loc[i - 1] = i - 1;
+  for (int i = 1; i < K; i++) loc[i - 1] = i - 1;
 
   int count = 0;
   std::vector<int> bin(K);
   std::vector<double> expect(K);
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * pdf(dist, i);
   }
@@ -41,11 +40,10 @@ TEST(ProbDistributionsHypergeometric, chiSquareGoodnessFitTest) {
   while (count < N) {
     int a = stan::math::hypergeometric_rng(num_draws, 10, 15, rng);
     int i = 0;
-    while (i < K-1 && a > loc[i])
-      ++i;
+    while (i < K - 1 && a > loc[i]) ++i;
     ++bin[i];
     count++;
-   }
+  }
 
   double chi = 0;
 

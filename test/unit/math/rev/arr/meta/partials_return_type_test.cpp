@@ -1,5 +1,5 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/arr.hpp>
 #include <vector>
 
 TEST(MetaTraits, partials_return_type) {

@@ -1,9 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdCos, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -37,7 +35,6 @@ TEST(AgradFwdCos, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(-1.3 * cos(1.5), g[0]);
 }
-
 
 TEST(AgradFwdCos, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -125,8 +122,7 @@ TEST(AgradFwdCos, FvarFvarVar_3rdDeriv) {
 
 struct cos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cos(arg1);
   }
 };

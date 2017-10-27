@@ -1,8 +1,8 @@
+#include <gtest/gtest.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <vector>
 
 using std::vector;
@@ -41,4 +41,3 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
   bool same = boost::is_same<vector<var>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

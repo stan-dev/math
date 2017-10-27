@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, pow_var_var) {
   AVAR a(3.0);
@@ -13,7 +13,7 @@ TEST(AgradRev, pow_var_var) {
   AVEC x = createAVEC(a, b);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(4.0 * pow(3.0, 4.0-1.0), g[0]);
+  EXPECT_FLOAT_EQ(4.0 * pow(3.0, 4.0 - 1.0), g[0]);
   EXPECT_FLOAT_EQ(log(3.0) * pow(3.0, 4.0), g[1]);
 }
 
@@ -26,7 +26,7 @@ TEST(AgradRev, pow_var_double) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(4.0 * pow(4.0, 4.0-1.0), g[0]);
+  EXPECT_FLOAT_EQ(4.0 * pow(4.0, 4.0 - 1.0), g[0]);
 
   b = 2.0;
   f = pow(a, b);
@@ -46,9 +46,8 @@ TEST(AgradRev, pow_var_double) {
 
   b = -2.0;
   f = pow(a, b);
-  EXPECT_FLOAT_EQ(1/16.0, f.val());
+  EXPECT_FLOAT_EQ(1 / 16.0, f.val());
 }
-
 
 TEST(AgradRev, pow_double_var) {
   double a = 3.0;
@@ -79,15 +78,13 @@ TEST(AgradRev, pow_boundry) {
   EXPECT_FLOAT_EQ(inf, i.val());
 
   AVAR j = pow(b, c);
-  EXPECT_FLOAT_EQ(0.0 , j.val());
+  EXPECT_FLOAT_EQ(0.0, j.val());
 }
 
 struct pow_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return pow(arg1, arg2);
   }
 };

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/arr.hpp>
 #include <vector>
 
 TEST(MathMatrix, value_of) {
@@ -8,12 +8,10 @@ TEST(MathMatrix, value_of) {
   using stan::math::fvar;
 
   vector<double> a_vals;
-  for (size_t i = 0; i < 10; ++i)
-    a_vals.push_back(i + 1);
+  for (size_t i = 0; i < 10; ++i) a_vals.push_back(i + 1);
 
   vector<double> b_vals;
-  for (size_t i = 10; i < 15; ++i)
-    b_vals.push_back(i + 1);
+  for (size_t i = 10; i < 15; ++i) b_vals.push_back(i + 1);
 
   vector<fvar<double> > a_fd;
   a_fd = stan::math::to_fvar(a_vals);
@@ -23,11 +21,9 @@ TEST(MathMatrix, value_of) {
   vector<double> d_a = value_of(a_fd);
   vector<double> d_b = value_of(b_fd);
 
-  for (int i = 0; i < 5; ++i)
-    EXPECT_FLOAT_EQ(b_fd[i].val_, d_b[i]);
+  for (int i = 0; i < 5; ++i) EXPECT_FLOAT_EQ(b_fd[i].val_, d_b[i]);
 
-  for (int i = 0; i < 10; ++i)
-    EXPECT_FLOAT_EQ(a_fd[i].val_, d_a[i]);
+  for (int i = 0; i < 10; ++i) EXPECT_FLOAT_EQ(a_fd[i].val_, d_a[i]);
 
   vector<fvar<double> > a_zeros(10);
   vector<fvar<fvar<double> > > a_ffd;

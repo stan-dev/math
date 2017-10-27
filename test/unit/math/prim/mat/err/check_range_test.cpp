@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <string>
+#include <test/unit/util.hpp>
 #include <vector>
 
 TEST(ErrorHandlingMatrix, checkRange_6_arg_std_vector) {
@@ -17,13 +17,12 @@ TEST(ErrorHandlingMatrix, checkRange_6_arg_std_vector) {
 
   std::string expected_message;
   expected_message =
-    "function: accessing element out of range. "
-    "index 12 out of range; "
-    "expecting index to be between 1 and 4; "
-    "index position = 4";
+      "function: accessing element out of range. "
+      "index 12 out of range; "
+      "expecting index to be between 1 and 4; "
+      "index position = 4";
   EXPECT_THROW_MSG(check_range("function", "x", 4, 12, 4, ""),
-                   std::out_of_range,
-                   expected_message);
+                   std::out_of_range, expected_message);
 }
 
 TEST(ErrorHandlingMatrix, checkRange_4_arg_std_vector) {
@@ -39,10 +38,9 @@ TEST(ErrorHandlingMatrix, checkRange_4_arg_std_vector) {
 
   std::string expected_message;
   expected_message =
-    "function: accessing element out of range. "
-    "index 12 out of range; "
-    "expecting index to be between 1 and 4";
-  EXPECT_THROW_MSG(check_range("function", "x", 4, 12),
-                   std::out_of_range,
+      "function: accessing element out of range. "
+      "index 12 out of range; "
+      "expecting index to be between 1 and 4";
+  EXPECT_THROW_MSG(check_range("function", "x", 4, 12), std::out_of_range,
                    expected_message);
 }

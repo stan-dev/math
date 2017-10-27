@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, grad2F1_fd1) {
@@ -76,7 +76,8 @@ TEST(ProbInternalMath, grad2F1_fv1) {
   fvar<var> b = 1.0;
   fvar<var> c = 2.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
   EXPECT_NEAR(0.461773431539720, gradA.val_.val(), 1e-8);
@@ -92,7 +93,8 @@ TEST(ProbInternalMath, grad2F1_fv2) {
   fvar<var> c = 2.0;
   c.d_ = 1.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
   EXPECT_NEAR(0.461773431539720, gradA.val_.val(), 1e-8);
@@ -109,7 +111,8 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv1) {
   fvar<var> b = 1.0;
   fvar<var> c = 2.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
 
@@ -127,7 +130,8 @@ TEST(ProbInternalMath, grad2F1_fv_1stderiv2) {
   fvar<var> c = 2.0;
   c.d_ = 1.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
 
@@ -146,7 +150,8 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv1) {
   fvar<var> b = 1.0;
   fvar<var> c = 2.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
 
@@ -165,7 +170,8 @@ TEST(ProbInternalMath, grad2F1_fv_2ndderiv2) {
   fvar<var> c = 2.0;
   c.d_ = 1.0;
   fvar<var> z = 0.4;
-  fvar<var> gradA; fvar<var> gradC;
+  fvar<var> gradA;
+  fvar<var> gradC;
 
   stan::math::grad_2F1(gradA, gradC, a, b, c, z);
 

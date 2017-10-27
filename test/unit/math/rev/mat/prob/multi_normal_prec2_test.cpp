@@ -1,13 +1,12 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
+#include <string>
+#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal.hpp>
+#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal_multi_row.hpp>
+#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients_multi_normal.hpp>
-#include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal_multi_row.hpp>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_normal.hpp>
 #include <vector>
-#include <string>
-
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -17,9 +16,8 @@ using stan::math::var;
 using stan::math::to_var;
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto(T_y y1, T_loc mu1, T_scale sigma1,
-                   T_y y2, T_loc mu2, T_scale sigma2,
-                   std::string message = "") {
+void expect_propto(T_y y1, T_loc mu1, T_scale sigma1, T_y y2, T_loc mu2,
+                   T_scale sigma2, std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_prec_log<false>(y1, mu1, sigma1),
                   stan::math::multi_normal_prec_log<false>(y2, mu2, sigma2),
                   stan::math::multi_normal_prec_log<true>(y1, mu1, sigma1),
@@ -27,85 +25,62 @@ void expect_propto(T_y y1, T_loc mu1, T_scale sigma1,
                   message);
 }
 
-
 TEST_F(agrad_distributions_multi_normal, Propto) {
-  expect_propto(to_var(y), to_var(mu), to_var(Sigma),
-                to_var(y2), to_var(mu2), to_var(Sigma2),
-                "All vars: y, mu, sigma");
+  expect_propto(to_var(y), to_var(mu), to_var(Sigma), to_var(y2), to_var(mu2),
+                to_var(Sigma2), "All vars: y, mu, sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoY) {
-  expect_propto(to_var(y), mu, Sigma,
-                to_var(y2), mu, Sigma,
-                "var: y");
+  expect_propto(to_var(y), mu, Sigma, to_var(y2), mu, Sigma, "var: y");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYMu) {
-  expect_propto(to_var(y), to_var(mu), Sigma,
-                to_var(y2), to_var(mu2), Sigma,
+  expect_propto(to_var(y), to_var(mu), Sigma, to_var(y2), to_var(mu2), Sigma,
                 "var: y and mu");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYSigma) {
-  expect_propto(to_var(y), mu, to_var(Sigma),
-                to_var(y2), mu, to_var(Sigma2),
+  expect_propto(to_var(y), mu, to_var(Sigma), to_var(y2), mu, to_var(Sigma2),
                 "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMu) {
-  expect_propto(y, to_var(mu), Sigma,
-                y, to_var(mu2), Sigma,
-                "var: mu");
+  expect_propto(y, to_var(mu), Sigma, y, to_var(mu2), Sigma, "var: mu");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMuSigma) {
-  expect_propto(y, to_var(mu), to_var(Sigma),
-                y, to_var(mu2), to_var(Sigma2),
+  expect_propto(y, to_var(mu), to_var(Sigma), y, to_var(mu2), to_var(Sigma2),
                 "var: mu and sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoSigma) {
-  expect_propto(y, mu, to_var(Sigma),
-                y, mu, to_var(Sigma2),
-                "var: sigma");
+  expect_propto(y, mu, to_var(Sigma), y, mu, to_var(Sigma2), "var: sigma");
 }
 
 TEST_F(agrad_distributions_multi_normal_multi_row, Propto) {
-  expect_propto(to_var(y), to_var(mu), to_var(Sigma),
-                to_var(y2), to_var(mu2), to_var(Sigma2),
-                "All vars: y, mu, sigma");
+  expect_propto(to_var(y), to_var(mu), to_var(Sigma), to_var(y2), to_var(mu2),
+                to_var(Sigma2), "All vars: y, mu, sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoY) {
-  expect_propto(to_var(y), mu, Sigma,
-                to_var(y2), mu, Sigma,
-                "var: y");
+  expect_propto(to_var(y), mu, Sigma, to_var(y2), mu, Sigma, "var: y");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYMu) {
-  expect_propto(to_var(y), to_var(mu), Sigma,
-                to_var(y2), to_var(mu2), Sigma,
+  expect_propto(to_var(y), to_var(mu), Sigma, to_var(y2), to_var(mu2), Sigma,
                 "var: y and mu");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYSigma) {
-  expect_propto(to_var(y), mu, to_var(Sigma),
-                to_var(y2), mu, to_var(Sigma2),
+  expect_propto(to_var(y), mu, to_var(Sigma), to_var(y2), mu, to_var(Sigma2),
                 "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMu) {
-  expect_propto(y, to_var(mu), Sigma,
-                y, to_var(mu2), Sigma,
-                "var: mu");
+  expect_propto(y, to_var(mu), Sigma, y, to_var(mu2), Sigma, "var: mu");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMuSigma) {
-  expect_propto(y, to_var(mu), to_var(Sigma),
-                y, to_var(mu2), to_var(Sigma2),
+  expect_propto(y, to_var(mu), to_var(Sigma), y, to_var(mu2), to_var(Sigma2),
                 "var: mu and sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
-  expect_propto(y, mu, to_var(Sigma),
-                y, mu, to_var(Sigma2),
-                "var: sigma");
+  expect_propto(y, mu, to_var(Sigma), y, mu, to_var(Sigma2), "var: sigma");
 }
-
-
 
 struct multi_normal_prec_fun {
   const int K_;
 
-  explicit multi_normal_prec_fun(int K) : K_(K) { }
+  explicit multi_normal_prec_fun(int K) : K_(K) {}
 
   template <typename T>
   T operator()(const std::vector<T>& x) const {
@@ -116,10 +91,8 @@ struct multi_normal_prec_fun {
     Matrix<T, Dynamic, 1> mu(K_);
     Matrix<T, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
-    for (int i = 0; i < K_; ++i)
-      y(i) = x[pos++];
-    for (int i = 0; i < K_; ++i)
-      mu(i) = x[pos++];
+    for (int i = 0; i < K_; ++i) y(i) = x[pos++];
+    for (int i = 0; i < K_; ++i) mu(i) = x[pos++];
     for (int j = 0; j < K_; ++j) {
       for (int i = 0; i <= j; ++i) {
         Sigma(i, j) = x[pos++];
@@ -169,35 +142,32 @@ struct vectorized_multi_normal_prec_fun {
   // direct use eigen vector for mu
   const bool dont_vectorize_mu;
 
-  vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>
-                                                (int K, int L, bool M = false,
-                                                 bool N = false) : K_(K), L_(L),
-                                                 dont_vectorize_y(M),
-                                                 dont_vectorize_mu(N) {
+  vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(int K, int L,
+                                                                bool M = false,
+                                                                bool N = false)
+      : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
-      throw std::runtime_error("attempt to disable vectorization with vector "
-                                                              "bigger than 1");
+      throw std::runtime_error(
+          "attempt to disable vectorization with vector "
+          "bigger than 1");
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
   typename boost::math::tools::promote_args<T_y, T_mu, T_sigma>::type
-  operator() (const std::vector<T_y>& y_vec,
-              const std::vector<T_mu>& mu_vec,
-              const std::vector<T_sigma>& sigma_vec) const {
-    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y*-1> >
-                    y(L_, Matrix<T_y, is_row_vec_y, is_row_vec_y*-1> (K_));
-    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu*-1> >
-                    mu(L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu*-1> (K_));
+  operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
+             const std::vector<T_sigma>& sigma_vec) const {
+    vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
+        L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
+    vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
+        L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>(K_));
     Matrix<T_sigma, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
     for (int i = 0; i < L_; ++i)
-      for (int j = 0; j < K_; ++j)
-        y[i](j) = y_vec[pos++];
+      for (int j = 0; j < K_; ++j) y[i](j) = y_vec[pos++];
 
     pos = 0;
     for (int i = 0; i < L_; ++i)
-      for (int j = 0; j < K_; ++j)
-        mu[i](j) = mu_vec[pos++];
+      for (int j = 0; j < K_; ++j) mu[i](j) = mu_vec[pos++];
 
     pos = 0;
     for (int j = 0; j < K_; ++j) {
@@ -243,38 +213,38 @@ void test_all() {
     for (int ii = 0; ii < 2; ii++)
       for (int jj = 0; jj < 2; jj++) {
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          y_, mu_, sigma_);
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            y_, mu_, sigma_);
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          y_, mu_, get_vvar(sigma_));
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            y_, mu_, get_vvar(sigma_));
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          y_, get_vvar(mu_), sigma_);
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            y_, get_vvar(mu_), sigma_);
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          y_, get_vvar(mu_), get_vvar(sigma_));
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            y_, get_vvar(mu_), get_vvar(sigma_));
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          get_vvar(y_), mu_, sigma_);
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            get_vvar(y_), mu_, sigma_);
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          get_vvar(y_), mu_, get_vvar(sigma_));
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            get_vvar(y_), mu_, get_vvar(sigma_));
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          get_vvar(y_), get_vvar(mu_), sigma_);
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            get_vvar(y_), get_vvar(mu_), sigma_);
         test_grad_multi_normal(
-          vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                           is_row_vec_mu>(3, 1, ii, jj),
-          get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
-    }
+            vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
+                3, 1, ii, jj),
+            get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+      }
   }
 
   {
@@ -306,37 +276,29 @@ void test_all() {
     sigma_[5] = 56;
 
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      y_, mu_, sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
+        mu_, sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      y_, mu_, get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
+        mu_, get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      y_, get_vvar(mu_), sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
+        get_vvar(mu_), sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      y_, get_vvar(mu_), get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
+        get_vvar(mu_), get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      get_vvar(y_), mu_, sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        get_vvar(y_), mu_, sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      get_vvar(y_), mu_, get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        get_vvar(y_), mu_, get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      get_vvar(y_), get_vvar(mu_), sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        get_vvar(y_), get_vvar(mu_), sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(3, 2),
-      get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
   }
   {
     vector<double> y_(1), mu_(1), sigma_(1);
@@ -344,39 +306,30 @@ void test_all() {
     mu_[0] = -2.7;
     sigma_[0] = 0.48;
 
-
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      y_, mu_, sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
+        mu_, sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      y_, mu_, get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
+        mu_, get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      y_, get_vvar(mu_), sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
+        get_vvar(mu_), sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      y_, get_vvar(mu_), get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
+        get_vvar(mu_), get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      get_vvar(y_), mu_, sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        get_vvar(y_), mu_, sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      get_vvar(y_), mu_, get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        get_vvar(y_), mu_, get_vvar(sigma_));
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      get_vvar(y_), get_vvar(mu_), sigma_);
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        get_vvar(y_), get_vvar(mu_), sigma_);
     test_grad_multi_normal(
-      vectorized_multi_normal_prec_fun<is_row_vec_y,
-                                       is_row_vec_mu>(1, 1),
-      get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+        vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
   }
 }
 

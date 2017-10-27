@@ -1,8 +1,8 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
-#include <stdexcept>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <stdexcept>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLog1p, Fvar) {
   using stan::math::fvar;
@@ -28,10 +28,8 @@ TEST(MathFunctions, log1p_inf_return) {
   using stan::math::log1p;
   EXPECT_EQ(-std::numeric_limits<double>::infinity(),
             log1p(fvar<double>(-1.0)));
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            log1p(fvar<double>(-1)));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), log1p(fvar<double>(-1)));
 }
-
 
 TEST(AgradFwdLog1p, FvarFvarDouble) {
   using stan::math::fvar;
@@ -61,8 +59,7 @@ TEST(AgradFwdLog1p, FvarFvarDouble) {
 
 struct log1p_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

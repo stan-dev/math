@@ -1,5 +1,5 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <stan/math.hpp>
 
 TEST(MathFunctions, logInt) {
   using std::log;

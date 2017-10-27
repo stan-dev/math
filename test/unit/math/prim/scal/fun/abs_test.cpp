@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, abs) {
   using stan::math::abs;
@@ -32,6 +32,5 @@ TEST(MathFunctions, abs2) {
 TEST(MathFunctions, abs_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::abs(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::abs(nan));
 }

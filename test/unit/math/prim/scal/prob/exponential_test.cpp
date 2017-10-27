@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 
 TEST(ProbDistributionsExponential, error_check) {
@@ -11,9 +11,9 @@ TEST(ProbDistributionsExponential, error_check) {
   EXPECT_NO_THROW(stan::math::exponential_rng(2.0, rng));
 
   EXPECT_THROW(stan::math::exponential_rng(-2.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::exponential_rng(stan::math::positive_infinity(),
-                                           rng),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::exponential_rng(stan::math::positive_infinity(), rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsExponential, chiSquareGoodnessFitTest) {
@@ -27,7 +27,7 @@ TEST(ProbDistributionsExponential, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's exponential distribution
-  boost::math::exponential_distribution<>dist(2.0);
+  boost::math::exponential_distribution<> dist(2.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

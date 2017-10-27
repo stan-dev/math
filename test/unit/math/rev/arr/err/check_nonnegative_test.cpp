@@ -1,6 +1,6 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/rev/arr.hpp>
 #include <string>
 #include <vector>
 
@@ -14,25 +14,24 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
 
   x.assign(N, 0);
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
-    << "check_nonnegative(vector) should be true with finite x: " << x[0];
+      << "check_nonnegative(vector) should be true with finite x: " << x[0];
 
   x.assign(N, std::numeric_limits<double>::infinity());
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
-    << "check_nonnegative(vector) should be true with x = Inf: " << x[0];
+      << "check_nonnegative(vector) should be true with x = Inf: " << x[0];
 
   x.assign(N, -0.01);
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative should throw exception with x = " << x[0];
-
+      << "check_nonnegative should throw exception with x = " << x[0];
 
   x.assign(N, -std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative(vector) should throw an exception with x = -Inf: "
-    << x[0];
+      << "check_nonnegative(vector) should throw an exception with x = -Inf: "
+      << x[0];
 
   x.assign(N, std::numeric_limits<double>::quiet_NaN());
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative(vector) should throw exception on NaN: " << x[0];
+      << "check_nonnegative(vector) should throw exception on NaN: " << x[0];
   stan::math::recover_memory();
 }
 
@@ -45,8 +44,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   const std::string function = "check_nonnegative";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
-    a.push_back(var(i));
+  for (int i = 0; i < N; ++i) a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 

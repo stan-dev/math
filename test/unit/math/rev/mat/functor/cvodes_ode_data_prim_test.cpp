@@ -1,10 +1,10 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <string>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/arr/functor/mock_throwing_ode_functor.hpp>
-#include <string>
+#include <test/unit/util.hpp>
 #include <vector>
 
 struct StanMathOdeCVode : public ::testing::Test {
@@ -30,7 +30,7 @@ TEST_F(StanMathOdeCVode, recover_exception) {
   std::vector<double> theta_v(M, 0.0);
 
   cvodes_ode_data<mock_throwing_ode_functor<std::logic_error>, double, double>
-    ode_data_dd(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
+      ode_data_dd(throwing_ode, y0_d, theta_v, x, x_int, &msgs);
 
   std::vector<double> y(3, 0);
   std::vector<double> dy_dt(3, 0);
@@ -38,10 +38,8 @@ TEST_F(StanMathOdeCVode, recover_exception) {
   N_Vector nv_y = N_VMake_Serial(N, &y[0]);
   N_Vector nv_dy_dt = N_VMake_Serial(N, &dy_dt[0]);
 
-
   double t = 10;
 
   EXPECT_THROW_MSG(ode_data_dd.ode_rhs(t, nv_y, nv_dy_dt, &ode_data_dd),
-                   std::logic_error,
-                   message);
+                   std::logic_error, message);
 }

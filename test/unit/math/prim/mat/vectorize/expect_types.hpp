@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_TYPES_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_TYPES_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <Eigen/Dense>
+#include <test/unit/math/prim/mat/vectorize/expect_match_return_t.hpp>
 #include <vector>
 
 template <typename F>
@@ -12,8 +12,7 @@ void expect_int_types() {
 
   expect_match_return_t<F, double, int>();
   expect_match_return_t<F, vector<double>, vector<int> >();
-  expect_match_return_t<F, vector<vector<double> >,
-                               vector<vector<int> > >();
+  expect_match_return_t<F, vector<vector<double> >, vector<vector<int> > >();
 }
 
 template <typename F, typename T>

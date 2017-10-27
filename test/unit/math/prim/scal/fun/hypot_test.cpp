@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, hypotDouble) {
   using stan::math::hypot;
@@ -36,12 +36,9 @@ TEST(MathFunctions, hypotInf) {
 TEST(MathFunctions, hypotNaN) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::hypot(3.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::hypot(3.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::hypot(nan, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::hypot(nan, 3.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::hypot(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::hypot(nan, nan));
 }

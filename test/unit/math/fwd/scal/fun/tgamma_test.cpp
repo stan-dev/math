@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/digamma.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTgamma, Fvar) {
@@ -17,8 +17,7 @@ TEST(AgradFwdTgamma, Fvar) {
 
 struct tgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tgamma(arg1);
   }
 };

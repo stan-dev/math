@@ -14,8 +14,8 @@
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/seq_view.hpp>
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
+#include <stan/math/prim/mat/meta/seq_view.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 
@@ -44,6 +44,10 @@
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/fun/Phi.hpp>
+#include <stan/math/prim/mat/fun/Phi_approx.hpp>
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/acos.hpp>
 #include <stan/math/prim/mat/fun/acosh.hpp>
@@ -90,17 +94,16 @@
 #include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/determinant.hpp>
-#include <stan/math/prim/mat/fun/diagonal.hpp>
 #include <stan/math/prim/mat/fun/diag_matrix.hpp>
 #include <stan/math/prim/mat/fun/diag_post_multiply.hpp>
 #include <stan/math/prim/mat/fun/diag_pre_multiply.hpp>
+#include <stan/math/prim/mat/fun/diagonal.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/divide.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/mat/fun/eigenvectors_sym.hpp>
 #include <stan/math/prim/mat/fun/elt_divide.hpp>
@@ -111,8 +114,8 @@
 #include <stan/math/prim/mat/fun/exp2.hpp>
 #include <stan/math/prim/mat/fun/expm1.hpp>
 #include <stan/math/prim/mat/fun/fabs.hpp>
-#include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/fun/factor_U.hpp>
+#include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/mat/fun/fill.hpp>
 #include <stan/math/prim/mat/fun/floor.hpp>
 #include <stan/math/prim/mat/fun/get_base1.hpp>
@@ -121,14 +124,13 @@
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/initialize.hpp>
 #include <stan/math/prim/mat/fun/inv.hpp>
-#include <stan/math/prim/mat/fun/inverse.hpp>
-#include <stan/math/prim/mat/fun/inverse_spd.hpp>
+#include <stan/math/prim/mat/fun/inv_Phi.hpp>
 #include <stan/math/prim/mat/fun/inv_cloglog.hpp>
 #include <stan/math/prim/mat/fun/inv_logit.hpp>
-#include <stan/math/prim/mat/fun/inv_Phi.hpp>
 #include <stan/math/prim/mat/fun/inv_sqrt.hpp>
 #include <stan/math/prim/mat/fun/inv_square.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/mat/fun/inverse.hpp>
+#include <stan/math/prim/mat/fun/inverse_spd.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log10.hpp>
@@ -166,8 +168,6 @@
 #include <stan/math/prim/mat/fun/num_elements.hpp>
 #include <stan/math/prim/mat/fun/ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/ordered_free.hpp>
-#include <stan/math/prim/mat/fun/Phi.hpp>
-#include <stan/math/prim/mat/fun/Phi_approx.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/mat/fun/positive_ordered_free.hpp>
 #include <stan/math/prim/mat/fun/prod.hpp>
@@ -212,9 +212,9 @@
 #include <stan/math/prim/mat/fun/square.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/stan_print.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sub_col.hpp>
 #include <stan/math/prim/mat/fun/sub_row.hpp>
+#include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/tail.hpp>
 #include <stan/math/prim/mat/fun/tan.hpp>
@@ -248,11 +248,11 @@
 
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
-#include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
-#include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_rng.hpp>
+#include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
+#include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_log.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
@@ -302,6 +302,5 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
-
 
 #endif

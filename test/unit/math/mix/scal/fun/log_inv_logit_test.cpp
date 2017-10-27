@@ -1,8 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdLogInvLogit, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -36,8 +35,9 @@ TEST(AgradFwdLogInvLogit, FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ(1.3 * (-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5))
-                  / (1 + exp(-0.5)) / (1 + exp(-0.5)), g[0]);
+  EXPECT_FLOAT_EQ(1.3 * (-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5)) /
+                      (1 + exp(-0.5)) / (1 + exp(-0.5)),
+                  g[0]);
 }
 TEST(AgradFwdLogInvLogit, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -91,8 +91,9 @@ TEST(AgradFwdLogInvLogit, FvarFvarVar_2ndDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ((-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5))
-                  / (1 + exp(-0.5)) / (1 + exp(-0.5)), g[0]);
+  EXPECT_FLOAT_EQ((-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5)) /
+                      (1 + exp(-0.5)) / (1 + exp(-0.5)),
+                  g[0]);
 
   fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
@@ -103,8 +104,9 @@ TEST(AgradFwdLogInvLogit, FvarFvarVar_2ndDeriv) {
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
   b.d_.val_.grad(q, r);
-  EXPECT_FLOAT_EQ((-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5))
-                  / (1 + exp(-0.5)) / (1 + exp(-0.5)), r[0]);
+  EXPECT_FLOAT_EQ((-exp(-0.5) * (1 + exp(-0.5)) + exp(-0.5) * exp(-0.5)) /
+                      (1 + exp(-0.5)) / (1 + exp(-0.5)),
+                  r[0]);
 }
 TEST(AgradFwdLogInvLogit, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
@@ -124,8 +126,7 @@ TEST(AgradFwdLogInvLogit, FvarFvarVar_3rdDeriv) {
 }
 struct log_inv_logit_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log_inv_logit(arg1);
   }
 };

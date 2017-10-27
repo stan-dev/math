@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(mathMatrix, getLp) {
   using stan::math::accumulator;
@@ -13,4 +13,3 @@ TEST(mathMatrix, getLp) {
   lp_accum.add(3);
   EXPECT_FLOAT_EQ(17.5, get_lp(lp, lp_accum));
 }
-

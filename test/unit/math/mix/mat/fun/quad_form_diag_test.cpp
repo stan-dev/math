@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -15,7 +15,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_fv_1) {
   vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -61,7 +61,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_fv_2) {
   vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -98,7 +98,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_row_vector_fv_1) {
   row_vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -143,7 +143,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_row_vector_fv_2) {
   row_vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -212,7 +212,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_fv_1) {
   vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -246,7 +246,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_fv_2) {
   vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -273,7 +273,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_fv_1) {
   row_vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -308,7 +308,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_fv_2) {
   row_vector_fv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -365,7 +365,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_d_1) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -404,7 +404,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_vector_d_2) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -436,7 +436,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_row_vector_d_1) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -476,7 +476,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_fv_row_vector_d_2) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -539,7 +539,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_ffv_1) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -591,7 +591,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_ffv_2) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -634,7 +634,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_ffv_3) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -677,7 +677,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_ffv_4) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -720,7 +720,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_ffv_1) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -771,7 +771,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_ffv_2) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -814,7 +814,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_ffv_3) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -857,7 +857,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_ffv_4) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -931,7 +931,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_ffv_1) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -967,7 +967,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_ffv_2) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -995,7 +995,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_ffv_3) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1023,7 +1023,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_vector_ffv_4) {
   vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1052,7 +1052,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_ffv_1) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1089,7 +1089,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_ffv_2) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1118,7 +1118,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_ffv_3) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1146,7 +1146,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_d_row_vector_ffv_4) {
   row_vector_ffv bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -1204,7 +1204,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_d_1) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1247,7 +1247,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_d_2) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1282,7 +1282,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_d_3) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1317,7 +1317,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_vector_d_4) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1353,7 +1353,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_d_1) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1397,7 +1397,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_d_2) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1432,7 +1432,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_d_3) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -1467,7 +1467,7 @@ TEST(AgradMixMatrixQuadFormDiag, mat_ffv_row_vector_d_4) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;

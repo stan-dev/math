@@ -1,7 +1,7 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
+#include <stan/math/mix/mat.hpp>
+#include <vector>
 
 void test_logical_or(double x, double y) {
   using stan::math::fvar;
@@ -34,8 +34,5 @@ TEST(AgradRev, unaryNot) {
   xs.push_back(-std::numeric_limits<double>::infinity());
   xs.push_back(std::numeric_limits<double>::quiet_NaN());
   for (size_t i = 0; i < xs.size(); ++i)
-    for (size_t j = 0; j < xs.size(); ++j)
-      test_logical_or(xs[i], xs[j]);
+    for (size_t j = 0; j < xs.size(); ++j) test_logical_or(xs[i], xs[j]);
 }
-
-

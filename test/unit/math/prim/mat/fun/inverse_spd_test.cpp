@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, inverse_spd_exception) {
   using stan::math::inverse_spd;
@@ -17,8 +17,6 @@ TEST(MathMatrix, inverse_spd_exception) {
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 
   // not positive definite
-  m2 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m2 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 }

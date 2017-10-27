@@ -1,7 +1,7 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <random>
+#include <stan/math/mix/mat.hpp>
+#include <vector>
 
 using stan::math::var;
 using stan::math::fvar;
@@ -46,8 +46,8 @@ typedef Eigen::Matrix<ffv, Eigen::Dynamic, Eigen::Dynamic> Mffv;
  * @param n0 Ignored
  * @param z Output variable
  */
-template<typename T1>
-void build(int n1, int n0, T1 &z) {
+template <typename T1>
+void build(int n1, int n0, T1& z) {
   std::random_device rd;
   std::mt19937 mt(rd());
   z = T1(rd());
@@ -67,7 +67,7 @@ void build(int n1, int n0, T1 &z) {
  * @param n0 Columns of z (ignored if C == 1)
  * @param z Output variable
  */
-template<typename T1, int R, int C>
+template <typename T1, int R, int C>
 void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
   z = Eigen::Matrix<T1, R, C>(R == 1 ? 1 : n1, C == 1 ? 1 : n0);
 
@@ -88,8 +88,8 @@ void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
  * @param n0 Second dimension of last element
  * @param z Output variable
  */
-template<typename T1>
-void build(int n2, int n1, int n0, std::vector<T1> &z) {
+template <typename T1>
+void build(int n2, int n1, int n0, std::vector<T1>& z) {
   z.resize(n2);
   for (int i = 0; i < n2; i++) {
     build(n1, n0, z[i]);
@@ -107,8 +107,8 @@ void build(int n2, int n1, int n0, std::vector<T1> &z) {
  * @param n0 Second dimension of last element
  * @param z Output variable
  */
-template<typename T1>
-void build(int n3, int n2, int n1, int n0, std::vector<T1> &z) {
+template <typename T1>
+void build(int n3, int n2, int n1, int n0, std::vector<T1>& z) {
   z.resize(n3);
   for (int i = 0; i < n3; i++) {
     build(n2, n1, n0, z[i]);
@@ -120,54 +120,42 @@ void build(int n3, int n2, int n1, int n0, std::vector<T1> &z) {
  *
  * @param z1 Argument
  */
-double get_value(const double& z1) {
-  return z1;
-}
+double get_value(const double& z1) { return z1; }
 
 /**
  * Get value of var.
  *
  * @param z1 Argument
  */
-double get_value(const var& z1) {
-  return z1.val();
-}
+double get_value(const var& z1) { return z1.val(); }
 
 /**
  * Get value of fd
  *
  * @param z1 Argument
  */
-double get_value(const fd& z1) {
-  return z1.val();
-}
+double get_value(const fd& z1) { return z1.val(); }
 
 /**
  * Get value of fvar<var>
  *
  * @param z1 Argument
  */
-double get_value(const fv& z1) {
-  return z1.val().val();
-}
+double get_value(const fv& z1) { return z1.val().val(); }
 
 /**
  * Get value of fvar<fvar<double> >
  *
  * @param z1 Argument
  */
-double get_value(const ffd& z1) {
-  return z1.val().val();
-}
+double get_value(const ffd& z1) { return z1.val().val(); }
 
 /**
  * Get value of fvar<fvar<var> >
  *
  * @param z1 Argument
  */
-double get_value(const ffv& z1) {
-  return z1.val().val().val();
-}
+double get_value(const ffv& z1) { return z1.val().val().val(); }
 
 /**
  * Check if variables are equal via floating point macro
@@ -177,7 +165,7 @@ double get_value(const ffv& z1) {
  * @param z1 First argument
  * @param z2 Second argument
  */
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 void check_eq(const T1& z1, const T2& z2) {
   EXPECT_FLOAT_EQ(get_value(z1), get_value(z2));
 }
@@ -188,7 +176,7 @@ void check_eq(const T1& z1, const T2& z2) {
  * @param z1 First integer
  * @param z2 Second integer
  */
-template<>
+template <>
 void check_eq(const int& z1, const int& z2) {
   EXPECT_EQ(z1, z2);
 }
@@ -201,15 +189,14 @@ void check_eq(const int& z1, const int& z2) {
  * @param z1 First matrix
  * @param z2 Second matrix
  */
-template<typename T1, typename T2, int R, int C>
+template <typename T1, typename T2, int R, int C>
 void check_eq(const Eigen::Matrix<T1, R, C>& z1,
               const Eigen::Matrix<T2, R, C>& z2) {
   EXPECT_EQ(z1.rows(), z2.rows());
   EXPECT_EQ(z1.cols(), z2.cols());
 
   for (int i = 0; i < z1.rows(); i++)
-    for (int j = 0; j < z1.cols(); j++)
-      check_eq(z1(i, j), z2(i, j));
+    for (int j = 0; j < z1.cols(); j++) check_eq(z1(i, j), z2(i, j));
 }
 
 /**
@@ -220,11 +207,10 @@ void check_eq(const Eigen::Matrix<T1, R, C>& z1,
  * @param z1 First std::vector
  * @param z2 Second std::vector
  */
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 void check_eq(const std::vector<T1>& z1, const std::vector<T2>& z2) {
   EXPECT_EQ(z1.size(), z2.size());
-  for (size_t i = 0; i < z1.size(); i++)
-    check_eq(z1[i], z2[i]);
+  for (size_t i = 0; i < z1.size(); i++) check_eq(z1[i], z2[i]);
 }
 
 /**
@@ -236,7 +222,7 @@ void check_eq(const std::vector<T1>& z1, const std::vector<T2>& z2) {
  * @tparam T2 Element type of second std::vector
  * @tparam T3 Element type of return std::vector
  */
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 void checkv() {
   std::vector<T1> x;
   std::vector<T2> y;
@@ -245,19 +231,14 @@ void checkv() {
   std::random_device rd;
   std::mt19937 mt(rd());
 
-  int r1 = rd() % 5,
-      r2 = rd() % 5 + 1,
-      r3 = rd() % 5 + 1,
-      r4 = rd() % 5;
+  int r1 = rd() % 5, r2 = rd() % 5 + 1, r3 = rd() % 5 + 1, r4 = rd() % 5;
 
   build(r1, r2, r3, x);
   build(r4, r2, r3, y);
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
   EXPECT_EQ(x.size() + y.size(), result.size());
-  for (size_t i = 0; i < x.size(); i++)
-    check_eq(result[i], x[i]);
-  for (size_t i = 0; i < y.size(); i++)
-    check_eq(result[x.size() + i], y[i]);
+  for (size_t i = 0; i < x.size(); i++) check_eq(result[i], x[i]);
+  for (size_t i = 0; i < y.size(); i++) check_eq(result[x.size() + i], y[i]);
 }
 
 /**
@@ -269,7 +250,7 @@ void checkv() {
  * @tparam T2 Element type of second std::vector
  * @tparam T3 Element type of return std::vector
  */
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 void checkvv() {
   std::vector<std::vector<T1> > x;
   std::vector<std::vector<T2> > y;
@@ -278,20 +259,15 @@ void checkvv() {
   std::random_device rd;
   std::mt19937 mt(rd());
 
-  int r1 = rd() % 5,
-      r2 = rd() % 5 + 1,
-      r3 = rd() % 5 + 1,
-      r4 = rd() % 5 + 1,
+  int r1 = rd() % 5, r2 = rd() % 5 + 1, r3 = rd() % 5 + 1, r4 = rd() % 5 + 1,
       r5 = rd() % 5;
 
   build(r1, r2, r3, r4, x);
   build(r5, r2, r3, r4, y);
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
   EXPECT_EQ(x.size() + y.size(), result.size());
-  for (size_t i = 0; i < x.size(); i++)
-    check_eq(result[i], x[i]);
-  for (size_t i = 0; i < y.size(); i++)
-    check_eq(result[x.size() + i], y[i]);
+  for (size_t i = 0; i < x.size(); i++) check_eq(result[i], x[i]);
+  for (size_t i = 0; i < y.size(); i++) check_eq(result[x.size() + i], y[i]);
 }
 
 /**
@@ -301,7 +277,7 @@ void checkvv() {
  * @tparam T2 Element type of second container
  * @tparam T3 Element type of third container
  */
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 void check() {
   // repeat the checks a few times since they're random
   for (int i = 0; i < 3; i++) {

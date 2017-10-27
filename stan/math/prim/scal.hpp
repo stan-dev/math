@@ -3,6 +3,7 @@
 
 #include <stan/math/version.hpp>
 
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
@@ -33,7 +34,6 @@
 #include <stan/math/prim/scal/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>
@@ -57,11 +57,14 @@
 #include <stan/math/prim/scal/err/invalid_argument_vec.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
 
+#include <stan/math/prim/scal/fun/F32.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
+#include <stan/math/prim/scal/fun/Phi_approx.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
+#include <stan/math/prim/scal/fun/as_bool.hpp>
 #include <stan/math/prim/scal/fun/asinh.hpp>
 #include <stan/math/prim/scal/fun/atanh.hpp>
-#include <stan/math/prim/scal/fun/as_bool.hpp>
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
@@ -77,10 +80,9 @@
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
+#include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/scal/fun/expm1.hpp>
-#include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/fdim.hpp>
 #include <stan/math/prim/scal/fun/fill.hpp>
@@ -102,9 +104,9 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/int_step.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
@@ -147,8 +149,6 @@
 #include <stan/math/prim/scal/fun/modulus.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
-#include <stan/math/prim/scal/fun/Phi_approx.hpp>
 #include <stan/math/prim/scal/fun/positive_constrain.hpp>
 #include <stan/math/prim/scal/fun/positive_free.hpp>
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
@@ -204,10 +204,10 @@
 #include <stan/math/prim/scal/prob/binomial_lccdf.hpp>
 #include <stan/math/prim/scal/prob/binomial_lcdf.hpp>
 #include <stan/math/prim/scal/prob/binomial_log.hpp>
-#include <stan/math/prim/scal/prob/binomial_lpmf.hpp>
-#include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/binomial_logit_log.hpp>
 #include <stan/math/prim/scal/prob/binomial_logit_lpmf.hpp>
+#include <stan/math/prim/scal/prob/binomial_lpmf.hpp>
+#include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/cauchy_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/cauchy_cdf.hpp>
 #include <stan/math/prim/scal/prob/cauchy_cdf_log.hpp>
@@ -313,11 +313,11 @@
 #include <stan/math/prim/scal/prob/neg_binomial_2_lccdf.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_lcdf.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_log.hpp>
-#include <stan/math/prim/scal/prob/neg_binomial_2_lpmf.hpp>
-#include <stan/math/prim/scal/prob/neg_binomial_2_rng.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_log_log.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_log_lpmf.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_2_log_rng.hpp>
+#include <stan/math/prim/scal/prob/neg_binomial_2_lpmf.hpp>
+#include <stan/math/prim/scal/prob/neg_binomial_2_rng.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_cdf.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_cdf_log.hpp>
@@ -358,11 +358,11 @@
 #include <stan/math/prim/scal/prob/poisson_lccdf.hpp>
 #include <stan/math/prim/scal/prob/poisson_lcdf.hpp>
 #include <stan/math/prim/scal/prob/poisson_log.hpp>
-#include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
-#include <stan/math/prim/scal/prob/poisson_rng.hpp>
 #include <stan/math/prim/scal/prob/poisson_log_log.hpp>
 #include <stan/math/prim/scal/prob/poisson_log_lpmf.hpp>
 #include <stan/math/prim/scal/prob/poisson_log_rng.hpp>
+#include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
+#include <stan/math/prim/scal/prob/poisson_rng.hpp>
 #include <stan/math/prim/scal/prob/rayleigh_ccdf_log.hpp>
 #include <stan/math/prim/scal/prob/rayleigh_cdf.hpp>
 #include <stan/math/prim/scal/prob/rayleigh_cdf_log.hpp>

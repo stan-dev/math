@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, eltMultiplyVec) {
   stan::math::vector_d v1(2);
@@ -59,4 +59,3 @@ TEST(MathMatrix, eltMultiplyMatrixException) {
   EXPECT_THROW(stan::math::elt_multiply(m1, m2), std::invalid_argument);
   EXPECT_THROW(stan::math::elt_multiply(m1, m3), std::invalid_argument);
 }
-

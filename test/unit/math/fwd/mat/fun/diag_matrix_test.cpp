@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixDiagMatrix, vector_fd) {
   using stan::math::diag_matrix;
@@ -14,9 +14,9 @@ TEST(AgradFwdMatrixDiagMatrix, vector_fd) {
 
   vector_fd v(3);
   v << 1, 4, 9;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
   matrix_fd m = diag_matrix(v);
   EXPECT_EQ(1, m(0, 0).val_);
   EXPECT_EQ(4, m(1, 1).val_);

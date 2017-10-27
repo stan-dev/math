@@ -1,7 +1,7 @@
-#include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(MathFunctions, sumZeroSize) {
@@ -27,8 +27,7 @@ TEST(MathFunctions, sub_nan) {
   x[1] = 2.0;
   x[2] = nan;
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::sum(x));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::sum(x));
 }
 TEST(MathMatrix, sum_vector_int) {
   std::vector<int> x(3);

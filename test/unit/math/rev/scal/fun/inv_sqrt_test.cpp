@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -33,8 +33,7 @@ TEST(AgradRev, inv_sqrt) {
 
 struct inv_sqrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_sqrt(arg1);
   }
 };

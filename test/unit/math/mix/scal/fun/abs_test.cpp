@@ -1,10 +1,9 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
-#include <test/unit/math/mix/scal/fun/nan_util.hpp>
 #include <limits>
-
+#include <stan/math/mix/scal.hpp>
+#include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdAbs, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -91,8 +90,7 @@ TEST(AgradFwdAbs, FvarFvarVar_3rdDeriv) {
 
 struct abs_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return abs(arg1);
   }
 };

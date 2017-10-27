@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -13,14 +13,12 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_matrix_fv1) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -29,9 +27,9 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_matrix_fv1) {
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val());
-  EXPECT_FLOAT_EQ(-11.0/36.0, I(0, 0).d_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val());
+  EXPECT_FLOAT_EQ(-11.0 / 36.0, I(0, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.58333331, I(0, 1).d_.val());
   EXPECT_FLOAT_EQ(-0.22916667, I(1, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_.val());
@@ -65,14 +63,12 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_matrix_fv2) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -110,8 +106,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_fv1) {
   vector_fv Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -122,7 +117,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_fv1) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val());
   EXPECT_FLOAT_EQ(-0.1388889, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.10416666, I(1).d_.val());
 
@@ -152,8 +147,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_fv2) {
   vector_fv Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -190,20 +184,18 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_matrix_d1) {
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val());
   EXPECT_FLOAT_EQ(-0.6388889, I(0, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.91666669, I(0, 1).d_.val());
   EXPECT_FLOAT_EQ(-0.47916666, I(1, 0).d_.val());
@@ -231,20 +223,18 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_matrix_d2) {
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val());
   EXPECT_FLOAT_EQ(-0.6388889, I(0, 0).d_.val());
   EXPECT_FLOAT_EQ(-0.91666669, I(0, 1).d_.val());
   EXPECT_FLOAT_EQ(-0.47916666, I(1, 0).d_.val());
@@ -273,8 +263,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_d1) {
   vector_d Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -283,7 +272,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_d1) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val());
   EXPECT_FLOAT_EQ(-0.47222221, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_.val());
 
@@ -310,8 +299,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_d2) {
   vector_d Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -320,7 +308,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_fv_vector_d2) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val());
   EXPECT_FLOAT_EQ(-0.47222221, I(0).d_.val());
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_.val());
 
@@ -346,10 +334,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_fv1) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -358,8 +344,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_fv1) {
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0, 0).d_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0, 1).d_.val());
   EXPECT_FLOAT_EQ(0.25, I(1, 0).d_.val());
@@ -387,10 +373,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_fv2) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -420,15 +404,14 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_fv1) {
   vector_fv Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0).d_.val());
   EXPECT_FLOAT_EQ(0.25, I(1).d_.val());
 
@@ -451,8 +434,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_fv2) {
   vector_fv Ad(2);
   vector_fv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -531,14 +513,12 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv1) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -547,9 +527,9 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv1) {
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val_.val());
-  EXPECT_FLOAT_EQ(-11.0/36.0, I(0, 0).d_.val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val_.val());
+  EXPECT_FLOAT_EQ(-11.0 / 36.0, I(0, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.58333331, I(0, 1).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.22916667, I(1, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_.val_.val());
@@ -583,14 +563,12 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv2) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -627,8 +605,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv3) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -637,8 +614,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv3) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -679,8 +655,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv4) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -689,8 +664,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_ffv4) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -732,8 +706,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_ffv1) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -744,7 +717,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_ffv1) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val_.val());
   EXPECT_FLOAT_EQ(-0.1388889, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.10416666, I(1).d_.val_.val());
 
@@ -774,8 +747,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_ffv2) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -812,8 +784,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_ffv3) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -856,8 +827,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_ffv4) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -900,20 +870,18 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d1) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val_.val());
   EXPECT_FLOAT_EQ(-0.6388889, I(0, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.91666669, I(0, 1).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.47916666, I(1, 0).d_.val_.val());
@@ -941,14 +909,12 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d2) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
 
@@ -974,8 +940,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d3) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -984,8 +949,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d3) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
 
@@ -1011,8 +975,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d4) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1021,8 +984,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_matrix_d4) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left_spd(Av, Ad);
 
@@ -1049,8 +1011,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d1) {
   vector_d Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1059,7 +1020,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d1) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val_.val());
   EXPECT_FLOAT_EQ(-0.47222221, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_.val_.val());
 
@@ -1086,8 +1047,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d2) {
   vector_d Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1096,7 +1056,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d2) {
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val_.val());
   EXPECT_FLOAT_EQ(-0.47222221, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_.val_.val());
 
@@ -1123,8 +1083,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d3) {
   vector_d Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1160,8 +1119,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_ffv_vector_d4) {
   vector_d Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1196,10 +1154,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_ffv1) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1208,8 +1164,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_ffv1) {
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0, 0).val_.val_.val());
   EXPECT_FLOAT_EQ(1, I(0, 1).val_.val_.val());
-  EXPECT_FLOAT_EQ(5.0/4.0, I(1, 0).val_.val_.val());
-  EXPECT_FLOAT_EQ(7.0/4.0, I(1, 1).val_.val_.val());
+  EXPECT_FLOAT_EQ(5.0 / 4.0, I(1, 0).val_.val_.val());
+  EXPECT_FLOAT_EQ(7.0 / 4.0, I(1, 1).val_.val_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0, 0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0, 1).d_.val_.val());
   EXPECT_FLOAT_EQ(0.25, I(1, 0).d_.val_.val());
@@ -1237,10 +1193,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_ffv2) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1270,10 +1224,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_ffv3) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1307,10 +1259,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_matrix_ffv4) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1344,15 +1294,14 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_ffv1) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
 
   I = mdivide_left_spd(Av, Ad);
   EXPECT_FLOAT_EQ(0.66666669, I(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(3.0/4.0, I(1).val_.val_.val());
+  EXPECT_FLOAT_EQ(3.0 / 4.0, I(1).val_.val_.val());
   EXPECT_FLOAT_EQ(0.33333334, I(0).d_.val_.val());
   EXPECT_FLOAT_EQ(0.25, I(1).d_.val_.val());
 
@@ -1375,8 +1324,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_ffv2) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1401,8 +1349,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_ffv3) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1429,8 +1376,7 @@ TEST(AgradMixMatrixMdivideLeftSPD, matrix_d_vector_ffv4) {
   vector_ffv Ad(2);
   vector_ffv I;
 
-  Av << 3.0, 0.0,
-    0.0, 4.0;
+  Av << 3.0, 0.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1497,8 +1443,8 @@ TEST(AgradMixMatrixMdivideLeftSPD, ffv_exceptions) {
   EXPECT_THROW(mdivide_left_spd(fd1, rvf2), std::domain_error);
   EXPECT_THROW(mdivide_left_spd(fd1, rvf1), std::domain_error);
   EXPECT_THROW(mdivide_left_spd(fd1, vf2), std::domain_error);
-/*  EXPECT_THROW(mdivide_left_spd(fd2, rvf2), std::domain_error);
-  EXPECT_THROW(mdivide_left_spd(fd2, rvf1), std::domain_error);
-  EXPECT_THROW(mdivide_left_spd(fd2, vf1), std::domain_error);
-*/
+  /*  EXPECT_THROW(mdivide_left_spd(fd2, rvf2), std::domain_error);
+    EXPECT_THROW(mdivide_left_spd(fd2, rvf1), std::domain_error);
+    EXPECT_THROW(mdivide_left_spd(fd2, vf1), std::domain_error);
+  */
 }

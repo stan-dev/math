@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, binary_log_loss) {
   EXPECT_FLOAT_EQ(0.0, stan::math::binary_log_loss(0, 0.0));
@@ -15,9 +15,7 @@ TEST(MathFunctions, binary_log_loss) {
 TEST(MathFunctions, binary_log_loss_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binary_log_loss(0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::binary_log_loss(0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binary_log_loss(1, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::binary_log_loss(1, nan));
 }

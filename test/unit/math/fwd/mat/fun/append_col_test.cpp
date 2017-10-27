@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixAppendCol, fd) {
   using stan::math::append_col;
@@ -10,14 +10,11 @@ TEST(AgradFwdMatrixAppendCol, fd) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-        9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -28,8 +25,7 @@ TEST(AgradFwdMatrixAppendCol, fd) {
   MatrixXd adb_append_col = append_col(ad, b);
 
   for (int i = 0; i < 2; i++)
-    for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_, ab_append_col(i, j).d_);
+    for (int j = 0; j < 2; j++) EXPECT_EQ(a(i, j).d_, ab_append_col(i, j).d_);
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 4; j++)
@@ -59,11 +55,10 @@ TEST(AgradFwdRowVectorAppendCol, fd) {
   row_vector_fd ab_append_col = append_col(a, b);
   RowVectorXd adb_append_col = append_col(ad, b);
 
-  for (int i = 0; i < 4; i++)
-      EXPECT_EQ(a(i).d_, ab_append_col(i).d_);
+  for (int i = 0; i < 4; i++) EXPECT_EQ(a(i).d_, ab_append_col(i).d_);
 
   for (int i = 0; i < 7; i++)
-      EXPECT_EQ(ab_append_col(i).val_, adb_append_col(i));
+    EXPECT_EQ(ab_append_col(i).val_, adb_append_col(i));
 }
 
 TEST(AgradFwdMatrixAppendCol, ffd) {
@@ -75,14 +70,11 @@ TEST(AgradFwdMatrixAppendCol, ffd) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-        9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;

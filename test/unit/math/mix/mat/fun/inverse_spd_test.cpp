@@ -1,14 +1,12 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
 using stan::math::var;
 
 class AgradMixMatrixInverseSPD : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
 
 TEST_F(AgradMixMatrixInverseSPD, exception_fv) {
@@ -26,9 +24,7 @@ TEST_F(AgradMixMatrixInverseSPD, exception_fv) {
 
   // not positive definite
   stan::math::matrix_fv m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
@@ -39,7 +35,6 @@ TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
   m1 << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 
-
   // non-symmetric
   stan::math::matrix_ffv m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -47,18 +42,14 @@ TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
 
   // not positive definite
   stan::math::matrix_ffv m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 TEST_F(AgradMixMatrixInverseSPD, matrix_fv_1st_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -98,8 +89,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_fv_1st_deriv) {
       stan::math::recover_memory();
       m3(i, j).val_.grad(z1, h2);
       stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
+      for (int k = 0; k < 9; k++) EXPECT_FLOAT_EQ(h1[k], h2[k]);
     }
   }
 }
@@ -108,9 +98,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_fv_2nd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -150,8 +138,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_fv_2nd_deriv) {
       stan::math::recover_memory();
       m3(i, j).d_.grad(z1, h2);
       stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
+      for (int k = 0; k < 9; k++) EXPECT_FLOAT_EQ(h1[k], h2[k]);
     }
   }
 }
@@ -160,9 +147,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_1st_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -202,8 +187,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_1st_deriv) {
       stan::math::recover_memory();
       m3(i, j).val_.val_.grad(z1, h2);
       stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
+      for (int k = 0; k < 9; k++) EXPECT_FLOAT_EQ(h1[k], h2[k]);
     }
   }
 }
@@ -212,9 +196,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_2nd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -254,8 +236,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_2nd_deriv) {
       stan::math::recover_memory();
       m3(i, j).d_.val_.grad(z1, h2);
       stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
+      for (int k = 0; k < 9; k++) EXPECT_FLOAT_EQ(h1[k], h2[k]);
     }
   }
 }
@@ -264,9 +245,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_3rd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -315,8 +294,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_3rd_deriv) {
       stan::math::recover_memory();
       m3(i, j).d_.d_.grad(z1, h2);
       stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
+      for (int k = 0; k < 9; k++) EXPECT_FLOAT_EQ(h1[k], h2[k]);
     }
   }
 }

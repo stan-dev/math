@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 

@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, fmax_vv) {
   AVAR a = 1.3;
@@ -119,10 +119,8 @@ TEST(AgradRev, fmax_dv_3) {
 
 struct fmax_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return fmax(arg1, arg2);
   }
 };

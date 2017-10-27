@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::matrix_d;
 using stan::math::vector_d;
@@ -24,14 +24,12 @@ void test_fwd_diag_post_multiply_vv(matrix_d md, vector_d vd) {
       for (int m = 0; m < M; ++m) {
         for (int n = 0; n < N; ++n) {
           mf(m, n).val_ = md(m, n);
-          if (m == m1 && n == n1)
-            mf(m, n).d_ = 2.5;
+          if (m == m1 && n == n1) mf(m, n).d_ = 2.5;
         }
       }
 
       vector_fd vf(K);
-      for (int k = 0; k < K; ++k)
-        vf(k).val_ = vd(k);
+      for (int k = 0; k < K; ++k) vf(k).val_ = vd(k);
 
       // value
       matrix_fd mf_vf = diag_post_multiply(mf, vf);
@@ -46,8 +44,7 @@ void test_fwd_diag_post_multiply_vv(matrix_d md, vector_d vd) {
 
       // SAME FOR ROW VECTORS
       row_vector_fd rvf(K);
-      for (int k = 0; k < K; ++k)
-        rvf(k).val_ = vd(k);
+      for (int k = 0; k < K; ++k) rvf(k).val_ = vd(k);
 
       // value
       matrix_fd mf_rvf = diag_post_multiply(mf, rvf);
@@ -64,47 +61,46 @@ void test_fwd_diag_post_multiply_vv(matrix_d md, vector_d vd) {
 
   // right tangent
   for (int k1 = 0; k1 < K; ++k1) {
-      matrix_fd mf(M, N);
-      for (int m = 0; m < M; ++m)
-        for (int n = 0; n < N; ++n)
-          mf(m, n).val_ = md(m, n);
+    matrix_fd mf(M, N);
+    for (int m = 0; m < M; ++m)
+      for (int n = 0; n < N; ++n) mf(m, n).val_ = md(m, n);
 
-      vector_fd vf(K);
-      for (int k = 0; k < K; ++k) {
-        vf(k).val_ = vd(k);
-        if (k == k1) vf(k).d_ = 3.7;
+    vector_fd vf(K);
+    for (int k = 0; k < K; ++k) {
+      vf(k).val_ = vd(k);
+      if (k == k1) vf(k).d_ = 3.7;
+    }
+
+    matrix_fd mf_vf = diag_post_multiply(mf, vf);
+
+    // right tangent
+    for (int m = 0; m < M; ++m) {
+      for (int n = 0; n < N; ++n) {
+        if (n == k1)
+          EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_vf(m, n).d_);
+        else
+          EXPECT_FLOAT_EQ(0.0, mf_vf(m, n).d_);
       }
+    }
 
-      matrix_fd mf_vf = diag_post_multiply(mf, vf);
+    // SAME FOR ROW VECTORS
+    row_vector_fd rvf(K);
+    for (int k = 0; k < K; ++k) {
+      rvf(k).val_ = vd(k);
+      if (k == k1) rvf(k).d_ = 3.7;
+    }
 
-      // right tangent
-      for (int m = 0; m < M; ++m) {
-        for (int n = 0; n < N; ++n) {
-          if (n == k1)
-            EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_vf(m, n).d_);
-          else
-            EXPECT_FLOAT_EQ(0.0, mf_vf(m, n).d_);
-        }
+    matrix_fd mf_rvf = diag_post_multiply(mf, rvf);
+
+    // right tangent
+    for (int m = 0; m < M; ++m) {
+      for (int n = 0; n < N; ++n) {
+        if (n == k1)
+          EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_rvf(m, n).d_);
+        else
+          EXPECT_FLOAT_EQ(0.0, mf_rvf(m, n).d_);
       }
-
-      // SAME FOR ROW VECTORS
-      row_vector_fd rvf(K);
-      for (int k = 0; k < K; ++k) {
-        rvf(k).val_ = vd(k);
-        if (k == k1) rvf(k).d_ = 3.7;
-      }
-
-      matrix_fd mf_rvf = diag_post_multiply(mf, rvf);
-
-      // right tangent
-      for (int m = 0; m < M; ++m) {
-        for (int n = 0; n < N; ++n) {
-          if (n == k1)
-            EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_rvf(m, n).d_);
-          else
-            EXPECT_FLOAT_EQ(0.0, mf_rvf(m, n).d_);
-        }
-      }
+    }
   }
 }
 
@@ -121,8 +117,7 @@ void test_fwd_diag_post_multiply_vd(matrix_d md, vector_d vd) {
       for (int m = 0; m < M; ++m) {
         for (int n = 0; n < N; ++n) {
           mf(m, n).val_ = md(m, n);
-          if (m == m1 && n == n1)
-            mf(m, n).d_ = 2.5;
+          if (m == m1 && n == n1) mf(m, n).d_ = 2.5;
         }
       }
 
@@ -141,16 +136,14 @@ void test_fwd_diag_post_multiply_vd(matrix_d md, vector_d vd) {
 
   // SAME FOR ROW VECTORS
   row_vector_d rvf(K);
-  for (int k = 0; k < K; ++k)
-    rvf(k) = vd(k);
+  for (int k = 0; k < K; ++k) rvf(k) = vd(k);
   for (int m1 = 0; m1 < M; ++m1) {
     for (int n1 = 0; n1 < N; ++n1) {
       matrix_fd mf(M, N);
       for (int m = 0; m < M; ++m) {
         for (int n = 0; n < N; ++n) {
           mf(m, n).val_ = md(m, n);
-          if (m == m1 && n == n1)
-            mf(m, n).d_ = 2.5;
+          if (m == m1 && n == n1) mf(m, n).d_ = 2.5;
         }
       }
 
@@ -178,8 +171,7 @@ void test_fwd_diag_post_multiply_dv(matrix_d md, vector_d vd) {
   for (int m1 = 0; m1 < M; ++m1) {
     for (int n1 = 0; n1 < N; ++n1) {
       vector_fd vf(K);
-      for (int k = 0; k < K; ++k)
-        vf(k).val_ = vd(k);
+      for (int k = 0; k < K; ++k) vf(k).val_ = vd(k);
 
       // value
       matrix_fd mf_vf = diag_post_multiply(md, vf);
@@ -191,8 +183,7 @@ void test_fwd_diag_post_multiply_dv(matrix_d md, vector_d vd) {
 
       // ROW VECTOR VALUE
       row_vector_fd rvf(K);
-      for (int k = 0; k < K; ++k)
-        rvf(k).val_ = vd(k);
+      for (int k = 0; k < K; ++k) rvf(k).val_ = vd(k);
 
       // value
       matrix_fd mf_rvf = diag_post_multiply(md, rvf);
@@ -206,42 +197,42 @@ void test_fwd_diag_post_multiply_dv(matrix_d md, vector_d vd) {
 
   // right tangent
   for (int k1 = 0; k1 < K; ++k1) {
-      vector_fd vf(K);
-      for (int k = 0; k < K; ++k) {
-        vf(k).val_ = vd(k);
-        if (k == k1) vf(k).d_ = 3.7;
+    vector_fd vf(K);
+    for (int k = 0; k < K; ++k) {
+      vf(k).val_ = vd(k);
+      if (k == k1) vf(k).d_ = 3.7;
+    }
+
+    matrix_fd mf_vf = diag_post_multiply(md, vf);
+
+    // right tangent
+    for (int m = 0; m < M; ++m) {
+      for (int n = 0; n < N; ++n) {
+        if (n == k1)
+          EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_vf(m, n).d_);
+        else
+          EXPECT_FLOAT_EQ(0.0, mf_vf(m, n).d_);
       }
+    }
 
-      matrix_fd mf_vf = diag_post_multiply(md, vf);
+    // ROW VECTORS
+    row_vector_fd rvf(K);
+    for (int k = 0; k < K; ++k) {
+      rvf(k).val_ = vd(k);
+      if (k == k1) rvf(k).d_ = 3.7;
+    }
 
-      // right tangent
-      for (int m = 0; m < M; ++m) {
-        for (int n = 0; n < N; ++n) {
-          if (n == k1)
-            EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_vf(m, n).d_);
-          else
-            EXPECT_FLOAT_EQ(0.0, mf_vf(m, n).d_);
-        }
+    matrix_fd mf_rvf = diag_post_multiply(md, rvf);
+
+    // right tangent
+    for (int m = 0; m < M; ++m) {
+      for (int n = 0; n < N; ++n) {
+        if (n == k1)
+          EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_rvf(m, n).d_);
+        else
+          EXPECT_FLOAT_EQ(0.0, mf_rvf(m, n).d_);
       }
-
-      // ROW VECTORS
-      row_vector_fd rvf(K);
-      for (int k = 0; k < K; ++k) {
-        rvf(k).val_ = vd(k);
-        if (k == k1) rvf(k).d_ = 3.7;
-      }
-
-      matrix_fd mf_rvf = diag_post_multiply(md, rvf);
-
-      // right tangent
-      for (int m = 0; m < M; ++m) {
-        for (int n = 0; n < N; ++n) {
-          if (n == k1)
-            EXPECT_FLOAT_EQ(3.7 * md(m, n), mf_rvf(m, n).d_);
-          else
-            EXPECT_FLOAT_EQ(0.0, mf_rvf(m, n).d_);
-        }
-      }
+    }
   }
 }
 
@@ -261,8 +252,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff1) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, ff2) {
   matrix_d m(2, 2);
-  m << 1, 10,
-       100, 1000;
+  m << 1, 10, 100, 1000;
   vector_d v(2);
   v << 2, 3;
   test_fwd_diag_post_multiply(m, v);
@@ -270,9 +260,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff2) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, ff3) {
   matrix_d m(3, 3);
-  m << 1, 10, 100,
-       1000, 2, -4,
-       8, -16, 32;
+  m << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
   vector_d v(3);
   v << -1.7, 111.2, -29.3;
   test_fwd_diag_post_multiply(m, v);
@@ -280,9 +268,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, ff3) {
 
 TEST(AgradFwdMatrixDiagPostMultiply, exceptions) {
   matrix_d m(3, 3);
-  m << 1, 10, 100,
-       1000, 2, -4,
-       8, -16, 32;
+  m << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
 
   vector_d v(2);
   v << -1.7, 111.2;
@@ -291,9 +277,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, exceptions) {
   v << -1.7, 111.2;
 
   matrix_fd mf(3, 3);
-  mf << 1, 10, 100,
-        1000, 2, -4,
-        8, -16, 32;
+  mf << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
 
   vector_fd vf(2);
   vf << -1.7, 111.2;
@@ -320,9 +304,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -344,9 +326,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, vector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c,
-       b, c, d,
-       d, e, f;
+  Y << a, b, c, b, c, d, d, e, f;
 
   vector_d A(3);
   A << 1, 2, 3;
@@ -395,9 +375,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd) {
   using stan::math::fvar;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -419,9 +397,7 @@ TEST(AgradFwdMatrixDiagPostMultiply, rowvector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c,
-       b, c, d,
-       d, e, f;
+  Y << a, b, c, b, c, d, d, e, f;
 
   row_vector_d A(3);
   A << 1, 2, 3;

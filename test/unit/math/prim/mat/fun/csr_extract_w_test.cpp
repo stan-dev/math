@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 // Test that values from a dense matrix in sparse format are extracted.
@@ -59,7 +59,6 @@ TEST(SparseStuff, csr_extract_w_sparse) {
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
 
-
 // Test that values from a sparse matrix in sparse format are extracted
 // after A.makeCompressed()
 TEST(SparseStuff, csr_extract_w_sparse_compressed) {
@@ -72,4 +71,3 @@ TEST(SparseStuff, csr_extract_w_sparse_compressed) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
-

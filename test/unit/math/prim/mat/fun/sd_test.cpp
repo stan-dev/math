@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, sd) {
@@ -36,7 +36,6 @@ TEST(MathMatrix, sd) {
   rv = stan::math::row_vector_d(3);
   rv << 1.0, 2.0, 3.0;
   EXPECT_FLOAT_EQ(1.0, sd(rv));
-
 
   stan::math::matrix_d m;
   EXPECT_THROW(sd(m), std::invalid_argument);

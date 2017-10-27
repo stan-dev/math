@@ -16,8 +16,7 @@ void expect_std_vector_error() {
   vector<vector<T> > z;
   z.push_back(y);
   z.push_back(y);
-  EXPECT_THROW(F::template apply<vector<vector<T> > >(z),
-               std::exception);
+  EXPECT_THROW(F::template apply<vector<vector<T> > >(z), std::exception);
 }
 
 #endif

@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
@@ -32,8 +32,7 @@ TEST(AgradRev, Phi) {
     x = createAVEC(y);
     phi_y.grad(x, dy);
     EXPECT_FLOAT_EQ(stan::math::Phi(y.val()), phi_y.val());
-    EXPECT_FLOAT_EQ(dy_values[i], dy[0])
-      << "y = " << y;
+    EXPECT_FLOAT_EQ(dy_values[i], dy[0]) << "y = " << y;
   }
 }
 
@@ -144,8 +143,7 @@ TEST(AgradRev, PhiTails) {
 
 struct Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return Phi(arg1);
   }
 };

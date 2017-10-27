@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, eigenvalues_sym) {
   stan::math::matrix_d m0;
@@ -10,4 +10,3 @@ TEST(MathMatrix, eigenvalues_sym) {
   EXPECT_THROW(eigenvalues_sym(m0), std::invalid_argument);
   EXPECT_THROW(eigenvalues_sym(m1), std::invalid_argument);
 }
-

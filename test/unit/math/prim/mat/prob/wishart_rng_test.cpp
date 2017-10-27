@@ -1,10 +1,9 @@
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <stdexcept>
+#include <test/unit/math/prim/mat/util.hpp>
 #include <vector>
-
 
 TEST(ProbDistributionsWishartRng, rng) {
   using Eigen::MatrixXd;
@@ -16,9 +15,7 @@ TEST(ProbDistributionsWishartRng, rng) {
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
 
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 2.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);
@@ -47,23 +44,19 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
 
   boost::random::mt19937 rng;
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 2.0,
-          -3.0,  4.0, 0.0,
-           2.0, 0.0, 3.0;
+  sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
   int N = 10000;
 
-
   double avg = 0;
-  double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
-                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
-                  + digamma(3.0 / 2.0);
+  double expect = sigma.rows() * log(2.0) + log(determinant(sigma)) +
+                  digamma(5.0 / 2.0) + digamma(4.0 / 2.0) + digamma(3.0 / 2.0);
 
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
     a = wishart_rng(5.0, sigma, rng);
     avg += log(determinant(a)) / N;
     count++;
-   }
+  }
   double chi = (expect - avg) * (expect - avg) / expect;
   chi_squared mydist(1);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
@@ -85,13 +78,9 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   MatrixXd sigma_sym(3, 3);
 
   // wishart_rng should take only the lower part
-  sigma << 9.0, -3.0, 1.0,
-           2.0,  4.0, -1.0,
-           2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 1.0, 2.0, 4.0, -1.0, 2.0, 1.0, 3.0;
 
-  sigma_sym << 9.0, 2.0, 2.0,
-               2.0,  4.0, 1.0,
-               2.0, 1.0, 3.0;
+  sigma_sym << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
 
   VectorXd C(3);
   C << 2, 1, 3;
@@ -103,8 +92,8 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)
-    acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0)
-                   / (C.transpose() * sigma_sym * C)(0));
+    acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0) /
+                   (C.transpose() * sigma_sym * C)(0));
 
   EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
   EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);

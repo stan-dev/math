@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, fma_double) {
   using stan::math::fma;
@@ -12,17 +12,13 @@ TEST(MathFunctions, fma_double) {
 
 TEST(MathFunctions, fma_int) {
   using stan::math::fma;
-  EXPECT_FLOAT_EQ(11.0, fma(static_cast<int>(3),
-                            static_cast<int>(2),
-                            static_cast<int>(5)));
+  EXPECT_FLOAT_EQ(
+      11.0, fma(static_cast<int>(3), static_cast<int>(2), static_cast<int>(5)));
 }
 
 TEST(MathFunctions, fma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fma(nan, 3.0, 2.7));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fma(3.0, nan, 1.5));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fma(2, -8.2, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fma(nan, 3.0, 2.7));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fma(3.0, nan, 1.5));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fma(2, -8.2, nan));
 }

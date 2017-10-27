@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -24,24 +24,20 @@ TEST(AgradRevMatrix, fill) {
   Matrix<AVAR, Dynamic, Dynamic> m(2, 3);
   fill(m, AVAR(12));
   for (int i = 0; i < 2; ++i)
-    for (int j = 0; j < 3; ++j)
-      EXPECT_FLOAT_EQ(12.0, m(i, j).val());
+    for (int j = 0; j < 3; ++j) EXPECT_FLOAT_EQ(12.0, m(i, j).val());
 
   Matrix<AVAR, Dynamic, 1> rv(3);
   fill(rv, AVAR(13));
-  for (int i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(13.0, rv(i).val());
+  for (int i = 0; i < 3; ++i) EXPECT_FLOAT_EQ(13.0, rv(i).val());
 
   Matrix<AVAR, 1, Dynamic> v(4);
   fill(v, AVAR(22));
-  for (int i = 0; i < 4; ++i)
-    EXPECT_FLOAT_EQ(22.0, v(i).val());
+  for (int i = 0; i < 4; ++i) EXPECT_FLOAT_EQ(22.0, v(i).val());
 
   vector<vector<AVAR> > d(3, vector<AVAR>(2));
   fill(d, AVAR(54));
   for (size_t i = 0; i < 3; ++i)
-    for (size_t j = 0; j < 2; ++j)
-      EXPECT_FLOAT_EQ(54, d[i][j].val());
+    for (size_t j = 0; j < 2; ++j) EXPECT_FLOAT_EQ(54, d[i][j].val());
 }
 TEST(AgradRevMatrix, fillDouble) {
   using Eigen::Matrix;

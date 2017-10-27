@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <string>
+#include <test/unit/util.hpp>
 #include <vector>
 
 const std::string function_ = "function";
@@ -9,10 +9,8 @@ const std::string msg1_ = "error_message1 ";
 const std::string msg2_ = "error_message2 ";
 
 class ErrorHandlingScalar_out_of_range : public ::testing::Test {
-public:
-  void SetUp() {
-  }
-
+ public:
+  void SetUp() {}
 
   template <class T>
   std::string expected_message_with_0_messages(T y, size_t i) {
@@ -41,22 +39,17 @@ public:
     return expected_message.str();
   }
 
-
-
   template <class T>
   void test_throw(T y, size_t i) {
     using stan::math::out_of_range;
 
     EXPECT_THROW_MSG(out_of_range(function_, y.size(), i, msg1_, msg2_),
-                     std::out_of_range,
-                     expected_message_with_2_messages(y, i));
+                     std::out_of_range, expected_message_with_2_messages(y, i));
 
     EXPECT_THROW_MSG(out_of_range(function_, y.size(), i, msg1_),
-                     std::out_of_range,
-                     expected_message_with_1_message(y, i));
+                     std::out_of_range, expected_message_with_1_message(y, i));
 
-    EXPECT_THROW_MSG(out_of_range(function_, y.size(), i),
-                     std::out_of_range,
+    EXPECT_THROW_MSG(out_of_range(function_, y.size(), i), std::out_of_range,
                      expected_message_with_0_messages(y, i));
   }
 };

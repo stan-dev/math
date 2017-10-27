@@ -1,10 +1,10 @@
+#include <gtest/gtest.h>
+#include <iostream>
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/mat/fun/mdivide_left_tri.hpp>
-#include <gtest/gtest.h>
+#include <stdexcept>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <stdexcept>
-#include <iostream>
 
 TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;
@@ -18,8 +18,7 @@ TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
   matrix_v A(2, 2);
   matrix_v B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);
@@ -66,8 +65,7 @@ TEST(AgradRevMatrix, var_double_mdivide_left_tri_low) {
   matrix_v A(2, 2);
   matrix_d B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);
@@ -114,8 +112,7 @@ TEST(AgradRevMatrix, double_var_mdivide_left_tri_low) {
   matrix_d A(2, 2);
   matrix_v B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);

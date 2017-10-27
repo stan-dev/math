@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixDeterminant, matrix_fv_1stDeriv) {
@@ -76,8 +76,8 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_1stDeriv) {
 
   EXPECT_THROW(determinant(matrix_ffv(2, 3)), std::invalid_argument);
 
-  AVEC z = createAVEC(b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val());
+  AVEC z =
+      createAVEC(b.val().val(), c.val().val(), d.val().val(), e.val().val());
   VEC h;
   a_det.val_.val().grad(z, h);
   EXPECT_FLOAT_EQ(7.0, h[0]);
@@ -101,8 +101,8 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_1) {
 
   fvar<fvar<var> > a_det = stan::math::determinant(a);
 
-  AVEC z = createAVEC(b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val());
+  AVEC z =
+      createAVEC(b.val().val(), c.val().val(), d.val().val(), e.val().val());
   VEC h;
   a_det.val().d_.grad(z, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -127,8 +127,8 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_2ndDeriv_2) {
 
   fvar<fvar<var> > a_det = stan::math::determinant(a);
 
-  AVEC z = createAVEC(b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val());
+  AVEC z =
+      createAVEC(b.val().val(), c.val().val(), d.val().val(), e.val().val());
   VEC h;
   a_det.d_.val().grad(z, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
@@ -157,8 +157,8 @@ TEST(AgradMixMatrixDeterminant, matrix_ffv_3rdDeriv) {
 
   fvar<fvar<var> > a_det = stan::math::determinant(a);
 
-  AVEC z = createAVEC(b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val());
+  AVEC z =
+      createAVEC(b.val().val(), c.val().val(), d.val().val(), e.val().val());
   VEC h;
   a_det.d_.d_.grad(z, h);
   EXPECT_NEAR(0.0, h[0], 1e-8);

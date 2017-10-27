@@ -1,8 +1,8 @@
+#include <gtest/gtest.h>
+#include <limits>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
-#include <limits>
 
 void test_logical_or(double x, double y) {
   AVAR x_v = x;
@@ -20,6 +20,5 @@ TEST(AgradRev, unaryNot) {
   xs.push_back(-std::numeric_limits<double>::infinity());
   xs.push_back(std::numeric_limits<double>::quiet_NaN());
   for (size_t i = 0; i < xs.size(); ++i)
-    for (size_t j = 0; j < xs.size(); ++j)
-      test_logical_or(xs[i], xs[j]);
+    for (size_t j = 0; j < xs.size(); ++j) test_logical_or(xs[i], xs[j]);
 }

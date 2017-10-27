@@ -1,6 +1,6 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -79,10 +79,8 @@ TEST(AgradRev, gamma_q_var_double) {
 
 struct gamma_q_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return gamma_q(arg1, arg2);
   }
 };

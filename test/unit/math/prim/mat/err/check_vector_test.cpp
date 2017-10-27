@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ErrorHandlingMatrix, checkVectorMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;

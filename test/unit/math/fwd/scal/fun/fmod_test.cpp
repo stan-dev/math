@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFmod, Fvar) {
@@ -24,7 +24,7 @@ TEST(AgradFwdFmod, Fvar) {
   fvar<double> f = fmod(w, x);
   EXPECT_FLOAT_EQ(fmod(3.0, 2.0), f.val_);
   EXPECT_FLOAT_EQ(1.0 * -floor(3.0 / 2.0), f.d_);
- }
+}
 
 TEST(AgradFwdFmod, FvarFvarDouble) {
   using stan::math::fvar;
@@ -48,10 +48,8 @@ TEST(AgradFwdFmod, FvarFvarDouble) {
 
 struct fmod_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fmod(arg1, arg2);
   }
 };

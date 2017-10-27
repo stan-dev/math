@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdCosh, Fvar) {
@@ -23,7 +23,6 @@ TEST(AgradFwdCosh, Fvar) {
   EXPECT_FLOAT_EQ(cosh(-0.5), c.val_);
   EXPECT_FLOAT_EQ(-sinh(-0.5), c.d_);
 }
-
 
 TEST(AgradFwdCosh, FvarFvarDouble) {
   using stan::math::fvar;
@@ -54,8 +53,7 @@ TEST(AgradFwdCosh, FvarFvarDouble) {
 
 struct cosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cosh(arg1);
   }
 };

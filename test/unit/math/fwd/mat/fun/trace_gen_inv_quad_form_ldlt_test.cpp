@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 
@@ -106,8 +106,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_fd_matrix_d_matrix_d) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    D(i).d_ = 1.0;
+  for (int i = 0; i < 4; i++) D(i).d_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());
@@ -127,8 +126,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_fd_matrix_d) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    A(i).d_ = 1.0;
+  for (int i = 0; i < 4; i++) A(i).d_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());
@@ -148,8 +146,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_fd) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    B(i).d_ = 1.0;
+  for (int i = 0; i < 4; i++) B(i).d_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());
@@ -316,8 +313,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_ffd_matrix_d_matrix_d) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    D(i).d_.val_ = 1.0;
+  for (int i = 0; i < 4; i++) D(i).d_.val_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());
@@ -337,8 +333,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_ffd_matrix_d) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    A(i).d_.val_ = 1.0;
+  for (int i = 0; i < 4; i++) A(i).d_.val_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());
@@ -358,8 +353,7 @@ TEST(AgradFwdMatrixTraceGenInvQuadFormLDLT, matrix_d_matrix_d_matrix_ffd) {
   A << 2, 3, 3, 7;
   B << 5, 6, 7, 8;
   D << 9, 10, 11, 12;
-  for (int i = 0; i < 4; i++)
-    B(i).d_.val_ = 1.0;
+  for (int i = 0; i < 4; i++) B(i).d_.val_ = 1.0;
 
   ldlt_A.compute(A);
   ASSERT_TRUE(ldlt_A.success());

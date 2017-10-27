@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 template <typename T_N, typename T_n>
 void test_binom_coefficient(const T_N& N, const T_n& n) {
@@ -9,7 +9,6 @@ void test_binom_coefficient(const T_N& N, const T_n& n) {
   EXPECT_FLOAT_EQ(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1),
                   binomial_coefficient_log(N, n));
 }
-
 
 TEST(MathFunctions, binomial_coefficient_log) {
   using stan::math::binomial_coefficient_log;

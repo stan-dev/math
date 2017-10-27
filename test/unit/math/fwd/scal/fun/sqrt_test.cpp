@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdSqrt, Fvar) {
@@ -68,8 +68,7 @@ TEST(AgradFwdSqrt, FvarFvarDouble) {
 
 struct sqrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sqrt(arg1);
   }
 };

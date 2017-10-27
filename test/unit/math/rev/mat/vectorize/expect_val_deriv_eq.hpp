@@ -1,10 +1,10 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VAL_DERIV_EQ_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_VAL_DERIV_EQ_HPP
 
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 static inline void expect_val_deriv_eq(stan::math::var exp_var,
                                        stan::math::var base_exp_var,

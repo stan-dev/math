@@ -1,8 +1,8 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <limits>
+#include <stan/math/mix/scal.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwd, primitiveValueRevNested) {
   using stan::math::var;

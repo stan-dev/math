@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBesselSecondKind, Fvar) {
@@ -20,7 +20,6 @@ TEST(AgradFwdBesselSecondKind, Fvar) {
 
   EXPECT_THROW(bessel_second_kind(0, -a), std::domain_error);
 }
-
 
 TEST(AgradFwdBesselSecondKind, FvarFvarDouble) {
   using stan::math::fvar;
@@ -51,8 +50,7 @@ TEST(AgradFwdBesselSecondKind, FvarFvarDouble) {
 
 struct bessel_second_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_second_kind(1, arg1);
   }
 };

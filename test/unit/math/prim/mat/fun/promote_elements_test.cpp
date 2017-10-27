@@ -1,8 +1,8 @@
+#include <gtest/gtest.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 using Eigen::Matrix;
 using stan::math::var;
@@ -25,4 +25,3 @@ TEST(MathFunctionsMatPromote_Elements, doubleMat2varMat) {
   bool same = boost::is_same<Matrix<var, 2, 3>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

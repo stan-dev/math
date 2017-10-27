@@ -1,5 +1,5 @@
-#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(MetaTraits, VectorBuilderHelper_false_false) {

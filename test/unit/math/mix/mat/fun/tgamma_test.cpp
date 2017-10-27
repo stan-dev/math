@@ -1,11 +1,11 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
+#include <stan/math/prim/mat/fun/tgamma.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/tgamma.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -44,9 +44,7 @@ struct tgamma_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -65,7 +63,11 @@ struct tgamma_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(10.7).add(-0.2).build();
+        .add(1.3)
+        .add(-2.6)
+        .add(10.7)
+        .add(-0.2)
+        .build();
   }
 
   /**
@@ -73,7 +75,11 @@ struct tgamma_test {
    */
   static std::vector<double> invalid_inputs() {
     return test::math::vector_builder<double>()
-      .add(0).add(-2).add(-10).add(-23).build();
+        .add(0)
+        .add(-2)
+        .add(-10)
+        .add(-23)
+        .build();
   }
 
   /**
@@ -81,7 +87,11 @@ struct tgamma_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(3).add(14).add(6).build();
+        .add(1)
+        .add(3)
+        .add(14)
+        .add(6)
+        .build();
   }
 
   /**
@@ -89,7 +99,11 @@ struct tgamma_test {
    */
   static std::vector<int> int_invalid_inputs() {
     return test::math::vector_builder<int>()
-      .add(0).add(-25).add(-3).add(-17).build();
+        .add(0)
+        .add(-25)
+        .add(-3)
+        .add(-17)
+        .build();
   }
 };
 

@@ -1,7 +1,6 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/arr.hpp>
 #include <vector>
-
 
 TEST(StanAgradRevInternal, precomputed_gradients) {
   double value;
@@ -18,8 +17,8 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
   gradients[0] = 4;
   gradients[1] = 5;
 
-  EXPECT_NO_THROW(y = stan::math::precomputed_gradients(value, vars,
-                                                        gradients));
+  EXPECT_NO_THROW(
+      y = stan::math::precomputed_gradients(value, vars, gradients));
   EXPECT_FLOAT_EQ(value, y.val());
 
   std::vector<double> g;
@@ -30,7 +29,6 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
 
   stan::math::recover_memory();
 }
-
 
 TEST(StanAgradRevInternal, precomputed_gradients_vari_no_independent_vars) {
   double value = 1;
@@ -71,7 +69,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari) {
   EXPECT_FLOAT_EQ(0, vi.adj_);
 
   EXPECT_NO_THROW(vi.chain())
-    << "running vi.chain() with no independent variables";
+      << "running vi.chain() with no independent variables";
   EXPECT_FLOAT_EQ(value, vi.val_);
   EXPECT_FLOAT_EQ(0, vi.adj_);
   EXPECT_FLOAT_EQ(0, x1.vi_->adj_);
@@ -79,7 +77,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari) {
 
   vi.init_dependent();
   EXPECT_NO_THROW(vi.chain())
-    << "running vari.chain() with vari initialized as dependent variable";
+      << "running vari.chain() with vari initialized as dependent variable";
   EXPECT_FLOAT_EQ(value, vi.val_);
   EXPECT_FLOAT_EQ(1, vi.adj_);
   EXPECT_FLOAT_EQ(gradients[0], x1.vi_->adj_);
@@ -102,4 +100,3 @@ TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
                std::invalid_argument);
   stan::math::recover_memory();
 }
-

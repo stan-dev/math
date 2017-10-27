@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, divide) {
   using stan::math::divide;
@@ -43,8 +43,7 @@ void test_divide_modulus(int a, int b) {
 
 TEST(MathFunctions, divide_modulus) {
   for (int i = 1; i < 50; i++)
-    for (int j = 1; j < 50; j++)
-      test_divide_modulus(i, j);
+    for (int j = 1; j < 50; j++) test_divide_modulus(i, j);
 }
 
 TEST(MathFunctions, int_divide_by_0) {

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFloor, Fvar) {
@@ -19,7 +19,7 @@ TEST(AgradFwdFloor, Fvar) {
 
   fvar<double> c = floor(2 * x);
   EXPECT_FLOAT_EQ(floor(2 * 0.5), c.val_);
-   EXPECT_FLOAT_EQ(0.0, c.d_);
+  EXPECT_FLOAT_EQ(0.0, c.d_);
 }
 
 TEST(AgradFwdFloor, FvarFvarDouble) {
@@ -50,8 +50,7 @@ TEST(AgradFwdFloor, FvarFvarDouble) {
 
 struct floor_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return floor(arg1);
   }
 };

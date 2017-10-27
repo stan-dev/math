@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdIsNan, Fvar) {
   using stan::math::fvar;
@@ -46,4 +46,3 @@ TEST(AgradFwdIsNan, FvarFvar) {
   EXPECT_FALSE(is_nan(d.val_.val_));
   EXPECT_FALSE(is_nan(e.val_.val_));
 }
-

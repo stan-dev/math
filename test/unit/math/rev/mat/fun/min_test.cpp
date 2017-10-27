@@ -1,9 +1,9 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
+#include <limits>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <limits>
-#include <algorithm>
 
 TEST(AgradRevMatrix, min_vector) {
   using stan::math::min;

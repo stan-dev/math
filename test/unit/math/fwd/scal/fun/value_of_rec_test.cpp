@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
+#include <gtest/gtest.h>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal.hpp>
-#include <gtest/gtest.h>
+#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 
 TEST(AgradFwd, value_of_rec) {
   using stan::math::fvar;
@@ -13,4 +13,3 @@ TEST(AgradFwd, value_of_rec) {
   EXPECT_FLOAT_EQ(5.0, value_of_rec(ff_a));
   EXPECT_FLOAT_EQ(5.0, value_of_rec(ffff_a));
 }
-

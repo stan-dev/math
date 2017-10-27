@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/hypot.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdHypot, Fvar) {
@@ -53,10 +53,8 @@ TEST(AgradFwdHypot, FvarFvarDouble) {
 
 struct hypot_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return hypot(arg1, arg2);
   }
 };

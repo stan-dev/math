@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 
 TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
   using stan::math::fvar;
@@ -15,13 +15,13 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
   g.d_ = 1.0;
   fvar<double> dig_a = digamma(a);
   fvar<double> dig_b = digamma(b);
-  fvar<double> dig_sum = digamma(a+b);
+  fvar<double> dig_sum = digamma(a + b);
   fvar<double> beta_ab = exp(lbeta(a, b));
   fvar<double> g_a;
   fvar<double> g_b;
 
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a,
-                                dig_b, dig_sum, beta_ab);
+  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
+                                beta_ab);
   EXPECT_FLOAT_EQ(-0.36651629442883944183907601651838247842001142107486495485,
                   g_a.val_);
   EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,
@@ -42,13 +42,13 @@ TEST(ProbInternalMath, grad_reg_inc_beta_ffd) {
   g.d_ = 1.0;
   fvar<fvar<double> > dig_a = digamma(a);
   fvar<fvar<double> > dig_b = digamma(b);
-  fvar<fvar<double> > dig_sum = digamma(a+b);
+  fvar<fvar<double> > dig_sum = digamma(a + b);
   fvar<fvar<double> > beta_ab = exp(lbeta(a, b));
   fvar<fvar<double> > g_a;
   fvar<fvar<double> > g_b;
 
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a,
-                                dig_b, dig_sum, beta_ab);
+  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
+                                beta_ab);
   EXPECT_FLOAT_EQ(-0.36651629442883944183907601651838247842001142107486495485,
                   g_a.val_.val_);
   EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,

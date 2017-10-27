@@ -1,7 +1,7 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
+#include <stan/math/rev/scal.hpp>
 #include <string>
+#include <vector>
 
 TEST(normal_cdf, tails) {
   using stan::math::var;
@@ -76,7 +76,7 @@ TEST(normal_cdf, tails) {
   EXPECT_FLOAT_EQ(1, 6.11716439954988e-39 / normal_cdf(var(-13), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 3.73256429887771e-36 / normal_cdf(var(-12.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.77648211207768e-33 / normal_cdf(var(-12), 0, 1).val());
- EXPECT_FLOAT_EQ(1, 6.59577144611367e-31 / normal_cdf(var(-11.5), 0, 1).val());
+  EXPECT_FLOAT_EQ(1, 6.59577144611367e-31 / normal_cdf(var(-11.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 1.91065957449868e-28 / normal_cdf(var(-11), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 4.31900631780923e-26 / normal_cdf(var(-10.5), 0, 1).val());
   EXPECT_FLOAT_EQ(1, 7.61985302416053e-24 / normal_cdf(var(-10), 0, 1).val());
@@ -124,14 +124,14 @@ TEST(normal_cdf, tails) {
   stan::math::recover_memory();
 }
 
-void test_value_and_derivatives(double expected_val,
-                                double y_dbl, double mu_dbl, double sigma_dbl) {
+void test_value_and_derivatives(double expected_val, double y_dbl,
+                                double mu_dbl, double sigma_dbl) {
   using stan::math::is_nan;
   using stan::math::var;
   using stan::math::normal_cdf;
   std::stringstream msg_ss;
-  msg_ss << "parameters: (" << y_dbl << ", " << mu_dbl << ", "
-         << sigma_dbl << ")";
+  msg_ss << "parameters: (" << y_dbl << ", " << mu_dbl << ", " << sigma_dbl
+         << ")";
   std::string msg = msg_ss.str();
 
   SCOPED_TRACE(msg);
@@ -153,13 +153,15 @@ void test_value_and_derivatives(double expected_val,
   double inv2e = 0.5 / e;
   std::vector<double> finite_diffs;
   finite_diffs.resize(3);
-  finite_diffs[0] = (normal_cdf(y_dbl + e, mu_dbl, sigma_dbl)
-                     - normal_cdf(y_dbl - e, mu_dbl, sigma_dbl)) * inv2e;
-  finite_diffs[1] = (normal_cdf(y_dbl, mu_dbl + e, sigma_dbl)
-                     - normal_cdf(y_dbl, mu_dbl - e, sigma_dbl)) * inv2e;
-  finite_diffs[2] = (normal_cdf(y_dbl, mu_dbl, sigma_dbl + e)
-                     - normal_cdf(y_dbl, mu_dbl, sigma_dbl - e)) * inv2e;
-
+  finite_diffs[0] = (normal_cdf(y_dbl + e, mu_dbl, sigma_dbl) -
+                     normal_cdf(y_dbl - e, mu_dbl, sigma_dbl)) *
+                    inv2e;
+  finite_diffs[1] = (normal_cdf(y_dbl, mu_dbl + e, sigma_dbl) -
+                     normal_cdf(y_dbl, mu_dbl - e, sigma_dbl)) *
+                    inv2e;
+  finite_diffs[2] = (normal_cdf(y_dbl, mu_dbl, sigma_dbl + e) -
+                     normal_cdf(y_dbl, mu_dbl, sigma_dbl - e)) *
+                    inv2e;
 
   EXPECT_FLOAT_EQ(expected_val, val.val());
   EXPECT_FALSE(is_nan(gradients[0]));
@@ -184,7 +186,6 @@ void test_value_and_derivatives(double expected_val,
       EXPECT_FLOAT_EQ(0.0, gradients[2]);
   }
 }
-
 
 TEST(normal_cdf, derivatives) {
   test_value_and_derivatives(0.5, 10.0, 10.0, 0.5);

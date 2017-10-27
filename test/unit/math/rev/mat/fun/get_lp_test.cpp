@@ -1,7 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-
 
 TEST(mathMatrix, getLp) {
   using stan::math::accumulator;

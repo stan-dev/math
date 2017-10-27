@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -24,12 +24,10 @@ TEST(AgradRevMatrix, sum_vector) {
 
   std::vector<double> grad;
   std::vector<AVAR> x(v.size());
-  for (int i = 0; i < v.size(); ++i)
-    x[i] = v(i);
+  for (int i = 0; i < v.size(); ++i) x[i] = v(i);
   output.grad(x, grad);
   EXPECT_EQ(6, grad.size());
-  for (int i = 0; i < 6; ++i)
-    EXPECT_FLOAT_EQ(1.0, grad[i]);
+  for (int i = 0; i < 6; ++i) EXPECT_FLOAT_EQ(1.0, grad[i]);
 
   d.resize(0);
   v.resize(0);

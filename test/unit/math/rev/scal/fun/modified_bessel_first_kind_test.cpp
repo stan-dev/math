@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -19,8 +19,7 @@ TEST(AgradRev, modified_bessel_first_kind_int_var) {
   b = -3.0;
   f = stan::math::modified_bessel_first_kind(a, b);
 
-  EXPECT_FLOAT_EQ(-3.95337021740260939647863574058058,
-                  f.val());
+  EXPECT_FLOAT_EQ(-3.95337021740260939647863574058058, f.val());
 
   x = createAVEC(a, b);
   f.grad(x, g);
@@ -30,8 +29,7 @@ TEST(AgradRev, modified_bessel_first_kind_int_var) {
 
 struct modified_bessel_first_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return modified_bessel_first_kind(1, arg1);
   }
 };

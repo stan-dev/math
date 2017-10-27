@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, trunc) {
   using stan::math::trunc;
@@ -15,6 +15,5 @@ TEST(MathFunctions, trunc) {
 
 TEST(MathFunctions, truncNaN) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::trunc(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::trunc(nan));
 }

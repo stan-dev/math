@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -18,7 +18,8 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(1.0, grad[0]);
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
+  e[0] = 5.9;
+  e[1] = -1.2;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0].val(), f[0].val());
@@ -29,7 +30,9 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(0.0, grad[1]);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0].val(), h[0].val());

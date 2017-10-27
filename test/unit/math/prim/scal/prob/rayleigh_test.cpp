@@ -1,11 +1,10 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
-
 
 TEST(ProbDistributionsRayleigh, error_check) {
   boost::random::mt19937 rng;
@@ -25,7 +24,7 @@ TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's rayleigh distribution
-  boost::math::rayleigh_distribution<>dist(2.0);
+  boost::math::rayleigh_distribution<> dist(2.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
@@ -36,4 +35,3 @@ TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-

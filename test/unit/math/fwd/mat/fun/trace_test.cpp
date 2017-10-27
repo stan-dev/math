@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixTrace, fd) {
   using stan::math::trace;
@@ -7,12 +7,11 @@ TEST(AgradFwdMatrixTrace, fd) {
   using stan::math::fvar;
 
   matrix_fd a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
+  a << -1.0, 2.0, 5.0, 10.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
 
   fvar<double> s = trace(a);
   EXPECT_FLOAT_EQ(9.0, s.val_);
@@ -24,8 +23,7 @@ TEST(AgradFwdMatrixTrace, ffd) {
   using stan::math::fvar;
 
   matrix_ffd a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
+  a << -1.0, 2.0, 5.0, 10.0;
   a(0, 0).d_ = 1.0;
   a(0, 1).d_ = 1.0;
   a(1, 0).d_ = 1.0;

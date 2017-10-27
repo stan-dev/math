@@ -1,6 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/rev/mat.hpp>
 #include <string>
 
 using stan::math::check_less_or_equal;
@@ -14,7 +14,6 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual_Matrix) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> high_vec;
   x_vec.resize(3);
   high_vec.resize(3);
-
 
   // x_vec, high
   x_vec << -5, 0, 5;
@@ -60,7 +59,6 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual_Matrix) {
   high_vec << 10, 10, std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
-
   // x, high_vec
   x = -100;
   high_vec << 0, 5, 10;
@@ -81,8 +79,8 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual_Matrix) {
 
   x = std::numeric_limits<double>::infinity();
   high_vec << std::numeric_limits<double>::infinity(),
-    std::numeric_limits<double>::infinity(),
-    std::numeric_limits<double>::infinity();
+      std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
   stan::math::recover_memory();
 }

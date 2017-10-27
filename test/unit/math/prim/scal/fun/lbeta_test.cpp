@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, lbeta) {
   using stan::math::lbeta;
@@ -15,12 +15,9 @@ TEST(MathFunctions, lbeta) {
 TEST(MathFunctions, lbeta_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(nan, 1.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(nan, 1.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(1.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(nan, nan));
 }

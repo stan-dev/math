@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbNegBinomial, log_matches_lpmf) {
   int y = 3;
@@ -12,15 +12,15 @@ TEST(ProbNegBinomial, log_matches_lpmf) {
                   (stan::math::neg_binomial_log<true>(y, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf<false>(y, alpha, beta)),
                   (stan::math::neg_binomial_log<false>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf<true, int, double, double>(
+                      y, alpha, beta)),
+                  (stan::math::neg_binomial_log<true, int, double, double>(
+                      y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf<false, int, double, double>(
+                      y, alpha, beta)),
+                  (stan::math::neg_binomial_log<false, int, double, double>(
+                      y, alpha, beta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::neg_binomial_lpmf<true, int, double, double>(y, alpha, beta)),
-    (stan::math::neg_binomial_log<true, int, double, double>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::neg_binomial_lpmf<false, int, double, double>
-                                                            (y, alpha, beta)),
-    (stan::math::neg_binomial_log<false, int, double, double>
-                                                            (y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::neg_binomial_lpmf<int, double, double>(y, alpha, beta)),
-    (stan::math::neg_binomial_log<int, double, double>(y, alpha, beta)));
+      (stan::math::neg_binomial_lpmf<int, double, double>(y, alpha, beta)),
+      (stan::math::neg_binomial_log<int, double, double>(y, alpha, beta)));
 }

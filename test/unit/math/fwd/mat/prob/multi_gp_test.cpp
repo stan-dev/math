@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -10,37 +10,29 @@ TEST(ProbDistributionsMultiGP, fvar_double) {
   mu.setZero();
 
   Matrix<fvar<double>, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<double>, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<double>, Dynamic, 1> w(3, 1);
-  w << 1.0,
-       0.5,
-       1.5;
+  w << 1.0, 0.5, 1.5;
 
   for (int i = 0; i < 5; i++) {
     mu(i).d_ = 1.0;
-    if (i < 3)
-      w(i).d_ = 1.0;
+    if (i < 3) w(i).d_ = 1.0;
     for (int j = 0; j < 5; j++) {
       Sigma(i, j).d_ = 1.0;
-      if (i < 3)
-        y(i, j).d_ = 1.0;
+      if (i < 3) y(i, j).d_ = 1.0;
     }
   }
 
   fvar<double> lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<double>, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<fvar<double>, Dynamic, Dynamic> cSigma((1.0/w[i])*Sigma);
+    Matrix<fvar<double>, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 
@@ -54,37 +46,29 @@ TEST(ProbDistributionsMultiGP, fvar_fvar_double) {
   mu.setZero();
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> w(3, 1);
-  w << 1.0,
-       0.5,
-       1.5;
+  w << 1.0, 0.5, 1.5;
 
   for (int i = 0; i < 5; i++) {
     mu(i).d_.val_ = 1.0;
-    if (i < 3)
-      w(i).d_.val_ = 1.0;
+    if (i < 3) w(i).d_.val_ = 1.0;
     for (int j = 0; j < 5; j++) {
       Sigma(i, j).d_.val_ = 1.0;
-      if (i < 3)
-        y(i, j).d_.val_ = 1.0;
+      if (i < 3) y(i, j).d_.val_ = 1.0;
     }
   }
 
   fvar<fvar<double> > lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<fvar<double> >, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<fvar<fvar<double> >, Dynamic, Dynamic> cSigma((1.0/w[i])*Sigma);
+    Matrix<fvar<fvar<double> >, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 

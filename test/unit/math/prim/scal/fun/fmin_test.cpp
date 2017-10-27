@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, fminFinite) {
   using stan::math::fmin;
@@ -21,8 +21,7 @@ TEST(MathFunctions, fminNaN) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_FLOAT_EQ(1.0, fmin(1, nan));
   EXPECT_FLOAT_EQ(1.0, fmin(nan, 1));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fmin(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fmin(nan, nan));
 }
 
 TEST(MathFunctions, fminInf) {
@@ -33,4 +32,3 @@ TEST(MathFunctions, fminInf) {
   EXPECT_FLOAT_EQ(-inf, fmin(inf, -inf));
   EXPECT_FLOAT_EQ(-inf, fmin(-inf, inf));
 }
-

@@ -1,9 +1,9 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <vector>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -50,9 +50,8 @@ TEST(ProbDistributionsCategorical, error) {
   EXPECT_NO_THROW(categorical_log(N, theta));
   EXPECT_NO_THROW(categorical_log(n, theta));
   EXPECT_NO_THROW(categorical_log(2, theta));
-  EXPECT_THROW(categorical_log(N+1, theta), std::domain_error);
+  EXPECT_THROW(categorical_log(N + 1, theta), std::domain_error);
   EXPECT_THROW(categorical_log(0, theta), std::domain_error);
-
 
   theta(0) = nan;
   EXPECT_THROW(categorical_log(n, theta), std::domain_error);
@@ -85,9 +84,7 @@ TEST(ProbDistributionsCategorical, error_check) {
   boost::random::mt19937 rng;
 
   Matrix<double, Dynamic, Dynamic> theta(3, 1);
-  theta << 0.15,
-    0.45,
-    0.50;
+  theta << 0.15, 0.45, 0.50;
 
   EXPECT_THROW(stan::math::categorical_rng(theta, rng), std::domain_error);
 }
@@ -97,25 +94,21 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
 
   int N = 10000;
   Matrix<double, Dynamic, Dynamic> theta(3, 1);
-  theta << 0.15,
-    0.45,
-    0.40;
+  theta << 0.15, 0.45, 0.40;
   int K = theta.rows();
-  boost::math::chi_squared mydist(K-1);
+  boost::math::chi_squared mydist(K - 1);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> loc(theta.rows(), 1);
-  for (int i = 0; i < theta.rows(); i++)
-    loc(i) = 0;
+  for (int i = 0; i < theta.rows(); i++) loc(i) = 0;
 
   for (int i = 0; i < theta.rows(); i++) {
-    for (int j = i; j < theta.rows(); j++)
-      loc(j) += theta(i);
+    for (int j = i; j < theta.rows(); j++) loc(j) += theta(i);
   }
 
   int count = 0;
   int bin[K];
   double expect[K];
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * theta(i);
   }
@@ -124,7 +117,7 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
     int a = stan::math::categorical_rng(theta, rng);
     bin[a - 1]++;
     count++;
-   }
+  }
 
   double chi = 0;
 
@@ -133,4 +126,3 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
-

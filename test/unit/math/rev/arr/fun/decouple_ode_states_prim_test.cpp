@@ -1,8 +1,7 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/util.hpp>
 #include <vector>
-
 
 TEST(StanMathDecoupleOdeStates, decouple_ode_states_dd) {
   using stan::math::decouple_ode_states;
@@ -20,8 +19,7 @@ TEST(StanMathDecoupleOdeStates, decouple_ode_states_dd) {
   std::vector<std::vector<double> > ys_coupled(T);
   for (int t = 0; t < T; t++) {
     std::vector<double> coupled_state(N, 0.0);
-    for (int n = 0; n < N; n++)
-      coupled_state[n] = ++k;
+    for (int n = 0; n < N; n++) coupled_state[n] = ++k;
     ys_coupled[t] = coupled_state;
   }
 
@@ -29,13 +27,11 @@ TEST(StanMathDecoupleOdeStates, decouple_ode_states_dd) {
   ys = decouple_ode_states(ys_coupled, y0, theta);
 
   ASSERT_EQ(T, ys.size());
-  for (int t = 0; t < T; t++)
-    ASSERT_EQ(2, ys[t].size());
+  for (int t = 0; t < T; t++) ASSERT_EQ(2, ys[t].size());
 
   for (int t = 0; t < T; t++)
     for (int n = 0; n < 2; n++)
       EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n])
-        << "(" << n << ", " << t << "): "
-        << "for (double, double) the coupled system is the base system";
+          << "(" << n << ", " << t << "): "
+          << "for (double, double) the coupled system is the base system";
 }
-

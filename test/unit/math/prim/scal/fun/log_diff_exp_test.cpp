@@ -1,14 +1,13 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 void test_log_diff_exp(double a, double b) {
   using std::log;
   using std::exp;
   using stan::math::log_diff_exp;
-  EXPECT_FLOAT_EQ(log(exp(a) - exp(b)),
-                  log_diff_exp(a, b));
+  EXPECT_FLOAT_EQ(log(exp(a) - exp(b)), log_diff_exp(a, b));
 }
 
 TEST(MathFunctions, log_diff_exp) {
@@ -35,12 +34,9 @@ TEST(MathFunctions, log_diff_exp) {
 TEST(MathFunctions, log_diff_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_diff_exp(3.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(3.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_diff_exp(nan, 2.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(nan, 2.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_diff_exp(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(nan, nan));
 }

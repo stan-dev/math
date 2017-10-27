@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::to_matrix;
@@ -14,13 +14,11 @@ using std::vector;
 
 TEST(MathMatrix, conversions_1) {
   Matrix<double, Dynamic, Dynamic> a1(3, 2);
-  a1 << 1.1, 2.53,
-        3.98, 4.1,
-        5.1, 6.87;
+  a1 << 1.1, 2.53, 3.98, 4.1, 5.1, 6.87;
 
   Matrix<double, Dynamic, Dynamic> a2;
 
-  vector< vector <double> > b1(3, vector <double>(2));
+  vector<vector<double> > b1(3, vector<double>(2));
   b1[0][0] = 11.1;
   b1[0][1] = 12.7;
   b1[1][0] = 13.53;
@@ -28,13 +26,12 @@ TEST(MathMatrix, conversions_1) {
   b1[2][0] = 15;
   b1[2][1] = 16.5;
 
-  vector< vector <double> > b2;
+  vector<vector<double> > b2;
 
   Matrix<double, Dynamic, 1> c1(3);
   c1 << 21.0, 22.1, 23.53;
 
   Matrix<double, Dynamic, 1> c2;
-
 
   Matrix<double, 1, Dynamic> d1(3);
   d1 << 31.3, 32.53, 33;
@@ -48,7 +45,7 @@ TEST(MathMatrix, conversions_1) {
 
   vector<double> e2;
 
-  vector< vector <int> > f1(3, vector <int>(2));
+  vector<vector<int> > f1(3, vector<int>(2));
   f1[0][0] = 53;
   f1[0][1] = 54;
   f1[1][0] = 55;
@@ -56,7 +53,7 @@ TEST(MathMatrix, conversions_1) {
   f1[2][0] = 57;
   f1[2][1] = 58;
 
-  vector< vector <int> > f2;
+  vector<vector<int> > f2;
 
   vector<int> g1(3);
   g1[0] = 61;
@@ -64,7 +61,6 @@ TEST(MathMatrix, conversions_1) {
   g1[2] = 63;
 
   vector<int> g2;
-
 
   // Tests for empty containers
   // matrix to_matrix(vector)
@@ -124,7 +120,6 @@ TEST(MathMatrix, conversions_1) {
   // real[] to_array_1d(vector)
   EXPECT_NO_THROW(to_array_1d(c2));
 
-
   // matrix to_matrix(vector)
   a2 = to_matrix(a1);
   expect_matrix_eq(a1, a2);
@@ -172,8 +167,7 @@ TEST(MathMatrix, conversions_1) {
 
   // vector to_vector(row_vector)
   c2 = to_vector(d1);
-  for (int i = 0; i < 3; i++)
-    EXPECT_EQ(c2(i), d1(i));
+  for (int i = 0; i < 3; i++) EXPECT_EQ(c2(i), d1(i));
 
   // vector to_vector(vector)
   c2 = to_vector(c1);
@@ -204,8 +198,7 @@ TEST(MathMatrix, conversions_1) {
 
   // row_vector to_row_vector(vector)
   d2 = to_row_vector(c1);
-  for (int i = 0; i < 3; i++)
-    EXPECT_EQ(d2(i), c1(i));
+  for (int i = 0; i < 3; i++) EXPECT_EQ(d2(i), c1(i));
 
   // row_vector to_row_vector(row_vector)
   d2 = to_row_vector(d1);
@@ -267,8 +260,8 @@ TEST(MathMatrix, conversions_1) {
   expect_matrix_eq(d1, to_row_vector(to_vector(d1)));
 }
 TEST(MathMatrix, conversions_2) {
-  vector< vector < vector <double> > >
-    a1(3, vector < vector<double> >(2, vector <double>(4)));
+  vector<vector<vector<double> > > a1(
+      3, vector<vector<double> >(2, vector<double>(4)));
   a1[0][0][0] = 11.341;
   a1[0][1][0] = 12.734;
   a1[1][0][0] = 13.5433;
@@ -294,9 +287,9 @@ TEST(MathMatrix, conversions_2) {
   a1[2][0][3] = 15.7867;
   a1[2][1][3] = 16.445;
 
-  vector< vector < vector <double> > > a2;
+  vector<vector<vector<double> > > a2;
 
-  vector< vector <double> > b1(3, vector <double>(2));
+  vector<vector<double> > b1(3, vector<double>(2));
   b1[0][0] = 21.1;
   b1[0][1] = 22.7;
   b1[1][0] = 23.53;
@@ -304,7 +297,7 @@ TEST(MathMatrix, conversions_2) {
   b1[2][0] = 25;
   b1[2][1] = 26.5;
 
-  vector< vector <double> > b2;
+  vector<vector<double> > b2;
 
   vector<double> c1(3);
   c1[0] = 31.1;
@@ -313,9 +306,9 @@ TEST(MathMatrix, conversions_2) {
 
   vector<double> c2;
 
-  vector< vector < vector <int> > > d2;
+  vector<vector<vector<int> > > d2;
 
-  vector< vector <int> > e1(3, vector <int>(2));
+  vector<vector<int> > e1(3, vector<int>(2));
   e1[0][0] = 53;
   e1[0][1] = 54;
   e1[1][0] = 55;
@@ -323,7 +316,7 @@ TEST(MathMatrix, conversions_2) {
   e1[2][0] = 57;
   e1[2][1] = 58;
 
-  vector< vector <int> > e2;
+  vector<vector<int> > e2;
 
   vector<int> f1(3);
   f1[0] = 61;
@@ -342,8 +335,7 @@ TEST(MathMatrix, conversions_2) {
   c2 = to_array_1d(a1);
   for (size_t i = 0, ijk = 0; i < 3; i++)
     for (size_t j = 0; j < 2; j++)
-      for (size_t k = 0; k < 4; k++, ijk++)
-        EXPECT_EQ(a1[i][j][k], c2[ijk]);
+      for (size_t k = 0; k < 4; k++, ijk++) EXPECT_EQ(a1[i][j][k], c2[ijk]);
 
   c2 = to_array_1d(b1);
   EXPECT_EQ(b1[0][0], c2[0]);

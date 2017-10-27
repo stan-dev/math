@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbNormal, ccdf_log_matches_lccdf) {
   double y = 0.8;
@@ -9,6 +9,6 @@ TEST(ProbNormal, ccdf_log_matches_lccdf) {
   EXPECT_FLOAT_EQ((stan::math::normal_lccdf(y, mu, sigma)),
                   (stan::math::normal_ccdf_log(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::normal_lccdf<double, double, double>(y, mu, sigma)),
-    (stan::math::normal_ccdf_log<double, double, double>(y, mu, sigma)));
+      (stan::math::normal_lccdf<double, double, double>(y, mu, sigma)),
+      (stan::math::normal_ccdf_log<double, double, double>(y, mu, sigma)));
 }

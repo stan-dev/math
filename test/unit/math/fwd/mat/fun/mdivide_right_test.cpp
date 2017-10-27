@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRight, fd_matrix_matrix) {
@@ -11,14 +11,12 @@ TEST(AgradFwdMatrixMdivideRight, fd_matrix_matrix) {
   matrix_d Ad(2, 2);
   matrix_fd I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_, 1.0E-12);
@@ -167,8 +165,7 @@ TEST(AgradFwdMatrixMdivideRight, ffd_matrix_matrix) {
   d.d_.val_ = 2.0;
 
   Av << a, b, c, d;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);

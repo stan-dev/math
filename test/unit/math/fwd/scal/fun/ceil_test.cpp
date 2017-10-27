@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdCeil, Fvar) {
@@ -15,13 +15,12 @@ TEST(AgradFwdCeil, Fvar) {
 
   fvar<double> b = ceil(y);
   EXPECT_FLOAT_EQ(ceil(2.0), b.val_);
-   EXPECT_FLOAT_EQ(0.0, b.d_);
+  EXPECT_FLOAT_EQ(0.0, b.d_);
 
   fvar<double> c = ceil(2 * x);
   EXPECT_FLOAT_EQ(ceil(2 * 0.5), c.val_);
-   EXPECT_FLOAT_EQ(0.0, c.d_);
+  EXPECT_FLOAT_EQ(0.0, c.d_);
 }
-
 
 TEST(AgradFwdCeil, FvarFvarDouble) {
   using stan::math::fvar;
@@ -49,11 +48,9 @@ TEST(AgradFwdCeil, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct ceil_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return ceil(arg1);
   }
 };

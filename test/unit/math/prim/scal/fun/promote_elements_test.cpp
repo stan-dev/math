@@ -1,8 +1,8 @@
+#include <gtest/gtest.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 using stan::math::promote_elements;
 using stan::math::var;
@@ -30,4 +30,3 @@ TEST(MathFunctionsScalPromote_Elements, double2var) {
   bool same = boost::is_same<var, result_t>::value;
   EXPECT_TRUE(same);
 }
-

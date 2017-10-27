@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_ROW_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_ROW_VECTOR_VALUE_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <Eigen/Dense>
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
 
 template <typename F>
@@ -12,8 +12,7 @@ void expect_prim_row_vector_value() {
 
   std::vector<double> valid_inputs = F::valid_inputs();
 
-  RowVectorXd c =
-    RowVectorXd::Map(valid_inputs.data(), valid_inputs.size());
+  RowVectorXd c = RowVectorXd::Map(valid_inputs.data(), valid_inputs.size());
 
   RowVectorXd fc = F::template apply<RowVectorXd>(c);
   EXPECT_EQ(c.size(), fc.size());

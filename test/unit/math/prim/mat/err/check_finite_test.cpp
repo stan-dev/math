@@ -1,6 +1,6 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <string>
 
 using stan::math::check_finite;
@@ -13,24 +13,23 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
   x.resize(3);
   x << -1, 0, 1;
   ASSERT_NO_THROW(check_finite(function, "x", x))
-    << "check_finite should be true with finite x";
+      << "check_finite should be true with finite x";
 
   x.resize(3);
   x << -1, 0, std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
-    << "check_finite should throw exception on Inf";
+      << "check_finite should throw exception on Inf";
 
   x.resize(3);
   x << -1, 0, -std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
-    << "check_finite should throw exception on -Inf";
+      << "check_finite should throw exception on -Inf";
 
   x.resize(3);
   x << -1, 0, std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error)
-    << "check_finite should throw exception on NaN";
+      << "check_finite should throw exception on NaN";
 }
-
 
 TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
   const std::string function = "check_finite";
@@ -48,8 +47,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("[3]"))
-    << message;
+  EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
 
 TEST(ErrorHandlingScalar, CheckFinite_nan) {
@@ -58,14 +56,11 @@ TEST(ErrorHandlingScalar, CheckFinite_nan) {
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << nan, 0, 1;
-  EXPECT_THROW(check_finite(function, "x_mat", x_mat),
-               std::domain_error);
+  EXPECT_THROW(check_finite(function, "x_mat", x_mat), std::domain_error);
 
   x_mat << 1, nan, 1;
-  EXPECT_THROW(check_finite(function, "x_mat", x_mat),
-               std::domain_error);
+  EXPECT_THROW(check_finite(function, "x_mat", x_mat), std::domain_error);
 
   x_mat << 1, 0, nan;
-  EXPECT_THROW(check_finite(function, "x_mat", x_mat),
-               std::domain_error);
+  EXPECT_THROW(check_finite(function, "x_mat", x_mat), std::domain_error);
 }

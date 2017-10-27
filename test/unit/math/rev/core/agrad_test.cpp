@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRev, multiple_grads) {
   for (int i = 0; i < 100; ++i) {
@@ -28,4 +28,3 @@ TEST(AgradRev, multiple_grads) {
   EXPECT_FLOAT_EQ(3.0, grad_f[0]);
   EXPECT_FLOAT_EQ(2.0, grad_f[1]);
 }
-

@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
+#include <gtest/gtest.h>
 #include <boost/math/special_functions/binomial.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 int round_to_int(double x) {
   return static_cast<int>(x < 0 ? x - 0.5 : x + 0.5);
@@ -12,7 +12,6 @@ int finite_choose_test(int N, int n) {
   using std::exp;
   return round_to_int(exp(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1)));
 }
-
 
 void test_choose_finite(int N, int n) {
   using stan::math::choose;
@@ -24,8 +23,7 @@ void test_choose_finite(int N, int n) {
 
 TEST(MathFunctions, choose) {
   for (int N = 0; N <= 32; ++N)
-    for (int n = 0; n <= 32; ++n)
-      test_choose_finite(N, n);
+    for (int n = 0; n <= 32; ++n) test_choose_finite(N, n);
 }
 
 TEST(MathFunctions, chooseThrow) {
@@ -43,4 +41,3 @@ TEST(MathFunctions, choose_nan) {
   EXPECT_THROW(choose(nan, 2), std::domain_error);
   EXPECT_THROW(choose(nan, nan), std::domain_error);
 }
-

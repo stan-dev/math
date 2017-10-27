@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <gtest/gtest.h>
 
 TEST(StanAgradRevInternal, precomp_vv_vari) {
   double value, gradient1, gradient2;
@@ -13,9 +13,8 @@ TEST(StanAgradRevInternal, precomp_vv_vari) {
 
   AVEC vars = createAVEC(x1, x2);
 
-  EXPECT_NO_THROW(y
-      = stan::math::var(new stan::math::precomp_vv_vari(value,
-          x1.vi_, x2.vi_, gradient1, gradient2)));
+  EXPECT_NO_THROW(y = stan::math::var(new stan::math::precomp_vv_vari(
+                      value, x1.vi_, x2.vi_, gradient1, gradient2)));
   EXPECT_FLOAT_EQ(value, y.val());
 
   VEC g;

@@ -1,7 +1,6 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-
 
 TEST(AgradMixMatrixRowsDotSelf, fd) {
   using stan::math::columns_dot_self;

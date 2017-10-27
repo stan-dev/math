@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MetaTraits, VectorBuilder_false_false) {
   using stan::VectorBuilder;
@@ -44,4 +44,3 @@ TEST(MetaTraits, VectorBuilder_true_false) {
   EXPECT_NO_THROW(data4 = dvv4.data());
   EXPECT_FLOAT_EQ(0.0, data4);
 }
-

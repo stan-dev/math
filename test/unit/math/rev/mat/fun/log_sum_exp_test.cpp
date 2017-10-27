@@ -1,8 +1,8 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <cmath>
 #include <vector>
 
 using Eigen::Matrix;
@@ -15,23 +15,18 @@ void test_log_sum_exp_matrix(const Matrix<double, R, C>& m) {
   using std::exp;
 
   vector<var> x_expected(m.size());
-  for (int i = 0; i < m.size(); ++i)
-    x_expected[i] = m(i);
+  for (int i = 0; i < m.size(); ++i) x_expected[i] = m(i);
   var sum_exp(0);
-  for (int i = 0; i < m.size(); ++i)
-    sum_exp += exp(x_expected[i]);
+  for (int i = 0; i < m.size(); ++i) sum_exp += exp(x_expected[i]);
   var f_expected = log(sum_exp);
   double val_expected = f_expected.val();
   vector<double> g_expected(m.size());
   f_expected.grad(x_expected, g_expected);
 
-
   vector<var> x(m.size());
-  for (int i = 0; i < m.size(); ++i)
-    x[i] = m(i);
+  for (int i = 0; i < m.size(); ++i) x[i] = m(i);
   Matrix<var, R, C> mv(m.rows(), m.cols());
-  for (int i = 0; i < m.size(); ++i)
-    mv(i) = x[i];
+  for (int i = 0; i < m.size(); ++i) mv(i) = x[i];
   var f = log_sum_exp(mv);
   double val = f.val();
   vector<double> g(m.size());
@@ -39,8 +34,7 @@ void test_log_sum_exp_matrix(const Matrix<double, R, C>& m) {
 
   EXPECT_FLOAT_EQ(val_expected, val);
   EXPECT_EQ(g_expected.size(), g.size());
-  for (size_t i = 0; i < g.size(); ++i)
-    EXPECT_FLOAT_EQ(g_expected[i], g[i]);
+  for (size_t i = 0; i < g.size(); ++i) EXPECT_FLOAT_EQ(g_expected[i], g[i]);
 }
 
 TEST(AgradRev, logSumExpMatrix) {

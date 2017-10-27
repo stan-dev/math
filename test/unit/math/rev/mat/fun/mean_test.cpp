@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -16,10 +16,10 @@ TEST(AgradRevMatrix, mean_vector) {
 
   AVAR output;
   output = mean(d1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 
   output = mean(v1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 }
 TEST(AgradRevMatrix, mean_vector_exception) {
   using stan::math::mean;
@@ -44,10 +44,10 @@ TEST(AgradRevMatrix, mean_rowvector) {
 
   AVAR output;
   output = mean(d1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 
   output = mean(v1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 }
 TEST(AgradRevMatrix, mean_rowvector_exception) {
   using stan::math::mean;
@@ -72,10 +72,10 @@ TEST(AgradRevMatrix, mean_matrix) {
 
   AVAR output;
   output = mean(d1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 
   output = mean(v1);
-  EXPECT_FLOAT_EQ(97.0/3.0, output.val());
+  EXPECT_FLOAT_EQ(97.0 / 3.0, output.val());
 }
 TEST(AgradRevMatrix, mean_matrix_exception) {
   using stan::math::mean;

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogSumExp, Fvar) {
@@ -13,8 +13,8 @@ TEST(AgradFwdLogSumExp, Fvar) {
 
   fvar<double> a = log_sum_exp(x, y);
   EXPECT_FLOAT_EQ(log_sum_exp(0.5, 1.2), a.val_);
-  EXPECT_FLOAT_EQ((1.0 * exp(0.5) + 2.0 * exp(1.2)) / (exp(0.5)
-                                                       + exp(1.2)), a.d_);
+  EXPECT_FLOAT_EQ((1.0 * exp(0.5) + 2.0 * exp(1.2)) / (exp(0.5) + exp(1.2)),
+                  a.d_);
 
   fvar<double> b = log_sum_exp(x, z);
   EXPECT_FLOAT_EQ(log_sum_exp(0.5, 1.4), b.val_);
@@ -48,10 +48,8 @@ TEST(AgradFwdLogSumExp, FvarFvarDouble) {
 
 struct log_sum_exp_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_sum_exp(arg1, arg2);
   }
 };

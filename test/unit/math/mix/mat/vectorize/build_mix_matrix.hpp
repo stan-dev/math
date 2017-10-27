@@ -1,14 +1,14 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_BUILD_MIX_MATRIX_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_BUILD_MIX_MATRIX_HPP
 
+#include <Eigen/Dense>
 #include <stan/math/mix/mat.hpp>
 #include <test/unit/math/mix/mat/vectorize/build_mix_vector.hpp>
-#include <Eigen/Dense>
 #include <vector>
 
 template <typename F, typename T, int R, int C>
-static inline Eigen::Matrix<T, R, C>
-build_mix_matrix(const Eigen::Matrix<T, R, C>& x, int seed_index = -1) {
+static inline Eigen::Matrix<T, R, C> build_mix_matrix(
+    const Eigen::Matrix<T, R, C>& x, int seed_index = -1) {
   using Eigen::Matrix;
   using std::vector;
 

@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLbeta, Fvar) {
@@ -15,8 +15,9 @@ TEST(AgradFwdLbeta, Fvar) {
 
   fvar<double> a = lbeta(x, y);
   EXPECT_FLOAT_EQ(lbeta(0.5, 1.2), a.val_);
-  EXPECT_FLOAT_EQ(digamma(0.5) + 2.0 * digamma(1.2)
-                  - (1.0 + 2.0) * digamma(0.5 + 1.2), a.d_);
+  EXPECT_FLOAT_EQ(
+      digamma(0.5) + 2.0 * digamma(1.2) - (1.0 + 2.0) * digamma(0.5 + 1.2),
+      a.d_);
 
   fvar<double> b = lbeta(x, w);
   EXPECT_FLOAT_EQ(lbeta(0.5, 1.3), b.val_);
@@ -50,10 +51,8 @@ TEST(AgradFwdLbeta, FvarFvarDouble) {
 
 struct lbeta_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return lbeta(arg1, arg2);
   }
 };

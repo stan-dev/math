@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -17,16 +17,16 @@ TEST(ProbBernoulliLogit, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::bernoulli_logit_lpmf<false>(n, theta)),
                   (stan::math::bernoulli_logit_log<false>(n, theta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>
-                                                              (n, theta)),
-    (stan::math::bernoulli_logit_log<true, Matrix<int, Dynamic, 1>>
-                                                              (n, theta)));
+      (stan::math::bernoulli_logit_lpmf<true, Matrix<int, Dynamic, 1>>(n,
+                                                                       theta)),
+      (stan::math::bernoulli_logit_log<true, Matrix<int, Dynamic, 1>>(n,
+                                                                      theta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>
-                                                              (n, theta)),
-    (stan::math::bernoulli_logit_log<false, Matrix<int, Dynamic, 1>>
-                                                              (n, theta)));
+      (stan::math::bernoulli_logit_lpmf<false, Matrix<int, Dynamic, 1>>(n,
+                                                                        theta)),
+      (stan::math::bernoulli_logit_log<false, Matrix<int, Dynamic, 1>>(n,
+                                                                       theta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
-    (stan::math::bernoulli_logit_log<Matrix<int, Dynamic, 1>>(n, theta)));
+      (stan::math::bernoulli_logit_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
+      (stan::math::bernoulli_logit_log<Matrix<int, Dynamic, 1>>(n, theta)));
 }

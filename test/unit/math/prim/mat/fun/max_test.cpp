@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MathMatrix, max) {
@@ -74,12 +74,9 @@ TEST(MathMatrix, max_exception) {
   Matrix<double, Dynamic, 1> v;
   Matrix<double, 1, Dynamic> rv;
 
-  EXPECT_EQ(-numeric_limits<double>::infinity(),
-            stan::math::max(m));
-  EXPECT_EQ(-numeric_limits<double>::infinity(),
-            stan::math::max(v));
-  EXPECT_EQ(-numeric_limits<double>::infinity(),
-            stan::math::max(rv));
+  EXPECT_EQ(-numeric_limits<double>::infinity(), stan::math::max(m));
+  EXPECT_EQ(-numeric_limits<double>::infinity(), stan::math::max(v));
+  EXPECT_EQ(-numeric_limits<double>::infinity(), stan::math::max(rv));
 
   Matrix<double, Dynamic, Dynamic> m_nz(2, 3);
   Matrix<double, Dynamic, 1> v_nz(2);

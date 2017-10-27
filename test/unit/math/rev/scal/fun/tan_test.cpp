@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, tan_var) {
   AVAR a = 0.68;
@@ -12,7 +12,7 @@ TEST(AgradRev, tan_var) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1 + tan(0.68)*tan(0.68), g[0]);
+  EXPECT_FLOAT_EQ(1 + tan(0.68) * tan(0.68), g[0]);
 }
 
 TEST(AgradRev, tan_neg_var) {
@@ -23,24 +23,23 @@ TEST(AgradRev, tan_neg_var) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1 + tan(-0.68)*tan(-0.68), g[0]);
+  EXPECT_FLOAT_EQ(1 + tan(-0.68) * tan(-0.68), g[0]);
 }
 
 TEST(AgradRev, tan_boundry) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
   EXPECT_TRUE(std::isnan(tan(a)))
-    << "tan(" << a << "): " << tan(a) << " mimics std::tan behavior";
+      << "tan(" << a << "): " << tan(a) << " mimics std::tan behavior";
 
   AVAR b = -inf;
   EXPECT_TRUE(std::isnan(tan(b)))
-    << "tan(" << b << "): " << tan(b) << " mimics std::tan behavior";
+      << "tan(" << b << "): " << tan(b) << " mimics std::tan behavior";
 }
 
 struct tan_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tan(arg1);
   }
 };

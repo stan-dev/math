@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdBesselFirstKind, Fvar) {
@@ -18,7 +18,6 @@ TEST(AgradFwdBesselFirstKind, Fvar) {
   EXPECT_FLOAT_EQ(-0.3390589585259364589255, x.val_);
   EXPECT_FLOAT_EQ(-0.7461432154878245145319, x.d_);
 }
-
 
 TEST(AgradFwdBesselFirstKind, FvarFvarDouble) {
   using stan::math::fvar;
@@ -48,8 +47,7 @@ TEST(AgradFwdBesselFirstKind, FvarFvarDouble) {
 
 struct bessel_first_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_first_kind(1, arg1);
   }
 };

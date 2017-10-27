@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, col) {
   stan::math::matrix_d m(3, 4);
@@ -8,8 +8,7 @@ TEST(MathMatrix, col) {
   stan::math::vector_d c2 = stan::math::col(m, 1);
   EXPECT_EQ(3, c.size());
   EXPECT_EQ(3, c2.size());
-  for (size_t i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(c[i], c2[i]);
+  for (size_t i = 0; i < 3; ++i) EXPECT_FLOAT_EQ(c[i], c2[i]);
 }
 
 TEST(MathMatrix, col_exception) {

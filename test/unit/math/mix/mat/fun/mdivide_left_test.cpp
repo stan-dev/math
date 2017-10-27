@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::fvar;
@@ -12,14 +12,12 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_matrix_1stDeriv) {
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);
@@ -51,8 +49,8 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_matrix_1stDeriv) {
   EXPECT_NEAR(6.0, I(1, 0).d_.val(), 1.0E-12);
   EXPECT_NEAR(6.0, I(1, 1).d_.val(), 1.0e-12);
 
-  AVEC q = createAVEC(Av(0, 0).val_, Av(0, 1).val_,
-                      Av(1, 0).val_, Av(1, 1).val_);
+  AVEC q =
+      createAVEC(Av(0, 0).val_, Av(0, 1).val_, Av(1, 0).val_, Av(1, 1).val_);
   VEC h;
   I(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-7.0, h[0]);
@@ -69,14 +67,12 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_matrix_2ndDeriv) {
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Ad, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);
@@ -88,8 +84,8 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_matrix_2ndDeriv) {
   EXPECT_NEAR(6.0, I(1, 0).d_.val(), 1.0E-12);
   EXPECT_NEAR(6.0, I(1, 1).d_.val(), 1.0e-12);
 
-  AVEC q = createAVEC(Av(0, 0).val_, Av(0, 1).val_,
-                      Av(1, 0).val_, Av(1, 1).val_);
+  AVEC q =
+      createAVEC(Av(0, 0).val_, Av(0, 1).val_, Av(1, 0).val_, Av(1, 1).val_);
   VEC h;
   I(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0.0, h[0]);
@@ -141,8 +137,8 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_1stDeriv) {
   EXPECT_NEAR(-1.0, output(0, 0).d_.val(), 1.0E-12);
   EXPECT_NEAR(1.0, output(1, 0).d_.val(), 1.0E-12);
 
-  AVEC q = createAVEC(fv(0, 0).val_, fv(0, 1).val_,
-                      fv(1, 0).val_, fv(1, 1).val_);
+  AVEC q =
+      createAVEC(fv(0, 0).val_, fv(0, 1).val_, fv(1, 0).val_, fv(1, 1).val_);
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-8.0, h[0]);
@@ -178,8 +174,8 @@ TEST(AgradMixMatrixMdivideLeft, fv_matrix_vector_2ndDeriv) {
   matrix_fv output;
   output = mdivide_left(fv, vecf);
 
-  AVEC q = createAVEC(fv(0, 0).val_, fv(0, 1).val_,
-                      fv(1, 0).val_, fv(1, 1).val_);
+  AVEC q =
+      createAVEC(fv(0, 0).val_, fv(0, 1).val_, fv(1, 0).val_, fv(1, 1).val_);
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-6.0, h[0]);
@@ -249,14 +245,12 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_1stDeriv) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_.val().val(), 1.0E-12);
@@ -306,14 +300,12 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_2ndDeriv_1) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Ad, Av);
 
@@ -335,14 +327,12 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_2ndDeriv_2) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
   Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Ad, Av);
   EXPECT_NEAR(1.0, I(0, 0).val_.val().val(), 1.0E-12);
@@ -372,8 +362,7 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_3rdDeriv) {
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
   Av(0, 0).d_ = 2.0;
   Av(0, 1).d_ = 2.0;
   Av(1, 0).d_ = 2.0;
@@ -382,8 +371,7 @@ TEST(AgradMixMatrixMdivideLeft, ffv_matrix_matrix_3rdDeriv) {
   Av(0, 1).val_.d_ = 2.0;
   Av(1, 0).val_.d_ = 2.0;
   Av(1, 1).val_.d_ = 2.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_left(Ad, Av);
 

@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -15,15 +15,9 @@ TEST(AgradMixMatrixTraceGenQuadForm, mat_fv_1st_deriv) {
   matrix_fv cd(2, 2);
   fvar<var> res;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
 
   ad(0, 0).d_ = 1.0;
@@ -131,15 +125,9 @@ TEST(AgradMixMatrixTraceGenQuadForm, mat_fv_2nd_deriv) {
   matrix_fv cd(2, 2);
   fvar<var> res;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
 
   ad(0, 0).d_ = 1.0;
@@ -247,15 +235,9 @@ TEST(AgradMixMatrixTraceGenQuadForm, mat_ffv_1st_deriv) {
   matrix_ffv cd(2, 2);
   fvar<fvar<var> > res;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
 
   ad(0, 0).d_ = 1.0;
@@ -363,15 +345,9 @@ TEST(AgradMixMatrixTraceGenQuadForm, mat_ffv_2nd_deriv) {
   matrix_ffv cd(2, 2);
   fvar<fvar<var> > res;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
 
   ad(0, 0).d_ = 1.0;
@@ -479,15 +455,9 @@ TEST(AgradMixMatrixTraceGenQuadForm, mat_ffv_3rd_deriv) {
   matrix_ffv cd(2, 2);
   fvar<fvar<var> > res;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
 
   ad(0, 0).d_ = 1.0;

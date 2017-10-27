@@ -4,15 +4,14 @@
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    // Returns log(abs(det(A))) given a LDLT_factor of A
-    template<int R, int C, typename T>
-    inline T
-    log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
-      return A.log_abs_det();
-    }
-
-  }
+// Returns log(abs(det(A))) given a LDLT_factor of A
+template <int R, int C, typename T>
+inline T log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
+  return A.log_abs_det();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

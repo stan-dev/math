@@ -1,10 +1,8 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/expm1.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdExpm1, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -77,7 +75,6 @@ TEST(AgradFwdExpm1, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(exp(0.5), r[0]);
 }
 
-
 TEST(AgradFwdExpm1, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -125,8 +122,7 @@ TEST(AgradFwdExpm1, FvarFvarVar_3rdDeriv) {
 
 struct expm1_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return expm1(arg1);
   }
 };
@@ -135,4 +131,3 @@ TEST(AgradFwdExpm1, expm1_NaN) {
   expm1_fun expm1_;
   test_nan_mix(expm1_, false);
 }
-

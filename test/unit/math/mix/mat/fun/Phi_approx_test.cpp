@@ -1,10 +1,10 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -43,9 +43,7 @@ struct Phi_approx_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -64,15 +62,17 @@ struct Phi_approx_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(-15.2).add(0.0).add(1.3).build();
+        .add(-15.2)
+        .add(0.0)
+        .add(1.3)
+        .build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
   static std::vector<double> invalid_inputs() {
-    return test::math::vector_builder<double>()
-      .build();
+    return test::math::vector_builder<double>().build();
   }
 
   /**
@@ -80,15 +80,19 @@ struct Phi_approx_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(-10).add(0).add(1).add(5).add(10).build();
+        .add(-10)
+        .add(0)
+        .add(1)
+        .add(5)
+        .add(10)
+        .build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
   static std::vector<int> int_invalid_inputs() {
-    return test::math::vector_builder<int>()
-      .build();
+    return test::math::vector_builder<int>().build();
   }
 };
 

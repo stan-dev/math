@@ -16,8 +16,7 @@ void expect_int_std_vector_error() {
   vector<vector<int> > z;
   z.push_back(invalid_inputs);
   z.push_back(invalid_inputs);
-  EXPECT_THROW(F::template apply<vector<vector<double> > >(z),
-               std::exception);
+  EXPECT_THROW(F::template apply<vector<vector<double> > >(z), std::exception);
 }
 
 #endif

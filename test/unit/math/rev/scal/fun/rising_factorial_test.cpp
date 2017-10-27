@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, rising_factorial_var_int) {
   using stan::math::digamma;
@@ -18,9 +18,10 @@ TEST(AgradRev, rising_factorial_var_int) {
   EXPECT_FLOAT_EQ((digamma(5.0) - digamma(4.0)) * 4.0, g[1]);
 
   double eps = 1e-6;
-  EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 1)
-                  - stan::math::rising_factorial(4.0 - eps, 1))
-                  / (2 * eps), g[1]);
+  EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 1) -
+                   stan::math::rising_factorial(4.0 - eps, 1)) /
+                      (2 * eps),
+                  g[1]);
 }
 
 TEST(AgradRev, rising_factorial_exceptions) {
@@ -32,10 +33,8 @@ TEST(AgradRev, rising_factorial_exceptions) {
 
 struct rising_factorial_fun {
   template <typename T>
-  inline
-  typename stan::return_type<T>::type
-  operator()(const T& arg1,
-             int arg2) const {
+  inline typename stan::return_type<T>::type operator()(const T& arg1,
+                                                        int arg2) const {
     return rising_factorial(arg1, arg2);
   }
 };

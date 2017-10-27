@@ -1,10 +1,10 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -43,9 +43,7 @@ struct asinh_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -64,30 +62,34 @@ struct asinh_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(1.3).add(-2.6).add(0).add(-0.2).build();
+        .add(1.3)
+        .add(-2.6)
+        .add(0)
+        .add(-0.2)
+        .build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
-  static std::vector<double> invalid_inputs() {
-    return std::vector<double>();
-  }
+  static std::vector<double> invalid_inputs() { return std::vector<double>(); }
 
   /**
    * Return sequence of valid integer inputs.
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(-2).add(0).add(3).build();
+        .add(1)
+        .add(-2)
+        .add(0)
+        .add(3)
+        .build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
-  static std::vector<int> int_invalid_inputs() {
-    return std::vector<int>();
-  }
+  static std::vector<int> int_invalid_inputs() { return std::vector<int>(); }
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, asinh_test);

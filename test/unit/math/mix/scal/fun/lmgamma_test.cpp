@@ -1,9 +1,8 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdLmgamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -116,8 +115,7 @@ TEST(AgradFwdLmgamma, FvarFvarVar_3rdDeriv) {
 
 struct lmgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return lmgamma(3, arg1);
   }
 };

@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixBlock, matrix_fv) {
@@ -112,4 +112,3 @@ TEST(AgradMixMatrixBlock, matrix_ffv_exception) {
   EXPECT_THROW(block(v, 0, 0, 1, 1), std::out_of_range);
   EXPECT_THROW(block(v, 1, 1, 4, 4), std::out_of_range);
 }
-

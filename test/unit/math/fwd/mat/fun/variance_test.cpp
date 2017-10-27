@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 TEST(AgradFwdMatrixVariance, fd_vector) {
@@ -16,16 +16,16 @@ TEST(AgradFwdMatrixVariance, fd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_);
 
   d1.resize(1);
@@ -58,16 +58,16 @@ TEST(AgradFwdMatrixVariance, fd_rowvector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 11.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 11.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_);
 
   d1.resize(1);
@@ -100,16 +100,16 @@ TEST(AgradFwdMatrixVariance, fd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 2.0;
-   v1(0, 2).d_ = 2.0;
-   v1(1, 0).d_ = 2.0;
-   v1(1, 1).d_ = 2.0;
-   v1(1, 2).d_ = 2.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 2.0;
+  v1(0, 2).d_ = 2.0;
+  v1(1, 0).d_ = 2.0;
+  v1(1, 1).d_ = 2.0;
+  v1(1, 2).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_);
 
   d1.resize(1, 1);
@@ -171,16 +171,16 @@ TEST(AgradFwdMatrixVariance, ffd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
   d1.resize(1);
@@ -213,16 +213,16 @@ TEST(AgradFwdMatrixVariance, ffd_rowvector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 11.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 11.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_.val());
 
   d1.resize(1);
@@ -255,16 +255,16 @@ TEST(AgradFwdMatrixVariance, ffd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 2.0;
-   v1(0, 2).d_ = 2.0;
-   v1(1, 0).d_ = 2.0;
-   v1(1, 1).d_ = 2.0;
-   v1(1, 2).d_ = 2.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 2.0;
+  v1(0, 2).d_ = 2.0;
+  v1(1, 0).d_ = 2.0;
+  v1(1, 1).d_ = 2.0;
+  v1(1, 2).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
   d1.resize(1, 1);

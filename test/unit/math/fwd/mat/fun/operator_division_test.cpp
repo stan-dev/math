@@ -1,12 +1,12 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixOperatorDivision, fd_scalar) {
   using stan::math::divide;
   double d1, d2;
-  fvar<double>   v1, v2;
+  fvar<double> v1, v2;
 
   d1 = 10;
   v1 = 10;
@@ -544,8 +544,7 @@ TEST(AgradFwdMatrixOperatorDivision, ffd_matrix) {
   b.d_.val_ = 1.0;
   c.d_.val_ = 1.0;
   d.d_.val_ = 1.0;
-  d1 << 100, 0,
-       -3, 4;
+  d1 << 100, 0, -3, 4;
   v1 << a, b, c, d;
   d2 = -2;
   v2.val_.val_ = -2;

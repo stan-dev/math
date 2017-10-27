@@ -1,5 +1,5 @@
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <stan/math.hpp>
 #include <vector>
 
 // Test that column indexes of values from dense matrix in sparse
@@ -77,6 +77,3 @@ TEST(SparseStuff, csr_extract_v_sparse_compressed) {
   EXPECT_EQ(3, result[2]);
   EXPECT_EQ(3, result.size());
 }
-
-
-

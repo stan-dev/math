@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/util.hpp>
 
 TEST(prob_transform, prob) {
   EXPECT_FLOAT_EQ(stan::math::inv_logit(-1.0),
@@ -14,8 +14,8 @@ TEST(prob_transform, prob_j) {
   double x = -1.0;
   EXPECT_FLOAT_EQ(L + (U - L) * stan::math::inv_logit(x),
                   stan::math::prob_constrain(x, lp));
-  EXPECT_FLOAT_EQ(-17.0 + log(U - L) + log(stan::math::inv_logit(x))
-                  + log(1.0 - stan::math::inv_logit(x)),
+  EXPECT_FLOAT_EQ(-17.0 + log(U - L) + log(stan::math::inv_logit(x)) +
+                      log(1.0 - stan::math::inv_logit(x)),
                   lp);
 }
 TEST(prob_transform, prob_f) {

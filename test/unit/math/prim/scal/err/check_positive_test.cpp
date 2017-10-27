@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 #include <string>
 
 TEST(ErrorHandlingScalar, CheckPositive) {
@@ -16,6 +16,5 @@ TEST(ErrorHandlingScalar, CheckPositive_nan) {
 
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW(check_positive(function, "x", nan),
-               std::domain_error);
+  EXPECT_THROW(check_positive(function, "x", nan), std::domain_error);
 }

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixRepMatrix, fd_real) {
   using stan::math::rep_matrix;
@@ -43,9 +43,9 @@ TEST(AgradFwdMatrixRepMatrix, fd_rowvector) {
 
   row_vector_fd a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_fd output;
   output = rep_matrix(a, 3);
 
@@ -87,9 +87,9 @@ TEST(AgradFwdMatrixRepMatrix, fd_vector) {
 
   vector_fd a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_fd output;
   output = rep_matrix(a, 3);
 
@@ -166,9 +166,9 @@ TEST(AgradFwdMatrixRepMatrix, ffd_rowvector) {
 
   row_vector_ffd a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_ffd output;
   output = rep_matrix(a, 3);
 
@@ -210,9 +210,9 @@ TEST(AgradFwdMatrixRepMatrix, ffd_vector) {
 
   vector_ffd a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_ffd output;
   output = rep_matrix(a, 3);
 

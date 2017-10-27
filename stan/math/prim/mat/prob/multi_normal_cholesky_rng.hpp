@@ -3,9 +3,6 @@
 
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 #include <stan/math/prim/mat/fun/columns_dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
@@ -17,34 +14,34 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/subtract.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <string>
 
 namespace stan {
-  namespace math {
-    template <class RNG>
-    inline Eigen::VectorXd
-    multi_normal_cholesky_rng(
-        const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
-        RNG& rng) {
-      using boost::variate_generator;
-      using boost::normal_distribution;
+namespace math {
+template <class RNG>
+inline Eigen::VectorXd multi_normal_cholesky_rng(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+  using boost::variate_generator;
+  using boost::normal_distribution;
 
-      static const std::string function = "multi_normal_cholesky_rng";
-      check_finite(function, "Location parameter", mu);
+  static const std::string function = "multi_normal_cholesky_rng";
+  check_finite(function, "Location parameter", mu);
 
-      variate_generator<RNG&, normal_distribution<> >
-        std_normal_rng(rng, normal_distribution<>(0, 1));
+  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+      rng, normal_distribution<>(0, 1));
 
-      Eigen::VectorXd z(S.cols());
-      for (int i = 0; i < S.cols(); i++)
-        z(i) = std_normal_rng();
+  Eigen::VectorXd z(S.cols());
+  for (int i = 0; i < S.cols(); i++) z(i) = std_normal_rng();
 
-      return mu + S * z;
-    }
-  }
+  return mu + S * z;
 }
+}  // namespace math
+}  // namespace stan
 #endif

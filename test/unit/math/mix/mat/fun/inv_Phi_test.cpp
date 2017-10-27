@@ -1,11 +1,11 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
+#include <stan/math/prim/mat/fun/inv_Phi.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/inv_Phi.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -44,9 +44,7 @@ struct inv_Phi_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -65,7 +63,12 @@ struct inv_Phi_test {
    */
   static std::vector<double> valid_inputs() {
     return test::math::vector_builder<double>()
-      .add(0.01).add(0.5).add(0).add(1).add(0.98).build();
+        .add(0.01)
+        .add(0.5)
+        .add(0)
+        .add(1)
+        .add(0.98)
+        .build();
   }
 
   /**
@@ -73,7 +76,11 @@ struct inv_Phi_test {
    */
   static std::vector<double> invalid_inputs() {
     return test::math::vector_builder<double>()
-      .add(10.6).add(-10.6).add(25.7).add(-100.25).build();
+        .add(10.6)
+        .add(-10.6)
+        .add(25.7)
+        .add(-100.25)
+        .build();
   }
 
   /**
@@ -81,7 +88,11 @@ struct inv_Phi_test {
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(0).add(0).add(1).build();
+        .add(1)
+        .add(0)
+        .add(0)
+        .add(1)
+        .build();
   }
 
   /**
@@ -89,7 +100,11 @@ struct inv_Phi_test {
    */
   static std::vector<int> int_invalid_inputs() {
     return test::math::vector_builder<int>()
-      .add(10).add(-25).add(-100).add(50).build();
+        .add(10)
+        .add(-25)
+        .add(-100)
+        .add(50)
+        .build();
   }
 };
 

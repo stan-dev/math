@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdDigamma, Fvar) {
@@ -42,8 +42,7 @@ TEST(AgradFwdDigamma, FvarFvarDouble) {
 
 struct digamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return digamma(arg1);
   }
 };

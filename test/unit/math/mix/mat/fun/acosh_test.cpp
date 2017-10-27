@@ -1,10 +1,10 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -43,9 +43,7 @@ struct acosh_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -65,7 +63,10 @@ struct acosh_test {
   static std::vector<double> valid_inputs() {
     // out of domain succeeds following math.h return policy
     return test::math::vector_builder<double>()
-      .add(1).add(3.2).add(12.9).build();
+        .add(1)
+        .add(3.2)
+        .add(12.9)
+        .build();
   }
 
   /**
@@ -73,8 +74,7 @@ struct acosh_test {
    */
   static std::vector<double> invalid_inputs() {
     // TODO(carpenter): fix after C++11 unification
-    return test::math::vector_builder<double>()
-      .build();
+    return test::math::vector_builder<double>().build();
   }
 
   /**
@@ -82,8 +82,7 @@ struct acosh_test {
    */
   static std::vector<int> int_valid_inputs() {
     // out of domain succeeds following math.h return policy
-    return test::math::vector_builder<int>()
-      .add(1).add(5).add(10).build();
+    return test::math::vector_builder<int>().add(1).add(5).add(10).build();
   }
 
   /**
@@ -91,12 +90,9 @@ struct acosh_test {
    */
   static std::vector<int> int_invalid_inputs() {
     // TODO(carpenter): fix after C++11 unification
-    return test::math::vector_builder<int>()
-      .build();
+    return test::math::vector_builder<int>().build();
   }
 };
-
-
 
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, acosh_test);
 INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, acosh_test);

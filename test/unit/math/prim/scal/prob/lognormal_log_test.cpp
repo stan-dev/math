@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbLognormal, log_matches_lpdf) {
   double y = 0.8;
@@ -13,12 +13,12 @@ TEST(ProbLognormal, log_matches_lpdf) {
   EXPECT_FLOAT_EQ((stan::math::lognormal_lpdf<false>(y, mu, sigma)),
                   (stan::math::lognormal_log<false>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::lognormal_lpdf<true, double, double, double>(y, mu, sigma)),
-    (stan::math::lognormal_log<true, double, double, double>(y, mu, sigma)));
+      (stan::math::lognormal_lpdf<true, double, double, double>(y, mu, sigma)),
+      (stan::math::lognormal_log<true, double, double, double>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::lognormal_lpdf<false, double, double, double>(y, mu, sigma)),
-    (stan::math::lognormal_log<false, double, double, double>(y, mu, sigma)));
+      (stan::math::lognormal_lpdf<false, double, double, double>(y, mu, sigma)),
+      (stan::math::lognormal_log<false, double, double, double>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::lognormal_lpdf<double, double, double>(y, mu, sigma)),
-    (stan::math::lognormal_log<double, double, double>(y, mu, sigma)));
+      (stan::math::lognormal_lpdf<double, double, double>(y, mu, sigma)),
+      (stan::math::lognormal_log<double, double, double>(y, mu, sigma)));
 }

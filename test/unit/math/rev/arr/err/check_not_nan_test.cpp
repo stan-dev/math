@@ -1,5 +1,5 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/arr.hpp>
 #include <string>
 #include <vector>
 
@@ -12,8 +12,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   const std::string function = "check_not_nan";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
-    a.push_back(var(i));
+  for (int i = 0; i < N; ++i) a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
@@ -34,8 +33,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   const std::string function = "check_not_nan";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
-    a.push_back(var(i));
+  for (int i = 0; i < N; ++i) a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 

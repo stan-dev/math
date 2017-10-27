@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbPoissonLog, log_matches_lpmf) {
   int y = 3;

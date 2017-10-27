@@ -1,12 +1,11 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MetaTraits, VectorBuilderHelper_false_false) {
   using stan::VectorBuilderHelper;
   using stan::length;
   using Eigen::Matrix;
   using Eigen::Dynamic;
-
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);

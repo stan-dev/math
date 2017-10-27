@@ -1,7 +1,7 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, squared_distance_vector_vector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;

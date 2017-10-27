@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/atanh.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtanh, Fvar) {
@@ -19,7 +19,6 @@ TEST(AgradFwdAtanh, Fvar) {
   EXPECT_FLOAT_EQ(atanh(-0.9), b.val_);
   EXPECT_FLOAT_EQ(1 / (1 - 0.9 * 0.9), b.d_);
 }
-
 
 TEST(AgradFwdAtanh, FvarFvarDouble) {
   using stan::math::fvar;
@@ -47,11 +46,9 @@ TEST(AgradFwdAtanh, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct atanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atanh(arg1);
   }
 };

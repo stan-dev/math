@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MetaTraits, VectorBuilderHelper_false_false) {
   using stan::VectorBuilderHelper;
@@ -26,4 +26,3 @@ TEST(MetaTraits, VectorBuilderHelper_true_false) {
   double data = dvv1.data();
   EXPECT_FLOAT_EQ(0.0, data);
 }
-

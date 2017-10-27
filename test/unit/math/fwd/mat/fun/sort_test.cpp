@@ -1,6 +1,6 @@
+#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 typedef stan::math::fvar<double> AVAR;
@@ -13,17 +13,16 @@ void test_sort_asc(VEC val) {
   using stan::math::sort_asc;
 
   AVEC x;
-  for (size_t i=0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(AVAR(val[i]));
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val());
 
-  for (size_t i=0U; i < val.size(); i++)
-    for (size_t j=0U; j < val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
@@ -34,17 +33,17 @@ void test_sort_asc3(std::vector<double> val) {
   using stan::math::sort_asc;
 
   std::vector<fvar<fvar<double> > > x;
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<fvar<double> >(val[i]));
 
   std::vector<double> val_sorted = sort_asc(val);
   std::vector<fvar<fvar<double> > > x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val());
 
-  for (size_t i=0U; i < val.size(); i++)
-    for (size_t j=0U; j < val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
@@ -55,17 +54,16 @@ void test_sort_desc(VEC val) {
   using stan::math::sort_desc;
 
   AVEC x;
-  for (size_t i=0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(AVAR(val[i]));
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val());
 
-  for (size_t i=0U; i < val.size(); i++)
-    for (size_t j=0U; j < val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
@@ -76,17 +74,17 @@ void test_sort_desc3(VEC val) {
   using stan::math::sort_desc;
 
   std::vector<fvar<fvar<double> > > x;
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     x.push_back(fvar<fvar<double> >(val[i]));
 
   VEC val_sorted = sort_desc(val);
   std::vector<fvar<fvar<double> > > x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i < val.size(); i++)
+  for (size_t i = 0U; i < val.size(); i++)
     EXPECT_EQ(val_sorted[i], x_sorted[i].val().val());
 
-  for (size_t i=0U; i < val.size(); i++)
-    for (size_t j=0U; j < val.size(); j++)
+  for (size_t i = 0U; i < val.size(); i++)
+    for (size_t j = 0U; j < val.size(); j++)
       if (val_sorted[i] == val[j])
         EXPECT_EQ(x_sorted[i], x[j]);
       else
@@ -103,17 +101,16 @@ void test_sort_asc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i < size; i++)
-    x.data()[i] = AVAR(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = AVAR(val[i]);
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i < size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val());
 
-  for (size_t i=0U; i < size; i++)
-    for (size_t j=0U; j < size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
@@ -130,17 +127,16 @@ void test_sort_asc3(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i < size; i++)
-    x.data()[i] = fvar<fvar<double> >(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<fvar<double> >(val[i]);
 
   VEC val_sorted = sort_asc(val);
   AVEC x_sorted = sort_asc(x);
 
-  for (size_t i=0U; i < size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val().val());
 
-  for (size_t i=0U; i < size; i++)
-    for (size_t j=0U; j < size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
@@ -157,17 +153,16 @@ void test_sort_desc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i < size; i++)
-    x.data()[i] = AVAR(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = AVAR(val[i]);
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i < size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val());
 
-  for (size_t i=0U; i < size; i++)
-    for (size_t j=0U; j < size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
@@ -184,17 +179,16 @@ void test_sort_desc3(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i=0U; i < size; i++)
-    x.data()[i] = fvar<fvar<double> >(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<fvar<double> >(val[i]);
 
   VEC val_sorted = sort_desc(val);
   AVEC x_sorted = sort_desc(x);
 
-  for (size_t i=0U; i < size; i++)
+  for (size_t i = 0U; i < size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i].val().val());
 
-  for (size_t i=0U; i < size; i++)
-    for (size_t j=0U; j < size; j++)
+  for (size_t i = 0U; i < size; i++)
+    for (size_t j = 0U; j < size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
@@ -256,7 +250,6 @@ TEST(AgradFwdSort, d) {
   test_sort_asc(vec6);
   test_sort_desc(vec6);
 }
-
 
 TEST(AgradFwdSort, d_no_thrown) {
   AVEC vec0;
@@ -360,22 +353,22 @@ TEST(MathMatrix, sortDescStdVecNan) {
 
 TEST(MathMatrix, sortAscEigenVecNan) {
   test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
-  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
-                                     -1, 1> >();
+  test_sort_asc_throws<
+      Eigen::Matrix<stan::math::fvar<fvar<double> >, -1, 1> >();
 }
 TEST(MathMatrix, sortAscEigenRowVecNan) {
   test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
-  test_sort_asc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
-                                     1, -1> >();
+  test_sort_asc_throws<
+      Eigen::Matrix<stan::math::fvar<fvar<double> >, 1, -1> >();
 }
 
 TEST(MathMatrix, sortDescEigenVecNan) {
   test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, -1, 1> >();
-  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
-                                      -1, 1> >();
+  test_sort_desc_throws<
+      Eigen::Matrix<stan::math::fvar<fvar<double> >, -1, 1> >();
 }
 TEST(MathMatrix, sortDescEigenRowVecNan) {
   test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<double>, 1, -1> >();
-  test_sort_desc_throws<Eigen::Matrix<stan::math::fvar<fvar<double> >,
-                                      1, -1> >();
+  test_sort_desc_throws<
+      Eigen::Matrix<stan::math::fvar<fvar<double> >, 1, -1> >();
 }

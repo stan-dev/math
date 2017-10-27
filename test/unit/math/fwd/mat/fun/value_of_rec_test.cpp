@@ -1,17 +1,15 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradMatrix, value_of_rec) {
   using stan::math::fvar;
   using stan::math::value_of_rec;
 
   Eigen::Matrix<double, 2, 5> a;
-  for (int i = 0; i < 10; ++i)
-    a(i) = i + 1;
+  for (int i = 0; i < 10; ++i) a(i) = i + 1;
 
   Eigen::Matrix<double, 5, 1> b;
-  for (int i = 0; i < 5; ++i)
-    b(i) = 10 + i + 1;
+  for (int i = 0; i < 5; ++i) b(i) = 10 + i + 1;
 
   Eigen::Matrix<fvar<double>, 2, 5> fd_a;
   fd_a = stan::math::to_fvar(a);

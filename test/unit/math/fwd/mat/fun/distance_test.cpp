@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 

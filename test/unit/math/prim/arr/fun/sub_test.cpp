@@ -1,7 +1,7 @@
-#include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/arr.hpp>
 #include <vector>
 
 TEST(MathFunctions, sub) {
@@ -36,19 +36,16 @@ TEST(MathFunctions, sub_nan) {
   EXPECT_NO_THROW(stan::math::sub(x, y, result));
   EXPECT_FLOAT_EQ(0.5, result[0]);
   EXPECT_FLOAT_EQ(1.0, result[1]);
-  EXPECT_PRED1(boost::math::isnan<double>,
-               result[2]);
+  EXPECT_PRED1(boost::math::isnan<double>, result[2]);
 
   EXPECT_NO_THROW(stan::math::sub(y, x, result));
   EXPECT_FLOAT_EQ(-0.5, result[0]);
   EXPECT_FLOAT_EQ(-1.0, result[1]);
-  EXPECT_PRED1(boost::math::isnan<double>,
-               result[2]);
+  EXPECT_PRED1(boost::math::isnan<double>, result[2]);
 
   y[2] = nan;
   EXPECT_NO_THROW(stan::math::sub(x, y, result));
   EXPECT_FLOAT_EQ(0.5, result[0]);
   EXPECT_FLOAT_EQ(1.0, result[1]);
-  EXPECT_PRED1(boost::math::isnan<double>,
-               result[2]);
+  EXPECT_PRED1(boost::math::isnan<double>, result[2]);
 }

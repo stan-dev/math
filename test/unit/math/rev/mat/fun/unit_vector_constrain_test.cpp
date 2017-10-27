@@ -1,23 +1,20 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-#include <limits>
 #include <vector>
 
-std::vector<double>
-unit_vector_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl,
-                 int k) {
+std::vector<double> unit_vector_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl, int k) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
   using stan::math::var;
   Matrix<var, Dynamic, 1> y(y_dbl.size());
-  for (int i = 0; i < y.size(); ++i)
-    y(i) = y_dbl(i);
+  for (int i = 0; i < y.size(); ++i) y(i) = y_dbl(i);
 
   std::vector<var> x(y.size());
-  for (size_t i = 0; i < x.size(); ++i)
-    x[i] = y(i);
+  for (size_t i = 0; i < x.size(); ++i) x[i] = y(i);
 
   var fx_k = stan::math::unit_vector_constrain(y)[k];
   std::vector<double> grad(y.size());
@@ -36,8 +33,7 @@ TEST(AgradRevUnitVectorConstrain, Grad) {
     y_dbl << 0.0, 3.0, -1.0;
 
     AVEC x(3);
-    for (int i = 0; i < 3; ++i)
-      x[i] = y(i);
+    for (int i = 0; i < 3; ++i) x[i] = y(i);
     Matrix<AVAR, Dynamic, 1> theta = unit_vector_constrain(y);
     AVAR fx_k = theta(k);
     std::vector<double> grad;

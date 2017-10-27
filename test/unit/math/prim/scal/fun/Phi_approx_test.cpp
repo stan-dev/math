@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, Phi_approx) {
   EXPECT_EQ(0.5, stan::math::Phi_approx(0.0));
@@ -12,6 +12,5 @@ TEST(MathFunctions, Phi_approx) {
 TEST(MathFunctions, Phi_approx_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::Phi_approx(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::Phi_approx(nan));
 }

@@ -1,9 +1,9 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 #include <vector>
-#include <limits>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::var;
@@ -58,15 +58,13 @@ TEST(AgradRev, inv_Phi) {
     x = createAVEC(p);
     y.grad(x, dp);
     EXPECT_FLOAT_EQ(p_values[i], y.val());
-    EXPECT_FLOAT_EQ(1.0, dp[0])
-      << "p = " << p;
+    EXPECT_FLOAT_EQ(1.0, dp[0]) << "p = " << p;
   }
 }
 
 struct inv_Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_Phi(arg1);
   }
 };
@@ -75,7 +73,6 @@ TEST(AgradRev, inv_Phi_NaN) {
   inv_Phi_fun foo;
   test_nan(foo, true, false);
 }
-
 
 TEST(AgradRev, check_varis_on_stack) {
   stan::math::var p = 0.5;

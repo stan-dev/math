@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixCols, vector_fd) {
   using stan::math::vector_fd;
@@ -8,11 +8,11 @@ TEST(AgradFwdMatrixCols, vector_fd) {
 
   vector_fd v(5);
   v << 0, 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
   EXPECT_EQ(1U, cols(v));
 
   v.resize(0);
@@ -25,11 +25,11 @@ TEST(AgradFwdMatrixCols, row_vector_fd) {
 
   row_vector_fd rv(5);
   rv << 0, 1, 2, 3, 4;
-   rv(0).d_ = 1.0;
-   rv(1).d_ = 1.0;
-   rv(2).d_ = 1.0;
-   rv(3).d_ = 1.0;
-   rv(4).d_ = 1.0;
+  rv(0).d_ = 1.0;
+  rv(1).d_ = 1.0;
+  rv(2).d_ = 1.0;
+  rv(3).d_ = 1.0;
+  rv(4).d_ = 1.0;
   EXPECT_EQ(5U, cols(rv));
 
   rv.resize(0);

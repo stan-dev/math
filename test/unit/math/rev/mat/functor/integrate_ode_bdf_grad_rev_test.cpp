@@ -1,65 +1,59 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/functor/gradient.hpp>
 #include <iostream>
 #include <sstream>
-#include <vector>
+#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stdexcept>
+#include <vector>
 
 using std::cos;
 using std::sin;
 
-double y1(double t, double omega, double chi) {
-  return chi * cos(omega * t);
-}
+double y1(double t, double omega, double chi) { return chi * cos(omega * t); }
 
 double dy1_domega(double t, double omega, double chi) {
-  return - t * chi * sin(omega * t);
+  return -t * chi * sin(omega * t);
 }
 
-double dy1_dchi(double t, double omega, double chi) {
-  return cos(omega * t);
-}
+double dy1_dchi(double t, double omega, double chi) { return cos(omega * t); }
 
 double y2(double t, double omega, double chi) {
-  return - omega * chi * sin(omega * t);
+  return -omega * chi * sin(omega * t);
 }
 
 double dy2_domega(double t, double omega, double chi) {
-  return - chi * (sin(omega * t) + omega * t * cos(omega * t));
+  return -chi * (sin(omega * t) + omega * t * cos(omega * t));
 }
 
 double dy2_dchi(double t, double omega, double chi) {
-  return - omega * sin(omega * t);
+  return -omega * sin(omega * t);
 }
 
 class sho_functor {
-public:
+ public:
   template <typename T0, typename T1, typename T2>
-  inline
-  std::vector<typename stan::return_type<T1, T2>::type>
-  operator()(const T0& t_in,                 // time
-             const std::vector<T1>& y_in,    // state
-             const std::vector<T2>& theta,   // parameters
-             const std::vector<double>& x,   // double data
-             const std::vector<int>& x_int,  // integer data
-             std::ostream* msgs) const {
+  inline std::vector<typename stan::return_type<T1, T2>::type> operator()(
+      const T0& t_in,                 // time
+      const std::vector<T1>& y_in,    // state
+      const std::vector<T2>& theta,   // parameters
+      const std::vector<double>& x,   // double data
+      const std::vector<int>& x_int,  // integer data
+      std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
     std::vector<typename stan::return_type<T1, T2>::type> f;
     f.push_back(y_in.at(1));
-    f.push_back(- theta.at(0) * theta.at(0) * y_in.at(0));
+    f.push_back(-theta.at(0) * theta.at(0) * y_in.at(0));
 
     return f;
   }
 };
 
 class test_functor_double_var_1 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -76,18 +70,17 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
 };
 
 class test_functor_double_var_2 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -104,8 +97,8 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }
@@ -136,10 +129,9 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
 }
 
 class test_functor_var_double_1 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<double> theta;
@@ -156,18 +148,17 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
 };
 
 class test_functor_var_double_2 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<double> theta;
@@ -184,8 +175,8 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }
@@ -216,10 +207,9 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
 }
 
 class test_functor_var_var_1 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -236,18 +226,17 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][0];
   }
 };
 
 class test_functor_var_var_2 {
-public:
+ public:
   template <typename T>
-  inline
-  T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
 
     std::vector<T> theta;
@@ -264,8 +253,8 @@ public:
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
-      = stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
+    std::vector<std::vector<T> > ys =
+        stan::math::integrate_ode_bdf(sho, y0, t0, ts, theta, data, data_int);
 
     return ys[0][1];
   }

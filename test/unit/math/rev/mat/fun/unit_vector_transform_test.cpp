@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -18,8 +18,7 @@ TEST(probTransform, unit_vector_jacobian) {
   y << a, b, c;
 
   var lp(0);
-  Matrix<var, Dynamic, 1> x
-    = stan::math::unit_vector_constrain(y, lp);
+  Matrix<var, Dynamic, 1> x = stan::math::unit_vector_constrain(y, lp);
   const var r2 = stan::math::dot_self(y);
 
   vector<var> indeps;
@@ -44,11 +43,10 @@ TEST(probTransform, unit_vector_jacobian) {
 
   double det_J = J.determinant();
 
-  EXPECT_FLOAT_EQ(1.0 / det_J, lp.val())
-    << "J = " << std::endl
-    << J << std::endl
-    << "det_J = " << det_J << std::endl
-    << "x = " << x.transpose();
+  EXPECT_FLOAT_EQ(1.0 / det_J, lp.val()) << "J = " << std::endl
+                                         << J << std::endl
+                                         << "det_J = " << det_J << std::endl
+                                         << "x = " << x.transpose();
 }
 
 TEST(probTransform, check_varis_on_stack) {

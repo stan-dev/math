@@ -1,11 +1,11 @@
 #ifndef TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_REV_MAT_VECTORIZE_EXPECT_REV_VECTOR_VALUE_HPP
 
-#include <stan/math/rev/core/var.hpp>
 #include <gtest/gtest.h>
+#include <Eigen/Dense>
+#include <stan/math/rev/core/var.hpp>
 #include <test/unit/math/rev/mat/vectorize/build_rev_matrix.hpp>
 #include <test/unit/math/rev/mat/vectorize/expect_val_deriv_eq.hpp>
-#include <Eigen/Dense>
 #include <vector>
 
 template <typename F>
@@ -37,8 +37,7 @@ void expect_rev_vector_value() {
       vector<VectorXvar> fe = F::template apply<vector<VectorXvar> >(e);
       EXPECT_EQ(e[i].size(), fe[i].size());
       EXPECT_EQ(e.size(), fe.size());
-      expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j),
-                          fe[i](j), e[i](j));
+      expect_val_deriv_eq(F::apply_base(d[i](j)), d[i](j), fe[i](j), e[i](j));
     }
   }
 }

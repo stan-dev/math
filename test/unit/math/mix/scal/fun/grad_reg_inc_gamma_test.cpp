@@ -1,5 +1,5 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(ProbInternalMath, gradRegIncGamma_typical) {

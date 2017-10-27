@@ -1,13 +1,12 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, mdivide_right_ldlt_val) {
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;
 
-  Ad << 2.0, 3.0,
-        3.0, 7.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());

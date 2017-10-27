@@ -1,14 +1,11 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 class AgradFwdTanh : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
-
 
 TEST_F(AgradFwdTanh, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -40,7 +37,6 @@ TEST_F(AgradFwdTanh, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(1.3 * -2.0 * tanh(1.5) / (cosh(1.5) * cosh(1.5)), g[0]);
 }
-
 
 TEST_F(AgradFwdTanh, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -129,8 +125,7 @@ TEST_F(AgradFwdTanh, FvarFvarVar_3rdDeriv) {
 
 struct tanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tanh(arg1);
   }
 };

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
@@ -27,6 +27,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   o.edge3_.partials_[0] += 23.0;
   fvar<double> y = o.build(-1.0);
 
-  EXPECT_FLOAT_EQ(2*17 + 3*13 - 2*19 + 2*4*23, y.d_);
+  EXPECT_FLOAT_EQ(2 * 17 + 3 * 13 - 2 * 19 + 2 * 4 * 23, y.d_);
   EXPECT_FLOAT_EQ(-1, y.val_);
 }

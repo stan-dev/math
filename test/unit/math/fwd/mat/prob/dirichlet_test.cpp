@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/fwd/mat.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -60,6 +60,5 @@ TEST(ProbDistributions, fvar_fvar_double) {
 
   EXPECT_FLOAT_EQ(-43.40045,
                   stan::math::dirichlet_log(theta2, alpha2).val_.val_);
-  EXPECT_FLOAT_EQ(2017.2858,
-                  stan::math::dirichlet_log(theta2, alpha2).d_.val_);
+  EXPECT_FLOAT_EQ(2017.2858, stan::math::dirichlet_log(theta2, alpha2).d_.val_);
 }

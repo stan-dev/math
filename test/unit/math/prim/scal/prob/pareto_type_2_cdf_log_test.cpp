@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbParetoType2, cdf_log_matches_lcdf) {
   double y = 0.8;
@@ -10,8 +10,8 @@ TEST(ProbParetoType2, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lcdf(y, mu, lambda, alpha)),
                   (stan::math::pareto_type_2_cdf_log(y, mu, lambda, alpha)));
   EXPECT_FLOAT_EQ(
-    (stan::math::pareto_type_2_lcdf<double, double, double, double>
-                                                      (y, mu, lambda, alpha)),
-    (stan::math::pareto_type_2_cdf_log<double, double, double, double>
-                                                      (y, mu, lambda, alpha)));
+      (stan::math::pareto_type_2_lcdf<double, double, double, double>(
+          y, mu, lambda, alpha)),
+      (stan::math::pareto_type_2_cdf_log<double, double, double, double>(
+          y, mu, lambda, alpha)));
 }

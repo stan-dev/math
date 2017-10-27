@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, add_v_exception) {
   stan::math::vector_d d1, d2;
@@ -47,7 +47,6 @@ TEST(MathMatrix, add_m_exception) {
   EXPECT_THROW(stan::math::add(d1, d2), std::invalid_argument);
 }
 
-
 TEST(MathMatrix, add_c_m) {
   stan::math::matrix_d v(2, 2);
   v << 1, 2, 3, 4;
@@ -81,7 +80,6 @@ TEST(MathMatrix, add_c_rv) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(5.0, result(2));
 }
-
 
 TEST(MathMatrix, add_c_v) {
   stan::math::vector_d v(3);

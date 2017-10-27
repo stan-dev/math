@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, fdim_vv) {
   using stan::math::fdim;
@@ -120,10 +120,8 @@ TEST(AgradRev, fdim_dv_2) {
 
 struct fdim_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return fdim(arg1, arg2);
   }
 };

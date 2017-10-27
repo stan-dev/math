@@ -1,9 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdAtan2, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -34,7 +32,7 @@ TEST(AgradFwdAtan2, FvarVar_double_1stDeriv) {
   fvar<var> a = atan2(x, z);
 
   EXPECT_FLOAT_EQ(atan2(1.5, 1.5), a.val_.val());
-  EXPECT_FLOAT_EQ(13.0 / 30.0 , a.d_.val());
+  EXPECT_FLOAT_EQ(13.0 / 30.0, a.d_.val());
 
   AVEC y = createAVEC(x.val_);
   VEC g;
@@ -106,8 +104,6 @@ TEST(AgradFwdAtan2, Double_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 / 9.0, g[0]);
 }
 
-
-
 TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -126,8 +122,9 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_.val());
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_.val());
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_.val());
-  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5)
-                       * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_.val());
+  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) /
+                      ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)),
+                  a.d_.d_.val());
 
   AVEC q = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
@@ -159,7 +156,6 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_1stDeriv) {
   a.val_.val_.grad(q, g);
   EXPECT_FLOAT_EQ(1.0 / 3.0, g[0]);
 }
-
 
 TEST(AgradFwdAtan2, Double_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -287,7 +283,6 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_3rdDeriv) {
   EXPECT_FLOAT_EQ(4.0 / 27.0, g[0]);
 }
 
-
 TEST(AgradFwdAtan2, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -326,13 +321,10 @@ TEST(AgradFwdAtan2, Double_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(-4.0 / 27.0, g[0]);
 }
 
-
 struct atan2_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return atan2(arg1, arg2);
   }
 };

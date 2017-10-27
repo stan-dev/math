@@ -1,7 +1,7 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <exception>
 #include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <string>
 
 using stan::math::var;

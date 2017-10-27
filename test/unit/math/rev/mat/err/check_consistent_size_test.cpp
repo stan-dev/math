@@ -1,6 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/rev/mat.hpp>
 #include <string>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
@@ -12,7 +12,6 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
 
   const std::string function = "check_consistent_size";
   const std::string name1 = "name1";
-
 
   Matrix<var, Dynamic, 1> v1(4);
   v1 << 4.0, 5.0, 6.0, 7.0;
@@ -39,7 +38,7 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize_nan) {
   v1 << nan, nan, 4, nan;
   EXPECT_EQ(4U, size_of(v1));
   EXPECT_NO_THROW(check_consistent_size(function, name1, v1, 4U));
-  EXPECT_THROW(
-    check_consistent_size(function, name1, v1, 2U), std::invalid_argument);
+  EXPECT_THROW(check_consistent_size(function, name1, v1, 2U),
+               std::invalid_argument);
   stan::math::recover_memory();
 }

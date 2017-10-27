@@ -1,16 +1,15 @@
-#include <stan/math/prim/scal.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <vector>
 
 void test_log_sum_exp(double a, double b) {
   using std::log;
   using std::exp;
   using stan::math::log_sum_exp;
-  EXPECT_FLOAT_EQ(log(exp(a) + exp(b)),
-                  log_sum_exp(a, b));
+  EXPECT_FLOAT_EQ(log(exp(a) + exp(b)), log_sum_exp(a, b));
 }
 
 void test_log_sum_exp(const std::vector<double>& as) {
@@ -18,10 +17,8 @@ void test_log_sum_exp(const std::vector<double>& as) {
   using std::exp;
   using stan::math::log_sum_exp;
   double sum_exp = 0.0;
-  for (size_t n = 0; n < as.size(); ++n)
-    sum_exp += exp(as[n]);
-  EXPECT_FLOAT_EQ(log(sum_exp),
-                  log_sum_exp(as));
+  for (size_t n = 0; n < as.size(); ++n) sum_exp += exp(as[n]);
+  EXPECT_FLOAT_EQ(log(sum_exp), log_sum_exp(as));
 }
 
 TEST(MathFunctions, log_sum_exp) {
@@ -57,12 +54,9 @@ TEST(MathFunctions, log_sum_exp_2) {
 TEST(MathFunctions, log_sum_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_sum_exp(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(1.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_sum_exp(nan, 1.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(nan, 1.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_sum_exp(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(nan, nan));
 }

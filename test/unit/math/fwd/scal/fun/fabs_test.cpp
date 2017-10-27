@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdFabs, Fvar) {
   using stan::math::fvar;
@@ -74,11 +74,9 @@ TEST(AgradFwdFabs, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct fabs_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return fabs(arg1);
   }
 };

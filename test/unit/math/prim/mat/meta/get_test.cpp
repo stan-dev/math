@@ -1,12 +1,11 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MetaTraits, get) {
   using stan::get;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
-  m << 1, 3, 5,
-       2, 4, 6;
+  m << 1, 3, 5, 2, 4, 6;
   EXPECT_EQ(1.0, get(m, 0));
   EXPECT_EQ(3.0, get(m, 2));
   EXPECT_EQ(6.0, get(m, 5));

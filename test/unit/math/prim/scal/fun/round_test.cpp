@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, round) {
   using stan::math::round;
@@ -15,6 +15,5 @@ TEST(MathFunctions, round) {
 
 TEST(MathFunctions, roundNaN) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::round(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::round(nan));
 }

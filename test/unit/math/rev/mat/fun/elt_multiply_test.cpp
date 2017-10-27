@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -115,7 +115,6 @@ TEST(AgradRevMatrix, elt_multiply_row_vec_dv) {
   EXPECT_FLOAT_EQ(2.0, g[0]);
   EXPECT_FLOAT_EQ(0.0, g[1]);
 }
-
 
 TEST(AgradRevMatrix, elt_multiply_matrix_vv) {
   using stan::math::elt_multiply;

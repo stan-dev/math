@@ -1,8 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdLog2, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -115,8 +114,7 @@ TEST(AgradFwdLog2, FvarFvarVar_3rdDeriv) {
 
 struct log2_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log2(arg1);
   }
 };

@@ -1,8 +1,8 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 using Eigen::Matrix;
@@ -120,20 +120,17 @@ TEST(ProbDistributionsMultinomial, chiSquareGoodnessFitTest) {
   int K = 3;
   Matrix<double, Dynamic, 1> theta(K);
   theta << 0.2, 0.35, 0.45;
-  boost::math::chi_squared mydist(K-1);
+  boost::math::chi_squared mydist(K - 1);
 
   double expect[K];
-  for (int i = 0 ; i < K; ++i)
-    expect[i] = N * theta(i);
+  for (int i = 0; i < K; ++i) expect[i] = N * theta(i);
 
   int bin[K];
-  for (int i = 0; i < K; ++i)
-    bin[i] = 0;
+  for (int i = 0; i < K; ++i) bin[i] = 0;
 
   for (int count = 0; count < M; ++count) {
     std::vector<int> a = stan::math::multinomial_rng(theta, trials, rng);
-    for (int i = 0; i < K; ++i)
-      bin[i] += a[i];
+    for (int i = 0; i < K; ++i) bin[i] += a[i];
   }
 
   double chi = 0;

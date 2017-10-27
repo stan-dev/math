@@ -1,8 +1,8 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <stan/math/mix/mat.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 
 using stan::math::fvar;
 TEST(AgradMixMatrixMin, fv_vector_1stDeriv) {
@@ -16,9 +16,9 @@ TEST(AgradMixMatrixMin, fv_vector_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<var> output;
   output = min(d1);
@@ -47,9 +47,9 @@ TEST(AgradMixMatrixMin, fv_vector_2ndDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<var> output;
   output = min(v1);
@@ -84,9 +84,9 @@ TEST(AgradMixMatrixMin, fv_rowvector_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<var> output;
   output = min(d1);
@@ -115,9 +115,9 @@ TEST(AgradMixMatrixMin, fv_rowvector_2ndDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<var> output;
   output = min(v1);
@@ -148,9 +148,9 @@ TEST(AgradMixMatrixMin, fv_matrix_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<var> output;
   output = min(d1);
@@ -179,9 +179,9 @@ TEST(AgradMixMatrixMin, fv_matrix_2ndDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<var> output;
   output = min(v1);
@@ -212,9 +212,9 @@ TEST(AgradMixMatrixMin, ffv_vector_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(d1);
@@ -243,9 +243,9 @@ TEST(AgradMixMatrixMin, ffv_vector_2ndDeriv_1) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -268,9 +268,9 @@ TEST(AgradMixMatrixMin, ffv_vector_2ndDeriv_2) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -293,12 +293,12 @@ TEST(AgradMixMatrixMin, ffv_vector_3rdDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
-   v1(0).val_.d_ = 1.0;
-   v1(1).val_.d_ = 1.0;
-   v1(2).val_.d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
+  v1(0).val_.d_ = 1.0;
+  v1(1).val_.d_ = 1.0;
+  v1(2).val_.d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -333,9 +333,9 @@ TEST(AgradMixMatrixMin, ffv_rowvector_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(d1);
@@ -364,9 +364,9 @@ TEST(AgradMixMatrixMin, ffv_rowvector_2ndDeriv_1) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -389,9 +389,9 @@ TEST(AgradMixMatrixMin, ffv_rowvector_2ndDeriv_2) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -414,12 +414,12 @@ TEST(AgradMixMatrixMin, ffv_rowvector_3rdDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
-   v1(0).val_.d_ = 1.0;
-   v1(1).val_.d_ = 1.0;
-   v1(2).val_.d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
+  v1(0).val_.d_ = 1.0;
+  v1(1).val_.d_ = 1.0;
+  v1(2).val_.d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -451,9 +451,9 @@ TEST(AgradMixMatrixMin, ffv_matrix_1stDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(d1);
@@ -483,9 +483,9 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_1) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -509,9 +509,9 @@ TEST(AgradMixMatrixMin, ffv_matrix_2ndDeriv_2) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);
@@ -535,12 +535,12 @@ TEST(AgradMixMatrixMin, ffv_matrix_3rdDeriv) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(0, 0).val_.d_ = 1.0;
-   v1(0, 1).val_.d_ = 1.0;
-   v1(0, 2).val_.d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(0, 0).val_.d_ = 1.0;
+  v1(0, 1).val_.d_ = 1.0;
+  v1(0, 2).val_.d_ = 1.0;
 
   fvar<fvar<var> > output;
   output = min(v1);

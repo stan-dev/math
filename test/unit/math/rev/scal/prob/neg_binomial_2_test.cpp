@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <vector>
 
 TEST(ProbDistributionsNegBinomial, derivatives) {
@@ -10,7 +10,6 @@ TEST(ProbDistributionsNegBinomial, derivatives) {
   int N = 100;
   double mu_dbl = 8;
   double phi_dbl = 1.5;
-
 
   for (int k = 0; k < 20; ++k) {
     var mu(mu_dbl);
@@ -31,10 +30,10 @@ TEST(ProbDistributionsNegBinomial, derivatives) {
     std::vector<double> finite_diffs;
     double eps = 1e-10;
     double inv2e = 0.5 / eps;
-    double dmu = neg_binomial_2_log(N, mu_dbl + eps, phi_dbl)
-      - neg_binomial_2_log(N, mu_dbl - eps, phi_dbl);
-    double dphi = neg_binomial_2_log(N, mu_dbl, phi_dbl + eps)
-      - neg_binomial_2_log(N, mu_dbl, phi_dbl - eps);
+    double dmu = neg_binomial_2_log(N, mu_dbl + eps, phi_dbl) -
+                 neg_binomial_2_log(N, mu_dbl - eps, phi_dbl);
+    double dphi = neg_binomial_2_log(N, mu_dbl, phi_dbl + eps) -
+                  neg_binomial_2_log(N, mu_dbl, phi_dbl - eps);
     finite_diffs.push_back(dmu * inv2e);
     finite_diffs.push_back(dphi * inv2e);
 

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 void test_crossprod(const stan::math::matrix_d& x) {
   using stan::math::crossprod;
@@ -8,8 +8,7 @@ void test_crossprod(const stan::math::matrix_d& x) {
   EXPECT_EQ(y.rows(), xtx.rows());
   EXPECT_EQ(y.cols(), xtx.cols());
   for (int m = 0; m < y.rows(); ++m)
-    for (int n = 0; n < y.cols(); ++n)
-      EXPECT_FLOAT_EQ(xtx(m, n), y(m, n));
+    for (int n = 0; n < y.cols(); ++n) EXPECT_FLOAT_EQ(xtx(m, n), y(m, n));
 }
 TEST(MathMatrix, crossprod) {
   stan::math::matrix_d x;
@@ -20,15 +19,10 @@ TEST(MathMatrix, crossprod) {
   test_crossprod(x);
 
   x = stan::math::matrix_d(2, 2);
-  x <<
-    1.0, 0.0,
-    2.0, 3.0;
+  x << 1.0, 0.0, 2.0, 3.0;
   test_crossprod(x);
 
   x = stan::math::matrix_d(3, 3);
-  x <<
-    1.0, 0.0, 0.0,
-    2.0, 3.0, 0.0,
-    4.0, 5.0, 6.0;
+  x << 1.0, 0.0, 0.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0;
   test_crossprod(x);
 }

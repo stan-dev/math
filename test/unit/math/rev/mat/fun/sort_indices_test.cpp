@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
@@ -7,8 +7,7 @@ void test_sort_indices_asc(VEC val) {
   using stan::math::sort_indices_asc;
 
   AVEC x;
-  for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(AVAR(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -28,8 +27,7 @@ void test_sort_indices_desc(VEC val) {
   using stan::math::sort_indices_desc;
 
   AVEC x;
-  for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(AVAR(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -54,8 +52,7 @@ void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = AVAR(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = AVAR(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -80,8 +77,7 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = AVAR(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = AVAR(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -96,8 +92,6 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
       else
         EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
-
-
 
 TEST(AgradRev, sort_indices) {
   VEC a;

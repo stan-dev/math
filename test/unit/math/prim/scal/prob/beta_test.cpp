@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 
 TEST(ProbDistributionsBeta, error_check) {
@@ -31,7 +31,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's beta distribution
-  boost::math::beta_distribution<>dist(2.0, 1.0);
+  boost::math::beta_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
@@ -54,7 +54,7 @@ TEST(ProbDistributionsBeta, chiSquareGoodnessFitTestSmallParameters) {
   }
 
   // Generate quantiles from boost's beta distribution
-  boost::math::beta_distribution<>dist(0.2, 0.3);
+  boost::math::beta_distribution<> dist(0.2, 0.3);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

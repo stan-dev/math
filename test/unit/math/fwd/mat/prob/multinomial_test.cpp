@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <stan/math/fwd/mat.hpp>
 #include <vector>
 
 using Eigen::Matrix;
@@ -15,8 +15,7 @@ TEST(ProbDistributionsMultinomial, fvar_double) {
   ns.push_back(3);
   Matrix<fvar<double>, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  for (int i = 0; i < 3; i++)
-    theta(i).d_ = 1.0;
+  for (int i = 0; i < 3; i++) theta(i).d_ = 1.0;
 
   EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_log(ns, theta).val_);
   EXPECT_FLOAT_EQ(17.666666, stan::math::multinomial_log(ns, theta).d_);
@@ -30,8 +29,7 @@ TEST(ProbDistributionsMultinomial, fvar_fvar_double) {
   ns.push_back(3);
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
-  for (int i = 0; i < 3; i++)
-    theta(i).d_.val_ = 1.0;
+  for (int i = 0; i < 3; i++) theta(i).d_.val_ = 1.0;
 
   EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_log(ns, theta).val_.val_);
   EXPECT_FLOAT_EQ(17.666666, stan::math::multinomial_log(ns, theta).d_.val_);

@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -25,8 +25,7 @@ TEST(AgradRevMatrix, determinant) {
 
   EXPECT_FLOAT_EQ(det1.val(), det2.val());
   EXPECT_EQ(g1.size(), g2.size());
-  for (size_t i = 0; i < g1.size(); ++i)
-    EXPECT_FLOAT_EQ(g1[i], g2[i]);
+  for (size_t i = 0; i < g1.size(); ++i) EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 TEST(AgradRevMatrix, deteriminant_exception) {
   using stan::math::matrix_v;
@@ -66,14 +65,13 @@ TEST(AgradRevMatrix, determinant3by3) {
 
   matrix_v Z(9, 9);
   for (int i = 0; i < 9; ++i)
-    for (int j = 0; j < 9; ++j)
-      Z(i, j) = i * j + 1;
+    for (int j = 0; j < 9; ++j) Z(i, j) = i * j + 1;
   AVAR h = determinant(Z);
   // supresses set but not used warning
   h = h;
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v X(2, 2);
-  X <<  2, 3, 5, 7;
+  X << 2, 3, 5, 7;
   test::check_varis_on_stack(stan::math::determinant(X));
 }

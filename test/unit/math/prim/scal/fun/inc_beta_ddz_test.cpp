@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, inc_beta_ddz) {
   using stan::math::inc_beta_ddz;
@@ -15,31 +15,30 @@ TEST(MathFunctions, inc_beta_ddz) {
   double large_z = 0.999;
 
   EXPECT_FLOAT_EQ(0.063300692, inc_beta_ddz(small_a, small_b, small_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(1.1905416, inc_beta_ddz(small_a, small_b, mid_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.35587692, inc_beta_ddz(small_a, small_b, large_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
 
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, small_b, small_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, small_b, mid_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.009898182, inc_beta_ddz(large_a, small_b, large_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
 
   EXPECT_FLOAT_EQ(0.1848717, inc_beta_ddz(small_a, large_b, small_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(small_a, large_b, mid_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(small_a, large_b, large_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
 
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, large_b, small_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, large_b, mid_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, large_b, large_z))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
 }
-

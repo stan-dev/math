@@ -1,7 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdPow, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -34,8 +34,7 @@ TEST(AgradFwdPow, FvarVar_Double_1stDeriv) {
   fvar<var> a = pow(x, z);
 
   EXPECT_FLOAT_EQ(pow(0.5, 1.2), a.val_.val());
-  EXPECT_FLOAT_EQ((1.2 * 1.0 / 0.5) * pow(0.5, 1.2),
-                  a.d_.val());
+  EXPECT_FLOAT_EQ((1.2 * 1.0 / 0.5) * pow(0.5, 1.2), a.d_.val());
 
   AVEC y = createAVEC(x.val_);
   VEC g;
@@ -53,8 +52,7 @@ TEST(AgradFwdPow, Double_FvarVar_1stDeriv) {
   fvar<var> a = pow(x, z);
 
   EXPECT_FLOAT_EQ(pow(0.5, 1.2), a.val_.val());
-  EXPECT_FLOAT_EQ((2.0 * log(0.5)) * pow(0.5, 1.2),
-                  a.d_.val());
+  EXPECT_FLOAT_EQ((2.0 * log(0.5)) * pow(0.5, 1.2), a.d_.val());
 
   AVEC y = createAVEC(z.val_);
   VEC g;
@@ -320,10 +318,8 @@ TEST(AgradFwdPow, Double_FvarFvarVar_3rdDeriv) {
 
 struct pow_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return pow(arg1, arg2);
   }
 };

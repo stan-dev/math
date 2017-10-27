@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, quad_form_mat) {
   using stan::math::quad_form;
@@ -8,15 +8,9 @@ TEST(MathMatrix, quad_form_mat) {
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
 
-
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   matrix_d resd = quad_form(ad, bd);
@@ -33,14 +27,9 @@ TEST(MathMatrix, quad_form_sym_mat) {
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   matrix_d resd = quad_form_sym(ad, bd);
@@ -59,12 +48,9 @@ TEST(MathMatrix, quad_form_vec) {
   vector_d bd(4);
   double res;
 
-
   bd << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   res = quad_form(ad, bd);
@@ -81,10 +67,8 @@ TEST(MathMatrix, quad_form_sym_vec) {
   double res;
 
   bd << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   res = quad_form_sym(ad, bd);
@@ -98,24 +82,16 @@ TEST(MathMatrix, quad_form_sym_symmetry) {
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   matrix_d resd = quad_form_sym(ad, bd);
   EXPECT_EQ(resd(1, 0), resd(0, 1));
 
   bd.resize(4, 3);
-  bd << 100, 10, 11,
-  0,  1, 12,
-  -3, -3, 34,
-  5,  2, 44;
+  bd << 100, 10, 11, 0, 1, 12, -3, -3, 34, 5, 2, 44;
   resd = quad_form_sym(ad, bd);
   EXPECT_EQ(resd(1, 0), resd(0, 1));
   EXPECT_EQ(resd(2, 0), resd(0, 2));
@@ -129,15 +105,9 @@ TEST(MathMatrix, quad_form_sym_asymmetric) {
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
 
-
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   EXPECT_THROW(quad_form_sym(ad, bd), std::domain_error);

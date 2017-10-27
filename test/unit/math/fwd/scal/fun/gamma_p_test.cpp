@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdGammaP, gamma_p) {
@@ -53,13 +53,10 @@ TEST(AgradFwdGammaP, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0.40753385, a.d_.d_);
 }
 
-
 struct gamma_p_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return gamma_p(arg1, arg2);
   }
 };

@@ -1,8 +1,7 @@
-#include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <stan/math/mix/scal.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
-
+#include <test/unit/math/rev/scal/fun/util.hpp>
 
 TEST(AgradFwdFmod, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -321,10 +320,8 @@ TEST(AgradFwdFmod, Double_FvarFvarVar_3rdDeriv) {
 
 struct fmod_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fmod(arg1, arg2);
   }
 };

@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -138,8 +138,8 @@ TEST(AgradRevMatrix, distance_vv) {
   AVAR c;
   // a = (-1, 0, 1), b = (1, 2, 3)
   for (int i = -1; i < 2; i++) {
-    a(i+1) = i;
-    b(i+1) = i + 2;
+    a(i + 1) = i;
+    b(i + 1) = i + 2;
   }
   c = stan::math::distance(a, b);
   EXPECT_FLOAT_EQ(3.464102, c.val());
@@ -166,8 +166,8 @@ TEST(AgradRevMatrix, distance_dv) {
   AVAR c;
   // a = (-1, 0, 1), b = (1, 2, 3)
   for (int i = -1; i < 2; i++) {
-    a(i+1) = i;
-    b(i+1) = i + 2;
+    a(i + 1) = i;
+    b(i + 1) = i + 2;
   }
   c = stan::math::distance(a, b);
   EXPECT_FLOAT_EQ(3.464102, c.val());
@@ -190,8 +190,8 @@ TEST(AgradRevMatrix, distance_vd) {
   AVAR c;
   // a = (-1, 0, 1), b = (1, 2, 3)
   for (int i = -1; i < 2; i++) {
-    a(i+1) = i;
-    b(i+1) = i + 2;
+    a(i + 1) = i;
+    b(i + 1) = i + 2;
   }
   c = stan::math::distance(a, b);
   EXPECT_FLOAT_EQ(3.464102, c.val());

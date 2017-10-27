@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <cmath>
 
 TEST(AgradRev, fma_vvv) {
   AVAR a = 3.0;
@@ -96,11 +96,8 @@ TEST(AgradRev, fma_ddv) {
 
 struct fma_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return fma(arg1, arg2, arg3);
   }
 };

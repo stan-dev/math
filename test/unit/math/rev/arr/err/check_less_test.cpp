@@ -1,5 +1,5 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/arr.hpp>
 #include <string>
 #include <vector>
 
@@ -15,8 +15,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   const std::string function = "check_less";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
-    a.push_back(var(i));
+  for (int i = 0; i < N; ++i) a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 

@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, multiply_c_v) {
   stan::math::vector_d v(3);
@@ -55,8 +55,7 @@ TEST(MathMatrix, multiply_m_v_exception) {
 
   m.resize(3, 0);
   v.resize(0);
-  EXPECT_THROW(stan::math::multiply(m, v),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::multiply(m, v), std::invalid_argument);
 
   m.resize(2, 3);
   v.resize(2);
@@ -72,8 +71,7 @@ TEST(MathMatrix, multiply_rv_m_exception) {
 
   rv.resize(0);
   m.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(rv, m),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
 
   rv.resize(3);
   m.resize(2, 3);
@@ -86,11 +84,9 @@ TEST(MathMatrix, multiply_m_m_exception) {
   m2.resize(3, 5);
   EXPECT_NO_THROW(stan::math::multiply(m1, m2));
 
-
   m1.resize(2, 0);
   m2.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(m1, m2),
-               std::invalid_argument);
+  EXPECT_THROW(stan::math::multiply(m1, m2), std::invalid_argument);
 
   m1.resize(4, 3);
   m2.resize(2, 3);
@@ -110,7 +106,6 @@ TEST(MathMatrix, multiply) {
   EXPECT_NO_THROW(multiply(2.0, rv0));
   EXPECT_NO_THROW(multiply(2.0, m0));
 }
-
 
 TEST(AgradRevMatrix, multiply_int) {
   using stan::math::multiply;

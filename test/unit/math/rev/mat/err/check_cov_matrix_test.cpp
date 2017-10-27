@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <string>
 
 TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
@@ -15,5 +15,5 @@ TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
   Sigma << 1;
 
   EXPECT_NO_THROW(check_cov_matrix(function, "Sigma", Sigma))
-    << "check_cov_matrix should not throw exception with Sigma";
+      << "check_cov_matrix should not throw exception with Sigma";
 }

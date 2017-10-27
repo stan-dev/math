@@ -1,8 +1,7 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/util.hpp>
 #include <vector>
-
 
 TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
   using stan::math::var;
@@ -19,13 +18,12 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
 
   size_t S = 1;
   size_t N = 2;
-  size_t size = N * (1+S);
+  size_t size = N * (1 + S);
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(size, 0.0);
-    for (size_t n = 0; n < size; n++)
-      coupled_state[n] = ++k;
+    for (size_t n = 0; n < size; n++) coupled_state[n] = ++k;
     ys_coupled[t] = coupled_state;
   }
 
@@ -33,8 +31,7 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
   ys = decouple_ode_states(ys_coupled, y0, theta);
 
   ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
+  for (size_t t = 0; t < T; t++) ASSERT_EQ(2U, ys[t].size());
 
   for (size_t t = 0; t < T; t++)
     for (size_t n = 0; n < 2; n++)
@@ -57,13 +54,12 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vd) {
 
   size_t N = 2;
   size_t S = N;
-  size_t size = N * (1+S);
+  size_t size = N * (1 + S);
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(size, 0.0);
-    for (size_t n = 0; n < size; n++)
-      coupled_state[n] = ++k;
+    for (size_t n = 0; n < size; n++) coupled_state[n] = ++k;
     ys_coupled[t] = coupled_state;
   }
 
@@ -71,8 +67,7 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vd) {
   ys = decouple_ode_states(ys_coupled, y0_v, theta);
 
   ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
+  for (size_t t = 0; t < T; t++) ASSERT_EQ(2U, ys[t].size());
 
   // note: decouple states operation above does not do any
   // shifting. Integrator gives plain solution.
@@ -98,15 +93,14 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
   std::vector<var> theta_v(theta_d.begin(), theta_d.end());
 
   size_t N = 2;
-  size_t S = N+1;
-  size_t size = N * (1+S);
+  size_t S = N + 1;
+  size_t size = N * (1 + S);
   size_t T = 10;
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(size, 0.0);
-    for (size_t n = 0; n < size; n++)
-      coupled_state[n] = ++k;
+    for (size_t n = 0; n < size; n++) coupled_state[n] = ++k;
     ys_coupled[t] = coupled_state;
   }
 
@@ -114,8 +108,7 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
   ys = decouple_ode_states(ys_coupled, y0_v, theta_v);
 
   ASSERT_EQ(T, ys.size());
-  for (size_t t = 0; t < T; t++)
-    ASSERT_EQ(2U, ys[t].size());
+  for (size_t t = 0; t < T; t++) ASSERT_EQ(2U, ys[t].size());
 
   // note: decouple states operation above does not do any
   // shifting. Integrator gives plain solution.
@@ -125,4 +118,3 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
                       // + y0[n].val(),
                       ys[t][n].val());
 }
-

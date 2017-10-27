@@ -1,5 +1,5 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixDiagMatrix, vector_fv_1stDeriv) {
@@ -165,4 +165,3 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
-

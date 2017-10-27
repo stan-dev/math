@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
+#include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::fvar;
@@ -71,8 +71,7 @@ TEST(AgradFwdinv_Phi, FvarFvarDouble) {
 
 struct inv_Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_Phi(arg1);
   }
 };

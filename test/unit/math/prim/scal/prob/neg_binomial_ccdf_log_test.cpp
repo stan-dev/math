@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/scal.hpp>
 
 TEST(ProbNegBinomial, ccdf_log_matches_lccdf) {
   int y = 3;
@@ -9,6 +9,6 @@ TEST(ProbNegBinomial, ccdf_log_matches_lccdf) {
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lccdf(y, alpha, beta)),
                   (stan::math::neg_binomial_ccdf_log(y, alpha, beta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::neg_binomial_lccdf<int, double, double>(y, alpha, beta)),
-    (stan::math::neg_binomial_ccdf_log<int, double, double>(y, alpha, beta)));
+      (stan::math::neg_binomial_lccdf<int, double, double>(y, alpha, beta)),
+      (stan::math::neg_binomial_ccdf_log<int, double, double>(y, alpha, beta)));
 }

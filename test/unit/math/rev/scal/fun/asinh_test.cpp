@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, asinh_val) {
   AVAR a = 0.2;
@@ -12,7 +12,7 @@ TEST(AgradRev, asinh_val) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/sqrt(0.2 * 0.2  + 1.0), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / sqrt(0.2 * 0.2 + 1.0), g[0]);
 }
 
 TEST(AgradRev, asinh_neg_val) {
@@ -23,7 +23,7 @@ TEST(AgradRev, asinh_neg_val) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/sqrt(-0.2 * -0.2  + 1.0), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / sqrt(-0.2 * -0.2 + 1.0), g[0]);
 }
 
 TEST(AgradRev, asinh_boundry) {
@@ -47,8 +47,7 @@ TEST(AgradRev, asinh_boundry) {
 
 struct asinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return asinh(arg1);
   }
 };

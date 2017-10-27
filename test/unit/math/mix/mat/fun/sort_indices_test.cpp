@@ -1,7 +1,6 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/mix/mat.hpp>
 #include <vector>
-
 
 typedef std::vector<double> VEC;
 using stan::math::fvar;
@@ -11,8 +10,7 @@ using stan::math::sort_indices_desc;
 
 void test_sort_indices_asc2(std::vector<double> val) {
   std::vector<fvar<var> > x;
-  for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<var>(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(fvar<var>(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -49,8 +47,7 @@ void test_sort_indices_asc4(std::vector<double> val) {
 
 void test_sort_indices_desc2(VEC val) {
   std::vector<fvar<var> > x;
-  for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(fvar<var>(val[i]));
+  for (size_t i = 0U; i < val.size(); i++) x.push_back(fvar<var>(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -92,8 +89,7 @@ void test_sort_indices_asc2(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<var>(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<var>(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -116,8 +112,7 @@ void test_sort_indices_asc4(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<var> >(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<fvar<var> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -140,8 +135,7 @@ void test_sort_indices_desc2(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<var>(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<var>(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -164,8 +158,7 @@ void test_sort_indices_desc4(Eigen::Matrix<T, R, C> val) {
   const size_t size = val.size();
 
   AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
-    x.data()[i] = fvar<fvar<var> >(val[i]);
+  for (size_t i = 0U; i < size; i++) x.data()[i] = fvar<fvar<var> >(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);

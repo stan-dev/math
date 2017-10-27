@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <vector>
 
@@ -9,8 +9,8 @@ TEST(ProbDistributionsBernoulliLogit, error_check) {
 
   EXPECT_NO_THROW(stan::math::bernoulli_logit_rng(-3.5, rng));
   EXPECT_THROW(
-    stan::math::bernoulli_logit_rng(stan::math::positive_infinity(), rng),
-    std::domain_error);
+      stan::math::bernoulli_logit_rng(stan::math::positive_infinity(), rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {

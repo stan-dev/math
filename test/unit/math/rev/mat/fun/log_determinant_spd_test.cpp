@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
@@ -27,8 +27,7 @@ TEST(AgradRevMatrix, log_determinant_spd_diff) {
 
   EXPECT_FLOAT_EQ(det1.val(), det2.val());
   EXPECT_EQ(g1.size(), g2.size());
-  for (size_t i = 0; i < g1.size(); ++i)
-    EXPECT_FLOAT_EQ(g1[i], g2[i]);
+  for (size_t i = 0; i < g1.size(); ++i) EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
 TEST(AgradRevMatrix, log_determinant_spd) {
@@ -83,4 +82,3 @@ TEST(AgradRevMatrix, log_determinant_grad) {
   EXPECT_FLOAT_EQ(-2.0, g[3]);
 }
 #endif
-

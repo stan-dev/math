@@ -1,8 +1,8 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <vector>
+#include <stan/math/rev/arr.hpp>
 #include <string>
+#include <vector>
 
 using stan::math::var;
 using stan::math::check_positive_finite;
@@ -16,42 +16,42 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
   x.push_back(0.1);
   x.push_back(1);
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
-    << "check_positive_finite should be true with finite x";
+      << "check_positive_finite should be true with finite x";
 
   x.clear();
   x.push_back(1);
   x.push_back(2);
   x.push_back(std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
-    << "check_positive_finite should throw exception on Inf";
+      << "check_positive_finite should throw exception on Inf";
 
   x.clear();
   x.push_back(-1);
   x.push_back(2);
   x.push_back(std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
-    << "check_positive_finite should throw exception on negative x";
+      << "check_positive_finite should throw exception on negative x";
 
   x.clear();
   x.push_back(0);
   x.push_back(2);
   x.push_back(std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
-    << "check_positive_finite should throw exception on x=0";
+      << "check_positive_finite should throw exception on x=0";
 
   x.clear();
   x.push_back(1);
   x.push_back(2);
   x.push_back(-std::numeric_limits<double>::infinity());
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
-    << "check_positive_finite should throw exception on -Inf";
+      << "check_positive_finite should throw exception on -Inf";
 
   x.clear();
   x.push_back(1);
   x.push_back(2);
   x.push_back(std::numeric_limits<double>::quiet_NaN());
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
-    << "check_positive_finite should throw exception on NaN";
+      << "check_positive_finite should throw exception on NaN";
   stan::math::recover_memory();
 }
 
@@ -64,8 +64,7 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   const std::string function = "check_positive_finite";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
-    a.push_back(var(i));
+  for (int i = 0; i < N; ++i) a.push_back(var(i));
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 

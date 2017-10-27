@@ -1,7 +1,7 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <stan/math/fwd/mat.hpp>
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixMax, fd_vector) {
@@ -14,9 +14,9 @@ TEST(AgradFwdMatrixMax, fd_vector) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<double> output;
   output = max(d1);
@@ -45,9 +45,9 @@ TEST(AgradFwdMatrixMax, fd_rowvector) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
 
   fvar<double> output;
   output = max(d1);
@@ -76,9 +76,9 @@ TEST(AgradFwdMatrixMax, fd_matrix) {
 
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
 
   fvar<double> output;
   output = max(d1);

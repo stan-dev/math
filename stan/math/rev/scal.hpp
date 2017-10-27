@@ -4,11 +4,13 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/ad_promotable.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
+#include <stan/math/rev/scal/meta/partials_type.hpp>
 
 #include <stan/math/prim/scal.hpp>
 
+#include <stan/math/rev/scal/fun/Phi.hpp>
+#include <stan/math/rev/scal/fun/Phi_approx.hpp>
 #include <stan/math/rev/scal/fun/abs.hpp>
 #include <stan/math/rev/scal/fun/acos.hpp>
 #include <stan/math/rev/scal/fun/acosh.hpp>
@@ -53,9 +55,9 @@
 #include <stan/math/rev/scal/fun/if_else.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
 #include <stan/math/rev/scal/fun/inv.hpp>
+#include <stan/math/rev/scal/fun/inv_Phi.hpp>
 #include <stan/math/rev/scal/fun/inv_cloglog.hpp>
 #include <stan/math/rev/scal/fun/inv_logit.hpp>
-#include <stan/math/rev/scal/fun/inv_Phi.hpp>
 #include <stan/math/rev/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
@@ -64,7 +66,6 @@
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/logit.hpp>
 #include <stan/math/rev/scal/fun/log10.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/log1m_exp.hpp>
@@ -78,12 +79,11 @@
 #include <stan/math/rev/scal/fun/log_mix.hpp>
 #include <stan/math/rev/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/scal/fun/log_sum_exp.hpp>
+#include <stan/math/rev/scal/fun/logit.hpp>
 #include <stan/math/rev/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/rev/scal/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/rev/scal/fun/multiply_log.hpp>
 #include <stan/math/rev/scal/fun/owens_t.hpp>
-#include <stan/math/rev/scal/fun/Phi.hpp>
-#include <stan/math/rev/scal/fun/Phi_approx.hpp>
 #include <stan/math/rev/scal/fun/pow.hpp>
 #include <stan/math/rev/scal/fun/primitive_value.hpp>
 #include <stan/math/rev/scal/fun/rising_factorial.hpp>
@@ -96,8 +96,8 @@
 #include <stan/math/rev/scal/fun/step.hpp>
 #include <stan/math/rev/scal/fun/tan.hpp>
 #include <stan/math/rev/scal/fun/tanh.hpp>
-#include <stan/math/rev/scal/fun/to_var.hpp>
 #include <stan/math/rev/scal/fun/tgamma.hpp>
+#include <stan/math/rev/scal/fun/to_var.hpp>
 #include <stan/math/rev/scal/fun/trigamma.hpp>
 #include <stan/math/rev/scal/fun/trunc.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>

@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdModifiedBesselSecondKind, Fvar) {
@@ -46,8 +46,7 @@ TEST(AgradFwdModifiedBesselSecondKind, FvarFvarDouble) {
 
 struct modified_bessel_second_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return modified_bessel_second_kind(1, arg1);
   }
 };

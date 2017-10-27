@@ -1,8 +1,8 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, tgamma) {
   using stan::math::tgamma;
@@ -18,6 +18,5 @@ TEST(MathFunctions, tgammaStanMath) {
 
 TEST(MathFunctions, tgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::tgamma(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::tgamma(nan));
 }

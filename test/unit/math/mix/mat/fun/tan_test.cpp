@@ -1,12 +1,12 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
+#include <stan/math/mix/mat.hpp>
+#include <stan/math/prim/mat/fun/tan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
 #include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <stan/math/prim/mat/fun/tan.hpp>
+#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
 #include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
 #include <vector>
 
 /**
@@ -45,9 +45,7 @@ struct tan_test {
    *
    * WARNING:  this is *not an independent test*.
    */
-  static double apply_base(int x) {
-    return apply<double>(x);
-  }
+  static double apply_base(int x) { return apply<double>(x); }
 
   /**
    * This is the generic version of the integer version defined
@@ -67,30 +65,35 @@ struct tan_test {
   static std::vector<double> valid_inputs() {
     using stan::math::pi;
     return test::math::vector_builder<double>()
-      .add(4.4).add(pi()/2).add(0).add(-3 * pi()/2).add(-0.7).build();
+        .add(4.4)
+        .add(pi() / 2)
+        .add(0)
+        .add(-3 * pi() / 2)
+        .add(-0.7)
+        .build();
   }
 
   /**
    * Return sequence of invalid double-valued inputs.
    */
-  static std::vector<double> invalid_inputs() {
-    return std::vector<double>();
-  }
+  static std::vector<double> invalid_inputs() { return std::vector<double>(); }
 
   /**
    * Return sequence of valid integer inputs.
    */
   static std::vector<int> int_valid_inputs() {
     return test::math::vector_builder<int>()
-      .add(1).add(-2).add(0).add(3).build();
+        .add(1)
+        .add(-2)
+        .add(0)
+        .add(3)
+        .build();
   }
 
   /**
    * Return sequence of invalid integer inputs.
    */
-  static std::vector<int> int_invalid_inputs() {
-    return std::vector<int>();
-  }
+  static std::vector<int> int_invalid_inputs() { return std::vector<int>(); }
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, tan_test);

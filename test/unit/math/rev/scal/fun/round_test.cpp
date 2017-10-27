@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -36,7 +36,6 @@ TEST(AgradRev, round_3) {
   EXPECT_FLOAT_EQ(0.0, grad_f[0]);
 }
 
-
 TEST(AgradRev, round_4) {
   AVAR a = -1.7;
   AVAR f = round(a);
@@ -50,8 +49,7 @@ TEST(AgradRev, round_4) {
 
 struct round_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return round(arg1);
   }
 };

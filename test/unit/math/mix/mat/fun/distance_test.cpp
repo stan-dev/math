@@ -1,7 +1,7 @@
-#include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/mix/mat.hpp>
 #include <vector>
 
 using stan::math::var;
@@ -711,7 +711,6 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv2) {
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
 
-
   stan::math::fvar<fvar<var> > a = stan::math::distance(v, rv);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -755,7 +754,6 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv3) {
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
 
-
   stan::math::fvar<fvar<var> > a = stan::math::distance(v, rv);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_.val());
@@ -798,7 +796,6 @@ TEST(AgradMixMatrixDistance, vector_fv_rowvector_ffv4) {
   v(0).val_.d_ = 4.0;
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
-
 
   stan::math::fvar<fvar<var> > a = stan::math::distance(v, rv);
 

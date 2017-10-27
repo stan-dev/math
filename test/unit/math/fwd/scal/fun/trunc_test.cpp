@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTrunc, Fvar) {
@@ -22,11 +22,9 @@ TEST(AgradFwdTrunc, Fvar) {
   EXPECT_FLOAT_EQ(0.0, c.d_);
 }
 
-
 struct trunc_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return trunc(arg1);
   }
 };

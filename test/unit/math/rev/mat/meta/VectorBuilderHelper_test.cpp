@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <vector>
 
 TEST(MetaTraits, VectorBuilderHelper_false_true) {
@@ -41,7 +41,6 @@ TEST(MetaTraits, VectorBuilderHelper_true_true) {
   std::vector<double> data3;
   EXPECT_NO_THROW(data3 = dvv3.data());
   EXPECT_EQ(length(a_vector), data3.size());
-
 
   VectorBuilderHelper<double, true, true> dvv4(length(a_row_vector));
   dvv4[0] = 0.0;

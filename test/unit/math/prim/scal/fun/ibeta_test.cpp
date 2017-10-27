@@ -1,33 +1,28 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 const double inf = std::numeric_limits<double>::infinity();
 
 TEST(MathFunctions, ibeta) {
   using stan::math::ibeta;
 
-  EXPECT_FLOAT_EQ(0.0, ibeta(0.5, 0.5, 0.0))
-    << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(0.0, ibeta(0.5, 0.5, 0.0)) << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.333333333, ibeta(0.5, 0.5, 0.25))
-    << "reasonable values for a, b, x";
-  EXPECT_FLOAT_EQ(0.5, ibeta(0.5, 0.5, 0.5))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(0.5, ibeta(0.5, 0.5, 0.5)) << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.666666667, ibeta(0.5, 0.5, 0.75))
-    << "reasonable values for a, b, x";
-  EXPECT_FLOAT_EQ(1.0, ibeta(0.5, 0.5, 1.0))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(1.0, ibeta(0.5, 0.5, 1.0)) << "reasonable values for a, b, x";
 
-  EXPECT_FLOAT_EQ(0.0, ibeta(0.1, 1.5, 0.0))
-    << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(0.0, ibeta(0.1, 1.5, 0.0)) << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.9117332, ibeta(0.1, 1.5, 0.25))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.9645342, ibeta(0.1, 1.5, 0.5))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(0.9897264, ibeta(0.1, 1.5, 0.75))
-    << "reasonable values for a, b, x";
-  EXPECT_FLOAT_EQ(1.0, ibeta(0.1, 1.5, 1.0))
-    << "reasonable values for a, b, x";
+      << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(1.0, ibeta(0.1, 1.5, 1.0)) << "reasonable values for a, b, x";
 }
 
 TEST(MathFunctions, ibeta_a_boundary) {
@@ -64,7 +59,6 @@ TEST(MathFunctions, ibeta_a_b_boundary) {
   EXPECT_THROW(stan::math::ibeta(0.0, 0.0, x), std::domain_error);
 }
 
-
 TEST(MathFunctions, ibeta_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -76,4 +70,3 @@ TEST(MathFunctions, ibeta_nan) {
   EXPECT_THROW(stan::math::ibeta(nan, nan, 0.0), std::domain_error);
   EXPECT_THROW(stan::math::ibeta(nan, nan, nan), std::domain_error);
 }
-

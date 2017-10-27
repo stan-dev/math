@@ -1,8 +1,8 @@
 #ifndef TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_MATRIX_VALUE_HPP
 #define TEST_UNIT_MATH_PRIM_MAT_VECTORIZE_EXPECT_PRIM_MATRIX_VALUE_HPP
 
-#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <Eigen/Dense>
+#include <test/unit/math/prim/mat/vectorize/expect_val_eq.hpp>
 #include <vector>
 
 template <typename F>
@@ -14,7 +14,7 @@ void expect_prim_matrix_value() {
   MatrixXd a(valid_inputs.size(), 3);
 
   for (int i = 0; i < a.size(); i++) {
-    a(i) =  valid_inputs[(i % valid_inputs.size())];
+    a(i) = valid_inputs[(i % valid_inputs.size())];
   }
 
   MatrixXd fa = F::template apply<MatrixXd>(a);

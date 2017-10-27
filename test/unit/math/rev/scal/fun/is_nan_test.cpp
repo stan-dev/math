@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <limits>
 
 TEST(AgradRev, is_nan) {
   using stan::math::is_nan;
@@ -19,4 +19,3 @@ TEST(AgradRev, is_nan) {
   AVAR c(infinity);
   EXPECT_FALSE(is_nan(c));
 }
-

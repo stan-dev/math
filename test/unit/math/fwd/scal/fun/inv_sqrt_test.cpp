@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdInvSqrt, Fvar) {
@@ -7,7 +7,7 @@ TEST(AgradFwdInvSqrt, Fvar) {
   using stan::math::inv_sqrt;
 
   fvar<double> x(0.5);
-  x.d_ = 1.0;   // Derivatives w.r.t. x
+  x.d_ = 1.0;  // Derivatives w.r.t. x
   fvar<double> a = inv_sqrt(x);
 
   EXPECT_FLOAT_EQ(inv_sqrt(0.5), a.val_);
@@ -47,8 +47,7 @@ TEST(AgradFwdInvSqrt, FvarFvarDouble) {
 
 struct inv_sqrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_sqrt(arg1);
   }
 };

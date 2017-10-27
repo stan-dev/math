@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixQrQ, fd) {
   using stan::math::matrix_d;
@@ -26,8 +26,7 @@ TEST(AgradFwdMatrixQrQ, fd) {
   matrix_d res2 = qr_Q(m2);
 
   for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_);
+    for (int j = 0; j < 3; j++) EXPECT_FLOAT_EQ(res2(i, j), res(i, j).val_);
 
   EXPECT_FLOAT_EQ(0.12556578, res(0, 0).d_);
   EXPECT_FLOAT_EQ(-0.023659391, res(0, 1).d_);

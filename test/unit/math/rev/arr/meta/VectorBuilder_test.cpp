@@ -1,5 +1,5 @@
-#include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/arr.hpp>
 #include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_true) {
@@ -47,4 +47,3 @@ TEST(MetaTraits, VectorBuilder_true_true) {
   EXPECT_NO_THROW(data2 = dvv2.data());
   EXPECT_EQ(length(a_std_vector), data2.size());
 }
-

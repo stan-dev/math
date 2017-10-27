@@ -1,7 +1,7 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
+#include <stan/math/fwd/scal.hpp>
 
 TEST(AgradFwd, primitiveValue) {
   using stan::math::fvar;
@@ -46,4 +46,3 @@ TEST(AgradFwd, primitiveValueNanNested) {
   EXPECT_TRUE(boost::math::isnan(primitive_value(a)));
   EXPECT_TRUE(boost::math::isnan(primitive_value(nan)));
 }
-

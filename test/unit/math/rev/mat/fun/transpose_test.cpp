@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
@@ -12,8 +12,7 @@ TEST(AgradRevMatrix, transpose_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_v a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 2), a(1, 1));
 
@@ -41,8 +40,7 @@ TEST(AgradRevMatrix, transpose_vector) {
 
   row_vector_v a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
-  for (size_type i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(a(i).val(), a_tr(i).val());
+  for (size_type i = 0; i < 3; ++i) EXPECT_FLOAT_EQ(a(i).val(), a_tr(i).val());
 
   VEC g = cgradvec(a_tr(1), x);
   EXPECT_FLOAT_EQ(0.0, g[0]);
@@ -61,8 +59,7 @@ TEST(AgradRevMatrix, transpose_row_vector) {
 
   vector_v a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
-  for (size_type i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(a(i).val(), a_tr(i).val());
+  for (size_type i = 0; i < 3; ++i) EXPECT_FLOAT_EQ(a(i).val(), a_tr(i).val());
 
   VEC g = cgradvec(a_tr(1), x);
   EXPECT_FLOAT_EQ(0.0, g[0]);
@@ -76,8 +73,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::vector_v b(3);
   b << 1.0, 2.0, 3.0;
   stan::math::matrix_v c(2, 3);
-  c << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
+  c << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
 
   test::check_varis_on_stack(stan::math::transpose(a));
   test::check_varis_on_stack(stan::math::transpose(b));

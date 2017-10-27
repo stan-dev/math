@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 
 TEST(MathMatrix, sumVector) {
   using stan::math::sum;
@@ -19,7 +19,6 @@ TEST(MathMatrix, sumVector) {
   v[2] = 100.0;
   EXPECT_FLOAT_EQ(115.0, sum(v));
 }
-
 
 TEST(MathMatrix, sumRowVector) {
   using stan::math::sum;

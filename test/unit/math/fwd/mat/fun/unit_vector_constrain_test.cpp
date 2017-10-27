@@ -1,5 +1,5 @@
-#include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/mat.hpp>
 
 TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
   using stan::math::unit_vector_constrain;
@@ -29,8 +29,7 @@ TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
   const double eps = 10e-20;
   for (int i = 0; i < x3.size(); ++i) {
     Eigen::VectorXcd cx3(x3.size());
-    for (int j = 0; j < x3.size(); ++j)
-      cx3.real().coeffRef(j) = x3(j).val_;
+    for (int j = 0; j < x3.size(); ++j) cx3.real().coeffRef(j) = x3(j).val_;
     cx3.imag().setZero();
     cx3.imag().coeffRef(2) = eps;
     // should be cx3.squaredNorm() but Eigen has a bug?
@@ -52,7 +51,7 @@ TEST(AgradFwdMatrixSoftmax, ffd) {
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> x(1);
   x << 0.7;
-   x(0).d_ = 1.0;
+  x(0).d_ = 1.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta = unit_vector_constrain(x);
   EXPECT_EQ(1, theta.size());

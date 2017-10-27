@@ -1,9 +1,9 @@
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
-#include <limits>
-#include <stdexcept>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
+#include <limits>
+#include <stan/math/prim/scal.hpp>
+#include <stdexcept>
 
 TEST(MathFunctions, expm1) {
   using stan::math::expm1;
@@ -11,8 +11,7 @@ TEST(MathFunctions, expm1) {
   EXPECT_FLOAT_EQ(exp(-14.2) - 1, expm1(-14.2));
   EXPECT_FLOAT_EQ(exp(0) - 1, expm1(0));
   EXPECT_FLOAT_EQ(exp(172.987) - 1, expm1(172.987));
-  EXPECT_FLOAT_EQ(-1,
-                  expm1(-std::numeric_limits<double>::infinity()));
+  EXPECT_FLOAT_EQ(-1, expm1(-std::numeric_limits<double>::infinity()));
 }
 
 TEST(MathFunctions, expm1_inf_return) {

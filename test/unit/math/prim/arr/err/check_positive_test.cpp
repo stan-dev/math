@@ -1,6 +1,6 @@
-#include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/arr.hpp>
 #include <string>
 #include <vector>
 
@@ -31,8 +31,7 @@ TEST(ErrorHandlingScalar, CheckPositive_nan) {
 
   for (size_t i = 0; i < x.size(); i++) {
     x[i] = nan;
-    EXPECT_THROW(check_positive(function, "x", x),
-                 std::domain_error);
+    EXPECT_THROW(check_positive(function, "x", x), std::domain_error);
     x[i] = i;
   }
 }

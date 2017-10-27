@@ -1,14 +1,13 @@
-#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/mat.hpp>
 
 TEST(ErrorHandlingMatrix, checkCovMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  EXPECT_NO_THROW(stan::math::check_cov_matrix("checkCovMatrix",
-                                               "y", y));
+  EXPECT_NO_THROW(stan::math::check_cov_matrix("checkCovMatrix", "y", y));
 
   y << 1, 2, 3, 2, 1, 2, 3, 2, 1;
   EXPECT_THROW(stan::math::check_cov_matrix("checkCovMatrix", "y", y),
@@ -21,8 +20,7 @@ TEST(ErrorHandlingMatrix, checkCovMatrix_nan) {
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  EXPECT_NO_THROW(stan::math::check_cov_matrix("checkCovMatrix",
-                                               "y", y));
+  EXPECT_NO_THROW(stan::math::check_cov_matrix("checkCovMatrix", "y", y));
 
   for (int i = 0; i < y.size(); i++) {
     y.resize(3, 3);

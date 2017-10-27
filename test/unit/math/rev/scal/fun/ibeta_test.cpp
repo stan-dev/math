@@ -1,9 +1,9 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/nan_util.hpp>
-#include <test/unit/math/rev/scal/util.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <limits>
+#include <stan/math/rev/scal.hpp>
+#include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev, ibeta_vvv) {
   using stan::math::var;
@@ -207,11 +207,8 @@ TEST(AgradRev, ibeta_ddv) {
 
 struct ibeta_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return ibeta(arg1, arg2, arg3);
   }
 };

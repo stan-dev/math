@@ -1,5 +1,5 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
@@ -11,13 +11,12 @@ TEST(AgradRev, cbrt) {
   AVEC x = createAVEC(a);
   VEC grad_f;
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(1.0 / 3.0 / std::pow(27.0, 2.0/3.0), grad_f[0]);
+  EXPECT_FLOAT_EQ(1.0 / 3.0 / std::pow(27.0, 2.0 / 3.0), grad_f[0]);
 }
 
 struct cbrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cbrt(arg1);
   }
 };

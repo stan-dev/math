@@ -2,16 +2,18 @@
 #define STAN_MATH_REV_MAT_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
-#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
 
+#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
+#include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
@@ -23,8 +25,6 @@
 #include <stan/math/rev/mat/fun/dot_self.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
-#include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
-#include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/log_determinant.hpp>
 #include <stan/math/rev/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/rev/mat/fun/log_determinant_spd.hpp>
@@ -53,11 +53,11 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/variance.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
-#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
-#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
-#include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 
 #endif

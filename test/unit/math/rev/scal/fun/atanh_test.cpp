@@ -1,8 +1,8 @@
-#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <stan/math/rev/scal.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
-#include <limits>
 
 TEST(AgradRev, atanh) {
   AVAR a = 0.3;
@@ -12,7 +12,7 @@ TEST(AgradRev, atanh) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(1.0 - 0.3 * 0.3), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (1.0 - 0.3 * 0.3), g[0]);
 }
 
 TEST(AgradRev, atanh_1) {
@@ -24,7 +24,7 @@ TEST(AgradRev, atanh_1) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(1.0 - 1.0 * 1.0), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (1.0 - 1.0 * 1.0), g[0]);
 }
 
 TEST(AgradRev, atanh_neg_1) {
@@ -36,7 +36,7 @@ TEST(AgradRev, atanh_neg_1) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(1.0 - (-1.0 * -1.0)), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (1.0 - (-1.0 * -1.0)), g[0]);
 }
 
 TEST(AgradRev, atanh_out_of_bounds) {
@@ -47,8 +47,7 @@ TEST(AgradRev, atanh_out_of_bounds) {
 
 struct atanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atanh(arg1);
   }
 };

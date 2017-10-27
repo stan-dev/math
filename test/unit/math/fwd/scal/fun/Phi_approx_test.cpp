@@ -1,5 +1,5 @@
-#include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/scal.hpp>
 // Phi_approx needs inv_logit in order for this to work
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
@@ -57,8 +57,7 @@ TEST(AgradFwdPhi_approx, FvarFvarDouble) {
 
 struct Phi_approx_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return stan::math::Phi_approx(arg1);
   }
 };

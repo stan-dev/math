@@ -1,5 +1,5 @@
-#include <stan/math/fwd/arr.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/fwd/arr.hpp>
 #include <vector>
 
 TEST(AgradFwdMatrixSum, vectorFvar) {

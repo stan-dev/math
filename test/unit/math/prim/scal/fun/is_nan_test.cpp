@@ -1,6 +1,6 @@
-#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <stan/math/prim/scal.hpp>
 
 TEST(MathFunctions, is_nan) {
   using stan::math::is_nan;
@@ -15,4 +15,3 @@ TEST(MathFunctions, is_nan) {
   EXPECT_FALSE(stan::math::is_nan(min));
   EXPECT_FALSE(stan::math::is_nan(max));
 }
-
