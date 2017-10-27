@@ -36,6 +36,13 @@ namespace stan {
     std::map<std::string, bool> compiled_kernels;
     std::string dummy_kernel = "__kernel void dummy() { };";
 
+    /**
+     * Initalizes the global std::map variables that 
+     * hold the OpenCL kernel sources, the groups to 
+     * which each kernel is assigned to and the
+     * information about which kernel was already compiled.
+     * 
+     */
     void init_kernel_groups() {
       // To identify the kernel group
       kernel_groups["transpose"] = "basic_matrix";
@@ -95,7 +102,14 @@ namespace stan {
 
     // TODO(Rok): select some other platform/device than 0
     // TODO(Rok): option to turn profiling OFF
-
+    /**
+     * The class that represents the OpenCL runtime
+     * 
+     * The class is used to find the OpenCL supported
+     * platforms/devices and initialize the OpenCL 
+     * context/command queue. 
+     * 
+     */
     class ocl {
       private:
         std::string description_;
@@ -173,18 +187,42 @@ namespace stan {
 
     ocl ocl_context_queue;
 
+    /**
+     * Returns the description of the OpenCL 
+     * platform and device that is used.
+     * 
+     */
     std::string get_description() {
       return ocl_context_queue.description();
     }
 
+    /**
+     * Returns the reference to the 
+     * OpenCL context. If no context was created,
+     * a new context is created. 
+     *  
+     */
     cl::Context& get_context() {
       return ocl_context_queue.context();
     }
-
+    /**
+     * Returns the reference to the active
+     * OpenCL command queue. If no context 
+     * and queue were created,
+     * a new context and queue are created and
+     * the reference to the new queue is returned.
+     * 
+     */
     cl::CommandQueue& get_queue() {
       return ocl_context_queue.queue();
     }
 
+    /**
+     * Compiles all the kernel in the specified group
+     * 
+     * @param group The kernel group name
+     * 
+     */
     void compile_kernel_group(std::string group) {
         cl::Context ctx = get_context();
         std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
@@ -212,6 +250,14 @@ namespace stan {
         }
     }
 
+    /**
+     * Returns the reference to the compiled kernel. 
+     * If the kernel has not yet been compiled, 
+     * the kernel group is compiled first.
+     * 
+     * @param name The kernel name
+     * 
+     */
     cl::Kernel& get_kernel(std::string name) {
       // Compile the kernel group and return the kernel
       if (!compiled_kernels[kernel_groups[name]]) {

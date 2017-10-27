@@ -128,7 +128,7 @@ namespace stan {
                        "columns of ", name, y.cols());
     }
 
-        /**
+    /**
      * Check if the two matrices on the GPU are of the same size.
      *
      * This function checks the runtime sizes only.

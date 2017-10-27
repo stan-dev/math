@@ -10,26 +10,22 @@
 #include <CL/cl.hpp>
 #endif
 
-/** @file stan/math/prim/arr/err/check_gpu.hpp
-*    @brief errors - utility functions for error checks:
-*    OpenCL and user errors (input dimensions,etc..)
+/** @file stan/math/prim/arr/err/check_opencl.hpp
+*    @brief checking OpenCL error numbers
 */
 
 namespace stan {
   namespace math {
 
-    // OpenCL errors - this lists all OpenCL erros
-    // including the ones from OpenCL 2.0
     /**
-     * Fill the specified container with the specified value.
+     * Throws the domain error with specifying the OpenCL error that occured.
+     * It outputs the OpenCL errors that are specified in OpenCL 2.0
+     * If no matching error number is found, it throws the error
+     * with the number. 
      *
-     * Each container in the specified standard vector is filled
-     * recursively by calling <code>fill</code>.
-     *
-     * @tparam T Type of container in vector.
-     * @tparam S Type of value.
-     * @param[in] x Container.
-     * @param[in, out] y Value.
+     * @param e The error number
+     * 
+     * @throw std::domain_error Always.
      */
     void check_ocl_error(const cl::Error& e) {
       std::string error_string;
@@ -300,9 +296,8 @@ namespace stan {
           error_string = "number " + std::to_string(e.err());
           break;
       }
-      std::cout << "The OpenCL application ended with the error: " <<
-       error_string << std::endl;
-      exit(1);
+      std::domain_error("The OpenCL application ended with the error: "
+        + error_string);
     }
 
   }
