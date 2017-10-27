@@ -22,7 +22,22 @@
 // CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
 namespace stan {
   namespace math {
-
+    
+    /**
+     * Return the lower-triangular Cholesky factor (i.e., matrix
+     * square root) of the specified square, symmetric matrix.  
+     * The return value \f$L\f$ will be a lower-traingular matrix such that the
+     * original matrix \f$A\f$ is given by
+     * <p>\f$A = L \times L^T\f$.
+     * The Cholesky decomposition is computed on the GPU. The
+     * input matrix is transfered to the GPU and the resulting
+     * lower-triangular matrix is then copied from the GPU.
+     * 
+     * @param m Symmetrix matrix.
+     * @return Square root of matrix.
+     * @throw std::domain_error if m is not a symmetric matrix or
+     *   if m is not positive definite (if m has more than 0 elements)
+     */
     template <typename T>
     typename boost::enable_if_c<boost::is_arithmetic<T>::value,
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type

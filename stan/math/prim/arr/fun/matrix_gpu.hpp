@@ -148,7 +148,8 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    void copy(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> & src,
+    template <typename T>
+    void copy(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & src,
      matrix_gpu & dst) {
             check_size_match("copy (Eigen -> GPU)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
