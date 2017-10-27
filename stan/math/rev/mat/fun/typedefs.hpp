@@ -5,28 +5,29 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index size_type;
+    typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index
+        size_type;
 
-/**
- * The type of a matrix holding <code>var</code>
- * values.
- */
-typedef Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_v;
+    /**
+     * The type of a matrix holding <code>var</code>
+     * values.
+     */
+    typedef Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_v;
 
-/**
- * The type of a (column) vector holding <code>var</code>
- * values.
- */
-typedef Eigen::Matrix<var, Eigen::Dynamic, 1> vector_v;
+    /**
+     * The type of a (column) vector holding <code>var</code>
+     * values.
+     */
+    typedef Eigen::Matrix<var, Eigen::Dynamic, 1> vector_v;
 
-/**
- * The type of a row vector holding <code>var</code>
- * values.
- */
-typedef Eigen::Matrix<var, 1, Eigen::Dynamic> row_vector_v;
+    /**
+     * The type of a row vector holding <code>var</code>
+     * values.
+     */
+    typedef Eigen::Matrix<var, 1, Eigen::Dynamic> row_vector_v;
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

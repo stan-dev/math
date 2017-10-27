@@ -23,7 +23,7 @@ using stan::math::value_of;
  *
  */
 class AgradDistributionTest {
- public:
+public:
   virtual void valid_values(vector<vector<double> >& /*parameters*/,
                             vector<double>& /* log_prob */) {
     throw std::runtime_error("valid_values() not implemented");
@@ -39,7 +39,7 @@ class AgradDistributionTest {
 using boost::mpl::at_c;
 template <class T>
 class AgradDistributionTestFixture : public ::testing::Test {
- public:
+public:
   typename at_c<T, 0>::type TestClass;
   typedef typename at_c<typename at_c<T, 1>::type, 0>::type T0;
   typedef typename at_c<typename at_c<T, 1>::type, 1>::type T1;

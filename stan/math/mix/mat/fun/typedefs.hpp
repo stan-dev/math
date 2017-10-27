@@ -7,21 +7,21 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> matrix_fv;
+    typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> matrix_fv;
 
-typedef Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic>
-    matrix_ffv;
+    typedef Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic>
+        matrix_ffv;
 
-typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> vector_fv;
+    typedef Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> vector_fv;
 
-typedef Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> vector_ffv;
+    typedef Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> vector_ffv;
 
-typedef Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic> row_vector_fv;
+    typedef Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic> row_vector_fv;
 
-typedef Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic> row_vector_ffv;
+    typedef Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic> row_vector_ffv;
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

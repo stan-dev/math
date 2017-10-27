@@ -5,19 +5,19 @@
 #include <stan/math/rev/core/var.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline var& var::operator*=(const var& b) {
-  vi_ = new multiply_vv_vari(vi_, b.vi_);
-  return *this;
-}
+    inline var& var::operator*=(const var& b) {
+      vi_ = new multiply_vv_vari(vi_, b.vi_);
+      return *this;
+    }
 
-inline var& var::operator*=(double b) {
-  if (b == 1.0) return *this;
-  vi_ = new multiply_vd_vari(vi_, b);
-  return *this;
-}
+    inline var& var::operator*=(double b) {
+      if (b == 1.0) return *this;
+      vi_ = new multiply_vd_vari(vi_, b);
+      return *this;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

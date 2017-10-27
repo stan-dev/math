@@ -7,14 +7,14 @@
 #include <stan/math/prim/scal/fun/exp2.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> exp2(const fvar<T>& x) {
-  using std::log;
-  return fvar<T>(exp2(x.val_), x.d_ * exp2(x.val_) * LOG_2);
-}
+    template <typename T>
+    inline fvar<T> exp2(const fvar<T>& x) {
+      using std::log;
+      return fvar<T>(exp2(x.val_), x.d_ * exp2(x.val_) * LOG_2);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

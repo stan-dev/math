@@ -7,20 +7,20 @@
 #include <stan/math/rev/core/precomp_v_vari.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the natural logarithm of one minus the inverse logit of
- * the specified argument.
- *
- * @param u argument
- * @return log of one minus the inverse logit of the argument
- */
-inline var log1m_inv_logit(const var& u) {
-  return var(
-      new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val())));
-}
+    /**
+     * Return the natural logarithm of one minus the inverse logit of
+     * the specified argument.
+     *
+     * @param u argument
+     * @return log of one minus the inverse logit of the argument
+     */
+    inline var log1m_inv_logit(const var& u) {
+      return var(new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_,
+                                    -inv_logit(u.val())));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

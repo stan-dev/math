@@ -8,20 +8,20 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return a sorted copy of the argument container in ascending order.
- *
- * @tparam C type of container
- * @param xs Container to sort
- * @return sorted version of container
- */
-template <typename C>
-std::vector<int> sort_indices_desc(const C& xs) {
-  return sort_indices<false>(xs);
-}
+    /**
+     * Return a sorted copy of the argument container in ascending order.
+     *
+     * @tparam C type of container
+     * @param xs Container to sort
+     * @return sorted version of container
+     */
+    template <typename C>
+    std::vector<int> sort_indices_desc(const C& xs) {
+      return sort_indices<false>(xs);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

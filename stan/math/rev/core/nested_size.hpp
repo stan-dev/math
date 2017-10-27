@@ -5,13 +5,13 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-static inline size_t nested_size() {
-  return ChainableStack::var_stack_.size() -
-         ChainableStack::nested_var_stack_sizes_.back();
-}
+    static inline size_t nested_size() {
+      return ChainableStack::var_stack_.size() -
+             ChainableStack::nested_var_stack_sizes_.back();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

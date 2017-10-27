@@ -7,30 +7,30 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-namespace {
-class lgamma_vari : public op_v_vari {
- public:
-  lgamma_vari(double value, vari* avi) : op_v_vari(value, avi) {}
-  void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
-};
-}  // namespace
+    namespace {
+      class lgamma_vari : public op_v_vari {
+      public:
+        lgamma_vari(double value, vari* avi) : op_v_vari(value, avi) {}
+        void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
+      };
+    }  // namespace
 
-/**
- * The log gamma function for variables (C99).
- *
- * The derivatie is the digamma function,
- *
- * \f$\frac{d}{dx} \Gamma(x) = \psi^{(0)}(x)\f$.
- *
- * @param a The variable.
- * @return Log gamma of the variable.
- */
-inline var lgamma(const var& a) {
-  return var(new lgamma_vari(lgamma(a.val()), a.vi_));
-}
+    /**
+     * The log gamma function for variables (C99).
+     *
+     * The derivatie is the digamma function,
+     *
+     * \f$\frac{d}{dx} \Gamma(x) = \psi^{(0)}(x)\f$.
+     *
+     * @param a The variable.
+     * @return Log gamma of the variable.
+     */
+    inline var lgamma(const var& a) {
+      return var(new lgamma_vari(lgamma(a.val()), a.vi_));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

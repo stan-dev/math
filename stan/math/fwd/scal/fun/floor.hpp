@@ -5,14 +5,14 @@
 #include <stan/math/fwd/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> floor(const fvar<T>& x) {
-  using std::floor;
-  return fvar<T>(floor(x.val_), 0);
-}
+    template <typename T>
+    inline fvar<T> floor(const fvar<T>& x) {
+      using std::floor;
+      return fvar<T>(floor(x.val_), 0);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

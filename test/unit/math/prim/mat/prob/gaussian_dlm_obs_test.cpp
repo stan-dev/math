@@ -123,7 +123,7 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMMSeq) {
 }
 
 class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);
     GG = MatrixXd::Random(2, 2);

@@ -9,7 +9,7 @@ const std::string msg1_ = "error_message ";
 const std::string msg2_ = " after y";
 
 class ErrorHandlingScalar_domain_error : public ::testing::Test {
- public:
+public:
   void SetUp() {}
 
   template <class T>

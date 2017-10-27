@@ -25,11 +25,11 @@ int count_matches(const std::string& target, const std::string& s) {
   return count;
 }
 namespace test {
-template <typename T1, typename T2>
-void expect_same_type() {
-  bool b = boost::is_same<T1, T2>::value;
-  EXPECT_TRUE(b);
-}
+  template <typename T1, typename T2>
+  void expect_same_type() {
+    bool b = boost::is_same<T1, T2>::value;
+    EXPECT_TRUE(b);
+  }
 }  // namespace test
 
 #endif

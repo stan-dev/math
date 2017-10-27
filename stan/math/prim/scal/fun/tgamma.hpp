@@ -4,16 +4,16 @@
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the gamma function applied to the specified argument.
- *
- * @param x Argument.
- * @return The gamma function applied to argument.
- */
-inline double tgamma(double x) { return boost::math::tgamma(x); }
+    /**
+     * Return the gamma function applied to the specified argument.
+     *
+     * @param x Argument.
+     * @return The gamma function applied to argument.
+     */
+    inline double tgamma(double x) { return boost::math::tgamma(x); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

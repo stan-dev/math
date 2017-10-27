@@ -4,17 +4,17 @@
 #include <cmath>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the natural log of the specified argument.  This version
- * is required to disambiguate <code>log(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural log of argument.
- */
-inline double log(int x) { return std::log(static_cast<double>(x)); }
+    /**
+     * Return the natural log of the specified argument.  This version
+     * is required to disambiguate <code>log(int)</code>.
+     *
+     * @param[in] x Argument.
+     * @return Natural log of argument.
+     */
+    inline double log(int x) { return std::log(static_cast<double>(x)); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -30,7 +30,7 @@ double dy2_dchi(double t, double omega, double chi) {
 }
 
 class sho_functor {
- public:
+public:
   template <typename T0, typename T1, typename T2>
   inline std::vector<typename stan::return_type<T1, T2>::type> operator()(
       const T0& t_in,                 // time
@@ -51,7 +51,7 @@ class sho_functor {
 };
 
 class test_functor_double_var_1 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
@@ -78,7 +78,7 @@ class test_functor_double_var_1 {
 };
 
 class test_functor_double_var_2 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
@@ -129,7 +129,7 @@ TEST(StanMathOdeIntegrateODEGrad, double_var) {
 }
 
 class test_functor_var_double_1 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
@@ -156,7 +156,7 @@ class test_functor_var_double_1 {
 };
 
 class test_functor_var_double_2 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
@@ -207,7 +207,7 @@ TEST(StanMathOdeIntegrateODEGrad, var_double) {
 }
 
 class test_functor_var_var_1 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;
@@ -234,7 +234,7 @@ class test_functor_var_var_1 {
 };
 
 class test_functor_var_var_2 {
- public:
+public:
   template <typename T>
   inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
     sho_functor sho;

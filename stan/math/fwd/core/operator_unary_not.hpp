@@ -4,21 +4,21 @@
 #include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the negation of the value of the argument as defined by
- * <code>!</code>.
- *
- * @tparam value and tangent type for variables
- * @param[in] x argument
- * @return negation of argument value
- */
-template <typename T>
-inline bool operator!(const fvar<T>& x) {
-  return !x.val_;
-}
+    /**
+     * Return the negation of the value of the argument as defined by
+     * <code>!</code>.
+     *
+     * @tparam value and tangent type for variables
+     * @param[in] x argument
+     * @return negation of argument value
+     */
+    template <typename T>
+    inline bool operator!(const fvar<T>& x) {
+      return !x.val_;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

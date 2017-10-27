@@ -16,7 +16,7 @@ using stan::is_constant_struct;
 using stan::math::value_of;
 
 class AgradCdfLogTest {
- public:
+public:
   virtual void valid_values(vector<vector<double> >& /*parameters*/,
                             vector<double>& /* cdf_log */) {
     throw std::runtime_error("valid_values() not implemented");
@@ -67,7 +67,7 @@ class AgradCdfLogTest {
 
 template <class T>
 class AgradCdfLogTestFixture : public ::testing::Test {
- public:
+public:
   typename at_c<T, 0>::type TestClass;
   typedef typename at_c<typename at_c<T, 1>::type, 0>::type T0;
   typedef typename at_c<typename at_c<T, 1>::type, 1>::type T1;

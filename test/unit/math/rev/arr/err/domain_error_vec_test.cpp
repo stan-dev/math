@@ -9,7 +9,7 @@ const std::string msg1_ = "error_message ";
 const std::string msg2_ = " second message";
 
 class ErrorHandlingScalar_domain_error_vec : public ::testing::Test {
- public:
+public:
   void SetUp() { index_ = 0; }
 
   template <class T>

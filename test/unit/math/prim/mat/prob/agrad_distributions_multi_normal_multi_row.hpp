@@ -1,5 +1,5 @@
 class agrad_distributions_multi_normal_multi_row : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     y.resize(1, 3);
     y << 2.0, -2.0, 11.0;

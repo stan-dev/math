@@ -8,14 +8,15 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> erfc(const fvar<T>& x) {
-  using std::exp;
-  return fvar<T>(erfc(x.val_), -x.d_ * exp(-square(x.val_)) * TWO_OVER_SQRT_PI);
-}
+    template <typename T>
+    inline fvar<T> erfc(const fvar<T>& x) {
+      using std::exp;
+      return fvar<T>(erfc(x.val_),
+                     -x.d_ * exp(-square(x.val_)) * TWO_OVER_SQRT_PI);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

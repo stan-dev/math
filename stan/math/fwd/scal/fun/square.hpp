@@ -6,12 +6,12 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> square(const fvar<T>& x) {
-  return fvar<T>(square(x.val_), x.d_ * 2 * x.val_);
-}
-}  // namespace math
+    template <typename T>
+    inline fvar<T> square(const fvar<T>& x) {
+      return fvar<T>(square(x.val_), x.d_ * 2 * x.val_);
+    }
+  }  // namespace math
 }  // namespace stan
 #endif

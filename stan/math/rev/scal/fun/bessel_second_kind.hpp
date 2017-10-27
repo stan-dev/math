@@ -6,26 +6,26 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-namespace {
+    namespace {
 
-class bessel_second_kind_dv_vari : public op_dv_vari {
- public:
-  bessel_second_kind_dv_vari(int a, vari* bvi)
-      : op_dv_vari(bessel_second_kind(a, bvi->val_), a, bvi) {}
-  void chain() {
-    bvi_->adj_ +=
-        adj_ * (ad_ * bessel_second_kind(ad_, bvi_->val_) / bvi_->val_ -
-                bessel_second_kind(ad_ + 1, bvi_->val_));
-  }
-};
-}  // namespace
+      class bessel_second_kind_dv_vari : public op_dv_vari {
+      public:
+        bessel_second_kind_dv_vari(int a, vari* bvi)
+            : op_dv_vari(bessel_second_kind(a, bvi->val_), a, bvi) {}
+        void chain() {
+          bvi_->adj_ +=
+              adj_ * (ad_ * bessel_second_kind(ad_, bvi_->val_) / bvi_->val_ -
+                      bessel_second_kind(ad_ + 1, bvi_->val_));
+        }
+      };
+    }  // namespace
 
-inline var bessel_second_kind(int v, const var& a) {
-  return var(new bessel_second_kind_dv_vari(v, a.vi_));
-}
+    inline var bessel_second_kind(int v, const var& a) {
+      return var(new bessel_second_kind_dv_vari(v, a.vi_));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

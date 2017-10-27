@@ -4,16 +4,16 @@
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-struct fvar;
+    template <typename T>
+    struct fvar;
 
-template <typename V, typename T>
-struct ad_promotable<V, fvar<T> > {
-  enum { value = ad_promotable<V, T>::value };
-};
+    template <typename V, typename T>
+    struct ad_promotable<V, fvar<T> > {
+      enum { value = ad_promotable<V, T>::value };
+    };
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -9,14 +9,14 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T, int R, int C>
-inline fvar<T> dot_self(const Eigen::Matrix<fvar<T>, R, C>& v) {
-  check_vector("dot_self", "v", v);
-  return dot_product(v, v);
-}
+    template <typename T, int R, int C>
+    inline fvar<T> dot_self(const Eigen::Matrix<fvar<T>, R, C>& v) {
+      check_vector("dot_self", "v", v);
+      return dot_product(v, v);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

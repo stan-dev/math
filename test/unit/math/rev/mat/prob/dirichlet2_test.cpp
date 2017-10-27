@@ -18,7 +18,7 @@ using stan::math::var;
 using stan::math::to_var;
 
 class AgradDistributionsDirichlet : public ::testing::Test {
- protected:
+protected:
   virtual void SetUp() {
     theta.resize(3, 1);
     theta << 0.2, 0.3, 0.5;

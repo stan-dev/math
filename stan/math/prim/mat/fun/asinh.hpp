@@ -5,35 +5,36 @@
 #include <stan/math/prim/scal/fun/asinh.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap asinh() so it can be vectorized.
- *
- * @tparam T argument scalar type
- * @param x argument
- * @return inverse hyperbolic sine of argument in radians.
- */
-struct asinh_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return asinh(x);
-  }
-};
+    /**
+     * Structure to wrap asinh() so it can be vectorized.
+     *
+     * @tparam T argument scalar type
+     * @param x argument
+     * @return inverse hyperbolic sine of argument in radians.
+     */
+    struct asinh_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        return asinh(x);
+      }
+    };
 
-/**
- * Vectorized version of asinh().
- *
- * @tparam T Container type.
- * @param x Container.
- * @return Inverse hyperbolic sine of each value in the container.
- */
-template <typename T>
-inline typename apply_scalar_unary<asinh_fun, T>::return_t asinh(const T& x) {
-  return apply_scalar_unary<asinh_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of asinh().
+     *
+     * @tparam T Container type.
+     * @param x Container.
+     * @return Inverse hyperbolic sine of each value in the container.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<asinh_fun, T>::return_t asinh(
+        const T& x) {
+      return apply_scalar_unary<asinh_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

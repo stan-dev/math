@@ -4,17 +4,17 @@
 #include <stan/math/rev/core/var.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the negation of the value of the argument as defined by
- * <code>!</code>.
- *
- * @param[in] x argument
- * @return negation of argument value
- */
-inline bool operator!(const var& x) { return !x.val(); }
+    /**
+     * Return the negation of the value of the argument as defined by
+     * <code>!</code>.
+     *
+     * @param[in] x argument
+     * @return negation of argument value
+     */
+    inline bool operator!(const var& x) { return !x.val(); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

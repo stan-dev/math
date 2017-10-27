@@ -5,33 +5,33 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Check if the specified matrix/vector is of
- * non-zero size.
- *
- * Throws a std:invalid_argument otherwise. The message
- * will indicate that the variable name "has size 0".
- *
- * @tparam T_y Type of container
- *
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Container to test. This will accept matrices and vectors
- *
- * @throw <code>std::invalid_argument</code> if the specified matrix/vector
- *   has zero size
- */
-template <typename T_y>
-inline void check_nonzero_size(const std::string& function,
-                               const std::string& name, const T_y& y) {
-  if (y.size() > 0) return;
+    /**
+     * Check if the specified matrix/vector is of
+     * non-zero size.
+     *
+     * Throws a std:invalid_argument otherwise. The message
+     * will indicate that the variable name "has size 0".
+     *
+     * @tparam T_y Type of container
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Container to test. This will accept matrices and vectors
+     *
+     * @throw <code>std::invalid_argument</code> if the specified matrix/vector
+     *   has zero size
+     */
+    template <typename T_y>
+    inline void check_nonzero_size(const std::string& function,
+                                   const std::string& name, const T_y& y) {
+      if (y.size() > 0) return;
 
-  invalid_argument(function, name, 0, "has size ",
-                   ", but must have a non-zero size");
-}
+      invalid_argument(function, name, 0, "has size ",
+                       ", but must have a non-zero size");
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

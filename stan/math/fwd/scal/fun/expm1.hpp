@@ -6,14 +6,14 @@
 #include <stan/math/prim/scal/fun/expm1.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> expm1(const fvar<T>& x) {
-  using std::exp;
-  return fvar<T>(expm1(x.val_), x.d_ * exp(x.val_));
-}
+    template <typename T>
+    inline fvar<T> expm1(const fvar<T>& x) {
+      using std::exp;
+      return fvar<T>(expm1(x.val_), x.d_ * exp(x.val_));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

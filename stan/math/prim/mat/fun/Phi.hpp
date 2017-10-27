@@ -5,33 +5,33 @@
 #include <stan/math/prim/scal/fun/Phi.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap Phi() so it can be vectorized.
- * @param x Argument variable.
- * @tparam T Argument type.
- * @return Unit normal CDF of x.
- */
-struct Phi_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return Phi(x);
-  }
-};
+    /**
+     * Structure to wrap Phi() so it can be vectorized.
+     * @param x Argument variable.
+     * @tparam T Argument type.
+     * @return Unit normal CDF of x.
+     */
+    struct Phi_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        return Phi(x);
+      }
+    };
 
-/**
- * Vectorized version of Phi().
- * @param x Container.
- * @tparam T Container type.
- * @return Unit normal CDF of each value in x.
- */
-template <typename T>
-inline typename apply_scalar_unary<Phi_fun, T>::return_t Phi(const T& x) {
-  return apply_scalar_unary<Phi_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of Phi().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Unit normal CDF of each value in x.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<Phi_fun, T>::return_t Phi(const T& x) {
+      return apply_scalar_unary<Phi_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

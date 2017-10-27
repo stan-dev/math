@@ -5,10 +5,10 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline void stan_print(std::ostream* o, const var& x) { *o << x.val(); }
+    inline void stan_print(std::ostream* o, const var& x) { *o << x.val(); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -7,29 +7,29 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the closest integer to the specified argument, with
- * halfway cases rounded away from zero.
- *
- * @param x Argument.
- * @return The rounded value of the argument.
- */
-inline double round(double x) {
-  if (is_nan(x)) return std::numeric_limits<double>::quiet_NaN();
-  return boost::math::round(x, boost_policy_t());
-}
+    /**
+     * Return the closest integer to the specified argument, with
+     * halfway cases rounded away from zero.
+     *
+     * @param x Argument.
+     * @return The rounded value of the argument.
+     */
+    inline double round(double x) {
+      if (is_nan(x)) return std::numeric_limits<double>::quiet_NaN();
+      return boost::math::round(x, boost_policy_t());
+    }
 
-/**
- * Return the closest integer to the specified argument, with
- * halfway cases rounded away from zero.
- *
- * @param x Argument.
- * @return The rounded value of the argument.
- */
-inline double round(int x) { return round(static_cast<double>(x)); }
+    /**
+     * Return the closest integer to the specified argument, with
+     * halfway cases rounded away from zero.
+     *
+     * @param x Argument.
+     * @return The rounded value of the argument.
+     */
+    inline double round(int x) { return round(static_cast<double>(x)); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

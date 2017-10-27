@@ -4,14 +4,14 @@
 #include <cmath>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline double inv_sqrt(double x) {
-  using std::sqrt;
-  return 1.0 / sqrt(x);
-}
+    inline double inv_sqrt(double x) {
+      using std::sqrt;
+      return 1.0 / sqrt(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

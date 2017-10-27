@@ -4,16 +4,16 @@
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return 1 if the argument is unequal to zero and 0 otherwise.
- *
- * @param v Value.
- * @return 1 if argument is equal to zero (or NaN) and 0 otherwise.
- */
-inline int as_bool(const var& v) { return 0.0 != v.vi_->val_; }
+    /**
+     * Return 1 if the argument is unequal to zero and 0 otherwise.
+     *
+     * @param v Value.
+     * @return 1 if argument is equal to zero (or NaN) and 0 otherwise.
+     */
+    inline int as_bool(const var& v) { return 0.0 != v.vi_->val_; }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

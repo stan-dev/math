@@ -16,29 +16,30 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline std::vector<int> multinomial_rng(
-    const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, int N, RNG& rng) {
-  static const std::string function = "multinomial_rng";
+    template <class RNG>
+    inline std::vector<int> multinomial_rng(
+        const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, int N,
+        RNG& rng) {
+      static const std::string function = "multinomial_rng";
 
-  check_simplex(function, "Probabilites parameter", theta);
-  check_positive(function, "number of trials variables", N);
+      check_simplex(function, "Probabilites parameter", theta);
+      check_positive(function, "number of trials variables", N);
 
-  std::vector<int> result(theta.size(), 0);
-  double mass_left = 1.0;
-  int n_left = N;
-  for (int k = 0; n_left > 0 && k < theta.size(); ++k) {
-    double p = theta[k] / mass_left;
-    if (p > 1.0) p = 1.0;
-    result[k] = binomial_rng(n_left, p, rng);
-    n_left -= result[k];
-    mass_left -= theta[k];
-  }
-  return result;
-}
+      std::vector<int> result(theta.size(), 0);
+      double mass_left = 1.0;
+      int n_left = N;
+      for (int k = 0; n_left > 0 && k < theta.size(); ++k) {
+        double p = theta[k] / mass_left;
+        if (p > 1.0) p = 1.0;
+        result[k] = binomial_rng(n_left, p, rng);
+        n_left -= result[k];
+        mass_left -= theta[k];
+      }
+      return result;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

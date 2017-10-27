@@ -6,7 +6,7 @@
 
 const std::string function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
- public:
+public:
   void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

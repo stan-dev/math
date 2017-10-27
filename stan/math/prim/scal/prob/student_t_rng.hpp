@@ -21,24 +21,24 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double student_t_rng(double nu, double mu, double sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::student_t_distribution;
+    template <class RNG>
+    inline double student_t_rng(double nu, double mu, double sigma, RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::student_t_distribution;
 
-  static const std::string function = "student_t_rng";
+      static const std::string function = "student_t_rng";
 
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+      check_positive_finite(function, "Degrees of freedom parameter", nu);
+      check_finite(function, "Location parameter", mu);
+      check_positive_finite(function, "Scale parameter", sigma);
 
-  variate_generator<RNG&, student_t_distribution<> > rng_unit_student_t(
-      rng, student_t_distribution<>(nu));
-  return mu + sigma * rng_unit_student_t();
-}
+      variate_generator<RNG&, student_t_distribution<> > rng_unit_student_t(
+          rng, student_t_distribution<>(nu));
+      return mu + sigma * rng_unit_student_t();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

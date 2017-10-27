@@ -4,12 +4,12 @@
 #include <valarray>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline double calculate_chain(double x, double val) {
-  return std::exp(x - val);  // works out to inv_logit(x)
-}
+    inline double calculate_chain(double x, double val) {
+      return std::exp(x - val);  // works out to inv_logit(x)
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

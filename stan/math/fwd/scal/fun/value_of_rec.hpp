@@ -5,23 +5,23 @@
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the value of the specified variable.
- *
- * T must implement value_of_rec.
- *
- * @tparam T Scalar type
- * @param v Variable.
- * @return Value of variable.
- */
+    /**
+     * Return the value of the specified variable.
+     *
+     * T must implement value_of_rec.
+     *
+     * @tparam T Scalar type
+     * @param v Variable.
+     * @return Value of variable.
+     */
 
-template <typename T>
-inline double value_of_rec(const fvar<T>& v) {
-  return value_of_rec(v.val_);
-}
+    template <typename T>
+    inline double value_of_rec(const fvar<T>& v) {
+      return value_of_rec(v.val_);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -9,7 +9,7 @@ const std::string msg1_ = "error_message1 ";
 const std::string msg2_ = "error_message2 ";
 
 class ErrorHandlingScalar_out_of_range : public ::testing::Test {
- public:
+public:
   void SetUp() {}
 
   template <class T>

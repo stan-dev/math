@@ -7,7 +7,7 @@
 
 // This test fixture swallows output to std::cout
 class Math : public ::testing::Test {
- public:
+public:
   void SetUp() {
     output_.str("");
     cout_backup_ = std::cout.rdbuf();
@@ -58,14 +58,14 @@ TEST_F(Math, paper_example_2) {
 }
 
 namespace paper {  // paper_example_3
-template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type normal_log(
-    const T1& y, const T2& mu, const T3& sigma) {
-  using std::pow;
-  using std::log;
-  return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma) -
-         0.5 * log(2 * stan::math::pi());
-}
+  template <typename T1, typename T2, typename T3>
+  inline typename boost::math::tools::promote_args<T1, T2, T3>::type normal_log(
+      const T1& y, const T2& mu, const T3& sigma) {
+    using std::pow;
+    using std::log;
+    return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma) -
+           0.5 * log(2 * stan::math::pi());
+  }
 }  // namespace paper
 
 TEST_F(Math, paper_example_3) {
@@ -78,24 +78,24 @@ TEST_F(Math, paper_example_3) {
 
 // paper_example_4: remove 'paper::' when including in the paper
 namespace paper {
-using Eigen::Matrix;
-using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::Dynamic;
 
-struct normal_ll {
-  const Matrix<double, Dynamic, 1> y_;
+  struct normal_ll {
+    const Matrix<double, Dynamic, 1> y_;
 
-  explicit normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
+    explicit normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
 
-  template <typename T>
-  T operator()(const Matrix<T, Dynamic, 1>& theta) const {
-    T mu = theta[0];
-    T sigma = theta[1];
-    T lp = 0;
-    for (int n = 0; n < y_.size(); ++n)
-      lp += paper::normal_log(y_[n], mu, sigma);
-    return lp;
-  }
-};
+    template <typename T>
+    T operator()(const Matrix<T, Dynamic, 1>& theta) const {
+      T mu = theta[0];
+      T sigma = theta[1];
+      T lp = 0;
+      for (int n = 0; n < y_.size(); ++n)
+        lp += paper::normal_log(y_[n], mu, sigma);
+      return lp;
+    }
+  };
 }  // namespace paper
 
 TEST_F(Math, paper_example_4) {
@@ -116,24 +116,24 @@ TEST_F(Math, paper_example_4) {
 }
 
 namespace paper_example_5 {
-using Eigen::Matrix;
-using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::Dynamic;
 
-struct functor {
-  const Matrix<double, Dynamic, 1> y_;
+  struct functor {
+    const Matrix<double, Dynamic, 1> y_;
 
-  explicit functor(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
+    explicit functor(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
 
-  template <typename T>
-  Matrix<T, Dynamic, 1> operator()(const Matrix<T, Dynamic, 1>& theta) const {
-    Matrix<T, Dynamic, 1> lp(y_.size());
-    T mu = theta[0];
-    T sigma = theta[1];
-    for (int n = 0; n < y_.size(); ++n)
-      lp[n] = paper::normal_log(y_[n], mu, sigma);
-    return lp;
-  }
-};
+    template <typename T>
+    Matrix<T, Dynamic, 1> operator()(const Matrix<T, Dynamic, 1>& theta) const {
+      Matrix<T, Dynamic, 1> lp(y_.size());
+      T mu = theta[0];
+      T sigma = theta[1];
+      for (int n = 0; n < y_.size(); ++n)
+        lp[n] = paper::normal_log(y_[n], mu, sigma);
+      return lp;
+    }
+  };
 
 }  // namespace paper_example_5
 

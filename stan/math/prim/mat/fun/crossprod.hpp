@@ -5,18 +5,18 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Returns the result of pre-multiplying a matrix by its
- * own transpose.
- * @param M Matrix to multiply.
- * @return Transpose of M times M
- */
-inline matrix_d crossprod(const matrix_d& M) {
-  return tcrossprod(static_cast<matrix_d>(M.transpose()));
-}
+    /**
+     * Returns the result of pre-multiplying a matrix by its
+     * own transpose.
+     * @param M Matrix to multiply.
+     * @return Transpose of M times M
+     */
+    inline matrix_d crossprod(const matrix_d& M) {
+      return tcrossprod(static_cast<matrix_d>(M.transpose()));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

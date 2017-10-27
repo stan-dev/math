@@ -20,23 +20,23 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double scaled_inv_chi_square_rng(double nu, double s, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::chi_squared_distribution;
+    template <class RNG>
+    inline double scaled_inv_chi_square_rng(double nu, double s, RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::chi_squared_distribution;
 
-  static const std::string function = "scaled_inv_chi_square_rng";
+      static const std::string function = "scaled_inv_chi_square_rng";
 
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_positive_finite(function, "Scale parameter", s);
+      check_positive_finite(function, "Degrees of freedom parameter", nu);
+      check_positive_finite(function, "Scale parameter", s);
 
-  variate_generator<RNG&, chi_squared_distribution<> > chi_square_rng(
-      rng, chi_squared_distribution<>(nu));
-  return nu * s / chi_square_rng();
-}
+      variate_generator<RNG&, chi_squared_distribution<> > chi_square_rng(
+          rng, chi_squared_distribution<>(nu));
+      return nu * s / chi_square_rng();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

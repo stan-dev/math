@@ -6,23 +6,24 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-class op_vector_vari : public vari {
- protected:
-  const size_t size_;
-  vari** vis_;
+    class op_vector_vari : public vari {
+    protected:
+      const size_t size_;
+      vari** vis_;
 
- public:
-  op_vector_vari(double f, const std::vector<var>& vs)
-      : vari(f), size_(vs.size()) {
-    vis_ = reinterpret_cast<vari**>(operator new(sizeof(vari*) * vs.size()));
-    for (size_t i = 0; i < vs.size(); ++i) vis_[i] = vs[i].vi_;
-  }
-  vari* operator[](size_t n) const { return vis_[n]; }
-  size_t size() { return size_; }
-};
+    public:
+      op_vector_vari(double f, const std::vector<var>& vs)
+          : vari(f), size_(vs.size()) {
+        vis_ =
+            reinterpret_cast<vari**>(operator new(sizeof(vari*) * vs.size()));
+        for (size_t i = 0; i < vs.size(); ++i) vis_[i] = vs[i].vi_;
+      }
+      vari* operator[](size_t n) const { return vis_[n]; }
+      size_t size() { return size_; }
+    };
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -6,7 +6,7 @@ using std::numeric_limits;
 using stan::math::var;
 
 class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
- public:
+public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
     using stan::math::logit;

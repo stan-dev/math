@@ -6,7 +6,7 @@ using std::numeric_limits;
 using stan::math::var;
 
 class AgradCdfScaledInvChiSquare : public AgradCdfTest {
- public:
+public:
   void valid_values(vector<vector<double> >& parameters, vector<double>& cdf) {
     vector<double> param(3);
 

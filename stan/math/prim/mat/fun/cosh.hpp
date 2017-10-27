@@ -5,34 +5,34 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap cosh() so it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
- * @return Hyperbolic cosine of x.
- */
-struct cosh_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::cosh;
-    return cosh(x);
-  }
-};
+    /**
+     * Structure to wrap cosh() so it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyperbolic cosine of x.
+     */
+    struct cosh_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        using std::cosh;
+        return cosh(x);
+      }
+    };
 
-/**
- * Vectorized version of cosh().
- * @param x Angle in radians.
- * @tparam T Variable type.
- * @return Hyberbolic cosine of x.
- */
-template <typename T>
-inline typename apply_scalar_unary<cosh_fun, T>::return_t cosh(const T& x) {
-  return apply_scalar_unary<cosh_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of cosh().
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Hyberbolic cosine of x.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<cosh_fun, T>::return_t cosh(const T& x) {
+      return apply_scalar_unary<cosh_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

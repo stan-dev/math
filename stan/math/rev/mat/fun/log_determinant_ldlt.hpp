@@ -7,47 +7,47 @@
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 
 namespace stan {
-namespace math {
-namespace {
+  namespace math {
+    namespace {
 
-/**
- * Returns the log det of the matrix whose LDLT factorization is given
- * See The Matrix Cookbook's chapter on Derivatives of a Determinant
- * In this case, it is just the inverse of the underlying matrix
- * @param A, which is a LDLT_factor
- * @return ln(det(A))
- * @throws never
- */
+      /**
+       * Returns the log det of the matrix whose LDLT factorization is given
+       * See The Matrix Cookbook's chapter on Derivatives of a Determinant
+       * In this case, it is just the inverse of the underlying matrix
+       * @param A, which is a LDLT_factor
+       * @return ln(det(A))
+       * @throws never
+       */
 
-template <int R, int C>
-class log_det_ldlt_vari : public vari {
- public:
-  explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
-      : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
+      template <int R, int C>
+      class log_det_ldlt_vari : public vari {
+      public:
+        explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
+            : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
 
-  virtual void chain() {
-    Eigen::Matrix<double, R, C> invA;
+        virtual void chain() {
+          Eigen::Matrix<double, R, C> invA;
 
-    // If we start computing Jacobians, this may be a bit inefficient
-    invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
-    alloc_ldlt_->ldlt_.solveInPlace(invA);
+          // If we start computing Jacobians, this may be a bit inefficient
+          invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
+          alloc_ldlt_->ldlt_.solveInPlace(invA);
 
-    for (size_t j = 0; j < alloc_ldlt_->N_; j++) {
-      for (size_t i = 0; i < alloc_ldlt_->N_; i++) {
-        alloc_ldlt_->variA_(i, j)->adj_ += adj_ * invA(i, j);
-      }
+          for (size_t j = 0; j < alloc_ldlt_->N_; j++) {
+            for (size_t i = 0; i < alloc_ldlt_->N_; i++) {
+              alloc_ldlt_->variA_(i, j)->adj_ += adj_ * invA(i, j);
+            }
+          }
+        }
+
+        const LDLT_alloc<R, C> *alloc_ldlt_;
+      };
+    }  // namespace
+
+    template <int R, int C>
+    var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+      return var(new log_det_ldlt_vari<R, C>(A));
     }
-  }
 
-  const LDLT_alloc<R, C> *alloc_ldlt_;
-};
-}  // namespace
-
-template <int R, int C>
-var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
-  return var(new log_det_ldlt_vari<R, C>(A));
-}
-
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

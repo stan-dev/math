@@ -5,21 +5,21 @@
 #include <stan/math/prim/scal/fun/trunc.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the nearest integral value that is not larger in
- * magnitude than the specified argument.
- *
- * @tparam T Scalar type of autodiff variable.
- * @param[in] x Argument.
- * @return The truncated argument.
- */
-template <typename T>
-inline fvar<T> trunc(const fvar<T>& x) {
-  return fvar<T>(trunc(x.val_), 0);
-}
+    /**
+     * Return the nearest integral value that is not larger in
+     * magnitude than the specified argument.
+     *
+     * @tparam T Scalar type of autodiff variable.
+     * @param[in] x Argument.
+     * @return The truncated argument.
+     */
+    template <typename T>
+    inline fvar<T> trunc(const fvar<T>& x) {
+      return fvar<T>(trunc(x.val_), 0);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

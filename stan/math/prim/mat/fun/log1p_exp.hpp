@@ -5,34 +5,34 @@
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap log1m_exp() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
- * @return Natural log of (1 + exp(x)).
- */
-struct log1p_exp_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return log1p_exp(x);
-  }
-};
+    /**
+     * Structure to wrap log1m_exp() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return Natural log of (1 + exp(x)).
+     */
+    struct log1p_exp_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        return log1p_exp(x);
+      }
+    };
 
-/**
- * Vectorized version of log1m_exp().
- * @param x Container.
- * @tparam T Container type.
- * @return Natural log of (1 + exp()) applied to each value in x.
- */
-template <typename T>
-inline typename apply_scalar_unary<log1p_exp_fun, T>::return_t log1p_exp(
-    const T& x) {
-  return apply_scalar_unary<log1p_exp_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of log1m_exp().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Natural log of (1 + exp()) applied to each value in x.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<log1p_exp_fun, T>::return_t log1p_exp(
+        const T& x) {
+      return apply_scalar_unary<log1p_exp_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

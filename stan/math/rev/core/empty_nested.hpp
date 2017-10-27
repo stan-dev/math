@@ -4,15 +4,15 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return true if there is no nested autodiff being executed.
- */
-static inline bool empty_nested() {
-  return ChainableStack::nested_var_stack_sizes_.empty();
-}
+    /**
+     * Return true if there is no nested autodiff being executed.
+     */
+    static inline bool empty_nested() {
+      return ChainableStack::nested_var_stack_sizes_.empty();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

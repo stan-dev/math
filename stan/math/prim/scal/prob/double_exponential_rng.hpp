@@ -16,40 +16,40 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return a pseudorandom double exponential variate with the given location
- * and scale using the specified random number generator.
- *
- * @tparam RNG class of random number generator
- * @param mu location parameter
- * @param sigma positive scale parameter
- * @param rng random number generator
- * @return double exponential random variate
- * @throw std::domain_error if mu is infinite or sigma is nonpositive
- */
-template <class RNG>
-inline double double_exponential_rng(double mu, double sigma, RNG& rng) {
-  static const std::string function = "double_exponential_rng";
+    /**
+     * Return a pseudorandom double exponential variate with the given location
+     * and scale using the specified random number generator.
+     *
+     * @tparam RNG class of random number generator
+     * @param mu location parameter
+     * @param sigma positive scale parameter
+     * @param rng random number generator
+     * @return double exponential random variate
+     * @throw std::domain_error if mu is infinite or sigma is nonpositive
+     */
+    template <class RNG>
+    inline double double_exponential_rng(double mu, double sigma, RNG& rng) {
+      static const std::string function = "double_exponential_rng";
 
-  using boost::variate_generator;
-  using boost::random::uniform_01;
-  using std::log;
-  using std::abs;
+      using boost::variate_generator;
+      using boost::random::uniform_01;
+      using std::log;
+      using std::abs;
 
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+      check_finite(function, "Location parameter", mu);
+      check_positive_finite(function, "Scale parameter", sigma);
 
-  variate_generator<RNG&, uniform_01<> > rng_unit_01(rng, uniform_01<>());
-  double a = 0;
-  double laplaceRN = rng_unit_01();
-  if (0.5 - laplaceRN > 0)
-    a = 1.0;
-  else if (0.5 - laplaceRN < 0)
-    a = -1.0;
-  return mu - sigma * a * log1m(2 * abs(0.5 - laplaceRN));
-}
-}  // namespace math
+      variate_generator<RNG&, uniform_01<> > rng_unit_01(rng, uniform_01<>());
+      double a = 0;
+      double laplaceRN = rng_unit_01();
+      if (0.5 - laplaceRN > 0)
+        a = 1.0;
+      else if (0.5 - laplaceRN < 0)
+        a = -1.0;
+      return mu - sigma * a * log1m(2 * abs(0.5 - laplaceRN));
+    }
+  }  // namespace math
 }  // namespace stan
 #endif

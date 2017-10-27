@@ -6,7 +6,7 @@ using std::numeric_limits;
 using stan::math::var;
 
 class AgradCdfLogNormal : public AgradCdfLogTest {
- public:
+public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& cdf_log) {
     vector<double> param(3);

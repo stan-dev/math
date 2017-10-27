@@ -11,27 +11,27 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
-                                   RNG& rng) {
-  static const std::string function = "wishart_rng";
+    template <class RNG>
+    inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
+                                       RNG& rng) {
+      static const std::string function = "wishart_rng";
 
-  using Eigen::MatrixXd;
-  typename index_type<MatrixXd>::type k = S.rows();
+      using Eigen::MatrixXd;
+      typename index_type<MatrixXd>::type k = S.rows();
 
-  check_square(function, "scale parameter", S);
-  check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
+      check_square(function, "scale parameter", S);
+      check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
 
-  MatrixXd B = MatrixXd::Zero(k, k);
-  for (int j = 0; j < k; ++j) {
-    for (int i = 0; i < j; ++i) B(i, j) = normal_rng(0, 1, rng);
-    B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
-  }
-  return crossprod(B * S.llt().matrixU());
-}
+      MatrixXd B = MatrixXd::Zero(k, k);
+      for (int j = 0; j < k; ++j) {
+        for (int i = 0; i < j; ++i) B(i, j) = normal_rng(0, 1, rng);
+        B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
+      }
+      return crossprod(B * S.llt().matrixU());
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

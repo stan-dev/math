@@ -6,9 +6,9 @@
 
 namespace stan {
 
-template <typename T>
-size_t length(const std::vector<T>& x) {
-  return x.size();
-}
+  template <typename T>
+  size_t length(const std::vector<T>& x) {
+    return x.size();
+  }
 }  // namespace stan
 #endif

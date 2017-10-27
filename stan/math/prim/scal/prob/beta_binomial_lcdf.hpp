@@ -23,120 +23,126 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Returns the log CDF of the Beta-Binomial distribution with given population
- * size, prior success, and prior failure parameters. Given containers of
- * matching sizes, returns the log sum of probabilities.
- *
- * @tparam T_n type of success parameter
- * @tparam T_N type of population size parameter
- * @tparam T_size1 type of prior success parameter
- * @tparam T_size2 type of prior failure parameter
- * @param n success parameter
- * @param N population size parameter
- * @param alpha prior success parameter
- * @param beta prior failure parameter
- * @return log probability or log sum of probabilities
- * @throw std::domain_error if N, alpha, or beta fails to be positive
- * @throw std::invalid_argument if container sizes mismatch
- */
-template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
-    const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
-  static const std::string function = "beta_binomial_lcdf";
-  typedef typename stan::partials_return_type<T_n, T_N, T_size1, T_size2>::type
-      T_partials_return;
+    /**
+     * Returns the log CDF of the Beta-Binomial distribution with given
+     * population size, prior success, and prior failure parameters. Given
+     * containers of matching sizes, returns the log sum of probabilities.
+     *
+     * @tparam T_n type of success parameter
+     * @tparam T_N type of population size parameter
+     * @tparam T_size1 type of prior success parameter
+     * @tparam T_size2 type of prior failure parameter
+     * @param n success parameter
+     * @param N population size parameter
+     * @param alpha prior success parameter
+     * @param beta prior failure parameter
+     * @return log probability or log sum of probabilities
+     * @throw std::domain_error if N, alpha, or beta fails to be positive
+     * @throw std::invalid_argument if container sizes mismatch
+     */
+    template <typename T_n, typename T_N, typename T_size1, typename T_size2>
+    typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
+        const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
+      static const std::string function = "beta_binomial_lcdf";
+      typedef
+          typename stan::partials_return_type<T_n, T_N, T_size1, T_size2>::type
+              T_partials_return;
 
-  if (!(stan::length(n) && stan::length(N) && stan::length(alpha) &&
-        stan::length(beta)))
-    return 0.0;
+      if (!(stan::length(n) && stan::length(N) && stan::length(alpha) &&
+            stan::length(beta)))
+        return 0.0;
 
-  T_partials_return P(0.0);
+      T_partials_return P(0.0);
 
-  check_nonnegative(function, "Population size parameter", N);
-  check_positive_finite(function, "First prior sample size parameter", alpha);
-  check_positive_finite(function, "Second prior sample size parameter", beta);
-  check_consistent_sizes(function, "Successes variable", n,
-                         "Population size parameter", N,
-                         "First prior sample size parameter", alpha,
-                         "Second prior sample size parameter", beta);
+      check_nonnegative(function, "Population size parameter", N);
+      check_positive_finite(function, "First prior sample size parameter",
+                            alpha);
+      check_positive_finite(function, "Second prior sample size parameter",
+                            beta);
+      check_consistent_sizes(function, "Successes variable", n,
+                             "Population size parameter", N,
+                             "First prior sample size parameter", alpha,
+                             "Second prior sample size parameter", beta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_size1> alpha_vec(alpha);
-  scalar_seq_view<T_size2> beta_vec(beta);
-  size_t size = max_size(n, N, alpha, beta);
+      scalar_seq_view<T_n> n_vec(n);
+      scalar_seq_view<T_N> N_vec(N);
+      scalar_seq_view<T_size1> alpha_vec(alpha);
+      scalar_seq_view<T_size2> beta_vec(beta);
+      size_t size = max_size(n, N, alpha, beta);
 
-  using std::exp;
-  using std::log;
-  using std::exp;
+      using std::exp;
+      using std::log;
+      using std::exp;
 
-  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+      operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as neg infinity
-  for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) <= 0) return ops_partials.build(negative_infinity());
-  }
+      // Explicit return for extreme values
+      // The gradients are technically ill-defined, but treated as neg infinity
+      for (size_t i = 0; i < stan::length(n); i++) {
+        if (value_of(n_vec[i]) <= 0)
+          return ops_partials.build(negative_infinity());
+      }
 
-  for (size_t i = 0; i < size; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-      continue;
+      for (size_t i = 0; i < size; i++) {
+        // Explicit results for extreme values
+        // The gradients are technically ill-defined, but treated as zero
+        if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
+          continue;
+        }
+
+        const T_partials_return n_dbl = value_of(n_vec[i]);
+        const T_partials_return N_dbl = value_of(N_vec[i]);
+        const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+        const T_partials_return beta_dbl = value_of(beta_vec[i]);
+
+        const T_partials_return mu = alpha_dbl + n_dbl + 1;
+        const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
+
+        T_partials_return F;
+        F = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
+                (T_partials_return)1);
+
+        T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
+        C += lgamma(mu) - lgamma(n_dbl + 2);
+        C += lgamma(N_dbl + 2) - lgamma(N_dbl + alpha_dbl + beta_dbl);
+        C = exp(C);
+
+        C *= F / exp(lbeta(alpha_dbl, beta_dbl));
+        C /= N_dbl + 1;
+
+        const T_partials_return Pi = 1 - C;
+
+        P += log(Pi);
+
+        T_partials_return dF[6];
+        T_partials_return digammaOne = 0;
+        T_partials_return digammaTwo = 0;
+
+        if (contains_nonconstant_struct<T_size1, T_size2>::value) {
+          digammaOne = digamma(mu + nu);
+          digammaTwo = digamma(alpha_dbl + beta_dbl);
+          grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
+                   1 - nu, (T_partials_return)1);
+        }
+        if (!is_constant_struct<T_size1>::value) {
+          const T_partials_return g =
+              -C * (digamma(mu) - digammaOne + dF[1] / F - digamma(alpha_dbl) +
+                    digammaTwo);
+          ops_partials.edge1_.partials_[i] += g / Pi;
+        }
+        if (!is_constant_struct<T_size2>::value) {
+          const T_partials_return g =
+              -C * (digamma(nu) - digammaOne - dF[4] / F - digamma(beta_dbl) +
+                    digammaTwo);
+          ops_partials.edge2_.partials_[i] += g / Pi;
+        }
+      }
+
+      return ops_partials.build(P);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
-
-    const T_partials_return mu = alpha_dbl + n_dbl + 1;
-    const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
-
-    T_partials_return F;
-    F = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-            (T_partials_return)1);
-
-    T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
-    C += lgamma(mu) - lgamma(n_dbl + 2);
-    C += lgamma(N_dbl + 2) - lgamma(N_dbl + alpha_dbl + beta_dbl);
-    C = exp(C);
-
-    C *= F / exp(lbeta(alpha_dbl, beta_dbl));
-    C /= N_dbl + 1;
-
-    const T_partials_return Pi = 1 - C;
-
-    P += log(Pi);
-
-    T_partials_return dF[6];
-    T_partials_return digammaOne = 0;
-    T_partials_return digammaTwo = 0;
-
-    if (contains_nonconstant_struct<T_size1, T_size2>::value) {
-      digammaOne = digamma(mu + nu);
-      digammaTwo = digamma(alpha_dbl + beta_dbl);
-      grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
-               1 - nu, (T_partials_return)1);
-    }
-    if (!is_constant_struct<T_size1>::value) {
-      const T_partials_return g = -C * (digamma(mu) - digammaOne + dF[1] / F -
-                                        digamma(alpha_dbl) + digammaTwo);
-      ops_partials.edge1_.partials_[i] += g / Pi;
-    }
-    if (!is_constant_struct<T_size2>::value) {
-      const T_partials_return g = -C * (digamma(nu) - digammaOne - dF[4] / F -
-                                        digamma(beta_dbl) + digammaTwo);
-      ops_partials.edge2_.partials_[i] += g / Pi;
-    }
-  }
-
-  return ops_partials.build(P);
-}
-
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -3,16 +3,16 @@
 
 namespace stan {
 
-struct error_index {
-  enum {
-    value =
+  struct error_index {
+    enum {
+      value =
 #ifdef ERROR_INDEX
-        ERROR_INDEX
+          ERROR_INDEX
 #else
-        1
+          1
 #endif
+    };
   };
-};
 
 }  // namespace stan
 #endif

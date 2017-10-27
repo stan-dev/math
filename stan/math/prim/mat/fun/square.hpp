@@ -5,33 +5,34 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap square() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
- * @return x squared.
- */
-struct square_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return square(x);
-  }
-};
+    /**
+     * Structure to wrap square() so that it can be vectorized.
+     * @param x Variable.
+     * @tparam T Variable type.
+     * @return x squared.
+     */
+    struct square_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        return square(x);
+      }
+    };
 
-/**
- * Vectorized version of square().
- * @param x Container.
- * @tparam T Container type.
- * @return Each value in x squared.
- */
-template <typename T>
-inline typename apply_scalar_unary<square_fun, T>::return_t square(const T& x) {
-  return apply_scalar_unary<square_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of square().
+     * @param x Container.
+     * @tparam T Container type.
+     * @return Each value in x squared.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<square_fun, T>::return_t square(
+        const T& x) {
+      return apply_scalar_unary<square_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

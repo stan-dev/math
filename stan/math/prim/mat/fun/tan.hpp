@@ -5,34 +5,34 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Structure to wrap tan() so that it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
- * @return Tangent of x.
- */
-struct tan_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::tan;
-    return tan(x);
-  }
-};
+    /**
+     * Structure to wrap tan() so that it can be vectorized.
+     * @param x Angle in radians.
+     * @tparam T Variable type.
+     * @return Tangent of x.
+     */
+    struct tan_fun {
+      template <typename T>
+      static inline T fun(const T& x) {
+        using std::tan;
+        return tan(x);
+      }
+    };
 
-/**
- * Vectorized version of tan().
- * @param x Container of angles in radians.
- * @tparam T Container type.
- * @return Tangent of each value in x.
- */
-template <typename T>
-inline typename apply_scalar_unary<tan_fun, T>::return_t tan(const T& x) {
-  return apply_scalar_unary<tan_fun, T>::apply(x);
-}
+    /**
+     * Vectorized version of tan().
+     * @param x Container of angles in radians.
+     * @tparam T Container type.
+     * @return Tangent of each value in x.
+     */
+    template <typename T>
+    inline typename apply_scalar_unary<tan_fun, T>::return_t tan(const T& x) {
+      return apply_scalar_unary<tan_fun, T>::apply(x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

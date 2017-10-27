@@ -6,21 +6,21 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the natural logarithm of the gamma function applied to
- * the specified argument.
- *
- * @tparam T Scalar type of autodiff variable.
- * @param x Argument.
- * @return natural logarithm of the gamma function of argument.
- */
-template <typename T>
-inline fvar<T> lgamma(const fvar<T>& x) {
-  return fvar<T>(lgamma(x.val_), x.d_ * digamma(x.val_));
-}
+    /**
+     * Return the natural logarithm of the gamma function applied to
+     * the specified argument.
+     *
+     * @tparam T Scalar type of autodiff variable.
+     * @param x Argument.
+     * @return natural logarithm of the gamma function of argument.
+     */
+    template <typename T>
+    inline fvar<T> lgamma(const fvar<T>& x) {
+      return fvar<T>(lgamma(x.val_), x.d_ * digamma(x.val_));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

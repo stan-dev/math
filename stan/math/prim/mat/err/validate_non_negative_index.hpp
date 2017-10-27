@@ -6,20 +6,21 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline void validate_non_negative_index(const std::string& var_name,
-                                        const std::string& expr, int val) {
-  if (val < 0) {
-    std::stringstream msg;
-    msg << "Found negative dimension size in variable declaration"
-        << "; variable=" << var_name << "; dimension size expression=" << expr
-        << "; expression value=" << val;
-    std::string msg_str(msg.str());
-    throw std::invalid_argument(msg_str.c_str());
-  }
-}
+    inline void validate_non_negative_index(const std::string& var_name,
+                                            const std::string& expr, int val) {
+      if (val < 0) {
+        std::stringstream msg;
+        msg << "Found negative dimension size in variable declaration"
+            << "; variable=" << var_name
+            << "; dimension size expression=" << expr
+            << "; expression value=" << val;
+        std::string msg_str(msg.str());
+        throw std::invalid_argument(msg_str.c_str());
+      }
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

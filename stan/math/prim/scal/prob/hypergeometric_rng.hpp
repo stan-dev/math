@@ -9,35 +9,35 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
-  using boost::variate_generator;
-  using boost::math::hypergeometric_distribution;
+    template <class RNG>
+    inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
+      using boost::variate_generator;
+      using boost::math::hypergeometric_distribution;
 
-  static const std::string function = "hypergeometric_rng";
+      static const std::string function = "hypergeometric_rng";
 
-  check_bounded(function, "Draws parameter", N, 0, a + b);
-  check_positive(function, "Draws parameter", N);
-  check_positive(function, "Successes in population parameter", a);
-  check_positive(function, "Failures in population parameter", b);
+      check_bounded(function, "Draws parameter", N, 0, a + b);
+      check_positive(function, "Draws parameter", N);
+      check_positive(function, "Successes in population parameter", a);
+      check_positive(function, "Failures in population parameter", b);
 
-  hypergeometric_distribution<> dist(b, N, a + b);
+      hypergeometric_distribution<> dist(b, N, a + b);
 
-  double u = uniform_rng(0.0, 1.0, rng);
-  int min = 0;
-  int max = a - 1;
-  while (min < max) {
-    int mid = (min + max) / 2;
-    if (cdf(dist, mid + 1) > u)
-      max = mid;
-    else
-      min = mid + 1;
-  }
-  return min + 1;
-}
+      double u = uniform_rng(0.0, 1.0, rng);
+      int min = 0;
+      int max = a - 1;
+      while (min < max) {
+        int mid = (min + max) / 2;
+        if (cdf(dist, mid + 1) > u)
+          max = mid;
+        else
+          min = mid + 1;
+      }
+      return min + 1;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

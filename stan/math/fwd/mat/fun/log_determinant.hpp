@@ -12,15 +12,15 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T, int R, int C>
-inline fvar<T> log_determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
-  check_square("log_determinant", "m", m);
+    template <typename T, int R, int C>
+    inline fvar<T> log_determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
+      check_square("log_determinant", "m", m);
 
-  return log(fabs(determinant(m)));
-}
+      return log(fabs(determinant(m)));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

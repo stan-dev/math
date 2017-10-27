@@ -29,25 +29,25 @@ struct is_empty<empty> {
 // ------------------------------------------------------------
 
 namespace std {
-std::ostream& operator<<(std::ostream& os, const vector<double>& param) {
-  os << "(";
-  for (size_t n = 0; n < param.size(); n++) {
-    os << param[n];
-    if (n < param.size() - 1) os << ", ";
+  std::ostream& operator<<(std::ostream& os, const vector<double>& param) {
+    os << "(";
+    for (size_t n = 0; n < param.size(); n++) {
+      os << param[n];
+      if (n < param.size() - 1) os << ", ";
+    }
+    os << ")";
+    return os;
   }
-  os << ")";
-  return os;
-}
 
-std::ostream& operator<<(std::ostream& os, const vector<var>& param) {
-  os << "(";
-  for (size_t n = 0; n < param.size(); n++) {
-    os << param[n];
-    if (n < param.size() - 1) os << ", ";
+  std::ostream& operator<<(std::ostream& os, const vector<var>& param) {
+    os << "(";
+    for (size_t n = 0; n < param.size(); n++) {
+      os << param[n];
+      if (n < param.size() - 1) os << ", ";
+    }
+    os << ")";
+    return os;
   }
-  os << ")";
-  return os;
-}
 
 }  // namespace std
 

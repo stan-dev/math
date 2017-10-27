@@ -7,32 +7,32 @@
 #include <stan/math/rev/scal/fun/square.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-namespace {
-class inv_Phi_vari : public op_v_vari {
- public:
-  explicit inv_Phi_vari(vari* avi) : op_v_vari(inv_Phi(avi->val_), avi) {}
-  void chain() {
-    static const double NEG_HALF = -0.5;
-    avi_->adj_ +=
-        adj_ * SQRT_2_TIMES_SQRT_PI / std::exp(NEG_HALF * val_ * val_);
-  }
-};
-}  // namespace
+    namespace {
+      class inv_Phi_vari : public op_v_vari {
+      public:
+        explicit inv_Phi_vari(vari* avi) : op_v_vari(inv_Phi(avi->val_), avi) {}
+        void chain() {
+          static const double NEG_HALF = -0.5;
+          avi_->adj_ +=
+              adj_ * SQRT_2_TIMES_SQRT_PI / std::exp(NEG_HALF * val_ * val_);
+        }
+      };
+    }  // namespace
 
-/**
- * The inverse of unit normal cumulative density function.
- *
- * See inv_Phi() for the double-based version.
- *
- * The derivative is the reciprocal of unit normal density function,
- *
- * @param p Probability
- * @return The unit normal inverse cdf evaluated at p
- */
-inline var inv_Phi(const var& p) { return var(new inv_Phi_vari(p.vi_)); }
+    /**
+     * The inverse of unit normal cumulative density function.
+     *
+     * See inv_Phi() for the double-based version.
+     *
+     * The derivative is the reciprocal of unit normal density function,
+     *
+     * @param p Probability
+     * @return The unit normal inverse cdf evaluated at p
+     */
+    inline var inv_Phi(const var& p) { return var(new inv_Phi_vari(p.vi_)); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

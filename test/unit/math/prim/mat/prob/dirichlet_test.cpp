@@ -107,7 +107,8 @@ void test_dirichlet3_1(VectorXd alpha) {
   for (int count = 0; count < N; ++count) {
     Eigen::VectorXd theta = stan::math::dirichlet_rng(alpha, rng);
     int i;
-    for (i = 0; i < K - 1 && theta(0) > loc[i]; ++i) {}
+    for (i = 0; i < K - 1 && theta(0) > loc[i]; ++i) {
+    }
     ++bin[i];
   }
   EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));

@@ -15,21 +15,22 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double skew_normal_rng(double mu, double sigma, double alpha, RNG& rng) {
-  boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
+    template <class RNG>
+    inline double skew_normal_rng(double mu, double sigma, double alpha,
+                                  RNG& rng) {
+      boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 
-  static const std::string function = "skew_normal_rng";
+      static const std::string function = "skew_normal_rng";
 
-  check_finite(function, "Location parameter", mu);
-  check_finite(function, "Shape parameter", alpha);
-  check_positive(function, "Scale parameter", sigma);
+      check_finite(function, "Location parameter", mu);
+      check_finite(function, "Shape parameter", alpha);
+      check_positive(function, "Scale parameter", sigma);
 
-  return quantile(dist, uniform_rng(0.0, 1.0, rng));
-}
+      return quantile(dist, uniform_rng(0.0, 1.0, rng));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -16,18 +16,18 @@
 #define STAN_MATH_PATCH 0
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/** Major version number for Stan math library. */
-const std::string MAJOR_VERSION = STAN_STRING(STAN_MATH_MAJOR);
+    /** Major version number for Stan math library. */
+    const std::string MAJOR_VERSION = STAN_STRING(STAN_MATH_MAJOR);
 
-/** Minor version number for Stan math library. */
-const std::string MINOR_VERSION = STAN_STRING(STAN_MATH_MINOR);
+    /** Minor version number for Stan math library. */
+    const std::string MINOR_VERSION = STAN_STRING(STAN_MATH_MINOR);
 
-/** Patch version for Stan math library. */
-const std::string PATCH_VERSION = STAN_STRING(STAN_MATH_PATCH);
+    /** Patch version for Stan math library. */
+    const std::string PATCH_VERSION = STAN_STRING(STAN_MATH_PATCH);
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

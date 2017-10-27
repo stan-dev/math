@@ -6,15 +6,15 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> acos(const fvar<T>& x) {
-  using std::acos;
-  using std::sqrt;
-  return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
-}
+    template <typename T>
+    inline fvar<T> acos(const fvar<T>& x) {
+      using std::acos;
+      using std::sqrt;
+      return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

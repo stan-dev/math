@@ -5,19 +5,19 @@
 #include <stan/math/rev/core/vari.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-// use for single precomputed partials
-class precomp_v_vari : public op_v_vari {
- protected:
-  double da_;
+    // use for single precomputed partials
+    class precomp_v_vari : public op_v_vari {
+    protected:
+      double da_;
 
- public:
-  precomp_v_vari(double val, vari* avi, double da)
-      : op_v_vari(val, avi), da_(da) {}
-  void chain() { avi_->adj_ += adj_ * da_; }
-};
+    public:
+      precomp_v_vari(double val, vari* avi, double da)
+          : op_v_vari(val, avi), da_(da) {}
+      void chain() { avi_->adj_ += adj_ * da_; }
+    };
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

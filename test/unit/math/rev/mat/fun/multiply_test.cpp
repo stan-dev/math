@@ -14,7 +14,7 @@ template <int R_A, int C_A, int C_B>
 class mult_vv {
   int i, j, N, M, K;
 
- public:
+public:
   mult_vv(int i_, int j_, int N_, int M_, int K_)
       : i(i_), j(j_), N(N_), M(M_), K(K_) {}
   template <typename T>
@@ -39,7 +39,7 @@ template <>
 class mult_vv<1, -1, 1> {
   int N, M, K;
 
- public:
+public:
   mult_vv(int N_, int M_, int K_) : N(N_), M(M_), K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
@@ -64,7 +64,7 @@ class mult_dv {
   int i, j, M, K;
   Eigen::Matrix<double, R_A, C_A> A_c;
 
- public:
+public:
   mult_dv(int i_, int j_, int M_, int K_, Eigen::Matrix<double, R_A, C_A> A_c_)
       : i(i_), j(j_), M(M_), K(K_), A_c(A_c_) {}
   template <typename T>
@@ -87,7 +87,7 @@ class mult_dv<1, -1, 1> {
   int M, K;
   Eigen::Matrix<double, 1, -1> A_c;
 
- public:
+public:
   mult_dv(int M_, int K_, Eigen::Matrix<double, 1, -1> A_c_)
       : M(M_), K(K_), A_c(A_c_) {}
   template <typename T>
@@ -110,7 +110,7 @@ class mult_vd {
   int i, j, N, M;
   Eigen::Matrix<double, C_A, C_B> B_c;
 
- public:
+public:
   mult_vd(int i_, int j_, int N_, int M_, Eigen::Matrix<double, C_A, C_B> B_c_)
       : i(i_), j(j_), N(N_), M(M_), B_c(B_c_) {}
   template <typename T>
@@ -132,7 +132,7 @@ class mult_vd<1, -1, 1> {
   int N, M;
   Eigen::Matrix<double, -1, 1> B_c;
 
- public:
+public:
   mult_vd(int N_, int M_, Eigen::Matrix<double, -1, 1> B_c_)
       : N(N_), M(M_), B_c(B_c_) {}
   template <typename T>

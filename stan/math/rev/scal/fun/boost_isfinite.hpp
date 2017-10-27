@@ -6,22 +6,22 @@
 
 namespace boost {
 
-namespace math {
+  namespace math {
 
-/**
- * Checks if the given number has finite value.
- *
- * Return <code>true</code> if the specified variable's
- * value is finite.
- *
- * @param v Variable to test.
- * @return <code>true</code> if variable is finite.
- */
-template <>
-inline bool isfinite(const stan::math::var& v) {
-  return (boost::math::isfinite)(v.val());
-}
+    /**
+     * Checks if the given number has finite value.
+     *
+     * Return <code>true</code> if the specified variable's
+     * value is finite.
+     *
+     * @param v Variable to test.
+     * @return <code>true</code> if variable is finite.
+     */
+    template <>
+    inline bool isfinite(const stan::math::var& v) {
+      return (boost::math::isfinite)(v.val());
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace boost
 #endif

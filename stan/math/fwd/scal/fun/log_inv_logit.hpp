@@ -6,13 +6,13 @@
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline fvar<T> log_inv_logit(const fvar<T>& x) {
-  using std::exp;
-  return fvar<T>(log_inv_logit(x.val_), x.d_ / (1 + exp(x.val_)));
-}
-}  // namespace math
+    template <typename T>
+    inline fvar<T> log_inv_logit(const fvar<T>& x) {
+      using std::exp;
+      return fvar<T>(log_inv_logit(x.val_), x.d_ / (1 + exp(x.val_)));
+    }
+  }  // namespace math
 }  // namespace stan
 #endif

@@ -15,23 +15,23 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double lognormal_rng(double mu, double sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::lognormal_distribution;
+    template <class RNG>
+    inline double lognormal_rng(double mu, double sigma, RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::lognormal_distribution;
 
-  static const std::string function = "lognormal_rng";
+      static const std::string function = "lognormal_rng";
 
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+      check_finite(function, "Location parameter", mu);
+      check_positive_finite(function, "Scale parameter", sigma);
 
-  variate_generator<RNG&, lognormal_distribution<> > lognorm_rng(
-      rng, lognormal_distribution<>(mu, sigma));
-  return lognorm_rng();
-}
+      variate_generator<RNG&, lognormal_distribution<> > lognorm_rng(
+          rng, lognormal_distribution<>(mu, sigma));
+      return lognorm_rng();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

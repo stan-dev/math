@@ -5,14 +5,14 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-inline double dot_self(const std::vector<double>& x) {
-  double sum = 0.0;
-  for (size_t i = 0; i < x.size(); ++i) sum += x[i] * x[i];
-  return sum;
-}
+    inline double dot_self(const std::vector<double>& x) {
+      double sum = 0.0;
+      for (size_t i = 0; i < x.size(); ++i) sum += x[i] * x[i];
+      return sum;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

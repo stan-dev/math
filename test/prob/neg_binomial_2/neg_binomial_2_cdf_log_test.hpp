@@ -7,7 +7,7 @@ using std::numeric_limits;
 using stan::math::var;
 
 class AgradCdfLogNegBinomial2 : public AgradCdfLogTest {
- public:
+public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& cdf_log) {
     vector<double> param(3);

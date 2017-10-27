@@ -10,52 +10,53 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-namespace {
-template <typename T_y, bool is_vec>
-struct not_nan {
-  static void check(const std::string& function, const std::string& name,
-                    const T_y& y) {
-    if (is_nan(value_of_rec(y)))
-      domain_error(function, name, y, "is ", ", but must not be nan!");
-  }
-};
-
-template <typename T_y>
-struct not_nan<T_y, true> {
-  static void check(const std::string& function, const std::string& name,
-                    const T_y& y) {
-    for (size_t n = 0; n < stan::length(y); n++) {
-      if (is_nan(value_of_rec(stan::get(y, n))))
-        domain_error_vec(function, name, y, n, "is ", ", but must not be nan!");
-    }
-  }
-};
-}  // namespace
-
-/**
- * Check if <code>y</code> is not
- * <code>NaN</code>.
- *
- * This function is vectorized and will check each element of
- * <code>y</code>. If any element is <code>NaN</code>, this
- * function will throw an exception.
- *
- * @tparam T_y Type of y
- *
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Variable to check
- *
- * @throw <code>domain_error</code> if any element of y is NaN.
- */
-template <typename T_y>
-inline void check_not_nan(const std::string& function, const std::string& name,
+    namespace {
+      template <typename T_y, bool is_vec>
+      struct not_nan {
+        static void check(const std::string& function, const std::string& name,
                           const T_y& y) {
-  not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
-}
+          if (is_nan(value_of_rec(y)))
+            domain_error(function, name, y, "is ", ", but must not be nan!");
+        }
+      };
 
-}  // namespace math
+      template <typename T_y>
+      struct not_nan<T_y, true> {
+        static void check(const std::string& function, const std::string& name,
+                          const T_y& y) {
+          for (size_t n = 0; n < stan::length(y); n++) {
+            if (is_nan(value_of_rec(stan::get(y, n))))
+              domain_error_vec(function, name, y, n, "is ",
+                               ", but must not be nan!");
+          }
+        }
+      };
+    }  // namespace
+
+    /**
+     * Check if <code>y</code> is not
+     * <code>NaN</code>.
+     *
+     * This function is vectorized and will check each element of
+     * <code>y</code>. If any element is <code>NaN</code>, this
+     * function will throw an exception.
+     *
+     * @tparam T_y Type of y
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Variable to check
+     *
+     * @throw <code>domain_error</code> if any element of y is NaN.
+     */
+    template <typename T_y>
+    inline void check_not_nan(const std::string& function,
+                              const std::string& name, const T_y& y) {
+      not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+    }
+
+  }  // namespace math
 }  // namespace stan
 #endif

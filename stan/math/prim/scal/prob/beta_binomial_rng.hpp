@@ -16,33 +16,35 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return a pseudorandom Beta-Binomial draw with specified population size,
- * prior success, and prior failure parameter using the specified random
- * number generator.
- *
- * @tparam RNG type of random number generator
- * @param N population size parameter
- * @param alpha success parameter
- * @param beta failure parameter
- * @param rng random number generator
- * @return Beta-Binomial random variate
- * @throw std::domain_error if N, alpha, or beta is negative.
- */
-template <class RNG>
-inline int beta_binomial_rng(int N, double alpha, double beta, RNG& rng) {
-  static const std::string function = "beta_binomial_rng";
+    /**
+     * Return a pseudorandom Beta-Binomial draw with specified population size,
+     * prior success, and prior failure parameter using the specified random
+     * number generator.
+     *
+     * @tparam RNG type of random number generator
+     * @param N population size parameter
+     * @param alpha success parameter
+     * @param beta failure parameter
+     * @param rng random number generator
+     * @return Beta-Binomial random variate
+     * @throw std::domain_error if N, alpha, or beta is negative.
+     */
+    template <class RNG>
+    inline int beta_binomial_rng(int N, double alpha, double beta, RNG& rng) {
+      static const std::string function = "beta_binomial_rng";
 
-  check_nonnegative(function, "Population size parameter", N);
-  check_positive_finite(function, "First prior sample size parameter", alpha);
-  check_positive_finite(function, "Second prior sample size parameter", beta);
+      check_nonnegative(function, "Population size parameter", N);
+      check_positive_finite(function, "First prior sample size parameter",
+                            alpha);
+      check_positive_finite(function, "Second prior sample size parameter",
+                            beta);
 
-  double p = beta_rng(alpha, beta, rng);
-  return binomial_rng(N, p, rng);
-}
+      double p = beta_rng(alpha, beta, rng);
+      return binomial_rng(N, p, rng);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

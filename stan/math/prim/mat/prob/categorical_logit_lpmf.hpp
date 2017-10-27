@@ -13,64 +13,68 @@
 #include <vector>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-// CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
-template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
-    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  static const std::string function = "categorical_logit_lpmf";
+    // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
+    template <bool propto, typename T_prob>
+    typename boost::math::tools::promote_args<T_prob>::type
+    categorical_logit_lpmf(
+        int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+      static const std::string function = "categorical_logit_lpmf";
 
-  check_bounded(function, "categorical outcome out of support", n, 1,
-                beta.size());
-  check_finite(function, "log odds parameter", beta);
+      check_bounded(function, "categorical outcome out of support", n, 1,
+                    beta.size());
+      check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value) return 0.0;
+      if (!include_summand<propto, T_prob>::value) return 0.0;
 
-  // FIXME:  wasteful vs. creating term (n-1) if not vectorized
-  return beta(n - 1) - log_sum_exp(beta);  // == log_softmax(beta)(n-1);
-}
+      // FIXME:  wasteful vs. creating term (n-1) if not vectorized
+      return beta(n - 1) - log_sum_exp(beta);  // == log_softmax(beta)(n-1);
+    }
 
-template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type
-categorical_logit_lpmf(int n,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<false>(n, beta);
-}
+    template <typename T_prob>
+    inline typename boost::math::tools::promote_args<T_prob>::type
+    categorical_logit_lpmf(
+        int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+      return categorical_logit_lpmf<false>(n, beta);
+    }
 
-template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  static const std::string function = "categorical_logit_lpmf";
+    template <bool propto, typename T_prob>
+    typename boost::math::tools::promote_args<T_prob>::type
+    categorical_logit_lpmf(
+        const std::vector<int>& ns,
+        const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+      static const std::string function = "categorical_logit_lpmf";
 
-  for (size_t k = 0; k < ns.size(); ++k)
-    check_bounded(function, "categorical outcome out of support", ns[k], 1,
-                  beta.size());
-  check_finite(function, "log odds parameter", beta);
+      for (size_t k = 0; k < ns.size(); ++k)
+        check_bounded(function, "categorical outcome out of support", ns[k], 1,
+                      beta.size());
+      check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value) return 0.0;
+      if (!include_summand<propto, T_prob>::value) return 0.0;
 
-  if (ns.size() == 0) return 0.0;
+      if (ns.size() == 0) return 0.0;
 
-  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_softmax_beta = log_softmax(beta);
+      Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_softmax_beta =
+          log_softmax(beta);
 
-  // FIXME:  replace with more efficient sum()
-  Eigen::Matrix<typename boost::math::tools::promote_args<T_prob>::type,
-                Eigen::Dynamic, 1>
-      results(ns.size());
-  for (size_t i = 0; i < ns.size(); ++i)
-    results[i] = log_softmax_beta(ns[i] - 1);
-  return sum(results);
-}
+      // FIXME:  replace with more efficient sum()
+      Eigen::Matrix<typename boost::math::tools::promote_args<T_prob>::type,
+                    Eigen::Dynamic, 1>
+          results(ns.size());
+      for (size_t i = 0; i < ns.size(); ++i)
+        results[i] = log_softmax_beta(ns[i] - 1);
+      return sum(results);
+    }
 
-template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type
-categorical_logit_lpmf(const std::vector<int>& ns,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<false>(ns, beta);
-}
+    template <typename T_prob>
+    inline typename boost::math::tools::promote_args<T_prob>::type
+    categorical_logit_lpmf(
+        const std::vector<int>& ns,
+        const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+      return categorical_logit_lpmf<false>(ns, beta);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

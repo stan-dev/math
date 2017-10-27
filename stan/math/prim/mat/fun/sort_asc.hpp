@@ -6,23 +6,23 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the specified vector in ascending order.
- *
- * @tparam T Type of elements contained in vector.
- * @param xs Vector to order.
- * @return Vector in ascending order.
- * @throw std::domain_error If any of the values are NaN.
- */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> sort_asc(Eigen::Matrix<T, R, C> xs) {
-  check_not_nan("sort_asc", "container argument", xs);
-  std::sort(xs.data(), xs.data() + xs.size());
-  return xs;
-}
+    /**
+     * Return the specified vector in ascending order.
+     *
+     * @tparam T Type of elements contained in vector.
+     * @param xs Vector to order.
+     * @return Vector in ascending order.
+     * @throw std::domain_error If any of the values are NaN.
+     */
+    template <typename T, int R, int C>
+    inline Eigen::Matrix<T, R, C> sort_asc(Eigen::Matrix<T, R, C> xs) {
+      check_not_nan("sort_asc", "container argument", xs);
+      std::sort(xs.data(), xs.data() + xs.size());
+      return xs;
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

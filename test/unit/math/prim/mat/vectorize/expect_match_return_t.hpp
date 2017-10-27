@@ -7,23 +7,23 @@
 
 namespace stan {
 
-namespace test {
+  namespace test {
 
-/**
- * Tests that the return type of a vectorized function with a
- * specified argument type is a specified type.
- *
- * @tparam F Functor defining function to test.
- * @tparam T_result_expected  Expected result type.
- * @tparam T_arg Argument type.
- */
-template <typename F, typename T_result_expected, typename T_arg>
-void expect_match_return_t() {
-  using stan::math::apply_scalar_unary;
-  typedef typename apply_scalar_unary<F, T_arg>::return_t result_t;
-  EXPECT_TRUE((boost::is_same<T_result_expected, result_t>::value));
-}
+    /**
+     * Tests that the return type of a vectorized function with a
+     * specified argument type is a specified type.
+     *
+     * @tparam F Functor defining function to test.
+     * @tparam T_result_expected  Expected result type.
+     * @tparam T_arg Argument type.
+     */
+    template <typename F, typename T_result_expected, typename T_arg>
+    void expect_match_return_t() {
+      using stan::math::apply_scalar_unary;
+      typedef typename apply_scalar_unary<F, T_arg>::return_t result_t;
+      EXPECT_TRUE((boost::is_same<T_result_expected, result_t>::value));
+    }
 
-}  // namespace test
+  }  // namespace test
 }  // namespace stan
 #endif

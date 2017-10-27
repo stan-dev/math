@@ -6,18 +6,18 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <typename T>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T>::type,
-                     Eigen::Dynamic, 1>
-rep_vector(const T& x, int n) {
-  check_nonnegative("rep_vector", "n", n);
-  return Eigen::Matrix<typename boost::math::tools::promote_args<T>::type,
-                       Eigen::Dynamic, 1>::Constant(n, x);
-}
+    template <typename T>
+    inline Eigen::Matrix<typename boost::math::tools::promote_args<T>::type,
+                         Eigen::Dynamic, 1>
+    rep_vector(const T& x, int n) {
+      check_nonnegative("rep_vector", "n", n);
+      return Eigen::Matrix<typename boost::math::tools::promote_args<T>::type,
+                           Eigen::Dynamic, 1>::Constant(n, x);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

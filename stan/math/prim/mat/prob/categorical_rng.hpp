@@ -14,30 +14,30 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline int categorical_rng(
-    const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, RNG& rng) {
-  using boost::variate_generator;
-  using boost::uniform_01;
+    template <class RNG>
+    inline int categorical_rng(
+        const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, RNG& rng) {
+      using boost::variate_generator;
+      using boost::uniform_01;
 
-  static const std::string function = "categorical_rng";
+      static const std::string function = "categorical_rng";
 
-  check_simplex(function, "Probabilities parameter", theta);
+      check_simplex(function, "Probabilities parameter", theta);
 
-  variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
+      variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
 
-  Eigen::VectorXd index(theta.rows());
-  index.setZero();
+      Eigen::VectorXd index(theta.rows());
+      index.setZero();
 
-  index = cumulative_sum(theta);
+      index = cumulative_sum(theta);
 
-  double c = uniform01_rng();
-  int b = 0;
-  while (c > index(b, 0)) b++;
-  return b + 1;
-}
-}  // namespace math
+      double c = uniform01_rng();
+      int b = 0;
+      while (c > index(b, 0)) b++;
+      return b + 1;
+    }
+  }  // namespace math
 }  // namespace stan
 #endif

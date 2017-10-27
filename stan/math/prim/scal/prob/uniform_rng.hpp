@@ -14,24 +14,24 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double uniform_rng(double alpha, double beta, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::uniform_real_distribution;
+    template <class RNG>
+    inline double uniform_rng(double alpha, double beta, RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::uniform_real_distribution;
 
-  static const std::string function = "uniform_rng";
+      static const std::string function = "uniform_rng";
 
-  check_finite(function, "Lower bound parameter", alpha);
-  check_finite(function, "Upper bound parameter", beta);
-  check_greater(function, "Upper bound parameter", beta, alpha);
+      check_finite(function, "Lower bound parameter", alpha);
+      check_finite(function, "Upper bound parameter", beta);
+      check_greater(function, "Upper bound parameter", beta, alpha);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
-      rng, uniform_real_distribution<>(alpha, beta));
-  return uniform_rng();
-}
+      variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
+          rng, uniform_real_distribution<>(alpha, beta));
+      return uniform_rng();
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

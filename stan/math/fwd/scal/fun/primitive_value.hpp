@@ -5,23 +5,23 @@
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return the primitive value of the specified forward-mode
- * autodiff variable.  This function applies recursively to
- * higher-order autodiff types to return a primitive double value.
- *
- * @tparam T scalar type for autodiff variable.
- * @param v input variable.
- * @return primitive value of input.
- */
-template <typename T>
-inline double primitive_value(const fvar<T>& v) {
-  return primitive_value(v.val_);
-}
+    /**
+     * Return the primitive value of the specified forward-mode
+     * autodiff variable.  This function applies recursively to
+     * higher-order autodiff types to return a primitive double value.
+     *
+     * @tparam T scalar type for autodiff variable.
+     * @param v input variable.
+     * @return primitive value of input.
+     */
+    template <typename T>
+    inline double primitive_value(const fvar<T>& v) {
+      return primitive_value(v.val_);
+    }
 
-}  // namespace math
+  }  // namespace math
 
 }  // namespace stan
 

@@ -5,17 +5,18 @@
 #include <stan/math/prim/scal/prob/scaled_inv_chi_square_lcdf.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * @deprecated use <code>scaled_inv_chi_square_lcdf</code>
- */
-template <typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf_log(
-    const T_y& y, const T_dof& nu, const T_scale& s) {
-  return scaled_inv_chi_square_lcdf<T_y, T_dof, T_scale>(y, nu, s);
-}
+    /**
+     * @deprecated use <code>scaled_inv_chi_square_lcdf</code>
+     */
+    template <typename T_y, typename T_dof, typename T_scale>
+    typename return_type<T_y, T_dof, T_scale>::type
+    scaled_inv_chi_square_cdf_log(const T_y& y, const T_dof& nu,
+                                  const T_scale& s) {
+      return scaled_inv_chi_square_lcdf<T_y, T_dof, T_scale>(y, nu, s);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

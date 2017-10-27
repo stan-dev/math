@@ -6,10 +6,10 @@
 
 namespace stan {
 
-template <typename T>
-struct partials_type<stan::math::fvar<T> > {
-  typedef T type;
-};
+  template <typename T>
+  struct partials_type<stan::math::fvar<T> > {
+    typedef T type;
+  };
 
 }  // namespace stan
 #endif

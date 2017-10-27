@@ -17,23 +17,23 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double logistic_rng(double mu, double sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::exponential_distribution;
+    template <class RNG>
+    inline double logistic_rng(double mu, double sigma, RNG& rng) {
+      using boost::variate_generator;
+      using boost::random::exponential_distribution;
 
-  static const std::string function = "logistic_rng";
+      static const std::string function = "logistic_rng";
 
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+      check_finite(function, "Location parameter", mu);
+      check_positive_finite(function, "Scale parameter", sigma);
 
-  variate_generator<RNG&, exponential_distribution<> > exp_rng(
-      rng, exponential_distribution<>(1));
-  return mu - sigma * std::log(exp_rng() / exp_rng());
-}
+      variate_generator<RNG&, exponential_distribution<> > exp_rng(
+          rng, exponential_distribution<>(1));
+      return mu - sigma * std::log(exp_rng() / exp_rng());
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

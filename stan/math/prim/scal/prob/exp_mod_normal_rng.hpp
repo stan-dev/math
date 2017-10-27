@@ -17,20 +17,20 @@
 #include <string>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <class RNG>
-inline double exp_mod_normal_rng(double mu, double sigma, double lambda,
-                                 RNG& rng) {
-  static const std::string function = "exp_mod_normal_rng";
+    template <class RNG>
+    inline double exp_mod_normal_rng(double mu, double sigma, double lambda,
+                                     RNG& rng) {
+      static const std::string function = "exp_mod_normal_rng";
 
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Inv_scale parameter", lambda);
-  check_positive_finite(function, "Scale parameter", sigma);
+      check_finite(function, "Location parameter", mu);
+      check_positive_finite(function, "Inv_scale parameter", lambda);
+      check_positive_finite(function, "Scale parameter", sigma);
 
-  return normal_rng(mu, sigma, rng) + exponential_rng(lambda, rng);
-}
+      return normal_rng(mu, sigma, rng) + exponential_rng(lambda, rng);
+    }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 #endif

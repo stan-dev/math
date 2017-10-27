@@ -5,23 +5,23 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 
 namespace stan {
-/**
- * Metaprogram structure to determine the base scalar type
- * of a template argument.
- *
- * <p>This base class should be specialized for structured types.
- *
- * @tparam T Type of object.
- */
-template <typename T>
-struct scalar_type {
-  typedef T type;
-};
+  /**
+   * Metaprogram structure to determine the base scalar type
+   * of a template argument.
+   *
+   * <p>This base class should be specialized for structured types.
+   *
+   * @tparam T Type of object.
+   */
+  template <typename T>
+  struct scalar_type {
+    typedef T type;
+  };
 
-template <typename T>
-struct scalar_type<T*> {
-  typedef typename scalar_type<T>::type type;
-};
+  template <typename T>
+  struct scalar_type<T*> {
+    typedef typename scalar_type<T>::type type;
+  };
 
 }  // namespace stan
 #endif

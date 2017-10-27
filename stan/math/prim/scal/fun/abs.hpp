@@ -4,20 +4,20 @@
 #include <cmath>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-/**
- * Return floating-point absolute value.
- *
- * Delegates to <code>fabs(double)</code> rather than
- * <code>std::abs(int)</code>.
- *
- * @param x scalar
- * @return absolute value of scalar
- */
-inline double abs(double x) { return std::fabs(x); }
+    /**
+     * Return floating-point absolute value.
+     *
+     * Delegates to <code>fabs(double)</code> rather than
+     * <code>std::abs(int)</code>.
+     *
+     * @param x scalar
+     * @return absolute value of scalar
+     */
+    inline double abs(double x) { return std::fabs(x); }
 
-}  // namespace math
+  }  // namespace math
 }  // namespace stan
 
 #endif

@@ -7,47 +7,49 @@
 #include <stan/math/prim/mat/fun/quad_form_sym.hpp>
 
 namespace stan {
-namespace math {
+  namespace math {
 
-template <int RA, int CA, int RB, int CB, typename T>
-inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
-    const Eigen::Matrix<fvar<T>, RA, CA>& A,
-    const Eigen::Matrix<double, RB, CB>& B) {
-  check_square("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  Eigen::Matrix<fvar<T>, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
-  return T(0.5) * (ret + transpose(ret));
-}
+    template <int RA, int CA, int RB, int CB, typename T>
+    inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
+        const Eigen::Matrix<fvar<T>, RA, CA>& A,
+        const Eigen::Matrix<double, RB, CB>& B) {
+      check_square("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym", "A", A, "B", B);
+      check_symmetric("quad_form_sym", "A", A);
+      Eigen::Matrix<fvar<T>, CB, CB> ret(
+          multiply(transpose(B), multiply(A, B)));
+      return T(0.5) * (ret + transpose(ret));
+    }
 
-template <int RA, int CA, int RB, typename T>
-inline fvar<T> quad_form_sym(const Eigen::Matrix<fvar<T>, RA, CA>& A,
-                             const Eigen::Matrix<double, RB, 1>& B) {
-  check_square("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  return dot_product(B, multiply(A, B));
-}
-template <int RA, int CA, int RB, int CB, typename T>
-inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
-    const Eigen::Matrix<double, RA, CA>& A,
-    const Eigen::Matrix<fvar<T>, RB, CB>& B) {
-  check_square("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  Eigen::Matrix<fvar<T>, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
-  return T(0.5) * (ret + transpose(ret));
-}
+    template <int RA, int CA, int RB, typename T>
+    inline fvar<T> quad_form_sym(const Eigen::Matrix<fvar<T>, RA, CA>& A,
+                                 const Eigen::Matrix<double, RB, 1>& B) {
+      check_square("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym", "A", A, "B", B);
+      check_symmetric("quad_form_sym", "A", A);
+      return dot_product(B, multiply(A, B));
+    }
+    template <int RA, int CA, int RB, int CB, typename T>
+    inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
+        const Eigen::Matrix<double, RA, CA>& A,
+        const Eigen::Matrix<fvar<T>, RB, CB>& B) {
+      check_square("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym", "A", A, "B", B);
+      check_symmetric("quad_form_sym", "A", A);
+      Eigen::Matrix<fvar<T>, CB, CB> ret(
+          multiply(transpose(B), multiply(A, B)));
+      return T(0.5) * (ret + transpose(ret));
+    }
 
-template <int RA, int CA, int RB, typename T>
-inline fvar<T> quad_form_sym(const Eigen::Matrix<double, RA, CA>& A,
-                             const Eigen::Matrix<fvar<T>, RB, 1>& B) {
-  check_square("quad_form_sym", "A", A);
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  return dot_product(B, multiply(A, B));
-}
-}  // namespace math
+    template <int RA, int CA, int RB, typename T>
+    inline fvar<T> quad_form_sym(const Eigen::Matrix<double, RA, CA>& A,
+                                 const Eigen::Matrix<fvar<T>, RB, 1>& B) {
+      check_square("quad_form_sym", "A", A);
+      check_multiplicable("quad_form_sym", "A", A, "B", B);
+      check_symmetric("quad_form_sym", "A", A);
+      return dot_product(B, multiply(A, B));
+    }
+  }  // namespace math
 }  // namespace stan
 
 #endif
