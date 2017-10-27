@@ -4,6 +4,8 @@
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/mat/err/check_matching_dims.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -106,11 +108,10 @@ namespace stan {
 
     void copy(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> & src,
      matrix_gpu & dst) {
-            if (src.rows() != dst.rows() || src.cols() != dst.cols()) {
-              std::cout << "Copy (Eigen -> GPU) : CPU and GPU matrix "
-               "sizes do no match!" <<
-                std::endl;
-            }
+            check_size_match("copy (Eigen -> GPU)",
+             "src.rows()", src.rows(), "dst.rows()", dst.rows());
+            check_size_match("copy (Eigen -> GPU)",
+             "src.cols()", src.cols(), "dst.cols()", dst.cols());
 
             try {
               cl::Context ctx = get_context();
@@ -144,18 +145,10 @@ namespace stan {
     template <typename T>
     void copy(matrix_gpu & src,
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & dst) {
-            if (dst.rows() != src.rows()) {
-              std::cout << "Copy (GPU -> Eigen): GPU and CPU matrics "
-               "row lengths do no match!" <<
-               std::endl;
-            }
-            if (dst.cols() != src.cols()) {
-              std::cout << "Copy (GPU -> Eigen): GPU and CPU matrices "
-               "col lengths do not match!" <<
-               std::endl;
-            }
-            int rows = dst.rows();
-            int cols = dst.cols();
+            check_size_match("copy (GPU -> Eigen)",
+             "src.rows()", src.rows(), "dst.rows()", dst.rows());
+            check_size_match("copy (GPU -> Eigen)",
+             "src.cols()", src.cols(), "dst.cols()", dst.cols());
             try {
               cl::Context ctx = get_context();
               cl::CommandQueue queue = get_queue();
@@ -187,16 +180,10 @@ namespace stan {
 
     void copy(matrix_gpu & src,
      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> & dst) {
-            if (dst.rows() != src.rows()) {
-              std::cout << "Copy (GPU -> Eigen): Eigen and matrix_gpu"
-              " row lengths do no match!" <<
-               std::endl;
-            }
-            if (dst.cols() != src.cols()) {
-              std::cout << "Copy (GPU -> Eigen): Eigen and stanmathCL "
-               "matrix_gpu col lengths do no match!" <<
-               std::endl;
-            }
+            check_size_match("copy (GPU -> Eigen)",
+              "src.rows()", src.rows(), "dst.rows()", dst.rows());
+            check_size_match("copy (GPU -> Eigen)",
+              "src.cols()", src.cols(), "dst.cols()", dst.cols());
 
             try {
               std::vector<double> Btemp(dst.size());
@@ -229,10 +216,10 @@ namespace stan {
     }
 
     void copy(matrix_gpu & src,  matrix_gpu & dst) { // NOLINT
-      if (src.rows() != dst.rows() || src.cols() != dst.cols()) {
-        app_error("The dimensions of the input and output "
-        "matrices should match.");
-      }
+      check_size_match("copy (GPU -> GPU)",
+        "src.rows()", src.rows(), "dst.rows()", dst.rows());
+      check_size_match("copy (GPU -> GPU)",
+        "src.cols()", src.cols(), "dst.cols()", dst.cols());
       cl::Kernel kernel = get_kernel("copy");
       cl::CommandQueue cmdQueue = get_queue();
       try {

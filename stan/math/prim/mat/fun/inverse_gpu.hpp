@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/mat/err/check_gpu.hpp>
 #include <Eigen/Dense>
 #include <iostream>
 #include <string>
@@ -18,9 +20,7 @@
 namespace stan {
   namespace math {
     void lower_triangular_inverse(matrix_gpu & A) {
-      if (A.rows() != A.cols()) {
-        app_error("the input matrix of the inverse is not square");
-      }
+      check_square("lower_triangular_inverse (GPU)", "A", A);
 
       cl::Kernel kernel_step1 = get_kernel("lower_tri_inv_step1");
       cl::Kernel kernel_step2 = get_kernel("lower_tri_inv_step2");

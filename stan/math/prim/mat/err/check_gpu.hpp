@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
@@ -12,9 +13,9 @@ namespace stan {
   namespace math {
 
     /**
-     * Check if the specified matrix_gpu has NaN values
+     * Check if the specified matrix on the GPU has NaN values
      *
-     * @param A matrix to check for NaN values
+     * @param A matrix on the gpu to check for NaN values
      *
      * @throw <code>std::domain_error</code> if
      *    any element of the matrix is <code>NaN</code>.
@@ -57,9 +58,9 @@ namespace stan {
     }
 
     /**
-     * Check if the specified matrix_gpu has zeros on the diagonal
+     * Check if the specified matrix on the GPU has zeros on the diagonal
      *
-     * @param A matrix to check for zeros on the diagonal
+     * @param A matrix on the GPU to check for zeros on the diagonal
      *
      * @throw <code>std::domain_error</code> if
      *    any diagonal element of the matrix is zero.
@@ -104,6 +105,57 @@ namespace stan {
         check_ocl_error(e);
       }
     }
+
+    /**
+     * Check if the specified matrix on the GPU is square.
+     *
+     * This check allows 0x0 matrices.
+     *
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix on the GPU to test
+     *
+     * @throw <code>std::invalid_argument</code> if the matrix
+     *    is not square
+     */
+    inline void
+    check_square(const std::string& function,
+                 const std::string& name,
+                 matrix_gpu& y) {
+      check_size_match(function,
+                       "Expecting a square matrix; rows of ", name, y.rows(),
+                       "columns of ", name, y.cols());
+    }
+
+        /**
+     * Check if the two matrices on the GPU are of the same size.
+     *
+     * This function checks the runtime sizes only.
+     *     
+     *
+     * @param function Function name (for error messages)
+     * @param name1 Variable name for the first matrix (for error messages)
+     * @param y1 First matrix
+     * @param name2 Variable name for the second matrix (for error messages)
+     * @param y2 Second matrix
+     *
+     * @throw <code>std::invalid_argument</code>
+     * if the dimensions of the matrices do not match
+     */
+    inline void check_matching_dims(const std::string& function,
+                                    const std::string& name1,
+                                    matrix_gpu& y1,
+                                    const std::string& name2,
+                                    matrix_gpu& y2) {
+      check_size_match(function,
+                       "Rows of ", name1, y1.rows(),
+                       "rows of ", name2, y2.rows());
+      check_size_match(function,
+                       "Columns of ", name1, y1.cols(),
+                       "columns of ", name2, y2.cols());
+    }
+
   }
 }
 #endif
