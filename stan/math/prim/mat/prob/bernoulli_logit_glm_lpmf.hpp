@@ -14,7 +14,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/mat/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>

@@ -7,7 +7,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/mat/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>

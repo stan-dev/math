@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_SIZE_ZERO_HPP
-#define STAN_MATH_PRIM_MAT_FUN_SIZE_ZERO_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_SIZE_ZERO_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_SIZE_ZERO_HPP
 
-#include <stan/math/prim/mat/meta/length.hpp>
+#include <stan/math/prim/scal/meta/length.hpp>
 #include <utility>
 
 namespace stan {

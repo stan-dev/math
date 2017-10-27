@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/mat/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
