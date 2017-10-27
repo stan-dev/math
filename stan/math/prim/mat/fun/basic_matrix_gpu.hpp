@@ -176,7 +176,6 @@ namespace stan {
         check_ocl_error(e);
       }
     }
-    
      /**
      * Copies a submatrix of the source matrix to 
      * the destination matrix. The submatrix to copy 
@@ -200,32 +199,32 @@ namespace stan {
      * 
      */
     void copy_submatrix(matrix_gpu & src,
-     matrix_gpu & dst, int src_offset_rows, int src_offset_cols, int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
-      
+     matrix_gpu & dst, int src_offset_rows, int src_offset_cols,
+       int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
       // TODO(Rok): check if size_rows or size_cols is 0
-      // TODO(Rok): check if size_cols and size_rows is larger than src or dst matrix
-      // TODO(Rok): check if offset_rows+size_rows or offset_cols+size_cols is out of bounds on any matrix
-      
+      // TODO(Rok): check if size_cols and size_rows is
+      //   larger than src or dst matrix
+      // TODO(Rok): check if offset_rows+size_rows or
+      //   offset_cols+size_cols is out of bounds on any matrix
       cl::Kernel kernel = get_kernel("copy_submatrix");
       cl::CommandQueue cmdQueue = get_queue();
       try {
-        
         kernel.setArg(0, src.buffer());
         kernel.setArg(1, dst.buffer());
-        
+
         kernel.setArg(2, src_offset_rows);
         kernel.setArg(3, src_offset_cols);
         kernel.setArg(4, dst_offset_rows);
         kernel.setArg(5, dst_offset_cols);
-        
+
         kernel.setArg(6, size_rows);
         kernel.setArg(7, size_cols);
-        
+
         kernel.setArg(8, src.rows());
         kernel.setArg(9, src.cols());
         kernel.setArg(10, dst.rows());
         kernel.setArg(11, dst.cols());
-        
+
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
