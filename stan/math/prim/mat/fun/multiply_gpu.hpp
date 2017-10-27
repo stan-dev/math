@@ -61,9 +61,13 @@ namespace stan {
 
     void multiply(matrix_gpu & A, matrix_gpu & B,
      matrix_gpu & C ) {
-      if (A.cols()!= B.rows()) {
-        app_error("Incorrect dimensions of the matrices in matrix multiply!");
-      }
+      check_size_match("multiply (GPU)", "A.cols()", A.cols(),
+       "B.rows()", B.rows());
+      check_size_match("multiply (GPU)", "A.rows()", A.rows(),
+       "C.rows()", C.rows());
+      check_size_match("multiply (GPU)", "B.cols()", B.cols(),
+       "C.cols()", C.cols());
+
       // Square matrices
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue cmdQueue = get_queue();

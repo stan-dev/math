@@ -20,6 +20,17 @@ namespace stan {
 
     // OpenCL errors - this lists all OpenCL erros
     // including the ones from OpenCL 2.0
+    /**
+     * Fill the specified container with the specified value.
+     *
+     * Each container in the specified standard vector is filled
+     * recursively by calling <code>fill</code>.
+     *
+     * @tparam T Type of container in vector.
+     * @tparam S Type of value.
+     * @param[in] x Container.
+     * @param[in, out] y Value.
+     */
     void check_ocl_error(const cl::Error& e) {
       std::string error_string;
       switch (e.err()) {
@@ -294,10 +305,6 @@ namespace stan {
       exit(1);
     }
 
-    void app_error(std::string text) {
-      std::cout << "ERROR: " << text << std::endl;
-      exit(1);
-    }
   }
 }
 #endif
