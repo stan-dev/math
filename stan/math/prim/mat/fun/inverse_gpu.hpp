@@ -19,6 +19,15 @@
 // CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
 namespace stan {
   namespace math {
+    /**
+     * Computes the inverse of the lower triangular matrix 
+     * that resides in the GPU global memory
+     * 
+     * @param[in,out] A matrix on the GPU 
+     *
+     * @throw <code>std::invalid_argument</code> if the matrix
+     *    is not square
+     */
     void lower_triangular_inverse(matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
 

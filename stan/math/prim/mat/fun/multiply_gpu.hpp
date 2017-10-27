@@ -14,7 +14,14 @@
 
 namespace stan {
   namespace math {
-
+    /**
+     * Multiplies the diagonal of the specified matrix on the GPU 
+     * with the specified scalar.
+     * 
+     * @param[in,out] A matrix
+     * @param scalar scalar
+     *      
+     */
     void diagonal_multiply_with_scalar(matrix_gpu & A,
      double scalar) {
       cl::Kernel kernel = get_kernel("scalar_mul_diagonal");
@@ -38,7 +45,14 @@ namespace stan {
         check_ocl_error(e);
       }
     }
-
+    /**
+     * Multiplies the specified matrix on the GPU 
+     * with the specified scalar.
+     * 
+     * @param[in,out] A matrix
+     * @param scalar scalar
+     *      
+     */
     void multiply_with_scalar(matrix_gpu & A,  double scalar) {
       cl::Kernel kernel = get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = get_queue();
@@ -59,6 +73,23 @@ namespace stan {
       }
     }
 
+    /**
+     * Computes the product of the first two specified GPU matrices.  The number of
+     * columns in the first matrix must be the same as the number of rows
+     * in the second matrix. The number of rows of the resulting matrix must be the
+     * same as the number of rows in the first matrix and the number of columnds
+     * of the resulting matrix must be the same as the number of columns of the 
+     * second matrix. 
+     * 
+     * Computes the matrix multiplication C = A x B
+     * 
+     * @param A first matrix
+     * @param B second matrix
+     * @param C the product of the first and second matrix
+     * 
+     * @throw <code>std::invalid_argument</code> if the sizes
+     *   of the matrices 
+     */
     void multiply(matrix_gpu & A, matrix_gpu & B,
      matrix_gpu & C ) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
