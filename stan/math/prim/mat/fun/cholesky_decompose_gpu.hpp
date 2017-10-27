@@ -22,7 +22,6 @@
 // CURRENTLY ONLY SUPPORTS LOWER TRIANGULAR
 namespace stan {
   namespace math {
-    
     /**
      * Return the lower-triangular Cholesky factor (i.e., matrix
      * square root) of the specified square, symmetric matrix.  
