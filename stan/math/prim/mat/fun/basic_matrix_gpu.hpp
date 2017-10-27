@@ -176,6 +176,67 @@ namespace stan {
         check_ocl_error(e);
       }
     }
+    
+     /**
+     * Copies a submatrix of the source matrix to 
+     * the destination matrix. The submatrix to copy 
+     * starts at (src_offset_rows, src_offset_cols)
+     * and is of size size_rows x size_cols.
+     * The submatrix is copied to the 
+     * destination matrix starting at 
+     * (dst_offset_rows, dst_offset_cols)
+     * 
+     * @param src the source matrix
+     * @param dst the destination submatrix
+     * @param src_offset_rows the offset row in src
+     * @param src_offset_cols the offset column in src
+     * @param dst_offset_rows the offset row in dst
+     * @param dst_offset_cols the offset column in dst
+     * @param size_rows the number of rows in the submatrix
+     * @param size_cols the number of columns in the submatrix
+     * 
+     * @throw <code>std::invalid_argument</code> if 
+     * 
+     * 
+     */
+    void copy_submatrix(matrix_gpu & src,
+     matrix_gpu & dst, int src_offset_rows, int src_offset_cols, int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
+      
+      // TODO(Rok): check if size_rows or size_cols is 0
+      // TODO(Rok): check if size_cols and size_rows is larger than src or dst matrix
+      // TODO(Rok): check if offset_rows+size_rows or offset_cols+size_cols is out of bounds on any matrix
+      
+      cl::Kernel kernel = get_kernel("copy_submatrix");
+      cl::CommandQueue cmdQueue = get_queue();
+      try {
+        
+        kernel.setArg(0, src.buffer());
+        kernel.setArg(1, dst.buffer());
+        
+        kernel.setArg(2, src_offset_rows);
+        kernel.setArg(3, src_offset_cols);
+        kernel.setArg(4, dst_offset_rows);
+        kernel.setArg(5, dst_offset_cols);
+        
+        kernel.setArg(6, size_rows);
+        kernel.setArg(7, size_cols);
+        
+        kernel.setArg(8, src.rows());
+        kernel.setArg(9, src.cols());
+        kernel.setArg(10, dst.rows());
+        kernel.setArg(11, dst.cols());
+        
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(size_rows, size_cols),
+          cl::NullRange,
+          NULL,
+          NULL);
+      } catch (const cl::Error& e) {
+        check_ocl_error(e);
+      }
+    }
 
     /**
      * Copies the lower triangular 

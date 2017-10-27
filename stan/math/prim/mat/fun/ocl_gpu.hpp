@@ -53,6 +53,7 @@ namespace stan {
       kernel_groups["copy_triangular_transposed"] = "basic_matrix";
       kernel_groups["add"] = "basic_matrix";
       kernel_groups["subtract"] = "basic_matrix";
+      kernel_groups["copy_submatrix"] = "basic_matrix";
       kernel_groups["scalar_mul_diagonal"] = "matrix_multiply";
       kernel_groups["scalar_mul"] = "matrix_multiply";
       kernel_groups["basic_multiply"] = "matrix_multiply";
