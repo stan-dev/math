@@ -2,8 +2,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <cmath>
+#include <limits>
 
-TEST(AgradFwdAcosh,Fvar) {
+TEST(AgradFwdAcosh, Fvar) {
   using stan::math::fvar;
   using stan::math::acosh;
   using std::sqrt;
@@ -31,7 +32,7 @@ TEST(MathFunctions, acosh_inf_return) {
 }
 
 
-TEST(AgradFwdAcosh,FvarFvarDouble) {
+TEST(AgradFwdAcosh, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::acosh;
 
@@ -65,7 +66,7 @@ struct acosh_fun {
   }
 };
 
-TEST(AgradFwdAcosh,acosh_NaN) {
+TEST(AgradFwdAcosh, acosh_NaN) {
   acosh_fun acosh_;
   test_nan_fwd(acosh_, false);
 }

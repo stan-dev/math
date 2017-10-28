@@ -37,7 +37,11 @@ namespace stan {
     template <typename TA, int RA, int CA, typename TB, int CB>
     class multiply_mat_vari : public vari {
     public:
-      int A_rows_, A_cols_, B_cols_, A_size_, B_size_;
+      int A_rows_;
+      int A_cols_;
+      int B_cols_;
+      int A_size_;
+      int B_size_;
       double* Ad_;
       double* Bd_;
       vari** variRefA_;
@@ -212,7 +216,11 @@ namespace stan {
     template <int RA, int CA, typename TB, int CB>
     class multiply_mat_vari<double, RA, CA, TB, CB> : public vari {
     public:
-      int A_rows_, A_cols_, B_cols_, A_size_, B_size_;
+      int A_rows_;
+      int A_cols_;
+      int B_cols_;
+      int A_size_;
+      int B_size_;
       double* Ad_;
       double* Bd_;
       vari** variRefB_;
@@ -370,7 +378,11 @@ namespace stan {
     template <typename TA, int RA, int CA, int CB>
     class multiply_mat_vari<TA, RA, CA, double, CB> : public vari {
     public:
-      int A_rows_, A_cols_, B_cols_, A_size_, B_size_;
+      int A_rows_;
+      int A_cols_;
+      int B_cols_;
+      int A_size_;
+      int B_size_;
       double* Ad_;
       double* Bd_;
       vari** variRefA_;

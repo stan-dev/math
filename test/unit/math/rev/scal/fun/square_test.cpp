@@ -3,15 +3,15 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,square) {
+TEST(AgradRev, square) {
   AVAR a = 7.0;
   AVEC x = createAVEC(a);
   AVAR f = square(a);
   EXPECT_FLOAT_EQ(49.0, f.val());
 
   VEC grad_f;
-  f.grad(x,grad_f);
-  EXPECT_EQ(1U,grad_f.size());
+  f.grad(x, grad_f);
+  EXPECT_EQ(1U, grad_f.size());
   EXPECT_FLOAT_EQ(14.0, grad_f[0]);
 }
 
@@ -23,9 +23,9 @@ struct square_fun {
   }
 };
 
-TEST(AgradRev,square_NaN) {
+TEST(AgradRev, square_NaN) {
   square_fun square_;
-  test_nan(square_,false,true);
+  test_nan(square_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

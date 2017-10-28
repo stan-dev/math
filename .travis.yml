@@ -44,7 +44,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER=test/unit/math/rev/mat
+          TESTFOLDER=test/unit/math/rev/mat/fun
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -72,7 +76,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/rev/mat
+          TESTFOLDER=test/unit/math/rev/mat/fun
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
@@ -88,7 +96,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER=test/unit/math/mix/mat/fun
+          TESTFOLDER="test/unit/math/mix/mat/fun/[A-l]*"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"

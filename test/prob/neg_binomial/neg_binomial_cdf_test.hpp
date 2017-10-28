@@ -17,32 +17,32 @@ public:
     param[2] = 3;           // logit(p)/Inverse Scale
     parameters.push_back(param);
     cdf.push_back(0.4240861277740262114122); // expected cdf
-    
+
     param[0] = 0;          // Failures/Counts
     param[1] = 15;          // Successes/Shape
     param[2] = 3;           // logit(p)/Inverse Scale
     parameters.push_back(param);
     cdf.push_back(0.013363461010158063716); // expected cdf
-    
+
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
 
     // Successes/Shape
     index.push_back(1U);
     value.push_back(-1);
-      
+
     // logit(p)/Inverse Scale
     index.push_back(2U);
     value.push_back(-1);
-      
+
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
@@ -65,19 +65,19 @@ public:
     using std::log;
     using std::exp;
     using stan::math::binomial_coefficient_log;
-    
+
     typename stan::return_type<T_shape, T_inv_scale>::type cdf(0);
-      
+
     for (int i = 0; i <= n; i++) {
-        
+
       typename stan::return_type<T_shape, T_inv_scale>::type temp;
       temp = binomial_coefficient_log(i + alpha - 1, i);
 
-      cdf += exp( temp + alpha * log(beta / (1 + beta) ) + i * log(1 / (1 + beta) ) );
-        
+      cdf += exp(temp + alpha * log(beta / (1 + beta) ) + i * log(1 / (1 + beta) ) );
+
     }
-      
+
     return cdf;
-      
+
   }
 };

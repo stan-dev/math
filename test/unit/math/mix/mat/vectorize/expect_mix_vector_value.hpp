@@ -1,10 +1,10 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_EXPECT_MIX_VECTOR_VALUE_HPP
 
-#include <vector>
-#include <Eigen/Dense>
 #include <test/unit/math/mix/mat/vectorize/build_mix_matrix.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename T>
 void expect_mix_vector_value() {
@@ -31,15 +31,14 @@ void expect_mix_vector_value() {
         if (k == i) {
           c.push_back(build_mix_matrix<F>(template_v, j));
           d.push_back(build_mix_matrix<F>(template_v, j));
-        }
-        else {
+        } else {
           c.push_back(build_mix_matrix<F>(template_v));
           d.push_back(build_mix_matrix<F>(template_v));
         }
       vector<vector_t> fd = F::template apply<vector<vector_t> >(d);
       EXPECT_EQ(d.size(), fd.size());
       EXPECT_EQ(d[i].size(), fd[i].size());
-      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j), 
+      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j),
                                         fd[i](j), d[i](j));
     }
   }

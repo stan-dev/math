@@ -42,14 +42,14 @@ public:
     param[1] = -25;          // theta
     parameters.push_back(param);
     log_prob.push_back(-25); // expected log_prob
-    
+
     param[0] = 0;           // n
     param[1] = -25;         // theta
     parameters.push_back(param);
     log_prob.push_back(-exp(-25)); // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
     index.push_back(0U);
@@ -63,25 +63,25 @@ public:
 
   template <class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob(const T_n& n, const T_prob& theta, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::bernoulli_logit_log(n, theta);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob(const T_n& n, const T_prob& theta, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::bernoulli_logit_log<propto>(n, theta);
   }
-  
-  
+
+
   template <class T_n, class T_prob, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type 
+  typename stan::return_type<T_n, T_prob>::type
   log_prob_function(const T_n& n, const T_prob& theta, const T2&,
                     const T3&, const T4&, const T5&) {
     using std::log;

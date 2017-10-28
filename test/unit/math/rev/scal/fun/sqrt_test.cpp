@@ -2,18 +2,19 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
-TEST(AgradRev,sqrt_a) {
+TEST(AgradRev, sqrt_a) {
   AVAR a(5.0);
-  AVAR f = sqrt(a); 
-  EXPECT_FLOAT_EQ(sqrt(5.0),f.val());
+  AVAR f = sqrt(a);
+  EXPECT_FLOAT_EQ(sqrt(5.0), f.val());
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ((1.0/2.0) * pow(5.0,-0.5), g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ((1.0/2.0) * pow(5.0, -0.5), g[0]);
 }
 
-TEST(AgradRev,sqrt_neg) {
+TEST(AgradRev, sqrt_neg) {
   AVAR a = 0.0 - stan::math::EPSILON;
   EXPECT_TRUE(std::isnan(sqrt(a)));
 
@@ -21,28 +22,28 @@ TEST(AgradRev,sqrt_neg) {
   EXPECT_TRUE(std::isnan(sqrt(a)));
 }
 
-TEST(AgradRev,sqrt_inf) {
+TEST(AgradRev, sqrt_inf) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a = inf;
   AVAR f = sqrt(a);
-  EXPECT_FLOAT_EQ(inf,f.val());
+  EXPECT_FLOAT_EQ(inf, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(0.0,g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(0.0, g[0]);
 }
 
-TEST(AgradRev,sqrt_zero) {
+TEST(AgradRev, sqrt_zero) {
   double inf = std::numeric_limits<double>::infinity();
   AVAR a(0.0);
   AVAR f = sqrt(a);
-  EXPECT_FLOAT_EQ(0.0,f.val());
+  EXPECT_FLOAT_EQ(0.0, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
-  EXPECT_FLOAT_EQ(inf,g[0]);
+  f.grad(x, g);
+  EXPECT_FLOAT_EQ(inf, g[0]);
 }
 
 struct sqrt_fun {
@@ -53,9 +54,9 @@ struct sqrt_fun {
   }
 };
 
-TEST(AgradRev,sqrt_NaN) {
+TEST(AgradRev, sqrt_NaN) {
   sqrt_fun sqrt_;
-  test_nan(sqrt_,false,true);
+  test_nan(sqrt_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

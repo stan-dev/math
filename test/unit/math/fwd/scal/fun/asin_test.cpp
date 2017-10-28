@@ -2,15 +2,15 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdAsin,Fvar) {
+TEST(AgradFwdAsin, Fvar) {
   using stan::math::fvar;
   using std::asin;
   using std::isnan;
   using std::sqrt;
   using stan::math::INFTY;
 
-  fvar<double> x(0.5,1.0);
-  
+  fvar<double> x(0.5, 1.0);
+
   fvar<double> a = asin(x);
   EXPECT_FLOAT_EQ(asin(0.5), a.val_);
   EXPECT_FLOAT_EQ(1 / sqrt(1 - 0.5 * 0.5), a.d_);
@@ -27,29 +27,29 @@ TEST(AgradFwdAsin,Fvar) {
   EXPECT_FLOAT_EQ(-3 * asin(0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(-3 / sqrt(1 - 0.5 * 0.5) + 5, d.d_);
 
-  fvar<double> y(3.4,1.0);
+  fvar<double> y(3.4, 1.0);
   fvar<double> e = asin(y);
   isnan(e.val_);
   isnan(e.d_);
 
-  fvar<double> z(1.0,1.0);
+  fvar<double> z(1.0, 1.0);
   fvar<double> f = asin(z);
   EXPECT_FLOAT_EQ(asin(1.0), f.val_);
   EXPECT_FLOAT_EQ(INFTY, f.d_);
 
-  fvar<double> z2(1.0+stan::math::EPSILON,1.0);
+  fvar<double> z2(1.0+stan::math::EPSILON, 1.0);
   fvar<double> f2 = asin(z2);
   EXPECT_TRUE(boost::math::isnan(f2.val_));
   EXPECT_TRUE(boost::math::isnan(f2.d_));
 
-  fvar<double> z3(-1.0-stan::math::EPSILON,1.0);
+  fvar<double> z3(-1.0-stan::math::EPSILON, 1.0);
   fvar<double> f3 = asin(z3);
   EXPECT_TRUE(boost::math::isnan(f3.val_));
   EXPECT_TRUE(boost::math::isnan(f3.d_));
 }
 
 
-TEST(AgradFwdAsin,FvarFvarDouble) {
+TEST(AgradFwdAsin, FvarFvarDouble) {
   using stan::math::fvar;
   using std::asin;
 
@@ -83,7 +83,7 @@ struct asin_fun {
   }
 };
 
-TEST(AgradFwdAsin,asin_NaN) {
+TEST(AgradFwdAsin, asin_NaN) {
   asin_fun asin_;
-  test_nan_fwd(asin_,false);
+  test_nan_fwd(asin_, false);
 }

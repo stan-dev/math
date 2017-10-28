@@ -6,6 +6,7 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 
+#include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/meta/is_constant_struct.hpp>
@@ -60,6 +61,7 @@
 #include <stan/math/prim/mat/fun/block.hpp>
 #include <stan/math/prim/mat/fun/cbrt.hpp>
 #include <stan/math/prim/mat/fun/ceil.hpp>
+#include <stan/math/prim/mat/fun/chol2inv.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_free.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
@@ -244,6 +246,7 @@
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 
+#include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
@@ -289,6 +292,9 @@
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
+#include <stan/math/prim/mat/prob/ordered_probit_log.hpp>
+#include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
+#include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
 #include <stan/math/prim/mat/prob/wishart_log.hpp>
 #include <stan/math/prim/mat/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>

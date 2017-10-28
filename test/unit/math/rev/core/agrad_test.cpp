@@ -8,18 +8,19 @@ TEST(AgradRev, multiple_grads) {
     AVAR a = 2.0;
     AVAR b = 3.0 * a;
     AVAR c = sin(a) * b;
-    c = c; // fixes warning regarding unused variable
-    
+    // fixes warning regarding unused variable
+    c = c;
+
     AVAR nothing;
   }
-  
+
   AVAR d = 2.0;
   AVAR e = 3.0;
   AVAR f = d * e;
-  
-  AVEC x = createAVEC(d,e);
+
+  AVEC x = createAVEC(d, e);
   VEC grad_f;
-  f.grad(x,grad_f);
+  f.grad(x, grad_f);
 
   EXPECT_FLOAT_EQ(3.0, d.adj());
   EXPECT_FLOAT_EQ(2.0, e.adj());

@@ -29,11 +29,11 @@ public:
     parameters.push_back(param);
     cdf.push_back(5.05 / 10.0);   // expected cdf
   }
- 
-  void invalid_values(vector<size_t>& /*index*/, 
+
+  void invalid_values(vector<size_t>& /*index*/,
                       vector<double>& /*value*/) {
     // y
-    
+
     // alpha
 
     // beta
@@ -44,7 +44,7 @@ public:
     return false;
   }
 
-  //BOUND INCLUDED IN ORDER FOR TEST TO PASS WITH CURRENT FRAMEWORK
+  // BOUND INCLUDED IN ORDER FOR TEST TO PASS WITH CURRENT FRAMEWORK
   bool has_upper_bound() {
     return true;
   }
@@ -55,15 +55,15 @@ public:
 
   template <class T_y, class T_low, class T_high,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_low, T_high>::type 
+  typename stan::return_type<T_y, T_low, T_high>::type
   cdf(const T_y& y, const T_low& alpha, const T_high& beta,
       const T3&, const T4&, const T5&) {
     return stan::math::uniform_cdf(y, alpha, beta);
   }
-  
+
   template <class T_y, class T_low, class T_high,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_low, T_high>::type 
+  typename stan::return_type<T_y, T_low, T_high>::type
   cdf_function(const T_y& y, const T_low& alpha, const T_high& beta,
                const T3&, const T4&, const T5&) {
       using stan::math::include_summand;

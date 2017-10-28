@@ -14,13 +14,13 @@ TEST_F(AgradFwdSinh, Fvar) {
   using std::sinh;
   using std::cosh;
 
-  fvar<double> x(0.5,1.0);
+  fvar<double> x(0.5, 1.0);
 
   fvar<double> a = sinh(x);
   EXPECT_FLOAT_EQ(sinh(0.5), a.val_);
   EXPECT_FLOAT_EQ(cosh(0.5), a.d_);
 
-  fvar<double> y(-1.2,1.0);
+  fvar<double> y(-1.2, 1.0);
 
   fvar<double> b = sinh(y);
   EXPECT_FLOAT_EQ(sinh(-1.2), b.val_);
@@ -67,7 +67,7 @@ struct sinh_fun {
   }
 };
 
-TEST_F(AgradFwdSinh,sinh_NaN) {
+TEST_F(AgradFwdSinh, sinh_NaN) {
   sinh_fun sinh_;
-  test_nan_fwd(sinh_,false);
+  test_nan_fwd(sinh_, false);
 }

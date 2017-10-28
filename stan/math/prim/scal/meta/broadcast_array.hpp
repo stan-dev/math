@@ -14,18 +14,19 @@ namespace stan {
       public:
         explicit broadcast_array(T& prim): prim_(prim) {}
 
-        T& operator[] (int /*i*/) {
+        T& operator[](int /*i*/) {
           return prim_;
         }
       };
 
-      template <typename T>
+      template <typename T, typename S>
       class empty_broadcast_array {
       public:
         empty_broadcast_array() {}
-        T& operator[] (int /*i*/) {
-          throw std::logic_error("Don't do this");
-        }
+       /**
+        * Not implemented so cannot be called.
+        */
+        T& operator[] (int /*i*/);
       };
     }
   }
