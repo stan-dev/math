@@ -33,8 +33,8 @@ TEST(MathMatrix, LDLTfactor_InvalidValues) {
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> non_spd(3, 3);
   non_spd << 2.0, 0.0, 0.0,
-        -1.0, 0.0, -1.0,
-         0.0, -1.0, 2.0;
+            -1.0, 0.0, -1.0,
+             0.0, -1.0, 2.0;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> spd_nan(3, 3);
   spd_nan << 2.0, -1.0, nan,
