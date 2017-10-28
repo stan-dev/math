@@ -54,7 +54,7 @@ namespace stan {
         z_rng(rng, uniform_real_distribution<>(-1.0, 1.0));
       for (size_t n = 0; n < N; ++n) {
         double z = z_rng();
-        output[n] = mu_vec[n] - sign(z) * sigma_vec[n] * std::log(abs(z));
+        output[n] = mu_vec[n] - stan::math::sign(z) * sigma_vec[n] * std::log(abs(z));
       }
 
       return output.data();
