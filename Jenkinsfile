@@ -76,7 +76,13 @@ pipeline {
                     )
                 }
             }
-            post { always { deleteDir() } }
+            post {
+                always {
+                    warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
+                    deleteDir()
+                }
+            }
         }
         stage('Tests') {
             failFast true
@@ -123,7 +129,6 @@ pipeline {
                         sh setupCC(false)
                         sh "echo 'O=0' >> make/local"
                         runTests("test/prob")
-                        retry(2) { junit 'test/**/*.xml' }
                     }
                     post { always { deleteDir() } }
                 }
@@ -135,8 +140,6 @@ pipeline {
             node('master') {
                 warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
                 warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
             }
         }
         success {
