@@ -172,7 +172,7 @@ namespace stan {
             stan::math::subtract(Rbar_gpu, Rbar_gpu, temp_gpu);
           }
 
-          stan::math::diagonal_multiply_with_scalar(Dbar2_gpu, 0.5);
+          stan::math::diagonal_multiply(Dbar2_gpu, 0.5);
           stan::math::zeros(Dbar2_gpu, stan::math::UPPER);
 
           stan::math::copy_submatrix(Rbar_gpu, Lbar_gpu, 0, 0, j, 0, k-j, j);

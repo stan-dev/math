@@ -22,8 +22,7 @@ namespace stan {
      * @param scalar scalar
      *      
      */
-    void diagonal_multiply_with_scalar(matrix_gpu & A,
-     double scalar) {
+    void diagonal_multiply(matrix_gpu & A, double scalar) {
       cl::Kernel kernel = get_kernel("scalar_mul_diagonal");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -53,7 +52,27 @@ namespace stan {
      * @param scalar scalar
      *      
      */
-    void multiply_with_scalar(matrix_gpu & A,  double scalar) {
+    void multiply(matrix_gpu & A,  double scalar) {
+      cl::Kernel kernel = get_kernel("scalar_mul");
+      cl::CommandQueue cmdQueue = get_queue();
+      try {
+        kernel.setArg(0, A.buffer());
+        kernel.setArg(1, scalar);
+        kernel.setArg(2, A.rows());
+        kernel.setArg(3, A.cols());
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(A.rows(), A.cols()),
+          cl::NullRange,
+          NULL,
+          NULL);
+      } catch (const cl::Error& e) {
+        check_ocl_error(e);
+      }
+    }
+    
+    void multiply(double scalar, matrix_gpu & A) {
       cl::Kernel kernel = get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -90,8 +109,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the sizes
      *   of the matrices 
      */
-    void multiply(matrix_gpu & A, matrix_gpu & B,
-     matrix_gpu & C ) {
+    void multiply(matrix_gpu & A, matrix_gpu & B, matrix_gpu & C ) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
        "B.rows()", B.rows());
       check_size_match("multiply (GPU)", "A.rows()", A.rows(),
