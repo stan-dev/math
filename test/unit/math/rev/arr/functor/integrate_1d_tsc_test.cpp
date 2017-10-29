@@ -1,10 +1,10 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
+#include <test/unit/math/rev/mat/fun/util.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <test/unit/util.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
 
 struct f1 {
   template <typename T1, typename T2>
@@ -14,7 +14,6 @@ struct f1 {
     return exp(x) + y;
   }
 };
-
 
 struct f2 {
   template <typename T1, typename T2>
@@ -59,9 +58,7 @@ TEST(StanMath_integrate_1d_tsc, test1) {
 
   EXPECT_FLOAT_EQ(integrate_1d_tsc(if1, .2, .7, stan::math::var(.5),
                                    msgs).val(), 0.7923499+.25);
-
 }
-
 
 TEST(StanMath_integrate_1d_tsc, finite_diff) {
   using stan::math::integrate_1d_tsc;
@@ -75,7 +72,7 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
 
   EXPECT_FLOAT_EQ((integrate_1d_tsc(if1, .2, .7, .6+1e-6, msgs) -
     integrate_1d_tsc(if1, .2, .7, .6-1e-6, msgs))/2e-6, g[0]);
@@ -89,7 +86,7 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
 
   EXPECT_FLOAT_EQ((integrate_1d_tsc(if2, 0., 1.1, .68+1e-6, msgs) -
     integrate_1d_tsc(if2, 0., 1.1, .68-1e-6, msgs))/2e-6, g[0]);

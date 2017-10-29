@@ -1,9 +1,9 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <test/unit/util.hpp>
 
 struct f1 {
   template <typename T1, typename T2>
@@ -75,5 +75,4 @@ TEST(StanMath_integrate_1d_tsc, test1) {
 
   EXPECT_FLOAT_EQ(integrate_1d_tsc(if4, -.2, 2.9, b, msgs),
                   24219.99);
-
 }
