@@ -68,7 +68,7 @@ namespace stan {
       int dim_temp = A.rows();
       A.rows_ = A.cols();
       A.cols_ = dim_temp;
-      stan::math::copy(A, temp); //NOLINT
+      stan::math::copy(temp, A); //NOLINT
     }
 
     /**
@@ -160,8 +160,8 @@ namespace stan {
       cl::Kernel kernel = get_kernel("copy_triangular");
       cl::CommandQueue cmdQueue = get_queue();
       try {
-        kernel.setArg(0, src.buffer());
-        kernel.setArg(1, dst.buffer());
+        kernel.setArg(0, dst.buffer());
+        kernel.setArg(1, src.buffer());
         kernel.setArg(2, dst.rows());
         kernel.setArg(3, dst.cols());
         kernel.setArg(4, lower_upper);
@@ -206,6 +206,8 @@ namespace stan {
       //   larger than src or dst matrix
       // TODO(Rok): check if offset_rows+size_rows or
       //   offset_cols+size_cols is out of bounds on any matrix
+      if (size_rows == 0 || size_cols == 0)
+        return;
       cl::Kernel kernel = get_kernel("copy_submatrix");
       cl::CommandQueue cmdQueue = get_queue();
       try {

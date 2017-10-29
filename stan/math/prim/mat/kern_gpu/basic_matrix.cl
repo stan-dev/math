@@ -70,13 +70,13 @@ __kernel void copy_triangular(
     int i = get_global_id(0); 
     int j = get_global_id(1); 
     if ( i < M && j < N){ 
-     if ( !lower_upper && i < M && j <=i ){ 
+     if ( !lower_upper && j <=i ){ 
        a[i*N+j] = b[i*N+j];
-     }else if (!lower_upper && i<M && j<N){ 
+     }else if (!lower_upper ){ 
        a[i*N+j]=0; 
-     }else if (lower_upper && i<M && j>=i && j<N){ 
+     }else if (lower_upper && j>=i ){ 
        a[i*N+j]=b[i*N+j];
-     }else if (lower_upper && i<M && j<i ){ 
+     }else if (lower_upper && j<i ){ 
        a[i*N+j]=0;
      } 
     } 
