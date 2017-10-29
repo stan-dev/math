@@ -37,7 +37,6 @@ namespace stan {
     double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
-      using std::abs;
       static const std::string function = "double_exponential_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
@@ -55,7 +54,7 @@ namespace stan {
       for (size_t n = 0; n < N; ++n) {
         double z = z_rng();
         output[n] = mu_vec[n]
-          - stan::math::sign(z) * sigma_vec[n] * std::log(abs(z));
+          - ((z > 0) ? 1.0 : -1.0) * sigma_vec[n] * std::log(std::abs(z));
       }
 
       return output.data();
