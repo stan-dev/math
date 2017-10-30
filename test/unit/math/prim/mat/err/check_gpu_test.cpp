@@ -7,7 +7,7 @@ using stan::math::check_nan_gpu;
 TEST(ErrorHandlingScalar,CheckFinite_Matrix) {
   const std::string function = "check_nan_gpu";
   Eigen::Matrix<double,Eigen::Dynamic,1> x;
-  using stan::math:matrix_gpu
+  using stan::math::matrix_gpu;
   x.resize(3);
   x << -1, 0, 1;
   matrix_gpu xx(x);
