@@ -7,7 +7,7 @@
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenCL/cl.hpp>
 #else
-#include <CL/cl.hpp>
+#include <CL/cl.h>
 #endif
 
 /** @file stan/math/prim/arr/err/check_opencl.hpp
