@@ -141,6 +141,15 @@ TEST(MathMatrix,multiply_rv_m_exception_fail_dims) {
   EXPECT_THROW(stan::math::multiply(rvv, mm, ans_mm), std::invalid_argument);
 }
 
+TEST(MathMatrix,multiply_m_exception_pass_diagonal_mul) {
+  stan::math::matrix_d m0;
+  m0.resize(3,2);
+  m0 << 1, 1, 1,
+  1, 1, 1;
+  stan::math::matrix_gpu mm(m0);
+  EXPECT_NO_THROW(stan::math::diagonal_multiply(mm, 1.0));
+}
+
 TEST(MathMatrix,multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1, m2;
   
