@@ -45,7 +45,7 @@ def updateUpstream(String upstreamRepo) {
                 curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
                 sh create-${upstreamRepo}-pull-request.sh
             """
-            deleteDir()
+            retry(3) { deleteDir() }
         }
     }
 }
@@ -80,7 +80,7 @@ pipeline {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
-                    deleteDir()
+                    retry(3) { deleteDir() }
                 }
             }
         }
@@ -94,7 +94,7 @@ pipeline {
                         sh setupCC()
                         sh "make -j${env.PARALLEL} test-headers"
                     }
-                    post { always { deleteDir() } }
+                    post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Unit') {
                     agent any
@@ -104,7 +104,7 @@ pipeline {
                         runTests("test/unit")
                         retry(2) { junit 'test/**/*.xml' }
                     }
-                    post { always { deleteDir() } }
+                    post { always { retry(3) { deleteDir() } } }
                 }
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
@@ -126,11 +126,14 @@ pipeline {
                     // changed code or makefiles
                     steps { 
                         unstash 'MathSetup'
-                        sh setupCC(false)
-                        sh "echo 'O=0' >> make/local"
+                        sh """
+                            ${setupCC(false)}
+                            echo 'O=0' >> make/local
+                            echo N_TESTS=${env.N_TESTS} >> make/local
+                           """
                         runTests("test/prob")
                     }
-                    post { always { deleteDir() } }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
