@@ -12,7 +12,7 @@
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenCL/cl.hpp>
 #else
-#include <CL/cl.hpp>
+#include <CL/cl.h>
 #endif
 
 enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
