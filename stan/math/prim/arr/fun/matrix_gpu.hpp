@@ -98,9 +98,8 @@ namespace stan {
          * matrices do not have matching dimensions
          * 
          */
-        template <typename T>
-        explicit matrix_gpu(const Eigen::Matrix<T,
-         Eigen::Dynamic, Eigen::Dynamic> &A) {
+        template<typename T, int R, int C>
+        explicit matrix_gpu(const Eigen::Matrix<T, R, C> &A) {
           try {
             cl::Context ctx = get_context();
             cl::CommandQueue queue = get_queue();
@@ -148,8 +147,8 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    template <typename T>
-    void copy(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & src,
+    template <typename T, int R, int C>
+    void copy(const Eigen::Matrix<T, R, C> & src,
      matrix_gpu & dst) {
             check_size_match("copy (Eigen -> GPU)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
@@ -198,9 +197,9 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    template <typename T>
+    template <typename T, int R, int C>
     void copy(matrix_gpu & src,
-     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & dst) {
+     Eigen::Matrix<T, R, C> & dst) {
             check_size_match("copy (GPU -> Eigen)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
             check_size_match("copy (GPU -> Eigen)",
