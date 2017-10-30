@@ -37,7 +37,7 @@ TEST(MathMatrix, multiply_c_m) {
   EXPECT_FLOAT_EQ(12.0, m(1,2));
 }
 
-TEST(MathMatrix,multiply_rv_v_exception) {
+TEST(MathMatrix,multiply_rv_v_exception_pass_vec) {
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
   
@@ -45,16 +45,24 @@ TEST(MathMatrix,multiply_rv_v_exception) {
   v.resize(3);
   stan::math::matrix_gpu rvv(rv);
   stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_v(3,0);
+  stan::math::matrix_gpu ans_v(1,1);
   EXPECT_NO_THROW(stan::math::multiply(rvv, vv, ans_v));
+}
 
+TEST(MathMatrix,multiply_rv_v_exception_pass_empty) {
+  stan::math::row_vector_d rv;
+  stan::math::vector_d v;
   rv.resize(0);
   v.resize(0);
   stan::math::matrix_gpu rvv(rv);
   stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_vv(0,0);
+  stan::math::matrix_gpu ans_vv(1,1);
   EXPECT_NO_THROW(stan::math::multiply(rvv, vv, ans_vv));
+}
 
+TEST(MathMatrix,multiply_rv_v_exception_fail) {
+  stan::math::row_vector_d rv;
+  stan::math::vector_d v;
   rv.resize(2);
   v.resize(3);
   stan::math::matrix_gpu rvv(rv);
@@ -62,7 +70,8 @@ TEST(MathMatrix,multiply_rv_v_exception) {
   stan::math::matrix_gpu ans_vv(2,3);
   EXPECT_THROW(stan::math::multiply(rvv, vv, ans_vv), std::invalid_argument);
 }
-TEST(MathMatrix,multiply_m_v_exception) {
+
+TEST(MathMatrix,multiply_m_v_exception_pass) {
   stan::math::matrix_d m;
   stan::math::vector_d v;
   
@@ -70,9 +79,13 @@ TEST(MathMatrix,multiply_m_v_exception) {
   v.resize(5);
   stan::math::matrix_gpu mm(m);
   stan::math::matrix_gpu vv(v);
-  stan::math::matrix_gpu ans_mm(1,1);
+  stan::math::matrix_gpu ans_mm(3,1);
   EXPECT_NO_THROW(stan::math::multiply(mm, vv, ans_mm));
+}
 
+TEST(MathMatrix,multiply_m_v_exception_fail_zero) {
+  stan::math::matrix_d m;
+  stan::math::vector_d v;
   m.resize(3, 0);
   v.resize(0);
   stan::math::matrix_gpu mm(m);
@@ -80,7 +93,11 @@ TEST(MathMatrix,multiply_m_v_exception) {
   stan::math::matrix_gpu ans_mm(1, 0);
   EXPECT_THROW(stan::math::multiply(mm, vv, ans_mm),
                std::invalid_argument);
+}
 
+TEST(MathMatrix,multiply_m_v_exception_pass_pass) {
+  stan::math::matrix_d m;
+  stan::math::vector_d v;
   m.resize(2, 3);
   v.resize(2);
   stan::math::matrix_gpu mm(m);
@@ -88,7 +105,8 @@ TEST(MathMatrix,multiply_m_v_exception) {
   stan::math::matrix_gpu ans_mm(2, 1);
   EXPECT_THROW(stan::math::multiply(mm, vv, ans_mm), std::invalid_argument);  
 }
-TEST(MathMatrix,multiply_rv_m_exception) {
+
+TEST(MathMatrix,multiply_rv_m_exception_pass_vec1) {
   stan::math::row_vector_d rv;
   stan::math::matrix_d m;
     
@@ -96,18 +114,25 @@ TEST(MathMatrix,multiply_rv_m_exception) {
   m.resize(3, 5);
   stan::math::matrix_gpu mm(m);
   stan::math::matrix_gpu rvv(rv);
-  stan::math::matrix_gpu ans_mm(3, 1);
-  
+  stan::math::matrix_gpu ans_mm(1, 5);
   EXPECT_NO_THROW(stan::math::multiply(rvv, mm, ans_mm));
+}
 
+TEST(MathMatrix,multiply_rv_m_exception_fail_zero1) {
+  stan::math::row_vector_d rv;
+  stan::math::matrix_d m;
   rv.resize(0);
   m.resize(0, 3);
   stan::math::matrix_gpu mm(m);
   stan::math::matrix_gpu rvv(rv);
   stan::math::matrix_gpu ans_mm(1, 0);
-  EXPECT_THROW(stan::math::multiply(rrv, mm, ans_mm),
+  EXPECT_THROW(stan::math::multiply(rvv, mm, ans_mm),
                std::invalid_argument);
+}
 
+TEST(MathMatrix,multiply_rv_m_exception_fail_dims) {
+  stan::math::row_vector_d rv;
+  stan::math::matrix_d m;
   rv.resize(3);
   m.resize(2, 3);
   stan::math::matrix_gpu mm(m);
@@ -115,31 +140,37 @@ TEST(MathMatrix,multiply_rv_m_exception) {
   stan::math::matrix_gpu ans_mm(1,3);
   EXPECT_THROW(stan::math::multiply(rvv, mm, ans_mm), std::invalid_argument);
 }
-TEST(MathMatrix,multiply_m_m_exception) {
+
+TEST(MathMatrix,multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1, m2;
   
   m1.resize(1, 3);
   m2.resize(3, 5);
   stan::math::matrix_gpu mm1(m1);
   stan::math::matrix_gpu mm2(m2);
-  stan::math::matrix_gpu mm3(3, 3);
+  stan::math::matrix_gpu mm3(1, 5);
   EXPECT_NO_THROW(stan::math::multiply(mm1, mm2, mm3));
+}
 
-  
-  mm1.resize(2, 0);
-  mm2.resize(0, 3);
+TEST(MathMatrix,multiply_m_m_exception_fail_dim_zero) {
+  stan::math::matrix_d m1, m2; 
+  m1.resize(2, 0);
+  m2.resize(0, 3);
   stan::math::matrix_gpu mm1(m1);
   stan::math::matrix_gpu mm2(m2);
   stan::math::matrix_gpu mm3(3, 3);
   EXPECT_THROW(stan::math::multiply(mm1, mm2, mm3),
                std::invalid_argument);
+}
 
+TEST(MathMatrix,multiply_m_m_exception_fail_dim) {
+  stan::math::matrix_d m1, m2;
   m1.resize(4, 3);
   m2.resize(2, 3);
   stan::math::matrix_gpu mm1(m1);
   stan::math::matrix_gpu mm2(m2);
   stan::math::matrix_gpu mm3(3, 3);
-  EXPECT_THROW(stan::math::multiply(mm1, mm2, mm4), std::invalid_argument);
+  EXPECT_THROW(stan::math::multiply(mm1, mm2, mm3), std::invalid_argument);
 }
 
 TEST(MathMatrix, multiply) {
