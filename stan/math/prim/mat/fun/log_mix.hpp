@@ -20,6 +20,7 @@
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <string>
+#include <algorithm>
 
 namespace stan {
   namespace math {
@@ -71,16 +72,15 @@ namespace stan {
 
       /**
        * Calculate derivatives
-       */
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lambda_dbl(N, 1);
-      /**
+       *
        * Exp-normalise to prevent overflow, as: 
        * (exp(x-a) * exp(a)) / (exp(y-a) * exp(a)) = exp(x-a) / exp(y-a)
        */
+      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lambda_dbl(N, 1);
       double max_val = max(lambda_dbl);
         for (size_t n = 0; n < N; ++n)
           exp_lambda_dbl[n] = exp((lambda_dbl[n] - max_val));
-          
+
       T_partials_return dot_exp_lam_theta = dot_product(exp_lambda_dbl,
                                                         theta_dbl);
 
