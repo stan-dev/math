@@ -139,11 +139,11 @@ namespace stan {
             stan::math::transpose(Cbar_gpu, Cbar3_gpu);
 
             stan::math::multiply(Cbar_gpu, R_gpu, Bbar2_gpu);
-            stan::math::subtract(Bbar_gpu, Bbar_gpu, Bbar2_gpu);
+            stan::math::subtract(Bbar_gpu, Bbar2_gpu, Bbar_gpu);
 
             stan::math::transpose(Cbar3_gpu, Cbar_gpu);
             stan::math::multiply(Cbar3_gpu, C_gpu, Dbar2_gpu);
-            stan::math::subtract(Dbar_gpu, Dbar_gpu, Dbar2_gpu);
+            stan::math::subtract(Dbar_gpu, Dbar2_gpu, Dbar_gpu);
           }
 
           stan::math::transpose(D_gpu);
@@ -161,7 +161,7 @@ namespace stan {
           if (Cbar_gpu.size() > 0 && B_gpu.size() > 0) {
             stan::math::transpose(Cbar2_gpu, Cbar_gpu);
             stan::math::multiply(Cbar2_gpu, B_gpu, temp_gpu);
-            stan::math::subtract(Rbar_gpu, Rbar_gpu, temp_gpu);
+            stan::math::subtract(Rbar_gpu, temp_gpu,Rbar_gpu);
           }
 
           if (Dbar_gpu.size() > 0 && R_gpu.size() > 0) {
@@ -169,7 +169,7 @@ namespace stan {
             stan::math::copy_triangular_transposed(Dbar_gpu,
               stan::math::LOWER_TO_UPPER_TRIANGULAR);
             stan::math::multiply(Dbar_gpu, R_gpu, temp_gpu);
-            stan::math::subtract(Rbar_gpu, Rbar_gpu, temp_gpu);
+            stan::math::subtract(Rbar_gpu, temp_gpu, Rbar_gpu);
           }
 
           stan::math::diagonal_multiply(Dbar2_gpu, 0.5);

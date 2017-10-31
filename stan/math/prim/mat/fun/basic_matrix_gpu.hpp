@@ -333,8 +333,8 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    void subtract(matrix_gpu & C, matrix_gpu & A,
-     matrix_gpu & B) {
+    void subtract(matrix_gpu & A, matrix_gpu & B,
+     matrix_gpu & C) {
       check_matching_dims("subtract (GPU)", "A", A, "B", B);
       check_matching_dims("subtract (GPU)", "B", B, "C", C);
       if (A.size()==0) {
