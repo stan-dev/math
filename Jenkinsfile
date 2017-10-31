@@ -130,10 +130,12 @@ pipeline {
                             ${setupCC(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
+                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log
+                            date
                            """
-                        runTests("test/prob")
+
                     }
-                    post { always { retry(3) { sh "date; rm -rf *; date" } } }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
