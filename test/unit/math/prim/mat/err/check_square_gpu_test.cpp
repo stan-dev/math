@@ -5,13 +5,13 @@ TEST(ErrorHandlingMatrix, check_square) {
   Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
   
   y.resize(3,3);
-  matrix_gpu yy(y);
+  stan::math::matrix_gpu yy(y);
   EXPECT_NO_THROW(stan::math::check_square("check_square",
                                            "yy", yy));
 
   y.resize(3, 2);
-  matrix_gpu yy(y);
-  EXPECT_THROW(stan::math::check_square("check_square", "yy", yy), 
+  stan::math::matrix_gpu yyy(y);
+  EXPECT_THROW(stan::math::check_square("check_square", "yyy", yyy), 
                std::invalid_argument);
 }
 
@@ -21,14 +21,14 @@ TEST(ErrorHandlingMatrix, check_square_nan) {
 
   y.resize(3,3);
   y << nan, nan, nan,nan, nan, nan,nan, nan, nan;
-  matrix_gpu yy(y);
+  stan::math::matrix_gpu yy(y);
   EXPECT_NO_THROW(stan::math::check_square("check_square",
                                            "yy", yy));
 
   y.resize(3, 2);
   y << nan, nan, nan,nan, nan, nan;
-  matrix_gpu yy(y);
-  EXPECT_THROW(stan::math::check_square("check_square", "yy", yy), 
+  stan::math::matrix_gpu yyy(y);
+  EXPECT_THROW(stan::math::check_square("check_square", "yyy", yyy), 
                std::invalid_argument);
 }
 
@@ -36,7 +36,7 @@ TEST(ErrorHandlingMatrix, check_square_0x0) {
   Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
   
   y.resize(0,0);
-  matrix_gpu yy(y);
+  stan::math::matrix_gpu yy(y);
   EXPECT_NO_THROW(stan::math::check_square("check_square",
                                            "yy", yy));
 }
@@ -45,15 +45,15 @@ TEST(ErrorHandlingMatrix, check_square_0_size) {
   Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> y;
   
   y.resize(0,10);
-  matrix_gpu yy(y);
+  stan::math::matrix_gpu yy(y);
   EXPECT_THROW(stan::math::check_square("check_square",
                                         "yy", yy),
                std::invalid_argument);
 
   y.resize(10,0);
-  matrix_gpu yy(y);
+  stan::math::matrix_gpu yyy(y);
   EXPECT_THROW(stan::math::check_square("check_square",
-                                        "yy", yy),
+                                        "yyy", yyy),
                std::invalid_argument);
 
 }
