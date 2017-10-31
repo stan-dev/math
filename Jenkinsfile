@@ -133,7 +133,7 @@ pipeline {
                            """
                         runTests("test/prob")
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post { always { retry(3) { sh "date; rm -rf *; date" } } }
                 }
             }
         }
