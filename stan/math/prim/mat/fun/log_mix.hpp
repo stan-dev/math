@@ -39,8 +39,8 @@ namespace stan {
     log_mix(const T_theta& theta,
             const T_lam& lambda) {
       static const std::string function = "log_mix";
-    typedef typename stan::partials_return_type<T_theta, T_lam>::type
-      T_partials_return;
+      typedef typename stan::partials_return_type<T_theta, T_lam>::type
+        T_partials_return;
 
       const size_t N = theta.size();
 
