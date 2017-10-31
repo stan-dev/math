@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
+
 TEST(MathMatrix,add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
@@ -12,6 +13,7 @@ TEST(MathMatrix,add_v_exception_pass) {
   EXPECT_NO_THROW(stan::math::add(d11, d22, d33));
 }
 
+// TODO(Rok): Seg Fault in this test for (0,0)
 TEST(MathMatrix,add_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
@@ -40,7 +42,7 @@ TEST(MathMatrix,add_rv_exception_pass) {
   d2.resize(3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,1);
+  stan::math::matrix_gpu d33(1,3);
   EXPECT_NO_THROW(stan::math::add(d11, d22, d33));
 }
 
@@ -51,7 +53,7 @@ TEST(MathMatrix,add_rv_exception_pass_zero) {
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,1);
+  stan::math::matrix_gpu d33(1,0);
   EXPECT_NO_THROW(stan::math::add(d11, d22, d33));
 }
 
