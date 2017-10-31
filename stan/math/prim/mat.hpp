@@ -142,6 +142,7 @@
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_spd.hpp>
 #include <stan/math/prim/mat/fun/log_inv_logit.hpp>
+#include <stan/math/prim/mat/fun/log_mix.hpp>
 #include <stan/math/prim/mat/fun/log_softmax.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/logit.hpp>

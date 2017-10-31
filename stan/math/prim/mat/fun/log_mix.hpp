@@ -10,6 +10,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 
 namespace stan {
   namespace math {
@@ -53,34 +54,50 @@ namespace stan {
     typedef typename stan::partials_return_type<T_theta, T_lam>::type
       T_partials_return;
 
-    T_partials_return logp(0.0);
-
     const size_t N = theta.size();
 
+    scalar_seq_view<T_theta> theta_vec(theta);
     Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_dbl(N, 1);
-    {
-      scalar_seq_view<T_theta> theta_vec(theta);
       for (size_t n = 0; n < N; ++n) {
         theta_dbl[n] = value_of(theta_vec[n]);
       }
-    }
 
+    scalar_seq_view<T_lam> lam_vec(lambda);
     Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lambda_dbl(N, 1);
-    {
-      scalar_seq_view<T_lam> lam_vec(lambda);
       for (size_t n = 0; n < N; ++n) {
         lambda_dbl[n] = value_of(lam_vec[n]);
       }
+
+    Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lambda_dbl(N, 1);
+        exp_lambda_dbl = exp(lambda_dbl);
+
+    T_partials_return logp(0.0);
+    T_partials_return logp_tmp(0.0);
+
+    for (size_t n = 0; n < N; ++n) 
+      logp_tmp += theta_dbl[n] * exp_lambda_dbl[n];
+
+    logp += log(logp_tmp);
+
+    Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_deriv(N, 1);
+        theta_deriv = exp_lambda_dbl / dot_product(exp_lambda_dbl, theta_dbl); 
+
+    Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_deriv(N, 1);
+      for (size_t n = 0; n < N; ++n) 
+        lam_deriv[n] = theta_deriv[n] * theta_dbl[n];
+
+
+      operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
+      if (!(is_constant_struct<T_theta>::value && is_constant_struct<T_lam>::value)) {
+        if (!is_constant_struct<T_theta>::value) {
+          ops_partials.edge1_.partials_ = theta_deriv;
+        }
+        if (!is_constant_struct<T_lam>::value) {
+          ops_partials.edge2_.partials_ = lam_deriv;
+        }
+      }
+      return ops_partials.build(logp);
     }
-    Eigen::Matrix<typename return_type<T_theta, T_lam>::type, Eigen::Dynamic, 1> lgp(N,1);
-
-    lgp = log(theta) + lambda;
-
-    logp += value_of(log_sum_exp(lgp));
-
-    return logp;
-    }
-
   }
 }
 #endif
