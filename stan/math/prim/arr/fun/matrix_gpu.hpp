@@ -71,7 +71,7 @@ namespace stan {
          * @param rows number of matrix rows
          * @param cols number of matrix columns
          * 
-         * @throw <code>std::invalid_argument</code> if the 
+         * @throw <code>std::invalid_argument</code> if the
          * matrices do not have matching dimensions
          * 
          */
@@ -79,7 +79,7 @@ namespace stan {
         : rows_(rows), cols_(cols) {
           try {
             cl::Context ctx = get_context();
-            if (rows_>0 || cols_>0){
+            if (rows_ > 0 && cols_ > 0) {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * rows_ * cols_);
             }
@@ -107,7 +107,7 @@ namespace stan {
             cl::CommandQueue queue = get_queue();
             rows_ = A.rows();
             cols_ = A.cols();
-            if (rows_>0 && cols_>0) {
+            if (rows_ > 0 && cols_ > 0) {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * A.size());
 
