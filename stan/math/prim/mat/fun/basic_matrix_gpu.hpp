@@ -294,6 +294,11 @@ namespace stan {
      matrix_gpu& B, matrix_gpu& C) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
       check_matching_dims("add (GPU)", "B", B, "C", C);
+      if (A.size()==0) {
+        //If A is of size 0, so are the other ones, otherwise the above
+        //checks would throw expection
+        return;
+      }
       cl::Kernel kernel = get_kernel("add");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -332,6 +337,11 @@ namespace stan {
      matrix_gpu & B) {
       check_matching_dims("subtract (GPU)", "A", A, "B", B);
       check_matching_dims("subtract (GPU)", "B", B, "C", C);
+      if (A.size()==0) {
+        //If A is of size 0, so are the other ones, otherwise the above
+        //checks would throw expection
+        return;
+      }
       cl::Kernel kernel = get_kernel("subtract");
       cl::CommandQueue cmdQueue = get_queue();
 

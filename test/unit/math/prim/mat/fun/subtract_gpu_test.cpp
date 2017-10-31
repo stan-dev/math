@@ -12,7 +12,8 @@ TEST(MathMatrix,subtract_v_exception_pass) {
   EXPECT_NO_THROW(stan::math::subtract(d11, d22, d33));
 }
 
-// TODO(Rok): Seg Fault in this test for (0,0)
+// TODO(Steve): This should probably throw expection? 
+//The dimensions do not match
 TEST(MathMatrix,subtract_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);

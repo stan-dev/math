@@ -79,8 +79,10 @@ namespace stan {
         : rows_(rows), cols_(cols) {
           try {
             cl::Context ctx = get_context();
-            oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-             sizeof(double) * rows_ * cols_);
+            if (rows_>0 || cols_>0){
+              oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+               sizeof(double) * rows_ * cols_);
+            }
           } catch (const cl::Error& e) {
             check_ocl_error(e);
           }
@@ -105,29 +107,31 @@ namespace stan {
             cl::CommandQueue queue = get_queue();
             rows_ = A.rows();
             cols_ = A.cols();
-            oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-             sizeof(double) * A.size());
+            if (rows_>0 && cols_>0) {
+              oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+               sizeof(double) * A.size());
 
-            cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-             sizeof(double) * A.size());
+              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+               sizeof(double) * A.size());
 
-            queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
-             sizeof(double) * A.size(), A.data());
+              queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
+               sizeof(double) * A.size(), A.data());
 
-            cl::Kernel kernel = get_kernel("transpose");
+              cl::Kernel kernel = get_kernel("transpose");
 
-            kernel.setArg(0, oclBuffer);
-            kernel.setArg(1, buffer_temp);
-            kernel.setArg(2, cols_);
-            kernel.setArg(3, rows_);
+              kernel.setArg(0, oclBuffer);
+              kernel.setArg(1, buffer_temp);
+              kernel.setArg(2, cols_);
+              kernel.setArg(3, rows_);
 
-            queue.enqueueNDRangeKernel(
-             kernel,
-             cl::NullRange,
-             cl::NDRange(cols_, rows_),
-             cl::NullRange,
-             NULL,
-             NULL);
+              queue.enqueueNDRangeKernel(
+               kernel,
+               cl::NullRange,
+               cl::NDRange(cols_, rows_),
+               cl::NullRange,
+               NULL,
+               NULL);
+             }
           } catch (const cl::Error& e) {
             check_ocl_error(e);
           }
