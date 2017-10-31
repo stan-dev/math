@@ -161,7 +161,7 @@ namespace stan {
           if (Cbar_gpu.size() > 0 && B_gpu.size() > 0) {
             stan::math::transpose(Cbar2_gpu, Cbar_gpu);
             stan::math::multiply(Cbar2_gpu, B_gpu, temp_gpu);
-            stan::math::subtract(Rbar_gpu, temp_gpu,Rbar_gpu);
+            stan::math::subtract(Rbar_gpu, temp_gpu, Rbar_gpu);
           }
 
           if (Dbar_gpu.size() > 0 && R_gpu.size() > 0) {

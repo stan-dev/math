@@ -71,7 +71,7 @@ namespace stan {
         check_ocl_error(e);
       }
     }
-    
+
     void multiply(double scalar, matrix_gpu & A) {
       cl::Kernel kernel = get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = get_queue();
