@@ -21,8 +21,8 @@ namespace stan {
      * Returns the log PDF of the Generalized Linear Model (GLM)
      * with Normal distribution and id link function.
      * If containers are supplied, returns the log sum of the probabilities.
-     * @tparam T_n type of real vector of dependent variables (labels);
-     * this can also be a single real value;
+     * @tparam T_n type of vector of dependent variables (labels);
+     * this can also be a single value;
      * @tparam T_x type of the matrix of independent variables (features); this
      * should be an Eigen::Matrix type whose number of rows should match the
      * length of n and whose number of columns should match the length of beta
@@ -31,7 +31,7 @@ namespace stan {
      * @tparam T_alpha type of the intercept;
      * this has to be a single value;
      * @tparam T_scale type of the scale vector.
-     * @param n real vector parameter
+     * @param n vector parameter
      * @param x design matrix
      * @param beta weight vector
      * @param alpha intercept (in log odds)
