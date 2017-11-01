@@ -7,12 +7,8 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
@@ -21,10 +17,6 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/random/negative_binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <string>
 
@@ -41,11 +33,11 @@ namespace stan {
      * should be an Eigen::Matrix type whose number of rows should match the 
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
-     * this can also be a single double value;
+     * this can also be a single value;
      * @tparam T_alpha type of the intercept;
-     * this can either be a vector of doubles of a single double value;
-     * @tparam T_precision type of the precision vector;
-     * this can also be a single double value;
+     * this should be a single value;
+     * @tparam T_precision type of the (positive) precision vector phi;
+     * this can also be a single value;
      * @param n failures count vector parameter
      * @param x design matrix
      * @param beta weight vector
@@ -53,6 +45,9 @@ namespace stan {
      * @param phi (vector of) precision parameters
      * @return log probability or log sum of probabilities
      * @throw std::invalid_argument if container sizes mismatch.
+     * @throw std::domain_error if x, beta or alpha is infinite.
+     * @throw std::domain_error if phi is infinite or non-positive.
+     * @throw std::domain_error if n is negative.
      */
     template <bool propto, typename T_n, typename T_x, typename T_beta,
               typename T_alpha, typename T_precision>
@@ -76,9 +71,9 @@ namespace stan {
       T_partials_return logp(0.0);
 
       check_nonnegative(function, "Failures variables", n);
-      check_not_nan(function, "Matrix of independent variables", x);
-      check_not_nan(function, "Weight vector", beta);
-      check_not_nan(function, "Intercept", alpha);
+      check_finite(function, "Matrix of independent variables", x);
+      check_finite(function, "Weight vector", beta);
+      check_finite(function, "Intercept", alpha);
       check_positive_finite(function, "Precision parameter", phi);
       check_consistent_sizes(function,
                              "Rows in matrix of independent variables",
@@ -92,7 +87,7 @@ namespace stan {
 
       if (!include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
         return 0.0;
-      
+
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
 
@@ -106,7 +101,7 @@ namespace stan {
           phi_arr[n] = value_of(phi_vec[n]);
         }
       }
-                                         
+
       Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
       {
         scalar_seq_view<T_beta> beta_vec(beta);
@@ -115,7 +110,7 @@ namespace stan {
         }
       }
       Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
-      
+
       Array<T_partials_return, Dynamic, 1> theta_dbl = (x_dbl * beta_dbl
       + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha)).array();
       Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
@@ -127,35 +122,36 @@ namespace stan {
       Array<T_partials_return, Dynamic, 1> n_plus_phi = n_arr + phi_arr;
 
       // Compute the log-density.
-      
-      if (include_summand<propto>::value)
+      if (include_summand<propto>::value) {
         logp -= (n_arr
           + Array<double, Dynamic, 1>::Ones(N, 1))
           .unaryExpr([](T_partials_return xx) {
-            return lgamma(xx); 
-          }).sum();
-      if (include_summand<propto, T_precision>::value)
+                       return lgamma(xx);
+                     }).sum();
+      }
+      if (include_summand<propto, T_precision>::value) {
         logp += (phi_arr.binaryExpr(phi_arr, [](T_partials_return xx,
-                                               T_partials_return yy) {
-                                              return multiply_log(xx, yy);
-                                            })
+                                                T_partials_return yy) {
+                                                  return multiply_log(xx, yy);
+                                              })
                 - phi_arr.unaryExpr([](T_partials_return xx) {
                                       return lgamma(xx);
                                     })).sum();
+      }
       if (include_summand<propto, T_x, T_beta, T_alpha, T_precision>::value)
         logp -= (n_plus_phi * logsumexp_eta_logphi).sum();
       if (include_summand<propto, T_x, T_beta, T_alpha>::value)
         logp += (n_arr * theta_dbl).sum();
-      if (include_summand<propto, T_precision>::value)
+      if (include_summand<propto, T_precision>::value) {
         logp += n_plus_phi.unaryExpr([](T_partials_return xx) {
           return lgamma(xx);
         }).sum();
-
+      }
 
       // Compute the necessary derivatives.
-      operands_and_partials<T_x, T_beta,T_alpha,
+      operands_and_partials<T_x, T_beta, T_alpha,
                             T_precision> ops_partials(x, beta, alpha, phi);
-                                  
+
       if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
             && is_constant_struct<T_alpha>::value)) {
         Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
@@ -176,8 +172,8 @@ namespace stan {
         ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
           - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
           - logsumexp_eta_logphi - phi_arr.unaryExpr([](T_partials_return xx) {
-                                                   return digamma(xx);
-                                                 })
+                                                       return digamma(xx);
+                                                     })
           + n_plus_phi.unaryExpr([](T_partials_return xx) {
                                    return digamma(xx);
                                  })).matrix();

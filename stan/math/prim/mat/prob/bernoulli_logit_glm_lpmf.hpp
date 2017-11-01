@@ -7,14 +7,10 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <string>
@@ -32,15 +28,16 @@ namespace stan {
      * should be an Eigen::Matrix type whose number of rows should match the 
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
-     * this can also be a single double value;
+     * this can also be a single value;
      * @tparam T_alpha type of the intercept;
-     * this can either be a vector of doubles of a single double value;
+     * this has to be single value;
      * @param n binary vector parameter
      * @param x design matrix
      * @param beta weight vector
      * @param alpha intercept (in log odds)
      * @return log probability or log sum of probabilities
-     * @throw std::domain_error if theta is infinite.
+     * @throw std::domain_error if x, beta or alpha is infinite.
+     * @throw std::domain_error if n is not binary.
      * @throw std::invalid_argument if container sizes mismatch.
      */
     template <bool propto, typename T_n, typename T_x, typename T_beta,
@@ -63,9 +60,9 @@ namespace stan {
       T_partials_return logp(0.0);
 
       check_bounded(function, "Vector of dependent variables", n, 0, 1);
-      check_not_nan(function, "Matrix of independent variables", x);
-      check_not_nan(function, "Weight vector", beta);
-      check_not_nan(function, "Intercept", alpha);
+      check_finite(function, "Matrix of independent variables", x);
+      check_finite(function, "Weight vector", beta);
+      check_finite(function, "Intercept", alpha);
       check_consistent_sizes(function,
                              "Rows in matrix of independent variables",
                              x.col(0), "Vector of dependent variables",  n);
