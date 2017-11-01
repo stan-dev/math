@@ -47,7 +47,6 @@ TEST(MatrixFunctions, LogMix_Throws) {
   /**
    * Test invalid vector of densities
    */
-
   stan::math::vector_d dens_inf(5, 1);
     dens_inf << stan::math::INFTY, -7.62, -12.63, -55.62, -2.35;
   stan::math::vector_d dens_neg_inf(5, 1);
@@ -65,7 +64,6 @@ TEST(MatrixFunctions, LogMix_Throws) {
   /**
    * Test inconsistent vector sizes
    */
-
   stan::math::vector_d prob_small(2, 1);
     prob_small << 0.5, 0.5;
   stan::math::vector_d dens_large(7, 1);

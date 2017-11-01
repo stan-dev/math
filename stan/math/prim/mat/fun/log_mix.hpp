@@ -29,6 +29,19 @@ namespace stan {
      * Return the log mixture density with specified mixing proportion
      * and log densities.
      *
+     * \f[
+     * \frac{\partial }{\partial p_x}
+     *  = \frac{e^{d_x-a}}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
+     * \f]
+     *
+     * \f[
+     * \frac{\partial }{\partial d_x}
+     *  = \frac{e^{d_x-a}p_x}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
+     * \f]
+     *
+     * \f[
+     * \mbox{where } a=max(d)
+     * \f]
      *
      * @param theta vector of mixing proportions in [0, 1].
      * @param lambda vector of log densities.
@@ -89,7 +102,7 @@ namespace stan {
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_deriv(N, 1);
         for (size_t n = 0; n < N; ++n)
-          lam_deriv[n] = (exp_lambda_dbl[n] * theta_dbl[n]) / dot_exp_lam_theta;
+          lam_deriv[n] = theta_deriv[n] * theta_dbl[n];
 
       operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
       if (!(is_constant_struct<T_theta>::value
