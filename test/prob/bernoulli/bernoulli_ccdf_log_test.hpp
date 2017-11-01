@@ -16,10 +16,10 @@ public:
     parameters.push_back(param);
     ccdf_log.push_back(std::log(param[1])); // expected ccdf_log
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
-      
+
     // p (Probability)
     index.push_back(1U);
     value.push_back(-1e-4);
@@ -27,11 +27,11 @@ public:
     index.push_back(1U);
     value.push_back(1+1e-4);
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
@@ -48,12 +48,12 @@ public:
   template <typename T_n, typename T_prob, typename T2,
             typename T3, typename T4, typename T5>
   typename stan::return_type<T_prob>::type
-  ccdf_log_function(const T_n& n, const T_prob& theta,const T2&,
+  ccdf_log_function(const T_n& n, const T_prob& theta, const T2&,
                     const T3&, const T4&, const T5&) {
 
-    if(n < 0) return 0.0;
-    if(n < 1) return log(theta);
+    if (n < 0) return 0.0;
+    if (n < 1) return log(theta);
     else      return stan::math::negative_infinity();
-      
+
   }
 };

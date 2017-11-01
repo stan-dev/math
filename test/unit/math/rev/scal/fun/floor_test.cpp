@@ -3,14 +3,14 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-TEST(AgradRev,floor_var) {
+TEST(AgradRev, floor_var) {
   AVAR a = 1.2;
   AVAR f = floor(a);
   EXPECT_FLOAT_EQ(1.0, f.val());
 
   AVEC x = createAVEC(a);
   VEC g;
-  f.grad(x,g);
+  f.grad(x, g);
   EXPECT_FLOAT_EQ(0.0, g[0]);
 }
 
@@ -22,9 +22,9 @@ struct floor_fun {
   }
 };
 
-TEST(AgradRev,floor_NaN) {
+TEST(AgradRev, floor_NaN) {
   floor_fun floor_;
-  test_nan(floor_,false,true);
+  test_nan(floor_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

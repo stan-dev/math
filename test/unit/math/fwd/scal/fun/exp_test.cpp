@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdExp,Fvar) {
+TEST(AgradFwdExp, Fvar) {
   using stan::math::fvar;
   using std::exp;
 
-  fvar<double> x(0.5,1.0);
-  
+  fvar<double> x(0.5, 1.0);
+
   fvar<double> a = exp(x);
   EXPECT_FLOAT_EQ(exp(0.5), a.val_);
   EXPECT_FLOAT_EQ(exp(0.5), a.d_);
@@ -24,19 +24,19 @@ TEST(AgradFwdExp,Fvar) {
   EXPECT_FLOAT_EQ(-3 * exp(-0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(3 * exp(-0.5) + 5, d.d_);
 
-  fvar<double> y(-0.5,1.0);
+  fvar<double> y(-0.5, 1.0);
   fvar<double> e = exp(y);
   EXPECT_FLOAT_EQ(exp(-0.5), e.val_);
   EXPECT_FLOAT_EQ(exp(-0.5), e.d_);
 
-  fvar<double> z(0.0,1.0);
+  fvar<double> z(0.0, 1.0);
   fvar<double> f = exp(z);
   EXPECT_FLOAT_EQ(exp(0.0), f.val_);
   EXPECT_FLOAT_EQ(exp(0.0), f.d_);
 }
 
 
-TEST(AgradFwdExp,FvarFvarDouble) {
+TEST(AgradFwdExp, FvarFvarDouble) {
   using stan::math::fvar;
   using std::exp;
 
@@ -70,7 +70,7 @@ struct exp_fun {
   }
 };
 
-TEST(AgradFwdExp,exp_NaN) {
+TEST(AgradFwdExp, exp_NaN) {
   exp_fun exp_;
-  test_nan_fwd(exp_,false);
+  test_nan_fwd(exp_, false);
 }

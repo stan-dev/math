@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdInvSqrt,Fvar) {
+TEST(AgradFwdInvSqrt, Fvar) {
   using stan::math::fvar;
   using stan::math::inv_sqrt;
 
@@ -26,9 +26,9 @@ TEST(AgradFwdInvSqrt,Fvar) {
 
   std::isnan(g.val_);
   std::isnan(g.d_);
-}   
+}
 
-TEST(AgradFwdInvSqrt,FvarFvarDouble) {
+TEST(AgradFwdInvSqrt, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::inv_sqrt;
   using std::log;
@@ -53,7 +53,7 @@ struct inv_sqrt_fun {
   }
 };
 
-TEST(AgradFwdInvSqrt,inv_sqrt_NaN) {
+TEST(AgradFwdInvSqrt, inv_sqrt_NaN) {
   inv_sqrt_fun inv_sqrt_;
-  test_nan_fwd(inv_sqrt_,false);
+  test_nan_fwd(inv_sqrt_, false);
 }

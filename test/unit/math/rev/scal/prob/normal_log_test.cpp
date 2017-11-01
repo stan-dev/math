@@ -17,7 +17,7 @@ TEST(ProbDistributionsNormal, intVsDouble) {
     double lp2val = lp2.val();
     stan::math::grad(lp2.vi_);
     double lp2adj = lp2.adj();
-    EXPECT_FLOAT_EQ(lp1val,lp2val);
-    EXPECT_FLOAT_EQ(lp1adj,lp2adj);
+    EXPECT_FLOAT_EQ(lp1val, lp2val);
+    EXPECT_FLOAT_EQ(lp1adj, lp2adj);
   }
 }

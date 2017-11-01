@@ -35,8 +35,8 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-2.262849861924804084623);
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
 
     // y
@@ -63,33 +63,33 @@ public:
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& kappa,
            const T3&, const T4&, const T5&) {
     return stan::math::von_mises_log(y, mu, kappa);
   }
 
-  template <bool propto, 
+  template <bool propto,
             typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& kappa,
            const T3&, const T4&, const T5&) {
     return stan::math::von_mises_log<propto>(y, mu, kappa);
   }
-  
-  
+
+
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob_function(const T_y& y, const T_loc& mu, const T_scale& kappa,
                     const T3&, const T4&, const T5&) {
     using stan::math::pi;
     using stan::math::modified_bessel_first_kind;
     using std::log;
 
-    return -log(2.0 * stan::math::pi()) 
-      - log(modified_bessel_first_kind(0,kappa)) + kappa * cos(mu - y);
+    return -log(2.0 * stan::math::pi())
+      - log(modified_bessel_first_kind(0, kappa)) + kappa * cos(mu - y);
   }
 };
 

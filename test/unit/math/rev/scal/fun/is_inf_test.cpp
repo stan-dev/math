@@ -2,8 +2,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
+#include <limits>
 
-TEST(AgradRev,is_inf) {
+TEST(AgradRev, is_inf) {
   using stan::math::is_inf;
 
   double infinity = std::numeric_limits<double>::infinity();
@@ -17,6 +18,5 @@ TEST(AgradRev,is_inf) {
 
   AVAR c(nan);
   EXPECT_FALSE(is_inf(c));
-
 }
 

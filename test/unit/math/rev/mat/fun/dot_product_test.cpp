@@ -9,7 +9,7 @@ TEST(AgradRevMatrix, dot_product_vector_vector) {
 
   vector_d vd_1(3), vd_2(3);
   vector_v vv_1(3), vv_2(3);
-  
+
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
   vd_2 << 4, -2, -1;
@@ -42,7 +42,7 @@ TEST(AgradRevMatrix, dot_product_rowvector_vector) {
   row_vector_v v1(3);
   vector_d d2(3);
   vector_v v2(3);
-  
+
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
   d2 << 4, -2, -1;
@@ -77,12 +77,12 @@ TEST(AgradRevMatrix, dot_product_vector_rowvector) {
   vector_v v1(3);
   row_vector_d d2(3);
   row_vector_v v2(3);
-  
+
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-  
+
   EXPECT_FLOAT_EQ(3, stan::math::dot_product(v1, d2).val());
   EXPECT_FLOAT_EQ(3, stan::math::dot_product(d1, v2).val());
   EXPECT_FLOAT_EQ(3, stan::math::dot_product(v1, v2).val());
@@ -108,7 +108,7 @@ TEST(AgradRevMatrix, dot_product_rowvector_rowvector) {
 
   row_vector_d d1(3), d2(3);
   row_vector_v v1(3), v2(3);
-  
+
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
   d2 << 4, -2, -1;
@@ -133,7 +133,8 @@ TEST(AgradRevMatrix, dot_product_rowvector_rowvector_exception) {
 TEST(AgradRevMatrix, dot_product_vv) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -157,7 +158,8 @@ TEST(AgradRevMatrix, dot_product_dv) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -173,7 +175,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -188,7 +191,8 @@ TEST(AgradRevMatrix, dot_product_vd) {
 TEST(AgradRevMatrix, dot_product_vv_vec) {
   AVEC a, b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -212,7 +216,8 @@ TEST(AgradRevMatrix, dot_product_dv_vec) {
   VEC a;
   AVEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -228,7 +233,8 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
   AVEC a;
   VEC b;
   AVAR c;
-  for (int i = -1; i < 2; i++) { // a = (-1, 0, 1), b = (1, 2, 3)
+  // a = (-1, 0, 1), b = (1, 2, 3)
+  for (int i = -1; i < 2; i++) {
     a.push_back(i);
     b.push_back(i + 2);
   }
@@ -246,7 +252,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::vector_v v1(3), v2(3);
   v1 << 1, 3, -5;
   v2 << 4, -2, -1;
-  
+
   test::check_varis_on_stack(stan::math::dot_product(v1, v2));
   test::check_varis_on_stack(stan::math::dot_product(v1, value_of(v2)));
   test::check_varis_on_stack(stan::math::dot_product(value_of(v1), v2));

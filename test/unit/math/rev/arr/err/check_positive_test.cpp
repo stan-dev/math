@@ -1,9 +1,11 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
 
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar,CheckPositive) {
+TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   const std::string function = "check_positive";
 

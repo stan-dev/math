@@ -13,9 +13,9 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 TEST(AgradRevMatrix, append_row_matrix) {
-  matrix_v a(2,2);
-  matrix_v a_square(2,2);
-  MatrixXd b(2,2);
+  matrix_v a(2, 2);
+  matrix_v a_square(2, 2);
+  MatrixXd b(2, 2);
 
   a << 2.0, 3.0,
        9.0, -1.0;
@@ -26,7 +26,7 @@ TEST(AgradRevMatrix, append_row_matrix) {
   AVEC x;
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
-      x.push_back(a(i,j));
+      x.push_back(a(i, j));
       a_square(i, j) = square(a(i, j));
     }
   }
@@ -93,13 +93,13 @@ TEST(AgradRevMatrix, append_row_row_vector) {
 }
 
 template <typename T, int R, int C>
-void correct_type_vector(const Eigen::Matrix<T,R,C>& x) {
+void correct_type_vector(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, R);
   EXPECT_EQ(1, C);
 }
 
 template <typename T, int R, int C>
-void correct_type_matrix(const Eigen::Matrix<T,R,C>& x) {
+void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }
@@ -126,7 +126,8 @@ TEST(MathMatrix, append_row_different_types) {
          15, 16;
 
   MatrixXd m32b(2, 3);
-  m32b = m32*1.101; //ensure some different values
+  // ensure some different values
+  m32b = m32*1.101;
 
   MatrixXd m23(2, 3);
   m23 << 21, 22, 23,
@@ -159,7 +160,8 @@ TEST(MathMatrix, append_row_different_types) {
          15, 16;
 
   MatrixXd vm32b(2, 3);
-  vm32b = vm32*1.101; //ensure some different values
+  // ensure some different values
+  vm32b = vm32*1.101;
 
   MatrixXd vm23(2, 3);
   vm23 << 21, 22, 23,
@@ -222,15 +224,15 @@ TEST(MathMatrix, append_row_different_types) {
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::to_var;
-  stan::math::matrix_d a(2,2);
-  stan::math::matrix_d b(2,2);
+  stan::math::matrix_d a(2, 2);
+  stan::math::matrix_d b(2, 2);
 
   a << 2.0, 3.0,
        9.0, -1.0;
 
   b << 4.0, 3.0,
        0.0, 1.0;
-  
+
   test::check_varis_on_stack(stan::math::append_row(to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::append_row(to_var(a), b));
   test::check_varis_on_stack(stan::math::append_row(a, to_var(b)));
