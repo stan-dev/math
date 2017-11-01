@@ -5,17 +5,12 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-//#include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-//#include <stan/math/prim/scal/err/check_not_nan.hpp>
-//#include <stan/math/prim/scal/fun/constants.hpp>
-//#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-//#include <boost/random/normal_distribution.hpp>
-//#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <string>
 
@@ -145,11 +140,9 @@ namespace stan {
           ops_partials.edge4_.partials_ = ((inv_sigma - Array<double,
             Dynamic, 1>::Ones(N, 1)) * n_minus_mu_over_sigma_squared).matrix();
         }
-//        if (!is_constant_struct<T_scale>::value) {
-//        ops_partials.edge5_.partials_
-//          = ((inv_sigma * n_minus_mu_over_sigma_squared)
-//              - inv_sigma).matrix();
-//      }
+        if (!is_constant_struct<T_n>::value) {
+          ops_partials.edge5_.partials_ = - mu_derivative;
+        }
       }
 
       return ops_partials.build(logp);
