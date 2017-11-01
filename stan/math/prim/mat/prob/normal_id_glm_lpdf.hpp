@@ -24,7 +24,7 @@ namespace stan {
      * @tparam T_n type of real vector of dependent variables (labels);
      * this can also be a single real value;
      * @tparam T_x type of the matrix of independent variables (features); this
-     * should be an Eigen::Matrix type whose number of rows should match the 
+     * should be an Eigen::Matrix type whose number of rows should match the
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
      * this can also be a single value;
