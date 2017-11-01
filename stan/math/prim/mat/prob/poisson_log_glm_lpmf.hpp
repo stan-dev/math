@@ -5,20 +5,13 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <boost/random/poisson_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -36,15 +29,16 @@ namespace stan {
      * should be an Eigen::Matrix type whose number of rows should match the 
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
-     * this can also be a single double value;
+     * this can also be a single value;
      * @tparam T_alpha type of the intercept;
-     * this can either be a vector of doubles of a single double value;
+     * this should be a single value;
      * @param n positive integer vector parameter
      * @param x design matrix
      * @param beta weight vector
      * @param alpha intercept (in log odds)
      * @return log probability or log sum of probabilities
-     * @throw std::domain_error if theta is infinite.
+     * @throw std::domain_error if x, beta or alpha is infinite.
+     * @throw std::domain_error if n is negative.
      * @throw std::invalid_argument if container sizes mismatch.
      */
     template <bool propto, typename T_n, typename T_x, typename T_beta,
@@ -67,9 +61,9 @@ namespace stan {
       T_partials_return logp(0.0);
 
       check_nonnegative(function, "Vector of dependent variables", n);
-      check_not_nan(function, "Matrix of independent variables", x);
-      check_not_nan(function, "Weight vector", beta);
-      check_not_nan(function, "Intercept", alpha);
+      check_finite(function, "Matrix of independent variables", x);
+      check_finite(function, "Weight vector", beta);
+      check_finite(function, "Intercept", alpha);
       check_consistent_sizes(function,
                              "Rows in matrix of independent variables",
                              x.col(0), "Vector of dependent variables",  n);
@@ -83,16 +77,7 @@ namespace stan {
       const size_t N = x.col(0).size();
       const size_t M = x.row(0).size();
 
-      /*
-      for (size_t i = 0; i < N; i++)
-        if ((std::numeric_limits<double>::infinity() == theta_vec[i]) ||
-            (-std::numeric_limits<double>::infinity() == theta_vec[i]
-            && n_vec[i] != 0))
-          return LOG_ZERO;
-      */
-      // Should we do something like this?
-
-      Matrix<double, Dynamic, 1> n_vec(N, 1);
+      Matrix<T_partials_return, Dynamic, 1> n_vec(N, 1);
       {
         scalar_seq_view<T_n> n_seq_view(n);
         for (size_t n = 0; n < N; ++n) {
@@ -116,8 +101,7 @@ namespace stan {
         theta_dbl.array().exp().matrix();
 
       for (size_t i = 0; i < N; i++) {
-        // Compute the log-density and handle extreme values gracefully
-        // using Taylor approximations.
+        // Compute the log-density.
         if (!(theta_dbl[i] == -std::numeric_limits<double>::infinity()
               && n_vec[i] == 0)) {
           if (include_summand<propto>::value)
