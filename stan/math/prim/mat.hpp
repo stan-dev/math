@@ -61,6 +61,7 @@
 #include <stan/math/prim/mat/fun/block.hpp>
 #include <stan/math/prim/mat/fun/cbrt.hpp>
 #include <stan/math/prim/mat/fun/ceil.hpp>
+#include <stan/math/prim/mat/fun/chol2inv.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_free.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
