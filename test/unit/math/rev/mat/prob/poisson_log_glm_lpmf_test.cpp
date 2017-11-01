@@ -1,20 +1,14 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <chrono>
 
 using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
-typedef std::chrono::high_resolution_clock::time_point TimeVar;
-#define duration(a) std::chrono::duration_cast<std::chrono::microseconds>(a).count()
-#define timeNow() std::chrono::high_resolution_clock::now()
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles)
-{
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 15, 3, 5;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -23,7 +17,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles)
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   double alpha = 0.3;
-  Matrix<double, Dynamic,1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<double, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
 
@@ -33,20 +27,25 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles)
                   (stan::math::poisson_log_glm_lpmf<true>(n, x, beta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::poisson_log_lpmf<false>(n, theta)),
                   (stan::math::poisson_log_glm_lpmf<false>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::poisson_log_lpmf<true, Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::poisson_log_glm_lpmf<true, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::poisson_log_lpmf<false, Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::poisson_log_glm_lpmf<false, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::poisson_log_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
-                  (stan::math::poisson_log_glm_lpmf<Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::poisson_log_lpmf<true, Matrix<int, Dynamic, 1>>(n, theta)),
+    (stan::math::poisson_log_glm_lpmf
+      <true, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::poisson_log_lpmf
+      <false, Matrix<int, Dynamic, 1>>(n, theta)),
+    (stan::math::poisson_log_glm_lpmf
+      <false, Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::poisson_log_lpmf<Matrix<int, Dynamic, 1>>(n, theta)),
+    (stan::math::poisson_log_glm_lpmf
+      <Matrix<int, Dynamic, 1>>(n, x, beta, alpha)));
 }
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars)
-{
-
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 14, 2, 5;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -55,7 +54,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars)
   Matrix<var, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   var alpha = 0.3;
-  Matrix<var, Dynamic,1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
   Matrix<var, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
 
@@ -72,21 +71,18 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars)
   Matrix<var, Dynamic, 1> beta2(2, 1);
   beta2 << 0.3, 2;
   var alpha2 = 0.3;
-  
+
   var lp2 = stan::math::poisson_log_glm_lpmf(n2, x2, beta2, alpha2);
   lp2.grad();
 
   EXPECT_FLOAT_EQ(lp.val(),
                   lp2.val());
-  for (size_t i = 0; i < 2; i++)
-  {
+  for (size_t i = 0; i < 2; i++) {
     EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
   }
   EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-  for (size_t j = 0; j < 3; j++)
-  {
-    for (size_t i = 0; i < 2; i++)
-    {
+  for (size_t j = 0; j < 3; j++) {
+    for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
     }
   }
@@ -96,6 +92,13 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars)
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 /*
+
+#include <chrono>
+typedef std::chrono::high_resolution_clock::time_point TimeVar;
+#define duration(a) \
+  std::chrono::duration_cast<std::chrono::microseconds>(a).count()
+#define timeNow() std::chrono::high_resolution_clock::now()
+
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_speed) {
   const int R = 30000;
   const int C = 1000;  
