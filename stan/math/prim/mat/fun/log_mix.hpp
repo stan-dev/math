@@ -49,8 +49,7 @@ namespace stan {
      */
     template <typename T_theta, typename T_lam>
     typename return_type<T_theta, T_lam>::type
-    log_mix(const T_theta& theta,
-            const T_lam& lambda) {
+    log_mix(const T_theta& theta, const T_lam& lambda) {
       static const std::string function = "log_mix";
       typedef typename stan::partials_return_type<T_theta, T_lam>::type
         T_partials_return;
@@ -87,7 +86,7 @@ namespace stan {
        * Calculate derivatives
        *
        * Exp-normalise to prevent overflow, as: 
-       * (exp(x-a) * exp(a)) / (exp(y-a) * exp(a)) = exp(x-a) / exp(y-a)
+       * exp(x-a)exp(a) / exp(y-a)exp(a) = exp(x-a) / exp(y-a)
        */
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lambda_dbl(N, 1);
       double max_val = max(lambda_dbl);

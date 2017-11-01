@@ -1,4 +1,5 @@
 #include <stan/math/prim/mat/fun/log_mix.hpp>
+#include <stan/math/prim/scal/fun/log_mix.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -12,16 +13,23 @@ TEST(MatrixFunctions, LogMix_Values) {
     prob << 0.1, 0.3, 0.25, 0.15, 0.2;
   stan::math::vector_d dens(5, 1);
     dens << -5.65, -7.62, -12.63, -55.62, -2.35;
+  stan::math::vector_d prob_2(2, 1);
+    prob_2 << 0.1, 0.9;
+  stan::math::vector_d dens_2(2, 1);
+    dens_2 << -5.65, -7.62;
 
   stan::math::vector_d tmp(5, 1);
   tmp = (stan::math::log(prob) + dens);
 
-  double log_mix_stan = stan::math::log_mix(prob, dens);
+  double log_mix_stan_1 = stan::math::log_mix(prob, dens);
   double log_mix_sumexp = stan::math::log_sum_exp(tmp);
+  
+  double log_mix_stan_2 = stan::math::log_mix(prob_2, dens_2);
+  double log_mix_stan_scal = stan::math::log_mix(0.1, -5.65, -7.62);
 
-  EXPECT_FLOAT_EQ(log_mix_stan, log_mix_sumexp);
+  EXPECT_FLOAT_EQ(log_mix_stan_1, log_mix_sumexp);
+  EXPECT_FLOAT_EQ(log_mix_stan_2, log_mix_stan_scal);
 }
-
 
 TEST(MatrixFunctions, LogMix_Throws) {
   /**
