@@ -1,20 +1,14 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <chrono>
 
 using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
-typedef std::chrono::high_resolution_clock::time_point TimeVar;
-#define duration(a) std::chrono::duration_cast<std::chrono::microseconds>(a).count()
-#define timeNow() std::chrono::high_resolution_clock::now()
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles)
-{
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 51, 32, 12;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -38,20 +32,25 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles)
   EXPECT_FLOAT_EQ((stan::math::normal_lpdf<false>(n, theta, sigma)),
                   (stan::math::normal_id_glm_lpdf<false>(n, x, beta, alpha,
                   sigma)));
-  EXPECT_FLOAT_EQ((stan::math::normal_lpdf<true, Matrix<int, Dynamic, 1>>(n,
-                  theta, sigma)),
-                  (stan::math::normal_id_glm_lpdf<true, Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::normal_lpdf<false, Matrix<int, Dynamic, 1>>(n, theta, sigma)),
-                  (stan::math::normal_id_glm_lpdf<false, Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::normal_lpdf<Matrix<int, Dynamic, 1>>(n, theta, sigma)),
-                  (stan::math::normal_id_glm_lpdf<Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::normal_lpdf
+      <true, Matrix<int, Dynamic, 1>>(n, theta, sigma)),
+    (stan::math::normal_id_glm_lpdf
+      <true, Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::normal_lpdf
+      <false, Matrix<int, Dynamic, 1>>(n, theta, sigma)),
+    (stan::math::normal_id_glm_lpdf
+      <false, Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::normal_lpdf<Matrix<int, Dynamic, 1>>(n, theta, sigma)),
+    (stan::math::normal_id_glm_lpdf
+      <Matrix<int, Dynamic, 1>>(n, x, beta, alpha, sigma)));
 }
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars)
-{
-
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -62,7 +61,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars)
   var alpha = 0.3;
   Matrix<var, Dynamic, 1> sigma(3, 1);
   sigma << 10, 4, 6;
-  Matrix<var, Dynamic,1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
   Matrix<var, Dynamic, 1> theta(3, 1);
   theta = x * beta + alphavec;
 
@@ -81,22 +80,19 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars)
   var alpha2 = 0.3;
   Matrix<var, Dynamic, 1> sigma2(3, 1);
   sigma2 << 10, 4, 6;
-  
+
   var lp2 = stan::math::normal_id_glm_lpdf(n2, x2, beta2, alpha2, sigma2);
   lp2.grad();
 
   EXPECT_FLOAT_EQ(lp.val(),
                   lp2.val());
-  for (size_t i = 0; i < 2; i++)
-  {
+  for (size_t i = 0; i < 2; i++) {
     EXPECT_FLOAT_EQ(beta[i].adj(), beta2[i].adj());
   }
   EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
-  for (size_t j = 0; j < 3; j++)
-  {
+  for (size_t j = 0; j < 3; j++) {
     EXPECT_FLOAT_EQ(sigma[j].adj(), sigma2[j].adj());
-    for (size_t i = 0; i < 2; i++)
-    {
+    for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
     }
   }
@@ -106,6 +102,13 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars)
 //  existing primitives.
 
 /*
+
+#include <chrono>
+typedef std::chrono::high_resolution_clock::time_point TimeVar;
+#define duration(a) \
+  std::chrono::duration_cast<std::chrono::microseconds>(a).count()
+#define timeNow() std::chrono::high_resolution_clock::now()
+
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_speed) {
   const int R = 30000;
   const int C = 1000;  
