@@ -51,7 +51,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
-  Matrix<int, Dynamic, 1> n(3, 1);
+  Matrix<var, Dynamic, 1> n(3, 1);
   n << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42,
@@ -70,7 +70,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 
   stan::math::recover_memory();
 
-  Matrix<int, Dynamic, 1> n2(3, 1);
+  Matrix<var, Dynamic, 1> n2(3, 1);
   n2 << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x2(3, 2);
   x2 << -12, 46, -42,
@@ -91,6 +91,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   }
   EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
   for (size_t j = 0; j < 3; j++) {
+    EXPECT_FLOAT_EQ(n[j].adj(), n2[j].adj());
     EXPECT_FLOAT_EQ(sigma[j].adj(), sigma2[j].adj());
     for (size_t i = 0; i < 2; i++) {
       EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
@@ -102,7 +103,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 //  existing primitives.
 
 /*
-
 #include <chrono>
 typedef std::chrono::high_resolution_clock::time_point TimeVar;
 #define duration(a) \
@@ -121,7 +121,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_speed) {
   int T1 = 0;
   int T2 = 0;
   
-  for (size_t testnumber = 0; testnumber < 30; testnumber++){
+  for (size_t testnumber = 0; testnumber < 1; testnumber++){
     Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic, Dynamic>::Random(R, C);
     Matrix<double, Dynamic, 1> betareal = Matrix<double, Dynamic, Dynamic>::Random(C, 1);
     Matrix<double, Dynamic, 1> sigmareal = Matrix<double, Dynamic, Dynamic>::Random(R, 1)

@@ -44,7 +44,7 @@ namespace stan {
      */
     template <bool propto, typename T_n, typename T_x, typename T_beta,
               typename T_alpha, typename T_scale>
-    typename return_type<T_x, T_beta, T_alpha, T_scale>::type
+    typename return_type<T_n, T_x, T_beta, T_alpha, T_scale>::type
     normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
                              const T_alpha &alpha, const T_scale& sigma) {
       static const std::string function = "normal_id_glm_lpdf";
@@ -78,7 +78,7 @@ namespace stan {
                              "Columns in matrix of independent variables",
                              x.row(0), "Weight vector",  beta);
 
-      if (!include_summand<propto, T_x, T_beta, T_alpha, T_scale>::value)
+      if (!include_summand<propto, T_n, T_x, T_beta, T_alpha, T_scale>::value)
         return 0.0;
 
       const size_t N = x.col(0).size();
@@ -91,7 +91,7 @@ namespace stan {
         scalar_seq_view<T_scale> sigma_vec(sigma);
         for (size_t n = 0; n < N; ++n) {
           sigma_dbl[n] = value_of(sigma_vec[n]);
-          n_dbl[n] = n_vec[n];
+          n_dbl[n] = value_of(n_vec[n]);
         }
       }
       Array<T_partials_return, Dynamic, 1> inv_sigma = 1/sigma_dbl;
@@ -120,28 +120,29 @@ namespace stan {
         logp -= 0.5 * n_minus_mu_over_sigma_squared.sum();
 
       // Compute the necessary derivatives.
-      operands_and_partials<T_x, T_beta, T_alpha, T_scale> ops_partials(x, beta,
-        alpha, sigma);
-      if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
+      operands_and_partials<T_n, T_x, T_beta, T_alpha, T_scale> ops_partials(n,
+      x, beta, alpha, sigma);
+      if (!(is_constant_struct<T_n>::value && is_constant_struct<T_x>::value
+            && is_constant_struct<T_beta>::value
             && is_constant_struct<T_alpha>::value)) {
         Matrix<T_partials_return, Dynamic, 1> mu_derivative = (inv_sigma
           * n_minus_mu_over_sigma).matrix();
-        if (!is_constant_struct<T_beta>::value) {
-          ops_partials.edge2_.partials_ = x_dbl.transpose() * mu_derivative;
+        if (!is_constant_struct<T_n>::value) {
+          ops_partials.edge1_.partials_ = - mu_derivative;
         }
         if (!is_constant_struct<T_x>::value) {
-          ops_partials.edge1_.partials_ = mu_derivative
+          ops_partials.edge2_.partials_ = mu_derivative
             * beta_dbl.transpose();
         }
+        if (!is_constant_struct<T_beta>::value) {
+          ops_partials.edge3_.partials_ = x_dbl.transpose() * mu_derivative;
+        }
         if (!is_constant_struct<T_alpha>::value) {
-          ops_partials.edge3_.partials_[0] = mu_derivative.trace();
+          ops_partials.edge4_.partials_[0] = mu_derivative.trace();
         }
         if (!is_constant_struct<T_scale>::value) {
-          ops_partials.edge4_.partials_ = ((inv_sigma - Array<double,
+          ops_partials.edge5_.partials_ = ((inv_sigma - Array<double,
             Dynamic, 1>::Ones(N, 1)) * n_minus_mu_over_sigma_squared).matrix();
-        }
-        if (!is_constant_struct<T_n>::value) {
-          ops_partials.edge5_.partials_ = - mu_derivative;
         }
       }
 
@@ -151,7 +152,7 @@ namespace stan {
     template <typename T_n, typename T_x, typename T_beta, typename T_alpha,
       typename T_scale>
     inline
-        typename return_type<T_x, T_beta, T_alpha, T_scale>::type
+        typename return_type<T_n, T_x, T_beta, T_alpha, T_scale>::type
         normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
                                  const T_alpha &alpha, const T_scale& sigma) {
       return normal_id_glm_lpdf<false>(n, x, beta, alpha, sigma);
