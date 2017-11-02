@@ -133,23 +133,23 @@ pipeline {
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    // XXX Add conditional back in so we don't run this if we haven't
-                    // changed code or makefiles
-                    steps { 
-                        unstash 'MathSetup'
-                        sh """
-                            ${setupCC(false)}
-                            echo 'O=0' >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log; false
-                           """
-
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
             }
+        }
+        stage('Distribution tests') {
+            agent { label "distribution-tests" }
+            // XXX Add conditional back in so we don't run this if we haven't
+            // changed code or makefiles
+            steps { 
+                unstash 'MathSetup'
+                sh """
+                    ${setupCC(false)}
+                    echo 'O=0' >> make/local
+                    echo N_TESTS=${env.N_TESTS} >> make/local
+                    ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || head -n1000; echo "..."; tail -n 10000 dist_test.log; false
+                    """
+
+            }
+            post { always { retry(3) { deleteDir() } } }
         }
     }
     post {
