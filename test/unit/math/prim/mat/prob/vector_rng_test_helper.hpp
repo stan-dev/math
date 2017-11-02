@@ -35,7 +35,8 @@ void assign_parameter_values(T_param& params,
  * @param params Vector with value to copy into param
  */
 template <>
-void assign_parameter_values(double& param, const std::vector<double>& values) {
+void assign_parameter_values(double& param,
+                             const std::vector<double>& values) {
   param = values[0];
 }
 

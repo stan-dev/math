@@ -5,7 +5,7 @@
 #include <cmath>
 #include <limits>
 
-TEST(AgradRev,acosh_val) {
+TEST(AgradRev, acosh_val) {
   using stan::math::acosh;
   using std::sqrt;
   AVAR a = 1.3;
@@ -18,7 +18,7 @@ TEST(AgradRev,acosh_val) {
   EXPECT_FLOAT_EQ(1 / sqrt(1.3 * 1.3  - 1.0), g[0]);
 }
 
-TEST(AgradRev,acosh_1) {
+TEST(AgradRev, acosh_1) {
   using stan::math::acosh;
   using std::sqrt;
   AVAR a = 1.0;
@@ -53,7 +53,7 @@ struct acosh_fun {
   }
 };
 
-TEST(AgradRev,acosh_NaN) {
+TEST(AgradRev, acosh_NaN) {
   acosh_fun acosh_;
   test_nan(acosh_, false, true);
 }

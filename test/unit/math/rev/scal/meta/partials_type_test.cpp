@@ -6,5 +6,5 @@ TEST(MetaTraits, partials_type) {
   using stan::partials_type;
 
   stan::partials_type<var>::type f(2.0);
-  EXPECT_EQ(2.0,f);
+  EXPECT_EQ(2.0, f);
 }

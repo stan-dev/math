@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <string>
 
 TEST(ErrorHandlingScalar, CheckPositiveSize) {
   using stan::math::check_positive_size;
@@ -25,5 +26,4 @@ TEST(ErrorHandlingScalar, CheckPositiveSize) {
   EXPECT_THROW_MSG(check_positive_size(function, name, expr, -1),
                    std::invalid_argument,
                    expected_msg);
-
 }

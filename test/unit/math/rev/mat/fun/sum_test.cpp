@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <vector>
 
 TEST(AgradRevMatrix, sum_vector) {
   using stan::math::sum;
@@ -10,14 +11,14 @@ TEST(AgradRevMatrix, sum_vector) {
 
   vector_d d(6);
   vector_v v(6);
-  
+
   d << 1, 2, 3, 4, 5, 6;
   v << 1, 2, 3, 4, 5, 6;
-  
+
   AVAR output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val());
-  
+
   output = sum(v);
   EXPECT_FLOAT_EQ(21.0, output.val());
 
@@ -29,7 +30,7 @@ TEST(AgradRevMatrix, sum_vector) {
   EXPECT_EQ(6, grad.size());
   for (int i = 0; i < 6; ++i)
     EXPECT_FLOAT_EQ(1.0, grad[i]);
-                   
+
   d.resize(0);
   v.resize(0);
   EXPECT_FLOAT_EQ(0.0, sum(d));
@@ -42,14 +43,14 @@ TEST(AgradRevMatrix, sum_rowvector) {
 
   row_vector_d d(6);
   row_vector_v v(6);
-  
+
   d << 1, 2, 3, 4, 5, 6;
   v << 1, 2, 3, 4, 5, 6;
-  
+
   AVAR output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val());
-                   
+
   output = sum(v);
   EXPECT_FLOAT_EQ(21.0, output.val());
 
@@ -65,14 +66,14 @@ TEST(AgradRevMatrix, sum_matrix) {
 
   matrix_d d(2, 3);
   matrix_v v(2, 3);
-  
+
   d << 1, 2, 3, 4, 5, 6;
   v << 1, 2, 3, 4, 5, 6;
-  
+
   AVAR output;
   output = sum(d);
   EXPECT_FLOAT_EQ(21.0, output.val());
-                   
+
   output = sum(v);
   EXPECT_FLOAT_EQ(21.0, output.val());
 

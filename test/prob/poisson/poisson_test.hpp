@@ -27,7 +27,7 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-3.0); // expected log_prob
   }
- 
+
   void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // n
@@ -44,25 +44,25 @@ public:
 
   template <class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob(const T_n& n, const T_rate& lambda, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::poisson_log(n, lambda);
   }
 
-  template <bool propto, 
+  template <bool propto,
             class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob(const T_n& n, const T_rate& lambda, const T2&,
            const T3&, const T4&, const T5&) {
     return stan::math::poisson_log<propto>(n, lambda);
   }
-  
-  
+
+
   template <class T_n, class T_rate, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type 
+  typename stan::return_type<T_n, T_rate>::type
   log_prob_function(const T_n& n, const T_rate& lambda, const T2&,
                     const T3&, const T4&, const T5&) {
     using boost::math::lgamma;
@@ -71,10 +71,10 @@ public:
 
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
-    
+
     if (boost::math::isinf(lambda))
       return LOG_ZERO;
-    
+
     return -lgamma(n + 1.0) + multiply_log(n, lambda) - lambda;
   }
 };

@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
-TEST(AgradFwdAtan2,Fvar) {
+TEST(AgradFwdAtan2, Fvar) {
   using stan::math::fvar;
   using std::atan2;
 
-  fvar<double> x(0.5,1.0);
-  fvar<double> y(2.3,2.0);
+  fvar<double> x(0.5, 1.0);
+  fvar<double> y(2.3, 2.0);
   double w = 2.1;
 
   fvar<double> a = atan2(x, y);
@@ -24,7 +24,7 @@ TEST(AgradFwdAtan2,Fvar) {
 }
 
 
-TEST(AgradFwdAtan2,FvarFvarDouble) {
+TEST(AgradFwdAtan2, FvarFvarDouble) {
   using stan::math::fvar;
   using std::atan2;
 
@@ -38,14 +38,15 @@ TEST(AgradFwdAtan2,FvarFvarDouble) {
 
   double z = 1.5;
 
-  fvar<fvar<double> > a = atan2(x,y);
+  fvar<fvar<double> > a = atan2(x, y);
 
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_);
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_);
   EXPECT_FLOAT_EQ(-1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.d_.val_);
-  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5) * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_);
+  EXPECT_FLOAT_EQ((1.5 * 1.5 - 1.5 * 1.5) / ((1.5 * 1.5 + 1.5 * 1.5)
+                                          * (1.5 * 1.5 + 1.5 * 1.5)), a.d_.d_);
 
-  a = atan2(x,z);
+  a = atan2(x, z);
   EXPECT_FLOAT_EQ(atan(1.0), a.val_.val_);
   EXPECT_FLOAT_EQ(1.5 / (1.5 * 1.5 + 1.5 * 1.5), a.val_.d_);
   EXPECT_FLOAT_EQ(0.0, a.d_.val_);
@@ -62,15 +63,15 @@ TEST(AgradFwdAtan2,FvarFvarDouble) {
 
 struct atan2_fun {
   template <typename T0, typename T1>
-  inline 
-  typename boost::math::tools::promote_args<T0,T1>::type
+  inline
+  typename boost::math::tools::promote_args<T0, T1>::type
   operator()(const T0 arg1,
              const T1 arg2) const {
-    return atan2(arg1,arg2);
+    return atan2(arg1, arg2);
   }
 };
 
 TEST(AgradFwdAtan2, nan) {
   atan2_fun atan2_;
-  test_nan_fwd(atan2_,3.0,5.0,false);
+  test_nan_fwd(atan2_, 3.0, 5.0, false);
 }

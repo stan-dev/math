@@ -8,7 +8,7 @@ TEST(SparseStuff, csr_matrix_times_vector_dense_multiply) {
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 6.0, 8.0, 10.0, 12.0;
   a = m.sparseView();
-  
+
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
@@ -18,7 +18,7 @@ TEST(SparseStuff, csr_matrix_times_vector_dense_multiply) {
 
   stan::math::vector_d result
     = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
-  EXPECT_FLOAT_EQ( 440.0, result(0));
+  EXPECT_FLOAT_EQ(440.0, result(0));
   EXPECT_FLOAT_EQ(1034.0, result(1));
 }
 
@@ -28,7 +28,7 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_row_multiply) {
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 4.0, 0.0, 8.0, 10.0, 0.0;
   a = m.sparseView();
-  
+
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
@@ -38,8 +38,8 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_row_multiply) {
 
   stan::math::vector_d result
     = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
-  EXPECT_FLOAT_EQ( 176.0, result(0));
-  EXPECT_FLOAT_EQ( 506.0, result(1));
+  EXPECT_FLOAT_EQ(176.0, result(0));
+  EXPECT_FLOAT_EQ(506.0, result(1));
 }
 
 // Test that sparse multiplication is correct when columns are all zero.
@@ -48,7 +48,7 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_column_multiply) {
   Eigen::SparseMatrix<double, Eigen::RowMajor> a;
   m << 2.0, 0.0, 6.0, 8.0, 0.0, 12.0;
   a = m.sparseView();
-  
+
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
@@ -59,8 +59,8 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_column_multiply) {
   stan::math::vector_d result
     = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
 
-  EXPECT_FLOAT_EQ( 308.0, result(0));
-  EXPECT_FLOAT_EQ( 704.0, result(1));
+  EXPECT_FLOAT_EQ(308.0, result(0));
+  EXPECT_FLOAT_EQ(704.0, result(1));
 }
 
 // Test that m=0 throws (CSR).

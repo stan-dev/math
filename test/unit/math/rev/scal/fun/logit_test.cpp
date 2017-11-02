@@ -21,7 +21,7 @@ void test_logit(double u) {
   f2.grad(uv2, grad_f2);
   double g2 = grad_f2[0];
 
-  EXPECT_FLOAT_EQ(log(u / (1 - u )), f2.val());
+  EXPECT_FLOAT_EQ(log(u / (1 - u)), f2.val());
   EXPECT_FLOAT_EQ(g1, g2);
 }
 
@@ -40,7 +40,7 @@ struct logit_fun {
   }
 };
 
-TEST(AgradRev,inv_logit_NaN) {
+TEST(AgradRev, inv_logit_NaN) {
   logit_fun logit_;
   test_nan(logit_, false, true);
 }

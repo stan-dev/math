@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 void test_logical_and(double x, double y) {
   using stan::math::var;
@@ -9,7 +10,7 @@ void test_logical_and(double x, double y) {
   EXPECT_EQ(x && y, var(x) && y);
 }
 
-TEST(AgradRev,unaryNot) {
+TEST(AgradRev, unaryNot) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

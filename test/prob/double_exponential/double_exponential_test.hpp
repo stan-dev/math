@@ -10,7 +10,7 @@ public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
     vector<double> param(3);
-    
+
     param[0] = 1.0;                  // y
     param[1] = 1.0;                  // mu
     param[2] = 1.0;                  // sigma
@@ -22,13 +22,13 @@ public:
     param[2] = 1.0;                  // sigma
     parameters.push_back(param);
     log_prob.push_back(-1.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688);   // expected log_prob
-    
+
     param[0] = -3.0;                 // y
     param[1] = 2.0;                  // mu
     param[2] = 1.0;                  // sigma
     parameters.push_back(param);
     log_prob.push_back(-5.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688);   // expected log_prob
-    
+
     param[0] = 1.0;                  // y
     param[1] = 0.0;                  // mu
     param[2] = 2.0;                  // sigma
@@ -47,8 +47,8 @@ public:
     parameters.push_back(param);
     log_prob.push_back(-0.90685281944005469058276788);        // expected log_prob
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
     // y
     index.push_back(0U);
@@ -56,7 +56,7 @@ public:
 
     index.push_back(0U);
     value.push_back(-numeric_limits<double>::infinity());
-    
+
     // mu
     index.push_back(1U);
     value.push_back(numeric_limits<double>::infinity());
@@ -80,25 +80,25 @@ public:
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& sigma,
            const T3&, const T4&, const T5&) {
     return stan::math::double_exponential_log(y, mu, sigma);
   }
 
-  template <bool propto, 
+  template <bool propto,
             typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob(const T_y& y, const T_loc& mu, const T_scale& sigma,
            const T3&, const T4&, const T5&) {
     return stan::math::double_exponential_log<propto>(y, mu, sigma);
   }
-  
-  
+
+
   template <typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type 
+  typename stan::return_type<T_y, T_loc, T_scale>::type
   log_prob_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
                         const T3&, const T4&, const T5&) {
     using std::log;
@@ -110,12 +110,12 @@ public:
 };
 
 
-TEST(ProbDistributionsDoubleExponential,Cumulative) {
-  EXPECT_FLOAT_EQ(0.5, stan::math::double_exponential_cdf(1.0,1.0,1.0));
-  EXPECT_FLOAT_EQ(0.8160603, stan::math::double_exponential_cdf(2.0,1.0,1.0));
-  EXPECT_FLOAT_EQ(0.003368973, stan::math::double_exponential_cdf(-3.0,2.0,1.0));
-  EXPECT_FLOAT_EQ(0.6967347, stan::math::double_exponential_cdf(1.0,0.0,2.0));
-  EXPECT_FLOAT_EQ(0.2246645, stan::math::double_exponential_cdf(1.9,2.3,0.5));
-  EXPECT_FLOAT_EQ(0.10094826, stan::math::double_exponential_cdf(1.9,2.3,0.25));
+TEST(ProbDistributionsDoubleExponential, Cumulative) {
+  EXPECT_FLOAT_EQ(0.5, stan::math::double_exponential_cdf(1.0, 1.0, 1.0));
+  EXPECT_FLOAT_EQ(0.8160603, stan::math::double_exponential_cdf(2.0, 1.0, 1.0));
+  EXPECT_FLOAT_EQ(0.003368973, stan::math::double_exponential_cdf(-3.0, 2.0, 1.0));
+  EXPECT_FLOAT_EQ(0.6967347, stan::math::double_exponential_cdf(1.0, 0.0, 2.0));
+  EXPECT_FLOAT_EQ(0.2246645, stan::math::double_exponential_cdf(1.9, 2.3, 0.5));
+  EXPECT_FLOAT_EQ(0.10094826, stan::math::double_exponential_cdf(1.9, 2.3, 0.25));
 }
 

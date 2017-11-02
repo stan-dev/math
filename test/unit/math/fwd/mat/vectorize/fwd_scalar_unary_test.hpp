@@ -1,12 +1,12 @@
 #ifndef TEST_UNIT_MATH_FWD_MAT_VECTORIZE_FWD_SCALAR_UNARY_TEST_HPP
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_FWD_SCALAR_UNARY_TEST_HPP
 
+#include <gtest/gtest.h>
 #include <stan/math/fwd/mat.hpp>
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_types.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_values.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_errors.hpp>
-#include <gtest/gtest.h>
 
 template <typename T>
 class fwd_scalar_unary_test : public ::testing::Test {

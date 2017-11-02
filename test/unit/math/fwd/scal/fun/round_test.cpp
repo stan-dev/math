@@ -7,8 +7,8 @@ TEST(AgradFwdRound, Fvar) {
   using stan::math::fvar;
   using boost::math::round;
 
-  fvar<double> x(0.5,1.0);
-  fvar<double> y(2.4,2.0);
+  fvar<double> x(0.5, 1.0);
+  fvar<double> y(2.4, 2.0);
 
   fvar<double> a = round(x);
   EXPECT_FLOAT_EQ(round(0.5), a.val_);
@@ -22,7 +22,7 @@ TEST(AgradFwdRound, Fvar) {
   EXPECT_FLOAT_EQ(round(2 * 0.5), c.val_);
   EXPECT_FLOAT_EQ(0.0, c.d_);
 
-  fvar<double> z(1.25,1.0);
+  fvar<double> z(1.25, 1.0);
 
   fvar<double> d = round(2 * z);
   EXPECT_FLOAT_EQ(round(2 * 1.25), d.val_);
@@ -63,7 +63,7 @@ struct round_fun {
   }
 };
 
-TEST(AgradFwdRound,round_NaN) {
+TEST(AgradFwdRound, round_NaN) {
   round_fun round_;
-  test_nan_fwd(round_,false);
+  test_nan_fwd(round_, false);
 }
