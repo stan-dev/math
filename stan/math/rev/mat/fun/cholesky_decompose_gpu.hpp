@@ -90,10 +90,7 @@ namespace stan {
             ++pos;
           }
         }
-/*
-        write_binary("~/L10000.dat",L);
-        write_binary("~/Lbar10000.dat",Lbar);
-        exit(1);*/
+
         matrix_gpu L_gpu(L);
         matrix_gpu Lbar_gpu(Lbar);
 
@@ -152,7 +149,7 @@ namespace stan {
           copy_triangular_transposed(Dbar2_gpu,
             LOWER_TO_UPPER_TRIANGULAR);
           D_gpu = transpose(D_gpu);
-          lower_triangular_inverse(D_gpu);
+          D_gpu = lower_triangular_inverse(D_gpu);
           D_gpu = transpose(D_gpu);
           Dbar_gpu = multiply(D_gpu, Dbar2_gpu);
           Dbar_gpu = transpose(Dbar_gpu);

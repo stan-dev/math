@@ -23,14 +23,17 @@ namespace stan {
      * Computes the inverse of the lower triangular matrix 
      * that resides in the GPU global memory
      * 
-     * @param[in,out] A matrix on the GPU 
+     * @param A matrix on the GPU 
      *
+     * @return the inverse of A
+     * 
      * @throw <code>std::invalid_argument</code> if the matrix
      *    is not square
      */
-    void lower_triangular_inverse(matrix_gpu & A) {
+    matrix_gpu lower_triangular_inverse(matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
-
+      matrix_gpu inv(A.rows(), A.cols());
+      copy(A, inv);
       cl::Kernel kernel_step1 = get_kernel("lower_tri_inv_step1");
       cl::Kernel kernel_step2 = get_kernel("lower_tri_inv_step2");
       cl::Kernel kernel_step3 = get_kernel("lower_tri_inv_step3");
@@ -38,16 +41,16 @@ namespace stan {
 
       try {
         int parts = 32;
-        if (A.rows() < 65)
+        if (inv.rows() < 65)
           parts = 1;
 
-        if (A.rows() > 2500)
+        if (inv.rows() > 2500)
           parts = 64;
 
-        matrix_gpu temp(A.rows(),  A.cols() * 2);
+        matrix_gpu temp(inv.rows(),  inv.cols() * 2);
 
-        int remainder = A.rows() % parts;
-        int part_size_fixed = A.rows()/parts;
+        int remainder = inv.rows() % parts;
+        int part_size_fixed = inv.rows()/parts;
 
         std::vector<int> stl_sizes(parts, part_size_fixed);
 
@@ -61,11 +64,11 @@ namespace stan {
         cmdQueue.enqueueWriteBuffer(sizes, CL_TRUE, 0,
          sizeof(int) * parts, &stl_sizes[0]);
 
-        kernel_step1.setArg(0, A.buffer());
+        kernel_step1.setArg(0, inv.buffer());
         kernel_step1.setArg(1, temp.buffer());
         kernel_step1.setArg(2, remainder);
         kernel_step1.setArg(3, part_size_fixed);
-        kernel_step1.setArg(4, A.rows());
+        kernel_step1.setArg(4, inv.rows());
 
 
         cmdQueue.enqueueNDRangeKernel(
@@ -81,21 +84,21 @@ namespace stan {
         for (int pp = parts; pp > 1; pp /= 2) {
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
 
-          kernel_step2.setArg(0, A.buffer());
+          kernel_step2.setArg(0, inv.buffer());
           kernel_step2.setArg(1, sizes);
           kernel_step2.setArg(2, temp.buffer());
           kernel_step2.setArg(3, repeat);
           kernel_step2.setArg(4, remainder);
           kernel_step2.setArg(5, part_size_fixed);
-          kernel_step2.setArg(6, A.rows());
+          kernel_step2.setArg(6, inv.rows());
 
-          kernel_step3.setArg(0, A.buffer());
+          kernel_step3.setArg(0, inv.buffer());
           kernel_step3.setArg(1, sizes);
           kernel_step3.setArg(2, temp.buffer());
           kernel_step3.setArg(3, repeat);
           kernel_step3.setArg(4, remainder);
           kernel_step3.setArg(5, part_size_fixed);
-          kernel_step3.setArg(6, A.rows());
+          kernel_step3.setArg(6, inv.rows());
 
            cmdQueue.enqueueNDRangeKernel(
           kernel_step2,
@@ -118,6 +121,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return inv;
     }
   }
 }
