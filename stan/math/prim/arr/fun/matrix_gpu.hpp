@@ -15,10 +15,6 @@
 #include <CL/cl.hpp>
 #endif
 
-enum triangularity {LOWER = 0, UPPER = 1, NONE = 2 };
-enum copy_transposed_triangular {LOWER_TO_UPPER_TRIANGULAR = 0,
-  UPPER_TO_LOWER_TRIANGULAR = 1};
-
 /*
 *  @file stan/math/prim/mat/fun/matrix_gpu.hpp
 *    @brief The matrix_gpu class - allocates memory space on the GPU,
@@ -45,7 +41,6 @@ namespace stan {
       public:
         int rows_;
         int cols_;
-
         int rows() {
           return rows_;
         }
@@ -61,7 +56,11 @@ namespace stan {
         cl::Buffer& buffer() {
           return oclBuffer;
         }
-
+        
+        matrix_gpu(){
+          rows_ = 0;
+          cols_ = 0;
+        }
         // TODO(Rok): constructors with enumerator added when
         //  the matrix_gpu does not need to be READ_WRITE
         /**

@@ -284,20 +284,18 @@ namespace stan {
      * 
      * @param A first matrix
      * @param B second matrix
-     * @param C result matrix
+     * @return C sum of A and B
      * 
      * @throw <code>std::invalid_argument</code> if the 
      * matrices do not have matching dimensions
      * 
      */
-    void add(matrix_gpu& A,
-     matrix_gpu& B, matrix_gpu& C) {
+    matrix_gpu add(matrix_gpu& A,
+     matrix_gpu& B) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
-      check_matching_dims("add (GPU)", "B", B, "C", C);
-      if (A.size() == 0) {
-        // If A is of size 0, so are the other ones, otherwise the above
-        // checks would throw expection
-        return;
+      matrix_gpu C(A.rows(), A.cols());
+      if (A.size() == 0) {        
+        return C;
       }
       cl::Kernel kernel = get_kernel("add");
       cl::CommandQueue cmdQueue = get_queue();
@@ -317,6 +315,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return C;
     }
 
     /**
