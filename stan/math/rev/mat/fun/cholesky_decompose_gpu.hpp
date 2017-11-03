@@ -132,34 +132,34 @@ namespace stan {
           if (Cbar_gpu.size() > 0) {
             stan::math::copy(D_gpu, Dinv_gpu);
             lower_triangular_inverse(Dinv_gpu);
-            transpose(Dinv_gpu);
-            transpose(Cbar2_gpu, Cbar_gpu);
+            Dinv_gpu = transpose(Dinv_gpu);
+            Cbar_gpu = transpose(Cbar2_gpu);
 
             multiply(Dinv_gpu, Cbar2_gpu, Cbar3_gpu);
-            transpose(Cbar_gpu, Cbar3_gpu);
+            Cbar3_gpu = transpose(Cbar_gpu);
 
             multiply(Cbar_gpu, R_gpu, Bbar2_gpu);
             Bbar_gpu = subtract(Bbar_gpu, Bbar2_gpu);
 
-            transpose(Cbar3_gpu, Cbar_gpu);
+            Cbar_gpu = transpose(Cbar3_gpu);
             multiply(Cbar3_gpu, C_gpu, Dbar2_gpu);
             Dbar_gpu = subtract(Dbar_gpu, Dbar2_gpu);
           }
 
-          transpose(D_gpu);
+          D_gpu = transpose(D_gpu);
           zeros(Dbar_gpu, UPPER);
           multiply(D_gpu, Dbar_gpu, Dbar2_gpu);
           copy_triangular_transposed(Dbar2_gpu,
             LOWER_TO_UPPER_TRIANGULAR);
-          transpose(D_gpu);
+          D_gpu = transpose(D_gpu);
           lower_triangular_inverse(D_gpu);
-          transpose(D_gpu);
+          D_gpu = transpose(D_gpu);
           multiply(D_gpu, Dbar2_gpu, Dbar_gpu);
-          transpose(Dbar_gpu);
+          Dbar_gpu = transpose(Dbar_gpu);
           multiply(D_gpu, Dbar_gpu, Dbar2_gpu);
 
           if (Cbar_gpu.size() > 0 && B_gpu.size() > 0) {
-            transpose(Cbar2_gpu, Cbar_gpu);
+            Cbar_gpu = transpose(Cbar2_gpu);
             multiply(Cbar2_gpu, B_gpu, temp_gpu);
             Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
           }

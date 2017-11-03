@@ -24,18 +24,15 @@ namespace stan {
      * to the first matrix. Both matrices 
      * are on the  GPU.
      * 
-     * @param dst the result matrix
      * @param src the input matrix
+     * 
+     * @return transposed input matrix
      * 
      * @throw <code>std::invalid_argument</code> if the 
      * dimensions of the matrices do not match     
      */
-    void transpose(matrix_gpu & dst, matrix_gpu & src) {
-      check_size_match("transpose (GPU)",
-        "dst.rows()", dst.rows(), "src.cols()", src.cols());
-      check_size_match("transpose (GPU)",
-        "dst.cols()", dst.cols(), "src.rows()", src.rows());
-
+    matrix_gpu transpose(matrix_gpu & src) {
+      matrix_gpu dst(src.cols(), src.rows());
       cl::Kernel kernel = get_kernel("transpose");
       cl::CommandQueue cmdQueue = get_queue();
 
@@ -54,21 +51,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
-    }
-
-    /**
-     * Transposes the matrix on the GPU
-     * 
-     * @param A matrix
-     * 
-     */
-    void transpose(matrix_gpu & A) {
-      matrix_gpu temp(A.cols(), A.rows());
-      transpose(temp, A);
-      int dim_temp = A.rows();
-      A.rows_ = A.cols();
-      A.cols_ = dim_temp;
-      stan::math::copy(temp, A); //NOLINT
+      return dst;
     }
 
     /**
@@ -110,14 +93,16 @@ namespace stan {
      * Stores the identity matrix to the
      * assigned matrix on the GPU
      * 
-     * @param A matrix
+     * @param rows_cols the number of rows and columns
+     * 
+     * @return the identity matrix
      * 
      * @throw <code>std::invalid_argument</code> if the 
      * matrix is not square 
      * 
      */
-    void identity(matrix_gpu & A) {
-      check_square("identity (GPU)", "A", A);
+    matrix_gpu identity(int rows_cols) {
+      matrix_gpu A(rows_cols, rows_cols);
       cl::Kernel kernel = get_kernel("identity");
       cl::CommandQueue cmdQueue = get_queue();
 
@@ -135,6 +120,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return A;
     }
 
     /**
@@ -284,7 +270,8 @@ namespace stan {
      * 
      * @param A first matrix
      * @param B second matrix
-     * @return C sum of A and B
+     * 
+     * @return sum of A and B
      * 
      * @throw <code>std::invalid_argument</code> if the 
      * matrices do not have matching dimensions
@@ -294,7 +281,7 @@ namespace stan {
      matrix_gpu& B) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
       matrix_gpu C(A.rows(), A.cols());
-      if (A.size() == 0) {        
+      if (A.size() == 0) {
         return C;
       }
       cl::Kernel kernel = get_kernel("add");
@@ -326,7 +313,8 @@ namespace stan {
      * 
      * @param A first matrix
      * @param B second matrix
-     * @param C result matrix
+     * 
+     * @return subtraction result matrix
      * 
      * @throw <code>std::invalid_argument</code> if the 
      * matrices do not have matching dimensions

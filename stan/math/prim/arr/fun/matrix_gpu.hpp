@@ -56,8 +56,8 @@ namespace stan {
         cl::Buffer& buffer() {
           return oclBuffer;
         }
-        
-        matrix_gpu(){
+
+        matrix_gpu() {
           rows_ = 0;
           cols_ = 0;
         }

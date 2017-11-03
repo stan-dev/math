@@ -18,8 +18,8 @@ TEST(MathMatrix, transpose) {
   EXPECT_NO_THROW(transpose(v00));
   EXPECT_NO_THROW(transpose(rv00));
   EXPECT_NO_THROW(transpose(m00));
-  EXPECT_NO_THROW(transpose(v00, v00_dst));
-  EXPECT_NO_THROW(transpose(rv00, v00_dst));
-  EXPECT_NO_THROW(transpose(m00, v00_dst));
+  EXPECT_NO_THROW(v00_dst = transpose(v00));
+  EXPECT_NO_THROW(v00_dst = transpose(rv00));
+  EXPECT_NO_THROW(v00_dst = transpose(m00));
 
 }
