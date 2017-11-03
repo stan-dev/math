@@ -25,7 +25,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -40,7 +39,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 0.0;
 
-      static const std::string function = "inv_gamma_lccdf";
+      static const char* function = "inv_gamma_lccdf";
 
       using boost::math::tools::promote_args;
       using std::exp;

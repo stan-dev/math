@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -26,7 +25,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
 
-      static const std::string function = "rayleigh_rng";
+      static const char* function = "rayleigh_rng";
 
       check_positive(function, "Scale parameter", sigma);
 

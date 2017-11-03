@@ -17,7 +17,6 @@
 #include <boost/random/cauchy_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -46,7 +45,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 1.0;
 
-      static const std::string function = "cauchy_cdf";
+      static const char* function = "cauchy_cdf";
 
       using boost::math::tools::promote_args;
 

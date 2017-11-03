@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -34,7 +33,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::bernoulli_distribution;
 
-      static const std::string function = "bernoulli_rng";
+      static const char* function = "bernoulli_rng";
 
       check_finite(function, "Probability parameter", theta);
       check_bounded(function, "Probability parameter", theta, 0, 1);

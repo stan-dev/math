@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::exponential_distribution;
 
-      static const std::string function = "exponential_rng";
+      static const char* function = "exponential_rng";
 
       check_positive_finite(function, "Inverse scale parameter", beta);
 

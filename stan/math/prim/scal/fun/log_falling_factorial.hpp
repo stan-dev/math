@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -56,7 +55,7 @@ namespace stan {
     log_falling_factorial(const T1 x, const T2 n) {
       if (is_nan(x) || is_nan(n))
         return std::numeric_limits<double>::quiet_NaN();
-      static const std::string function = "log_falling_factorial";
+      static const char* function = "log_falling_factorial";
       check_positive(function, "first argument", x);
       return lgamma(x + 1) - lgamma(x - n + 1);
     }

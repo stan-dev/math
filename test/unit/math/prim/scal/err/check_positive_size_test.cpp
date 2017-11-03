@@ -5,9 +5,9 @@
 
 TEST(ErrorHandlingScalar, CheckPositiveSize) {
   using stan::math::check_positive_size;
-  const std::string function = "function";
-  const std::string name = "name";
-  const std::string expr = "expr";
+  const char* function = "function";
+  const char* name = "name";
+  const char* expr = "expr";
   std::string expected_msg;
 
 

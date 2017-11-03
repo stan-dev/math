@@ -23,7 +23,6 @@
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -58,7 +57,7 @@ namespace stan {
     typename return_type<T_y, T_dof, T_loc, T_scale>::type
     student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                   const T_scale& sigma) {
-      static const std::string function = "student_t_lpdf";
+      static const char* function = "student_t_lpdf";
       typedef typename stan::partials_return_type<T_y, T_dof, T_loc,
                                                   T_scale>::type
         T_partials_return;
