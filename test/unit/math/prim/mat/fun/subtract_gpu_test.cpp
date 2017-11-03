@@ -9,7 +9,7 @@ TEST(MathMatrix,subtract_v_exception_pass) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,1);
-  EXPECT_NO_THROW(stan::math::subtract(d11, d22, d33));
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 // TODO(Steve): This should probably throw expection? 
@@ -21,7 +21,7 @@ TEST(MathMatrix,subtract_v_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1,1);
-  EXPECT_NO_THROW(stan::math::subtract(d11, d22, d33));
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrix,subtract_v_exception_fail_zero) {
@@ -31,7 +31,7 @@ TEST(MathMatrix,subtract_v_exception_fail_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,3);
-  EXPECT_THROW(stan::math::subtract(d11, d22, d33), std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrix,subtract_rv_exception_pass) {
@@ -42,7 +42,7 @@ TEST(MathMatrix,subtract_rv_exception_pass) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1,3);
-  EXPECT_NO_THROW(stan::math::subtract(d11, d22, d33));
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrix,subtract_rv_exception_pass_zero) {
@@ -52,7 +52,7 @@ TEST(MathMatrix,subtract_rv_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1,0);
-  EXPECT_NO_THROW(stan::math::subtract(d11, d22, d33));
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrix,subtract_rv_exception_fail_zero) {
@@ -62,9 +62,10 @@ TEST(MathMatrix,subtract_rv_exception_fail_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,1);
-  EXPECT_THROW(stan::math::subtract(d11, d22, d33), std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
-
+//TODO(Steve): should we remove this test? With copy on output,
+//this should not throw exception. Changed to NO_THROW
 TEST(MathMatrix,subtract_m_exception) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
@@ -72,9 +73,10 @@ TEST(MathMatrix,subtract_m_exception) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,1);
-  EXPECT_THROW(stan::math::subtract(d11, d22, d33), std::invalid_argument);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
-
+//TODO(Steve): should we remove this test? With copy on output,
+//this should not throw exception. Changed to NO_THROW
 TEST(MathMatrix,subtract_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0,0);
@@ -82,7 +84,7 @@ TEST(MathMatrix,subtract_m_exception_pass_zero) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(1,1);
-  EXPECT_THROW(stan::math::subtract(d11, d22, d33), std::invalid_argument);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrix,subtract_m_exception_fail) {
@@ -92,7 +94,7 @@ TEST(MathMatrix,subtract_m_exception_fail) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,2);
-  EXPECT_THROW(stan::math::subtract(d11, d22, d33), std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
 /* TODO(Steve/Rok) subtract for double:matrix
@@ -175,7 +177,7 @@ TEST(MathMatrix, subtract_exception) {
   matrix_gpu m11(m1);
   matrix_gpu m22(m2);
   matrix_gpu m33(m1);
-  EXPECT_THROW(subtract(v11, v22, v33),std::invalid_argument);
-  EXPECT_THROW(subtract(rv11, rv22, rv33),std::invalid_argument);
-  EXPECT_THROW(subtract(m11, m22, m33),std::invalid_argument);
+  EXPECT_THROW(v33 = subtract(v11, v22),std::invalid_argument);
+  EXPECT_THROW(rv33 = subtract(rv11, rv22),std::invalid_argument);
+  EXPECT_THROW(m33 = subtract(m11, m22),std::invalid_argument);
 }
