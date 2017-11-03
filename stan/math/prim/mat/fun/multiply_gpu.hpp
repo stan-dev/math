@@ -44,22 +44,29 @@ namespace stan {
         check_ocl_error(e);
       }
     }
+
     /**
      * Multiplies the specified matrix on the GPU 
      * with the specified scalar.
      * 
-     * @param[in,out] A matrix
+     * @param A matrix
      * @param scalar scalar
+     * 
+     * @return matrix multipled with scalar
      *      
      */
-    void multiply(matrix_gpu & A,  double scalar) {
+    matrix_gpu multiply(matrix_gpu & A,  double scalar) {
+      matrix_gpu temp(A.rows(), A.cols());
+      if (A.size() == 0)
+        return temp;
       cl::Kernel kernel = get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = get_queue();
       try {
-        kernel.setArg(0, A.buffer());
-        kernel.setArg(1, scalar);
-        kernel.setArg(2, A.rows());
-        kernel.setArg(3, A.cols());
+        kernel.setArg(0, temp.buffer());
+        kernel.setArg(1, A.buffer());
+        kernel.setArg(2, scalar);
+        kernel.setArg(3, A.rows());
+        kernel.setArg(4, A.cols());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -70,16 +77,31 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return temp;
     }
 
-    void multiply(double scalar, matrix_gpu & A) {
+    /**
+     * Multiplies the specified matrix on the GPU 
+     * with the specified scalar.
+     * 
+     * @param scalar scalar
+     * @param A matrix     
+     * 
+     * @return matrix multipled with scalar
+     *      
+     */
+    matrix_gpu multiply(double scalar, matrix_gpu & A) {
+      matrix_gpu temp(A.rows(), A.cols());
+      if (A.size() == 0)
+        return temp;
       cl::Kernel kernel = get_kernel("scalar_mul");
       cl::CommandQueue cmdQueue = get_queue();
       try {
-        kernel.setArg(0, A.buffer());
-        kernel.setArg(1, scalar);
-        kernel.setArg(2, A.rows());
-        kernel.setArg(3, A.cols());
+        kernel.setArg(0, temp.buffer());
+        kernel.setArg(1, A.buffer());
+        kernel.setArg(2, scalar);
+        kernel.setArg(3, A.rows());
+        kernel.setArg(4, A.cols());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -90,6 +112,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return temp;
     }
 
     /**
@@ -104,20 +127,16 @@ namespace stan {
      * 
      * @param A first matrix
      * @param B second matrix
-     * @param C the product of the first and second matrix
      * 
-     * @throw <code>std::invalid_argument</code> if the sizes
-     *   of the matrices 
+     * @return the product of the first and second matrix
+     * 
+     * @throw <code>std::invalid_argument</code> if the 
+     *   number of columns in A and rows in B do not match
      */
-    void multiply(matrix_gpu & A, matrix_gpu & B, matrix_gpu & C ) {
+    matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
        "B.rows()", B.rows());
-      check_size_match("multiply (GPU)", "A.rows()", A.rows(),
-       "C.rows()", C.rows());
-      check_size_match("multiply (GPU)", "B.cols()", B.cols(),
-       "C.cols()", C.cols());
-
-      // Square matrices
+      matrix_gpu temp(A.rows(), B.cols());
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -128,7 +147,7 @@ namespace stan {
         kernel.setArg(2, B.rows());
         kernel.setArg(3, A.buffer());
         kernel.setArg(4, B.buffer());
-        kernel.setArg(5, C.buffer());
+        kernel.setArg(5, temp.buffer());
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
@@ -139,6 +158,7 @@ namespace stan {
       } catch (cl::Error& e) {
         check_ocl_error(e);
       }
+      return temp;
     }
   }
 }

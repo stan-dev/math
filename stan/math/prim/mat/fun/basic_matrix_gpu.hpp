@@ -28,8 +28,6 @@ namespace stan {
      * 
      * @return transposed input matrix
      * 
-     * @throw <code>std::invalid_argument</code> if the 
-     * dimensions of the matrices do not match     
      */
     matrix_gpu transpose(matrix_gpu & src) {
       matrix_gpu dst(src.cols(), src.rows());
@@ -97,9 +95,6 @@ namespace stan {
      * 
      * @return the identity matrix
      * 
-     * @throw <code>std::invalid_argument</code> if the 
-     * matrix is not square 
-     * 
      */
     matrix_gpu identity(int rows_cols) {
       matrix_gpu A(rows_cols, rows_cols);
@@ -130,19 +125,17 @@ namespace stan {
      * stored on the GPU. 
      * 
      * @param src the source matrix
-     * @param dst the destination matrix
      * @param lower_upper enum to describe
      * which part of the matrix to copy: 
      * LOWER - copies the lower triangular
      * UPPER - copes the upper triangular
      * 
-     * @throw <code>std::invalid_argument</code> if the 
-     * matrices do not have matching dimensions
+     * @return the matrix with the copied content
      * 
      */
-    void copy_triangular(matrix_gpu & src,
-     matrix_gpu & dst, triangularity lower_upper) {
-      check_matching_dims("copy_triangular (GPU)", "src", src, "dst", dst);
+    matrix_gpu copy_triangular(matrix_gpu & src,
+     triangularity lower_upper) {
+      matrix_gpu dst(src.rows(), src.cols());
       cl::Kernel kernel = get_kernel("copy_triangular");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -161,6 +154,7 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
+      return dst;
     }
      /**
      * Copies a submatrix of the source matrix to 
@@ -186,7 +180,7 @@ namespace stan {
      */
     void copy_submatrix(matrix_gpu & src,
      matrix_gpu & dst, int src_offset_rows, int src_offset_cols,
-       int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
+     int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
       // TODO(Rok): check if size_rows or size_cols is 0
       // TODO(Rok): check if size_cols and size_rows is
       //   larger than src or dst matrix
@@ -274,7 +268,7 @@ namespace stan {
      * @return sum of A and B
      * 
      * @throw <code>std::invalid_argument</code> if the 
-     * matrices do not have matching dimensions
+     * input matrices do not have matching dimensions
      * 
      */
     matrix_gpu add(matrix_gpu& A,
@@ -317,7 +311,7 @@ namespace stan {
      * @return subtraction result matrix
      * 
      * @throw <code>std::invalid_argument</code> if the 
-     * matrices do not have matching dimensions
+     * input matrices do not have matching dimensions
      * 
      */
     matrix_gpu subtract(matrix_gpu & A, matrix_gpu & B) {
