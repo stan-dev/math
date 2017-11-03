@@ -332,14 +332,11 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    void subtract(matrix_gpu & A, matrix_gpu & B,
-     matrix_gpu & C) {
+    matrix_gpu subtract(matrix_gpu & A, matrix_gpu & B) {
       check_matching_dims("subtract (GPU)", "A", A, "B", B);
-      check_matching_dims("subtract (GPU)", "B", B, "C", C);
+      matrix_gpu C(A.rows(), A.cols());
       if (A.size() == 0) {
-        // If A is of size 0, so are the other ones, otherwise the above
-        // checks would throw expection
-        return;
+        return C;
       }
       cl::Kernel kernel = get_kernel("subtract");
       cl::CommandQueue cmdQueue = get_queue();
@@ -360,6 +357,7 @@ namespace stan {
       } catch (cl::Error& e) {
         check_ocl_error(e);
       }
+      return C;
     }
   }
 }
