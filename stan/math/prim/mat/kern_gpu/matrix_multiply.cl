@@ -14,6 +14,7 @@ __kernel void scalar_mul_diagonal(
       
 __kernel void scalar_mul(
           __global double *a,
+          __global double *b,
           double scalar,
           unsigned int M,
           unsigned int N) 
@@ -21,7 +22,7 @@ __kernel void scalar_mul(
     int i = get_global_id(0); 
     int j = get_global_id(1); 
     if (i < M && j < N){ 
-     a[i*N+j]*= scalar; 
+     a[i*N+j] = b[i*N+j]*scalar; 
     } 
 };
 
