@@ -15,7 +15,9 @@ namespace stan {
     /**
      * Check if the specified matrix on the GPU has NaN values
      *
-     * @param A matrix on the gpu to check for NaN values
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix to test
      *
      * @throw <code>std::domain_error</code> if
      *    any element of the matrix is <code>NaN</code>.
@@ -60,7 +62,9 @@ namespace stan {
     /**
      * Check if the specified matrix on the GPU has zeros on the diagonal
      *
-     * @param A matrix on the GPU to check for zeros on the diagonal
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix to test
      *
      * @throw <code>std::domain_error</code> if
      *    any diagonal element of the matrix is zero.
