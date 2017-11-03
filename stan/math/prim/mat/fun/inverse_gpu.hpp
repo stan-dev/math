@@ -32,8 +32,9 @@ namespace stan {
      */
     matrix_gpu lower_triangular_inverse(matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
-      matrix_gpu inv(A.rows(), A.cols());
-      copy(A, inv);
+      matrix_gpu inv(A.rows
+      (), A.cols());
+      copy(A, inv);//NOLINT
       cl::Kernel kernel_step1 = get_kernel("lower_tri_inv_step1");
       cl::Kernel kernel_step2 = get_kernel("lower_tri_inv_step2");
       cl::Kernel kernel_step3 = get_kernel("lower_tri_inv_step3");
