@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -38,7 +37,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const std::string function = "normal_rng";
+      static const char* function = "normal_rng";
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);

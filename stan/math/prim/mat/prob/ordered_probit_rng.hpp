@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -16,7 +15,7 @@ namespace stan {
     ordered_probit_rng(double eta,
                        const Eigen::VectorXd& c,
                        RNG& rng) {
-      static const std::string function = "ordered_probit";
+      static const char* function = "ordered_probit";
 
       check_finite(function, "Location parameter", eta);
       check_greater(function, "Size of cut points parameter", c.size(), 0);

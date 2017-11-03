@@ -1,12 +1,11 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
   using stan::math::var;
   using stan::math::check_not_nan;
-  const std::string function = "check_not_nan";
+  const char* function = "check_not_nan";
 
   var x = 0;
   double x_d = 0;
@@ -43,7 +42,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_not_nan;
 
-  const std::string function = "check_not_nan";
+  const char* function = "check_not_nan";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
@@ -61,7 +60,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_not_nan;
 
-  const std::string function = "check_not_nan";
+  const char* function = "check_not_nan";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

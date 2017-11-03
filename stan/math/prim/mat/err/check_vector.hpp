@@ -29,8 +29,8 @@ namespace stan {
      *   vector.
      */
     template <typename T, int R, int C>
-    inline void check_vector(const std::string& function,
-                             const std::string& name,
+    inline void check_vector(const char* function,
+                             const char* name,
                              const Eigen::Matrix<T, R, C>& x) {
       if (R == 1)
         return;

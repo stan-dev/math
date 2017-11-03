@@ -22,7 +22,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +35,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)))
         return 0.0;
 
-      static const std::string function = "logistic_lccdf";
+      static const char* function = "logistic_lccdf";
 
       using boost::math::tools::promote_args;
       using std::log;

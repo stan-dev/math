@@ -28,7 +28,6 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -56,7 +55,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
         return 1.0;
 
-      static const std::string function = "beta_cdf";
+      static const char* function = "beta_cdf";
       using boost::math::tools::promote_args;
 
       T_partials_return P(1.0);
