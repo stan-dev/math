@@ -18,7 +18,7 @@ $(PCH) : $(PCH_HEADER)
 	@echo 'Compiling PCH'
 	$(COMPILE.cpp) -O$O $(PCH_HEADER) -o $@
 
-test/%.o : test/%.cpp $(PCH)
+test/prob/%.o : test/prob/%.cpp $(PCH)
 	$(COMPILE.cpp) -include-pch $(PCH) -O$O -o $@ $<
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
