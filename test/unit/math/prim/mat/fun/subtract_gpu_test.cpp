@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix,subtract_v_exception_pass) {
+TEST(MathMatrixGPU,subtract_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
@@ -14,7 +14,7 @@ TEST(MathMatrix,subtract_v_exception_pass) {
 
 // TODO(Steve): This should probably throw expection? 
 //The dimensions do not match
-TEST(MathMatrix,subtract_v_exception_pass_zero) {
+TEST(MathMatrixGPU,subtract_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -24,7 +24,7 @@ TEST(MathMatrix,subtract_v_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
-TEST(MathMatrix,subtract_v_exception_fail_zero) {
+TEST(MathMatrixGPU,subtract_v_exception_fail_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
@@ -34,7 +34,7 @@ TEST(MathMatrix,subtract_v_exception_fail_zero) {
   EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
-TEST(MathMatrix,subtract_rv_exception_pass) {
+TEST(MathMatrixGPU,subtract_rv_exception_pass) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
@@ -45,7 +45,7 @@ TEST(MathMatrix,subtract_rv_exception_pass) {
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
-TEST(MathMatrix,subtract_rv_exception_pass_zero) {
+TEST(MathMatrixGPU,subtract_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -55,7 +55,7 @@ TEST(MathMatrix,subtract_rv_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
-TEST(MathMatrix,subtract_rv_exception_fail_zero) {
+TEST(MathMatrixGPU,subtract_rv_exception_fail_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
@@ -66,7 +66,7 @@ TEST(MathMatrix,subtract_rv_exception_fail_zero) {
 }
 //TODO(Steve): should we remove this test? With copy on output,
 //this should not throw exception. Changed to NO_THROW
-TEST(MathMatrix,subtract_m_exception) {
+TEST(MathMatrixGPU,subtract_m_exception) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
   d2.resize(2,3);
@@ -77,7 +77,7 @@ TEST(MathMatrix,subtract_m_exception) {
 }
 //TODO(Steve): should we remove this test? With copy on output,
 //this should not throw exception. Changed to NO_THROW
-TEST(MathMatrix,subtract_m_exception_pass_zero) {
+TEST(MathMatrixGPU,subtract_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0,0);
   d2.resize(0,0);
@@ -87,7 +87,7 @@ TEST(MathMatrix,subtract_m_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
-TEST(MathMatrix,subtract_m_exception_fail) {
+TEST(MathMatrixGPU,subtract_m_exception_fail) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
   d2.resize(3,3);
@@ -98,7 +98,7 @@ TEST(MathMatrix,subtract_m_exception_fail) {
 }
 
 /* TODO(Steve/Rok) subtract for double:matrix
-TEST(MathMatrix,subtract_c_m) {
+TEST(MathMatrixGPU,subtract_c_m) {
   stan::math::matrix_d v(2,2);
   v << 1, 2, 3, 4;
   stan::math::matrix_d result;
@@ -116,7 +116,7 @@ TEST(MathMatrix,subtract_c_m) {
   EXPECT_FLOAT_EQ(2.0,result(1,1));
 }
 
-TEST(MathMatrix,subtract_c_rv) {
+TEST(MathMatrixGPU,subtract_c_rv) {
   stan::math::row_vector_d v(3);
   v << 1, 2, 3;
   stan::math::row_vector_d result;
@@ -133,7 +133,7 @@ TEST(MathMatrix,subtract_c_rv) {
 }
 
 
-TEST(MathMatrix,subtract_c_v) {
+TEST(MathMatrixGPU,subtract_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
   stan::math::vector_d result;
@@ -150,7 +150,7 @@ TEST(MathMatrix,subtract_c_v) {
 }
 */
 
-TEST(MathMatrix, subtract_exception) {
+TEST(MathMatrixGPU, subtract_exception) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v2(3);

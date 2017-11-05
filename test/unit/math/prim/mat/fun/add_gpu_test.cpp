@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 
-TEST(MathMatrix,add_v_exception_pass) {
+TEST(MathMatrixGPU,add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
@@ -14,7 +14,7 @@ TEST(MathMatrix,add_v_exception_pass) {
 }
 
 // TODO(Rok): Seg Fault in this test for (0,0)
-TEST(MathMatrix,add_v_exception_pass_zero) {
+TEST(MathMatrixGPU,add_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
@@ -24,7 +24,7 @@ TEST(MathMatrix,add_v_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrix,add_v_exception_pass_invalid_arg) {
+TEST(MathMatrixGPU,add_v_exception_pass_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
@@ -35,7 +35,7 @@ TEST(MathMatrix,add_v_exception_pass_invalid_arg) {
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
 
-TEST(MathMatrix,add_rv_exception_pass) {
+TEST(MathMatrixGPU,add_rv_exception_pass) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
@@ -46,7 +46,7 @@ TEST(MathMatrix,add_rv_exception_pass) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrix,add_rv_exception_pass_zero) {
+TEST(MathMatrixGPU,add_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(0);
@@ -57,7 +57,7 @@ TEST(MathMatrix,add_rv_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrix,add_rv_exception_fail_invalid_arg) {
+TEST(MathMatrixGPU,add_rv_exception_fail_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
@@ -68,7 +68,7 @@ TEST(MathMatrix,add_rv_exception_fail_invalid_arg) {
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
 
-TEST(MathMatrix,add_m_exception_pass_simple) {
+TEST(MathMatrixGPU,add_m_exception_pass_simple) {
   stan::math::matrix_d d1, d2;
 
   d1.resize(2,3);
@@ -79,7 +79,7 @@ TEST(MathMatrix,add_m_exception_pass_simple) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrix,add_m_exception_pass_zero) {
+TEST(MathMatrixGPU,add_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0,0);
   d2.resize(0,0);
@@ -89,7 +89,7 @@ TEST(MathMatrix,add_m_exception_pass_zero) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 //TODO(Steve): what to do with this test? 
-TEST(MathMatrix,add_m_exception_fail_invalid_arg) {
+TEST(MathMatrixGPU,add_m_exception_fail_invalid_arg) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
   d2.resize(3,3);
@@ -101,7 +101,7 @@ TEST(MathMatrix,add_m_exception_fail_invalid_arg) {
 
 //TODO(Steve): Matrix GPU function for adding constant
 /*
-TEST(MathMatrix,add_c_m) {
+TEST(MathMatrixGPU,add_c_m) {
   stan::math::matrix_d v(2,2);
   v << 1, 2, 3, 4;
   stan::math::matrix_d result;
@@ -119,7 +119,7 @@ TEST(MathMatrix,add_c_m) {
   EXPECT_FLOAT_EQ(6.0,result(1,1));
 }
 
-TEST(MathMatrix,add_c_rv) {
+TEST(MathMatrixGPU,add_c_rv) {
   stan::math::row_vector_d v(3);
   v << 1, 2, 3;
   stan::math::row_vector_d result;
@@ -136,7 +136,7 @@ TEST(MathMatrix,add_c_rv) {
 }
 
 
-TEST(MathMatrix,add_c_v) {
+TEST(MathMatrixGPU,add_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
   stan::math::vector_d result;
@@ -153,7 +153,7 @@ TEST(MathMatrix,add_c_v) {
 }
 */
 
-TEST(MathMatrix, add) {
+TEST(MathMatrixGPU, add) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v2(3);
