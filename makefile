@@ -1,6 +1,8 @@
 # Makefile for Stan.
 ##
 
+.SUFFIXES: 
+
 # The default target of this Makefile is...
 help:
 
