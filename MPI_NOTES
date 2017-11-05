@@ -1,0 +1,40 @@
+
+WARNING: Boost MPI is BROKEN in 1.64.0; I used 1.65.1, but 1.65.0
+seems to be OK as well, see here:
+https://svn.boost.org/trac10/ticket/12723
+
+Build boost serialization and boost mpi as shared libraries
+
+./b2 --prefix=$HOME/local --with-mpi --with-serialization -j4 install
+
+In make/local you need to set
+
+CC=mpicxx
+
+and ensure that the LDFLAGS finds the boost installation of mpi and serialization
+
+... and of course, the openmpi implementation needs to be
+available. The macports openmpi works great.
+
+The use of mpicxx is recommended by openmp, but not required. That is,
+for openmp you can find out the extra compiler flags needed for
+linking to openmpi with the command.
+
+mpicxx --showme
+
+The mpicxx man page has more details on this.
+
+The minimal tests are in
+
+test/unit/math/rev/arr/functor
+
+map_rect_mpi_test.cpp
+map_rect_lpdf_mpi_test.cpp
+
+To compile these, there is a makefile in their directory. After
+compilation they can be started with
+
+mpirun -np 4 ./map_rect_mpi_test
+
+with 4 cpus.
+
