@@ -8,7 +8,6 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -34,7 +33,7 @@ namespace stan {
      *   does not meet convergence conditions, or if any coefficient is NaN.
      */
     template <typename T_a1, typename T_a2, typename T_b1, typename T_z>
-    inline void check_2F1_converges(const std::string& function,
+    inline void check_2F1_converges(const char* function,
                                     const T_a1& a1, const T_a2& a2,
                                     const T_b1& b1, const T_z& z) {
       using std::floor;

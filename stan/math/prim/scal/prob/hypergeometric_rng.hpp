@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -17,7 +16,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::math::hypergeometric_distribution;
 
-      static const std::string function = "hypergeometric_rng";
+      static const char* function = "hypergeometric_rng";
 
       check_bounded(function, "Draws parameter", N, 0, a+b);
       check_positive(function, "Draws parameter", N);

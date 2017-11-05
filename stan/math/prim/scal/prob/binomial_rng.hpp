@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -45,7 +44,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::binomial_distribution;
 
-      static const std::string function = "binomial_rng";
+      static const char* function = "binomial_rng";
 
       check_nonnegative(function, "Population size parameter", N);
       check_finite(function, "Probability parameter", theta);

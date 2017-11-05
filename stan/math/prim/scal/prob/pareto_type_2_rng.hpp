@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -23,7 +22,7 @@ namespace stan {
                       double lambda,
                       double alpha,
                       RNG& rng) {
-      static const std::string function = "pareto_type_2_rng";
+      static const char* function = "pareto_type_2_rng";
 
       check_positive(function, "scale parameter", lambda);
       double uniform_01 = uniform_rng(0.0, 1.0, rng);

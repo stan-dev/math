@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <Eigen/StdVector>
-#include <string>
 #include <vector>
 
 namespace stan {
@@ -66,7 +65,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int K = c.size() + 1;
 
@@ -129,7 +128,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int N = lambda.size();
       int K = c.size() + 1;
@@ -201,7 +200,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int N = lambda.size();
 

@@ -1,6 +1,5 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
 using stan::math::check_greater;
@@ -12,7 +11,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
   using stan::math::check_greater;
 
   int N = 5;
-  const std::string function = "check_greater";
+  const char* function = "check_greater";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

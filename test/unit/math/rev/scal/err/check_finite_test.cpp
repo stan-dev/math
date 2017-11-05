@@ -1,14 +1,13 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 TEST(AgradRevErrorHandlingScalar, CheckFinite) {
   using stan::math::var;
   using stan::math::check_finite;
 
-  const std::string function = "check_bounded";
-  const std::string name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   var x = 0;
 
   EXPECT_NO_THROW(check_finite(function, name, x))
@@ -32,7 +31,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_finite;
 
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

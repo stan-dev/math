@@ -7,7 +7,7 @@ using stan::math::check_finite;
 
 // ---------- check_finite: matrix tests ----------
 TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
@@ -33,7 +33,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
 
 
 TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
 
@@ -53,7 +53,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingScalar, CheckFinite_nan) {
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);

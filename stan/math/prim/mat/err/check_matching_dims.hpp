@@ -33,10 +33,10 @@ namespace stan {
      * if the dimensions of the matrices do not match
      */
     template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-    inline void check_matching_dims(const std::string& function,
-                                    const std::string& name1,
+    inline void check_matching_dims(const char* function,
+                                    const char* name1,
                                     const Eigen::Matrix<T1, R1, C1>& y1,
-                                    const std::string& name2,
+                                    const char* name2,
                                     const Eigen::Matrix<T2, R2, C2>& y2) {
       check_size_match(function,
                        "Rows of ", name1, y1.rows(),
@@ -72,10 +72,10 @@ namespace stan {
      */
     template <bool check_compile, typename T1, typename T2,
               int R1, int C1, int R2, int C2>
-    inline void check_matching_dims(const std::string& function,
-                                    const std::string& name1,
+    inline void check_matching_dims(const char* function,
+                                    const char* name1,
                                     const Eigen::Matrix<T1, R1, C1>& y1,
-                                    const std::string& name2,
+                                    const char* name2,
                                     const Eigen::Matrix<T2, R2, C2>& y2) {
       if (check_compile && (R1 != R2 || C1 != C2)) {
         std::ostringstream msg;

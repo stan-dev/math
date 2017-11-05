@@ -1,14 +1,14 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <string>
 #include <limits>
+#include <string>
 
 using stan::math::check_nonnegative;
 
 TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   std::vector<double> x(N);
 
   x.assign(N, 0);
@@ -35,7 +35,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
 
 TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
   int N = 5;
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   std::vector<double> x(N);
   std::string message;
 
@@ -54,7 +54,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x;

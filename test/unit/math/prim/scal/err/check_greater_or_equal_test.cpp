@@ -1,12 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_greater_or_equal;
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
 
@@ -40,7 +39,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();

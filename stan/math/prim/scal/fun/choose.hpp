@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
   namespace math {
@@ -34,8 +35,7 @@ namespace stan {
       const double choices = boost::math::binomial_coefficient<double>(n, k);
       check_less_or_equal("choose", "n choose k", choices,
                           std::numeric_limits<int>::max());
-      // won't get proper round until C++11
-      return static_cast<int>(choices < 0 ? choices - 0.5 : choices + 0.5);
+      return static_cast<int>(std::round(choices));
     }
 
   }

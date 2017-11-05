@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -66,7 +65,7 @@ namespace stan {
     template<typename T>
     inline typename boost::math::tools::promote_args<T>::type
     rising_factorial(const T& x, int n) {
-      static const std::string function = "rising_factorial";
+      static const char* function = "rising_factorial";
       check_not_nan(function, "first argument", x);
       check_nonnegative(function, "second argument", n);
       return boost::math::rising_factorial(x, n, boost_policy_t());

@@ -16,7 +16,6 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -24,7 +23,7 @@ namespace stan {
     template <typename T_y, typename T_low, typename T_high>
     typename return_type<T_y, T_low, T_high>::type
     uniform_lccdf(const T_y& y, const T_low& alpha, const T_high& beta) {
-      static const std::string function = "uniform_lccdf";
+      static const char* function = "uniform_lccdf";
       typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
         T_partials_return;
 

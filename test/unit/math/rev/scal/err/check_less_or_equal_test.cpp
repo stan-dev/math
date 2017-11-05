@@ -1,13 +1,12 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_less_or_equal;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual) {
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   var x = -10.0;
   var lb = 0.0;
 
@@ -44,7 +43,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_less_or_equal;
 
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

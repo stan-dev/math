@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +24,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::lognormal_distribution;
 
-      static const std::string function = "lognormal_rng";
+      static const char* function = "lognormal_rng";
 
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
