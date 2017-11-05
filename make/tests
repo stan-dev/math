@@ -11,11 +11,19 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 ##
 $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
+PCH_HEADER := stan/math/mix/mat.hpp
+PCH := $(PCH_HEADER:.hpp=.hpp.gch)
+
+$(PCH) : $(PCH_HEADER)
+	@echo 'Compiling PCH'
+	$(COMPILE.cpp) -O$O $(PCH_HEADER) -o $@
+
+test/%.o : test/%.cpp $(PCH)
+	$(COMPILE.cpp) -include-pch $(PCH) -O$O -o $@ $<
+
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
 	$(LINK.cpp) -o $@ $^
-
-
 
 
 ##

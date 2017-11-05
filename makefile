@@ -4,9 +4,6 @@
 # The default target of this Makefile is...
 help:
 
-## Disable implicit rules.
-SUFIXES:
-
 include make/default_compiler_options
 
 ##
