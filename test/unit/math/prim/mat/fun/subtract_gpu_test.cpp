@@ -20,7 +20,7 @@ TEST(MathMatrixGPU,subtract_v_exception_pass_zero) {
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,1);
+  stan::math::matrix_gpu d33(1,0);
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
@@ -64,8 +64,7 @@ TEST(MathMatrixGPU,subtract_rv_exception_fail_zero) {
   stan::math::matrix_gpu d33(3,1);
   EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
-//TODO(Steve): should we remove this test? With copy on output,
-//this should not throw exception. Changed to NO_THROW
+
 TEST(MathMatrixGPU,subtract_m_exception) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
@@ -75,8 +74,7 @@ TEST(MathMatrixGPU,subtract_m_exception) {
   stan::math::matrix_gpu d33(3,1);
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
-//TODO(Steve): should we remove this test? With copy on output,
-//this should not throw exception. Changed to NO_THROW
+
 TEST(MathMatrixGPU,subtract_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0,0);
@@ -96,59 +94,6 @@ TEST(MathMatrixGPU,subtract_m_exception_fail) {
   stan::math::matrix_gpu d33(3,2);
   EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
-
-/* TODO(Steve/Rok) subtract for double:matrix
-TEST(MathMatrixGPU,subtract_c_m) {
-  stan::math::matrix_d v(2,2);
-  v << 1, 2, 3, 4;
-  stan::math::matrix_d result;
-
-  result = stan::math::subtract(2.0,v);
-  EXPECT_FLOAT_EQ(1.0,result(0,0));
-  EXPECT_FLOAT_EQ(0.0,result(0,1));
-  EXPECT_FLOAT_EQ(-1.0,result(1,0));
-  EXPECT_FLOAT_EQ(-2.0,result(1,1));
-
-  result = stan::math::subtract(v,2.0);
-  EXPECT_FLOAT_EQ(-1.0,result(0,0));
-  EXPECT_FLOAT_EQ(0.0,result(0,1));
-  EXPECT_FLOAT_EQ(1.0,result(1,0));
-  EXPECT_FLOAT_EQ(2.0,result(1,1));
-}
-
-TEST(MathMatrixGPU,subtract_c_rv) {
-  stan::math::row_vector_d v(3);
-  v << 1, 2, 3;
-  stan::math::row_vector_d result;
-
-  result = stan::math::subtract(2.0,v);
-  EXPECT_FLOAT_EQ(1.0,result(0));
-  EXPECT_FLOAT_EQ(0.0,result(1));
-  EXPECT_FLOAT_EQ(-1.0,result(2));
-
-  result = stan::math::subtract(v,2.0);
-  EXPECT_FLOAT_EQ(-1.0,result(0));
-  EXPECT_FLOAT_EQ(0.0,result(1));
-  EXPECT_FLOAT_EQ(1.0,result(2));
-}
-
-
-TEST(MathMatrixGPU,subtract_c_v) {
-  stan::math::vector_d v(3);
-  v << 1, 2, 3;
-  stan::math::vector_d result;
-
-  result = stan::math::subtract(2.0,v);
-  EXPECT_FLOAT_EQ(1.0,result(0));
-  EXPECT_FLOAT_EQ(0.0,result(1));
-  EXPECT_FLOAT_EQ(-1.0,result(2));
-
-  result = stan::math::subtract(v,2.0);
-  EXPECT_FLOAT_EQ(-1.0,result(0));
-  EXPECT_FLOAT_EQ(0.0,result(1));
-  EXPECT_FLOAT_EQ(1.0,result(2));
-}
-*/
 
 TEST(MathMatrixGPU, subtract_exception) {
   stan::math::vector_d v1(2);

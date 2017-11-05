@@ -13,14 +13,13 @@ TEST(MathMatrixGPU,add_v_exception_pass) {
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-// TODO(Rok): Seg Fault in this test for (0,0)
 TEST(MathMatrixGPU,add_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,1);
+  stan::math::matrix_gpu d33(1,0);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
@@ -88,7 +87,7 @@ TEST(MathMatrixGPU,add_m_exception_pass_zero) {
   stan::math::matrix_gpu d33(0,0);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
-//TODO(Steve): what to do with this test? 
+
 TEST(MathMatrixGPU,add_m_exception_fail_invalid_arg) {
   stan::math::matrix_d d1, d2;
   d1.resize(2,3);
@@ -98,60 +97,6 @@ TEST(MathMatrixGPU,add_m_exception_fail_invalid_arg) {
   stan::math::matrix_gpu d33(2,3);
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
-
-//TODO(Steve): Matrix GPU function for adding constant
-/*
-TEST(MathMatrixGPU,add_c_m) {
-  stan::math::matrix_d v(2,2);
-  v << 1, 2, 3, 4;
-  stan::math::matrix_d result;
-
-  result = stan::math::add(2.0,v);
-  EXPECT_FLOAT_EQ(3.0,result(0,0));
-  EXPECT_FLOAT_EQ(4.0,result(0,1));
-  EXPECT_FLOAT_EQ(5.0,result(1,0));
-  EXPECT_FLOAT_EQ(6.0,result(1,1));
-
-  result = stan::math::add(v,2.0);
-  EXPECT_FLOAT_EQ(3.0,result(0,0));
-  EXPECT_FLOAT_EQ(4.0,result(0,1));
-  EXPECT_FLOAT_EQ(5.0,result(1,0));
-  EXPECT_FLOAT_EQ(6.0,result(1,1));
-}
-
-TEST(MathMatrixGPU,add_c_rv) {
-  stan::math::row_vector_d v(3);
-  v << 1, 2, 3;
-  stan::math::row_vector_d result;
-
-  result = stan::math::add(2.0,v);
-  EXPECT_FLOAT_EQ(3.0,result(0));
-  EXPECT_FLOAT_EQ(4.0,result(1));
-  EXPECT_FLOAT_EQ(5.0,result(2));
-
-  result = stan::math::add(v,2.0);
-  EXPECT_FLOAT_EQ(3.0,result(0));
-  EXPECT_FLOAT_EQ(4.0,result(1));
-  EXPECT_FLOAT_EQ(5.0,result(2));
-}
-
-
-TEST(MathMatrixGPU,add_c_v) {
-  stan::math::vector_d v(3);
-  v << 1, 2, 3;
-  stan::math::vector_d result;
-
-  result = stan::math::add(2.0,v);
-  EXPECT_FLOAT_EQ(3.0,result(0));
-  EXPECT_FLOAT_EQ(4.0,result(1));
-  EXPECT_FLOAT_EQ(5.0,result(2));
-
-  result = stan::math::add(v,2.0);
-  EXPECT_FLOAT_EQ(3.0,result(0));
-  EXPECT_FLOAT_EQ(4.0,result(1));
-  EXPECT_FLOAT_EQ(5.0,result(2));
-}
-*/
 
 TEST(MathMatrixGPU, add) {
   stan::math::vector_d v1(2);
@@ -181,7 +126,7 @@ TEST(MathMatrixGPU, add) {
   matrix_gpu m22(m2);
   matrix_gpu m33(m1);
 
-  EXPECT_THROW(v33 = add(v11, v22),std::invalid_argument);
-  EXPECT_THROW(rv33 = add(rv11, rv22),std::invalid_argument);
-  EXPECT_THROW(m33 = add(m11, m22),std::invalid_argument);
+  EXPECT_THROW(v33 = add(v11, v22), std::invalid_argument);
+  EXPECT_THROW(rv33 = add(rv11, rv22), std::invalid_argument);
+  EXPECT_THROW(m33 = add(m11, m22), std::invalid_argument);
 }
