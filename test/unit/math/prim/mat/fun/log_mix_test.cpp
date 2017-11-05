@@ -23,7 +23,7 @@ TEST(MatrixFunctions, LogMix_Values) {
 
   double log_mix_stan_1 = stan::math::log_mix(prob, dens);
   double log_mix_sumexp = stan::math::log_sum_exp(tmp);
-  
+
   double log_mix_stan_2 = stan::math::log_mix(prob_2, dens_2);
   double log_mix_stan_scal = stan::math::log_mix(0.1, -5.65, -7.62);
 

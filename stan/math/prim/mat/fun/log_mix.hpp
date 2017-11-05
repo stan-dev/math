@@ -31,11 +31,15 @@ namespace stan {
      *
      * \f[
      * \frac{\partial }{\partial p_x}
-     *  = \frac{e^{d_x-a}}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
+     * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+     * \exp^{\log\left(p_n\right)+d_n}\right)
+     * = \frac{e^{d_x-a}}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
      * \f]
      *
      * \f[
      * \frac{\partial }{\partial d_x}
+     * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+     * \exp^{\log\left(p_n\right)+d_n}\right)
      *  = \frac{e^{d_x-a}p_x}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
      * \f]
      *
