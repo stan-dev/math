@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix,zero_m_exception_pass) {
+TEST(MathMatrixGPU,zero_m_exception_pass) {
   stan::math::matrix_gpu m(1,1);
   
   EXPECT_NO_THROW(stan::math::identity(m));
