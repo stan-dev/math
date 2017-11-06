@@ -107,53 +107,53 @@ test/unit/math/memory/%.o: test/unit/math/memory/%.cpp
 	$(COMPILE.cpp) -o $@ $(@:.gch=)
 
 test/prob/%.o : stan/math/mix/mat.hpp.gch test/prob/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/prim/scal/%.o : stan/math/prim/scal.hpp.gch test/unit/math/prim/scal/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/prim/arr/%.o : stan/math/prim/arr.hpp.gch test/unit/math/prim/arr/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/prim/mat/%.o : stan/math/prim/mat.hpp.gch test/unit/math/prim/mat/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/rev/core/%.o : stan/math/rev/core.hpp.gch test/unit/math/rev/core/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/rev/scal/%.o : stan/math/rev/scal.hpp.gch test/unit/math/rev/scal/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/rev/arr/%.o : stan/math/rev/arr.hpp.gch test/unit/math/rev/arr/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/rev/mat/%.o : stan/math/rev/mat.hpp.gch test/unit/math/rev/mat/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/fwd/core/%.o : stan/math/fwd/core.hpp.gch test/unit/math/fwd/core/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/fwd/scal/%.o : stan/math/fwd/scal.hpp.gch test/unit/math/fwd/scal/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/fwd/arr/%.o : stan/math/fwd/arr.hpp.gch test/unit/math/fwd/arr/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 test/unit/math/fwd/mat/%.o : stan/math/fwd/mat.hpp.gch test/unit/math/fwd/mat/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/scal/%.o : stan/math/mix/scal.hpp.gch test/unit/math/mix/scal/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/arr/%.o : stan/math/mix/arr.hpp.gch test/unit/math/mix/arr/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/mat/%.o : stan/math/mix/mat.hpp.gch test/unit/math/mix/mat/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
 
 # No stan/math/mix/core.hpp exists
 test/unit/math/mix/core/%.o : test/unit/math/mix/core/%.cpp
 	$(COMPILE.cpp) -o $@ $(@:.o=.cpp)
-
-test/unit/math/mix/scal/%.o : stan/math/mix/scal.hpp.gch test/unit/math/mix/scal/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
-
-test/unit/math/mix/arr/%.o : stan/math/mix/arr.hpp.gch test/unit/math/mix/arr/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
-
-test/unit/math/mix/mat/%.o : stan/math/mix/mat.hpp.gch test/unit/math/mix/mat/%.cpp
-	$(COMPILE.cpp) -include-pch $< -o $@ $(@:.o=.cpp)
 
 
 ############################################################
