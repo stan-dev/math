@@ -1,7 +1,6 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 #include <vector>
 
 using stan::math::var;
@@ -9,7 +8,7 @@ using stan::math::check_nonnegative;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   std::vector<var> x(N);
 
   x.assign(N, 0);
@@ -42,7 +41,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   using stan::math::check_nonnegative;
 
   int N = 5;
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

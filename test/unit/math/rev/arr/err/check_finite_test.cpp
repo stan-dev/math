@@ -1,6 +1,5 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 #include <limits>
 
@@ -10,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
 
   int N = 5;
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

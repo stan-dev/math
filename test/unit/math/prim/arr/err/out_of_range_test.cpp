@@ -1,12 +1,12 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <string>
 #include <vector>
+#include <string>
 
-const std::string function_ = "function";
-const std::string msg1_ = "error_message1 ";
-const std::string msg2_ = "error_message2 ";
+const char* function_ = "function";
+const char* msg1_ = "error_message1 ";
+const char* msg2_ = "error_message2 ";
 
 class ErrorHandlingScalar_out_of_range : public ::testing::Test {
 public:

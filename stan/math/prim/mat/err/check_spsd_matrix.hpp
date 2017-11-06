@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,8 +26,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_spsd_matrix(const std::string& function,
-                      const std::string& name,
+    check_spsd_matrix(const char* function,
+                      const char* name,
                   const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       check_square(function, name, y);
       check_positive_size(function, name, "rows()", y.rows());

@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <limits>
-#include <string>
 
-const std::string function = "function";
+const char* function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
 public:
   void SetUp() {

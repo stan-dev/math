@@ -10,7 +10,6 @@
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -42,7 +41,7 @@ namespace stan {
     typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
     exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
                        const T_inv_scale& lambda, RNG& rng) {
-      static const std::string function = "exp_mod_normal_rng";
+      static const char* function = "exp_mod_normal_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);

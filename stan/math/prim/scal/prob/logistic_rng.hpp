@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +35,7 @@ namespace stan {
     logistic_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
       using boost::variate_generator;
       using boost::random::exponential_distribution;
-      static const std::string function = "logistic_rng";
+      static const char* function = "logistic_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);

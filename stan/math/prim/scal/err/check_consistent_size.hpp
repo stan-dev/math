@@ -24,8 +24,8 @@ namespace stan {
      * @throw <code>invalid_argument</code> if the size is inconsistent
      */
     template <typename T>
-    inline void check_consistent_size(const std::string& function,
-                                      const std::string& name,
+    inline void check_consistent_size(const char* function,
+                                      const char* name,
                                       const T& x,
                                       size_t expected_size) {
       if (!is_vector<T>::value)

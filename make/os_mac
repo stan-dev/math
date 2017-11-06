@@ -5,7 +5,6 @@
 #   - GTEST_CXXFLAGS
 
 ifeq (g++,$(CC_TYPE))
-  CXXFLAGS += -Wno-unused-function
   VERSION := $(CC_MAJOR).$(CC_MINOR)
 endif
 

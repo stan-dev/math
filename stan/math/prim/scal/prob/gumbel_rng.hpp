@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +35,7 @@ namespace stan {
     gumbel_rng(const T_loc& mu, const T_scale& beta, RNG& rng) {
       using boost::variate_generator;
       using boost::uniform_01;
-      static const std::string function = "gumbel_rng";
+      static const char* function = "gumbel_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> beta_vec(beta);

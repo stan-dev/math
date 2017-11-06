@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <algorithm>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,10 +26,10 @@ namespace stan {
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2>
-    inline void check_consistent_sizes(const std::string& function,
-                                       const std::string& name1,
+    inline void check_consistent_sizes(const char* function,
+                                       const char* name1,
                                        const T1& x1,
-                                       const std::string& name2,
+                                       const char* name2,
                                        const T2& x2) {
       using stan::is_vector;
       size_t max_size = std::max(is_vector<T1>::value * size_of(x1),
@@ -61,12 +60,12 @@ namespace stan {
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2, typename T3>
-    inline void check_consistent_sizes(const std::string& function,
-                                       const std::string& name1,
+    inline void check_consistent_sizes(const char* function,
+                                       const char* name1,
                                        const T1& x1,
-                                       const std::string& name2,
+                                       const char* name2,
                                        const T2& x2,
-                                       const std::string& name3,
+                                       const char* name3,
                                        const T3& x3) {
       size_t max_size = std::max(is_vector<T1>::value * size_of(x1),
                                  std::max(is_vector<T2>::value * size_of(x2),
@@ -101,14 +100,14 @@ namespace stan {
      * @throw <code>invalid_argument</code> if sizes are inconsistent
      */
     template <typename T1, typename T2, typename T3, typename T4>
-    inline void check_consistent_sizes(const std::string& function,
-                                       const std::string& name1,
+    inline void check_consistent_sizes(const char* function,
+                                       const char* name1,
                                        const T1& x1,
-                                       const std::string& name2,
+                                       const char* name2,
                                        const T2& x2,
-                                       const std::string& name3,
+                                       const char* name3,
                                        const T3& x3,
-                                       const std::string& name4,
+                                       const char* name4,
                                        const T4& x4) {
       size_t max_size
         = std::max(is_vector<T1>::value * size_of(x1),
@@ -122,16 +121,16 @@ namespace stan {
     }
     template <typename T1, typename T2, typename T3, typename T4,
               typename T5>
-    inline void check_consistent_sizes(const std::string& function,
-                                       const std::string& name1,
+    inline void check_consistent_sizes(const char* function,
+                                       const char* name1,
                                        const T1& x1,
-                                       const std::string& name2,
+                                       const char* name2,
                                        const T2& x2,
-                                       const std::string& name3,
+                                       const char* name3,
                                        const T3& x3,
-                                       const std::string& name4,
+                                       const char* name4,
                                        const T4& x4,
-                                       const std::string& name5,
+                                       const char* name5,
                                        const T5& x5) {
       size_t max_size = std::max(size_of(x1),
                                  std::max(size_of(x2),

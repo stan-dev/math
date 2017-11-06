@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -41,7 +40,7 @@ namespace stan {
                     RNG& rng) {
       using boost::variate_generator;
       using boost::random::normal_distribution;
-      static const std::string function = "skew_normal_rng";
+      static const char* function = "skew_normal_rng";
 
       scalar_seq_view<T_loc> mu_vec(mu);
       scalar_seq_view<T_scale> sigma_vec(sigma);

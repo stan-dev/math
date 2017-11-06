@@ -1,12 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_finite;
 
 TEST(ErrorHandlingScalar, CheckFinite) {
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   double x = 0;
 
   EXPECT_NO_THROW(check_finite(function, "x", x))
@@ -24,7 +23,7 @@ TEST(ErrorHandlingScalar, CheckFinite) {
 }
 
 TEST(ErrorHandlingScalar, CheckFinite_nan) {
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_finite(function, "x", nan), std::domain_error);

@@ -1,6 +1,5 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <string>
 
 using stan::math::matrix_d;
 
@@ -37,7 +36,7 @@ void test_multiply_lower_tri_self_transpose(const matrix_d& x) {
 TEST(MathMatrix, multiply_lower_tri_self_transpose) {
   using stan::math::check_symmetric;
   using stan::math::multiply_lower_tri_self_transpose;
-  static const std::string function
+  static const char* function
     = "stan::math::multiply_lower_tri_self_transpose(%1%)";
   matrix_d x;
   test_multiply_lower_tri_self_transpose(x);

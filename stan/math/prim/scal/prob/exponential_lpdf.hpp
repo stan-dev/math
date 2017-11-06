@@ -18,7 +18,6 @@
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -52,7 +51,7 @@ namespace stan {
     template <bool propto, typename T_y, typename T_inv_scale>
     typename return_type<T_y, T_inv_scale>::type
     exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
-      static const std::string function = "exponential_lpdf";
+      static const char* function = "exponential_lpdf";
       typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
         T_partials_return;
 

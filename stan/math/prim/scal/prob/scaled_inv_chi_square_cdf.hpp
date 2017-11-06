@@ -24,7 +24,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -52,7 +51,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu) && stan::length(s)))
         return 1.0;
 
-      static const std::string function = "scaled_inv_chi_square_cdf";
+      static const char* function = "scaled_inv_chi_square_cdf";
 
       using std::exp;
 

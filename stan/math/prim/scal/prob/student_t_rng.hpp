@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -41,7 +40,7 @@ namespace stan {
                   RNG& rng) {
       using boost::variate_generator;
       using boost::random::student_t_distribution;
-      static const std::string function = "student_t_rng";
+      static const char* function = "student_t_rng";
 
       scalar_seq_view<T_deg> nu_vec(nu);
       scalar_seq_view<T_loc> mu_vec(mu);
