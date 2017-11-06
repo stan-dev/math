@@ -27,6 +27,8 @@ namespace stan {
         const Eigen::Matrix<T_out, Eigen::Dynamic, 1> f = F::apply(eta, theta.col(i), x_r.col(i), x_i[i]);
         const std::size_t rows = res.rows();
         const std::size_t f_size = f.rows();
+        // TODO: we should probalby always double the size and then
+        // discard excessive empty elements before we return
         res.conservativeResize(rows + f_size, 1);
         res.bottomRows(f_size) = f;
       }
