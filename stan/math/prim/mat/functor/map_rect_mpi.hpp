@@ -50,7 +50,7 @@ namespace stan {
 
       const int callsite_id_;
 
-      typedef Eigen::Matrix<typename stan::return_type<T_shared_param, T_param>::type, Eigen::Dynamic, 1> result_t;
+      typedef typename CombineF::result_type result_type;
 
     public:
       // called on root
@@ -88,6 +88,13 @@ namespace stan {
         // mirror constructor actions done on root
       }
 
+      // mpi communication using caching... we return a const_iterator
+      // to the slice of data which we process locally; is there a
+      // better type to return? I only need a const reference to be
+      // returned.
+      std::map<int, std::vector<std::vector<int>>>::const_iterator scatter(const std::vector<int>& in_values);
+      std::map<int, Eigen::MatrixXd>::const_iterator scatter(const Eigen::MatrixXd& in_values);
+
       static void distributed_apply() {
         // entry point when called on remote
 
@@ -98,7 +105,7 @@ namespace stan {
       }
 
       // all data is cached and local parameters are also available
-      result_t reduce() {
+      result_type reduce() {
         // get output size for each element which includes all the
         // calculated gradients, etc.
         const std::size_t num_element_outputs = ReduceF::get_element_outputs(eta.rows(), theta.rows());
@@ -141,6 +148,7 @@ namespace stan {
 
     template <typename F>
     struct simple_combine {
+      typedef Eigen::VectorXd result_type;
       static Eigen::VectorXd gather_outputs(...) {
         // gather stuff into a single big object which we output as VectorXd.
       }
