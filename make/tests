@@ -17,14 +17,23 @@ $(GTEST)/%.cc: ;
 ##
 # Rule for generating dependencies.
 ##
-.PRECIOUS: test/%.d
-test/%.d : test/%.cpp
+.PRECIOUS: %.d
+%.d : %.cpp
 	@mkdir -p $(dir $@)
 	@set -e; \
 	rm -f $@; \
 	$(COMPILE.cpp) -MM $< > $@.$$$$; \
 	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
+
+%.d : %.hpp
+	@mkdir -p $(dir $@)
+	@set -e; \
+	rm -f $@; \
+	$(COMPILE.cpp) -MM $< > $@.$$$$; \
+	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.hpp.gch $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+    $(eval include $$@)
 
 ##
 # Adding a test for multiple translation units. If this fails,
@@ -103,7 +112,7 @@ test/unit/math/memory/%.o: test/unit/math/memory/%.cpp
 
 .PRECIOUS: %.hpp.gch test/%.o
 
-%.hpp.gch: %.hpp
+%.hpp.gch: %.hpp %.d
 	$(COMPILE.cpp) -o $@ $(@:.gch=)
 
 test/prob/%.o : stan/math/mix/mat.hpp.gch test/prob/%.cpp
