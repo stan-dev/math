@@ -163,6 +163,7 @@ namespace stan {
                  const int callsite_id) {
       typedef typename map_rect_traits<T_shared_param, T_param, F>::reduce_t ReduceF;
       typedef typename map_rect_traits<T_shared_param, T_param, F>::combine_t CombineF;
+      
       mpi_parallel_call<T_shared_param,T_param,ReduceF,CombineF> job_chunk(eta, theta, x_r, x_i, callsite_id);
 
       return job_chunk.reduce();
