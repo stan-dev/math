@@ -92,7 +92,7 @@ namespace stan {
       // to the slice of data which we process locally; is there a
       // better type to return? I only need a const reference to be
       // returned.
-      std::map<int, std::vector<std::vector<int>>>::const_iterator scatter(const std::vector<int>& in_values);
+      std::map<int, std::vector<std::vector<int>>>::const_iterator scatter(const std::vector<std::vectotr<int>>& in_values);
       std::map<int, Eigen::MatrixXd>::const_iterator scatter(const Eigen::MatrixXd& in_values);
 
       static void distributed_apply() {
