@@ -25,18 +25,18 @@ env:
 install:
   - |
     if [[ ${TRAVIS_OS_NAME} == "linux"]]; then
-      mkdir -p ${OPENCL_ROOT}
-      bash .travis/amd_sdk.sh ${AMDAPPSDK_VERSION}
-      tar -xjf AMD-SDK.tar.bz2
-      export OPENCL_VENDOR_PATH=${AMDAPPSDKROOT}/etc/OpenCL/vendors
-      mkdir -p ${OPENCL_VENDOR_PATH}
-      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDKROOT}
-      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd
-      export LD_LIBRARY_PATH=${AMDAPPSDKROOT}/lib/x86_64/sdk:${LD_LIBRARY_PATH}
-      cp ${AMDAPPSDKROOT}/lib/x86_64/libamdocl12cl64.so ${AMDAPPSDKROOT}/lib/x86_64/sdk/libamdocl12cl64.so
-      chmod +x ${AMDAPPSDKROOT}/bin/x86_64/clinfo
-      ${AMDAPPSDKROOT}/bin/x86_64/clinfo
-    fi
+      mkdir -p ${OPENCL_ROOT};
+      bash .travis/amd_sdk.sh ${AMDAPPSDK_VERSION};
+      tar -xjf AMD-SDK.tar.bz2;
+      export OPENCL_VENDOR_PATH=${AMDAPPSDKROOT}/etc/OpenCL/vendors;
+      mkdir -p ${OPENCL_VENDOR_PATH};
+      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDKROOT};
+      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
+      export LD_LIBRARY_PATH=${AMDAPPSDKROOT}/lib/x86_64/sdk:${LD_LIBRARY_PATH};
+      cp ${AMDAPPSDKROOT}/lib/x86_64/libamdocl12cl64.so ${AMDAPPSDKROOT}/lib/x86_64/sdk/libamdocl12cl64.so;
+      chmod +x ${AMDAPPSDKROOT}/bin/x86_64/clinfo;
+      ${AMDAPPSDKROOT}/bin/x86_64/clinfo;
+    fi;
 
 linux_clang: &linux_clang
   os: linux
