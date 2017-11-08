@@ -11,31 +11,21 @@ before_script:
 # Thanks to JuliaGPU https://github.com/JuliaGPU/OpenCL.jl
 # and boost https://github.com/boostorg/compute
 ############################################################################
-env:
-  global:
-    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
-    # OpenCL
-    - OPENCL_LIB=default
-    - OPENCL_HEADERS_VER="21"
-    # AMD APP SDK
-    - OPENCL_ROOT=${DEPS_DIR}/opencl
-    - AMDAPPSDKROOT=${OPENCL_ROOT}/AMDAPPSDK
-    - AMDAPPSDK_VERSION=300
 
 before_install:
   - if [ $TRAVIS_OS_NAME = "linux" ]; then
-      bash .travis/amd_sdk.sh;
-      tar -xjf AMD-SDK.tar.bz2;
-      AMDAPPSDK=${HOME}/AMDAPPSDK;
-      export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
-      mkdir -p ${OPENCL_VENDOR_PATH};
-      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
-      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
-      export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64/sdk:${LD_LIBRARY_PATH};
-      cp ${AMDAPPSDKROOT}/lib/x86_64/libamdocl12cl64.so ${AMDAPPSDKROOT}/lib/x86_64/sdk/libamdocl12cl64.so
-      chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
-      ${AMDAPPSDK}/bin/x86_64/clinfo;
-    fi;
+    bash .travis/amd_sdk.sh;
+    tar -xjf AMD-SDK.tar.bz2;
+    AMDAPPSDK=${HOME}/AMDAPPSDK;
+    export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
+    mkdir -p ${OPENCL_VENDOR_PATH};
+    sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
+    echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
+    export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64:${LD_LIBRARY_PATH};
+    chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
+    ${AMDAPPSDK}/bin/x86_64/clinfo;
+  fi;
+   - ln -s /usr/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 
 linux_clang: &linux_clang
   os: linux
