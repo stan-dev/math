@@ -88,8 +88,7 @@ namespace stan {
     }
 
     /**
-     * Stores the identity matrix to the
-     * assigned matrix on the GPU
+     * Returns the identity matrix stored on the GPU
      * 
      * @param rows_cols the number of rows and columns
      * 
@@ -98,6 +97,9 @@ namespace stan {
      */
     matrix_gpu identity(int rows_cols) {
       matrix_gpu A(rows_cols, rows_cols);
+      if(rows_cols == 0){
+        return A;
+      }
       cl::Kernel kernel = get_kernel("identity");
       cl::CommandQueue cmdQueue = get_queue();
 

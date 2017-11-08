@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
 #include <stan/math/prim/mat/err/check_gpu.hpp>
+#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -43,14 +44,12 @@ namespace stan {
     cholesky_decompose_gpu(const Eigen::Matrix<T,
      Eigen::Dynamic, Eigen::Dynamic>& m) {
       if (m.size() == 0) return m;
-
       matrix_gpu A(m);
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::Kernel kernel_left = get_kernel("cholesky_left_update");
       cl::Kernel kernel_mid = get_kernel("cholesky_mid_update");
       cl::Kernel kernel_zero = get_kernel("cholesky_zero");
       cl::CommandQueue cmd_queue = get_queue();
-
       try {
         cl::Context ctx = get_context();
         // Will be managed by the library core system
@@ -110,9 +109,6 @@ namespace stan {
            cl::NDRange(local, local));
           offset += block;
         }
-
-
-
         int left = A.rows() - offset;
         if (left > 0) {
           kernel_chol_block.setArg(1, offset);
@@ -126,16 +122,12 @@ namespace stan {
       } catch (const cl::Error& e) {
         check_ocl_error(e);
       }
-
       copy_triangular_transposed(A, LOWER_TO_UPPER_TRIANGULAR);
-      check_nan_gpu("cholesky_decompose_gpu", "A", A);
-      check_diagonal_zeros("cholesky_decompose_gpu", "A", A);
+      check_positive_definite_gpu("cholesky_decompose_gpu", "Matrix m", A);      
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
        m_tmp(m.rows(), m.cols());
       copy(A, m_tmp); // NOLINT
-      m_tmp = m_tmp.template triangularView<Eigen::Lower>();
-
-      return m_tmp;
+      return m_tmp.template triangularView<Eigen::Lower>();
     }
   }
 }

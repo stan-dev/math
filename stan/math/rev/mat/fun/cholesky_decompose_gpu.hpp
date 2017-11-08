@@ -77,7 +77,6 @@ namespace stan {
         using Eigen::StrictlyUpper;
         using Eigen::StrictlyLower;
         MatrixXd Lbar(M_, M_);
-        MatrixXd Lbar1(M_, M_);
         MatrixXd L(M_, M_);
         Lbar.setZero();
         L.setZero();
@@ -90,10 +89,8 @@ namespace stan {
             ++pos;
           }
         }
-
         matrix_gpu L_gpu(L);
         matrix_gpu Lbar_gpu(Lbar);
-
         int M = M_;
         int block_size_ = 128;
         block_size_ = std::max((M / 8 / 16) * 16, 8);

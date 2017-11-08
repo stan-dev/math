@@ -11,7 +11,69 @@
 
 namespace stan {
   namespace math {
+    
+    /**
+     * Check if the specified matrix on the GPU has NaN values
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix to test
+     *
+     * @throw <code>std::domain_error</code> if
+     *    any element of the matrix is <code>NaN</code>.
+     */
+    inline void
+    check_positive_definite_gpu(const std::string& function,
+                           const std::string& name,
+                  matrix_gpu& y) {
+      if (y.size() == 0) return;
 
+      cl::Kernel kernel_check_nan = get_kernel("check_nan");
+      cl::Kernel kernel_check_diagonal_zeros =
+       get_kernel("check_diagonal_zeros");
+      cl::CommandQueue cmd_queue = get_queue();
+
+      try {
+        cl::Context ctx = get_context();
+        int nan_flag = 0;
+        int diag_zeros_flag = 0;
+        cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE,
+         sizeof(int));
+
+        cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0,
+         sizeof(int), &nan_flag);
+
+        kernel_check_nan.setArg(0, y.buffer());
+        kernel_check_nan.setArg(1, y.rows());
+        kernel_check_nan.setArg(2, y.cols());
+        kernel_check_nan.setArg(3, buffer_flag);
+
+        cmd_queue.enqueueNDRangeKernel(kernel_check_nan,
+         cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
+
+        cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
+         sizeof(int), &nan_flag);
+         
+        kernel_check_diagonal_zeros.setArg(0, y.buffer());
+        kernel_check_diagonal_zeros.setArg(1, y.rows());
+        kernel_check_diagonal_zeros.setArg(2, y.cols());
+        kernel_check_diagonal_zeros.setArg(3, buffer_flag);
+
+        cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros,
+         cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
+
+        cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
+         sizeof(int), &diag_zeros_flag);
+         
+        //  if NaN values were found in the matrix
+        if (nan_flag || diag_zeros_flag) {
+          domain_error(function, name, "is not positive definite", "");
+        }
+      } catch (const cl::Error& e) {
+        check_ocl_error(e);
+      }
+    }
+    
     /**
      * Check if the specified matrix on the GPU has NaN values
      *
