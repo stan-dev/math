@@ -62,7 +62,9 @@ namespace stan {
           }
 
       /**
-       * Reverse mode differentiation algorithm refernce:
+       * Reverse mode differentiation algorithm using a GPU
+       * 
+       * Reference:
        *
        * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
        *
@@ -89,24 +91,93 @@ namespace stan {
           }
         }
 
-        stan::math::matrix_gpu L_gpu(L);
-        stan::math::matrix_gpu Lbar_gpu(Lbar);  
-        stan::math::matrix_gpu Lbar_temp_gpu(L);
+        matrix_gpu L_gpu(L);
+        matrix_gpu Lbar_gpu(Lbar);
 
-        stan::math::transpose(L_gpu);
-        stan::math::multiply(L_gpu, Lbar_gpu, Lbar_temp_gpu);
-        stan::math::copy_triangular_transposed(
-         Lbar_temp_gpu,LOWER_TO_UPPER_TRIANGULAR);
-        stan::math::transpose(L_gpu);
-        stan::math::lower_triangular_inverse(L_gpu);
-        stan::math::transpose(L_gpu);
-        stan::math::transpose(Lbar_temp_gpu);
-        stan::math::multiply(L_gpu,Lbar_temp_gpu,Lbar_gpu);
-        stan::math::transpose(Lbar_gpu);
-        stan::math::multiply(L_gpu,Lbar_gpu,Lbar_temp_gpu);
-        stan::math::transpose(Lbar_temp_gpu);
-        stan::math::diagonal_multiply_with_scalar(Lbar_temp_gpu,0.5);
-        stan::math::copy(Lbar_temp_gpu, Lbar);
+        int M = M_;
+        int block_size_ = 128;
+        block_size_ = std::max((M / 8 / 16) * 16, 8);
+        block_size_ = std::min(block_size_, 512);
+        for (int k = M; k > 0; k -= block_size_) {
+          int j = std::max(0, k - block_size_);
+          matrix_gpu R_gpu(k-j, j);
+          matrix_gpu D_gpu(k-j, k-j);
+          matrix_gpu Dinv_gpu(k-j, k-j);
+          matrix_gpu B_gpu(M-k, j);
+          matrix_gpu C_gpu(M-k, k-j);
+
+          matrix_gpu Rbar_gpu(k-j, j);
+          matrix_gpu Dbar_gpu(k-j, k-j);
+          matrix_gpu Dbar2_gpu(k-j, k-j);
+          matrix_gpu Bbar_gpu(M-k, j);
+          matrix_gpu Bbar2_gpu(M-k, j);
+          matrix_gpu Cbar_gpu(M-k, k-j);
+          matrix_gpu Cbar2_gpu(k-j, M-k);
+          matrix_gpu Cbar3_gpu(k-j, M-k);
+          matrix_gpu temp_gpu(k-j, j);
+
+          copy_submatrix(L_gpu, R_gpu, j, 0, 0, 0, k-j, j);
+          copy_submatrix(L_gpu, D_gpu, j, j, 0, 0, k-j, k-j);
+          copy_submatrix(L_gpu, B_gpu, k, 0, 0, 0, M-k, j);
+          copy_submatrix(L_gpu, C_gpu, k, j, 0, 0, M-k, k-j);
+
+          copy_submatrix(Lbar_gpu, Rbar_gpu, j, 0, 0, 0, k-j, j);
+          copy_submatrix(Lbar_gpu, Dbar_gpu, j, j, 0, 0, k-j, k-j);
+          copy_submatrix(Lbar_gpu, Bbar_gpu, k, 0, 0, 0, M-k, j);
+          copy_submatrix(Lbar_gpu, Cbar_gpu, k, j, 0, 0, M-k, k-j);
+
+          if (Cbar_gpu.size() > 0) {
+            copy(D_gpu, Dinv_gpu);
+            Dinv_gpu = lower_triangular_inverse(Dinv_gpu);
+            Dinv_gpu = transpose(Dinv_gpu);
+            Cbar2_gpu = transpose(Cbar_gpu);
+
+            Cbar3_gpu = multiply(Dinv_gpu, Cbar2_gpu);
+            Cbar_gpu = transpose(Cbar3_gpu);
+
+            Bbar2_gpu = multiply(Cbar_gpu, R_gpu);
+            Bbar_gpu = subtract(Bbar_gpu, Bbar2_gpu);
+
+            Cbar3_gpu = transpose(Cbar_gpu);
+            Dbar2_gpu = multiply(Cbar3_gpu, C_gpu);
+            Dbar_gpu = subtract(Dbar_gpu, Dbar2_gpu);
+          }
+
+          D_gpu = transpose(D_gpu);
+          zeros(Dbar_gpu, UPPER);
+          Dbar2_gpu = multiply(D_gpu, Dbar_gpu);
+          copy_triangular_transposed(Dbar2_gpu,
+            LOWER_TO_UPPER_TRIANGULAR);
+          D_gpu = transpose(D_gpu);
+          D_gpu = lower_triangular_inverse(D_gpu);
+          D_gpu = transpose(D_gpu);
+          Dbar_gpu = multiply(D_gpu, Dbar2_gpu);
+          Dbar_gpu = transpose(Dbar_gpu);
+          Dbar2_gpu = multiply(D_gpu, Dbar_gpu);
+
+          if (Cbar_gpu.size() > 0 && B_gpu.size() > 0) {
+            Cbar2_gpu = transpose(Cbar_gpu);
+            temp_gpu = multiply(Cbar2_gpu, B_gpu);
+            Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
+          }
+
+          if (Dbar_gpu.size() > 0 && R_gpu.size() > 0) {
+            copy(Dbar2_gpu, Dbar_gpu);
+            copy_triangular_transposed(Dbar_gpu,
+              LOWER_TO_UPPER_TRIANGULAR);
+            temp_gpu = multiply(Dbar_gpu, R_gpu);
+            Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
+          }
+
+          diagonal_multiply(Dbar2_gpu, 0.5);
+          zeros(Dbar2_gpu, UPPER);
+
+          copy_submatrix(Rbar_gpu, Lbar_gpu, 0, 0, j, 0, k-j, j);
+          copy_submatrix(Dbar2_gpu, Lbar_gpu, 0, 0, j, j, k-j, k-j);
+          copy_submatrix(Bbar_gpu, Lbar_gpu, 0, 0, k, 0, M-k, j);
+          copy_submatrix(Cbar_gpu, Lbar_gpu, 0, 0, k, j, M-k, k-j);
+        }
+        copy(Lbar_gpu, Lbar);
         pos = 0;
         for (size_type j = 0; j < M_; ++j)
           for (size_type i = j; i < M_; ++i)
@@ -114,10 +185,7 @@ namespace stan {
       }
     };
     /**
-     * Reverse mode specialization of cholesky decomposition
-     *
-     * Internally calls Eigen::LLT rather than using
-     * stan::math::cholesky_decompose in order to use an inplace decomposition.
+     * Reverse mode specialization of cholesky decomposition on a GPU
      *
      * Note chainable stack varis are created below in Matrix<var, -1, -1>
      *
@@ -131,11 +199,7 @@ namespace stan {
 
       Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
       L_A = L_A.selfadjointView<Eigen::Lower>();
-//      std::cout << "OUTPUT REV: \n";
-//    TODO: Have the matrix stay on the GPU for this and the derivative
-      L_A = stan::math::cholesky_decompose_gpu(L_A);
-//      std::cout << "OUTPUT REV: \n";
-//      std::cout << L_A << "\n";
+      L_A = cholesky_decompose_gpu(L_A);
       // Memory allocated in arena.
       vari* dummy = new vari(0.0, false);
       Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
