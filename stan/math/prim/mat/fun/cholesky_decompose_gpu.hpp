@@ -44,6 +44,7 @@ namespace stan {
     cholesky_decompose_gpu(const Eigen::Matrix<T,
      Eigen::Dynamic, Eigen::Dynamic>& m) {
       if (m.size() == 0) return m;
+      check_symmetric("cholesky_decompose", "m", m);
       matrix_gpu A(m);
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::Kernel kernel_left = get_kernel("cholesky_left_update");
