@@ -10,6 +10,7 @@ TEST(MathMatrixGPU,add_v_exception_pass) {
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
   stan::math::matrix_gpu d33(3,1);
+  d33 = stan::math::add(d11, d22);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
