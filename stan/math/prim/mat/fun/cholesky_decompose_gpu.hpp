@@ -123,7 +123,8 @@ namespace stan {
         check_ocl_error(e);
       }
       copy_triangular_transposed(A, LOWER_TO_UPPER_TRIANGULAR);
-      check_positive_definite_gpu("cholesky_decompose_gpu", "Matrix m", A);      
+      check_positive_definite_gpu("cholesky_decompose_gpu",
+        "Matrix m", A);
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
        m_tmp(m.rows(), m.cols());
       copy(A, m_tmp); // NOLINT

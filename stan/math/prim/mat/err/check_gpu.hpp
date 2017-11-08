@@ -11,7 +11,6 @@
 
 namespace stan {
   namespace math {
-    
     /**
      * Check if the specified matrix on the GPU has NaN values
      *
@@ -53,7 +52,7 @@ namespace stan {
 
         cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
          sizeof(int), &nan_flag);
-         
+
         kernel_check_diagonal_zeros.setArg(0, y.buffer());
         kernel_check_diagonal_zeros.setArg(1, y.rows());
         kernel_check_diagonal_zeros.setArg(2, y.cols());
@@ -64,7 +63,7 @@ namespace stan {
 
         cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
          sizeof(int), &diag_zeros_flag);
-         
+
         //  if NaN values were found in the matrix
         if (nan_flag || diag_zeros_flag) {
           domain_error(function, name, "is not positive definite", "");
@@ -73,7 +72,6 @@ namespace stan {
         check_ocl_error(e);
       }
     }
-    
     /**
      * Check if the specified matrix on the GPU has NaN values
      *

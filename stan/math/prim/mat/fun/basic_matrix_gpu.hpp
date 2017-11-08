@@ -97,7 +97,7 @@ namespace stan {
      */
     matrix_gpu identity(int rows_cols) {
       matrix_gpu A(rows_cols, rows_cols);
-      if(rows_cols == 0){
+      if (rows_cols == 0) {
         return A;
       }
       cl::Kernel kernel = get_kernel("identity");
@@ -122,9 +122,9 @@ namespace stan {
 
     /**
      * Copies the lower or upper 
-     * triangular of the source matrix to the 
-     * destination matrix. Both matrices are
-     * stored on the GPU. 
+     * triangular of the source matrix to
+     * the destination matrix. 
+     * Both matrices are stored on the GPU.
      * 
      * @param src the source matrix
      * @param lower_upper enum to describe

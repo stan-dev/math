@@ -7,6 +7,9 @@
 #endif
 
 TEST(MathMatrix, kernel_initialize) {
+      //test if this fixes the exception problem
+      stan::math::matrix_gpu a(10,10);
+      a = stan::math::transpose(a);
       EXPECT_NO_THROW(cl::Kernel kernel_transpose = 
       stan::math::get_kernel("transpose"));
       EXPECT_NO_THROW(cl::Kernel kernel_copy = 
