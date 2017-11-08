@@ -6,12 +6,6 @@ before_script:
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
-############################################################################
-# Install and set for 
-# Thanks to JuliaGPU https://github.com/JuliaGPU/OpenCL.jl
-# and boost https://github.com/boostorg/compute
-############################################################################
-
 before_install:
   - if [ $TRAVIS_OS_NAME = "linux" ]; then
     bash .travis/amd_sdk.sh;
