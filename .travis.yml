@@ -5,10 +5,9 @@ before_script:
   - echo ${CXX}
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - if [ $TRAVIS_OS_NAME = "linux" ]; then
       bash .travis/amd_sdk.sh;
-      tar -xjf AMD-SDK.tar.bz2;
+      tar xvjf AMD-SDK.tar.bz2;
       AMDAPPSDK=${HOME}/AMDAPPSDK;
       export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
       mkdir -p ${OPENCL_VENDOR_PATH};

@@ -3,7 +3,7 @@
 # Original script from https://github.com/gregvw/amd_sdk/
 
 # Location from which get nonce and file name from
-URL="http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-tools-sdks/amd-accelerated-parallel-processing-app-sdk/"
+URL="http://developer.amd.com/amd-accelerated-parallel-processing-app-sdk/"
 URLDOWN="http://developer.amd.com/amd-license-agreement-appsdk/"
 
 NONCE1_STRING='name="amd_developer_central_downloads_page_nonce"'
@@ -11,7 +11,8 @@ FILE_STRING='name="f"'
 POSTID_STRING='name="post_id"'
 NONCE2_STRING='name="amd_developer_central_nonce"'
 
-#For newest FORM=`wget -qO - $URL | sed -n '/download-2/,/64-bit/p'`
+# This gets the second latest (2.9.1 ATM, latest is 3.0)
+# For newest: FORM=`wget -qO - $URL | sed -n '/download-2/,/64-bit/p'`
 FORM=`wget -qO - $URL | sed -n '/download-5/,/64-bit/p'`
 
 # Get nonce from form
@@ -36,3 +37,4 @@ NONCE2=`echo $NONCE2 | awk -F'"' '{print $2}'`
 echo $NONCE2
 
 wget --content-disposition --trust-server-names $URLDOWN --post-data "amd_developer_central_nonce=${NONCE2}&f=${FILE}" -O AMD-SDK.tar.bz2;
+
