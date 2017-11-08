@@ -35,7 +35,7 @@ before_install:
       chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
       ${AMDAPPSDK}/bin/x86_64/clinfo;
     fi;
-  - sudo ln -s /usr/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+  - sudo ln -s ${AMDAPPSDK}/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 
 matrix:
   fast_finish: true
