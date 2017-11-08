@@ -6,13 +6,45 @@ before_script:
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
 
+############################################################################
+# Install and set for 
+# Thanks to JuliaGPU https://github.com/JuliaGPU/OpenCL.jl
+# and boost https://github.com/boostorg/compute
+############################################################################
+env:
+  global:
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    # OpenCL
+    - OPENCL_LIB=default
+    - OPENCL_HEADERS_VER="21"
+    # AMD APP SDK
+    - OPENCL_ROOT=${DEPS_DIR}/opencl
+    - AMDAPPSDKROOT=${OPENCL_ROOT}/AMDAPPSDK
+    - AMDAPPSDK_VERSION=300
+
+install:
+  - |
+    if [[ ${TRAVIS_OS_NAME} == "linux"]]; then
+      mkdir -p ${OPENCL_ROOT}
+      bash .travis/amd_sdk.sh ${AMDAPPSDK_VERSION}
+      tar -xjf AMD-SDK.tar.bz2
+      export OPENCL_VENDOR_PATH=${AMDAPPSDKROOT}/etc/OpenCL/vendors
+      mkdir -p ${OPENCL_VENDOR_PATH}
+      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDKROOT}
+      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd
+      export LD_LIBRARY_PATH=${AMDAPPSDKROOT}/lib/x86_64/sdk:${LD_LIBRARY_PATH}
+      cp ${AMDAPPSDKROOT}/lib/x86_64/libamdocl12cl64.so ${AMDAPPSDKROOT}/lib/x86_64/sdk/libamdocl12cl64.so
+      chmod +x ${AMDAPPSDKROOT}/bin/x86_64/clinfo
+      ${AMDAPPSDKROOT}/bin/x86_64/clinfo
+    fi
+
 linux_clang: &linux_clang
   os: linux
   compiler: "clang-3.8"
   addons: 
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-      packages: [ 'clang-3.8', 'libc++-dev', 'fglrx', 'opencl-headers']
+      packages: [ 'clang-3.8', 'libc++-dev' ]
 
 linux_gcc: &linux_gcc
   os: linux
@@ -20,7 +52,7 @@ linux_gcc: &linux_gcc
   addons:
     apt:
       sources: [ 'ubuntu-toolchain-r-test' ]
-      packages: [ 'g++-4.9', 'fglrx', 'opencl-headers']
+      packages: [ 'g++-4.9' ]
 
 
 matrix:
