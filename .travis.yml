@@ -5,18 +5,6 @@ before_script:
   - echo ${CXX}
   - ${CXX} --version
   - echo "CC=$CXX" > make/local
-  - if [ $TRAVIS_OS_NAME = "linux" ]; then
-      bash .travis/amd_sdk.sh;
-      tar xvjf AMD-SDK.tar.bz2;
-      AMDAPPSDK=${HOME}/AMDAPPSDK;
-      export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
-      mkdir -p ${OPENCL_VENDOR_PATH};
-      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
-      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
-      export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64:${LD_LIBRARY_PATH};
-      chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
-      ${AMDAPPSDK}/bin/x86_64/clinfo;
-    fi;
 
 linux_clang: &linux_clang
   os: linux
@@ -24,7 +12,7 @@ linux_clang: &linux_clang
   addons: 
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-      packages: [ 'clang-3.8', 'libc++-dev' ]
+      packages: [ 'clang-3.8', 'libc++-dev', 'fglrx', 'opencl-headers']
 
 linux_gcc: &linux_gcc
   os: linux
@@ -32,7 +20,7 @@ linux_gcc: &linux_gcc
   addons:
     apt:
       sources: [ 'ubuntu-toolchain-r-test' ]
-      packages: [ 'g++-4.9' ]
+      packages: [ 'g++-4.9', 'fglrx', 'opencl-headers']
 
 
 matrix:
