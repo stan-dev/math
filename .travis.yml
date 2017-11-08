@@ -35,7 +35,7 @@ before_install:
       chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
       ${AMDAPPSDK}/bin/x86_64/clinfo;
     fi;
-  - ln -s /usr/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+  - sudo ln -s /usr/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 
 matrix:
   fast_finish: true
@@ -125,5 +125,5 @@ matrix:
 
 script: ./runTests.py -j2 $TESTFOLDER
 
-sudo: false
+sudo: true
 dist: trusty
