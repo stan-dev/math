@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -32,7 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::gamma_distribution;
 
-      static const std::string function = "gamma_rng";
+      static const char* function("gamma_rng");
       check_positive_finite(function, "Shape parameter", alpha);
       check_positive_finite(function, "Inverse scale parameter", beta);
 

@@ -23,14 +23,13 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
      * Returns the inverse chi square cumulative distribution function for the
-     * given variate and degrees of freedom. If given containers of matching
+     * given variate and degrees of freedom. If given containers of matching 
      * sizes, returns the product of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -50,7 +49,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(nu)))
         return 1.0;
 
-      static const std::string function = "inv_chi_square_cdf";
+      static const char* function("inv_chi_square_cdf");
 
       using boost::math::tools::promote_args;
       using std::exp;

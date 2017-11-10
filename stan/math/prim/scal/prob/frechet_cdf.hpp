@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -32,7 +31,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const std::string function = "frechet_cdf";
+      static const char* function("frechet_cdf");
 
       using boost::math::tools::promote_args;
       using std::log;

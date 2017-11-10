@@ -5,15 +5,15 @@ using stan::math::check_less_or_equal;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar,CheckLessOrEqual) {
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   var x = -10.0;
   var lb = 0.0;
-
+ 
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x, lb))
     << "check_less_or_equal should be true with x < lb";
-
+  
   x = 1.0;
-  EXPECT_THROW(check_less_or_equal(function, "x", x, lb),
+  EXPECT_THROW(check_less_or_equal(function, "x", x, lb), 
                std::domain_error)
     << "check_less_or_equal should throw an exception with x > lb";
 
@@ -27,7 +27,7 @@ TEST(AgradRevErrorHandlingScalar,CheckLessOrEqual) {
 
   x = -10.0;
   lb = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_less_or_equal(function, "x", x, lb),
+  EXPECT_THROW(check_less_or_equal(function, "x", x, lb), 
                std::domain_error)
     << "check_less should throw an exception with x == -10.0 and lb == -Inf";
 
@@ -42,7 +42,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_less_or_equal;
 
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
@@ -64,3 +64,4 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
 
   stan::math::recover_memory();
 }
+

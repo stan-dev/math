@@ -18,7 +18,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,7 +26,7 @@ namespace stan {
     template <typename T_n, typename T_rate>
     typename return_type<T_rate>::type
     poisson_cdf(const T_n& n, const T_rate& lambda) {
-      static const std::string function = "poisson_cdf";
+      static const char* function("poisson_cdf");
       typedef typename stan::partials_return_type<T_n, T_rate>::type
         T_partials_return;
 

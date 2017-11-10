@@ -11,7 +11,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -24,7 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::exponential_distribution;
 
-      static const std::string function = "pareto_rng";
+      static const char* function("pareto_rng");
 
       check_positive_finite(function, "Scale parameter", y_min);
       check_positive_finite(function, "Shape parameter", alpha);

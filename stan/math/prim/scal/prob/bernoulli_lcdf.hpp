@@ -17,13 +17,12 @@
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the log CDF of the Bernoulli distribution. If containers are
+     * Returns the log CDF of the Bernoulli distribution. If containers are 
      * supplied, returns the log sum of the probabilities.
      *
      * @tparam T_n type of integer parameter
@@ -37,7 +36,7 @@ namespace stan {
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_lcdf(const T_n& n, const T_prob& theta) {
-      static const std::string function = "bernoulli_lcdf";
+      static const char* function("bernoulli_lcdf");
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 

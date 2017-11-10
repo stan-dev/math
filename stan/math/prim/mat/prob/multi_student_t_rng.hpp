@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/prob/inv_gamma_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cstdlib>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -29,7 +28,7 @@ namespace stan {
           const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
           const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
           RNG& rng) {
-      static const std::string function = "multi_student_t_rng";
+      static const char* function("multi_student_t_rng");
 
       check_finite(function, "Location parameter", mu);
       check_symmetric(function, "Scale parameter", s);

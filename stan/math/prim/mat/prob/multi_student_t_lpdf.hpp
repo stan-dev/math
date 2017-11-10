@@ -20,7 +20,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <cstdlib>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -38,7 +37,7 @@ namespace stan {
                         const T_dof& nu,
                         const T_loc& mu,
                         const T_scale& Sigma) {
-      static const std::string function = "multi_student_t";
+      static const char* function("multi_student_t");
 
       using boost::math::lgamma;
       using std::log;

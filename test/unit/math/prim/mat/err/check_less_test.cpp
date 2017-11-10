@@ -4,15 +4,15 @@
 using stan::math::check_less;
 
 TEST(ErrorHandlingScalar,CheckLess_Matrix) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   double x;
   double high;
   Eigen::Matrix<double,Eigen::Dynamic,1> x_vec;
   Eigen::Matrix<double,Eigen::Dynamic,1> high_vec;
   x_vec.resize(3);
   high_vec.resize(3);
-
-
+  
+  
   // x_vec, high
   x_vec << -5, 0, 5;
   high = 10;
@@ -26,7 +26,7 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
   high = 5;
   EXPECT_THROW(check_less(function, "x", x_vec, high),
                std::domain_error);
-
+  
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = 5;
   EXPECT_THROW(check_less(function, "x", x_vec, high),
@@ -36,7 +36,7 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
   high = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_less(function, "x", x_vec, high),
                std::domain_error);
-
+  
   // x_vec, high_vec
   x_vec << -5, 0, 5;
   high_vec << 0, 5, 10;
@@ -50,10 +50,10 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
   high_vec << 10, 10, 5;
   EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
                std::domain_error);
-
+  
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, 10;
-  EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
+  EXPECT_THROW(check_less(function, "x", x_vec, high_vec), 
                std::domain_error);
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
@@ -61,7 +61,7 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
   EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
                std::domain_error);
 
-
+  
   // x, high_vec
   x = -100;
   high_vec << 0, 5, 10;
@@ -75,15 +75,15 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
   high_vec << 100, 200, 5;
   EXPECT_THROW(check_less(function, "x", x, high_vec),
                std::domain_error);
-
+  
   x = std::numeric_limits<double>::infinity();
   high_vec << 10, 20, 30;
-  EXPECT_THROW(check_less(function, "x", x, high_vec),
+  EXPECT_THROW(check_less(function, "x", x, high_vec), 
                std::domain_error);
 
   x = std::numeric_limits<double>::infinity();
-  high_vec << std::numeric_limits<double>::infinity(),
-    std::numeric_limits<double>::infinity(),
+  high_vec << std::numeric_limits<double>::infinity(), 
+    std::numeric_limits<double>::infinity(), 
     std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_less(function, "x", x, high_vec),
                std::domain_error);
@@ -91,7 +91,7 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix) {
 
 
 TEST(ErrorHandlingScalar,CheckLess_Matrix_one_indexed_message) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   double x;
   double high;
   Eigen::Matrix<double,Eigen::Dynamic,1> x_vec;
@@ -152,7 +152,7 @@ TEST(ErrorHandlingScalar,CheckLess_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingScalar,CheckGreaterOrEqual_nan) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double,Eigen::Dynamic,1> x_vec(3);

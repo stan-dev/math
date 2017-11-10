@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -47,7 +46,7 @@ namespace stan {
       using boost::random::uniform_real_distribution;
       using std::log;
       using std::exp;
-      static const std::string function = "beta_rng";
+      static const char* function("beta_rng");
       check_positive_finite(function, "First shape parameter", alpha);
       check_positive_finite(function, "Second shape parameter", beta);
 

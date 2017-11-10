@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -32,7 +31,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::student_t_distribution;
 
-      static const std::string function = "student_t_rng";
+      static const char* function("student_t_rng");
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_finite(function, "Location parameter", mu);

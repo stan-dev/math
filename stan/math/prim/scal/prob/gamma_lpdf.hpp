@@ -22,7 +22,6 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -53,7 +52,7 @@ namespace stan {
               typename T_y, typename T_shape, typename T_inv_scale>
     typename return_type<T_y, T_shape, T_inv_scale>::type
     gamma_lpdf(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
-      static const std::string function = "gamma_lpdf";
+      static const char* function("gamma_lpdf");
       typedef typename stan::partials_return_type<T_y, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;

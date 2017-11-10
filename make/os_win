@@ -26,15 +26,11 @@ else
 endif
 ifeq (g++,$(CC_TYPE))
   CXXFLAGS += -m$(BIT)
-  CXXFLAGS += -Wno-unused-function
-  CXXFLAGS += -Wno-uninitialized
   CXXFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
-  CXXFLAGS += -Wno-unused-function
-  CXXFLAGS += -Wno-uninitialized
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
 endif

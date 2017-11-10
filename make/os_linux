@@ -20,7 +20,5 @@ ifeq (mingw32-g++,$(CC_TYPE))
 endif
 ifeq (clang++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS += -Wno-unused-function
-  CXXFLAGS += -Wno-uninitialized
 endif
 

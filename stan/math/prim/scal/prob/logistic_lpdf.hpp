@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -30,7 +29,7 @@ namespace stan {
               typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const std::string function = "logistic_lpdf";
+      static const char* function("logistic_lpdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 

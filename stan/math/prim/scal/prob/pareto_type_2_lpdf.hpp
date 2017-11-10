@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -29,7 +28,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     pareto_type_2_lpdf(const T_y& y, const T_loc& mu, const T_scale& lambda,
                       const T_shape& alpha) {
-      static const std::string function = "pareto_type_2_lpdf";
+      static const char* function("pareto_type_2_lpdf");
       typedef
         typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
         T_partials_return;

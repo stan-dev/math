@@ -2,10 +2,10 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-const std::string function_ = "function";
-const std::string y_name_ = "y";
-const std::string msg1_ = "error_message ";
-const std::string msg2_ = " after y";
+const char* function_ = "function";
+const char* y_name_ = "y";
+const char* msg1_ = "error_message ";
+const char* msg2_ = " after y";
 
 class ErrorHandlingScalar_domain_error : public ::testing::Test {
 public:
@@ -66,6 +66,6 @@ public:
 
 TEST_F(ErrorHandlingScalar_domain_error, double) {
   double y = 10;
-
+  
   test_throw<double>(y);
 }

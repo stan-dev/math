@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +35,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::chi_squared_distribution;
 
-      static const std::string function = "chi_square_rng";
+      static const char* function("chi_square_rng");
 
       check_positive_finite(function, "Degrees of freedom parameter", nu);
 

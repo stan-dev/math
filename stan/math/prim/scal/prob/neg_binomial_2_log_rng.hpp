@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/prob/gamma_rng.hpp>
 #include <stan/math/prim/scal/prob/poisson_rng.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -33,7 +32,7 @@ namespace stan {
       using boost::random::poisson_distribution;
       using boost::gamma_distribution;
 
-      static const std::string function = "neg_binomial_2_log_rng";
+      static const char* function("neg_binomial_2_log_rng");
 
       check_finite(function, "Log-location parameter", eta);
       check_positive_finite(function, "Precision parameter", phi);

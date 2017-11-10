@@ -11,7 +11,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -24,7 +23,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::random::uniform_real_distribution;
 
-      static const std::string function = "uniform_rng";
+      static const char* function("uniform_rng");
 
       check_finite(function, "Lower bound parameter", alpha);
       check_finite(function, "Upper bound parameter", beta);

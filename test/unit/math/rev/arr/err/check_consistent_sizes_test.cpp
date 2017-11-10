@@ -7,7 +7,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::check_consistent_sizes;
 
   int N = 5;
-  const std::string function = "check_consistent_size";
+  const char* function = "check_consistent_size";
   vector<var> a;
   vector<var> b;
 
