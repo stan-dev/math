@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -47,7 +46,7 @@ namespace stan {
     typename return_type<T_n, T_x, T_beta, T_alpha, T_scale>::type
     normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
                              const T_alpha &alpha, const T_scale& sigma) {
-      static const std::string function = "normal_id_glm_lpdf";
+      static const char* function = "normal_id_glm_lpdf";
       typedef typename stan::partials_return_type<T_n, T_x, T_beta,
                                                   T_alpha, T_scale>::type
         T_partials_return;
