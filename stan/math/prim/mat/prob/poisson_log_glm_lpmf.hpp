@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -23,9 +22,9 @@ namespace stan {
      * Returns the log PMF of the Generalized Linear Model (GLM)
      * with Poisson distribution and log link function.
      * If containers are supplied, returns the log sum of the probabilities.
-     * @tparam T_n type of vector of dependent variables (labels), integers >=0;
+     * @tparam T_n type of vector of variates (labels), integers >=0;
      * this can also be a single positive integer;
-     * @tparam T_x type of the matrix of independent variables (features); this
+     * @tparam T_x type of the matrix of covariates (features); this
      * should be an Eigen::Matrix type whose number of rows should match the 
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
@@ -46,7 +45,7 @@ namespace stan {
     typename return_type<T_x, T_beta, T_alpha>::type
     poisson_log_glm_lpmf(const T_n &n, const T_x &x, const T_beta &beta,
                              const T_alpha &alpha) {
-      static const std::string function = "poisson_log_glm_lpmf";
+      static const char* function = "poisson_log_glm_lpmf";
       typedef typename stan::partials_return_type<T_n, T_x, T_beta,
                                                   T_alpha>::type
         T_partials_return;
