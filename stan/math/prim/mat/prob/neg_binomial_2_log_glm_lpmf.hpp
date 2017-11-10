@@ -18,7 +18,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,17 +26,17 @@ namespace stan {
      * Returns the log PMF of the Generalized Linear Model (GLM)
      * with Negative-Binomial-2 distribution and log link function.
      * If containers are supplied, returns the log sum of the probabilities.
-     * @tparam T_n type of positive int vector of dependent variables (labels);
+     * @tparam T_n type of positive int vector of variates (labels);
      * this can also be a single positive integer value;
-     * @tparam T_x type of the matrix of independent variables (features); this
+     * @tparam T_x type of the matrix of covariates (features); this
      * should be an Eigen::Matrix type whose number of rows should match the 
      * length of n and whose number of columns should match the length of beta
      * @tparam T_beta type of the weight vector;
-     * this can also be a single value;
+     * this can also be a scalar;
      * @tparam T_alpha type of the intercept;
-     * this should be a single value;
+     * this should be a scalar;
      * @tparam T_precision type of the (positive) precision vector phi;
-     * this can also be a single value;
+     * this can also be a scalar;
      * @param n failures count vector parameter
      * @param x design matrix
      * @param beta weight vector
@@ -54,7 +53,7 @@ namespace stan {
     typename return_type<T_x, T_beta, T_alpha, T_precision>::type
     neg_binomial_2_log_glm_lpmf(const T_n &n, const T_x &x, const T_beta &beta,
                              const T_alpha &alpha, const T_precision &phi) {
-      static const std::string function = "neg_binomial_2_log_glm_lpmf";
+      static const char* function = "neg_binomial_2_log_glm_lpmf";
       typedef typename stan::partials_return_type<T_n, T_x, T_beta,
                                                   T_alpha, T_precision>::type
         T_partials_return;
