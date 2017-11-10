@@ -3,7 +3,7 @@
 
 TEST(ErrorHandlingScalar,CheckPositive) {
   using stan::math::check_positive;
-  const std::string function = "check_positive";
+  const char* function = "check_positive";
 
   Eigen::Matrix<double,Eigen::Dynamic,1> x_mat(3);
   x_mat << 1, 2, 3;
@@ -18,7 +18,7 @@ TEST(ErrorHandlingScalar,CheckPositive) {
 
 TEST(ErrorHandlingScalar,CheckPositive_nan) {
   using stan::math::check_positive;
-  const std::string function = "check_positive";
+  const char* function = "check_positive";
 
   double nan = std::numeric_limits<double>::quiet_NaN();
 

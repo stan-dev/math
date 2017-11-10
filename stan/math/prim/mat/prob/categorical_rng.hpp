@@ -11,7 +11,6 @@
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -23,7 +22,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::uniform_01;
 
-      static const std::string function = "categorical_rng";
+      static const char* function("categorical_rng");
 
       check_simplex(function, "Probabilities parameter", theta);
 

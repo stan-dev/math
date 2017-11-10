@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +24,7 @@ namespace stan {
                     RNG& rng) {
       boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
 
-      static const std::string function = "skew_normal_rng";
+      static const char* function("skew_normal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_finite(function, "Shape parameter", alpha);

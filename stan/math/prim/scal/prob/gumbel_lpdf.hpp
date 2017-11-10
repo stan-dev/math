@@ -18,14 +18,13 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the Gumbel log probability density for the given
-     * location and scale. Given containers of matching sizes, returns the
+     * Returns the Gumbel log probability density for the given 
+     * location and scale. Given containers of matching sizes, returns the 
      * log sum of densities.
      *
      * @tparam T_y type of real parameter
@@ -41,7 +40,7 @@ namespace stan {
     template <bool propto, typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
-      static const std::string function = "gumbel_lpdf";
+      static const char* function("gumbel_lpdf");
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 
@@ -118,3 +117,4 @@ namespace stan {
   }
 }
 #endif
+

@@ -15,7 +15,6 @@
 #include <stan/math/prim/mat/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -44,7 +43,7 @@ namespace stan {
                  const Eigen::Matrix
                  <T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
                  const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-      static const std::string function = "multi_gp_lpdf";
+      static const char* function("multi_gp_lpdf");
       typedef typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
         T_lp;
       T_lp lp(0.0);

@@ -3,7 +3,7 @@
 #include <test/unit/util.hpp>
 
 
-const std::string function = "function";
+const char* function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
 public:
   void SetUp() {
@@ -226,3 +226,4 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
                    std::domain_error,
                    expected_msg.str());
 }
+

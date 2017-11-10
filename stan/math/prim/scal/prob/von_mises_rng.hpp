@@ -11,7 +11,6 @@
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -36,7 +35,7 @@ namespace stan {
       using std::log;
       using std::pow;
 
-      static const std::string function = "von_mises_rng";
+      static const char* function("von_mises_rng");
 
       check_finite(function, "mean", mu);
       check_positive_finite(function, "inverse of variance", kappa);

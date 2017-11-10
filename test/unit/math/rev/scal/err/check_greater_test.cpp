@@ -5,13 +5,13 @@ using stan::math::check_greater;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar,CheckGreater) {
-  const std::string function = "check_greater";
+  const char* function = "check_greater";
   var x = 10.0;
   var lb = 0.0;
-
-  EXPECT_NO_THROW(check_greater(function, "x", x, lb))
+ 
+  EXPECT_NO_THROW(check_greater(function, "x", x, lb)) 
     << "check_greater should be true with x > lb";
-
+  
   x = -1.0;
   EXPECT_THROW(check_greater(function, "x", x, lb),
                std::domain_error)
@@ -42,7 +42,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_greater;
 
-  const std::string function = "check_greater";
+  const char* function = "check_greater";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

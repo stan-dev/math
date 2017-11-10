@@ -4,16 +4,16 @@
 TEST(AgradRevErrorHandlingScalar,CheckNotNan) {
   using stan::math::var;
   using stan::math::check_not_nan;
-  const std::string function = "check_not_nan";
+  const char* function = "check_not_nan";
 
   var x = 0;
   double x_d = 0;
-
+ 
   EXPECT_NO_THROW(check_not_nan(function, "x", x))
     << "check_not_nan should be true with finite x: " << x;
   EXPECT_NO_THROW(check_not_nan(function, "x", x_d))
     << "check_not_nan should be true with finite x: " << x_d;
-
+  
   x = std::numeric_limits<var>::infinity();
   x_d = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_not_nan(function, "x", x))
@@ -41,7 +41,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_not_nan;
 
-  const std::string function = "check_not_nan";
+  const char* function = "check_not_nan";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
@@ -58,8 +58,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
 TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_not_nan;
-
-  const std::string function = "check_not_nan";
+  
+  const char* function = "check_not_nan";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
@@ -72,3 +72,4 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
 
   stan::math::recover_memory();
 }
+

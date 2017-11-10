@@ -4,15 +4,15 @@
 using stan::math::check_less_or_equal;
 
 TEST(ErrorHandlingScalar,CheckLessOrEqual) {
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   double x = -10.0;
   double lb = 0.0;
-
+ 
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x, lb))
     << "check_less_or_equal should be true with x < lb";
-
+  
   x = 1.0;
-  EXPECT_THROW(check_less_or_equal(function, "x", x, lb),
+  EXPECT_THROW(check_less_or_equal(function, "x", x, lb), 
                std::domain_error)
     << "check_less_or_equal should throw an exception with x > lb";
 
@@ -26,7 +26,7 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual) {
 
   x = -10.0;
   lb = -std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_less_or_equal(function, "x", x, lb),
+  EXPECT_THROW(check_less_or_equal(function, "x", x, lb), 
                std::domain_error)
     << "check_less should throw an exception with x == -10.0 and lb == -Inf";
 
@@ -37,7 +37,7 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual) {
 }
 
 TEST(ErrorHandlingScalar,CheckLessOrEqual_nan) {
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -49,3 +49,4 @@ TEST(ErrorHandlingScalar,CheckLessOrEqual_nan) {
   EXPECT_THROW(check_less_or_equal(function, "x", nan, nan),
                std::domain_error);
 }
+  

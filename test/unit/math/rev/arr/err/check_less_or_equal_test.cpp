@@ -10,7 +10,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
   using stan::math::check_less_or_equal;
 
   int N = 5;
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

@@ -10,7 +10,7 @@ matrix_d generate_large_L_tri_mat(){
   vals[0] = 0.1;
   for (int i = 1; i < 10000; ++i)
     vals[i] = vals[i- 1] + 0.1123456;
-
+  
   x = Eigen::Map< Eigen::Matrix<double,100,100> >(vals);
   x *= 1e10;
 
@@ -36,7 +36,7 @@ void test_multiply_lower_tri_self_transpose(const matrix_d& x) {
 TEST(MathMatrix, multiply_lower_tri_self_transpose) {
   using stan::math::check_symmetric;
   using stan::math::multiply_lower_tri_self_transpose;
-  static const std::string function = "stan::math::multiply_lower_tri_self_transpose(%1%)";
+  static const char* function = "stan::math::multiply_lower_tri_self_transpose(%1%)";
   matrix_d x;
   test_multiply_lower_tri_self_transpose(x);
 
@@ -45,40 +45,40 @@ TEST(MathMatrix, multiply_lower_tri_self_transpose) {
   test_multiply_lower_tri_self_transpose(x);
 
   x = matrix_d(2,2);
-  x <<
+  x << 
     1.0, 0.0,
     2.0, 3.0;
   test_multiply_lower_tri_self_transpose(x);
 
   x = matrix_d(3,3);
-  x <<
+  x << 
     1.0, 0.0, 0.0,
     2.0, 3.0, 0.0,
     4.0, 5.0, 6.0;
   test_multiply_lower_tri_self_transpose(x);
 
   x = matrix_d(3,3);
-  x <<
+  x << 
     1.0, 0.0, 100000.0,
     2.0, 3.0, 0.0,
     4.0, 5.0, 6.0;
   test_multiply_lower_tri_self_transpose(x);
 
   x = matrix_d(3,2);
-  x <<
+  x << 
     1.0, 0.0,
     2.0, 3.0,
     4.0, 5.0;
   test_multiply_lower_tri_self_transpose(x);
 
   x = matrix_d(2,3);
-  x <<
+  x << 
     1.0, 0.0, 0.0,
     2.0, 3.0, 0.0;
   test_multiply_lower_tri_self_transpose(x);
 
   x = generate_large_L_tri_mat();
-  EXPECT_NO_THROW(check_symmetric(function,
-                                  "Symmetric matrix",
+  EXPECT_NO_THROW(check_symmetric(function, 
+                                  "Symmetric matrix", 
                                   multiply_lower_tri_self_transpose(x)));
 }

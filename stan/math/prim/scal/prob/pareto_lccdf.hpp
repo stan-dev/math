@@ -17,7 +17,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -32,7 +31,7 @@ namespace stan {
       if (!(stan::length(y) && stan::length(y_min) && stan::length(alpha)))
         return 0.0;
 
-      static const std::string function = "pareto_lccdf";
+      static const char* function("pareto_lccdf");
 
       using std::log;
       using std::exp;

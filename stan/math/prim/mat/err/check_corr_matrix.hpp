@@ -41,8 +41,8 @@ namespace stan {
      */
     template <typename T_y>
     inline void
-    check_corr_matrix(const std::string& function,
-                      const std::string& name,
+    check_corr_matrix(const char* function,
+                      const char* name,
         const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
       using Eigen::Matrix;
 

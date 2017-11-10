@@ -19,14 +19,13 @@
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
      * Returns the Weibull log complementary cumulative distribution function
-     * for the given location and scale. Given containers of matching sizes,
+     * for the given location and scale. Given containers of matching sizes, 
      * returns the log sum of probabilities.
      *
      * @tparam T_y type of real parameter
@@ -36,7 +35,7 @@ namespace stan {
      * @param alpha shape parameter
      * @param sigma scale parameter
      * @return log probability or log sum of probabilities
-     * @throw std::domain_error if y is negative, alpha sigma is nonpositive
+     * @throw std::domain_error if y is negative, alpha sigma is nonpositive 
      */
     template <typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
@@ -44,7 +43,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
-      static const std::string function = "weibull_lccdf";
+      static const char* function("weibull_lccdf");
 
       using boost::math::tools::promote_args;
       using std::log;

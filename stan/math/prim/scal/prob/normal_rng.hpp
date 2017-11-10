@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -22,7 +21,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const std::string function = "normal_rng";
+      static const char* function("normal_rng");
 
       check_finite(function, "Location parameter", mu);
       check_not_nan(function, "Location parameter", mu);

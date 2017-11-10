@@ -11,7 +11,6 @@
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -38,7 +37,7 @@ namespace stan {
       using boost::variate_generator;
       using boost::normal_distribution;
 
-      static const std::string function = "multi_normal_rng";
+      static const char* function("multi_normal_rng");
 
       check_positive(function, "Covariance matrix rows", S.rows());
       check_symmetric(function, "Covariance matrix", S);

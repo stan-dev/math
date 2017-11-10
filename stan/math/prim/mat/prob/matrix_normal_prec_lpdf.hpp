@@ -15,7 +15,6 @@
 #include <stan/math/prim/mat/fun/trace_gen_quad_form.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -48,7 +47,7 @@ namespace stan {
                            <T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
                            const Eigen::Matrix
                            <T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
-      static const std::string function = "matrix_normal_prec_lpdf";
+      static const char* function("matrix_normal_prec_lpdf");
       typename
         boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(0.0);
 

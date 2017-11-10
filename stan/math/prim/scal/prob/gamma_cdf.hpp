@@ -25,7 +25,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -53,7 +52,7 @@ namespace stan {
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const std::string function = "gamma_cdf";
+      static const char* function("gamma_cdf");
 
       using boost::math::tools::promote_args;
       using std::exp;

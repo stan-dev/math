@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/prob/normal_lpdf.hpp>
+
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -14,9 +15,9 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <string>
 
 namespace stan {
+
   namespace math {
 
     /**
@@ -29,7 +30,7 @@ namespace stan {
      *
      * <p>The result log probability is defined to be the sum of the
      * log probabilities for each observation/mean/deviation triple.
-     *
+     * 
      * @tparam T_y Type of sample average parameter.
      * @tparam T_s Type of sample squared errors parameter.
      * @tparam T_n Type of sample size parameter.
@@ -53,7 +54,8 @@ namespace stan {
     normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                            const T_n& n_obs, const T_loc& mu,
                            const T_scale& sigma) {
-      static const std::string function = "normal_sufficient_lpdf";
+      static const char*
+        function = "stan::math::normal_sufficient_lpdf(%1%)";
       typedef typename
         stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
         T_partials_return;

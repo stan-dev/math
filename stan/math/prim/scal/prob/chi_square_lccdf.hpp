@@ -21,14 +21,13 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the chi square log complementary cumulative distribution
-     * function for the given variate and degrees of freedom. If given
+     * Returns the chi square log complementary cumulative distribution 
+     * function for the given variate and degrees of freedom. If given 
      * containers of matching sizes, returns the log sum of probabilities.
      *
      * @tparam T_y type of scalar parameter
@@ -42,7 +41,7 @@ namespace stan {
     template <typename T_y, typename T_dof>
     typename return_type<T_y, T_dof>::type
     chi_square_lccdf(const T_y& y, const T_dof& nu) {
-      static const std::string function = "chi_square_lccdf";
+      static const char* function("chi_square_lccdf");
       typedef typename stan::partials_return_type<T_y, T_dof>::type
         T_partials_return;
 

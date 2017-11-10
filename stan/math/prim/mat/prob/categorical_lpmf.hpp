@@ -12,7 +12,6 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 #include <vector>
 
 namespace stan {
@@ -24,7 +23,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_prob>::type
     categorical_lpmf(int n,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      static const std::string function = "categorical_lpmf";
+      static const char* function("categorical_lpmf");
 
       using boost::math::tools::promote_args;
       using std::log;
@@ -54,7 +53,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_prob>::type
     categorical_lpmf(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      static const std::string function = "categorical_lpmf";
+      static const char* function("categorical_lpmf");
 
       using boost::math::tools::promote_args;
       using std::log;

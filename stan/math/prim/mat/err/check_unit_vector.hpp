@@ -31,8 +31,8 @@ namespace stan {
      *   vector or if any element is <code>NaN</code>.
      */
     template <typename T_prob>
-    void check_unit_vector(const std::string& function,
-                           const std::string& name,
+    void check_unit_vector(const char* function,
+                           const char* name,
                            const Eigen::Matrix<T_prob,
                              Eigen::Dynamic, 1>& theta) {
       check_nonzero_size(function, name, theta);

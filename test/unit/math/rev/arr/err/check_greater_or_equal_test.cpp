@@ -10,7 +10,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
 
   int N = 5;
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

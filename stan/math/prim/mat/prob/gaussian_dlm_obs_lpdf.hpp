@@ -24,7 +24,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <string>
 
 /*
   TODO: time-varying system matrices
@@ -89,7 +88,7 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const std::string function = "gaussian_dlm_obs_lpdf";
+      static const char* function("gaussian_dlm_obs_lpdf");
       typedef typename return_type<
         T_y,
         typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type T_lp;
@@ -272,7 +271,7 @@ namespace stan {
                          const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
                          const Eigen::Matrix
                          <T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-      static const std::string function = "gaussian_dlm_obs_lpdf";
+      static const char* function("gaussian_dlm_obs_lpdf");
       typedef
         typename return_type
         <T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type

@@ -24,13 +24,12 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha))
+     * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha)) 
      *
      * If given vectors of matching lengths, returns
      * the log sum of probabilities.
@@ -55,7 +54,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      static const std::string function = "binomial_logit_lpmf";
+      static const char* function("binomial_logit_lpmf");
 
       if (!(stan::length(n) && stan::length(N) && stan::length(alpha)))
         return 0.0;

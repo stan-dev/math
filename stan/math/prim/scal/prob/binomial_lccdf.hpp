@@ -24,14 +24,13 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the log CCDF for the binomial distribution evaluated at the
-     * specified success, population size, and chance of success. If given
+     * Returns the log CCDF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
      * containers of matching lengths, returns the log sum of probabilities.
      *
      * @tparam T_n type of successes parameter
@@ -48,7 +47,7 @@ namespace stan {
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_lccdf(const T_n& n, const T_N& N, const T_prob& theta) {
-      static const std::string function = "binomial_lccdf";
+      static const char* function("binomial_lccdf");
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 

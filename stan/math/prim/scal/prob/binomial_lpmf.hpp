@@ -24,14 +24,13 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
 
     /**
-     * Returns the log PMF for the binomial distribution evaluated at the
-     * specified success, population size, and chance of success. If given
+     * Returns the log PMF for the binomial distribution evaluated at the 
+     * specified success, population size, and chance of success. If given 
      * containers of matching lengths, returns the log sum of probabilities.
      *
      * @tparam T_n type of successes parameter
@@ -57,7 +56,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      static const std::string function = "binomial_lpmf";
+      static const char* function("binomial_lpmf");
 
       if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
         return 0.0;

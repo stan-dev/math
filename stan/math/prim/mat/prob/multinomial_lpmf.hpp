@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <vector>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -23,7 +22,7 @@ namespace stan {
     typename boost::math::tools::promote_args<T_prob>::type
     multinomial_lpmf(const std::vector<int>& ns,
                     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-      static const std::string function = "multinomial_lpmf";
+      static const char* function("multinomial_lpmf");
 
       using boost::math::tools::promote_args;
       using boost::math::lgamma;

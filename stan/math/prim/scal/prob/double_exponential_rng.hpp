@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -34,7 +33,7 @@ namespace stan {
     double_exponential_rng(double mu,
                            double sigma,
                            RNG& rng) {
-      static const std::string function = "double_exponential_rng";
+      static const char* function("double_exponential_rng");
 
       using boost::variate_generator;
       using boost::random::uniform_01;
