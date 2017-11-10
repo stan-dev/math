@@ -33,14 +33,14 @@ namespace stan {
      * \frac{\partial }{\partial p_x}
      * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
      * \exp^{\log\left(p_n\right)+d_n}\right)
-     * = \frac{e^{d_x-a}}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
+     * = \frac{e^{d_x-a}}{e^{d_1-a}p_1+\cdot\cdot\cdot+e^{d_m-a}p_m}
      * \f]
      *
      * \f[
      * \frac{\partial }{\partial d_x}
      * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
      * \exp^{\log\left(p_n\right)+d_n}\right)
-     *  = \frac{e^{d_x-a}p_x}{e^{d_1-a}p_1 + \cdot\cdot\cdot+e^{d_m-a}p_m}
+     *  = \frac{e^{d_x-a}p_x}{e^{d_1-a}p_1+\cdot\cdot\cdot+e^{d_m-a}p_m}
      * \f]
      *
      * \f[
@@ -74,17 +74,17 @@ namespace stan {
         for (size_t n = 0; n < N; ++n)
           theta_dbl[n] = value_of(theta_vec[n]);
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lambda_dbl(N, 1);
+      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_dbl(N, 1);
       scalar_seq_view<T_lam> lam_vec(lambda);
         for (size_t n = 0; n < N; ++n)
-          lambda_dbl[n] = value_of(lam_vec[n]);
+          lam_dbl[n] = value_of(lam_vec[n]);
 
       /**
        * Vector containing log-prob of each density, log_sum_exp applied as
        * part of return call.
        */
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> logp_tmp(N, 1);
-        logp_tmp = log(theta_dbl) + lambda_dbl;
+        logp_tmp = log(theta_dbl) + lam_dbl;
 
       /**
        * Calculate derivatives
@@ -92,16 +92,15 @@ namespace stan {
        * Exp-normalise to prevent overflow, as: 
        * exp(x-a)exp(a) / exp(y-a)exp(a) = exp(x-a) / exp(y-a)
        */
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lambda_dbl(N, 1);
-      double max_val = max(lambda_dbl);
+      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> exp_lam_dbl(N, 1);
+      double max_val = max(lam_dbl);
         for (size_t n = 0; n < N; ++n)
-          exp_lambda_dbl[n] = exp((lambda_dbl[n] - max_val));
+          exp_lam_dbl[n] = exp((lam_dbl[n] - max_val));
 
-      T_partials_return dot_exp_lam_theta = dot_product(exp_lambda_dbl,
-                                                        theta_dbl);
+      T_partials_return dot_exp_lam_theta = dot_product(exp_lam_dbl, theta_dbl);
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_deriv(N, 1);
-          theta_deriv = exp_lambda_dbl / dot_exp_lam_theta;
+          theta_deriv = exp_lam_dbl / dot_exp_lam_theta;
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_deriv(N, 1);
         for (size_t n = 0; n < N; ++n)
