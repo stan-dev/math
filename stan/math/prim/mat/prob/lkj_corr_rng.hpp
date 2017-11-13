@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_cholesky_rng.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +24,7 @@ namespace stan {
     template <class RNG>
     inline
     Eigen::MatrixXd lkj_corr_rng(size_t K, double eta, RNG& rng) {
-      static const std::string function = "lkj_corr_rng";
+      static const char* function = "lkj_corr_rng";
       check_positive(function, "Shape parameter", eta);
       return multiply_lower_tri_self_transpose(lkj_corr_cholesky_rng(K, eta,
                                                                      rng));

@@ -1,13 +1,12 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_less;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   var x;
   var high;
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_vec;

@@ -1,12 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_nonnegative;
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   double x = 0;
 
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
@@ -30,7 +29,7 @@ TEST(ErrorHandlingScalar, CheckNonnegative) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_nonnegative(function, "x", nan),

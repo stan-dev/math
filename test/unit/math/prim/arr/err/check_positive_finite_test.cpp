@@ -1,13 +1,12 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <string>
 #include <limits>
 
 using stan::math::check_positive_finite;
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
-  const std::string function = "check_positive_finite";
+  const char* function = "check_positive_finite";
   std::vector<double> x;
 
   x.clear();
@@ -54,7 +53,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
-  const std::string function = "check_positive_finite";
+  const char* function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x;

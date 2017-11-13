@@ -20,7 +20,6 @@
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
 #include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -50,7 +49,7 @@ namespace stan {
                       const T_N& N,
                       const T_size1& alpha,
                       const T_size2& beta) {
-      static const std::string function = "beta_binomial_lpmf";
+      static const char* function = "beta_binomial_lpmf";
       typedef typename stan::partials_return_type<T_size1, T_size2>::type
         T_partials_return;
 

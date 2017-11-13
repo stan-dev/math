@@ -6,8 +6,8 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
-#include <string>
 #include <vector>
+#include <string>
 
 namespace stan {
   namespace math {
@@ -27,8 +27,8 @@ namespace stan {
      *   values, or if any element is <code>NaN</code>.
      */
     template <typename T_y>
-    void check_ordered(const std::string& function,
-                       const std::string& name,
+    void check_ordered(const char* function,
+                       const char* name,
                        const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
       using Eigen::Dynamic;
       using Eigen::Matrix;

@@ -1,3 +1,6 @@
+@Library('StanUtils')
+import org.stan.Utils
+
 def setupCC(Boolean failOnError = true) {
     errorStr = failOnError ? "-Werror " : ""
     "echo CC=${env.CXX} ${errorStr}> make/local"
@@ -22,6 +25,8 @@ def mailBuildResults(String label, additionalEmails='') {
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
 }
+
+def utils = new org.stan.Utils()
 
 def updateUpstream(String upstreamRepo) {
     if (env.BRANCH_NAME == 'develop') {
@@ -60,6 +65,14 @@ pipeline {
     }
     options { skipDefaultCheckout() }
     stages {
+        stage('Kill previous builds') {
+            when { not { branch 'develop' } }
+            steps { 
+                script {
+                    utils.killOldBuilds()
+                }
+            }
+        }
         stage('Linting & Doc checks') {
             agent any
             steps {
@@ -130,7 +143,7 @@ pipeline {
                             ${setupCC(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
-                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log
+                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log; false
                            """
 
                     }

@@ -1,13 +1,12 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::var;
 using stan::math::check_nonnegative;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   var x = 0;
 
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
@@ -35,7 +34,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_nonnegative;
 
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
