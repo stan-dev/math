@@ -11,124 +11,182 @@ namespace stan {
   namespace math {
 
     namespace internal {
+
+      template <int member, typename T>
       class mpi_parallel_call_cache {
         // static members to hold locally cached data
         // of placing the cache inside mpi_parallel_call is that we will
         // cache the data multiple times (once for each ReduceF
-        // type). We should probably should move this into a non-templated
-        // class.
-        static std::map<int, Eigen::MatrixXd> cache_x_r_;
-        static std::map<int, std::vector<std::vector<int>>> cache_x_i_;
-        static std::map<int, std::vector<int>> cache_f_size_;
-        
+        // type).
+        typedef typename const T cached_t;
+        static std::map<int, cached_t> local_;
+
+        static bool is_cached(int callsite_id) { return(local_.count(callsite_id) == 1); }
+        static cached_t& lookup(int callsite_id) { return(local_.find(callsite_id)->second); }
+        static void cache(int callsite_id, cached_t element) { local_.insert(std::make_pair(callsite_id, element)); }
       };
+      
     }
 
     // utility class to store and cache static data and output size
     // per job; manages memory allocation and cluster communication
-    template <typename T_shared_param, typename T_param, typename ReduceF, typename CombineF>
+    template <typename ReduceF, typename CombineF>
     class mpi_parallel_call {
       boost::mpi::communicator world_;
       const std::size_t rank_ = world_.rank();
       const std::size_t world_size_ = world_.size();
 
-      // these point for a given instance to the data to be used
-      std::map<int, Eigen::MatrixXd>::const_iterator local_x_r_;
-      std::map<int, std::vector<std::vector<int>>>::const_iterator local_x_i_;
-      std::map<int, std::vector<int>>::const_iterator local_f_size_;
-
-      Eigen::MatrixXd local_output_;
-
-      // initialized on root... note: we need references to the
-      // operands only on the root. We could consider moving this into
-      // an instance of CombineF since we only need these there
-      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>* eta_;
-      const Eigen::Matrix<T_param, Eigen::Dynamic, Eigen::Dynamic>* theta_;
-        
-      Eigen::VectorXd eta_dbl_;
-      Eigen::MatrixXd local_theta_dbl_;
-
+      // local caches which hold local slices of data
+      typedef internal::mpi_parallel_call_cache<1, std::vector<std::vector<double>>> t_cache_x_r;
+      typedef internal::mpi_parallel_call_cache<2, std::vector<std::vector<int>>> t_cache_x_i;
+      typedef internal::mpi_parallel_call_cache<3, std::vector<int>> t_cache_f_out;
+      typedef internal::mpi_parallel_call_cache<4, std::vector<int>> t_cache_meta;
+      
       const int callsite_id_;
+
+      const CombineF combine_;
 
       typedef typename CombineF::result_type result_type;
 
+      vector_d local_shared_params_dbl_;
+      matrix_d local_job_params_dbl_;
+
+      int num_jobs_;
+      int num_local_jobs_;
+
     public:
       // called on root
-      mpi_parallel_call(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& eta,
-                        const Eigen::Matrix<T_param, Eigen::Dynamic, Eigen::Dynamic>& theta,
-                        const Eigen::MatrixXd& x_r,
-                        const std::vector<std::vector<int> >& x_i,
-                        const int callsite_id) {
+      template <typename T_shared_param, typename T_job_param>
+      mpi_parallel_call(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+                        const Eigen::Matrix<T_job_param, Eigen::Dynamic, Eigen::Dynamic>& job_params,
+                        const std::vector<std::vector<double>>& x_r,
+                        const std::vector<std::vector<int>>& x_i,
+                        int callsite_id) : callsite_id_(callsite_id), combine_(shared_params, job_params) {
         if(rank_ != 0)
           throw std::runtime_error("problem sizes can only defined on the root.");
 
         // make childs aware of upcoming job
-        mpi_broadcast_command<stan::math::mpi_distributed_apply<mpi_parallel_call<T_shared_param,T_param,ReduceF,CombineF>>>();
+        mpi_broadcast_command<stan::math::mpi_distributed_apply<mpi_parallel_call<ReduceF,CombineF>>>();
 
-        // broadcast meta info like callsite
+        // send callsite id
+        boost::mpi::broadcast(world_, callsite_id_, 0);
 
-        // check of callsite has been seen already
-        // if-first-call        
-        // setup_local_data(x_r, x_i);
-        // else
-        // grab data from caches
+        vector_d shared_params_dbl = value_of(shared_params);
+        matrix_d job_params_dbl = value_of(job_params);
 
-        distribute_param();
-
-        // if-first-call evaluate function with double args and record
-        // how many outputs we get for each job. In case an exception
-        // is thrown, we have to clear all the data cached so far!
+        setup_call(shared_params_dbl, job_params_dbl, x_r, x_i);
       }
 
       // called on remote sites
-      mpi_parallel_call() {
+      mpi_parallel_call(int callsite_id) : callsite_id_(callsite_id), combine_() {
         if(rank_ == 0)
           throw std::runtime_error("problem sizes must be defined on the root.");
 
-        // mirror constructor actions done on root
+        setup_call(vector_d(), matrix_d(), std::vector<std::vector<double>>(), std::vector<std::vector<int>>());
       }
-
-      // mpi communication using caching... we return a const_iterator
-      // to the slice of data which we process locally; is there a
-      // better type to return? I only need a const reference to be
-      // returned.
-      std::map<int, std::vector<std::vector<int>>>::const_iterator scatter(const std::vector<std::vectotr<int>>& in_values);
-      std::map<int, Eigen::MatrixXd>::const_iterator scatter(const Eigen::MatrixXd& in_values);
 
       static void distributed_apply() {
         // entry point when called on remote
+        int callsite_id;
+        boost::mpi::broadcast(world_, callsite_id, 0);
 
-        // call default constructor
-        mpi_parallel_call<T_shared_param,T_param,ReduceF,CombineF> job_chunk;
+        // call constructor for the remotes
+        mpi_parallel_call<ReduceF,CombineF> job_chunk(callsite_id);
 
         job_chunk.reduce();
       }
 
       // all data is cached and local parameters are also available
       result_type reduce() {
-        // get output size for each element which includes all the
-        // calculated gradients, etc.
-        const std::size_t num_element_outputs = ReduceF::get_element_outputs(eta.rows(), theta.rows());
-        // allocate final storage of all local outputs
-        local_output_.resize(num_element_outputs, sum(local_f_size->second));
 
-        const std::size_t num_local_jobs = local_theta_.cols();
-        std::size_t offset = 0;
+        matrix_d local_output;
+        std::vector<int> f_size(num_local_jobs_);
 
-        // evaluate for each job ReduceF which stores results directly
-        // in final location
-        for(std::size_t i = 0; i != num_local_jobs; ++i) {
-          const std::size_t f_size = local_f_size_[i];
-          ReduceF::apply(eta_, local_theta_.col(i), local_x_r_.col(i), local_x_i_[i], local_output_.block(0, offset, num_element_outputs, f_size));
-          offset += f_size;
+        t_cache_x_r::cache_t& local_x_r = t_cache_x_r::lookup(callsite_id_);
+        t_cache_x_i::cache_t& local_x_i = t_cache_x_i::lookup(callsite_id_);
+
+        int offset = 0;
+
+        for(std::size_t i=0; i != num_local_jobs_; ++i) {
+          const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
+          f_size[i] = job_output.cols();
+          if(i==0)
+            local_output.resize(job_output.rows(), num_local_jobs_);
+
+          if(local_output.cols() < offset + f_size[i])
+            local_output.conservativeResize(Eigen::NoChange, 2*(offset + f_size[i]));
+
+          local_output.block(0, offset, local_output.rows(), f_size[i]);
+
+          offset += f_size[i];
         }
 
-        return CombineF::gather_outputs(eta_, theta_, f_size_, local_output_);
+        // we do not need to get rid of memory which we haven't used
+        // as only upto offset will be send of MPI
+        
+        return combine_.gather_outputs(local_output_, f_size_);
+      }
+
+    private:
+
+      template <typename T_cache>
+      void cache_data(typename T_cache::cache_t& data) {
+        // distribute data only if not in cache yet
+        if(T_cache::is_cached(callsite_id_))
+          return;
+
+        // we have to transpose all data
+        typename T_cache::cache_t trans_data = transponse(data);
+
+        const auto flat_data = to_array_1d(trans_data);
+
+        // transfer it and rebuild 2D array
+
+        // finally
+        T_cache::cache(callsite_id_, local_data);
+      }
+
+      void setup_call(const vector_d& shared_params, const matrix_d& job_params,
+                      const std::vector<std::vectotr<double>>& x_r,
+                      const std::vector<std::vectotr<int>>& x_i) {
+
+        if(!t_cache_meta::is_cached(callsite_id_)) {
+          std::vector<int> meta(3);
+          meta[0] = shared_params.size();
+          meta[1] = job_params.rows();
+          meta[2] = job_params.cols();
+          boost::mpi::broadcast(world_, meta.data(), 3, 0);
+          t_cache_meta::cache(callsite_id_, meta);
+        }
+
+        const std::vector<int>& meta = t_cache_meta::lookup(callsite_id_);
+
+        // broadcast shared parameters
+        local_shared_params_dbl_ = shared_params;
+        local_shared_params_dbl_.resize(meta[0]);
+        boost::mpi::broadcast(world_, local_shared_params_dbl_.data(), meta[0], 0);
+
+        // scatter job specific parameters
+        const int num_job_params = meta[1];
+        
+        num_jobs_ = meta[2];
+        
+        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
+
+        num_local_jobs_ = job_chunks[rank_];
+        local_job_params_dbl_.resize(num_job_params, num_local_jobs_);
+
+        const std::vector<int> job_params_chunks = mpi_map_chunks(num_jobs_, num_job_params);
+        boost::mpi::scatterv(world_, job_params.data(), job_params_chunks, local_job_params_.data(), 0);
+
+        // distribute data if not yet cached
+        cache_data<t_cache_x_r>(x_r);
+        cache_data<t_cache_x_i>(x_i);
       }
 
     };
 
-    template <typename F, typename T_shared_param, typename T_param>
+    template <typename F, typename T_shared_param, typename T_job_param>
     struct map_rect_mpi_traits;
 
     template<>
@@ -140,31 +198,35 @@ namespace stan {
 
     template <typename F>
     struct simple_reducer {
-      static std::size_t get_elements_output(std::size_t size_eta, std::size_t size_theta) { return(1) };
-      static void apply(const Eigen::VectorXd& eta, const Eigen::VectorXd& theta, const Eigen::VectorXd& x_r, const std::vector<int>& x_i, Eigen::MatrixXd& out) {
-        out = F::apply(eta, theta, x_r, x_i);
+      static matrix_d apply(const vector_d& shared_params, const vector_d& job_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
+        const vector_d out = F::apply(shared_params, job_params, x_r, x_i);
+        return( out.transpose() );
       }
     };
 
+    // combine must be instantiated to be able to hold a reference to
+    // the operands for the AD cases
     template <typename F>
     struct simple_combine {
-      typedef Eigen::VectorXd result_type;
-      static Eigen::VectorXd gather_outputs(...) {
+      simple_combine() {}
+      simple_combine(const vector_d& shared_params, const matrix_d& job_params) {}
+      typedef vector_d result_type;
+      vector_d gather_outputs(...) {
         // gather stuff into a single big object which we output as VectorXd.
       }
     };
 
-    template <typename F, typename T_shared_param, typename T_param>
-    Eigen::Matrix<typename stan::return_type<T_shared_param, T_param>::type, Eigen::Dynamic, 1>
-    map_rect_mpi(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& eta,
-                 const Eigen::Matrix<T_param, Eigen::Dynamic, Eigen::Dynamic>& theta,
-                 const Eigen::MatrixXd& x_r,
-                 const std::vector<std::vector<int> >& x_i,
+    template <typename F, typename T_shared_param, typename T_job_param>
+    Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1>
+    map_rect_mpi(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+                 const Eigen::Matrix<T_job_param, Eigen::Dynamic, Eigen::Dynamic>& job_params,
+                 const std::vector<std::vector<double>>& x_r,
+                 const std::vector<std::vector<int>>& x_i,
                  const int callsite_id) {
-      typedef typename map_rect_traits<T_shared_param, T_param, F>::reduce_t ReduceF;
-      typedef typename map_rect_traits<T_shared_param, T_param, F>::combine_t CombineF;
+      typedef typename map_rect_traits<F, T_shared_param, T_job_param>::reduce_t ReduceF;
+      typedef typename map_rect_traits<F, T_shared_param, T_job_param>::combine_t CombineF;
       
-      mpi_parallel_call<T_shared_param,T_param,ReduceF,CombineF> job_chunk(eta, theta, x_r, x_i, callsite_id);
+      mpi_parallel_call<ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i, callsite_id);
 
       return job_chunk.reduce();
     }
