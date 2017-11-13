@@ -115,7 +115,8 @@ namespace stan {
       Array<T_partials_return, Dynamic, 1> log_phi = phi_arr.log();
       Array<T_partials_return, Dynamic, 1> logsumexp_eta_logphi =
         theta_dbl.binaryExpr(log_phi,
-                             [](T_partials_return xx, T_partials_return yy) {
+                             [](const T_partials_return& xx,
+                                const T_partials_return& yy) {
                                return log_sum_exp(xx, yy);
                              });
       Array<T_partials_return, Dynamic, 1> n_plus_phi = n_arr + phi_arr;
@@ -124,16 +125,16 @@ namespace stan {
       if (include_summand<propto>::value) {
         logp -= (n_arr
           + Array<double, Dynamic, 1>::Ones(N, 1))
-          .unaryExpr([](T_partials_return xx) {
+          .unaryExpr([](const T_partials_return& xx) {
                        return lgamma(xx);
                      }).sum();
       }
       if (include_summand<propto, T_precision>::value) {
-        logp += (phi_arr.binaryExpr(phi_arr, [](T_partials_return xx,
-                                                T_partials_return yy) {
+        logp += (phi_arr.binaryExpr(phi_arr, [](const T_partials_return& xx,
+                                                const T_partials_return& yy) {
                                                   return multiply_log(xx, yy);
                                               })
-                - phi_arr.unaryExpr([](T_partials_return xx) {
+                - phi_arr.unaryExpr([](const T_partials_return& xx) {
                                       return lgamma(xx);
                                     })).sum();
       }
@@ -142,7 +143,7 @@ namespace stan {
       if (include_summand<propto, T_x, T_beta, T_alpha>::value)
         logp += (n_arr * theta_dbl).sum();
       if (include_summand<propto, T_precision>::value) {
-        logp += n_plus_phi.unaryExpr([](T_partials_return xx) {
+        logp += n_plus_phi.unaryExpr([](const T_partials_return& xx) {
           return lgamma(xx);
         }).sum();
       }
@@ -170,10 +171,11 @@ namespace stan {
       if (!is_constant_struct<T_precision>::value) {
         ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
           - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-          - logsumexp_eta_logphi - phi_arr.unaryExpr([](T_partials_return xx) {
-                                                       return digamma(xx);
-                                                     })
-          + n_plus_phi.unaryExpr([](T_partials_return xx) {
+          - logsumexp_eta_logphi
+          - phi_arr.unaryExpr([](const T_partials_return& xx) {
+                                return digamma(xx);
+                              })
+          + n_plus_phi.unaryExpr([](const T_partials_return& xx) {
                                    return digamma(xx);
                                  })).matrix();
       }

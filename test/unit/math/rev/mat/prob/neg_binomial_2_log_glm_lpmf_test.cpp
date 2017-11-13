@@ -114,8 +114,9 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 #define timeNow() std::chrono::high_resolution_clock::now()
 
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) {
-  const int R = 30000;
-  const int C = 1000;  
+  for (size_t exponent = 7; exponent < 10; exponent++) {
+    const int R = 10000;
+    const int C = std::pow(3, exponent);
   
   Matrix<int,Dynamic,1> n(R, 1);
   for (size_t i = 0; i < R; i++) {
@@ -160,5 +161,6 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed) 
   }
   
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New Primitives:" << std::endl << T2 << std::endl;    
+}
 }
 */
