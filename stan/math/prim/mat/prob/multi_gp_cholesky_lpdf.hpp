@@ -12,7 +12,6 @@
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/row.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -44,7 +43,7 @@ namespace stan {
                           const Eigen::Matrix
                           <T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
                           const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-      static const std::string function = "multi_gp_cholesky_lpdf";
+      static const char* function = "multi_gp_cholesky_lpdf";
       typedef
         typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
       T_lp lp(0.0);

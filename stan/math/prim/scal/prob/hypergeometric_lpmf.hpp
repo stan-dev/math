@@ -14,7 +14,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/distributions.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +27,7 @@ namespace stan {
     double
     hypergeometric_lpmf(const T_n& n, const T_N& N,
                        const T_a& a, const T_b& b) {
-      static const std::string function = "hypergeometric_lpmf";
+      static const char* function = "hypergeometric_lpmf";
 
       if (!(stan::length(n) && stan::length(N) && stan::length(a)
             && stan::length(b)))

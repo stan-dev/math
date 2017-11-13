@@ -2,13 +2,12 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
-#include <string>
 
 using stan::math::var;
 using stan::math::check_positive_finite;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
-  const std::string function = "check_positive_finite";
+  const char* function = "check_positive_finite";
   std::vector<var> x;
 
   x.clear();
@@ -61,7 +60,7 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   using stan::math::check_positive_finite;
 
   int N = 5;
-  const std::string function = "check_positive_finite";
+  const char* function = "check_positive_finite";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

@@ -5,7 +5,7 @@
 #include <string>
 
 
-const std::string function = "function";
+const char* function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
 public:
   void SetUp() {

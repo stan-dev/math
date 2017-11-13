@@ -1,6 +1,5 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
 using stan::math::check_less;
@@ -12,7 +11,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   using stan::math::check_less;
 
   int N = 5;
-  const std::string function = "check_less";
+  const char* function = "check_less";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

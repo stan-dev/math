@@ -1,12 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_less;
 
 TEST(ErrorHandlingScalar, CheckLess) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   double x = -10.0;
   double lb = 0.0;
 
@@ -37,7 +36,7 @@ TEST(ErrorHandlingScalar, CheckLess) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
-  const std::string function = "check_less";
+  const char* function = "check_less";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();

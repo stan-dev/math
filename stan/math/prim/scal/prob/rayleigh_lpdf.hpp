@@ -19,7 +19,6 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -28,7 +27,7 @@ namespace stan {
               typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
-      static const std::string function = "rayleigh_lpdf";
+      static const char* function = "rayleigh_lpdf";
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 

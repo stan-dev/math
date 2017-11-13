@@ -10,7 +10,6 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <Eigen/Dense>
-#include <string>
 #include <vector>
 
 namespace stan {
@@ -46,7 +45,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_probit";
+      static const char* function = "ordered_probit";
 
       int K = c.size() + 1;
 
@@ -105,7 +104,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_probit";
+      static const char* function = "ordered_probit";
 
       int N = lambda.size();
       int K = c.size() + 1;
@@ -176,7 +175,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_probit";
+      static const char* function = "ordered_probit";
 
       int N = lambda.size();
 

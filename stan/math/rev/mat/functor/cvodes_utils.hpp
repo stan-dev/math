@@ -7,7 +7,6 @@
 #include <nvector/nvector_serial.h>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -20,7 +19,7 @@ namespace stan {
                                           void *eh_data) {
     }
 
-    inline void cvodes_check_flag(int flag, const std::string& func_name) {
+    inline void cvodes_check_flag(int flag, const char* func_name) {
       if (flag < 0) {
         std::ostringstream ss;
         ss << func_name << " failed with error flag " << flag;

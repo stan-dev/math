@@ -6,7 +6,7 @@
 using stan::math::check_greater_or_equal;
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   double x;
   double low;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
@@ -122,7 +122,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
 
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual_Matrix_one_indexed_message) {
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   double x;
   double low;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
@@ -182,7 +182,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqual_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
-  const std::string function = "check_greater_or_equal";
+  const char* function = "check_greater_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec(3);

@@ -17,7 +17,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -25,7 +24,7 @@ namespace stan {
     template <typename T_y, typename T_loc, typename T_scale>
     typename return_type<T_y, T_loc, T_scale>::type
     normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      static const std::string function = "normal_lcdf";
+      static const char* function = "normal_lcdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
         T_partials_return;
 

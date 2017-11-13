@@ -16,53 +16,46 @@ using std::stringstream;
 using std::endl;
 using std::pair;
 
+#ifdef STAN_TEST_ROW_VECTORS
+int ROW_VECTORS = 1;
+#else
+int ROW_VECTORS = 0;
+#endif
+
+void push_args(vector<string>& args, const string& type) {
+    args.push_back(type);
+    args.push_back("std::vector<" + type + ">");
+    args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
+    if (ROW_VECTORS == 1)
+      args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
+}
+
 vector<string> lookup_argument(const string& argument, const int& ind) {
   using boost::iequals;
   vector<string> args;
   if (iequals(argument, "int")) {
     args.push_back("int");
   } else if (iequals(argument, "ints")) {
-    args.push_back("int");
-    args.push_back("std::vector<int>");
-    args.push_back("Eigen::Matrix<int, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<int, 1, Eigen::Dynamic>");
+    push_args(args, "int");
   } else if (iequals(argument, "double")) {
     args.push_back("double");
     args.push_back("var");
   } else if (iequals(argument, "doubles")) {
-    args.push_back("double");
-    args.push_back("std::vector<double>");
-    args.push_back("Eigen::Matrix<double, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<double, 1, Eigen::Dynamic>");
+    push_args(args, "double");
     if (ind == 1) {
-    args.push_back("var");
-    args.push_back("std::vector<var>");
-    args.push_back("Eigen::Matrix<var, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<var, 1, Eigen::Dynamic>");
+    push_args(args, "var");
     }
     else if (ind == 2) {
-    args.push_back("fvar<double>");
-    args.push_back("std::vector<fvar<double> >");
-    args.push_back("Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<double>, 1, Eigen::Dynamic>");
+    push_args(args, "fvar<double>");
     }
     else if (ind == 3) {
-    args.push_back("fvar<var>");
-    args.push_back("std::vector<fvar<var> >");
-    args.push_back("Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>");
+    push_args(args, "fvar<var>");
     }
     else if (ind == 4) {
-    args.push_back("fvar<fvar<double> >");
-    args.push_back("std::vector<fvar<fvar<double> > >");
-    args.push_back("Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic>");
+    push_args(args, "fvar<fvar<double> >");
     }
     else if (ind == 5) {
-    args.push_back("fvar<fvar<var> >");
-    args.push_back("std::vector<fvar<fvar<var> > >");
-    args.push_back("Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1>");
-    args.push_back("Eigen::Matrix<fvar<fvar<var> >, 1, Eigen::Dynamic>");
+    push_args(args, "fvar<fvar<var> >");
     }
   }
   return args;
@@ -368,8 +361,8 @@ int create_files(const int& argc, const char* argv[], const int& index,
   if (index == 1)
     num_tests = size(argument_sequence);
   else
-    num_tests = size(argument_sequence) - std::pow(4, num_ints(arguments))
-      * std::pow(4, num_doubles(arguments));
+    num_tests = size(argument_sequence) - std::pow(3 + ROW_VECTORS,
+        num_ints(arguments)) * std::pow(3 + ROW_VECTORS, num_doubles(arguments));
 
   vector<std::ostream *> outs;
   const double BATCHES = N_TESTS > 0 ? num_tests / N_TESTS : -N_TESTS;
