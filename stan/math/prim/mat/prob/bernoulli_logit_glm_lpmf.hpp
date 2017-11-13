@@ -14,6 +14,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -56,7 +57,7 @@ namespace stan {
       using Eigen::Dynamic;
       using Eigen::Matrix;
 
-      if (!(stan::length(n) && stan::length(x) && stan::length(beta)))
+      if (size_zero(n, x, beta))
         return 0.0;
 
       T_partials_return logp(0.0);

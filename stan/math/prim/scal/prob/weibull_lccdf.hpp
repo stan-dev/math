@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
@@ -48,7 +49,7 @@ namespace stan {
       using boost::math::tools::promote_args;
       using std::log;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
+      if (size_zero(y, alpha, sigma))
         return 0.0;
 
       T_partials_return ccdf_log(0.0);
