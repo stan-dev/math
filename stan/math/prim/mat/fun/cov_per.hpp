@@ -8,7 +8,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/mat/fun/exp.hpp>
 #include <vector>
 #include <cmath>
 
@@ -40,7 +39,7 @@ namespace stan {
                  const T_sigma& sigma,
                  const T_l& l,
 				 const T_p& p) {
-      //using std::exp;
+      using std::exp;
       check_positive("cov_per", "marginal variance", sigma);
       check_positive("cov_per", "length-scale", l);
       check_positive("cov_per", "period", p);
