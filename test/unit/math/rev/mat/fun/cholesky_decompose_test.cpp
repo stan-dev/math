@@ -273,9 +273,10 @@ void test_chol_mult(int mat_size, double prec) {
 
   boost::random::mt19937 rng(2);
 
-  for (int i = 0; i < test_vec.size(); ++i) {
-    test_vec(i) = stan::math::normal_rng(0.0,0.1,rng);
-    if (i < vec_size)
+  for (int i = 0; i < test_vals.size(); ++i) {
+      if (i < test_vec.size()) {
+        test_vec(i) = stan::math::normal_rng(0.0,0.1,rng);
+      }
       test_vals(i) = i % 10 / 100.0;
   }
 
