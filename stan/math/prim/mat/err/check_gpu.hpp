@@ -33,7 +33,7 @@ namespace stan {
       cl::CommandQueue cmd_queue = get_queue();
 
       try {
-        cl::Context ctx = get_context();
+        cl::Context& ctx = get_context();
         int nan_flag = 0;
         int diag_zeros_flag = 0;
         cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE,
@@ -92,7 +92,7 @@ namespace stan {
       cl::CommandQueue cmd_queue = get_queue();
 
       try {
-        cl::Context ctx = get_context();
+        cl::Context& ctx = get_context();
         int nan_flag = 0;
         cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE,
          sizeof(int));

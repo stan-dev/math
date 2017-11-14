@@ -296,7 +296,7 @@ namespace stan {
           error_string = "number " + std::to_string(e.err());
           break;
       }
-      std::domain_error("The OpenCL application ended with the error: "
+      throw std::domain_error("The OpenCL application ended with the error: "
         + error_string);
     }
 

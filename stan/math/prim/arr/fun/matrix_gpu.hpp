@@ -53,7 +53,7 @@ namespace stan {
           return rows_ * cols_;
         }
 
-        cl::Buffer& buffer() {
+        const cl::Buffer& buffer() const {
           return oclBuffer;
         }
 
@@ -77,7 +77,7 @@ namespace stan {
         matrix_gpu(int rows,  int cols)
         : rows_(rows), cols_(cols) {
           try {
-            cl::Context ctx = get_context();
+            cl::Context& ctx = get_context();
             if (rows_ > 0 && cols_ > 0) {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * rows_ * cols_);
@@ -102,8 +102,9 @@ namespace stan {
         template<typename T, int R, int C>
         explicit matrix_gpu(const Eigen::Matrix<T, R, C> &A) {
           try {
-            cl::Context ctx = get_context();
-            cl::CommandQueue queue = get_queue();
+            cl::Context& ctx = get_context();
+            cl::CommandQueue& queue = get_queue();
+            cl::Kernel kernel = get_kernel("transpose");
             rows_ = A.rows();
             cols_ = A.cols();
             if (rows_ > 0 && cols_ > 0) {
@@ -111,12 +112,10 @@ namespace stan {
                sizeof(double) * A.size());
 
               cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-               sizeof(double) * A.size());
+               sizeof(T) * A.size());
 
               queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
-               sizeof(double) * A.size(), A.data());
-
-              cl::Kernel kernel = get_kernel("transpose");
+               sizeof(T) * A.size(), A.data());
 
               kernel.setArg(0, oclBuffer);
               kernel.setArg(1, buffer_temp);
@@ -159,7 +158,7 @@ namespace stan {
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
 
             try {
-              cl::Context ctx = get_context();
+              cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = dst.buffer();
 
@@ -208,7 +207,7 @@ namespace stan {
             check_size_match("copy (GPU -> Eigen)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
             try {
-              cl::Context ctx = get_context();
+              cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = src.buffer();
 
@@ -254,7 +253,7 @@ namespace stan {
       check_size_match("copy (GPU -> GPU)",
         "src.cols()", src.cols(), "dst.cols()", dst.cols());
       cl::Kernel kernel = get_kernel("copy");
-      cl::CommandQueue cmdQueue = get_queue();
+      cl::CommandQueue& cmdQueue = get_queue();
       try {
         kernel.setArg(0, src.buffer());
         kernel.setArg(1, dst.buffer());

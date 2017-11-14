@@ -225,7 +225,7 @@ namespace stan {
      * 
      */
     void compile_kernel_group(std::string group) {
-        cl::Context ctx = get_context();
+        cl::Context& ctx = get_context();
         std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
         std::string kernel_source = kernel_strings[group];
         cl::Program::Sources source(1,
@@ -259,7 +259,7 @@ namespace stan {
      * @param name The kernel name
      * 
      */
-    cl::Kernel& get_kernel(std::string name) {
+    cl::Kernel get_kernel(std::string name) {
       // Compile the kernel group and return the kernel
       if (!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);

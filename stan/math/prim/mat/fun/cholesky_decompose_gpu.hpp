@@ -52,7 +52,7 @@ namespace stan {
       cl::Kernel kernel_zero = get_kernel("cholesky_zero");
       cl::CommandQueue cmd_queue = get_queue();
       try {
-        cl::Context ctx = get_context();
+        cl::Context& ctx = get_context();
         // Will be managed by the library core system
         int block = 64;
         int offset = 0;

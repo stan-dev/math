@@ -58,7 +58,7 @@ namespace stan {
         for (int i = 0; i < remainder; i++) {
             stl_sizes[i]++;
         }
-        cl::Context ctx = get_context();
+        cl::Context& ctx = get_context();
         cl::Buffer sizes = cl::Buffer(ctx, CL_MEM_READ_WRITE,
          sizeof(int) * parts);
 

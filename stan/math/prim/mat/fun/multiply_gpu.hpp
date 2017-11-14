@@ -138,7 +138,7 @@ namespace stan {
        "B.rows()", B.rows());
       matrix_gpu temp(A.rows(), B.cols());
       cl::Kernel kernel = get_kernel("basic_multiply");
-      cl::CommandQueue cmdQueue = get_queue();
+      cl::CommandQueue& cmdQueue = get_queue();
       try {
         int Mpad = ((A.rows() + 15)/16)*16;
         int Npad = ((B.cols() + 15)/16)*16;

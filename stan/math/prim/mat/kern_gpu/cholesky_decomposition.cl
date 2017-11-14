@@ -12,46 +12,32 @@ __kernel void cholesky_block(__global double *b,int offset,int M, int n,__global
 	int arrSize=n;
 	for (int i = 0; i < n; i++){
 		d[i*n+f]=b[(i+offset)*M+f+offset];
-		if (i==f)
-			V[i*n+f]=1.0;
-		else
-			V[i*n+f]=0.0;
+		V[i*n+f]=0.0;
 	}
-	barrier(CLK_LOCAL_MEM_FENCE);	
-	
-	double sig;
-	for (int i=0;i<n-1;i++){
-		sig=sqrt(d[i*n+i]);
-		if (f==0){
-			d[i*n+i]=sig;
-		}
-		barrier(CLK_LOCAL_MEM_FENCE);
-		if (f>=(i+1))
-			d[f*n+i]=d[f*n+i]/sig;		
-		barrier(CLK_LOCAL_MEM_FENCE);
-		for (int k=i+1;k<n;k++){
-		  if (f>=(i+1))
-		  	d[k*n+f]=d[k*n+f]-d[k*n+i]*d[f*n+i];		  
-		}
-		barrier(CLK_LOCAL_MEM_FENCE);
+  barrier(CLK_LOCAL_MEM_FENCE);	
+  if(f==0){
+  for (int i = 0; i < n; i++)
+    for (int j = 0; j < (i+1); j++) {
+        double s = 0;
+        for (int k = 0; k < j; k++)
+            s += V[i*n+k] * V[j*n+k];
+        V[i*n+j] = (i == j) ? sqrt(d[i*n+i] - s) : (1.0 / V[j*n+j] * (d[i*n+j] - s));
+    }
+  }
+  barrier(CLK_LOCAL_MEM_FENCE);	
+  
+  for (int i = 0; i < n; i++){
+    d[i*n+f] = V[i*n+f];
+		b[(i+offset)*M+f+offset]=V[i*n+f];
 	}
-	
-	barrier(CLK_LOCAL_MEM_FENCE);
-	if (f==0){
-		d[(n-1)*n+n-1]=sqrt(d[(n-1)*n+n-1]);	
+  barrier(CLK_LOCAL_MEM_FENCE);	
+  for (int i = 0; i < n; i++){
+		if(i==f)
+    V[i*n+f]=1.0;
+    else
+		V[i*n+f]=0.0;
 	}
-	barrier(CLK_LOCAL_MEM_FENCE);
-	for (int p=f+1;p<n;p++){
-		d[f*n+p]=0;
-	}
-	
-	
-	barrier(CLK_LOCAL_MEM_FENCE);	
-	//write to matrix
-	for (int i = 0; i < n; i++){
-		b[(i+offset)*M+f+offset]=d[i*n+f];
-	}
-	barrier(CLK_LOCAL_MEM_FENCE);	
+  barrier(CLK_LOCAL_MEM_FENCE);	
 	double faktor;
 	for (int i = 0; i < n; i++){
 		if (i>0){
@@ -89,7 +75,7 @@ __kernel void cholesky_left_update(__global double* l,__global double* ap, __glo
 		const int tiledRow = TS3*t + row;
 		const int tiledCol = TS3*t + col;
 	
-		if (i<max_threads && tiledCol<block && (+offset+block)<M && (offset+tiledCol)<M){
+		if (i<max_threads && tiledCol<block && (i+offset+block)<M && (offset+tiledCol)<M){
 			Asub[col][row] = ap[(i+offset+block)*M+offset+tiledCol];
 		}else{
 			Asub[col][row] = 0.0;
@@ -131,7 +117,7 @@ __kernel void cholesky_mid_update(__global double* l,__global double* ap,int off
 		const int tiledRow = TS3*t + row;
 		const int tiledCol = TS3*t + col;
 		
-		if (i<max_threads && tiledCol<max_threads && i<M && tiledCol<M){
+		if (i<max_threads && tiledCol<max_threads && i<M && tiledCol<block){
 			Asub[col][row] = l[i*block+tiledCol];
 		}else{
 			Asub[col][row] = 0.0;
