@@ -81,6 +81,7 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
+#include <stan/math/prim/mat/fun/cov_per.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
 #include <stan/math/prim/mat/fun/csr_extract_u.hpp>
 #include <stan/math/prim/mat/fun/csr_extract_v.hpp>
