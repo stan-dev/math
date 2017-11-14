@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
@@ -36,7 +37,7 @@ namespace stan {
 
       using std::exp;
 
-      if (!(stan::length(n) && stan::length(alpha)))
+      if (size_zero(n, alpha))
         return 0.0;
 
       T_partials_return logp(0.0);

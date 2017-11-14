@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
@@ -32,7 +33,7 @@ namespace stan {
 
       static const char* function = "poisson_lpmf";
 
-      if (!(stan::length(n) && stan::length(lambda)))
+      if (size_zero(n, lambda))
         return 0.0;
 
       T_partials_return logp(0.0);

@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -40,7 +41,7 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(theta)))
+      if (size_zero(n, theta))
         return 0.0;
 
       T_partials_return P(0.0);
