@@ -37,15 +37,15 @@ namespace stan {
       using boost::random::cauchy_distribution;
       static const char* function = "cauchy_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      size_t N = max_size(mu, sigma);
-      VectorBuilder<true, double, T_loc, T_scale> output(N);
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", sigma);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      size_t N = max_size(mu, sigma);
+      VectorBuilder<true, double, T_loc, T_scale> output(N);
 
       for (size_t n = 0; n < N; ++n) {
         variate_generator<RNG&, cauchy_distribution<> >

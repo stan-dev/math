@@ -37,15 +37,15 @@ namespace stan {
       using boost::uniform_01;
       static const char* function = "gumbel_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> beta_vec(beta);
-      size_t N = max_size(mu, beta);
-      VectorBuilder<true, double, T_loc, T_scale> output(N);
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", beta);
       check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", beta);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> beta_vec(beta);
+      size_t N = max_size(mu, beta);
+      VectorBuilder<true, double, T_loc, T_scale> output(N);
 
       variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
       for (size_t n = 0; n < N; ++n)

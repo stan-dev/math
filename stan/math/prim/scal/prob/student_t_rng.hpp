@@ -42,18 +42,18 @@ namespace stan {
       using boost::random::student_t_distribution;
       static const char* function = "student_t_rng";
 
-      scalar_seq_view<T_deg> nu_vec(nu);
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      size_t N = max_size(nu, mu, sigma);
-      VectorBuilder<true, double, T_deg, T_loc, T_scale> output(N);
-
       check_positive_finite(function, "Degrees of freedom parameter", nu);
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_consistent_sizes(function, "Degrees of freedom parameter", nu,
                              "Location parameter", mu,
                              "Scale Parameter", sigma);
+
+      scalar_seq_view<T_deg> nu_vec(nu);
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      size_t N = max_size(nu, mu, sigma);
+      VectorBuilder<true, double, T_deg, T_loc, T_scale> output(N);
 
       for (size_t n = 0; n < N; ++n) {
         variate_generator<RNG&, student_t_distribution<> >

@@ -42,18 +42,18 @@ namespace stan {
       using boost::random::normal_distribution;
       static const char* function = "skew_normal_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      scalar_seq_view<T_shape> alpha_vec(alpha);
-      size_t N = max_size(mu, sigma, alpha);
-      VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_finite(function, "Shape parameter", alpha);
       check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", sigma,
                              "Shape Parameter", alpha);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_shape> alpha_vec(alpha);
+      size_t N = max_size(mu, sigma, alpha);
+      VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
       variate_generator<RNG&, normal_distribution<> >
         norm_rng(rng, normal_distribution<>(0, 1));

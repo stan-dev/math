@@ -43,18 +43,18 @@ namespace stan {
                        const T_inv_scale& lambda, RNG& rng) {
       static const char* function = "exp_mod_normal_rng";
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      scalar_seq_view<T_inv_scale> lambda_vec(lambda);
-      size_t N = max_size(mu, sigma, lambda);
-      VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
-
       check_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Scale parameter", sigma);
       check_positive_finite(function, "Inv_scale parameter", lambda);
       check_consistent_sizes(function, "Location parameter", mu,
                              "Scale Parameter", sigma,
                              "Inv_scale Parameter", lambda);
+
+      scalar_seq_view<T_loc> mu_vec(mu);
+      scalar_seq_view<T_scale> sigma_vec(sigma);
+      scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+      size_t N = max_size(mu, sigma, lambda);
+      VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
       for (size_t n = 0; n < N; ++n)
         output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
