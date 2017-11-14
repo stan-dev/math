@@ -32,10 +32,10 @@ before_install:
       sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
       echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
       export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64:${LD_LIBRARY_PATH};
-      sudo ln -s ${AMDAPPSDK}/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so;
       chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
       ${AMDAPPSDK}/bin/x86_64/clinfo;
     fi;
+  - sudo ln -s ${AMDAPPSDK}/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 
 matrix:
   fast_finish: true
