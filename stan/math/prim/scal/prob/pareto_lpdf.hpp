@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -34,7 +35,7 @@ namespace stan {
 
       using std::log;
 
-      if (!(stan::length(y) && stan::length(y_min) && stan::length(alpha)))
+      if (size_zero(y, y_min, alpha))
         return 0.0;
 
       T_partials_return logp(0.0);

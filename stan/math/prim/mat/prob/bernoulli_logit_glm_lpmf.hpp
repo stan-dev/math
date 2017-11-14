@@ -56,7 +56,7 @@ namespace stan {
       using Eigen::Dynamic;
       using Eigen::Matrix;
 
-      if (!(stan::length(n) && stan::length(x) && stan::length(beta)))
+      if (size_zero(n, x, beta))
         return 0.0;
 
       T_partials_return logp(0.0);

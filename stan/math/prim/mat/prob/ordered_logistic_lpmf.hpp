@@ -194,7 +194,7 @@ namespace stan {
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
+                                            T_cut, Eigen::Dynamic, 1> >& c) {
       typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       using std::exp;
@@ -237,7 +237,7 @@ namespace stan {
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
+                                            T_cut, Eigen::Dynamic, 1> >& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
   }
