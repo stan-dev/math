@@ -56,7 +56,7 @@ namespace stan {
         // Will be managed by the library core system
         int block = 64;
         int offset = 0;
-        int local = 32;
+        int local = 16;
 
         cl::Buffer buffer_V(ctx, CL_MEM_READ_WRITE,
          sizeof(T) * block * block * 4);

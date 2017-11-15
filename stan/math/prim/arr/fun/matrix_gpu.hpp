@@ -150,17 +150,15 @@ namespace stan {
      * 
      */
     template <typename T, int R, int C>
-    void copy(const Eigen::Matrix<T, R, C> & src,
-     matrix_gpu & dst) {
+    void copy(const Eigen::Matrix<T, R, C>& src,
+     matrix_gpu& dst) {
             check_size_match("copy (Eigen -> GPU)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
             check_size_match("copy (Eigen -> GPU)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
-
             try {
               cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
-              cl::Buffer buffer = dst.buffer();
 
               cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(T) * src.size());
@@ -169,11 +167,12 @@ namespace stan {
                sizeof(T) * dst.size(), src.data());
 
               cl::Kernel kernel = get_kernel("transpose");
-
-              kernel.setArg(0, buffer);
+              int cols = src.cols();
+              int rows = src.rows();
+              kernel.setArg(0, dst.buffer());
               kernel.setArg(1, buffer_temp);
-              kernel.setArg(2, src.cols());
-              kernel.setArg(3, src.rows());
+              kernel.setArg(2, cols);
+              kernel.setArg(3, rows);
               queue.enqueueNDRangeKernel(
                   kernel,
                   cl::NullRange,
@@ -182,6 +181,7 @@ namespace stan {
                   NULL,
                   NULL);
             } catch (const cl::Error& e) {
+              std::cout << e.err() << std::endl;
               check_ocl_error(e);
             }
     }
@@ -201,12 +201,12 @@ namespace stan {
      */
     template <typename T, int R, int C>
     void copy(matrix_gpu & src,
-     Eigen::Matrix<T, R, C> & dst) {
+     Eigen::Matrix<T, R, C> & dst) {            
             check_size_match("copy (GPU -> Eigen)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
             check_size_match("copy (GPU -> Eigen)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
-            try {
+            try {              
               cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = src.buffer();
