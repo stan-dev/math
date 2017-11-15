@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
@@ -33,7 +34,7 @@ namespace stan {
         T_partials_return;
 
       T_partials_return P(1.0);
-      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
+      if (size_zero(n, mu, phi))
         return P;
 
       check_positive_finite(function, "Location parameter", mu);

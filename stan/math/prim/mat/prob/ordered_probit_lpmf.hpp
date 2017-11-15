@@ -171,7 +171,7 @@ namespace stan {
     ordered_probit_lpmf(const std::vector<int>& y,
                         const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                         const std::vector<Eigen::Matrix<
-                                              T_cut, Eigen::Dynamic, 1>>& c) {
+                                          T_cut, Eigen::Dynamic, 1> >& c) {
       using std::exp;
       using std::log;
 
@@ -214,7 +214,7 @@ namespace stan {
     ordered_probit_lpmf(const std::vector<int>& y,
                         const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                         const std::vector<Eigen::Matrix<
-                                              T_cut, Eigen::Dynamic, 1>>& c) {
+                                          T_cut, Eigen::Dynamic, 1> >& c) {
       return ordered_probit_lpmf<false>(y, lambda, c);
     }
   }

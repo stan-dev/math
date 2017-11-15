@@ -22,7 +22,7 @@ namespace stan {
             partials_vec_(partials_), operands_(ops) {}
 
       private:
-        template<typename, typename, typename, typename, typename>
+        template<typename, typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
         const Op& operands_;
 
@@ -47,7 +47,7 @@ namespace stan {
             partials_vec_(partials_), operands_(ops) {}
 
       private:
-        template<typename, typename, typename, typename, typename>
+        template<typename, typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
         const Op& operands_;
 
@@ -76,7 +76,7 @@ namespace stan {
         }
 
       private:
-        template<typename, typename, typename, typename, typename>
+        template<typename, typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
         const Op& operands_;
 

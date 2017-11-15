@@ -9,7 +9,7 @@ namespace stan {
   namespace math {
     namespace internal {
       template <typename ViewElt, typename OpElt, int R, int C>
-      class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C>> {
+      class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
       public:
         empty_broadcast_array() {}
        /**

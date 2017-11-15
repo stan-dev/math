@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
@@ -32,8 +33,7 @@ namespace stan {
 
       T_partials_return ccdf_log(0.0);
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
-            && stan::length(alpha)))
+      if (size_zero(y, mu, sigma, alpha))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);
