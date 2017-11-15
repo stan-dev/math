@@ -7,7 +7,7 @@ using stan::math::var;
 using stan::math::log_mix;
 
   template<typename T1>
-  void check_prob_d(const T1& prob){
+  void check_prob_d(const T1& prob) {
     stan::math::vector_d prob_d(4);
     prob_d << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
@@ -17,7 +17,7 @@ using stan::math::log_mix;
   }
 
   template<typename T2>
-  void check_dens_d(const T2& dens){
+  void check_dens_d(const T2& dens) {
     stan::math::vector_d dens_d(4);
     dens_d << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
@@ -25,9 +25,9 @@ using stan::math::log_mix;
       EXPECT_FLOAT_EQ(dens[i].d_.adj(), dens_d[i]);
     }
   }
-   
+
   template<typename T1>
-  void check_prob_d_d(const T1& prob){
+  void check_prob_d_d(const T1& prob) {
     stan::math::vector_d prob_d(4);
     prob_d << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
@@ -37,7 +37,7 @@ using stan::math::log_mix;
   }
 
   template<typename T2>
-  void check_dens_d_d(const T2& dens){
+  void check_dens_d_d(const T2& dens) {
     stan::math::vector_d dens_d(4);
     dens_d << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
@@ -45,7 +45,6 @@ using stan::math::log_mix;
       EXPECT_FLOAT_EQ(dens[i].d_.val_.adj(), dens_d[i]);
     }
   }
-   
 
 TEST(AgradMixMatrixLogMix, vec_fv_vec_fv) {
   using stan::math::vector_fv;

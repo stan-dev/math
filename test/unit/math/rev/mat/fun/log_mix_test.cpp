@@ -11,7 +11,7 @@ TEST(AgradRevMatrix, log_mix_avec) {
   out.grad();
 
   EXPECT_FLOAT_EQ(out.val(), -2.70582405);
-  
+
   EXPECT_FLOAT_EQ(prob[0].adj(), 1.7433770185);
   EXPECT_FLOAT_EQ(prob[1].adj(), 0.3059982327);
   EXPECT_FLOAT_EQ(prob[2].adj(), 1.6918524409);
@@ -20,7 +20,7 @@ TEST(AgradRevMatrix, log_mix_avec) {
   EXPECT_FLOAT_EQ(dens[0].adj(), 0.2615065527);
   EXPECT_FLOAT_EQ(dens[1].adj(), 0.0611996465);
   EXPECT_FLOAT_EQ(dens[2].adj(), 0.6767409763);
-  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0005528243); 
+  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0005528243);
 }
 
 TEST(AgradRevMatrix, log_mix_vector_v) {
@@ -34,7 +34,7 @@ TEST(AgradRevMatrix, log_mix_vector_v) {
   out.grad();
 
   EXPECT_FLOAT_EQ(out.val(), -1.69226023);
-  
+
   EXPECT_FLOAT_EQ(prob[0].adj(), 0.2327617758);
   EXPECT_FLOAT_EQ(prob[1].adj(), 4.4028859801);
   EXPECT_FLOAT_EQ(prob[2].adj(), 0.0001422763);
@@ -43,7 +43,7 @@ TEST(AgradRevMatrix, log_mix_vector_v) {
   EXPECT_FLOAT_EQ(dens[0].adj(), 0.0302590308);
   EXPECT_FLOAT_EQ(dens[1].adj(), 0.9686349156);
   EXPECT_FLOAT_EQ(dens[2].adj(), 5.406498E-05);
-  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0010519885); 
+  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0010519885);
 }
 
 TEST(AgradRevMatrix, log_mix_row_vector_v) {
@@ -57,7 +57,7 @@ TEST(AgradRevMatrix, log_mix_row_vector_v) {
   out.grad();
 
   EXPECT_FLOAT_EQ(out.val(), -2.64097823);
-  
+
   EXPECT_FLOAT_EQ(prob[0].adj(), 5.215625E-08);
   EXPECT_FLOAT_EQ(prob[1].adj(), 0.0040907712);
   EXPECT_FLOAT_EQ(prob[2].adj(), 1.5856243363);
@@ -66,5 +66,5 @@ TEST(AgradRevMatrix, log_mix_row_vector_v) {
   EXPECT_FLOAT_EQ(dens[0].adj(), 1.564688E-09);
   EXPECT_FLOAT_EQ(dens[1].adj(), 0.0008590619);
   EXPECT_FLOAT_EQ(dens[2].adj(), 0.9989433319);
-  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0001976046); 
+  EXPECT_FLOAT_EQ(dens[3].adj(), 0.0001976046);
 }
