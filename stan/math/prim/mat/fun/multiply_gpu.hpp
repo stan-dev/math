@@ -41,7 +41,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("diagonal_multiply", e);
       }
     }
 
@@ -75,7 +75,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("multiply scalar", e);
       }
       return temp;
     }
@@ -110,7 +110,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("multiply scalar", e);
       }
       return temp;
     }
@@ -156,7 +156,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("multiply", e);
       }
       return temp;
     }

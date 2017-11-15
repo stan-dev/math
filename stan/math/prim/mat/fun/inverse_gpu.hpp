@@ -120,7 +120,7 @@ namespace stan {
           repeat *= 2;
         }
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("inverse", e);
       }
       return inv;
     }

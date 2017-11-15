@@ -47,7 +47,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("transpose", e);
       }
       return dst;
     }
@@ -83,7 +83,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("zeros", e);
       }
     }
 
@@ -115,7 +115,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("identity", e);
       }
       return A;
     }
@@ -154,7 +154,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("copy_triangular", e);
       }
       return dst;
     }
@@ -213,11 +213,11 @@ namespace stan {
           kernel,
           cl::NullRange,
           cl::NDRange(size_rows, size_cols),
-          cl::NullRange,
+          cl::NDRange(size_rows, size_cols),
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("copy_submatrix", e);
       }
     }
 
@@ -256,7 +256,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("copy_triangular_transposed", e);
       }
     }
     /**
@@ -296,7 +296,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("add", e);
       }
       return C;
     }
@@ -339,7 +339,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("subtract", e);
       }
       return C;
     }

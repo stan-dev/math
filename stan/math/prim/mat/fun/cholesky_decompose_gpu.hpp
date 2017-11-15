@@ -121,7 +121,7 @@ namespace stan {
       cmd_queue.enqueueNDRangeKernel(kernel_zero,
        cl::NullRange, cl::NDRange(A.rows(), A.rows()), cl::NullRange);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("cholesky_decompose", e);
       }
       copy_triangular_transposed(A, LOWER_TO_UPPER_TRIANGULAR);
       check_positive_definite_gpu("cholesky_decompose_gpu",

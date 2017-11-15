@@ -69,7 +69,7 @@ namespace stan {
           domain_error(function, name, "is not positive definite", "");
         }
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("pos_def_check", e);
       }
     }
     /**
@@ -115,7 +115,7 @@ namespace stan {
           domain_error(function, name, "has NaN values", "");
         }
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("nan_check", e);
       }
     }
 
@@ -166,7 +166,7 @@ namespace stan {
           domain_error(function, name, "has zeros on the diagonal.", "");
         }
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("diag_zeros_check",e);
       }
     }
 

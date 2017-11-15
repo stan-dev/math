@@ -157,7 +157,7 @@ namespace stan {
                  program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]);
             }
           } catch (const cl::Error& e) {
-            check_ocl_error(e);
+            check_ocl_error("build", e);
           }
         }
 

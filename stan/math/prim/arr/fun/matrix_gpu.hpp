@@ -83,7 +83,7 @@ namespace stan {
                sizeof(double) * rows_ * cols_);
             }
           } catch (const cl::Error& e) {
-            check_ocl_error(e);
+            check_ocl_error("matrix constructor", e);
           }
         }
 
@@ -131,7 +131,7 @@ namespace stan {
                NULL);
              }
           } catch (const cl::Error& e) {
-            check_ocl_error(e);
+            check_ocl_error("matrix constructor", e);
           }
         }
     };
@@ -181,8 +181,7 @@ namespace stan {
                   NULL,
                   NULL);
             } catch (const cl::Error& e) {
-              std::cout << e.err() << std::endl;
-              check_ocl_error(e);
+              check_ocl_error("copy Eigen->GPU", e);
             }
     }
 
@@ -231,7 +230,7 @@ namespace stan {
               queue.enqueueReadBuffer(buffer_temp,  CL_TRUE,  0,
                 sizeof(T) * dst.size(),  dst.data());
             } catch (const cl::Error& e) {
-              check_ocl_error(e);
+              check_ocl_error("copy GPU->Eigen", e);
             }
     }
 
@@ -267,7 +266,7 @@ namespace stan {
           NULL,
           NULL);
       } catch (const cl::Error& e) {
-        check_ocl_error(e);
+        check_ocl_error("copy GPU->GPU", e);
       }
     }
 
