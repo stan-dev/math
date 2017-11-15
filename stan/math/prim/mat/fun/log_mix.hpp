@@ -43,16 +43,16 @@ namespace stan {
     template <typename T_theta, typename T_lam>
     typename return_type<T_theta, T_lam>::type
     log_mix(const T_theta& theta, const T_lam& lambda) {
-      //static const char* function = "log_mix";
+      static const char* function = "log_mix";
       typedef typename stan::partials_return_type<T_theta, T_lam>::type
         T_partials_return;
 
-      //check_bounded(function, "theta", theta, 0, 1);
-      //check_not_nan(function, "lambda", lambda);
-      //check_not_nan(function, "theta", theta);
-      //check_finite(function, "lambda", lambda);
-      //check_finite(function, "theta", theta);
-      //check_consistent_sizes(function, "theta", theta, "lambda", lambda);
+      check_bounded(function, "theta", theta, 0, 1);
+      check_not_nan(function, "lambda", lambda);
+      check_not_nan(function, "theta", theta);
+      check_finite(function, "lambda", lambda);
+      check_finite(function, "theta", theta);
+      check_consistent_sizes(function, "theta", theta, "lambda", lambda);
 
       const int N = length(theta);
 
@@ -78,11 +78,11 @@ namespace stan {
         lam_deriv.array() = theta_deriv.array() * theta_dbl.array();
 
       operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
-        if (!is_constant_struct<T_theta>::value)
-          ops_partials.edge1_.partials_ = theta_deriv;
+      if (!is_constant_struct<T_theta>::value)
+        ops_partials.edge1_.partials_ = theta_deriv;
 
-        if (!is_constant_struct<T_lam>::value)
-          ops_partials.edge2_.partials_ = lam_deriv;
+      if (!is_constant_struct<T_lam>::value)
+        ops_partials.edge2_.partials_ = lam_deriv;
 
       return ops_partials.build(logp);
     }
