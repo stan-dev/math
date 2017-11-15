@@ -54,7 +54,7 @@ namespace stan {
       try {
         cl::Context& ctx = get_context();
         // Will be managed by the library core system
-        int block = 64;
+        int block = 32;
         int offset = 0;
         int local = 16;
 
