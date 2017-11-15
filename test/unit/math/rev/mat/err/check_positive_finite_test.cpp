@@ -1,12 +1,13 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 using stan::math::var;
 using stan::math::check_positive_finite;
 
-TEST(AgradRevErrorHandlingScalar,CheckPositiveFinite_Matrix) {
-  const std::string function = "check_positive_finite";
-  Eigen::Matrix<var,Eigen::Dynamic,1> x;
+TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Matrix) {
+  const char* function = "check_positive_finite";
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x;
 
   x.resize(3);
   x << 3, 2, 1;

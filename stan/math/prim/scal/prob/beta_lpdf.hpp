@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -26,7 +27,6 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -54,7 +54,7 @@ namespace stan {
     typename return_type<T_y, T_scale_succ, T_scale_fail>::type
     beta_lpdf(const T_y& y,
              const T_scale_succ& alpha, const T_scale_fail& beta) {
-      static const std::string function = "beta_lpdf";
+      static const char* function = "beta_lpdf";
 
       typedef typename stan::partials_return_type<T_y,
                                                   T_scale_succ,
@@ -65,7 +65,7 @@ namespace stan {
       using stan::is_vector;
       using std::log;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(y, alpha, beta))
         return 0.0;
 
       T_partials_return logp(0.0);

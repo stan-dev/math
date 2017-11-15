@@ -20,14 +20,14 @@ public:
     param[1] = 42.0;         // lambda
     parameters.push_back(param);
     cdf.push_back(0.9999999845303266798879); // expected cdf
-    
+
     param[0] = 0.0;          // n
     param[1] = 3.0;          // lambda
     parameters.push_back(param);
     cdf.push_back(0.04978706836786394446248); // expected cdf
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
 
     // lambda
@@ -37,11 +37,11 @@ public:
     index.push_back(1U);
     value.push_back(-1);
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
@@ -67,7 +67,7 @@ public:
     using std::exp;
     using stan::math::exp;
     using std::log;
-    
+
     typename stan::return_type<T_rate>::type cdf(0);
     for (int i = 0; i <= n; i++) {
       cdf += exp(i * log(lambda) - lgamma(i+1));

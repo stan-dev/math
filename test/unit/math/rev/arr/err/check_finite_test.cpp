@@ -1,5 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::var;
@@ -7,7 +9,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
 
   int N = 5;
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)
@@ -15,16 +17,16 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(5U,stack_size);
-  EXPECT_NO_THROW(check_finite(function,"a",a));
+  EXPECT_EQ(5U, stack_size);
+  EXPECT_NO_THROW(check_finite(function, "a", a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(5U,stack_size_after_call);
+  EXPECT_EQ(5U, stack_size_after_call);
 
   a[1] = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_finite(function,"a",a),std::domain_error);
+  EXPECT_THROW(check_finite(function, "a", a), std::domain_error);
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(6U,stack_size_after_call);
+  EXPECT_EQ(6U, stack_size_after_call);
 
   stan::math::recover_memory();
 }

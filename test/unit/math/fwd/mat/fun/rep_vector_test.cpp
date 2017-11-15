@@ -1,7 +1,7 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradFwdMatrixRepVector,fd_vector) {
+TEST(AgradFwdMatrixRepVector, fd_vector) {
   using stan::math::rep_vector;
   using stan::math::vector_fd;
   using stan::math::fvar;
@@ -11,17 +11,17 @@ TEST(AgradFwdMatrixRepVector,fd_vector) {
   vector_fd output;
   output = rep_vector(a, 4);
 
-  EXPECT_EQ(3,output(0).val_);
-  EXPECT_EQ(3,output(1).val_);
-  EXPECT_EQ(3,output(2).val_);
-  EXPECT_EQ(3,output(3).val_);
-  EXPECT_EQ(2,output(0).d_);
-  EXPECT_EQ(2,output(1).d_);
-  EXPECT_EQ(2,output(2).d_);
-  EXPECT_EQ(2,output(3).d_);
+  EXPECT_EQ(3, output(0).val_);
+  EXPECT_EQ(3, output(1).val_);
+  EXPECT_EQ(3, output(2).val_);
+  EXPECT_EQ(3, output(3).val_);
+  EXPECT_EQ(2, output(0).d_);
+  EXPECT_EQ(2, output(1).d_);
+  EXPECT_EQ(2, output(2).d_);
+  EXPECT_EQ(2, output(3).d_);
 }
 
-TEST(AgradFwdMatrixRepVector,fd_vector_exception) {
+TEST(AgradFwdMatrixRepVector, fd_vector_exception) {
   using stan::math::rep_vector;
   using stan::math::vector_fd;
   using stan::math::fvar;
@@ -29,9 +29,9 @@ TEST(AgradFwdMatrixRepVector,fd_vector_exception) {
   a.val_ = 3.0;
   a.d_ = 2.0;
 
-  EXPECT_THROW(rep_vector(a,-2), std::domain_error);
+  EXPECT_THROW(rep_vector(a, -2), std::domain_error);
 }
-TEST(AgradFwdMatrixRepVector,ffd_vector) {
+TEST(AgradFwdMatrixRepVector, ffd_vector) {
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
   using stan::math::fvar;
@@ -41,17 +41,17 @@ TEST(AgradFwdMatrixRepVector,ffd_vector) {
   vector_ffd output;
   output = rep_vector(a, 4);
 
-  EXPECT_EQ(3,output(0).val_.val());
-  EXPECT_EQ(3,output(1).val_.val());
-  EXPECT_EQ(3,output(2).val_.val());
-  EXPECT_EQ(3,output(3).val_.val());
-  EXPECT_EQ(2,output(0).d_.val());
-  EXPECT_EQ(2,output(1).d_.val());
-  EXPECT_EQ(2,output(2).d_.val());
-  EXPECT_EQ(2,output(3).d_.val());
+  EXPECT_EQ(3, output(0).val_.val());
+  EXPECT_EQ(3, output(1).val_.val());
+  EXPECT_EQ(3, output(2).val_.val());
+  EXPECT_EQ(3, output(3).val_.val());
+  EXPECT_EQ(2, output(0).d_.val());
+  EXPECT_EQ(2, output(1).d_.val());
+  EXPECT_EQ(2, output(2).d_.val());
+  EXPECT_EQ(2, output(3).d_.val());
 }
 
-TEST(AgradFwdMatrixRepVector,ffd_vector_exception) {
+TEST(AgradFwdMatrixRepVector, ffd_vector_exception) {
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
   using stan::math::fvar;
@@ -59,5 +59,5 @@ TEST(AgradFwdMatrixRepVector,ffd_vector_exception) {
   a.val_ = 3.0;
   a.d_ = 2.0;
 
-  EXPECT_THROW(rep_vector(a,-2), std::domain_error);
+  EXPECT_THROW(rep_vector(a, -2), std::domain_error);
 }

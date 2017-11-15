@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -26,10 +25,10 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the sizes do not match
      */
     template <typename T_y1, typename T_y2>
-    inline void check_matching_sizes(const std::string& function,
-                                     const std::string& name1,
+    inline void check_matching_sizes(const char* function,
+                                     const char* name1,
                                      const T_y1& y1,
-                                     const std::string& name2,
+                                     const char* name2,
                                      const T_y2& y2) {
       check_size_match(function,
                        "size of ", name1, y1.size(),

@@ -18,14 +18,14 @@ public:
     parameters.push_back(param);
     cdf.push_back(0.06757822542283530020679); // expected cdf
   }
-  
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
           vector<double>& value) {
 
     // N (Trials)
     index.push_back(1U);
     value.push_back(-1);
-      
+
     // p (Probability
     index.push_back(2U);
     value.push_back(-1e-4);
@@ -33,11 +33,11 @@ public:
     index.push_back(2U);
     value.push_back(1+1e-4);
   }
-  
+
   bool has_lower_bound() {
     return false;
   }
-    
+
   bool has_upper_bound() {
     return false;
   }
@@ -60,14 +60,14 @@ public:
     using std::log;
     using std::exp;
     using boost::math::binomial_coefficient;
-      
+
     typename stan::return_type<T_prob>::type cdf(1);
- 
+
     for (int i = 0; i <= n; i++) {
       cdf *= binomial_coefficient<double>(N, i) * exp(i * log(theta) + (N - i) * log(1 - theta));
     }
-      
+
     return cdf;
-      
+
   }
 };

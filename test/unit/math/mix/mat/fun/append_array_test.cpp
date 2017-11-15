@@ -1,9 +1,10 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <random>
 
 using stan::math::var;
 using stan::math::fvar;
-using namespace Eigen;
 
 typedef fvar<double> fd;
 typedef fvar<var> fv;
@@ -11,29 +12,29 @@ typedef fvar<var> fv;
 typedef fvar<fvar<double> > ffd;
 typedef fvar<fvar<var> > ffv;
 
-typedef Matrix<double, Dynamic, 1> V;
-typedef Matrix<double, 1, Dynamic> RV;
-typedef Matrix<double, Dynamic, Dynamic> M;
+typedef Eigen::Matrix<double, Eigen::Dynamic, 1> V;
+typedef Eigen::Matrix<double, 1, Eigen::Dynamic> RV;
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> M;
 
-typedef Matrix<var, Dynamic, 1> Vv;
-typedef Matrix<var, 1, Dynamic> RVv;
-typedef Matrix<var, Dynamic, Dynamic> Mv;
+typedef Eigen::Matrix<var, Eigen::Dynamic, 1> Vv;
+typedef Eigen::Matrix<var, 1, Eigen::Dynamic> RVv;
+typedef Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Mv;
 
-typedef Matrix<fd, Dynamic, 1> Vfd;
-typedef Matrix<fd, 1, Dynamic> RVfd;
-typedef Matrix<fd, Dynamic, Dynamic> Mfd;
+typedef Eigen::Matrix<fd, Eigen::Dynamic, 1> Vfd;
+typedef Eigen::Matrix<fd, 1, Eigen::Dynamic> RVfd;
+typedef Eigen::Matrix<fd, Eigen::Dynamic, Eigen::Dynamic> Mfd;
 
-typedef Matrix<ffd, Dynamic, 1> Vffd;
-typedef Matrix<ffd, 1, Dynamic> RVffd;
-typedef Matrix<ffd, Dynamic, Dynamic> Mffd;
+typedef Eigen::Matrix<ffd, Eigen::Dynamic, 1> Vffd;
+typedef Eigen::Matrix<ffd, 1, Eigen::Dynamic> RVffd;
+typedef Eigen::Matrix<ffd, Eigen::Dynamic, Eigen::Dynamic> Mffd;
 
-typedef Matrix<fv, Dynamic, 1> Vfv;
-typedef Matrix<fv, 1, Dynamic> RVfv;
-typedef Matrix<fv, Dynamic, Dynamic> Mfv;
+typedef Eigen::Matrix<fv, Eigen::Dynamic, 1> Vfv;
+typedef Eigen::Matrix<fv, 1, Eigen::Dynamic> RVfv;
+typedef Eigen::Matrix<fv, Eigen::Dynamic, Eigen::Dynamic> Mfv;
 
-typedef Matrix<ffv, Dynamic, 1> Vffv;
-typedef Matrix<ffv, 1, Dynamic> RVffv;
-typedef Matrix<ffv, Dynamic, Dynamic> Mffv;
+typedef Eigen::Matrix<ffv, Eigen::Dynamic, 1> Vffv;
+typedef Eigen::Matrix<ffv, 1, Eigen::Dynamic> RVffv;
+typedef Eigen::Matrix<ffv, Eigen::Dynamic, Eigen::Dynamic> Mffv;
 
 /**
  * Generate a new random variable, cast it to type T1, and store it in z.
@@ -47,7 +48,9 @@ typedef Matrix<ffv, Dynamic, Dynamic> Mffv;
  */
 template<typename T1>
 void build(int n1, int n0, T1 &z) {
-  z = T1(rand());
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  z = T1(rd());
 }
 
 /**
@@ -65,8 +68,8 @@ void build(int n1, int n0, T1 &z) {
  * @param z Output variable
  */
 template<typename T1, int R, int C>
-void build(int n1, int n0, Matrix<T1, R, C>& z) {
-  z = Matrix<T1, R, C>(R == 1 ? 1 : n1, C == 1 ? 1 : n0);
+void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
+  z = Eigen::Matrix<T1, R, C>(R == 1 ? 1 : n1, C == 1 ? 1 : n0);
 
   for (int i = 0; i < z.rows(); i++) {
     for (int j = 0; j < z.cols(); j++) {
@@ -199,7 +202,8 @@ void check_eq(const int& z1, const int& z2) {
  * @param z2 Second matrix
  */
 template<typename T1, typename T2, int R, int C>
-void check_eq(const Matrix<T1, R, C>& z1, const Matrix<T2, R, C>& z2) {
+void check_eq(const Eigen::Matrix<T1, R, C>& z1,
+              const Eigen::Matrix<T2, R, C>& z2) {
   EXPECT_EQ(z1.rows(), z2.rows());
   EXPECT_EQ(z1.cols(), z2.cols());
 
@@ -238,10 +242,13 @@ void checkv() {
   std::vector<T2> y;
   std::vector<T3> result;
 
-  int r1 = rand() % 5,
-    r2 = rand() % 5 + 1,
-    r3 = rand() % 5 + 1,
-    r4 = rand() % 5;
+  std::random_device rd;
+  std::mt19937 mt(rd());
+
+  int r1 = rd() % 5,
+      r2 = rd() % 5 + 1,
+      r3 = rd() % 5 + 1,
+      r4 = rd() % 5;
 
   build(r1, r2, r3, x);
   build(r4, r2, r3, y);
@@ -268,11 +275,14 @@ void checkvv() {
   std::vector<std::vector<T2> > y;
   std::vector<std::vector<T3> > result;
 
-  int r1 = rand() % 5,
-    r2 = rand() % 5 + 1,
-    r3 = rand() % 5 + 1,
-    r4 = rand() % 5 + 1,
-    r5 = rand() % 5;
+  std::random_device rd;
+  std::mt19937 mt(rd());
+
+  int r1 = rd() % 5,
+      r2 = rd() % 5 + 1,
+      r3 = rd() % 5 + 1,
+      r4 = rd() % 5 + 1,
+      r5 = rd() % 5;
 
   build(r1, r2, r3, r4, x);
   build(r5, r2, r3, r4, y);
@@ -294,7 +304,7 @@ void checkvv() {
 template<typename T1, typename T2, typename T3>
 void check() {
   // repeat the checks a few times since they're random
-  for(int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     checkv<T1, T2, T3>();
     checkvv<T1, T2, T3>();
   }

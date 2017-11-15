@@ -6,12 +6,12 @@
 
 
 
-TEST(AgradFwdCbrt,FvarVar_1stDeriv) {
+TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::cbrt;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
 
   EXPECT_FLOAT_EQ(cbrt(1.5), a.val_.val());
@@ -19,27 +19,27 @@ TEST(AgradFwdCbrt,FvarVar_1stDeriv) {
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.val_.grad(y,g);
+  a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(1.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), g[0]);
 }
 
-TEST(AgradFwdCbrt,FvarVar_2ndDeriv) {
+TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::cbrt;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.d_.grad(y,g);
+  a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(-2.0 * 1.3 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), g[0]);
 }
 
 
 
-TEST(AgradFwdCbrt,FvarFvarVar_1stDeriv) {
+TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::cbrt;
@@ -57,7 +57,7 @@ TEST(AgradFwdCbrt,FvarFvarVar_1stDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.val_.grad(p,g);
+  a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(1.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), g[0]);
 
   fvar<fvar<var> > y;
@@ -73,11 +73,11 @@ TEST(AgradFwdCbrt,FvarFvarVar_1stDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.val_.val_.grad(q,r);
+  b.val_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(1.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), r[0]);
 }
 
-TEST(AgradFwdCbrt,FvarFvarVar_2ndDeriv) {
+TEST(AgradFwdCbrt, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::cbrt;
@@ -90,7 +90,7 @@ TEST(AgradFwdCbrt,FvarFvarVar_2ndDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.d_.grad(p,g);
+  a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(2.0 * -2.0 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), g[0]);
 
   fvar<fvar<var> > y;
@@ -101,10 +101,10 @@ TEST(AgradFwdCbrt,FvarFvarVar_2ndDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.d_.val_.grad(q,r);
+  b.d_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(2.0 * -2.0 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), r[0]);
 }
-TEST(AgradFwdCbrt,FvarFvarVar_3rdDeriv) {
+TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::cbrt;
@@ -118,7 +118,7 @@ TEST(AgradFwdCbrt,FvarFvarVar_3rdDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.d_.d_.grad(p,g);
+  a.d_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0.12562021866154533528757664877253, g[0]);
 }
 
@@ -130,7 +130,7 @@ struct cbrt_fun {
   }
 };
 
-TEST(AgradFwdCbrt,cbrt_NaN) {
+TEST(AgradFwdCbrt, cbrt_NaN) {
   cbrt_fun cbrt_;
-  test_nan_mix(cbrt_,false);
+  test_nan_mix(cbrt_, false);
 }

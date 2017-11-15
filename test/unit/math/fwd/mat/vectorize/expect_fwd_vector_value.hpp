@@ -2,10 +2,10 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_VECTOR_VALUE_HPP
 
 #include <stan/math/fwd/mat.hpp>
-#include <vector>
-#include <Eigen/Dense>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_matrix.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename T>
 void expect_fwd_vector_value() {

@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -17,7 +18,6 @@
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -37,11 +37,11 @@ namespace stan {
     template <typename T_n, typename T_prob>
     typename return_type<T_prob>::type
     bernoulli_lccdf(const T_n& n, const T_prob& theta) {
-      static const std::string function = "bernoulli_lccdf";
+      static const char* function = "bernoulli_lccdf";
       typedef typename stan::partials_return_type<T_n, T_prob>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(theta)))
+      if (size_zero(n, theta))
         return 0.0;
 
       T_partials_return P(0.0);

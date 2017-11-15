@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
@@ -19,7 +20,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/distributions.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -29,7 +29,7 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_shape>::type
     skew_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                     const T_shape& alpha) {
-      static const std::string function = "skew_normal_lpdf";
+      static const char* function = "skew_normal_lpdf";
       typedef typename stan::partials_return_type<T_y, T_loc,
                                                   T_scale, T_shape>::type
         T_partials_return;
@@ -38,8 +38,7 @@ namespace stan {
       using stan::is_constant_struct;
       using std::exp;
 
-      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
-            && stan::length(alpha)))
+      if (size_zero(y, mu, sigma, alpha))
         return 0.0;
 
       T_partials_return logp(0.0);

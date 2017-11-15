@@ -1,10 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 using stan::math::check_greater;
 
-TEST(ErrorHandlingScalar,CheckGreater) {
-  const std::string function = "check_greater";
+TEST(ErrorHandlingScalar, CheckGreater) {
+  const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
 
@@ -34,8 +35,8 @@ TEST(ErrorHandlingScalar,CheckGreater) {
     << "check_greater should throw an exception with x == Inf and lb == Inf";
 }
 
-TEST(ErrorHandlingScalar,CheckGreater_nan) {
-  const std::string function = "check_greater";
+TEST(ErrorHandlingScalar, CheckGreater_nan) {
+  const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();

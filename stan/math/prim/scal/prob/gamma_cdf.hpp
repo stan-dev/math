@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -25,7 +26,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -47,13 +47,13 @@ namespace stan {
     template <typename T_y, typename T_shape, typename T_inv_scale>
     typename return_type<T_y, T_shape, T_inv_scale>::type
     gamma_cdf(const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(y, alpha, beta))
         return 1.0;
       typedef typename stan::partials_return_type<T_y, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
-      static const std::string function = "gamma_cdf";
+      static const char* function = "gamma_cdf";
 
       using boost::math::tools::promote_args;
       using std::exp;

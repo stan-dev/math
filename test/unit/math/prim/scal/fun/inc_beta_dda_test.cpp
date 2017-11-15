@@ -4,17 +4,17 @@
 TEST(MathFunctions, inc_beta_dda) {
   using stan::math::digamma;
   using stan::math::inc_beta_dda;
-  
+
   double small_a = 1.5;
   double large_a = 15000;
-  
+
   double small_b = 1.25;
   double large_b = 12500;
-  
+
   double small_z = 0.001;
   double mid_z = 0.6;
   double large_z = 0.999;
-  
+
   EXPECT_FLOAT_EQ(-0.00028665637, inc_beta_dda(small_a, small_b, small_z,
                                                digamma(small_a),
                                                digamma(small_a + small_b)))
@@ -27,7 +27,7 @@ TEST(MathFunctions, inc_beta_dda) {
                                                digamma(small_a),
                                                digamma(small_a + small_b)))
     << "reasonable values for a, b, x";
-  
+
 
   EXPECT_FLOAT_EQ(0.0, inc_beta_dda(large_a, small_b, small_z,
                                     digamma(large_a),
@@ -41,7 +41,7 @@ TEST(MathFunctions, inc_beta_dda) {
                                               digamma(large_a),
                                               digamma(large_a + small_b)))
     << "reasonable values for a, b, x";
-  
+
   EXPECT_FLOAT_EQ(1.8226241, inc_beta_dda(small_a, large_b, small_z,
                                           digamma(small_a),
                                           digamma(small_a + large_b)))
@@ -54,7 +54,7 @@ TEST(MathFunctions, inc_beta_dda) {
                                     digamma(small_a),
                                     digamma(small_a + large_b)))
     << "reasonable values for a, b, x";
-  
+
   EXPECT_FLOAT_EQ(0.0, inc_beta_dda(large_a, large_b, small_z,
                                     digamma(large_a),
                                     digamma(large_a + large_b)))

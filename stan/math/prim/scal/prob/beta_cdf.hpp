@@ -13,6 +13,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -28,7 +29,6 @@
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -53,10 +53,10 @@ namespace stan {
                                                   T_scale_fail>::type
         T_partials_return;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(y, alpha, beta))
         return 1.0;
 
-      static const std::string function = "beta_cdf";
+      static const char* function = "beta_cdf";
       using boost::math::tools::promote_args;
 
       T_partials_return P(1.0);

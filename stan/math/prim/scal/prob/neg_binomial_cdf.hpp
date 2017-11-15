@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -19,7 +20,6 @@
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -29,12 +29,12 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_cdf(const T_n& n, const T_shape& alpha,
                      const T_inv_scale& beta) {
-      static const std::string function = "neg_binomial_cdf";
+      static const char* function = "neg_binomial_cdf";
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(n, alpha, beta))
         return 1.0;
 
       T_partials_return P(1.0);

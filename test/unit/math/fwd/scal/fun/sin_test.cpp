@@ -7,8 +7,8 @@ TEST(AgradFwdSin, Fvar) {
   using std::sin;
   using std::cos;
 
-  fvar<double> x(0.5,1.0);
-  
+  fvar<double> x(0.5, 1.0);
+
   fvar<double> a = sin(x);
   EXPECT_FLOAT_EQ(sin(0.5), a.val_);
   EXPECT_FLOAT_EQ(cos(0.5), a.d_);
@@ -25,12 +25,12 @@ TEST(AgradFwdSin, Fvar) {
   EXPECT_FLOAT_EQ(-3 * sin(0.5) + 5 * 0.5, d.val_);
   EXPECT_FLOAT_EQ(-3 * cos(0.5) + 5, d.d_);
 
-  fvar<double> y(-0.5,1.0);
+  fvar<double> y(-0.5, 1.0);
   fvar<double> e = sin(y);
   EXPECT_FLOAT_EQ(sin(-0.5), e.val_);
   EXPECT_FLOAT_EQ(cos(-0.5), e.d_);
 
-  fvar<double> z(0.0,1.0);
+  fvar<double> z(0.0, 1.0);
   fvar<double> f = sin(z);
   EXPECT_FLOAT_EQ(sin(0.0), f.val_);
   EXPECT_FLOAT_EQ(cos(0.0), f.d_);
@@ -71,7 +71,7 @@ struct sin_fun {
   }
 };
 
-TEST(AgradFwdSin,sin_NaN) {
+TEST(AgradFwdSin, sin_NaN) {
   sin_fun sin_;
-  test_nan_fwd(sin_,false);
+  test_nan_fwd(sin_, false);
 }

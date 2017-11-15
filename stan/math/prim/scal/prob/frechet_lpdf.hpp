@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -21,7 +22,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -32,13 +32,13 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     frechet_lpdf(const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-      static const std::string function = "frechet_lpdf";
+      static const char* function = "frechet_lpdf";
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
       using std::log;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(sigma)))
+      if (size_zero(y, alpha, sigma))
         return 0.0;
 
       T_partials_return logp(0.0);

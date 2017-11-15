@@ -1,5 +1,6 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::math::check_less;
 using stan::math::var;
@@ -10,7 +11,7 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   using stan::math::check_less;
 
   int N = 5;
-  const std::string function = "check_less";
+  const char* function = "check_less";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)
@@ -18,15 +19,15 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(5U,stack_size);
-  EXPECT_NO_THROW(check_less(function,"a",a,10.0));
+  EXPECT_EQ(5U, stack_size);
+  EXPECT_NO_THROW(check_less(function, "a", a, 10.0));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(5U,stack_size_after_call);
+  EXPECT_EQ(5U, stack_size_after_call);
 
-  EXPECT_THROW(check_less(function,"a",a,2.0),std::domain_error);
+  EXPECT_THROW(check_less(function, "a", a, 2.0), std::domain_error);
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(5U,stack_size_after_call);
+  EXPECT_EQ(5U, stack_size_after_call);
 
   stan::math::recover_memory();
 }
