@@ -47,14 +47,17 @@ namespace stan {
       typedef typename stan::partials_return_type<T_theta, T_lam>::type
         T_partials_return;
 
-      check_bounded(function, "theta", theta, 0, 1);
-      check_not_nan(function, "lambda", lambda);
-      check_not_nan(function, "theta", theta);
-      check_finite(function, "lambda", lambda);
-      check_finite(function, "theta", theta);
+      const int N = length(theta);
+
+      for (int n = 0; n < N; ++n) {
+        check_bounded(function, "theta", theta[n], 0, 1);
+        check_not_nan(function, "lambda", lambda[n]);
+        check_not_nan(function, "theta", theta[n]);
+        check_finite(function, "lambda", lambda[n]);
+        check_finite(function, "theta", theta[n]);
+      }
       check_consistent_sizes(function, "theta", theta, "lambda", lambda);
 
-      const int N = length(theta);
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_dbl(N, 1);
       scalar_seq_view<T_theta> theta_vec(theta);
