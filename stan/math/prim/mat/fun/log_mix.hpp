@@ -1,6 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
 
+#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/mat/meta/get.hpp>
+#include <stan/math/prim/mat/meta/length.hpp>
+#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -11,9 +16,6 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
 
 namespace stan {
   namespace math {
@@ -49,15 +51,12 @@ namespace stan {
 
       const int N = length(theta);
 
-      for (int n = 0; n < N; ++n) {
-        check_bounded(function, "theta", theta[n], 0, 1);
-        check_not_nan(function, "lambda", lambda[n]);
-        check_not_nan(function, "theta", theta[n]);
-        check_finite(function, "lambda", lambda[n]);
-        check_finite(function, "theta", theta[n]);
-      }
+      check_bounded(function, "theta", theta, 0, 1);
+      check_not_nan(function, "lambda", lambda);
+      check_not_nan(function, "theta", theta);
+      check_finite(function, "lambda", lambda);
+      check_finite(function, "theta", theta);
       check_consistent_sizes(function, "theta", theta, "lambda", lambda);
-
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_dbl(N, 1);
       scalar_seq_view<T_theta> theta_vec(theta);
