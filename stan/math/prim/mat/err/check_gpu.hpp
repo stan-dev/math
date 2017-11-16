@@ -166,7 +166,7 @@ namespace stan {
           domain_error(function, name, "has zeros on the diagonal.", "");
         }
       } catch (const cl::Error& e) {
-        check_ocl_error("diag_zeros_check",e);
+        check_ocl_error("diag_zeros_check", e);
       }
     }
 

@@ -185,14 +185,15 @@ namespace stan {
      int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
       if (size_rows == 0 || size_cols == 0)
         return;
-      
       if ( (src_offset_rows+size_rows) > src.rows() ||
            (src_offset_cols+size_cols) > src.cols() ) {
-        domain_error("copy_submatrix", "submatrix in src" , " is out of bounds", "");
+        domain_error("copy_submatrix", "submatrix in src" ,
+          " is out of bounds", "");
       }
       if ((dst_offset_rows+size_rows) > dst.rows() ||
            (dst_offset_cols+size_cols) > dst.cols() ) {
-        domain_error("copy_submatrix", "submatrix in src" , " is out of bounds", "");
+        domain_error("copy_submatrix", "submatrix in src" ,
+         " is out of bounds", "");
       }
       if (size_rows == 0 || size_cols == 0)
         return;

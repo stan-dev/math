@@ -186,7 +186,7 @@ namespace stan {
     }
 
     /**
-     * Copies the source matrix that is stored 
+     * Copies the source matrix that is stored
      * on the GPU to the destination Eigen 
      * matrix. 
      * 
@@ -200,12 +200,12 @@ namespace stan {
      */
     template <typename T, int R, int C>
     void copy(matrix_gpu & src,
-     Eigen::Matrix<T, R, C> & dst) {            
+     Eigen::Matrix<T, R, C> & dst) {
             check_size_match("copy (GPU -> Eigen)",
              "src.rows()", src.rows(), "dst.rows()", dst.rows());
             check_size_match("copy (GPU -> Eigen)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
-            try {              
+            try {
               cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
               cl::Buffer buffer = src.buffer();

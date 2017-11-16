@@ -23,6 +23,7 @@ namespace stan {
      * If no matching error number is found, it throws the error
      * with the number. 
      *
+     * @param function the name of the function where the error occured
      * @param e The error number
      * 
      * @throw std::domain_error Always.
@@ -297,7 +298,8 @@ namespace stan {
           error_string = "number " + std::to_string(e.err());
           break;
       }
-      throw std::domain_error(function+": The OpenCL application ended with the error: "
+      throw std::domain_error(function +
+        ": The OpenCL application ended with the error: "
         + error_string);
     }
 

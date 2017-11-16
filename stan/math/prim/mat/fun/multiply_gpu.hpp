@@ -137,11 +137,12 @@ namespace stan {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
        "B.rows()", B.rows());
       matrix_gpu temp(A.rows(), B.cols());
+      if ( temp.size() == 0 )
+        return temp;
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue& cmdQueue = get_queue();
       try {
-        int local = 8;
-        std::cout << A.rows() << " x " << B.cols() << std::endl;
+        int local = 16;
         int Mpad = ((A.rows() + local-1)/local)*local;
         int Npad = ((B.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
