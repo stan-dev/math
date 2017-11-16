@@ -278,7 +278,7 @@ void test_chol_mult(int mat_size, double prec) {
 
   for (int i = 0; i < test_vals.size(); ++i) {
       if (i < test_vec.size()) {
-        test_vec(i) = stan::math::normal_rng(0.0,0.1,rng);
+        test_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
       }
       test_vals(i) = i % 10 / 100.0;
   }
