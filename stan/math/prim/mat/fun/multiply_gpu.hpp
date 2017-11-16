@@ -141,7 +141,7 @@ namespace stan {
       cl::CommandQueue& cmdQueue = get_queue();
       try {
         int local = 8;
-        std::cout << A.rows << " x " << B.cols() << std::endl;
+        std::cout << A.rows() << " x " << B.cols() << std::endl;
         int Mpad = ((A.rows() + local-1)/local)*local;
         int Npad = ((B.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());

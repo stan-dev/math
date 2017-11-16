@@ -183,11 +183,17 @@ namespace stan {
     void copy_submatrix(matrix_gpu & src,
      matrix_gpu & dst, int src_offset_rows, int src_offset_cols,
      int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
-      // TODO(Rok): check if size_rows or size_cols is 0
-      // TODO(Rok): check if size_cols and size_rows is
-      //   larger than src or dst matrix
-      // TODO(Rok): check if offset_rows+size_rows or
-      //   offset_cols+size_cols is out of bounds on any matrix
+      if (size_rows == 0 || size_cols == 0)
+        return;
+      
+      if ( (src_offset_rows+size_rows) > src.rows() ||
+           (src_offset_cols+size_cols) > src.cols() ) {
+        domain_error("copy_submatrix", "submatrix in src" , " is out of bounds", "");
+      }
+      if ((dst_offset_rows+size_rows) > dst.rows() ||
+           (dst_offset_cols+size_cols) > dst.cols() ) {
+        domain_error("copy_submatrix", "submatrix in src" , " is out of bounds", "");
+      }
       if (size_rows == 0 || size_cols == 0)
         return;
       cl::Kernel kernel = get_kernel("copy_submatrix");
@@ -213,7 +219,7 @@ namespace stan {
           kernel,
           cl::NullRange,
           cl::NDRange(size_rows, size_cols),
-          cl::NDRange(size_rows, size_cols),
+          cl::NullRange,
           NULL,
           NULL);
       } catch (const cl::Error& e) {
