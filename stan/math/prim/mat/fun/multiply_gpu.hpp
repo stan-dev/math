@@ -140,8 +140,10 @@ namespace stan {
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue& cmdQueue = get_queue();
       try {
-        int Mpad = ((A.rows() + 15)/16)*16;
-        int Npad = ((B.cols() + 15)/16)*16;
+        int local = 8;
+        std::cout << A.rows << " x " << B.cols() << std::endl;
+        int Mpad = ((A.rows() + local-1)/local)*local;
+        int Npad = ((B.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
         kernel.setArg(1, B.cols());
         kernel.setArg(2, B.rows());
@@ -152,7 +154,7 @@ namespace stan {
           kernel,
           cl::NullRange,
           cl::NDRange(Mpad,  Npad),
-          cl::NDRange(16, 16),
+          cl::NDRange(local, local),
           NULL,
           NULL);
       } catch (cl::Error& e) {
