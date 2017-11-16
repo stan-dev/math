@@ -118,6 +118,10 @@ namespace stan {
         cl::CommandQueue oclQueue_;
         cl::Platform oclPlatform_;
         cl::Device oclDevice_;
+        
+        //device properties
+        std::vector<size_t> maxWorkgroupDimensions;
+        size_t maxWorkgroupSize;
 
         void init() {
           try {
@@ -138,6 +142,15 @@ namespace stan {
             oclDevice_ = allDevices[0];
             description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>() +
              " on the platform " + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+            allDevices[0].getInfo< std::vector<size_t> >(
+              CL_DEVICE_MAX_WORK_ITEM_SIZES, &maxWorkgroupDimensions);
+            std::cout << "Max workgroup dimension: " <<
+            maxWorkgroupDimensions[0] << ", " <<
+            maxWorkgroupDimensions[1] << ", " <<
+            maxWorkgroupDimensions[2] << std::endl;
+            allDevices[0].getInfo< size_t >(
+              CL_DEVICE_MAX_WORK_GROUP_SIZE, &maxWorkgroupSize);
+            std::cout << "Max WG size: " << maxWorkgroupSize << std::endl;
             oclContext_ = cl::Context(allDevices);
             oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
              CL_QUEUE_PROFILING_ENABLE, NULL);
