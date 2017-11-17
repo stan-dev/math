@@ -53,15 +53,14 @@ namespace stan {
         check_not_nan("cov_periodic", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
-                    Eigen::Dynamic, Eigen::Dynamic>
-        cov(x.size(), x.size());
+                    Eigen::Dynamic, Eigen::Dynamic> cov(x.size(), x.size());
 
-      int x_size = x.size();
+      size_t x_size = x.size();
       if (x_size == 0)
         return cov;
 
       T_sigma sigma_sq = square(sigma);
-      T_l neg_two_inv_l_sq = -2.0 / square(l);
+      T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
       T_p pi_div_p = M_PI / p;
 
       for (int j = 0; j < (x_size - 1); ++j) {
@@ -122,13 +121,12 @@ namespace stan {
         check_not_nan("cov_periodic", "x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
-                    Eigen::Dynamic, Eigen::Dynamic>
-        cov(x1.size(), x2.size());
+                    Eigen::Dynamic, Eigen::Dynamic> cov(x1.size(), x2.size());
       if (x1.size() == 0 || x2.size() == 0)
         return cov;
 
       T_sigma sigma_sq = square(sigma);
-      T_l neg_two_inv_l_sq = -2.0 / square(l);
+      T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
       T_p pi_div_p = M_PI / p;
 
       for (size_t i = 0; i < x1.size(); ++i) {

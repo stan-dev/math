@@ -375,15 +375,15 @@ TEST(MathPrimMat, domain_error_training_sig_l_p) {
     << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale"))
     << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
     << msg3;
   EXPECT_TRUE(std::string::npos != msg4.find(" length-scale"))
     << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
     << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
     << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
     << msg7;
 
   EXPECT_THROW(stan::math::cov_periodic(x, sigma, l, p_bad), std::domain_error);
@@ -458,15 +458,15 @@ TEST(MathPrimMat, nan_error_training_sig_l_p) {
     << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale"))
     << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
     << msg3;
   EXPECT_TRUE(std::string::npos != msg4.find(" length-scale"))
     << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
     << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
     << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
     << msg7;
 
 
@@ -552,15 +552,15 @@ TEST(MathPrimMat, domain_error_cov_periodic2) {
     << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale"))
     << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
     << msg3;
   EXPECT_TRUE(std::string::npos != msg4.find(" length-scale"))
     << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
     << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
     << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
     << msg7;
 
 
@@ -663,15 +663,15 @@ TEST(MathPrimMat, nan_domain_error_cov_periodic2) {
     << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale"))
     << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
     << msg3;
   EXPECT_TRUE(std::string::npos != msg4.find(" length-scale"))
     << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
     << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
     << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
+  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
     << msg7;
 
 
