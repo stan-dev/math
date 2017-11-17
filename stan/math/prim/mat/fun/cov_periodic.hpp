@@ -8,6 +8,8 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <vector>
 #include <cmath>
 
@@ -61,11 +63,11 @@ namespace stan {
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-      T_p pi_div_p = M_PI / p;
+      T_p pi_div_p = M_PI * inv(p);
 
-      for (int j = 0; j < (x_size - 1); ++j) {
+      for (size_t j = 0; j < (x_size - 1); ++j) {
         cov(j, j) = sigma_sq;
-        for (int i = j + 1; i < x_size; ++i) {
+        for (size_t i = j + 1; i < x_size; ++i) {
           cov(i, j) = sigma_sq * exp(square(sin(pi_div_p * distance(x[i], x[j])))
                                      * neg_two_inv_l_sq);
           cov(j, i) = cov(i, j);
@@ -127,7 +129,7 @@ namespace stan {
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-      T_p pi_div_p = M_PI / p;
+      T_p pi_div_p = M_PI * inv(p);
 
       for (size_t i = 0; i < x1.size(); ++i) {
         for (size_t j = 0; j < x2.size(); ++j) {
