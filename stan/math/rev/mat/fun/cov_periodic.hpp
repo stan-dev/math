@@ -63,7 +63,7 @@ namespace stan {
        * that the constructor create new varis that aren't
        * popped onto the var_stack_, but rather are
        * popped onto the var_nochain_stack_. This is
-       * controlled to the second argument to
+       * controlled by the second argument to
        * vari's constructor.
        *
        * @param x std::vector of input elements.
@@ -176,7 +176,7 @@ namespace stan {
        * that the constructor create new varis that aren't
        * popped onto the var_stack_, but rather are
        * popped onto the var_nochain_stack_. This is
-       * controlled to the second argument to
+       * controlled by the second argument to
        * vari's constructor.
        *
        * @param x std::vector of input elements.
@@ -250,8 +250,8 @@ namespace stan {
      * \n
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-       * @param x std::vector of input elements.
-       *    Assumes that all elements of x have the same size.
+     * @param x std::vector of input elements.
+     *    Assumes that all elements of x have the same size.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
@@ -307,8 +307,8 @@ namespace stan {
      * \n
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-       * @param x std::vector of input elements.
-       *    Assumes that all elements of x have the same size.
+     * @param x std::vector of input elements.
+     *    Assumes that all elements of x have the same size.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
