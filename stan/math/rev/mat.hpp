@@ -16,7 +16,7 @@
 #include <stan/math/rev/mat/fun/columns_dot_product.hpp>
 #include <stan/math/rev/mat/fun/columns_dot_self.hpp>
 #include <stan/math/rev/mat/fun/cov_exp_quad.hpp>
-#include <stan/math/rev/mat/fun/cov_per.hpp>
+#include <stan/math/rev/mat/fun/cov_periodic.hpp>
 #include <stan/math/rev/mat/fun/crossprod.hpp>
 #include <stan/math/rev/mat/fun/determinant.hpp>
 #include <stan/math/rev/mat/fun/divide.hpp>

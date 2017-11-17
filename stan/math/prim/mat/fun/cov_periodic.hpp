@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_COV_PER_HPP
-#define STAN_MATH_PRIM_MAT_FUN_COV_PER_HPP
+#ifndef STAN_MATH_PRIM_MAT_FUN_COV_PERIODIC_HPP
+#define STAN_MATH_PRIM_MAT_FUN_COV_PERIODIC_HPP
 
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -35,16 +35,16 @@ namespace stan {
     inline typename
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
-    cov_per(const std::vector<T_x>& x,
+    cov_periodic(const std::vector<T_x>& x,
                  const T_sigma& sigma,
                  const T_l& l,
 				 const T_p& p) {
       using std::exp;
-      check_positive("cov_per", "marginal variance", sigma);
-      check_positive("cov_per", "length-scale", l);
-      check_positive("cov_per", "period", p);
+      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "length-scale", l);
+      check_positive("cov_periodic", "period", p);
       for (size_t n = 0; n < x.size(); ++n)
-        check_not_nan("cov_per", "x", x[n]);
+        check_not_nan("cov_periodic", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
@@ -92,19 +92,19 @@ namespace stan {
     inline typename
     Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
-    cov_per(const std::vector<T_x1>& x1,
+    cov_periodic(const std::vector<T_x1>& x1,
                  const std::vector<T_x2>& x2,
                  const T_sigma& sigma,
                  const T_l& l,
 				 const T_p& p) {
       using std::exp;
-      check_positive("cov_per", "marginal variance", sigma);
-      check_positive("cov_per", "length-scale", l);
-      check_positive("cov_per", "period", p);
+      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "length-scale", l);
+      check_positive("cov_periodic", "period", p);
       for (size_t n = 0; n < x1.size(); ++n)
-        check_not_nan("cov_per", "x1", x1[n]);
+        check_not_nan("cov_periodic", "x1", x1[n]);
       for (size_t n = 0; n < x2.size(); ++n)
-        check_not_nan("cov_per", "x2", x2[n]);
+        check_not_nan("cov_periodic", "x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
                     Eigen::Dynamic, Eigen::Dynamic>

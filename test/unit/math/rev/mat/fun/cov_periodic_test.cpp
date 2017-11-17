@@ -10,7 +10,7 @@ std::string pull_msg(std::vector<T_x1> x1,
 					 T_p p) {
   std::string message;
   try {
-    stan::math::cov_per(x1, x2, sigma, l, p);
+    stan::math::cov_periodic(x1, x2, sigma, l, p);
   } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
@@ -26,7 +26,7 @@ std::string pull_msg(std::vector<T_x1> x1,
 					 T_p p) {
   std::string message;
   try {
-    stan::math::cov_per(x1, sigma, l, p);
+    stan::math::cov_periodic(x1, sigma, l, p);
   } catch (std::domain_error& e) {
     message = e.what();
   } catch (...) {
@@ -36,7 +36,7 @@ std::string pull_msg(std::vector<T_x1> x1,
 }
 
 
-TEST(RevMath, cov_per_vvvv) {
+TEST(RevMath, cov_periodic_vvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   for (std::size_t i = 0; i < 3; ++i) {
@@ -49,7 +49,7 @@ TEST(RevMath, cov_per_vvvv) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -88,7 +88,7 @@ TEST(RevMath, cov_per_vvvv) {
   }
 }
 
-TEST(RevMath, cov_per_vvvd) {
+TEST(RevMath, cov_periodic_vvvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double p = 7;
@@ -102,7 +102,7 @@ TEST(RevMath, cov_per_vvvd) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -139,7 +139,7 @@ TEST(RevMath, cov_per_vvvd) {
 }
 
 
-TEST(RevMath, cov_per_vvdv) {
+TEST(RevMath, cov_periodic_vvdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double l = 5;
@@ -153,7 +153,7 @@ TEST(RevMath, cov_per_vvdv) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -190,7 +190,7 @@ TEST(RevMath, cov_per_vvdv) {
 }
 
 
-TEST(RevMath, cov_per_vdvv) {
+TEST(RevMath, cov_periodic_vdvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -203,7 +203,7 @@ TEST(RevMath, cov_per_vdvv) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -240,7 +240,7 @@ TEST(RevMath, cov_per_vdvv) {
   }
 }
 
-TEST(RevMath, cov_per_vvdd) {
+TEST(RevMath, cov_periodic_vvdd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double l = 5;
@@ -254,7 +254,7 @@ TEST(RevMath, cov_per_vvdd) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -286,7 +286,7 @@ TEST(RevMath, cov_per_vvdd) {
   }
 }
 
-TEST(RevMath, cov_per_vdvd) {
+TEST(RevMath, cov_periodic_vdvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -299,7 +299,7 @@ TEST(RevMath, cov_per_vdvd) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -332,7 +332,7 @@ TEST(RevMath, cov_per_vdvd) {
   }
 }
 
-TEST(RevMath, cov_per_vddv) {
+TEST(RevMath, cov_periodic_vddv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -345,7 +345,7 @@ TEST(RevMath, cov_per_vddv) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -379,7 +379,7 @@ TEST(RevMath, cov_per_vddv) {
 }
 
 
-TEST(RevMath, cov_per_vddd) {
+TEST(RevMath, cov_periodic_vddd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
   double l = 5;
@@ -392,7 +392,7 @@ TEST(RevMath, cov_per_vddd) {
       x[1] = -1;
       x[2] = -0.5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -422,7 +422,7 @@ TEST(RevMath, cov_per_vddd) {
 }
 
 
-TEST(RevMath, cov_per_dvvv) {
+TEST(RevMath, cov_periodic_dvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -435,7 +435,7 @@ TEST(RevMath, cov_per_dvvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -468,7 +468,7 @@ TEST(RevMath, cov_per_dvvv) {
 }
 
 
-TEST(RevMath, cov_per_dvvd) {
+TEST(RevMath, cov_periodic_dvvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -481,7 +481,7 @@ TEST(RevMath, cov_per_dvvd) {
         stan::math::var sigma = 0.2;
         stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -508,7 +508,7 @@ TEST(RevMath, cov_per_dvvd) {
   }
 }
 //////////////////////////////////////////////////////
-TEST(RevMath, cov_per_dvdv) {
+TEST(RevMath, cov_periodic_dvdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -521,7 +521,7 @@ TEST(RevMath, cov_per_dvdv) {
       stan::math::var sigma = 0.2;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -549,7 +549,7 @@ TEST(RevMath, cov_per_dvdv) {
   }
 }
 
-TEST(RevMath, cov_per_ddvv) {
+TEST(RevMath, cov_periodic_ddvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -562,7 +562,7 @@ TEST(RevMath, cov_per_ddvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -591,7 +591,7 @@ TEST(RevMath, cov_per_ddvv) {
   }
 }
 
-TEST(RevMath, cov_per_ddvd) {
+TEST(RevMath, cov_periodic_ddvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -604,7 +604,7 @@ TEST(RevMath, cov_per_ddvd) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -628,7 +628,7 @@ TEST(RevMath, cov_per_ddvd) {
   }
 }
 
-TEST(RevMath, cov_per_dddv) {
+TEST(RevMath, cov_periodic_dddv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -641,7 +641,7 @@ TEST(RevMath, cov_per_dddv) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -666,7 +666,7 @@ TEST(RevMath, cov_per_dddv) {
   }
 }
 
-TEST(RevMath, cov_per_dvdd) {
+TEST(RevMath, cov_periodic_dvdd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -679,7 +679,7 @@ TEST(RevMath, cov_per_dvdd) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var sigma = 0.2;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -703,7 +703,7 @@ TEST(RevMath, cov_per_dvdd) {
 }
 
 
-TEST(RevMath, cov_per_vector_vvvv) {
+TEST(RevMath, cov_periodic_vector_vvvv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -726,7 +726,7 @@ TEST(RevMath, cov_per_vector_vvvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -790,7 +790,7 @@ TEST(RevMath, cov_per_vector_vvvv) {
 }
 
 ////////////////////////////////////////////////////////////////////////////
-TEST(RevMath, cov_per_vector_vvvd) {
+TEST(RevMath, cov_periodic_vector_vvvd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -813,7 +813,7 @@ TEST(RevMath, cov_per_vector_vvvd) {
       stan::math::var sigma = 0.2;
       stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -872,7 +872,7 @@ TEST(RevMath, cov_per_vector_vvvd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vvdv) {
+TEST(RevMath, cov_periodic_vector_vvdv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double l = 5;
@@ -895,7 +895,7 @@ TEST(RevMath, cov_per_vector_vvdv) {
       stan::math::var sigma = 0.2;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -954,7 +954,7 @@ TEST(RevMath, cov_per_vector_vvdv) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vdvv) {
+TEST(RevMath, cov_periodic_vector_vdvv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -977,7 +977,7 @@ TEST(RevMath, cov_per_vector_vdvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1037,7 +1037,7 @@ TEST(RevMath, cov_per_vector_vdvv) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vvdd) {
+TEST(RevMath, cov_periodic_vector_vvdd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double l = 5;
@@ -1060,7 +1060,7 @@ TEST(RevMath, cov_per_vector_vvdd) {
 
       stan::math::var sigma = 0.2;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1115,7 +1115,7 @@ TEST(RevMath, cov_per_vector_vvdd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vdvd) {
+TEST(RevMath, cov_periodic_vector_vdvd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1138,7 +1138,7 @@ TEST(RevMath, cov_per_vector_vdvd) {
 
       stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1194,7 +1194,7 @@ TEST(RevMath, cov_per_vector_vdvd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vddv) {
+TEST(RevMath, cov_periodic_vector_vddv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1217,7 +1217,7 @@ TEST(RevMath, cov_per_vector_vddv) {
 
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1273,7 +1273,7 @@ TEST(RevMath, cov_per_vector_vddv) {
   }
 }
 
-TEST(RevMath, cov_per_vector_vddd) {
+TEST(RevMath, cov_periodic_vector_vddd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1295,7 +1295,7 @@ TEST(RevMath, cov_per_vector_vddd) {
       x[1] = x1;
       x[2] = x2;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1347,7 +1347,7 @@ TEST(RevMath, cov_per_vector_vddd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_dvvv) {
+TEST(RevMath, cov_periodic_vector_dvvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1370,7 +1370,7 @@ TEST(RevMath, cov_per_vector_dvvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1403,7 +1403,7 @@ TEST(RevMath, cov_per_vector_dvvv) {
   }
 }
 
-TEST(RevMath, cov_per_vector_dvvd) {
+TEST(RevMath, cov_periodic_vector_dvvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1426,7 +1426,7 @@ TEST(RevMath, cov_per_vector_dvvd) {
       stan::math::var sigma = 0.2;
       stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1454,7 +1454,7 @@ TEST(RevMath, cov_per_vector_dvvd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_dvdv) {
+TEST(RevMath, cov_periodic_vector_dvdv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1477,7 +1477,7 @@ TEST(RevMath, cov_per_vector_dvdv) {
       stan::math::var sigma = 0.2;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1506,7 +1506,7 @@ TEST(RevMath, cov_per_vector_dvdv) {
   }
 }
 
-TEST(RevMath, cov_per_vector_ddvv) {
+TEST(RevMath, cov_periodic_vector_ddvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1529,7 +1529,7 @@ TEST(RevMath, cov_per_vector_ddvv) {
       stan::math::var l = 5;
       stan::math::var p = 7;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1560,7 +1560,7 @@ TEST(RevMath, cov_per_vector_ddvv) {
 }
 
 
-TEST(RevMath, cov_per_vector_dvdd) {
+TEST(RevMath, cov_periodic_vector_dvdd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1583,7 +1583,7 @@ TEST(RevMath, cov_per_vector_dvdd) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var sigma = 0.2;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1608,7 +1608,7 @@ TEST(RevMath, cov_per_vector_dvdd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_ddvd) {
+TEST(RevMath, cov_periodic_vector_ddvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1631,7 +1631,7 @@ TEST(RevMath, cov_per_vector_ddvd) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var l = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1656,7 +1656,7 @@ TEST(RevMath, cov_per_vector_ddvd) {
   }
 }
 
-TEST(RevMath, cov_per_vector_dddv) {
+TEST(RevMath, cov_periodic_vector_dddv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1679,7 +1679,7 @@ TEST(RevMath, cov_per_vector_dddv) {
     for (std::size_t j = 0; j < 3; ++j) {
       stan::math::var p = 5;
 
-      EXPECT_NO_THROW(cov = stan::math::cov_per(x, sigma, l, p));
+      EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -1705,7 +1705,7 @@ TEST(RevMath, cov_per_vector_dddv) {
   }
 }
 
-TEST(RevMath, cov_per1_vec_eigen_rvec) {
+TEST(RevMath, cov_periodic1_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
 
@@ -1721,7 +1721,7 @@ TEST(RevMath, cov_per1_vec_eigen_rvec) {
   }
 
   Eigen::Matrix<var, -1, -1> cov;
-  EXPECT_NO_THROW(cov = stan::math::cov_per(x1, sigma, l, p));
+  EXPECT_NO_THROW(cov = stan::math::cov_periodic(x1, sigma, l, p));
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(3, cov.cols());
   for (int i = 0; i < 3; i++) {
@@ -1740,7 +1740,7 @@ TEST(RevMath, cov_per1_vec_eigen_rvec) {
 }
 
 
-TEST(RevMath, cov_per2_vec_eigen_rvec) {
+TEST(RevMath, cov_periodic2_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -1761,7 +1761,7 @@ TEST(RevMath, cov_per2_vec_eigen_rvec) {
   }
 
   Eigen::Matrix<var, -1, -1> cov;
-  EXPECT_NO_THROW(cov = stan::math::cov_per(x1, x2, sigma, l, p));
+  EXPECT_NO_THROW(cov = stan::math::cov_periodic(x1, x2, sigma, l, p));
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++) {
@@ -1779,7 +1779,7 @@ TEST(RevMath, cov_per2_vec_eigen_rvec) {
   }
 
   Eigen::Matrix<var, -1, -1> cov2;
-  cov2 = stan::math::cov_per(x2, x1, sigma, l, p);
+  cov2 = stan::math::cov_periodic(x2, x1, sigma, l, p);
   EXPECT_EQ(4, cov2.rows());
   EXPECT_EQ(3, cov2.cols());
   for (int i = 0; i < 4; i++) {
@@ -1798,7 +1798,7 @@ TEST(RevMath, cov_per2_vec_eigen_rvec) {
   }
 }
 
-TEST(RevMath, cov_per2_vec_eigen_mixed) {
+TEST(RevMath, cov_periodic2_vec_eigen_mixed) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -1833,7 +1833,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
 
 
   Eigen::Matrix<var, -1, -1> cov;
-  EXPECT_NO_THROW(cov = stan::math::cov_per(x1_rvec, x2_vec, sigma, l, p));
+  EXPECT_NO_THROW(cov = stan::math::cov_periodic(x1_rvec, x2_vec, sigma, l, p));
   EXPECT_EQ(3, cov.rows());
   EXPECT_EQ(4, cov.cols());
   for (int i = 0; i < 3; i++)
@@ -1843,7 +1843,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
         << "index: (" << i << ", " << j << ")";
 
   Eigen::Matrix<var, -1, -1> cov7;
-  EXPECT_NO_THROW(cov7 = stan::math::cov_per(x2_vec, x1_rvec, sigma, l, p));
+  EXPECT_NO_THROW(cov7 = stan::math::cov_periodic(x2_vec, x1_rvec, sigma, l, p));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 4; i++)
@@ -1855,7 +1855,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
     }
 
   Eigen::Matrix<var, -1, -1> cov2;
-  EXPECT_NO_THROW(cov2 = stan::math::cov_per(x1_vec, x2_rvec, sigma, l, p));
+  EXPECT_NO_THROW(cov2 = stan::math::cov_periodic(x1_vec, x2_rvec, sigma, l, p));
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++)
@@ -1865,7 +1865,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
         << "index: (" << i << ", " << j << ")";
 
   Eigen::Matrix<var, -1, -1> cov8;
-  EXPECT_NO_THROW(cov8 = stan::math::cov_per(x2_rvec, x1_vec, sigma, l, p));
+  EXPECT_NO_THROW(cov8 = stan::math::cov_periodic(x2_rvec, x1_vec, sigma, l, p));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 4; i++)
@@ -1877,7 +1877,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
     }
 
   Eigen::Matrix<var, -1, -1> cov3;
-  EXPECT_NO_THROW(cov3 = stan::math::cov_per(x2_vec, x2_rvec, sigma, l, p));
+  EXPECT_NO_THROW(cov3 = stan::math::cov_periodic(x2_vec, x2_rvec, sigma, l, p));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 4; i++)
@@ -1887,7 +1887,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
         << "index: (" << i << ", " << j << ")";
 
   Eigen::Matrix<var, -1, -1> cov4;
-  EXPECT_NO_THROW(cov4 = stan::math::cov_per(x2_rvec, x2_vec, sigma, l, p));
+  EXPECT_NO_THROW(cov4 = stan::math::cov_periodic(x2_rvec, x2_vec, sigma, l, p));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 4; i++)
@@ -1899,7 +1899,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
     }
 
   Eigen::Matrix<var, -1, -1> cov5;
-  EXPECT_NO_THROW(cov5 = stan::math::cov_per(x1_rvec, x1_vec, sigma, l, p));
+  EXPECT_NO_THROW(cov5 = stan::math::cov_periodic(x1_rvec, x1_vec, sigma, l, p));
   EXPECT_EQ(3, cov5.rows());
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++)
@@ -1909,7 +1909,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
         << "index: (" << i << ", " << j << ")";
 
   Eigen::Matrix<var, -1, -1> cov6;
-  EXPECT_NO_THROW(cov6 = stan::math::cov_per(x1_vec, x1_rvec, sigma, l, p));
+  EXPECT_NO_THROW(cov6 = stan::math::cov_periodic(x1_vec, x1_rvec, sigma, l, p));
   EXPECT_EQ(3, cov6.rows());
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++)
@@ -1921,7 +1921,7 @@ TEST(RevMath, cov_per2_vec_eigen_mixed) {
     }
 }
 
-TEST(RevMath, cov_per_domain_error_training) {
+TEST(RevMath, cov_periodic_domain_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1971,32 +1971,32 @@ TEST(RevMath, cov_per_domain_error_training) {
   EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
     << msg7;
 
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l_bad, p_bad), std::domain_error);
 }
 
-TEST(RevMath, cov_per_nan_error_training) {
+TEST(RevMath, cov_periodic_nan_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2055,57 +2055,57 @@ TEST(RevMath, cov_per_nan_error_training) {
   EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
     << msg7;
 
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x, sigma_bad, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad, sigma_bad, l_bad, p_bad), std::domain_error);
 
 
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_2, sigma_bad, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_3, sigma_bad, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_bad_3, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_3, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_bad_3, sigma_bad, l_bad, p_bad), std::domain_error);
 }
 
-TEST(RevMath, cov_per_domain_error) {
+TEST(RevMath, cov_periodic_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2149,13 +2149,13 @@ TEST(RevMath, cov_per_domain_error) {
   EXPECT_TRUE(std::string::npos != msg7.find(" marginal variance"))
     << msg7;
 
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l_bad, p_bad), std::domain_error);
 
   std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -2169,13 +2169,13 @@ TEST(RevMath, cov_per_domain_error) {
     x_vec_2[i] << 4, 1, 3;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
   std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
@@ -2189,33 +2189,33 @@ TEST(RevMath, cov_per_domain_error) {
     x_rvec_2[i] << 4, 1, 3;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
 }
 
-TEST(RevMath, cov_per2_nan_domain_error) {
+TEST(RevMath, cov_periodic2_nan_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2236,13 +2236,13 @@ TEST(RevMath, cov_per2_nan_domain_error) {
   var l_bad = std::numeric_limits<var>::quiet_NaN();
   var p_bad = std::numeric_limits<var>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2, sigma_bad, l_bad, p_bad), std::domain_error);
 
   std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -2256,13 +2256,13 @@ TEST(RevMath, cov_per2_nan_domain_error) {
     x_vec_2[i] << 4, 1, 3;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
   std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_1(3);
   for (size_t i = 0; i < x_rvec_1.size(); ++i) {
@@ -2276,29 +2276,29 @@ TEST(RevMath, cov_per2_nan_domain_error) {
     x_rvec_2[i] << 4, 1, 3;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma, l_bad, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l, p_bad), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l_bad, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2, sigma_bad, l_bad, p_bad), std::domain_error);
 
   std::vector<var> x1_bad(x1);
   x1_bad[1] = std::numeric_limits<var>::quiet_NaN();
@@ -2315,28 +2315,28 @@ TEST(RevMath, cov_per2_nan_domain_error) {
   std::vector<Eigen::Matrix<var, 1, -1> > x_rvec_2_bad(x_rvec_2);
   x_rvec_2_bad[1](1) = std::numeric_limits<var>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::cov_per(x1_bad, x2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1, x2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x1_bad, x2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1_bad, x2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1, x2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x1_bad, x2_bad, sigma, l, p), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1_bad, x_vec_2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1_bad, x_vec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1_bad, x_vec_2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1_bad, x_vec_2_bad, sigma, l, p), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1_bad, x_rvec_2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_rvec_2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1_bad, x_rvec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1_bad, x_rvec_2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_rvec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1_bad, x_rvec_2_bad, sigma, l, p), std::domain_error);
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1_bad, x_rvec_2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1_bad, x_vec_2, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1_bad, x_rvec_2_bad, sigma, l, p), std::domain_error);
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1_bad, x_vec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1_bad, x_rvec_2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1_bad, x_vec_2, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1_bad, x_rvec_2_bad, sigma, l, p), std::domain_error);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1_bad, x_vec_2_bad, sigma, l, p), std::domain_error);
 }
 
 
-TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_vec) {
+TEST(RevMath, cov_periodic2_dim_mismatch_vec_eigen_vec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2354,10 +2354,10 @@ TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_vec) {
     x_vec_2[i] << 4, 1, 3, 1;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l, p), std::invalid_argument);
 }
 
-TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_rvec) {
+TEST(RevMath, cov_periodic2_dim_mismatch_vec_eigen_rvec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2375,10 +2375,10 @@ TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_rvec) {
     x_vec_2[i] << 4, 1, 3, 1;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_vec_2, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_vec_2, sigma, l, p), std::invalid_argument);
 }
 
-TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_mixed) {
+TEST(RevMath, cov_periodic2_dim_mismatch_vec_eigen_mixed) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2408,11 +2408,11 @@ TEST(RevMath, cov_per2_dim_mismatch_vec_eigen_mixed) {
     x_rvec_2[i] << 1, 2, 3, 4;
   }
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_1, x_vec_1, sigma, l, p), std::invalid_argument);
-  EXPECT_THROW(stan::math::cov_per(x_vec_1, x_rvec_1, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_1, x_vec_1, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_1, x_rvec_1, sigma, l, p), std::invalid_argument);
 
-  EXPECT_THROW(stan::math::cov_per(x_rvec_2, x_vec_2, sigma, l, p), std::invalid_argument);
-  EXPECT_THROW(stan::math::cov_per(x_vec_2, x_rvec_2, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_rvec_2, x_vec_2, sigma, l, p), std::invalid_argument);
+  EXPECT_THROW(stan::math::cov_periodic(x_vec_2, x_rvec_2, sigma, l, p), std::invalid_argument);
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
@@ -2425,21 +2425,21 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   x[1] = -1;
   x[2] = -0.5;
 
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), to_var(sigma), to_var(l), to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), to_var(sigma), to_var(l), p));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), to_var(sigma), l, to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), sigma, to_var(l), to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), to_var(sigma), l, p));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), sigma, to_var(l), p));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), sigma, l, to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(to_var(x), sigma, l, p));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), to_var(sigma), to_var(l), to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), to_var(sigma), to_var(l), p));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), to_var(sigma), l, to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), sigma, to_var(l), to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), to_var(sigma), l, p));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), sigma, to_var(l), p));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), sigma, l, to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(to_var(x), sigma, l, p));
 
-  test::check_varis_on_stack(stan::math::cov_per(x, to_var(sigma), to_var(l), to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(x, to_var(sigma), to_var(l), p));
-  test::check_varis_on_stack(stan::math::cov_per(x, to_var(sigma), l, to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(x, sigma, to_var(l), to_var(p)));
-  test::check_varis_on_stack(stan::math::cov_per(x, to_var(sigma), l, p));
-  test::check_varis_on_stack(stan::math::cov_per(x, sigma, to_var(l), p));
-  test::check_varis_on_stack(stan::math::cov_per(x, sigma, l, to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, to_var(sigma), to_var(l), to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, to_var(sigma), to_var(l), p));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, to_var(sigma), l, to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, sigma, to_var(l), to_var(p)));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, to_var(sigma), l, p));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, sigma, to_var(l), p));
+  test::check_varis_on_stack(stan::math::cov_periodic(x, sigma, l, to_var(p)));
 }
 

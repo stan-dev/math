@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUN_COV_PER_HPP
-#define STAN_MATH_REV_MAT_FUN_COV_PER_HPP
+#ifndef STAN_MATH_REV_MAT_FUN_COV_PERIODIC_HPP
+#define STAN_MATH_REV_MAT_FUN_COV_PERIODIC_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
@@ -20,7 +20,7 @@ namespace stan {
 
     /**
      * This is a subclass of the vari class for precomputed
-     * gradients of cov_per.
+     * gradients of cov_periodic.
      *
      * The class stores the double values for the distance
      * matrix, pointers to the varis for the covariance
@@ -33,7 +33,7 @@ namespace stan {
      * @tparam T_p type of period
      */
     template <typename T_x, typename T_sigma, typename T_l, typename T_p>
-    class cov_per_vari : public vari {
+    class cov_periodic_vari : public vari {
     public:
       const size_t size_;
       const size_t size_ltri_;
@@ -52,7 +52,7 @@ namespace stan {
       vari** cov_diag_;
 
       /**
-       * Constructor for cov_per.
+       * Constructor for cov_periodic.
        *
        * All memory allocated in
        * ChainableStack's stack_alloc arena.
@@ -70,7 +70,7 @@ namespace stan {
        * @param l length scale
        * @param p period
        */
-      cov_per_vari(const std::vector<T_x>& x,
+      cov_periodic_vari(const std::vector<T_x>& x,
                         const T_sigma& sigma,
                         const T_l& l,
                         const T_p& p
@@ -136,7 +136,7 @@ namespace stan {
 
     /**
      * This is a subclass of the vari class for precomputed
-     * gradients of cov_per.
+     * gradients of cov_periodic.
      *
      * The class stores the double values for the distance
      * matrix, pointers to the varis for the covariance
@@ -148,7 +148,7 @@ namespace stan {
      * @tparam T_p type of period
      */
     template <typename T_x, typename T_l, typename T_p>
-    class cov_per_vari<T_x, double, T_l, T_p> : public vari {
+    class cov_periodic_vari<T_x, double, T_l, T_p> : public vari {
     public:
       const size_t size_;
       const size_t size_ltri_;
@@ -166,7 +166,7 @@ namespace stan {
       vari** cov_diag_;
 
       /**
-       * Constructor for cov_per.
+       * Constructor for cov_periodic.
        *
        * All memory allocated in
        * ChainableStack's stack_alloc arena.
@@ -184,7 +184,7 @@ namespace stan {
        * @param l length scale
        * @param p period
        */
-      cov_per_vari(const std::vector<T_x>& x,
+      cov_periodic_vari(const std::vector<T_x>& x,
                         double sigma,
                         const T_l& l,
 						const T_p& p)
@@ -258,24 +258,24 @@ namespace stan {
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
                        Eigen::Matrix<var, -1, -1> >::type
-      cov_per(const std::vector<T_x>& x,
+      cov_periodic(const std::vector<T_x>& x,
                    const var& sigma,
                    const var& l,
 				   const var& p) {
-      check_positive("cov_per", "marginal variance", sigma);
-      check_positive("cov_per", "length-scale", l);
-      check_positive("cov_per", "period", p);
+      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "length-scale", l);
+      check_positive("cov_periodic", "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan("cov_per", "x", x[i]);
+        check_not_nan("cov_periodic", "x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
       if (x_size == 0)
         return cov;
 
-      cov_per_vari<T_x, var, var, var> *baseVari
-        = new cov_per_vari<T_x, var, var, var>(x, sigma, l, p);
+      cov_periodic_vari<T_x, var, var, var> *baseVari
+        = new cov_periodic_vari<T_x, var, var, var>(x, sigma, l, p);
 
       size_t pos = 0;
       for (size_t j = 0; j < x_size - 1; ++j) {
@@ -308,25 +308,25 @@ namespace stan {
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
                        Eigen::Matrix<var, -1, -1> >::type
-      cov_per(const std::vector<T_x>& x,
+      cov_periodic(const std::vector<T_x>& x,
                    double sigma,
                    const var& l,
 				   const var& p) {
 
-      check_positive("cov_per", "marginal variance", sigma);
-      check_positive("cov_per", "length-scale", l);
-      check_positive("cov_per", "period", p);
+      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "length-scale", l);
+      check_positive("cov_periodic", "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan("cov_per", "x", x[i]);
+        check_not_nan("cov_periodic", "x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
       if (x_size == 0)
         return cov;
 
-      cov_per_vari<T_x, double, var, var> *baseVari
-        = new cov_per_vari<T_x, double, var, var>(x, sigma, l, p);
+      cov_periodic_vari<T_x, double, var, var> *baseVari
+        = new cov_periodic_vari<T_x, double, var, var>(x, sigma, l, p);
 
       size_t pos = 0;
       for (size_t j = 0; j < x_size - 1; ++j) {
