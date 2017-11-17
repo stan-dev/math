@@ -15,19 +15,27 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns a periodic kernel.
+     * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using the input \f$ \mathbf{X} \f$.
+     * The elements of \f$ \mathbf{K} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
+     * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-     * @tparam T_x type of std::vector of elements
+     * @tparam T_x type of std::vector elements of x.
+     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
-     * @tparam T_l type of length scale
+     * @tparam T_l type of length-scale
      * @tparam T_p type of period
      *
-     * @param x std::vector of elements that can be used in square distance.
-     *    This function assumes each element of x is the same size.
-     * @param sigma standard deviation
-     * @param l length scale
+     * @param x std::vector of input elements.
+     * 		This function assumes that all elements of x have the same size.
+     * @param sigma standard deviation of the signal
+     * @param l length-scale
      * @param p period
-     * @return squared distance
+     * @return periodic covariance matrix
      * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0 or
      *   x is nan or infinite
      */
@@ -35,12 +43,10 @@ namespace stan {
     inline typename
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
-    cov_periodic(const std::vector<T_x>& x,
-                 const T_sigma& sigma,
-                 const T_l& l,
+    cov_periodic(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
 				 const T_p& p) {
       using std::exp;
-      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
       check_positive("cov_periodic", "period", p);
       for (size_t n = 0; n < x.size(); ++n)
@@ -71,34 +77,43 @@ namespace stan {
     }
 
     /**
-     * Returns a periodic kernel.
+     * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using inputs
+     * \f$ \mathbf{X}_1 \f$ and \f$ \mathbf{X}_2 \f$.
+     * The elements of \f$ \mathbf{K} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_{1_i},\mathbf{X}_{2_j}), \f$ where
+     * \f$ \mathbf{X}_{1_i} \f$ and \f$ \mathbf{X}_{2_j} \f$  are the \f$i\f$-th and \f$j\f$-th rows of
+     * \f$ \mathbf{X}_1 \f$ and \f$ \mathbf{X}_2 \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-     * @tparam T_x1 type of first std::vector of elements
-     * @tparam T_x2 type of second std::vector of elements
+     * @tparam T_x1 type of std::vector elements of x1
+     * 		T_x1 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     * @tparam T_x2 type of std::vector elements of x2
+     * 		T_x2 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
-     * @tparam T_l type of length scale
+     * @tparam T_l type of length-scale
      * @tparam T_p type of period
      *
-     * @param x1 std::vector of elements that can be used in square distance
-     * @param x2 std::vector of elements that can be used in square distance
-     * @param sigma standard deviation
-     * @param l length scale
+     * @param x1 std::vector of first input elements
+     * @param x2 std::vector of second input elements.
+     * 		This function assumes that all the elements of x1 and x2 have the same sizes.
+     * @param sigma standard deviation of the signal
+     * @param l length-scale
      * @param p period
-     * @return squared distance
-     * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0 , or
-     *   x is nan or infinite
+     * @return periodic covariance matrix
+     * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0 ,
+     *   x1 or x2 is nan or infinite
      */
     template<typename T_x1, typename T_x2, typename T_sigma, typename T_l, typename T_p>
     inline typename
     Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
-    cov_periodic(const std::vector<T_x1>& x1,
-                 const std::vector<T_x2>& x2,
-                 const T_sigma& sigma,
-                 const T_l& l,
-				 const T_p& p) {
+    cov_periodic(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
+                 const T_sigma& sigma, const T_l& l, const T_p& p) {
       using std::exp;
-      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
       check_positive("cov_periodic", "period", p);
       for (size_t n = 0; n < x1.size(); ++n)

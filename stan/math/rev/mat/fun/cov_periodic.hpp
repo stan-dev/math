@@ -23,13 +23,15 @@ namespace stan {
      * gradients of cov_periodic.
      *
      * The class stores the double values for the distance
-     * matrix, pointers to the varis for the covariance
+     * matrix, sine, cosine and sine squared of the latter,
+     * pointers to the varis for the covariance
      * matrix, along with a pointer to the vari for sigma,
      * the vari for l and the vari for p.
      *
-     * @tparam T_x type of std::vector of elements
+     * @tparam T_x type of std::vector elements of x.
+     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
-     * @tparam T_l type of length scale
+     * @tparam T_l type of length-scale
      * @tparam T_p type of period
      */
     template <typename T_x, typename T_sigma, typename T_l, typename T_p>
@@ -64,17 +66,14 @@ namespace stan {
        * controlled to the second argument to
        * vari's constructor.
        *
-       * @param x std::vector input that can be used in square distance
-       *    Assumes each element of x is the same size
-       * @param sigma standard deviation
-       * @param l length scale
+       * @param x std::vector of input elements.
+       *    Assumes that all elements of x have the same size.
+       * @param sigma standard deviation of the signal
+       * @param l length-scale
        * @param p period
        */
-      cov_periodic_vari(const std::vector<T_x>& x,
-                        const T_sigma& sigma,
-                        const T_l& l,
-                        const T_p& p
-						)
+      cov_periodic_vari(const std::vector<T_x>& x, const T_sigma& sigma,
+                        const T_l& l, const T_p& p)
         : vari(0.0),
           size_(x.size()),
           size_ltri_(size_ * (size_ - 1) / 2),
@@ -139,12 +138,14 @@ namespace stan {
      * gradients of cov_periodic.
      *
      * The class stores the double values for the distance
-     * matrix, pointers to the varis for the covariance
+     * matrix, sine, cosine and sine squared of the latter,
+     * pointers to the varis for the covariance
      * matrix, along with a pointer to the vari for sigma,
      * the vari for l and the vari for p.
      *
-     * @tparam T_x type of std::vector of elements
-     * @tparam T_l type of length scale
+     * @tparam T_x type of std::vector elements of x
+     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     * @tparam T_l type of length-scale
      * @tparam T_p type of period
      */
     template <typename T_x, typename T_l, typename T_p>
@@ -178,15 +179,13 @@ namespace stan {
        * controlled to the second argument to
        * vari's constructor.
        *
-       * @param x std::vector input that can be used in square distance
-       *    Assumes each element of x is the same size
-       * @param sigma standard deviation
-       * @param l length scale
+       * @param x std::vector of input elements.
+       *    Assumes that all elements of x have the same size.
+       * @param sigma standard deviation of the signal
+       * @param l length-scale
        * @param p period
        */
-      cov_periodic_vari(const std::vector<T_x>& x,
-                        double sigma,
-                        const T_l& l,
+      cov_periodic_vari(const std::vector<T_x>& x, double sigma, const T_l& l,
 						const T_p& p)
         : vari(0.0),
           size_(x.size()),
@@ -242,14 +241,21 @@ namespace stan {
     };
 
     /**
-     * Returns a periodic kernel.
+     * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using the input \f$ \mathbf{X} \f$.
+     * The elements of \f$ \mathbf{K} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
+     * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-     * @param x std::vector input that can be used in square distance
-     *    Assumes each element of x is the same size
-     * @param sigma standard deviation
-     * @param l length scale
+       * @param x std::vector of input elements.
+       *    Assumes that all elements of x have the same size.
+     * @param sigma standard deviation of the signal
+     * @param l length-scale
      * @param p period
-     * @return squared distance
+     * @return periodic covariance matrix
      * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0, or
      *   x is nan or infinite
      */
@@ -262,7 +268,7 @@ namespace stan {
                    const var& sigma,
                    const var& l,
 				   const var& p) {
-      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
       check_positive("cov_periodic", "period", p);
       size_t x_size = x.size();
@@ -292,14 +298,21 @@ namespace stan {
     }
 
     /**
-     * Returns a periodic kernel.
+     * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using the input \f$ \mathbf{X} \f$.
+     * The elements of \f$ \mathbf{K} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
+     * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
-     * @param x std::vector input that can be used in square distance
-     *    Assumes each element of x is the same size
-     * @param sigma standard deviation
-     * @param l length scale
+       * @param x std::vector of input elements.
+       *    Assumes that all elements of x have the same size.
+     * @param sigma standard deviation of the signal
+     * @param l length-scale
      * @param p period
-     * @return squared distance
+     * @return periodic covariance matrix
      * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0, or
      *   x is nan or infinite
      */
@@ -313,7 +326,7 @@ namespace stan {
                    const var& l,
 				   const var& p) {
 
-      check_positive("cov_periodic", "marginal variance", sigma);
+      check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
       check_positive("cov_periodic", "period", p);
       size_t x_size = x.size();
