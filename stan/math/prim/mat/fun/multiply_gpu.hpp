@@ -163,6 +163,53 @@ namespace stan {
       }
       return temp;
     }
+    /**
+     * Computes the product of the first two specified GPU matrices.  The number of
+     * columns in the first matrix must be the same as the number of rows
+     * in the second matrix. The number of rows of the resulting matrix must be the
+     * same as the number of rows in the first matrix and the number of columnds
+     * of the resulting matrix must be the same as the number of columns of the 
+     * second matrix. 
+     * 
+     * Computes the matrix multiplication C = A x A^T
+     * 
+     * @param A matrix
+     * 
+     * @return the product of the matrix and its transpose
+     * 
+     * @throw <code>std::invalid_argument</code> if the 
+     *   number of columns in A and rows in B do not match
+     */
+    matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
+      matrix_gpu temp(A.rows(), A.rows());
+      matrix_gpu AT;
+      if ( temp.size() == 0 )
+        return temp;
+      cl::Kernel kernel = get_kernel("multiply_self_transposed");
+      cl::CommandQueue& cmdQueue = get_queue();
+      AT = transpose(A);
+      try {
+        int local = 16;
+        int Mpad = ((A.rows() + local-1)/local)*local;
+        int Npad = ((AT.cols() + local-1)/local)*local;
+        kernel.setArg(0, A.rows());
+        kernel.setArg(1, AT.cols());
+        kernel.setArg(2, AT.rows());
+        kernel.setArg(3, A.buffer());
+        kernel.setArg(4, AT.buffer());
+        kernel.setArg(5, temp.buffer());
+        cmdQueue.enqueueNDRangeKernel(
+          kernel,
+          cl::NullRange,
+          cl::NDRange(Mpad,  Npad),
+          cl::NDRange(local, local),
+          NULL,
+          NULL);
+      } catch (cl::Error& e) {
+        check_ocl_error("multiply", e);
+      }
+      return temp;
+    }
   }
 }
 

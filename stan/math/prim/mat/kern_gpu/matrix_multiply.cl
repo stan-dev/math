@@ -30,7 +30,7 @@ __kernel void scalar_mul(
     }
 }
 
-#define TS 8
+#define TS 16
 __kernel void basic_multiply(const int M, const int N, const int K,
                       const __global double* A,
                       const __global double* B,
@@ -82,5 +82,63 @@ __kernel void basic_multiply(const int M, const int N, const int K,
      C[globalRow*N + globalCol] = acc;
     }
  }
+ 
+#define TS11 16
+__kernel void multiply_self_transposed(const int M, const int N, const int K,
+                      const __global double* A,
+                      const __global double* B,
+                      __global double* C) {
+    // Thread identifiers
+    const int row = get_local_id(0);  // Local row ID (max: TS)
+    const int col = get_local_id(1);  // Local col ID (max: TS)
+    const int globalRow = TS11*get_group_id(0) + row;  // Row ID of C (0..M)
+    const int globalCol = TS11*get_group_id(1) + col;  // Col ID of C (0..N)
+    const int globalColMin = TS11*get_group_id(1);
+    const int globalRowMax = TS11*get_group_id(0)  + get_local_size(0);
 
+    // Local memory to fit a tile of TS*TS elements of A and B
+    __local double Asub[TS11][TS11];
+    __local double Bsub[TS11][TS11];
+
+    // Initialise the accumulation register
+    double acc = 0.0;
+
+    // Loop over all tiles
+    const int numTiles = (K+TS11-1)/TS11;
+    for (int t=0; t < numTiles; t++) {
+        // Load one tile of A and B into local memory
+        const int tiledRow = TS11*t + row;
+        const int tiledCol = TS11*t + col;
+        if(globalColMin <= globalRowMax){
+          if ( tiledRow < K && globalCol < N ) {
+           Asub[col][row] = B[tiledRow*N + globalCol];
+          } else {
+           Asub[col][row] = 0.0;
+          }
+          if ( tiledCol < K && globalRow < M ) {
+           Bsub[col][row] = A[globalRow*K + tiledCol];
+          } else {
+           Bsub[col][row] = 0.0;
+          }
+        }
+        // Synchronise to make sure the tile is loaded
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        // Perform the computation for a single tile
+        if( globalCol <= globalRow ){
+          for (int k=0; k < TS11; k++) {
+              acc += Bsub[k][row] * Asub[col][k];
+          }
+        }
+
+        // Synchronise before loading the next tile
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    // Store the final result in C
+    if ( globalCol < N && globalRow < M && globalCol <= globalRow ) {
+     C[globalRow*N + globalCol] = acc;
+     C[globalCol*N + globalRow] = acc;
+    }
+ }
 )====="
