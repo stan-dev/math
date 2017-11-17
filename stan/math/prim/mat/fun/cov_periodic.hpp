@@ -65,7 +65,7 @@ namespace stan {
       T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
       T_p pi_div_p = M_PI * inv(p);
 
-      for (size_t j = 0; j < (x_size - 1); ++j) {
+      for (size_t j = 0; j < x_size; ++j) {
         cov(j, j) = sigma_sq;
         for (size_t i = j + 1; i < x_size; ++i) {
           cov(i, j) = sigma_sq * exp(square(sin(pi_div_p * distance(x[i], x[j])))
@@ -73,7 +73,6 @@ namespace stan {
           cov(j, i) = cov(i, j);
         }
       }
-      cov(x_size - 1, x_size - 1) = sigma_sq;
       return cov;
     }
 
