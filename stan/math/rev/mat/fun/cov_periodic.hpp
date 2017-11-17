@@ -78,25 +78,25 @@ namespace stan {
           size_(x.size()),
           size_ltri_(size_ * (size_ - 1) / 2),
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
-		  p_d_(value_of(p)),
+          p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
 		  dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
 		  sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
 		  cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
 		  sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
-		  p_vari_(p.vi_),
+          p_vari_(p.vi_),
           cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
           cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
         double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
         double pi_div_p = M_PI / p_d_;
 
         size_t pos = 0;
-        for (size_t j = 0; j < size_ - 1; ++j) {
+        for (size_t j = 0; j < size_; ++j) {
           for (size_t i = j + 1; i < size_; ++i) {
-        	double dist = distance(x[i], x[j]);
-        	double sin_dist = sin(pi_div_p * dist);
-            double sin_dist_sq = square(sin_dist);
+			double dist = distance(x[i], x[j]);
+			double sin_dist = sin(pi_div_p * dist);
+			double sin_dist_sq = square(sin_dist);
             dist_[pos] = dist;
             sin_dist_[pos] = sin_dist;
         	cos_dist_[pos] = cos(pi_div_p * dist);
@@ -105,9 +105,8 @@ namespace stan {
                                        * neg_two_inv_l_sq), false);
             ++pos;
           }
+          cov_diag_[j] = new vari(sigma_sq_d_, false);
         }
-        for (size_t i = 0; i < size_; ++i)
-          cov_diag_[i] = new vari(sigma_sq_d_, false);
       }
 
       virtual void chain() {
@@ -190,7 +189,7 @@ namespace stan {
         : vari(0.0),
           size_(x.size()),
           size_ltri_(size_ * (size_ - 1) / 2),
-          l_d_(value_of(l)), sigma_d_(value_of(sigma)),
+          l_d_(value_of(l)), sigma_d_(sigma),
 		  p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
@@ -198,7 +197,7 @@ namespace stan {
 		  cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
 		  sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_),
-		  p_vari_(p.vi_),
+          p_vari_(p.vi_),
           cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
           cov_diag_(ChainableStack::memalloc_.alloc_array<vari*>(size_)) {
 
@@ -206,22 +205,21 @@ namespace stan {
         double pi_div_p = M_PI / p_d_;
 
         size_t pos = 0;
-        for (size_t j = 0; j < size_ - 1; ++j) {
+        for (size_t j = 0; j < size_; ++j) {
           for (size_t i = j + 1; i < size_; ++i) {
-          	double dist = distance(x[i], x[j]);
-          	double sin_dist = sin(pi_div_p * dist);
-            double sin_dist_sq = square(sin_dist);
-            dist_[pos] = dist;
-            sin_dist_[pos] = sin_dist;
-          	cos_dist_[pos] = cos(pi_div_p * dist);
-            sin_dist_sq_[pos] = sin_dist_sq;
-            cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
-                                         * neg_two_inv_l_sq), false);
+			double dist = distance(x[i], x[j]);
+			double sin_dist = sin(pi_div_p * dist);
+			double sin_dist_sq = square(sin_dist);
+			dist_[pos] = dist;
+			sin_dist_[pos] = sin_dist;
+			cos_dist_[pos] = cos(pi_div_p * dist);
+			sin_dist_sq_[pos] = sin_dist_sq;
+			cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
+										 * neg_two_inv_l_sq), false);
             ++pos;
           }
+          cov_diag_[j] = new vari(sigma_sq_d_, false);
         }
-        for (size_t i = 0; i < size_; ++i)
-          cov_diag_[i] = new vari(sigma_sq_d_, false);
       }
 
       virtual void chain() {
@@ -263,10 +261,8 @@ namespace stan {
     inline typename
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
-                       Eigen::Matrix<var, -1, -1> >::type
-      cov_periodic(const std::vector<T_x>& x,
-                   const var& sigma,
-                   const var& l,
+                       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
+      cov_periodic(const std::vector<T_x>& x, const var& sigma, const var& l,
 				   const var& p) {
       check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
@@ -284,7 +280,7 @@ namespace stan {
         = new cov_periodic_vari<T_x, var, var, var>(x, sigma, l, p);
 
       size_t pos = 0;
-      for (size_t j = 0; j < x_size - 1; ++j) {
+      for (size_t j = 0; j < x_size; ++j) {
         for (size_t i = (j + 1); i < x_size; ++i) {
           cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
           cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
@@ -292,8 +288,6 @@ namespace stan {
         }
         cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
       }
-      cov.coeffRef(x_size - 1, x_size - 1).vi_
-        = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
 
@@ -320,10 +314,8 @@ namespace stan {
     inline typename
     boost::enable_if_c<boost::is_same<typename scalar_type<T_x>::type,
                                       double>::value,
-                       Eigen::Matrix<var, -1, -1> >::type
-      cov_periodic(const std::vector<T_x>& x,
-                   double sigma,
-                   const var& l,
+                       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
+      cov_periodic(const std::vector<T_x>& x, double sigma, const var& l,
 				   const var& p) {
 
       check_positive("cov_periodic", "signal standard deviation", sigma);
@@ -354,7 +346,6 @@ namespace stan {
         = baseVari->cov_diag_[x_size - 1];
       return cov;
     }
-
   }
 }
 #endif

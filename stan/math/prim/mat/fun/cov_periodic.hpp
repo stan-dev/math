@@ -138,7 +138,6 @@ namespace stan {
       }
       return cov;
     }
-
   }
 }
 
