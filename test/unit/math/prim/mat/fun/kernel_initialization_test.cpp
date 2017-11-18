@@ -34,6 +34,8 @@ TEST(MathMatrix, kernel_initialize) {
       stan::math::get_kernel("scalar_mul"));
       EXPECT_NO_THROW(cl::Kernel kernel_basic_multiply = 
       stan::math::get_kernel("basic_multiply"));
+      EXPECT_NO_THROW(cl::Kernel kernel_multiply_self_transposed = 
+      stan::math::get_kernel("multiply_self_transposed"));
       EXPECT_NO_THROW(cl::Kernel kernel_lower_tri_inv_step1 = 
       stan::math::get_kernel("lower_tri_inv_step1"));
       EXPECT_NO_THROW(cl::Kernel kernel_lower_tri_inv_step2 = 
@@ -42,10 +44,6 @@ TEST(MathMatrix, kernel_initialize) {
       stan::math::get_kernel("lower_tri_inv_step3"));
       EXPECT_NO_THROW(cl::Kernel kernel_chol_block = 
       stan::math::get_kernel("cholesky_block"));
-      EXPECT_NO_THROW(cl::Kernel kernel_chol_left = 
-      stan::math::get_kernel("cholesky_left_update"));
-      EXPECT_NO_THROW(cl::Kernel kernel_chol_mid = 
-      stan::math::get_kernel("cholesky_mid_update"));
       EXPECT_NO_THROW(cl::Kernel kernel_chol_zero = 
       stan::math::get_kernel("cholesky_zero"));
       EXPECT_NO_THROW(cl::Kernel kernel_check_nan = 

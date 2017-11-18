@@ -131,6 +131,8 @@ TEST(MathMatrix,multiply_rv_m_exception_fail_zero1) {
   stan::math::matrix_gpu rvv(rv);
   stan::math::matrix_gpu ans_mm(1, 0);
   EXPECT_NO_THROW(ans_mm = stan::math::multiply(rvv, mm));
+  EXPECT_NO_THROW(ans_mm = stan::math::multiply_with_self_transposed(rvv));
+  EXPECT_NO_THROW(ans_mm = stan::math::multiply_with_self_transposed(mm));
 }
 
 TEST(MathMatrix,multiply_rv_m_exception_fail_dims) {
@@ -162,6 +164,8 @@ TEST(MathMatrix,multiply_m_m_exception_pass_dim) {
   stan::math::matrix_gpu mm2(m2);
   stan::math::matrix_gpu mm3(1, 5);
   EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
+  EXPECT_NO_THROW(mm3 = stan::math::multiply_with_self_transposed(mm1));
+  EXPECT_NO_THROW(mm3 = stan::math::multiply_with_self_transposed(mm2));
 }
 
 //TODO(Steve): Should this really throw an exception?
@@ -175,6 +179,8 @@ TEST(MathMatrix,multiply_m_m_exception_fail_dim_zero) {
   stan::math::matrix_gpu mm2(m2);
   stan::math::matrix_gpu mm3(3, 3);
   EXPECT_NO_THROW(mm3 = stan::math::multiply(mm1, mm2));
+  EXPECT_NO_THROW(mm3 = stan::math::multiply_with_self_transposed(mm1));
+  EXPECT_NO_THROW(mm3 = stan::math::multiply_with_self_transposed(mm2));
 }
 
 TEST(MathMatrix,multiply_m_m_exception_fail_dim) {
@@ -204,6 +210,9 @@ TEST(MathMatrix, multiply) {
   EXPECT_NO_THROW(multiply(2.0,v00));
   EXPECT_NO_THROW(multiply(2.0,rv00));
   EXPECT_NO_THROW(multiply(2.0,m00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(v00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(rv00));
+  EXPECT_NO_THROW(multiply_with_self_transposed(m00));
 }
 
 
