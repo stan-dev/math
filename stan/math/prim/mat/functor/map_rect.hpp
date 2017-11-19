@@ -43,10 +43,10 @@ namespace stan {
         const int f_size = f.rows();
         out_size += f_size;
         if(out.rows() < out_size)
-          out.conservativeResize(2*out_size, 1);
+          out.conservativeResize(2*out_size);
         out.segment(out_size - f_size, f_size) = f;
       }
-      out.conservativeResize(out_size, 1);
+      out.conservativeResize(out_size);
       return(out);
 #endif
     }
