@@ -1,723 +1,399 @@
 #include <stan/math/mix/mat.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 using stan::math::fvar;
 using stan::math::var;
 using stan::math::log_mix;
+using stan::math::vector_fv;
+using stan::math::vector_ffv;
+using stan::math::vector_d;
+using stan::math::row_vector_fv;
+using stan::math::row_vector_ffv;
+using stan::math::row_vector_d;
 
-  template<typename T1>
-  void check_prob_d(const T1& prob) {
-    stan::math::vector_d prob_d(4);
-    prob_d << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
+template<typename T_prob, typename T_dens>
+void mix_fv_fv(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d prob_deriv(4);
+  prob_deriv << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
-    for (int i = 0; i < 4; ++i) {
-      EXPECT_FLOAT_EQ(prob[i].d_.adj(), prob_d[i]);
-    }
-  }
+  stan::math::vector_d dens_deriv(4);
+  dens_deriv << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
-  template<typename T2>
-  void check_dens_d(const T2& dens) {
-    stan::math::vector_d dens_d(4);
-    dens_d << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
-
-    for (int i = 0; i < 4; ++i) {
-      EXPECT_FLOAT_EQ(dens[i].d_.adj(), dens_d[i]);
-    }
-  }
-
-  template<typename T1>
-  void check_prob_d_d(const T1& prob) {
-    stan::math::vector_d prob_d(4);
-    prob_d << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
-
-    for (int i = 0; i < 4; ++i) {
-      EXPECT_FLOAT_EQ(prob[i].d_.val_.adj(), prob_d[i]);
-    }
-  }
-
-  template<typename T2>
-  void check_dens_d_d(const T2& dens) {
-    stan::math::vector_d dens_d(4);
-    dens_d << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
-
-    for (int i = 0; i < 4; ++i) {
-      EXPECT_FLOAT_EQ(dens[i].d_.val_.adj(), dens_d[i]);
-    }
-  }
-
-TEST(AgradMixMatrixLogMix, vec_fv_vec_fv) {
-  using stan::math::vector_fv;
-
-  vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
+  fvar<var> out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
   EXPECT_FLOAT_EQ(out.d_.val(), 4.66673118);
-
   out.d_.grad();
 
-  check_prob_d(prob);
-  check_dens_d(dens);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(theta[i].d_.adj(), prob_deriv[i]);
+    EXPECT_FLOAT_EQ(lambda[i].d_.adj(), dens_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, vec_fv_row_vec_fv) {
-  using stan::math::vector_fv;
-  using stan::math::row_vector_fv;
+template<typename T_prob, typename T_dens>
+void mix_fv_d(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d prob_deriv(4);
+  prob_deriv << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
-  vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  row_vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 4.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_fv_vec_fv) {
-  using stan::math::vector_fv;
-  using stan::math::row_vector_fv;
-
-  row_vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 4.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_fv_row_vec_fv) {
-  using stan::math::row_vector_fv;
-
-  row_vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  row_vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 4.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, vec_fv_vec_d) {
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
-
-  vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<var> out = log_mix(prob, dens);
+  fvar<var> out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
   EXPECT_FLOAT_EQ(out.d_.val(), 3.66673118);
-
   out.d_.grad();
 
-  check_prob_d(prob);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(theta[i].d_.adj(), prob_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, vec_fv_row_vec_d) {
-  using stan::math::vector_fv;
-  using stan::math::row_vector_d;
+template<typename T_prob, typename T_dens>
+void mix_d_fv(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d dens_deriv(4);
+  dens_deriv << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
-  vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  row_vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 3.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_fv_vec_d) {
-  using stan::math::row_vector_fv;
-  using stan::math::vector_d;
-
-  row_vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 3.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_fv_row_vec_d) {
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
-
-  row_vector_fv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-
-  row_vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 3.66673118);
-
-  out.d_.grad();
-
-  check_prob_d(prob);
-}
-
-TEST(AgradMixMatrixLogMix, vec_d_vec_fv) {
-  using stan::math::vector_fv;
-  using stan::math::vector_d;
-
-  vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-
-  vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
+  fvar<var> out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
   EXPECT_FLOAT_EQ(out.d_.val(), 1.0);
-
   out.d_.grad();
 
-  check_dens_d(dens);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(lambda[i].d_.adj(), dens_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, vec_d_row_vec_fv) {
-  using stan::math::row_vector_fv;
-  using stan::math::vector_d;
+template<typename T_prob, typename T_dens>
+void mix_ffv_ffv(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d prob_deriv(4);
+  prob_deriv << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
-  vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
+  stan::math::vector_d dens_deriv(4);
+  dens_deriv << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
-  row_vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 1.0);
-
-  out.d_.grad();
-
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_d_vec_fv) {
-  using stan::math::vector_fv;
-  using stan::math::row_vector_d;
-
-  row_vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-
-  vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 1.0);
-
-  out.d_.grad();
-
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_d_row_vec_fv) {
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
-
-  row_vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-
-  row_vector_fv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-
-  fvar<var> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val(), 1.0);
-
-  out.d_.grad();
-
-  check_dens_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, vec_ffv_vec_ffv) {
-  using stan::math::vector_ffv;
-
-  vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
-
-  fvar<fvar<var>> out = log_mix(prob, dens);
+  fvar<fvar<var> > out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
   EXPECT_FLOAT_EQ(out.d_.val_.val(), 4.66673118);
-
   out.d_.val_.grad();
 
-  check_prob_d_d(prob);
-  check_dens_d_d(dens);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(theta[i].d_.val_.adj(), prob_deriv[i]);
+    EXPECT_FLOAT_EQ(lambda[i].d_.val_.adj(), dens_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, vec_ffv_row_vec_ffv) {
-  using stan::math::vector_ffv;
-  using stan::math::row_vector_ffv;
+template<typename T_prob, typename T_dens>
+void mix_ffv_d(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d prob_deriv(4);
+  prob_deriv << 2.3610604993, 0.8685856170, 0.3195347914, 0.1175502804;
 
-  vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  row_vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
-
-  fvar<fvar<var>> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 4.66673118);
-
-  out.d_.val_.grad();
-
-  check_prob_d_d(prob);
-  check_dens_d_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_ffv_vec_ffv) {
-  using stan::math::row_vector_ffv;
-  using stan::math::vector_ffv;
-
-  row_vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
-
-  fvar<fvar<var>> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 4.66673118);
-
-  out.d_.val_.grad();
-
-  check_prob_d_d(prob);
-  check_dens_d_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, row_vec_ffv_row_vec_ffv) {
-  using stan::math::row_vector_ffv;
-
-  row_vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  row_vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
-
-  fvar<fvar<var>> out = log_mix(prob, dens);
-
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 4.66673118);
-
-  out.d_.val_.grad();
-
-  check_prob_d_d(prob);
-  check_dens_d_d(dens);
-}
-
-TEST(AgradMixMatrixLogMix, vec_ffv_vec_d) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<fvar<var> > out = log_mix(prob, dens);
+  fvar<fvar<var> > out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
   EXPECT_FLOAT_EQ(out.d_.val_.val(), 3.66673118);
-
   out.d_.val_.grad();
 
-  check_prob_d_d(prob);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(theta[i].d_.val_.adj(), prob_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, vec_ffv_row_vec_d) {
-  using stan::math::row_vector_d;
-  using stan::math::vector_ffv;
+template<typename T_prob, typename T_dens>
+void mix_d_ffv(const T_prob& theta, const T_dens& lambda) {
+  stan::math::vector_d dens_deriv(4);
+  dens_deriv << 0.3541590748, 0.6080099319, 0.0319534791, 0.0058775140;
 
-  vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
-
-  row_vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-
-  fvar<fvar<var> > out = log_mix(prob, dens);
+  fvar<fvar<var> > out = log_mix(theta, lambda);
 
   EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 3.66673118);
-
+  EXPECT_FLOAT_EQ(out.d_.val_.val(), 1.0);
   out.d_.val_.grad();
 
-  check_prob_d_d(prob);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_FLOAT_EQ(lambda[i].d_.val_.adj(), dens_deriv[i]);
+  }
 }
 
-TEST(AgradMixMatrixLogMix, row_vec_ffv_vec_d) {
-  using stan::math::vector_d;
-  using stan::math::row_vector_ffv;
 
-  row_vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
+TEST(AgradMixMatrixLogMix, fv_fv) {
+  auto prob_fv = [](auto a) {
+    a[0].val_ = 0.15;
+    a[1].val_ = 0.70;
+    a[2].val_ = 0.10;
+    a[3].val_ = 0.05;
+    a[0].d_ = 1.0;
+    a[1].d_ = 1.0;
+    a[2].d_ = 1.0;
+    a[3].d_ = 1.0;
 
-  vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
+    return a;
+  };
+  auto dens_fv = [](auto b) {
+    b[0].val_ = -1.0;
+    b[1].val_ = -2.0;
+    b[2].val_ = -3.0;
+    b[3].val_ = -4.0;
+    b[0].d_ = 1.0;
+    b[1].d_ = 1.0;
+    b[2].d_ = 1.0;
+    b[3].d_ = 1.0;
 
-  fvar<fvar<var> > out = log_mix(prob, dens);
+    return b;
+  };
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 3.66673118);
+  vector_fv vecfv_prob(4);
+  vector_fv vecfv_dens(4);
+  row_vector_fv row_vecfv_prob(4);
+  row_vector_fv row_vecfv_dens(4);
+  std::vector<fvar<var> > std_vecfv_prob(4);
+  std::vector<fvar<var> > std_vecfv_dens(4);
 
-  out.d_.val_.grad();
+  mix_fv_fv(prob_fv(vecfv_prob), dens_fv(vecfv_dens));
+  mix_fv_fv(prob_fv(vecfv_prob), dens_fv(row_vecfv_dens));
+  mix_fv_fv(prob_fv(vecfv_prob), dens_fv(std_vecfv_dens));
 
-  check_prob_d_d(prob);
+  mix_fv_fv(prob_fv(row_vecfv_prob), dens_fv(vecfv_dens));
+  mix_fv_fv(prob_fv(row_vecfv_prob), dens_fv(row_vecfv_dens));
+  mix_fv_fv(prob_fv(row_vecfv_prob), dens_fv(std_vecfv_dens));
+
+  mix_fv_fv(prob_fv(std_vecfv_prob), dens_fv(vecfv_dens));
+  mix_fv_fv(prob_fv(std_vecfv_prob), dens_fv(row_vecfv_dens));
+  mix_fv_fv(prob_fv(std_vecfv_prob), dens_fv(std_vecfv_dens));
 }
 
-TEST(AgradMixMatrixLogMix, row_vec_ffv_row_vec_d) {
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
+TEST(AgradMixMatrixLogMix, fv_d) {
+  auto prob_fv = [](auto a) {
+    a[0].val_ = 0.15;
+    a[1].val_ = 0.70;
+    a[2].val_ = 0.10;
+    a[3].val_ = 0.05;
+    a[0].d_ = 1.0;
+    a[1].d_ = 1.0;
+    a[2].d_ = 1.0;
+    a[3].d_ = 1.0;
 
-  row_vector_ffv prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
-  prob(0).d_ = 1.0;
-  prob(1).d_ = 1.0;
-  prob(2).d_ = 1.0;
-  prob(3).d_ = 1.0;
-  prob(0).val_.d_ = 1.0;
-  prob(1).val_.d_ = 1.0;
-  prob(2).val_.d_ = 1.0;
-  prob(3).val_.d_ = 1.0;
+    return a;
+  };
 
-  row_vector_d dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
+  auto dens_d = [](auto b) {
+    b[0] = -1.0;
+    b[1] = -2.0;
+    b[2] = -3.0;
+    b[3] = -4.0;
 
-  fvar<fvar<var> > out = log_mix(prob, dens);
+    return b;
+  };
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 3.66673118);
+  vector_fv vecfv_prob(4);
+  vector_d vecd_dens(4);
+  row_vector_fv row_vecfv_prob(4);
+  row_vector_d row_vecd_dens(4);
+  std::vector<fvar<var> > std_vecfv_prob(4);
+  std::vector<double> std_vecd_dens(4);
 
-  out.d_.val_.grad();
+  mix_fv_d(prob_fv(vecfv_prob), dens_d(vecd_dens));
+  mix_fv_d(prob_fv(vecfv_prob), dens_d(row_vecd_dens));
+  mix_fv_d(prob_fv(vecfv_prob), dens_d(std_vecd_dens));
 
-  check_prob_d_d(prob);
+  mix_fv_d(prob_fv(row_vecfv_prob), dens_d(vecd_dens));
+  mix_fv_d(prob_fv(row_vecfv_prob), dens_d(row_vecd_dens));
+  mix_fv_d(prob_fv(row_vecfv_prob), dens_d(std_vecd_dens));
+
+  mix_fv_d(prob_fv(std_vecfv_prob), dens_d(vecd_dens));
+  mix_fv_d(prob_fv(std_vecfv_prob), dens_d(row_vecd_dens));
+  mix_fv_d(prob_fv(std_vecfv_prob), dens_d(std_vecd_dens));
 }
 
-TEST(AgradMixMatrixLogMix, vec_d_vec_ffv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+TEST(AgradMixMatrixLogMix, d_fv) {
+  auto prob_d = [](auto a) {
+    a[0] = 0.15;
+    a[1] = 0.70;
+    a[2] = 0.10;
+    a[3] = 0.05;
 
-  vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
+    return a;
+  };
 
-  vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
+  auto dens_fv = [](auto b) {
+    b[0].val_ = -1.0;
+    b[1].val_ = -2.0;
+    b[2].val_ = -3.0;
+    b[3].val_ = -4.0;
+    b[0].d_ = 1.0;
+    b[1].d_ = 1.0;
+    b[2].d_ = 1.0;
+    b[3].d_ = 1.0;
 
-  fvar<fvar<var>> out = log_mix(prob, dens);
+    return b;
+  };
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 1);
+  vector_d vecd_prob(4);
+  vector_fv vecfv_dens(4);
+  row_vector_d row_vecd_prob(4);
+  row_vector_fv row_vecfv_dens(4);
+  std::vector<double> std_vecd_prob(4);
+  std::vector<fvar<var> > std_vecfv_dens(4);
 
-  out.d_.val_.grad();
+  mix_d_fv(prob_d(vecd_prob), dens_fv(vecfv_dens));
+  mix_d_fv(prob_d(vecd_prob), dens_fv(row_vecfv_dens));
+  mix_d_fv(prob_d(vecd_prob), dens_fv(std_vecfv_dens));
 
-  check_dens_d_d(dens);
+  mix_d_fv(prob_d(row_vecd_prob), dens_fv(vecfv_dens));
+  mix_d_fv(prob_d(row_vecd_prob), dens_fv(row_vecfv_dens));
+  mix_d_fv(prob_d(row_vecd_prob), dens_fv(std_vecfv_dens));
+
+  mix_d_fv(prob_d(std_vecd_prob), dens_fv(vecfv_dens));
+  mix_d_fv(prob_d(std_vecd_prob), dens_fv(row_vecfv_dens));
+  mix_d_fv(prob_d(std_vecd_prob), dens_fv(std_vecfv_dens));
 }
 
-TEST(AgradMixMatrixLogMix, vec_d_row_vec_ffv) {
-  using stan::math::vector_d;
-  using stan::math::row_vector_ffv;
+TEST(AgradMixMatrixLogMix, ffv_ffv) {
+  auto prob_ffv = [](auto a) {
+    a[0].val_ = 0.15;
+    a[1].val_ = 0.70;
+    a[2].val_ = 0.10;
+    a[3].val_ = 0.05;
+    a[0].d_ = 1.0;
+    a[1].d_ = 1.0;
+    a[2].d_ = 1.0;
+    a[3].d_ = 1.0;
+    a[0].val_.d_ = 1.0;
+    a[1].val_.d_ = 1.0;
+    a[2].val_.d_ = 1.0;
+    a[3].val_.d_ = 1.0;
 
-  vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
+    return a;
+  };
+  auto dens_ffv = [](auto b) {
+    b[0].val_ = -1.0;
+    b[1].val_ = -2.0;
+    b[2].val_ = -3.0;
+    b[3].val_ = -4.0;
+    b[0].d_ = 1.0;
+    b[1].d_ = 1.0;
+    b[2].d_ = 1.0;
+    b[3].d_ = 1.0;
+    b[0].val_.d_ = 1.0;
+    b[1].val_.d_ = 1.0;
+    b[2].val_.d_ = 1.0;
+    b[3].val_.d_ = 1.0;
 
-  row_vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
+    return b;
+  };
 
-  fvar<fvar<var>> out = log_mix(prob, dens);
+  vector_ffv vecffv_prob(4);
+  vector_ffv vecffv_dens(4);
+  row_vector_ffv row_vecffv_prob(4);
+  row_vector_ffv row_vecffv_dens(4);
+  std::vector<fvar<fvar<var> > > std_vecffv_prob(4);
+  std::vector<fvar<fvar<var> > > std_vecffv_dens(4);
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 1);
+  mix_ffv_ffv(prob_ffv(vecffv_prob), dens_ffv(vecffv_dens));
+  mix_ffv_ffv(prob_ffv(vecffv_prob), dens_ffv(row_vecffv_dens));
+  mix_ffv_ffv(prob_ffv(vecffv_prob), dens_ffv(std_vecffv_dens));
 
-  out.d_.val_.grad();
+  mix_ffv_ffv(prob_ffv(row_vecffv_prob), dens_ffv(vecffv_dens));
+  mix_ffv_ffv(prob_ffv(row_vecffv_prob), dens_ffv(row_vecffv_dens));
+  mix_ffv_ffv(prob_ffv(row_vecffv_prob), dens_ffv(std_vecffv_dens));
 
-  check_dens_d_d(dens);
+  mix_ffv_ffv(prob_ffv(std_vecffv_prob), dens_ffv(vecffv_dens));
+  mix_ffv_ffv(prob_ffv(std_vecffv_prob), dens_ffv(row_vecffv_dens));
+  mix_ffv_ffv(prob_ffv(std_vecffv_prob), dens_ffv(std_vecffv_dens));
 }
 
-TEST(AgradMixMatrixLogMix, row_vec_d_vec_ffv) {
-  using stan::math::row_vector_d;
-  using stan::math::vector_ffv;
+TEST(AgradMixMatrixLogMix, ffv_d) {
+  auto prob_ffv = [](auto a) {
+    a[0].val_ = 0.15;
+    a[1].val_ = 0.70;
+    a[2].val_ = 0.10;
+    a[3].val_ = 0.05;
+    a[0].d_ = 1.0;
+    a[1].d_ = 1.0;
+    a[2].d_ = 1.0;
+    a[3].d_ = 1.0;
+    a[0].val_.d_ = 1.0;
+    a[1].val_.d_ = 1.0;
+    a[2].val_.d_ = 1.0;
+    a[3].val_.d_ = 1.0;
 
-  row_vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
+    return a;
+  };
 
-  vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
+  auto dens_d = [](auto b) {
+    b[0] = -1.0;
+    b[1] = -2.0;
+    b[2] = -3.0;
+    b[3] = -4.0;
 
-  fvar<fvar<var>> out = log_mix(prob, dens);
+    return b;
+  };
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 1);
+  vector_ffv vecffv_prob(4);
+  vector_d vecd_dens(4);
+  row_vector_ffv row_vecffv_prob(4);
+  row_vector_d row_vecd_dens(4);
+  std::vector<fvar<fvar<var> > > std_vecffv_prob(4);
+  std::vector<double> std_vecd_dens(4);
 
-  out.d_.val_.grad();
+  mix_ffv_d(prob_ffv(vecffv_prob), dens_d(vecd_dens));
+  mix_ffv_d(prob_ffv(vecffv_prob), dens_d(row_vecd_dens));
+  mix_ffv_d(prob_ffv(vecffv_prob), dens_d(std_vecd_dens));
 
-  check_dens_d_d(dens);
+  mix_ffv_d(prob_ffv(row_vecffv_prob), dens_d(vecd_dens));
+  mix_ffv_d(prob_ffv(row_vecffv_prob), dens_d(row_vecd_dens));
+  mix_ffv_d(prob_ffv(row_vecffv_prob), dens_d(std_vecd_dens));
+
+  mix_ffv_d(prob_ffv(std_vecffv_prob), dens_d(vecd_dens));
+  mix_ffv_d(prob_ffv(std_vecffv_prob), dens_d(row_vecd_dens));
+  mix_ffv_d(prob_ffv(std_vecffv_prob), dens_d(std_vecd_dens));
 }
 
-TEST(AgradMixMatrixLogMix, row_vec_d_row_vec_ffv) {
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
+TEST(AgradMixMatrixLogMix, d_ffv) {
+  auto prob_d = [](auto a) {
+    a[0] = 0.15;
+    a[1] = 0.70;
+    a[2] = 0.10;
+    a[3] = 0.05;
 
-  row_vector_d prob(4);
-  prob << 0.15, 0.70, 0.10, 0.05;
+    return a;
+  };
 
-  row_vector_ffv dens(4);
-  dens << -1.0, -2.0, -3.0, -4.0;
-  dens(0).d_ = 1.0;
-  dens(1).d_ = 1.0;
-  dens(2).d_ = 1.0;
-  dens(3).d_ = 1.0;
-  dens(0).val_.d_ = 1.0;
-  dens(1).val_.d_ = 1.0;
-  dens(2).val_.d_ = 1.0;
-  dens(3).val_.d_ = 1.0;
+  auto dens_ffv = [](auto b) {
+    b[0].val_ = -1.0;
+    b[1].val_ = -2.0;
+    b[2].val_ = -3.0;
+    b[3].val_ = -4.0;
+    b[0].d_ = 1.0;
+    b[1].d_ = 1.0;
+    b[2].d_ = 1.0;
+    b[3].d_ = 1.0;
+    b[0].val_.d_ = 1.0;
+    b[1].val_.d_ = 1.0;
+    b[2].val_.d_ = 1.0;
+    b[3].val_.d_ = 1.0;
 
-  fvar<fvar<var>> out = log_mix(prob, dens);
+    return b;
+  };
 
-  EXPECT_FLOAT_EQ(out.val_.val_.val(), -1.85911088);
-  EXPECT_FLOAT_EQ(out.d_.val_.val(), 1);
+  vector_d vecd_prob(4);
+  vector_ffv vecffv_dens(4);
+  row_vector_d row_vecd_prob(4);
+  row_vector_ffv row_vecffv_dens(4);
+  std::vector<double> std_vecd_prob(4);
+  std::vector<fvar<fvar<var> > > std_vecffv_dens(4);
 
-  out.d_.val_.grad();
+  mix_d_ffv(prob_d(vecd_prob), dens_ffv(vecffv_dens));
+  mix_d_ffv(prob_d(vecd_prob), dens_ffv(row_vecffv_dens));
+  mix_d_ffv(prob_d(vecd_prob), dens_ffv(std_vecffv_dens));
 
-  check_dens_d_d(dens);
+  mix_d_ffv(prob_d(row_vecd_prob), dens_ffv(vecffv_dens));
+  mix_d_ffv(prob_d(row_vecd_prob), dens_ffv(row_vecffv_dens));
+  mix_d_ffv(prob_d(row_vecd_prob), dens_ffv(std_vecffv_dens));
+
+  mix_d_ffv(prob_d(std_vecd_prob), dens_ffv(vecffv_dens));
+  mix_d_ffv(prob_d(std_vecd_prob), dens_ffv(row_vecffv_dens));
+  mix_d_ffv(prob_d(std_vecd_prob), dens_ffv(std_vecffv_dens));
 }

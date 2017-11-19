@@ -6,6 +6,8 @@
 #include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/arr/meta/get.hpp>
+#include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -74,17 +76,21 @@ namespace stan {
       T_partials_return logp = log_sum_exp(logp_tmp);
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_deriv(N, 1);
-        theta_deriv.array() = (lam_dbl.array() - logp).exp();
+      theta_deriv.array() = (lam_dbl.array() - logp).exp();
 
       Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_deriv(N, 1);
-        lam_deriv.array() = theta_deriv.array() * theta_dbl.array();
+      lam_deriv.array() = theta_deriv.array() * theta_dbl.array();
 
       operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
-      if (!is_constant_struct<T_theta>::value)
-        ops_partials.edge1_.partials_ = theta_deriv;
+      if (!is_constant_struct<T_theta>::value) {
+        for (int n = 0; n < N; ++n)
+          ops_partials.edge1_.partials_[n] = theta_deriv[n];
+      }
 
-      if (!is_constant_struct<T_lam>::value)
-        ops_partials.edge2_.partials_ = lam_deriv;
+      if (!is_constant_struct<T_lam>::value) {
+        for (int n = 0; n < N; ++n)
+          ops_partials.edge2_.partials_[n] = lam_deriv[n];
+      }
 
       return ops_partials.build(logp);
     }
