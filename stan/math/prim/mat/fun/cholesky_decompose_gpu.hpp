@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
 #include <stan/math/prim/mat/fun/multiply_gpu.hpp>
+#include <stan/math/prim/mat/fun/inverse_gpu.hpp>
 #include <stan/math/prim/mat/err/check_gpu.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -51,35 +52,29 @@ namespace stan {
       check_symmetric("cholesky_decompose", "m", m);
       matrix_gpu A(m);
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
-      cl::Kernel kernel_zero = get_kernel("cholesky_zero");
       cl::CommandQueue cmd_queue = get_queue();
       try {
-        cl::Context& ctx = get_context();
         // Will be managed by the library core system
         int block = 64;
         int offset = 0;
         matrix_gpu V(block, block);
-        cl::Buffer buffer_D(ctx, CL_MEM_READ_WRITE,
-         sizeof(T) * block * block);
-        kernel_chol_block.setArg(0, A.buffer());
-        kernel_chol_block.setArg(1, offset);
-        kernel_chol_block.setArg(2, A.rows());
-        kernel_chol_block.setArg(3, block);
-        kernel_chol_block.setArg(5, buffer_D);
-
-        kernel_zero.setArg(0, A.buffer());
-        kernel_zero.setArg(1, A.rows());
-
+        matrix_gpu D(block, block);
         matrix_gpu Mid;
         while ((offset + block) < (A.rows())) {
           matrix_gpu L(A.rows()-offset-block, block);
-          matrix_gpu L1(A.rows()-offset-block, block);
           matrix_gpu Mid_temp(A.rows()-offset-block, A.rows()-offset-block);
 
-          kernel_chol_block.setArg(1, offset);
-          kernel_chol_block.setArg(4, V.buffer());
+          copy_submatrix(A, D, offset, offset, 0, 0, block, block);
+          zeros(V);
+          kernel_chol_block.setArg(0, V.buffer());
+          kernel_chol_block.setArg(1, D.buffer());
+          kernel_chol_block.setArg(2, block);
           cmd_queue.enqueueNDRangeKernel(kernel_chol_block,
            cl::NullRange, cl::NDRange(block), cl::NDRange(block));
+          copy(V, D);
+          copy_submatrix(V, A, 0, 0, offset, offset, block, block);
+
+          V = lower_triangular_inverse(D);
 
           copy_submatrix(A, L, (offset+block), offset, 0, 0,
             (A.rows()-offset-block) , block);
@@ -98,14 +93,18 @@ namespace stan {
         }
         int left = A.rows() - offset;
         if (left > 0) {
-          kernel_chol_block.setArg(4, V.buffer());
-          kernel_chol_block.setArg(1, offset);
-          kernel_chol_block.setArg(3, left);
+          matrix_gpu D(left, left);
+          matrix_gpu V(left, left);
+          copy_submatrix(A, D, offset, offset, 0, 0, left, left);
+          zeros(V);
+          kernel_chol_block.setArg(0, V.buffer());
+          kernel_chol_block.setArg(1, D.buffer());
+          kernel_chol_block.setArg(2, left);
           cmd_queue.enqueueNDRangeKernel(kernel_chol_block,
            cl::NullRange, cl::NDRange(left), cl::NDRange(left));
+           copy_submatrix(V, A, 0, 0, offset, offset, left, left);
         }
-        cmd_queue.enqueueNDRangeKernel(kernel_zero,
-         cl::NullRange, cl::NDRange(A.rows(), A.rows()), cl::NullRange);
+        zeros(A, UPPER);
       } catch (const cl::Error& e) {
         check_ocl_error("cholesky_decompose", e);
       }

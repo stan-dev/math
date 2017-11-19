@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 
-#define DEVICE_FILTER CL_DEVICE_TYPE_CPU
+#define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 
 /*
 *    @file stan/math/prim/mat/fun/ocl.hpp
@@ -129,7 +129,7 @@ namespace stan {
               std::cout << " No platforms found. " << std::endl;
               exit(1);
             }
-            oclPlatform_ = allPlatforms[0];
+            oclPlatform_ = allPlatforms[2];
             std::vector<cl::Device> allDevices;
             oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
             if (allDevices.size() == 0) {

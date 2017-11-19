@@ -8,29 +8,16 @@ R"=====(
 #endif
 
 __kernel void cholesky_block(
-                __global double *b,
-                int offset,
-                int M,
-                int n,
                 __global double *V,
-                __global double *d) {
+                __global double *d,
+                int n) {
   int f = get_local_id(0);
-  int arrSize = n;
-  
-  for (int i = 0; i < n; i++) {
-    d[i*n+f] = b[(i+offset)*M+f+offset];
-    V[i*n+f] = 0.0;
-  }
-  //local double ss;
   for (int j = 0; j <n; j++) { 
-      //barrier(CLK_LOCAL_MEM_FENCE);
-      //if ( f == 0 ){
-        double ss = 0;
-        for (int k = 0; k < j; k++) {
-            ss += V[j * n + k] * V[j * n + k];
-        }
-        V[j * n + j] = sqrt(d[j * n + j] - ss);
-      //}
+      double ss = 0;
+      for (int k = 0; k < j; k++) {
+          ss += V[j * n + k] * V[j * n + k];
+      }
+      V[j * n + j] = sqrt(d[j * n + j] - ss);
       barrier(CLK_LOCAL_MEM_FENCE);
       int i=f;
       if ( i >= (j+1) && i < n ){
@@ -40,33 +27,6 @@ __kernel void cholesky_block(
           }
           V[i * n + j] = (1.0 / V[j * n + j] * (d[i * n + j] - s));
       }
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-
-  for (int i = 0; i < n; i++) {
-    d[i*n+f] = V[i*n+f];
-    b[(i+offset)*M+f+offset] = V[i*n+f];
-  }
-  for (int i = 0; i < n; i++) {
-    if ( i == f )
-      V[i*n+f] = 1.0;
-    else
-      V[i*n+f] = 0.0;
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
-  double faktor;
-  for (int i = 0; i < n; i++) {
-    if ( i > 0 ) {
-      barrier(CLK_LOCAL_MEM_FENCE);
-      for (int j = i; j < n; j++) {
-        faktor = d[j*n+i-1];
-        V[j*n+f] = V[j*n+f]-faktor*V[(i-1)*n+f];
-        barrier(CLK_LOCAL_MEM_FENCE);
-      }
-    }
-    faktor = d[i*n+i];
-    V[i*n+f] = V[i*n+f]/faktor;
-    barrier(CLK_LOCAL_MEM_FENCE);
   }
 }
 
