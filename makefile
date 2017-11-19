@@ -1,11 +1,10 @@
 # Makefile for Stan.
 ##
 
+.SUFFIXES: 
+
 # The default target of this Makefile is...
 help:
-
-## Disable implicit rules.
-SUFIXES:
 
 include make/default_compiler_options
 
@@ -46,6 +45,7 @@ include make/cpplint  # cpplint
 ##
 ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOALS)))
   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
+  -include $(shell find stan -name *.d)
 endif
 
 
@@ -121,11 +121,11 @@ doxygen:
 clean:
 	@echo '  removing test executables'
 	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
-	$(shell find test -type f -name "*_test.d" -exec rm {} +)
 	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
 	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
 	$(shell find test -type f -name "*.o" -exec rm {} +)
 	$(shell find test -type f -name "lib*.so" -exec rm {} +)
+	$(shell find test stan -type f -name "*.d" -or -name "*.hpp.gch" -exec rm {} +)
 
 clean-doxygen:
 	$(RM) -r doc/api

@@ -9,26 +9,31 @@ GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 ##
 # Build the google test library.
 ##
-$(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
+$(GTEST)/src/gtest-all.o: $(GTEST)/src/gtest-all.cc
+	$(COMPILE.cpp) -o $@ $<
 
-test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
-test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^
-
-
-
+$(GTEST)/%.cc: ;
 
 ##
 # Rule for generating dependencies.
 ##
-.PRECIOUS: test/%.d
-test/%.d : test/%.cpp
+.PRECIOUS: %.d
+%.d : %.cpp
 	@mkdir -p $(dir $@)
 	@set -e; \
 	rm -f $@; \
 	$(COMPILE.cpp) -MM $< > $@.$$$$; \
 	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
+
+%.d : %.hpp
+	@mkdir -p $(dir $@)
+	@set -e; \
+	rm -f $@; \
+	$(COMPILE.cpp) -MM $< > $@.$$$$; \
+	sed -e 's,\($(*F)\)\.o[ :]*,$(@D)/\1.hpp.gch $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+    $(eval include $$@)
 
 ##
 # Adding a test for multiple translation units. If this fails,
@@ -42,6 +47,7 @@ test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/mul
 	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
+
 
 ############################################################
 #
@@ -75,6 +81,89 @@ test/dummy.cpp:
 
 .PHONY: test-headers
 test-headers: $(HEADER_TESTS)
+
+test/unit/math_include_test.o: test/unit/math_include_test.cpp
+	$(COMPILE.cpp) $< -o $@
+
+############################################################
+#
+# General make targets for tests
+# (necessary now that implicit SUFFIX rules are actually turned off)
+#
+
+test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
+test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
+	$(LINK.cpp) -o $@ $^
+
+# We need these explicit targets here because we turned off suffixes. We can't
+# make a more general pattern rule like test/%.o because we want to force make
+# to generate the pre-compiled headers (below) when applicable.
+test/unit/math_c11_test.o: test/unit/math_c11_test.cpp
+	$(COMPILE.cpp) $< -o $@
+
+test/unit/math/memory/%.o: test/unit/math/memory/%.cpp
+	$(COMPILE.cpp) $< -o $@
+
+############################################################
+#
+# Targets to include proper pre-compiled header files (.hpp.gch) for unit tests
+# and distribution tests 
+##
+
+.PRECIOUS: %.hpp.gch test/%.o
+
+%.hpp.gch: %.hpp %.d
+	$(COMPILE.cpp) -o $@ $(@:.gch=)
+
+test/prob/%.o : stan/math/mix/mat.hpp.gch test/prob/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/prim/scal/%.o : stan/math/prim/scal.hpp.gch test/unit/math/prim/scal/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/prim/arr/%.o : stan/math/prim/arr.hpp.gch test/unit/math/prim/arr/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/prim/mat/%.o : stan/math/prim/mat.hpp.gch test/unit/math/prim/mat/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/rev/core/%.o : stan/math/rev/core.hpp.gch test/unit/math/rev/core/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/rev/scal/%.o : stan/math/rev/scal.hpp.gch test/unit/math/rev/scal/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/rev/arr/%.o : stan/math/rev/arr.hpp.gch test/unit/math/rev/arr/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/rev/mat/%.o : stan/math/rev/mat.hpp.gch test/unit/math/rev/mat/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/fwd/core/%.o : stan/math/fwd/core.hpp.gch test/unit/math/fwd/core/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/fwd/scal/%.o : stan/math/fwd/scal.hpp.gch test/unit/math/fwd/scal/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/fwd/arr/%.o : stan/math/fwd/arr.hpp.gch test/unit/math/fwd/arr/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/fwd/mat/%.o : stan/math/fwd/mat.hpp.gch test/unit/math/fwd/mat/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/scal/%.o : stan/math/mix/scal.hpp.gch test/unit/math/mix/scal/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/arr/%.o : stan/math/mix/arr.hpp.gch test/unit/math/mix/arr/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+test/unit/math/mix/mat/%.o : stan/math/mix/mat.hpp.gch test/unit/math/mix/mat/%.cpp
+	$(COMPILE.cpp) $(if $(filter $(CC_TYPE),clang++),-include-pch $<) -o $@ $(@:.o=.cpp)
+
+# No stan/math/mix/core.hpp exists
+test/unit/math/mix/core/%.o : test/unit/math/mix/core/%.cpp
+	$(COMPILE.cpp) -o $@ $(@:.o=.cpp)
+
 
 ############################################################
 ##

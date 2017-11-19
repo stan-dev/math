@@ -27,6 +27,7 @@
 *.o-*
 *.exe
 *.a
+*.gch
 
 # /doc/
 /doc/api
