@@ -129,6 +129,7 @@ namespace stan {
 
         int offset = 0;
 
+        // TODO: add exception handling
         for(std::size_t i=0; i != num_local_jobs_; ++i) {
           const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
           local_f_out[i] = job_output.cols();
@@ -157,6 +158,9 @@ namespace stan {
         }
 
         t_cache_f_out::cache_t& world_f_out = t_cache_f_out::lookup(callsite_id_);
+
+        // check that cached sizes are the same as just collected from
+        // this evaluation
 
         return combine_.gather_outputs(local_output_, world_f_out);
       }
@@ -193,8 +197,8 @@ namespace stan {
       }
 
       void setup_call(const vector_d& shared_params, const matrix_d& job_params,
-                      const std::vector<std::vectotr<double>>& x_r,
-                      const std::vector<std::vectotr<int>>& x_i) {
+                      const std::vector<std::vector<double>>& x_r,
+                      const std::vector<std::vector<int>>& x_i) {
 
         if(!t_cache_meta::is_cached(callsite_id_)) {
           std::vector<int> meta(3);
@@ -232,32 +236,84 @@ namespace stan {
     };
 
     template <typename F, typename T_shared_param, typename T_job_param>
-    struct map_rect_mpi_traits;
+    struct map_rect_reduce;
 
-    template<>
-    template<typename F>
-    struct map_rect_traits<F,double,double> {
-      typedef simple_reducer<F> reduce_t;
-      typedef simple_combine<F> combine_t;
-    };
-
+    template <>
     template <typename F>
-    struct simple_reducer {
+    struct map_rect_reduce<F, double, double> {
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
         const vector_d out = F::apply(shared_params, job_specific_params, x_r, x_i);
         return( out.transpose() );
       }
     };
+      
+    template <typename F, typename T_shared_param, typename T_job_param>
+    class map_rect_combine {
+      boost::mpi::communicator world_;
+      const std::size_t rank_ = world_.rank();
+      const std::size_t world_size_ = world_.size();
 
-    // combine must be instantiated to be able to hold a reference to
-    // the operands for the AD cases
-    template <typename F>
-    struct simple_combine {
-      simple_combine() {}
-      simple_combine(const vector_d& shared_params, const std::vector<vector_d>& job_params) {}
-      typedef vector_d result_type;
-      vector_d gather_outputs(...) {
-        // gather stuff into a single big object which we output as VectorXd.
+      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>* shared_params_operands_;
+      const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>* job_params_operands_;
+      
+    public:
+
+      typedef Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1> result_type;
+      
+      map_rect_combine() {}
+      map_rect_combine(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+                       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
+        : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
+
+      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out) {
+
+        const std::size_t num_jobs = world_f_out.size();
+        const std::size_t num_output_per_job = local_result.rows();
+        const std::size_t size_world_f_out = sum(world_f_out);
+
+        matrix_d world_result(num_output_per_job, size_world_f_out);
+
+        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs, 1);
+        std::vector<int> chunks_result(world_size_,0);
+        for(std::size_t i=0, ij=0; i != world_size_; ++i)
+          for(std::size_t j=0; j != job_chunks[i]; ++j, ++ij)
+            chunks_result[i] += world_f_out_[ij] * num_output_per_job;
+
+        // collect results
+        //std::cout << "gathering actual outputs..." << std::endl;
+        boost::mpi::gatherv(world_, local_result.data(), local_result.size(), world_result, chunks_result, 0);
+
+        // only add result to AD tree on root
+        if(rank_ != 0)
+          return(result_type());
+
+        result_type out(size_world_f_out);
+
+        const std::size_t num_shared_operands = *shared_params_operands_.size();
+        const std::size_t num_job_operands = *job_params_operands_.size();
+
+        const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
+
+        for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
+          for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
+            operands_and_partials<T_shared_param, T_job_param>
+              ops_partials(*shared_params_operands_, *job_params_operands_[i]);
+
+            if (!is_constant_struct<T_shared_param>::value) {
+              for(std::size_t k=0; k != num_shared_operands; ++k)
+                ops_partials.edge1_.partials[k] = world_result(1+k,ij);
+            }
+              
+            if (!is_constant_struct<T_job_param>::value) {
+              for(std::size_t k=0; k != num_job_operands; ++k)
+                ops_partials.edge2_.partials[k] = world_result(offset_job_params+k,ij);
+            }
+
+            out(ij) = ops_partials.build(world_result(1,ij));
+          }
+        }
+
+        return(out);
       }
     };
 
@@ -268,8 +324,8 @@ namespace stan {
                  const std::vector<std::vector<double>>& x_r,
                  const std::vector<std::vector<int>>& x_i,
                  const int callsite_id) {
-      typedef typename map_rect_traits<F, T_shared_param, T_job_param>::reduce_t ReduceF;
-      typedef typename map_rect_traits<F, T_shared_param, T_job_param>::combine_t CombineF;
+      typedef typename map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
+      typedef typename map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
       mpi_parallel_call<ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i, callsite_id);
 

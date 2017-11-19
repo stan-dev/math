@@ -7,22 +7,6 @@
 namespace stan {
   namespace math {
 
-    /*
-    template <typename T>
-    std::vector<std::vector<T> > transpose(const std::vector<std::vector<T> >& in) {
-      const std::size_t num_cols = in.size();
-      if(num_cols == 0) return(in);
-      const std::size_t num_rows = in[0].size();
-      std::vector<std::vector<T> > out(num_rows, std::vector<T>(num_cols));
-
-      for(std::size_t i=0; i < num_cols; ++i)
-        for(std::size_t j=0; j < num_rows; ++j)
-          out[j][i] = in[i][j];
-      
-      return(out);
-    }
-    */
-
     template <typename F, typename T_shared_param, typename T_job_param>
     Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1>
     map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
