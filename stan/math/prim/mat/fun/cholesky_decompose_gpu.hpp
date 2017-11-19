@@ -35,27 +35,18 @@ namespace stan {
      * input matrix is transfered to the GPU and the resulting
      * lower-triangular matrix is then copied from the GPU.
      * 
-     * @param m Symmetrix matrix.
-     * @return Square root of matrix.
-     * @throw std::domain_error if m is not a symmetric matrix or
-     *   if m is not positive definite (if m has more than 0 elements)
-     */
-    template <typename T>
-    typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
-    cholesky_decompose_gpu(const Eigen::Matrix<T,
-     Eigen::Dynamic, Eigen::Dynamic>& m) {
-      if (m.size() == 0) return m;
-      check_symmetric("cholesky_decompose", "m", m);
-      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-       m_tmp(m.rows(), m.cols());
-      check_symmetric("cholesky_decompose", "m", m);
-      matrix_gpu A(m);
+     * @param m Symmetrix matrix on the GPU.
+     * @return Square root of matrix on the GPU.
+     * @throw std::domain_error if m is not
+     *  positive definite (if m has more than 0 elements)
+     */    
+    matrix_gpu cholesky_decompose_gpu(matrix_gpu & A) {
+      if (A.size() == 0) return A;
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
       try {
         // Will be managed by the library core system
-        int block = 64;
+        int block = 200;
         int offset = 0;
         matrix_gpu V(block, block);
         matrix_gpu D(block, block);
@@ -103,6 +94,93 @@ namespace stan {
           cmd_queue.enqueueNDRangeKernel(kernel_chol_block,
            cl::NullRange, cl::NDRange(left), cl::NDRange(left));
            copy_submatrix(V, A, 0, 0, offset, offset, left, left);
+        }
+        zeros(A, UPPER);
+      } catch (const cl::Error& e) {
+        check_ocl_error("cholesky_decompose", e);
+      }
+      copy_triangular_transposed(A, LOWER_TO_UPPER_TRIANGULAR);
+      check_positive_definite_gpu("cholesky_decompose_gpu",
+        "Matrix m", A);
+      zeros(A, UPPER);
+      matrix_gpu B(A.rows(), A.cols());
+      copy(A, B);
+      return B;
+    }
+     /**
+     * Return the lower-triangular Cholesky factor (i.e., matrix
+     * square root) of the specified square, symmetric matrix.  
+     * The return value \f$L\f$ will be a lower-traingular matrix such that the
+     * original matrix \f$A\f$ is given by
+     * <p>\f$A = L \times L^T\f$.
+     * The Cholesky decomposition is computed on the GPU. The
+     * input matrix is transfered to the GPU and the resulting
+     * lower-triangular matrix is then copied from the GPU.
+     * 
+     * @param m Symmetrix matrix.
+     * @return Square root of matrix.
+     * @throw std::domain_error if m is not a symmetric matrix or
+     *   if m is not positive definite (if m has more than 0 elements)
+     */
+    template <typename T>
+    typename boost::enable_if_c<boost::is_arithmetic<T>::value,
+     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
+    cholesky_decompose_gpu(const Eigen::Matrix<T,
+     Eigen::Dynamic, Eigen::Dynamic>& m) {
+      if (m.size() == 0) return m;
+      check_symmetric("cholesky_decompose", "m", m);
+      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+       m_tmp(m.rows(), m.cols());
+
+      matrix_gpu A(m);
+      cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
+      cl::CommandQueue cmd_queue = get_queue();
+      try {
+        // Will be managed by the library core system
+        int block = m.rows()/5;
+        if ( m.rows() <= 128 )
+          block = 128;
+        int offset = 0;
+        matrix_gpu V(block, block);
+        matrix_gpu D(block, block);
+        matrix_gpu Mid;
+
+        while ((offset + block) < (A.rows())) {
+          matrix_gpu L(A.rows()-offset-block, block);
+          matrix_gpu Mid_temp(A.rows()-offset-block, A.rows()-offset-block);
+
+          copy_submatrix(A, D, offset, offset, 0, 0, block, block);
+          zeros(V);
+          V = cholesky_decompose_gpu(D);
+          copy(V, D);
+          copy_submatrix(V, A, 0, 0, offset, offset, block, block);
+
+          V = lower_triangular_inverse(D);
+
+          copy_submatrix(A, L, (offset+block), offset, 0, 0,
+            (A.rows()-offset-block) , block);
+          V = transpose(V);
+          L = multiply(L, V);
+          copy_submatrix(L, A, 0, 0, (offset+block), offset,
+            (A.rows()-offset-block) , block);
+
+          copy_submatrix(A, Mid_temp, (offset+block), (offset+block),
+            0, 0, (A.rows()-offset-block), (A.rows()-offset-block));
+          Mid = multiply_with_self_transposed(L);
+          Mid = subtract(Mid_temp, Mid);
+          copy_submatrix(Mid, A, 0, 0, (offset+block), (offset+block),
+            (A.rows()-offset-block), (A.rows()-offset-block));
+
+          offset += block;
+        }
+        int left = A.rows() - offset;
+        if (left > 0) {
+          matrix_gpu D(left, left);
+          matrix_gpu V(left, left);
+          copy_submatrix(A, D, offset, offset, 0, 0, left, left);
+          zeros(V);
+          V = cholesky_decompose_gpu(D);
+          copy_submatrix(V, A, 0, 0, offset, offset, left, left);
         }
         zeros(A, UPPER);
       } catch (const cl::Error& e) {
