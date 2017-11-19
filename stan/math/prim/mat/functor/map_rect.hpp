@@ -7,6 +7,7 @@
 namespace stan {
   namespace math {
 
+    /*
     template <typename T>
     std::vector<std::vector<T> > transpose(const std::vector<std::vector<T> >& in) {
       const std::size_t num_cols = in.size();
@@ -20,33 +21,35 @@ namespace stan {
       
       return(out);
     }
+    */
 
     template <typename F, typename T_shared_param, typename T_job_param>
     Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1>
     map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
-             const Eigen::Matrix<T_job_param, Eigen::Dynamic, Eigen::Dynamic>& job_params,
+             const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >& job_params,
              const std::vector<std::vector<double> >& x_r,
              const std::vector<std::vector<int> >& x_i,
              const int callsite_id) {
 #ifdef STAN_HAS_MPI
       return(map_rect_mpi<F>(eta, theta, x_r, x_i, callsite_id));
 #else
-      typedef typename stan::return_type<T_shared_param, T_job_param>::type T_out;
-      Eigen::Matrix<T_out, Eigen::Dynamic, 1> out;
-      const std::size_t num_jobs = job_params.cols();
-      const std::vector<std::vector<double> > trans_x_r = transpose(x_r);
-      const std::vector<std::vector<int> > trans_x_i = transpose(x_i);
+      typedef typename stan::return_type<T_shared_param, T_job_param>::type result_type;
+      Eigen::Matrix<result_type, Eigen::Dynamic, 1> out(job_params.size());
+      const std::size_t num_jobs = job_params.size();
+      int out_size = 0;
 
       for(std::size_t i = 0; i != num_jobs; ++i) {
-        const Eigen::Matrix<T_out, Eigen::Dynamic, 1> f = F::apply(shared_params, job_params.col(i), trans_x_r[i], trans_x_i[i]);
-        const std::size_t f_size = f.rows();
-        // TODO: we should probably always double the size and then
-        // discard excessive empty elements before we return
-        out.conservativeResize(out.rows() + f_size, 1);
-        out.bottomRows(f_size) = f;
+        const Eigen::Matrix<result_type, Eigen::Dynamic, 1> f = F::apply(shared_params, job_params[i], x_r[i], x_i[i]);
+        const int f_size = f.rows();
+        out_size += f_size;
+        if(out.rows() < out_size)
+          out.conservativeResize(2*out_size, 1);
+        out.segment(out_size - f_size, f_size) = f;
       }
+      out.conservativeResize(out_size, 1);
       return(out);
 #endif
     }
   }
 }
+
