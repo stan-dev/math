@@ -29,4 +29,18 @@ __kernel void check_diagonal_zeros(
   }
 }
 
+__kernel void check_symmetric(
+            __global double *A,
+            int rows,
+            int cols,
+            __global int *flag,
+            double tolerance) {
+  const int i = get_global_id(0);
+  const int j = get_global_id(1);
+  double diff = fabs(A[i*cols+j]-A[j*cols+i]);
+  if ( diff > tolerance ) {
+    flag[0] = 1;
+  }
+}
+
 )====="

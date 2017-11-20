@@ -11,6 +11,27 @@
 
 namespace stan {
   namespace math {
+     /**
+     * Check if the specified matrix on the GPU is square.
+     *
+     * This check allows 0x0 matrices.
+     *
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix on the GPU to test
+     *
+     * @throw <code>std::invalid_argument</code> if the matrix
+     *    is not square
+     */
+    inline void
+    check_square(const std::string& function,
+                 const std::string& name,
+                 matrix_gpu& y) {
+      check_size_match(function,
+                       "Expecting a square matrix; rows of ", name, y.rows(),
+                       "columns of ", name, y.cols());
+    }
     /**
      * Check if the specified matrix on the GPU has NaN values
      *
@@ -118,7 +139,53 @@ namespace stan {
         check_ocl_error("nan_check", e);
       }
     }
+    /**
+     * Check if the specified matrix on the GPU is symmetric
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix to test
+     *
+     * @throw <code>std::domain_error</code> if
+     *    the matrix is not symmetric.
+     */
+    inline void
+    check_symmetric_gpu(const std::string& function,
+                           const std::string& name,
+                  matrix_gpu& y) {
+      if (y.size() == 0) return;
+      check_square(function, name, y);
+      cl::Kernel kernel_check_symmetric = get_kernel("check_symmetric");
+      cl::CommandQueue cmd_queue = get_queue();
 
+      try {
+        cl::Context& ctx = get_context();
+        int symmetric_flag = 0;
+        cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE,
+         sizeof(int));
+
+        cmd_queue.enqueueWriteBuffer(buffer_symmetric_flag, CL_TRUE, 0,
+         sizeof(int), &symmetric_flag);
+
+        kernel_check_symmetric.setArg(0, y.buffer());
+        kernel_check_symmetric.setArg(1, y.rows());
+        kernel_check_symmetric.setArg(2, y.cols());
+        kernel_check_symmetric.setArg(3, buffer_symmetric_flag);
+        kernel_check_symmetric.setArg(4, CONSTRAINT_TOLERANCE);
+
+        cmd_queue.enqueueNDRangeKernel(kernel_check_symmetric,
+         cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
+
+        cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0,
+         sizeof(int), &symmetric_flag);
+        //  if the matrix is not symmetric
+        if (symmetric_flag) {
+          domain_error(function, name, "is not symmetric", "");
+        }
+      } catch (const cl::Error& e) {
+        check_ocl_error("symmetric_check", e);
+      }
+    }
     /**
      * Check if the specified matrix on the GPU has zeros on the diagonal
      *
@@ -170,27 +237,7 @@ namespace stan {
       }
     }
 
-    /**
-     * Check if the specified matrix on the GPU is square.
-     *
-     * This check allows 0x0 matrices.
-     *
-     *
-     * @param function Function name (for error messages)
-     * @param name Variable name (for error messages)
-     * @param y Matrix on the GPU to test
-     *
-     * @throw <code>std::invalid_argument</code> if the matrix
-     *    is not square
-     */
-    inline void
-    check_square(const std::string& function,
-                 const std::string& name,
-                 matrix_gpu& y) {
-      check_size_match(function,
-                       "Expecting a square matrix; rows of ", name, y.rows(),
-                       "columns of ", name, y.cols());
-    }
+
 
     /**
      * Check if the two matrices on the GPU are of the same size.

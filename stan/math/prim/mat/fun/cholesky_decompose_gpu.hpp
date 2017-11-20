@@ -35,18 +35,18 @@ namespace stan {
      * input matrix is transfered to the GPU and the resulting
      * lower-triangular matrix is then copied from the GPU.
      * 
-     * @param m Symmetrix matrix on the GPU.
+     * @param A Symmetrix matrix on the GPU.
+     * @param block size of the block for each step
      * @return Square root of matrix on the GPU.
      * @throw std::domain_error if m is not
      *  positive definite (if m has more than 0 elements)
      */    
-    matrix_gpu cholesky_decompose_gpu(matrix_gpu & A) {
+    matrix_gpu cholesky_decompose_gpu(matrix_gpu & A, int block) {
       if (A.size() == 0) return A;
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
       try {
         // Will be managed by the library core system
-        int block = 200;
         int offset = 0;
         matrix_gpu V(block, block);
         matrix_gpu D(block, block);
@@ -127,19 +127,20 @@ namespace stan {
      Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
     cholesky_decompose_gpu(const Eigen::Matrix<T,
      Eigen::Dynamic, Eigen::Dynamic>& m) {
-      if (m.size() == 0) return m;
-      check_symmetric("cholesky_decompose", "m", m);
+            if (m.size() == 0) return m;
+
+      matrix_gpu A(m);
+
+      check_symmetric_gpu("cholesky_decompose", "m", A);
+
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
        m_tmp(m.rows(), m.cols());
 
-      matrix_gpu A(m);
-      cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
+      cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       try {
         // Will be managed by the library core system
-        int block = m.rows()/5;
-        if ( m.rows() <= 128 )
-          block = 128;
+        int block = 400;
         int offset = 0;
         matrix_gpu V(block, block);
         matrix_gpu D(block, block);
@@ -151,7 +152,7 @@ namespace stan {
 
           copy_submatrix(A, D, offset, offset, 0, 0, block, block);
           zeros(V);
-          V = cholesky_decompose_gpu(D);
+          V = cholesky_decompose_gpu(D, 100);
           copy(V, D);
           copy_submatrix(V, A, 0, 0, offset, offset, block, block);
 
@@ -179,7 +180,7 @@ namespace stan {
           matrix_gpu V(left, left);
           copy_submatrix(A, D, offset, offset, 0, 0, left, left);
           zeros(V);
-          V = cholesky_decompose_gpu(D);
+          V = cholesky_decompose_gpu(D, 100);
           copy_submatrix(V, A, 0, 0, offset, offset, left, left);
         }
         zeros(A, UPPER);
@@ -189,9 +190,11 @@ namespace stan {
       copy_triangular_transposed(A, LOWER_TO_UPPER_TRIANGULAR);
       check_positive_definite_gpu("cholesky_decompose_gpu",
         "Matrix m", A);
+      zeros(A, UPPER);
       copy(A, m_tmp); // NOLINT
-      return m_tmp.template triangularView<Eigen::Lower>();
+      return m_tmp;
     }
+
   }
 }
 

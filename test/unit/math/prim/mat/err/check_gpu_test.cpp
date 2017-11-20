@@ -49,3 +49,37 @@ TEST(ErrorHandlingScalarGPU,Check_nan_positions) {
                std::domain_error);
 }
 
+TEST(ErrorHandlingScalarGPU,check_rv_v_symmetric_gpu) {
+  const std::string function = "check_symmetric_gpu";
+
+  stan::math::row_vector_d rv;
+  stan::math::vector_d v;
+  rv.resize(3);
+  v.resize(3);
+  stan::math::matrix_gpu rvv(rv);
+  stan::math::matrix_gpu vv(v);
+  EXPECT_THROW(check_symmetric_gpu(function, "rvv_non_symm", rvv),
+               std::invalid_argument);
+  EXPECT_THROW(check_symmetric_gpu(function, "v_non_symm", vv),
+               std::invalid_argument);
+
+}
+
+TEST(ErrorHandlingScalarGPU,check_m_symmetric_gpu) {
+  const std::string function = "check_symmetric_gpu";
+
+  stan::math::matrix_d m_ok(3,3);
+  stan::math::matrix_d m_fail(3,3);
+  m_fail << 1, 2, 3,
+       2, 4, -5,
+       3, 5, 6;
+  stan::math::matrix_gpu mm_fail(m_fail);
+  m_ok << 1, 2, 3,
+       2, 4, 5,
+       3, 5, 6;
+  stan::math::matrix_gpu mm_ok(m_ok);
+  EXPECT_THROW(check_symmetric_gpu(function, "m_non_symm", mm_fail),
+               std::domain_error);
+  EXPECT_NO_THROW(check_symmetric_gpu(function, "m_symm_mat1", mm_ok));
+
+}
