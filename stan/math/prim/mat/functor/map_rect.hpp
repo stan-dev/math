@@ -15,10 +15,10 @@ namespace stan {
              const std::vector<std::vector<int> >& x_i,
              const int callsite_id) {
 #ifdef STAN_HAS_MPI
-      return(map_rect_mpi<F>(eta, theta, x_r, x_i, callsite_id));
+      return(map_rect_mpi<F,T_shared_param,T_job_param>(shared_params, job_params, x_r, x_i, callsite_id));
 #else
       typedef typename stan::return_type<T_shared_param, T_job_param>::type result_type;
-      Eigen::Matrix<result_type, Eigen::Dynamic, 1> out(job_params.size());
+      Eigen::Matrix<result_type, Eigen::Dynamic, 1> out;
       const std::size_t num_jobs = job_params.size();
       int out_size = 0;
 
@@ -26,6 +26,7 @@ namespace stan {
         const Eigen::Matrix<result_type, Eigen::Dynamic, 1> f = F::apply(shared_params, job_params[i], x_r[i], x_i[i]);
         const int f_size = f.rows();
         out_size += f_size;
+        if(i == 0) out.resize(num_jobs * f_size);
         if(out.rows() < out_size)
           out.conservativeResize(2*out_size);
         out.segment(out_size - f_size, f_size) = f;

@@ -13,17 +13,17 @@ namespace stan {
     namespace internal {
 
       template <int member, typename T>
-      class mpi_parallel_call_cache {
+      struct mpi_parallel_call_cache {
         // static members to hold locally cached data
         // of placing the cache inside mpi_parallel_call is that we will
         // cache the data multiple times (once for each ReduceF
         // type).
-        typedef typename const T cached_t;
-        static std::map<int, cached_t> local_;
+        typedef const T cache_t;
+        static std::map<int, cache_t> local_;
 
         static bool is_cached(int callsite_id) { return(local_.count(callsite_id) == 1); }
-        static cached_t& lookup(int callsite_id) { return(local_.find(callsite_id)->second); }
-        static void cache(int callsite_id, cached_t element) { local_.insert(std::make_pair(callsite_id, element)); }
+        static cache_t& lookup(int callsite_id) { return(local_.find(callsite_id)->second); }
+        static void cache(int callsite_id, cache_t element) { local_.insert(std::make_pair(callsite_id, element)); }
       };
       
     }
@@ -69,7 +69,7 @@ namespace stan {
         mpi_broadcast_command<stan::math::mpi_distributed_apply<mpi_parallel_call<ReduceF,CombineF>>>();
 
         // send callsite id
-        boost::mpi::broadcast(world_, callsite_id_, 0);
+        boost::mpi::broadcast(world_, callsite_id, 0);
 
         const std::size_t num_jobs = job_params.size();
         const std::size_t num_job_params = job_params[0].size();
@@ -94,7 +94,8 @@ namespace stan {
       static void distributed_apply() {
         // entry point when called on remote
         int callsite_id;
-        boost::mpi::broadcast(world_, callsite_id, 0);
+        boost::mpi::communicator world;
+        boost::mpi::broadcast(world, callsite_id, 0);
 
         // call constructor for the remotes
         mpi_parallel_call<ReduceF,CombineF> job_chunk(callsite_id);
@@ -122,7 +123,7 @@ namespace stan {
         if(t_cache_f_out::is_cached(callsite_id_)) {
           t_cache_f_out::cache_t& f_out = t_cache_f_out::lookup(callsite_id_);
           int num_outputs = 0;
-          for(std::size_t j=start_job; j != start_job + num_local_jobs; ++j)
+          for(std::size_t j=start_job; j != start_job + num_local_jobs_; ++j)
             num_outputs += f_out[j];
           local_output.resize(1, num_outputs);
         }
@@ -153,7 +154,7 @@ namespace stan {
           // on the root we now have all sizes from all childs. Copy
           // over the local sizes to the world vector on each local
           // node in order to cache this information locally
-          std::copy(local_f_out.begin(), local_f_out.end(), world_f_out.begin() + start_jobs);
+          std::copy(local_f_out.begin(), local_f_out.end(), world_f_out.begin() + start_job);
           t_cache_f_out::cache(callsite_id_, world_f_out);
         }
 
@@ -162,7 +163,7 @@ namespace stan {
         // check that cached sizes are the same as just collected from
         // this evaluation
 
-        return combine_.gather_outputs(local_output_, world_f_out);
+        return combine_.gather_outputs(local_output, world_f_out);
       }
 
     private:
@@ -177,14 +178,14 @@ namespace stan {
         const std::vector<int> data_chunks = mpi_map_chunks(num_jobs_, size_data);
         const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
 
-        const auto flat_data = to_array_1d(data);
+        auto flat_data = to_array_1d(data);
 
         // transfer it ...
         decltype(flat_data) local_flat_data(data_chunks[rank_]);
         boost::mpi::scatterv(world_, flat_data.data(), data_chunks, local_flat_data.data(), 0);
 
         // ... and rebuild 2D array
-        T_cache::cache_t local_data;
+        std::vector<decltype(flat_data)> local_data;
         auto local_iter = local_flat_data.begin();
         for(std::size_t i=0; i != job_chunks[rank_]; ++i) {
           typename T_cache::cache_t::value_type const data_elem(local_iter, local_iter + size_data);
@@ -226,7 +227,7 @@ namespace stan {
         local_job_params_dbl_.resize(num_job_params, num_local_jobs_);
 
         const std::vector<int> job_params_chunks = mpi_map_chunks(num_jobs_, num_job_params);
-        boost::mpi::scatterv(world_, job_params.data(), job_params_chunks, local_job_params_.data(), 0);
+        boost::mpi::scatterv(world_, job_params.data(), job_params_chunks, local_job_params_dbl_.data(), 0);
 
         // distribute data if not yet cached
         cache_data<t_cache_x_r>(x_r);
@@ -265,7 +266,7 @@ namespace stan {
                        const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
         : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
 
-      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out) {
+      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out) const {
 
         const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_per_job = local_result.rows();
@@ -277,11 +278,11 @@ namespace stan {
         std::vector<int> chunks_result(world_size_,0);
         for(std::size_t i=0, ij=0; i != world_size_; ++i)
           for(std::size_t j=0; j != job_chunks[i]; ++j, ++ij)
-            chunks_result[i] += world_f_out_[ij] * num_output_per_job;
+            chunks_result[i] += world_f_out[ij] * num_output_per_job;
 
         // collect results
         //std::cout << "gathering actual outputs..." << std::endl;
-        boost::mpi::gatherv(world_, local_result.data(), local_result.size(), world_result, chunks_result, 0);
+        boost::mpi::gatherv(world_, local_result.data(), local_result.size(), world_result.data(), chunks_result, 0);
 
         // only add result to AD tree on root
         if(rank_ != 0)
@@ -289,24 +290,25 @@ namespace stan {
 
         result_type out(size_world_f_out);
 
-        const std::size_t num_shared_operands = *shared_params_operands_.size();
-        const std::size_t num_job_operands = *job_params_operands_.size();
+        const std::size_t num_shared_operands = shared_params_operands_->size();
+        const std::size_t num_job_operands = job_params_operands_->size();
 
         const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
 
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
-            operands_and_partials<T_shared_param, T_job_param>
-              ops_partials(*shared_params_operands_, *job_params_operands_[i]);
+            operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+                                  Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
+              ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
 
             if (!is_constant_struct<T_shared_param>::value) {
               for(std::size_t k=0; k != num_shared_operands; ++k)
-                ops_partials.edge1_.partials[k] = world_result(1+k,ij);
+                ops_partials.edge1_.partials_[k] = world_result(1+k,ij);
             }
               
             if (!is_constant_struct<T_job_param>::value) {
               for(std::size_t k=0; k != num_job_operands; ++k)
-                ops_partials.edge2_.partials[k] = world_result(offset_job_params+k,ij);
+                ops_partials.edge2_.partials_[k] = world_result(offset_job_params+k,ij);
             }
 
             out(ij) = ops_partials.build(world_result(1,ij));
@@ -324,8 +326,8 @@ namespace stan {
                  const std::vector<std::vector<double>>& x_r,
                  const std::vector<std::vector<int>>& x_i,
                  const int callsite_id) {
-      typedef typename map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-      typedef typename map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+      typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
+      typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
       mpi_parallel_call<ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i, callsite_id);
 
