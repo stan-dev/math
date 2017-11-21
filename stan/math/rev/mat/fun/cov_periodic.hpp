@@ -29,7 +29,7 @@ namespace stan {
      * the vari for l and the vari for p.
      *
      * @tparam T_x type of std::vector elements of x.
-     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
      * @tparam T_l type of length-scale
      * @tparam T_p type of period
@@ -67,7 +67,7 @@ namespace stan {
        * vari's constructor.
        *
        * @param x std::vector of input elements.
-       *    Assumes that all elements of x have the same size.
+       *   Assumes that all elements of x have the same size.
        * @param sigma standard deviation of the signal
        * @param l length-scale
        * @param p period
@@ -80,10 +80,10 @@ namespace stan {
           l_d_(value_of(l)), sigma_d_(value_of(sigma)),
           p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
-		  dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
           p_vari_(p.vi_),
           cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
@@ -94,12 +94,12 @@ namespace stan {
         size_t pos = 0;
         for (size_t j = 0; j < size_; ++j) {
           for (size_t i = j + 1; i < size_; ++i) {
-			double dist = distance(x[i], x[j]);
-			double sin_dist = sin(pi_div_p * dist);
-			double sin_dist_sq = square(sin_dist);
+            double dist = distance(x[i], x[j]);
+            double sin_dist = sin(pi_div_p * dist);
+            double sin_dist_sq = square(sin_dist);
             dist_[pos] = dist;
             sin_dist_[pos] = sin_dist;
-        	cos_dist_[pos] = cos(pi_div_p * dist);
+            cos_dist_[pos] = cos(pi_div_p * dist);
             sin_dist_sq_[pos] = sin_dist_sq;
             cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
                                        * neg_two_inv_l_sq), false);
@@ -143,7 +143,7 @@ namespace stan {
      * the vari for l and the vari for p.
      *
      * @tparam T_x type of std::vector elements of x
-     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_l type of length-scale
      * @tparam T_p type of period
      */
@@ -179,23 +179,23 @@ namespace stan {
        * vari's constructor.
        *
        * @param x std::vector of input elements.
-       *    Assumes that all elements of x have the same size.
+       *   Assumes that all elements of x have the same size.
        * @param sigma standard deviation of the signal
        * @param l length-scale
        * @param p period
        */
       cov_periodic_vari(const std::vector<T_x>& x, double sigma, const T_l& l,
-						const T_p& p)
+                        const T_p& p)
         : vari(0.0),
           size_(x.size()),
           size_ltri_(size_ * (size_ - 1) / 2),
           l_d_(value_of(l)), sigma_d_(sigma),
-		  p_d_(value_of(p)),
+          p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-		  sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_),
           p_vari_(p.vi_),
           cov_lower_(ChainableStack::memalloc_.alloc_array<vari*>(size_ltri_)),
@@ -207,15 +207,15 @@ namespace stan {
         size_t pos = 0;
         for (size_t j = 0; j < size_; ++j) {
           for (size_t i = j + 1; i < size_; ++i) {
-			double dist = distance(x[i], x[j]);
-			double sin_dist = sin(pi_div_p * dist);
-			double sin_dist_sq = square(sin_dist);
-			dist_[pos] = dist;
-			sin_dist_[pos] = sin_dist;
-			cos_dist_[pos] = cos(pi_div_p * dist);
-			sin_dist_sq_[pos] = sin_dist_sq;
-			cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
-										 * neg_two_inv_l_sq), false);
+            double dist = distance(x[i], x[j]);
+            double sin_dist = sin(pi_div_p * dist);
+            double sin_dist_sq = square(sin_dist);
+            dist_[pos] = dist;
+            sin_dist_[pos] = sin_dist;
+            cos_dist_[pos] = cos(pi_div_p * dist);
+            sin_dist_sq_[pos] = sin_dist_sq;
+            cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
+                                       * neg_two_inv_l_sq), false);
             ++pos;
           }
           cov_diag_[j] = new vari(sigma_sq_d_, false);
@@ -249,7 +249,7 @@ namespace stan {
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
      * @param x std::vector of input elements.
-     *    Assumes that all elements of x have the same size.
+     *   Assumes that all elements of x have the same size.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
@@ -263,7 +263,7 @@ namespace stan {
                                       double>::value,
                        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
       cov_periodic(const std::vector<T_x>& x, const var& sigma, const var& l,
-				   const var& p) {
+                   const var& p) {
       check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
       check_positive("cov_periodic", "period", p);
@@ -302,7 +302,7 @@ namespace stan {
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
      * @param x std::vector of input elements.
-     *    Assumes that all elements of x have the same size.
+     *   Assumes that all elements of x have the same size.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
@@ -316,7 +316,7 @@ namespace stan {
                                       double>::value,
                        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
       cov_periodic(const std::vector<T_x>& x, double sigma, const var& l,
-				   const var& p) {
+                   const var& p) {
 
       check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);

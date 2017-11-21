@@ -27,13 +27,13 @@ namespace stan {
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
      * @tparam T_x type of std::vector elements of x.
-     * 		T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
      * @tparam T_l type of length-scale
      * @tparam T_p type of period
      *
      * @param x std::vector of input elements.
-     * 		This function assumes that all elements of x have the same size.
+     *   This function assumes that all elements of x have the same size.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
@@ -46,7 +46,7 @@ namespace stan {
     Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_periodic(const std::vector<T_x>& x, const T_sigma& sigma, const T_l& l,
-				 const T_p& p) {
+                 const T_p& p) {
       using std::exp;
       check_positive("cov_periodic", "signal standard deviation", sigma);
       check_positive("cov_periodic", "length-scale", l);
@@ -89,16 +89,16 @@ namespace stan {
      * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
      *
      * @tparam T_x1 type of std::vector elements of x1
-     * 		T_x1 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     *   T_x1 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_x2 type of std::vector elements of x2
-     * 		T_x2 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
+     *   T_x2 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
      * @tparam T_l type of length-scale
      * @tparam T_p type of period
      *
      * @param x1 std::vector of first input elements
      * @param x2 std::vector of second input elements.
-     * 		This function assumes that all the elements of x1 and x2 have the same sizes.
+     *   This function assumes that all the elements of x1 and x2 have the same sizes.
      * @param sigma standard deviation of the signal
      * @param l length-scale
      * @param p period
