@@ -7,11 +7,7 @@ R"=====(
     #error "Double not supported by OpenCL implementation."
 #endif
 
-#define A(i,j)  A[i*cols+j]
-#define AT(i,j)  A[i*rows+j]
-#define B(i,j)  B[i*cols+j]
-#define BT(i,j)  B[i*rows+j]
-#define C(i,j)  C[i*cols+j]
+#define A(i,j)  A[j*rows+i]
 
 __kernel void check_nan(
             __global double *A,
@@ -20,8 +16,10 @@ __kernel void check_nan(
             __global int *flag) {
   const int i = get_global_id(0);
   const int j = get_global_id(1);
-  if (isnan(A(i,j))) {
-    flag[0] = 1;
+  if( i < rows && j < cols ) { 
+    if (isnan(A(i,j))) {
+      flag[0] = 1;
+    }
   }
 }
 
@@ -31,8 +29,10 @@ __kernel void check_diagonal_zeros(
               int cols,
               __global int *flag) {
   const int i = get_global_id(0);
-  if (A(i,i) == 0) {
-    flag[0] = 1;
+  if( i < rows && i < cols ) { 
+    if (A(i,i) == 0) {
+      flag[0] = 1;
+    }
   }
 }
 
@@ -44,9 +44,11 @@ __kernel void check_symmetric(
             double tolerance) {
   const int i = get_global_id(0);
   const int j = get_global_id(1);
-  double diff = fabs(A(i,j)-A(j,i));
-  if ( diff > tolerance ) {
-    flag[0] = 1;
+  if( i < rows && j < cols ) { 
+    double diff = fabs(A(i,j)-A(j,i));
+    if ( diff > tolerance ) {
+      flag[0] = 1;
+    }
   }
 }
 

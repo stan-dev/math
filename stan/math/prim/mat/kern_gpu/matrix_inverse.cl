@@ -14,15 +14,15 @@ R"=====(
     #error "Double precision not supported by OpenCL implementation."
 #endif
 
-#define A(i,j) A[i*cols+j]
-#define V(i,j) V[offset+i*(part_size_fixed+1)+j] 
+#define A(i,j) A[j*rows+i]
+#define V(i,j) V[offset+j*(part_size_fixed+1)+i] 
 
 __kernel void lower_tri_inv_step1(
                 __global double* A,
                 __global double* V,
                 int remainder,
                 int part_size_fixed,
-                int cols) {
+                int rows) {
   int indeks = get_global_id(0);
   int i = indeks*part_size_fixed;
   int part_size;
@@ -66,7 +66,7 @@ __kernel void lower_tri_inv_step1(
   }
 }
 
-#define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+i*part_size1+j]
+#define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+j*part_size2+i]
 
 #define WPT 4
 #define RTS 8
@@ -78,7 +78,7 @@ __kernel void lower_tri_inv_step2(
                 int repeat,
                 int remainder,
                 int part_size_fixed,
-                int cols) {
+                int rows) {
  int n = get_global_id(2)*2;
  double sum = 0;
  int part_size1 = 0, part_size2 = 0;
@@ -117,7 +117,7 @@ __kernel void lower_tri_inv_step2(
    const int tiledCol = TS2*t + col;
 
    if ( i < part_size2 && (tiledCol+w*RTS) < part_size1 &&
-      (tiledCol+offset_j+part_size1+w*RTS) < cols  && (i+offset_i) < cols ) {
+      (tiledCol+offset_j+part_size1+w*RTS) < rows  && (i+offset_i) < rows ) {
     Asub[col+w*RTS][row] =
       A((i+offset_i),(tiledCol+offset_j+part_size1+w*RTS));
    } else {
@@ -125,7 +125,7 @@ __kernel void lower_tri_inv_step2(
    }
 
    if ( (j+w*RTS) < part_size1 && tiledRow < part_size2 &&
-        (tiledRow+offset_i) < cols && (j+offset_j+w*RTS) < cols ) {
+        (tiledRow+offset_i) < rows && (j+offset_j+w*RTS) < rows ) {
     Bsub[col+w*RTS][row] = A((tiledRow+offset_i),(j+offset_j+w*RTS));
    } else {
     Bsub[col+w*RTS][row] = 0.0;
@@ -157,7 +157,7 @@ __kernel void lower_tri_inv_step3(
                 int repeat,
                 int remainder,
                 int part_size_fixed,
-                int cols) {
+                int rows) {
  int n = get_global_id(2)*2;
  double sum = 0;
  int part_size1 = 0, part_size2 = 0;
@@ -207,8 +207,8 @@ __kernel void lower_tri_inv_step3(
    } else {
     Asub[col+w*RTS][row] = 0.0;
    }
-   if ( (j+w*RTS) < part_size1 && (j+offset_j+w*RTS) < cols &&
-        (tiledRow+offset_i-part_size1) < cols ) {
+   if ( (j+w*RTS) < part_size1 && (j+offset_j+w*RTS) < rows &&
+        (tiledRow+offset_i-part_size1) < rows ) {
     Bsub[col+w*RTS][row] =
         A((tiledRow+offset_i-part_size1),(j+offset_j+w*RTS));
    } else {
@@ -226,7 +226,7 @@ __kernel void lower_tri_inv_step3(
  }
  for (int w = 0; w < WPT; w++) {
   if ( i < part_size2 && (j+w*RTS) < part_size1 &&
-      (i+offset_i) < cols && (j+offset_j+w*RTS) < cols ) {
+      (i+offset_i) < rows && (j+offset_j+w*RTS) < rows ) {
    A((i+offset_i),(j+offset_j+w*RTS)) = -acc[w];
   }
  }

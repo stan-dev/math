@@ -1,9 +1,10 @@
 R"=====(
-#define A(i,j)  A[i*cols+j]
-#define AT(i,j)  A[i*rows+j]
-#define B(i,j)  B[i*cols+j]
-#define BT(i,j)  B[i*rows+j]
-#define C(i,j)  C[i*cols+j]
+
+#define A(i,j)  A[j*rows+i]
+#define AT(i,j)  A[j*cols+i]
+#define B(i,j)  B[j*rows+i]
+#define BT(i,j)  B[j*cols+i]
+#define C(i,j)  C[j*rows+i]
 
 #ifdef cl_khr_fp64
     #pragma OPENCL EXTENSION cl_khr_fp64 : enable
@@ -12,7 +13,6 @@ R"=====(
 #else
     #error "Double not supported by OpenCL implementation."
 #endif
-
 
 __kernel void transpose(
           __global double *B,
@@ -134,8 +134,8 @@ __kernel void subtract(
     }
 }
 
-#define src(i,j) src[i*src_cols+j]
-#define dst(i,j) dst[i*dst_cols+j]
+#define src(i,j) src[j*src_rows+i]
+#define dst(i,j) dst[j*dst_rows+i]
 
 __kernel void copy_submatrix(
           __global double *src,

@@ -7,8 +7,8 @@ R"=====(
     #error "Double not supported by OpenCL implementation."
 #endif
 
-#define V(i,j) V[i*n+j]
-#define d(i,j) d[i*n+j]
+#define V(i,j) V[j*n+i]
+#define d(i,j) d[j*n+i]
 
 __kernel void cholesky_block(
                 __global double *V,

@@ -100,31 +100,15 @@ namespace stan {
           try {
             cl::Context& ctx = get_context();
             cl::CommandQueue& queue = get_queue();
-            cl::Kernel kernel = get_kernel("transpose");
             rows_ = A.rows();
             cols_ = A.cols();
             if (rows_ > 0 && cols_ > 0) {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * A.size());
 
-              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-               sizeof(T) * A.size());
-
-              queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
+              queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
                sizeof(T) * A.size(), A.data());
 
-              kernel.setArg(0, oclBuffer);
-              kernel.setArg(1, buffer_temp);
-              kernel.setArg(2, cols_);
-              kernel.setArg(3, rows_);
-
-              queue.enqueueNDRangeKernel(
-               kernel,
-               cl::NullRange,
-               cl::NDRange(cols_, rows_),
-               cl::NullRange,
-               NULL,
-               NULL);
              }
           } catch (const cl::Error& e) {
             check_ocl_error("matrix constructor", e);
@@ -153,29 +137,11 @@ namespace stan {
             check_size_match("copy (Eigen -> GPU)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
             try {
-              cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
 
-              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-               sizeof(T) * src.size());
-
-              queue.enqueueWriteBuffer(buffer_temp, CL_TRUE, 0,
+              queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
                sizeof(T) * dst.size(), src.data());
 
-              cl::Kernel kernel = get_kernel("transpose");
-              int cols = src.cols();
-              int rows = src.rows();
-              kernel.setArg(0, dst.buffer());
-              kernel.setArg(1, buffer_temp);
-              kernel.setArg(2, cols);
-              kernel.setArg(3, rows);
-              queue.enqueueNDRangeKernel(
-                  kernel,
-                  cl::NullRange,
-                  cl::NDRange(src.cols(), src.rows()),
-                  cl::NullRange,
-                  NULL,
-                  NULL);
             } catch (const cl::Error& e) {
               check_ocl_error("copy Eigen->GPU", e);
             }
@@ -202,28 +168,8 @@ namespace stan {
             check_size_match("copy (GPU -> Eigen)",
              "src.cols()", src.cols(), "dst.cols()", dst.cols());
             try {
-              cl::Context& ctx = get_context();
               cl::CommandQueue queue = get_queue();
-              cl::Buffer buffer = src.buffer();
-
-              cl::Buffer buffer_temp = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                sizeof(T) * src.size());
-
-              cl::Kernel kernel = get_kernel("transpose");
-
-              kernel.setArg(0, buffer_temp);
-              kernel.setArg(1, buffer);
-              kernel.setArg(2, src.rows());
-              kernel.setArg(3, src.cols());
-              queue.enqueueNDRangeKernel(
-                  kernel,
-                  cl::NullRange,
-                  cl::NDRange(src.rows(), src.cols()),
-                  cl::NullRange,
-                  NULL,
-                  NULL);
-
-              queue.enqueueReadBuffer(buffer_temp,  CL_TRUE,  0,
+              queue.enqueueReadBuffer(src.buffer(),  CL_TRUE,  0,
                 sizeof(T) * dst.size(),  dst.data());
             } catch (const cl::Error& e) {
               check_ocl_error("copy GPU->Eigen", e);
