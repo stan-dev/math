@@ -15,8 +15,6 @@ BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<hard_work_parallel_call>,
 
 #endif
 
-
-
 int main(int argc, const char* argv[]) {
 #ifdef STAN_HAS_MPI
   boost::mpi::environment env;
@@ -25,17 +23,6 @@ int main(int argc, const char* argv[]) {
   // send from the root
   stan::math::mpi_cluster cluster;
 
-
-  typedef stan::math::internal::mpi_parallel_call_cache<1, std::vector<std::vector<double>>> t_cache_x_r;
-  typedef stan::math::internal::mpi_parallel_call_cache<2, std::vector<std::vector<int>>> t_cache_x_i;
-  typedef stan::math::internal::mpi_parallel_call_cache<3, std::vector<int>> t_cache_f_out;
-  typedef stan::math::internal::mpi_parallel_call_cache<4, std::vector<int>> t_cache_meta;
-
-  t_cache_x_r i1;
-  t_cache_x_i i2;
-  t_cache_f_out i3;
-  t_cache_meta i4;
-  
 #endif
 
   Eigen::VectorXd shared_params_d(2);
@@ -50,6 +37,7 @@ int main(int argc, const char* argv[]) {
     job_params_d.push_back(job_d);
   }
 
+  
   std::vector<std::vector<double> > x_r(N, std::vector<double>(1,1.0));
   std::vector<std::vector<int> > x_i(N, std::vector<int>(0));
 

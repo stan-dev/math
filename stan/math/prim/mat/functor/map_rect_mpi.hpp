@@ -26,6 +26,9 @@ namespace stan {
         static void cache(int callsite_id, cache_t element) { local_.insert(std::make_pair(callsite_id, element)); }
       };
       
+      template <int member, typename T>
+      std::map<int, const T>
+      mpi_parallel_call_cache<member, T>::local_;
     }
 
     // utility class to store and cache static data and output size
@@ -96,6 +99,8 @@ namespace stan {
         int callsite_id;
         boost::mpi::communicator world;
         boost::mpi::broadcast(world, callsite_id, 0);
+
+        std::cout << "Starting on remote " << world.rank() << "; callsite_id = " << callsite_id << std::endl;
 
         // call constructor for the remotes
         mpi_parallel_call<ReduceF,CombineF> job_chunk(callsite_id);
@@ -171,20 +176,35 @@ namespace stan {
       template <typename T_cache>
       void cache_data(typename T_cache::cache_t& data) {
         // distribute data only if not in cache yet
-        if(T_cache::is_cached(callsite_id_))
+        if(T_cache::is_cached(callsite_id_)) {
+          std::cout << "cache_data on remote " << rank_ << " HIT the cache " << std::endl;
           return;
+        }
 
-        const std::size_t size_data = data[0].size();
+        // number of elements of each data item must be transferred to
+        // the workers
+        std::size_t size_data;
+
+        if(rank_ == 0)
+          size_data = data[0].size();
+
+        boost::mpi::broadcast(world_, size_data, 0);
+
         const std::vector<int> data_chunks = mpi_map_chunks(num_jobs_, size_data);
         const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
 
         auto flat_data = to_array_1d(data);
 
+        std::cout << "cache_data on remote " << rank_ << " input size " << flat_data.size()<< std::endl;
+        std::cout << "cache_data on remote " << rank_ << " expecting size " << data_chunks[rank_] << std::endl;
+
         // transfer it ...
         decltype(flat_data) local_flat_data(data_chunks[rank_]);
         boost::mpi::scatterv(world_, flat_data.data(), data_chunks, local_flat_data.data(), 0);
 
-        // ... and rebuild 2D array
+        std::cout << "cache_data on remote " << rank_ << " got scatterd data of size " << local_flat_data.size() << std::endl;
+
+         // ... and rebuild 2D array
         std::vector<decltype(flat_data)> local_data;
         auto local_iter = local_flat_data.begin();
         for(std::size_t i=0; i != job_chunks[rank_]; ++i) {
@@ -201,6 +221,7 @@ namespace stan {
                       const std::vector<std::vector<double>>& x_r,
                       const std::vector<std::vector<int>>& x_i) {
 
+        std::cout << "setup_call on remote " << rank_ << "; callsite_id_ = " << callsite_id_ << std::endl;
         if(!t_cache_meta::is_cached(callsite_id_)) {
           std::vector<int> meta(3);
           meta[0] = shared_params.size();
@@ -215,10 +236,14 @@ namespace stan {
         const int num_job_params = meta[1];
         num_jobs_ = meta[2];
 
+        std::cout << "setup_call on remote " << rank_ << "; got meta-info" << std::endl;
+
         // broadcast shared parameters
         local_shared_params_dbl_ = shared_params;
         local_shared_params_dbl_.resize(num_shared_params);
         boost::mpi::broadcast(world_, local_shared_params_dbl_.data(), num_shared_params, 0);
+
+        std::cout << "setup_call on remote " << rank_ << "; got " << num_shared_params << " shared parameters" << std::endl;
 
         // scatter job specific parameters
         const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
@@ -229,9 +254,13 @@ namespace stan {
         const std::vector<int> job_params_chunks = mpi_map_chunks(num_jobs_, num_job_params);
         boost::mpi::scatterv(world_, job_params.data(), job_params_chunks, local_job_params_dbl_.data(), 0);
 
+        std::cout << "setup_call on remote " << rank_ << "; got " << num_job_params << " job parameters" << std::endl;
+        
         // distribute data if not yet cached
         cache_data<t_cache_x_r>(x_r);
+        std::cout << "setup_call on remote " << rank_ << "; got real data" << std::endl;
         cache_data<t_cache_x_i>(x_i);
+        std::cout << "setup_call on remote " << rank_ << "; got int data" << std::endl;
       }
 
     };
@@ -269,20 +298,20 @@ namespace stan {
       result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out) const {
 
         const std::size_t num_jobs = world_f_out.size();
-        const std::size_t num_output_per_job = local_result.rows();
+        const std::size_t num_output_size_per_job = local_result.rows();
         const std::size_t size_world_f_out = sum(world_f_out);
 
-        matrix_d world_result(num_output_per_job, size_world_f_out);
+        
+        matrix_d world_result(num_output_size_per_job, size_world_f_out);
 
         const std::vector<int> job_chunks = mpi_map_chunks(num_jobs, 1);
         std::vector<int> chunks_result(world_size_,0);
         for(std::size_t i=0, ij=0; i != world_size_; ++i)
           for(std::size_t j=0; j != job_chunks[i]; ++j, ++ij)
-            chunks_result[i] += world_f_out[ij] * num_output_per_job;
+            chunks_result[i] += world_f_out[ij] * num_output_size_per_job;
 
         // collect results
-        //std::cout << "gathering actual outputs..." << std::endl;
-        boost::mpi::gatherv(world_, local_result.data(), local_result.size(), world_result.data(), chunks_result, 0);
+        boost::mpi::gatherv(world_, local_result.data(), chunks_result[rank_], world_result.data(), chunks_result, 0);
 
         // only add result to AD tree on root
         if(rank_ != 0)
@@ -291,7 +320,7 @@ namespace stan {
         result_type out(size_world_f_out);
 
         const std::size_t num_shared_operands = shared_params_operands_->size();
-        const std::size_t num_job_operands = job_params_operands_->size();
+        const std::size_t num_job_operands = (*job_params_operands_)[0].size();
 
         const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
 
@@ -311,7 +340,7 @@ namespace stan {
                 ops_partials.edge2_.partials_[k] = world_result(offset_job_params+k,ij);
             }
 
-            out(ij) = ops_partials.build(world_result(1,ij));
+            out(ij) = ops_partials.build(world_result(0,ij));
           }
         }
 
