@@ -51,6 +51,12 @@ TEST(RevMath, cov_periodic_vvvv) {
 
       EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
+      // Check positive definiteness
+      Eigen::LLT<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>> llt;
+      llt.compute(cov);
+      EXPECT_EQ(Eigen::ComputationInfo::Success, llt.info());
+
+      // Check gradients
       std::vector<double> grad;
       std::vector<stan::math::var> params;
       params.push_back(sigma);

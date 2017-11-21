@@ -36,7 +36,6 @@ std::string pull_msg(std::vector<T_x1> x1,
   return message;
 }
 
-
 TEST(MathPrimMat, vec_double_cov_periodic1) {
   double sigma = 0.2;
   double l = 5;
@@ -57,6 +56,10 @@ TEST(MathPrimMat, vec_double_cov_periodic1) {
                       cov(i, j))
         << "index: (" << i << ", " << j << ")";
 
+  // Check positive definiteness
+  Eigen::LLT<Eigen::MatrixXd> llt;
+  llt.compute(cov);
+  EXPECT_EQ(Eigen::ComputationInfo::Success, llt.info());
 }
 
 TEST(MathPrimMat, vec_eigen_cov_periodic1) {
