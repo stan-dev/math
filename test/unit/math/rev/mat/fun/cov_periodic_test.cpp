@@ -56,6 +56,11 @@ TEST(RevMath, cov_periodic_vvvv) {
       llt.compute(cov);
       EXPECT_EQ(Eigen::ComputationInfo::Success, llt.info());
 
+      // Check values
+	  EXPECT_FLOAT_EQ(sigma.val() * sigma.val() * exp(-2.0 * pow(sin(M_PI * (x[i].val() - x[j].val()) / p.val()), 2) / (l.val() * l.val())),
+					  cov(i, j).val())
+		<< "index: (" << i << ", " << j << ")";
+
       // Check gradients
       std::vector<double> grad;
       std::vector<stan::math::var> params;
@@ -570,6 +575,17 @@ TEST(RevMath, cov_periodic_ddvv) {
 
       EXPECT_NO_THROW(cov = stan::math::cov_periodic(x, sigma, l, p));
 
+      // Check positive definiteness
+      Eigen::LLT<Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>> llt;
+      llt.compute(cov);
+      EXPECT_EQ(Eigen::ComputationInfo::Success, llt.info());
+
+      // Check values
+	  EXPECT_FLOAT_EQ(sigma * sigma * exp(-2.0 * pow(sin(M_PI * (x[i] - x[j]) / p.val()), 2) / (l.val() * l.val())),
+					  cov(i, j).val())
+		<< "index: (" << i << ", " << j << ")";
+
+      // Check gradients
       std::vector<double> grad;
       std::vector<stan::math::var> params;
       params.push_back(l);
