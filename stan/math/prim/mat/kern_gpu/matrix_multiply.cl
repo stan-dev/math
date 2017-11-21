@@ -6,14 +6,19 @@ R"=====(
 #else
     #error "Double not supported by OpenCL implementation."
 #endif
+
+#define a(i,j)  a[i*cols+j]
+#define b(i,j)  b[i*cols+j]
+#define c(i,j)  c[i*cols+j]
+
 __kernel void scalar_mul_diagonal(
           __global double *a,
           double scalar,
-          unsigned int M,
-          unsigned int N) {
+          unsigned int rows,
+          unsigned int cols) {
     int i = get_global_id(0);
-    if ( i < M && i < N ) {
-     a[i*N+i] *= scalar;
+    if ( i < rows && i < cols ) {
+     a(i,i) *= scalar;
     }
 }
 
@@ -21,65 +26,65 @@ __kernel void scalar_mul(
           __global double *a,
           __global double *b,
           double scalar,
-          unsigned int M,
-          unsigned int N) {
+          unsigned int rows,
+          unsigned int cols) {
     int i = get_global_id(0);
     int j = get_global_id(1);
-    if ( i < M && j < N ) {
-     a[i*N+j] = b[i*N+j]*scalar;
+    if ( i < rows && j < cols ) {
+     a(i,j) = b(i,j)*scalar;
     }
 }
+
+#define A(i,j)  A[i*K+j]
+#define B(i,j)  B[i*N+j]
+#define C(i,j)  C[i*N+j]
 
 #define TS 16
 __kernel void basic_multiply(const int M, const int N, const int K,
                       const __global double* A,
                       const __global double* B,
                       __global double* C) {
-    // Thread identifiers
-    const int row = get_local_id(0);  // Local row ID (max: TS)
-    const int col = get_local_id(1);  // Local col ID (max: TS)
-    const int globalRow = TS*get_group_id(0) + row;  // Row ID of C (0..M)
-    const int globalCol = TS*get_group_id(1) + col;  // Col ID of C (0..N)
+    
+    const int local_i = get_local_id(0);
+    const int local_j = get_local_id(1);
+    const int i = TS*get_group_id(0) + local_i;
+    const int j = TS*get_group_id(1) + local_j;
 
-    // Local memory to fit a tile of TS*TS elements of A and B
     __local double Asub[TS][TS];
     __local double Bsub[TS][TS];
 
-    // Initialise the accumulation register
     double acc = 0.0;
 
-    // Loop over all tiles
     const int numTiles = (K+TS-1)/TS;
+    
     for (int t=0; t < numTiles; t++) {
-        // Load one tile of A and B into local memory
-        const int tiledRow = TS*t + row;
-        const int tiledCol = TS*t + col;
-        if ( tiledRow < K && globalCol < N ) {
-         Asub[col][row] = B[tiledRow*N + globalCol];
+        
+        const int tiledRow = TS*t + local_i;
+        const int tiledCol = TS*t + local_j;
+
+        if ( tiledRow < K && j < N ) {
+         Asub[local_j][local_i] = B(tiledRow,j);
         } else {
-         Asub[col][row] = 0.0;
-        }
-        if ( tiledCol < K && globalRow < M ) {
-         Bsub[col][row] = A[globalRow*K + tiledCol];
-        } else {
-         Bsub[col][row] = 0.0;
+         Asub[local_j][local_i] = 0.0;
         }
 
-        // Synchronise to make sure the tile is loaded
+        if ( tiledCol < K && i < M ) {
+         Bsub[local_j][local_i] = A(i,tiledCol);
+        } else {
+         Bsub[local_j][local_i] = 0.0;
+        }
+
         barrier(CLK_LOCAL_MEM_FENCE);
 
-        // Perform the computation for a single tile
         for (int k=0; k < TS; k++) {
-            acc += Bsub[k][row] * Asub[col][k];
+            acc += Bsub[k][local_i] * Asub[local_j][k];
         }
 
-        // Synchronise before loading the next tile
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
-    // Store the final result in C
-    if ( globalCol < N && globalRow < M ) {
-     C[globalRow*N + globalCol] = acc;
+    if ( j < N && i < M ) {
+     C(i,j) = acc;
     }
  }
  
@@ -89,12 +94,12 @@ __kernel void multiply_self_transposed(const int M, const int N, const int K,
                       const __global double* B,
                       __global double* C) {
     // Thread identifiers
-    const int row = get_local_id(0);  // Local row ID (max: TS)
-    const int col = get_local_id(1);  // Local col ID (max: TS)
-    const int globalRow = TS11*get_group_id(0) + row;  // Row ID of C (0..M)
-    const int globalCol = TS11*get_group_id(1) + col;  // Col ID of C (0..N)
-    const int globalColMin = TS11*get_group_id(1);
-    const int globalRowMax = TS11*get_group_id(0)  + get_local_size(0);
+    const int local_i = get_local_id(0);  // Local row ID (max: TS)
+    const int local_j = get_local_id(1);  // Local col ID (max: TS)
+    const int i = TS11*get_group_id(0) + local_i;  // Row ID of C (0..M)
+    const int j = TS11*get_group_id(1) + local_j;  // Col ID of C (0..N)
+    const int jMin = TS11*get_group_id(1);
+    const int iMax = TS11*get_group_id(0)  + get_local_size(0);
 
     // Local memory to fit a tile of TS*TS elements of A and B
     __local double Asub[TS11][TS11];
@@ -107,27 +112,27 @@ __kernel void multiply_self_transposed(const int M, const int N, const int K,
     const int numTiles = (K+TS11-1)/TS11;
     for (int t=0; t < numTiles; t++) {
         // Load one tile of A and B into local memory
-        const int tiledRow = TS11*t + row;
-        const int tiledCol = TS11*t + col;
-        if(globalColMin <= globalRowMax){
-          if ( tiledRow < K && globalCol < N ) {
-           Asub[col][row] = B[tiledRow*N + globalCol];
+        const int tiledRow = TS11*t + local_i;
+        const int tiledCol = TS11*t + local_j;
+        if(jMin <= iMax){
+          if ( tiledRow < K && j < N ) {
+           Asub[local_j][local_i] = B(tiledRow,j);
           } else {
-           Asub[col][row] = 0.0;
+           Asub[local_j][local_i] = 0.0;
           }
-          if ( tiledCol < K && globalRow < M ) {
-           Bsub[col][row] = A[globalRow*K + tiledCol];
+          if ( tiledCol < K && i < M ) {
+           Bsub[local_j][local_i] = A(i,tiledCol);
           } else {
-           Bsub[col][row] = 0.0;
+           Bsub[local_j][local_i] = 0.0;
           }
         }
         // Synchronise to make sure the tile is loaded
         barrier(CLK_LOCAL_MEM_FENCE);
 
         // Perform the computation for a single tile
-        if( globalCol <= globalRow ){
+        if( j <= i ){
           for (int k=0; k < TS11; k++) {
-              acc += Bsub[k][row] * Asub[col][k];
+              acc += Bsub[k][local_i] * Asub[local_j][k];
           }
         }
 
@@ -136,9 +141,9 @@ __kernel void multiply_self_transposed(const int M, const int N, const int K,
     }
 
     // Store the final result in C
-    if ( globalCol < N && globalRow < M && globalCol <= globalRow ) {
-     C[globalRow*N + globalCol] = acc;
-     C[globalCol*N + globalRow] = acc;
+    if ( j < N && i < M && j <= i ) {
+     C(i,j) = acc;
+     C(j,i) = acc;
     }
  }
 )====="

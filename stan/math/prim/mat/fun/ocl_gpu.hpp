@@ -57,7 +57,6 @@ namespace stan {
       kernel_groups["lower_tri_inv_step2"] = "matrix_inverse";
       kernel_groups["lower_tri_inv_step3"] = "matrix_inverse";
       kernel_groups["cholesky_block"] = "cholesky_decomposition";
-      kernel_groups["cholesky_zero"] = "cholesky_decomposition";
       kernel_groups["check_nan"] = "check_gpu";
       kernel_groups["check_symmetric"] = "check_gpu";
       kernel_groups["check_diagonal_zeros"] = "check_gpu";

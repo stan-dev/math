@@ -14,66 +14,71 @@ R"=====(
     #error "Double precision not supported by OpenCL implementation."
 #endif
 
+#define A(i,j) A[i*cols+j]
+#define V(i,j) V[offset+i*(part_size_fixed+1)+j] 
+
 __kernel void lower_tri_inv_step1(
-                __global double* ap,
-                __global double* vv,
+                __global double* A,
+                __global double* V,
                 int remainder,
                 int part_size_fixed,
-                int M) {
- int indeks = get_global_id(0);
- int i = indeks*part_size_fixed;
- int part_size;
- double faktor;
- if ( indeks < remainder ) {
-  i += indeks;
-  part_size = part_size_fixed+1;
- } else {
-  i += remainder;
-  part_size = part_size_fixed;
- }
- int offset = indeks*(part_size_fixed+1)*(part_size_fixed+1);
-   for (int p = 0; p < part_size; p++) {
-      for (int r = 0; r < part_size; r++) {
-        if ( p == r )
-          vv[offset+p*(part_size_fixed+1)+r] = 1;
-        else
-          vv[offset+p*(part_size_fixed+1)+r] = 0;
-      }
-    }
+                int cols) {
+  int indeks = get_global_id(0);
+  int i = indeks*part_size_fixed;
+  int part_size;
+  double faktor;
+  if ( indeks < remainder ) {
+    i += indeks;
+    part_size = part_size_fixed+1;
+  } else {
+    i += remainder;
+    part_size = part_size_fixed;
+  }
+  int offset = indeks*(part_size_fixed+1)*(part_size_fixed+1);
 
-    for (unsigned int ii = 0; ii < part_size; ii++) {
-      if ( ii > 0 ) {
-        for (unsigned int j = ii; j < part_size; j++) {
-          faktor = ap[(j+i)*M+i+ii-1];
-          for (unsigned int k = 0; k < part_size; k++) {
-            vv[offset+j*(part_size_fixed+1)+k] -=
-                    faktor*vv[offset+(ii-1)*(part_size_fixed+1)+k];
-          }
+  for (int p = 0; p < part_size; p++) {
+    for (int r = 0; r < part_size; r++) {
+      if ( p == r )
+        V(p,r) = 1;
+      else
+        V(p,r) = 0;
+    }
+  }
+
+  for (unsigned int ii = 0; ii < part_size; ii++) {
+    if ( ii > 0 ) {
+      for (unsigned int j = ii; j < part_size; j++) {
+        faktor = A((j+i),(i+ii-1));
+        for (unsigned int k = 0; k < part_size; k++) {
+          V(j,k) -= faktor*V((ii-1),k);
         }
       }
-      faktor = ap[(ii+i)*M+ii+i];
-      for (unsigned int k = 0; k < part_size; k++) {
-        vv[offset+ii*(part_size_fixed+1)+k] /= faktor;
-      }
     }
-    for (int p = 0; p < part_size; p++) {
-      for (int r=0; r < part_size; r++) {
-        ap[(p+i)*M+i+r] = vv[offset+p*(part_size_fixed+1)+r];
-      }
+    faktor = A((ii+i),(ii+i));
+    for (unsigned int k = 0; k < part_size; k++) {
+      V(ii,k) /= faktor;
     }
+  }
+  for (int p = 0; p < part_size; p++) {
+    for (int r=0; r < part_size; r++) {
+      A((p+i),(i+r)) = V(p,r);
+    }
+  }
 }
+
+#define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+i*part_size1+j]
 
 #define WPT 4
 #define RTS 8
 #define TS2 32
 __kernel void lower_tri_inv_step2(
-                __global double* ap,
+                __global double* A,
                 __global int* sizes,
-                __global double* MM,
+                __global double* temp,
                 int repeat,
                 int remainder,
                 int part_size_fixed,
-                int M) {
+                int cols) {
  int n = get_global_id(2)*2;
  double sum = 0;
  int part_size1 = 0, part_size2 = 0;
@@ -112,16 +117,16 @@ __kernel void lower_tri_inv_step2(
    const int tiledCol = TS2*t + col;
 
    if ( i < part_size2 && (tiledCol+w*RTS) < part_size1 &&
-      (tiledCol+offset_j+part_size1+w*RTS) < M  && (i+offset_i) < M ) {
+      (tiledCol+offset_j+part_size1+w*RTS) < cols  && (i+offset_i) < cols ) {
     Asub[col+w*RTS][row] =
-      ap[(i+offset_i)*M+tiledCol+offset_j+part_size1+w*RTS];
+      A((i+offset_i),(tiledCol+offset_j+part_size1+w*RTS));
    } else {
     Asub[col+w*RTS][row] = 0.0;
    }
 
    if ( (j+w*RTS) < part_size1 && tiledRow < part_size2 &&
-        (tiledRow+offset_i) < M && (j+offset_j+w*RTS) < M ) {
-    Bsub[col+w*RTS][row] = ap[(tiledRow+offset_i)*M+j+offset_j+w*RTS];
+        (tiledRow+offset_i) < cols && (j+offset_j+w*RTS) < cols ) {
+    Bsub[col+w*RTS][row] = A((tiledRow+offset_i),(j+offset_j+w*RTS));
    } else {
     Bsub[col+w*RTS][row] = 0.0;
    }
@@ -140,19 +145,19 @@ __kernel void lower_tri_inv_step2(
  for (int w = 0; w < WPT; w++) {
   if ( i < part_size2 && (j+w*RTS) < part_size1 &&
        i < sizeM && (j+w*RTS) < sizeM ) {
-   MM[(n/2)*(sizeM)*(sizeM)+i*part_size1+j+w*RTS] = acc[w];
+   temp(i,(j+w*RTS)) = acc[w];
   }
  }
 }
 
 __kernel void lower_tri_inv_step3(
-                __global double* ap,
+                __global double* A,
                 __global int* sizes,
-                __global double* MM,
+                __global double* temp,
                 int repeat,
                 int remainder,
                 int part_size_fixed,
-                int M) {
+                int cols) {
  int n = get_global_id(2)*2;
  double sum = 0;
  int part_size1 = 0, part_size2 = 0;
@@ -198,14 +203,14 @@ __kernel void lower_tri_inv_step3(
    if ( i < part_size2 && (tiledCol+w*RTS) < part_size1 &&
         i < sizeM && (tiledCol+w*RTS) < sizeM ) {
     Asub[col+w*RTS][row] =
-        MM[(n/2)*(sizeM)*(sizeM)+i*part_size1+tiledCol+w*RTS];
+        temp(i,(tiledCol+w*RTS));
    } else {
     Asub[col+w*RTS][row] = 0.0;
    }
-   if ( (j+w*RTS) < part_size1 && (j+offset_j+w*RTS) < M &&
-        (tiledRow+offset_i-part_size1) < M ) {
+   if ( (j+w*RTS) < part_size1 && (j+offset_j+w*RTS) < cols &&
+        (tiledRow+offset_i-part_size1) < cols ) {
     Bsub[col+w*RTS][row] =
-        ap[(tiledRow+offset_i-part_size1)*M+j+offset_j+w*RTS];
+        A((tiledRow+offset_i-part_size1),(j+offset_j+w*RTS));
    } else {
     Bsub[col+w*RTS][row] = 0.0;
    }
@@ -221,8 +226,8 @@ __kernel void lower_tri_inv_step3(
  }
  for (int w = 0; w < WPT; w++) {
   if ( i < part_size2 && (j+w*RTS) < part_size1 &&
-      (i+offset_i) < M && (j+offset_j+w*RTS) < M ) {
-   ap[(i+offset_i)*M+j+offset_j+w*RTS] = -acc[w];
+      (i+offset_i) < cols && (j+offset_j+w*RTS) < cols ) {
+   A((i+offset_i),(j+offset_j+w*RTS)) = -acc[w];
   }
  }
 }
