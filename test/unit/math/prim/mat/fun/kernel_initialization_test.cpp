@@ -40,11 +40,11 @@ TEST(MathMatrix, kernel_initialize) {
       stan::math::get_kernel("lower_tri_inv_step3"));
       EXPECT_NO_THROW(cl::Kernel kernel_chol_block = 
       stan::math::get_kernel("cholesky_block"));
-      EXPECT_NO_THROW(cl::Kernel kernel_chol_zero = 
-      stan::math::get_kernel("cholesky_zero"));
       EXPECT_NO_THROW(cl::Kernel kernel_check_nan = 
       stan::math::get_kernel("check_nan"));
       EXPECT_NO_THROW(cl::Kernel kernel_check_diagonal_zeros = 
       stan::math::get_kernel("check_diagonal_zeros"));
+      EXPECT_NO_THROW(cl::Kernel kernel_check_symmetric = 
+      stan::math::get_kernel("check_symmetric"));
 
 }
