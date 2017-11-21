@@ -6,10 +6,10 @@
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <CL/cl.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <CL/cl.hpp>
 
 /*
 *  @file stan/math/prim/mat/fun/matrix_gpu.hpp

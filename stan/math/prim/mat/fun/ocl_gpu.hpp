@@ -3,8 +3,7 @@
 
 #define __CL_ENABLE_EXCEPTIONS
 
-#include "stan/math/prim/arr/err/check_opencl.hpp"
-
+#include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <fstream>

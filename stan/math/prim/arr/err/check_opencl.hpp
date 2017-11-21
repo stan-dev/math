@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_OPENCL_HPP_
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_OPENCL_HPP_
 
+#include <CL/cl.hpp>
 #include <iostream>
 #include <string>
-#include <CL/cl.hpp>
 
 
 /** @file stan/math/prim/arr/err/check_opencl.hpp
