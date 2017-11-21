@@ -28,6 +28,21 @@ namespace stan {
      * matrix, along with a pointer to the vari for sigma,
      * the vari for l and the vari for p.
      *
+     * The elements of periodic covariance matrix \f$ \mathbf{K} \f$ using the
+     * input \f$ \mathbf{X} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
+     * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
+     *
+     * The partial derivatives w.r.t. the parameters are the following:\n
+     *
+     * \f$ \frac{\partial k}{\partial \sigma} = \frac{2k}{\sigma} \f$\n
+     * \f$ \frac{\partial k}{\partial \ell} = \frac{4k}{\ell^3} \sin^2(\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
+     * \f$ \frac{\partial k}{\partial p} = \frac{2k\pi|\mathbf{x}-\mathbf{x}^\prime|}{\ell^2p^2} \sin(2\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
+     *
      * @tparam T_x type of std::vector elements of x.
      *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_sigma type of sigma
@@ -142,6 +157,20 @@ namespace stan {
      * matrix, along with a pointer to the vari for sigma,
      * the vari for l and the vari for p.
      *
+     * The elements of periodic covariance matrix \f$ \mathbf{K} \f$ using the
+     * input \f$ \mathbf{X} \f$ are defined as
+     * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
+     * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
+     * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
+     * \sigma^2 \exp\left(-\frac{2\sin^2(\pi |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$
+     * \n
+     * where \f$ \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and period.
+     *
+     * The partial derivatives w.r.t. the parameters are the following:\n
+     *
+     * \f$ \frac{\partial k}{\partial \sigma} = \frac{2k}{\sigma} \f$\n
+     * \f$ \frac{\partial k}{\partial \ell} = \frac{4k}{\ell^3} \sin^2(\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
+     * \f$ \frac{\partial k}{\partial p} = \frac{2k\pi|\mathbf{x}-\mathbf{x}^\prime|}{\ell^2p^2} \sin(2\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
      * @tparam T_x type of std::vector elements of x
      *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
      * @tparam T_l type of length-scale
