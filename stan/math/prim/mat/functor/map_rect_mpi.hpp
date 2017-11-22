@@ -330,15 +330,11 @@ namespace stan {
                                   Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
               ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
 
-            if (!is_constant_struct<T_shared_param>::value) {
-              for(std::size_t k=0; k != num_shared_operands; ++k)
-                ops_partials.edge1_.partials_[k] = world_result(1+k,ij);
-            }
+            if (!is_constant_struct<T_shared_param>::value)
+              ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
               
-            if (!is_constant_struct<T_job_param>::value) {
-              for(std::size_t k=0; k != num_job_operands; ++k)
-                ops_partials.edge2_.partials_[k] = world_result(offset_job_params+k,ij);
-            }
+            if (!is_constant_struct<T_job_param>::value)
+                ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
 
             out(ij) = ops_partials.build(world_result(0,ij));
           }
