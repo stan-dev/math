@@ -40,23 +40,6 @@ namespace stan {
       }
     };
 
-    template<typename T>
-    void mpi_broadcast_command() {
-      boost::mpi::communicator world;
-
-      if(world.rank() != 0)
-        throw std::runtime_error("only root may broadcast commands.");
-
-      // used to lock the mpi cluster during execution of some
-      // distributed task
-      static std::mutex mpi_cluster_mutex;
-      std::lock_guard<std::mutex> lock_cluster(mpi_cluster_mutex);
-      
-      boost::shared_ptr<mpi_command> command(new T);
-      
-      boost::mpi::broadcast(world, command, 0);
-    }
-
     // map jobs of given chunk size to workers; used for deterministic
     // scheduling
     std::vector<int>
@@ -75,9 +58,13 @@ namespace stan {
       return(chunks);
     }
 
+    template<typename T>
+    void mpi_broadcast_command();
+
     struct mpi_cluster {
       boost::mpi::communicator world_;
       std::size_t const rank_ = world_.rank();
+      static std::mutex command_mutex;
       
       mpi_cluster() {
         if(rank_ != 0) {
@@ -99,9 +86,25 @@ namespace stan {
           mpi_broadcast_command<mpi_stop_worker>();
         }
       }
-
-
     };
+
+    std::mutex mpi_cluster::command_mutex;
+
+    template<typename T>
+    void mpi_broadcast_command() {
+      boost::mpi::communicator world;
+      
+      if(world.rank() != 0)
+        throw std::runtime_error("only root may broadcast commands.");
+
+      // used to lock the mpi cluster during execution of some
+      // distributed task
+      std::lock_guard<std::mutex> lock_cluster(mpi_cluster::command_mutex);
+      
+      boost::shared_ptr<mpi_command> command(new T);
+      
+      boost::mpi::broadcast(world, command, 0);
+    }
 
   }
 }

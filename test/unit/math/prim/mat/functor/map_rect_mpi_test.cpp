@@ -37,7 +37,6 @@ int main(int argc, const char* argv[]) {
     job_params_d.push_back(job_d);
   }
 
-  
   std::vector<std::vector<double> > x_r(N, std::vector<double>(1,1.0));
   std::vector<std::vector<int> > x_i(N, std::vector<int>(0));
 
