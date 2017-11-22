@@ -39,107 +39,127 @@ __kernel void scalar_mul(
 #define B(i,j)  B[j*K+i]
 #define C(i,j)  C[j*M+i]
 
-#define TS 16
+#define WPT 4
+#define TS 32
+#define RTS TS/WPT
 __kernel void basic_multiply(const int M, const int N, const int K,
                       const __global double* A,
                       const __global double* B,
                       __global double* C) {
         
-    const int local_i = get_local_id(0);
-    const int local_j = get_local_id(1);
-    const int i = TS*get_group_id(0) + local_i;
-    const int j = TS*get_group_id(1) + local_j;
-
+    const int row = get_local_id(0);
+    const int col = get_local_id(1);
+    const int i = TS*get_group_id(0) + row;
+    const int j = TS*get_group_id(1) + col;
+    
     __local double Asub[TS][TS];
     __local double Bsub[TS][TS];
-
-    double acc = 0.0;
-
-    const int numTiles = (K+TS-1)/TS;
+ 
+    double acc[WPT];
+    for (int w=0; w<WPT; w++) {
+        acc[w] = 0.0;
+    }
     
-    for (int t=0; t < numTiles; t++) {
+    const int numTiles = (K+TS-1)/TS;
+    for (int t=0; t<numTiles; t++) {
+        for (int w=0; w<WPT; w++) {
+            const int tiled_i = TS*t + row;
+            const int tiled_j = TS*t + col;
+            if ( i < M && (tiled_j + w*RTS) < K ) {
+              Asub[col + w*RTS][row] = A[(tiled_j + w*RTS)*M + i];
+            }else{
+              Asub[col + w*RTS][row] = 0.0;
+            }
+            if ( tiled_i < K && (j + w*RTS) < N ) {
+              Bsub[col + w*RTS][row] = B[(j + w*RTS)*K + tiled_i];
+            }else{
+              Bsub[col + w*RTS][row] = 0.0;
+            }
+        }
         
-        const int tiled_i = TS*t + local_i;
-        const int tiled_j = TS*t + local_j;
-
-        if ( i < M && tiled_j < K ) {
-         Asub[local_j][local_i] = A(i, tiled_j);
-        } else {
-         Asub[local_j][local_i] = 0.0;
-        }
-
-        if ( tiled_i < K && j < N ) {
-         Bsub[local_j][local_i] = B(tiled_i, j);
-        } else {
-         Bsub[local_j][local_i] = 0.0;
-        }
-
+        
         barrier(CLK_LOCAL_MEM_FENCE);
-
-        for (int k=0; k < TS; k++) {
-            acc += Asub[k][local_i] * Bsub[local_j][k];
+ 
+        for (int k=0; k<TS; k++) {
+            for (int w=0; w<WPT; w++) {
+                acc[w] += Asub[k][row] * Bsub[col + w*RTS][k];
+            }
         }
-
+ 
         barrier(CLK_LOCAL_MEM_FENCE);
     }
-
-    if ( j < N && i < M ) {
-     C(i,j) = acc;
+ 
+    for (int w=0; w<WPT; w++) {
+      if ( (j + w*RTS) < N && i < M ) {
+        C[(j + w*RTS)*M + i] = acc[w];
+      }
     }
 }
- 
-#define TS11 16
+
+#define WPT1 4
+#define TS1 32
+#define RTS1 TS1/WPT1
 __kernel void multiply_self_transposed(const int M, const int N, const int K,
                       const __global double* A,
                       const __global double* B,
                       __global double* C) {
     
-    const int local_i = get_local_id(0);
-    const int local_j = get_local_id(1);
-    const int i = TS11*get_group_id(0) + local_i;
-    const int j = TS11*get_group_id(1) + local_j;
-    const int jMin = TS11*get_group_id(1);
-    const int iMax = TS11*get_group_id(0)  + get_local_size(0);
-
-    __local double Asub[TS11][TS11];
-    __local double Bsub[TS11][TS11];
-
-    double acc = 0.0;
-
-    const int numTiles = (K+TS11-1)/TS11;
-    for (int t=0; t < numTiles; t++) {
-        
-        const int tiled_i = TS11*t + local_i;
-        const int tiled_j = TS11*t + local_j;
+    const int row = get_local_id(0); 
+    const int col = get_local_id(1); 
+    const int i = TS1*get_group_id(0) + row; 
+    const int j = TS1*get_group_id(1) + col; 
+    const int jMin = TS1*get_group_id(1);
+    const int iMax = TS1*get_group_id(0)  + get_local_size(0);
+    
+    __local double Asub[TS1][TS1];
+    __local double Bsub[TS1][TS1];
+ 
+    double acc[WPT1];
+    for (int w=0; w<WPT1; w++) {
+        acc[w] = 0.0;
+    }
+    
+    
+    const int numTiles = (K+TS1-1)/TS1;
+    for (int t=0; t<numTiles; t++) {
         if(jMin <= iMax){
-          
-          if ( i < M && tiled_j < K ) {
-           Asub[local_j][local_i] = A(i, tiled_j);
-          } else {
-           Asub[local_j][local_i] = 0.0;
-          }
-          if ( tiled_i < K && j < N ) {
-           Bsub[local_j][local_i] = B(tiled_i, j);
-          } else {
-           Bsub[local_j][local_i] = 0.0;
-          }
+        
+        for (int w=0; w<WPT1; w++) {
+            const int tiled_i = TS1*t + row;
+            const int tiled_j = TS1*t + col;
+            if ( i < M && (tiled_j + w*RTS1) < K ) {
+              Asub[col + w*RTS1][row] = A[(tiled_j + w*RTS1)*M + i];
+            }else{
+              Asub[col + w*RTS1][row] = 0.0;
+            }
+            if ( tiled_i < K && (j + w*RTS1) < N ) {
+              Bsub[col + w*RTS1][row] = B[(j + w*RTS1)*K + tiled_i];
+            }else{
+              Bsub[col + w*RTS1][row] = 0.0;
+            }
+        }
         }
         
         barrier(CLK_LOCAL_MEM_FENCE);
-
+ 
         
-        if( j <= i ){
-          for (int k=0; k < TS11; k++) {
-              acc += Asub[k][local_i] * Bsub[local_j][k];
-          }
+        for (int k=0; k<TS1; k++) {
+            for (int w=0; w<WPT1; w++) {
+              if((j + w*RTS1)<=i){
+                acc[w] += Asub[k][row] * Bsub[col + w*RTS1][k];
+              }
+            }
         }
-
+ 
+        
         barrier(CLK_LOCAL_MEM_FENCE);
     }
-
-    if ( j < N && i < M && j <= i ) {
-     C(i,j) = acc;
-     C(j,i) = acc;
+ 
+    for (int w=0; w<WPT1; w++) {
+      if ( (j + w*RTS1) < N && i < M  && (j + w*RTS1)<=i ) {
+        C[(j + w*RTS1)*M + i] = acc[w];
+        C[i*M + (j + w*RTS1)] = acc[w];
+      }
     }
  }
 )====="

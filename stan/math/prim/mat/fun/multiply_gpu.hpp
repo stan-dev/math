@@ -121,7 +121,8 @@ namespace stan {
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue& cmdQueue = get_queue();
       try {
-        int local = 16;
+        int local = 32;
+        int wpt = 4;
         int Mpad = ((A.rows() + local-1)/local)*local;
         int Npad = ((B.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
@@ -133,8 +134,8 @@ namespace stan {
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(Mpad,  Npad),
-          cl::NDRange(local, local),
+          cl::NDRange(Mpad,  Npad/wpt),
+          cl::NDRange(local, local/wpt),
           NULL,
           NULL);
       } catch (cl::Error& e) {
@@ -168,7 +169,8 @@ namespace stan {
       cl::CommandQueue& cmdQueue = get_queue();
       AT = transpose(A);
       try {
-        int local = 16;
+        int local = 32;
+        int wpt = 4;
         int Mpad = ((A.rows() + local-1)/local)*local;
         int Npad = ((AT.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
@@ -180,8 +182,8 @@ namespace stan {
         cmdQueue.enqueueNDRangeKernel(
           kernel,
           cl::NullRange,
-          cl::NDRange(Mpad,  Npad),
-          cl::NDRange(local, local),
+          cl::NDRange(Mpad,  Npad/wpt),
+          cl::NDRange(local, local/wpt),
           NULL,
           NULL);
       } catch (cl::Error& e) {
