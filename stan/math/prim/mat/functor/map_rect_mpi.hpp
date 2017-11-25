@@ -123,7 +123,7 @@ namespace stan {
 
         const int num_local_jobs = local_job_params_dbl_.cols();
         matrix_d local_output(1, num_local_jobs);
-        std::vector<int> local_f_out(num_local_jobs);
+        std::vector<int> local_f_out(num_local_jobs, -1);
 
         t_cache_x_r::cache_t& local_x_r = t_cache_x_r::lookup(callsite_id_);
         t_cache_x_i::cache_t& local_x_i = t_cache_x_i::lookup(callsite_id_);
@@ -142,19 +142,27 @@ namespace stan {
         std::cout << "evaluating " << num_local_jobs << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
         
         // TODO: add exception handling
-        for(std::size_t i=0; i != num_local_jobs; ++i) {
-          const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
-          local_f_out[i] = job_output.cols();
+        try {
+          for(std::size_t i=0; i != num_local_jobs; ++i) {
+            const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
+            local_f_out[i] = job_output.cols();
           
-          if(i==0)
-            local_output.resize(job_output.rows(), Eigen::NoChange);
+            if(i==0)
+              local_output.resize(job_output.rows(), Eigen::NoChange);
 
-          if(local_output.cols() < offset + local_f_out[i])
-            local_output.conservativeResize(Eigen::NoChange, 2*(offset + local_f_out[i]));
+            if(local_output.cols() < offset + local_f_out[i])
+              local_output.conservativeResize(Eigen::NoChange, 2*(offset + local_f_out[i]));
 
-          local_output.block(0, offset, local_output.rows(), local_f_out[i]) = job_output;
+            local_output.block(0, offset, local_output.rows(), local_f_out[i]) = job_output;
 
-          offset += local_f_out[i];
+            offset += local_f_out[i];
+          }
+        } catch(const std::exception& e) {
+          // We abort processing only and flag that things went
+          // wrong. We have to keep processing to keep the cluster in
+          // sync and let the gather_outputs method detect on the root
+          // that things went wrong
+          local_output(0,offset) = std::numeric_limits<double>::max();
         }
 
         // during first execution we distribute the output sizes from
@@ -164,8 +172,25 @@ namespace stan {
           boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs, world_f_out.data(), job_chunks, 0);
           // on the root we now have all sizes from all childs. Copy
           // over the local sizes to the world vector on each local
-          // node in order to cache this information locally
+          // node in order to cache this information locally.
           std::copy(local_f_out.begin(), local_f_out.end(), world_f_out.begin() + start_job);
+          // Before we can cache these sizes locally we must ensure
+          // that no exception has been fired from any node. Hence,
+          // check on the root that everything was ok and broadcast
+          // that info. Only then we locally cache the output sizes.
+          bool all_ok = true;
+          for(std::size_t i=0; i < num_jobs; ++i)
+            if(world_f_out[i] == -1)
+              all_ok = false;
+          boost::mpi::broadcast(world_, all_ok, 0);
+          if(!all_ok) {
+            // err out on the root
+            if (rank_ == 0)
+              throw std::runtime_error("MPI error on first evaluation.");
+            // and ensure on the workers that they return into their
+            // listening state
+            return(result_type());
+          }
           t_cache_f_out::cache(callsite_id_, world_f_out);
         }
 
@@ -334,7 +359,6 @@ namespace stan {
         const std::size_t num_output_size_per_job = local_result.rows();
         const std::size_t size_world_f_out = sum(world_f_out);
 
-        
         matrix_d world_result(num_output_size_per_job, size_world_f_out);
 
         std::vector<int> chunks_result(world_size_,0);
@@ -358,6 +382,10 @@ namespace stan {
 
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
+            // check if the outputs flags a failure
+            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max()))
+              throw std::runtime_error("MPI error.");
+
             operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
                                   Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
               ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
