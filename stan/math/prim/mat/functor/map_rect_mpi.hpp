@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <map>
+#include <type_traits>
 
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/arr/functor/mpi_command.hpp>
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
+#include <stan/math/prim/mat/fun/dims.hpp>
 
 namespace stan {
   namespace math {
@@ -43,7 +45,8 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<1, std::vector<std::vector<double>>> t_cache_x_r;
       typedef internal::mpi_parallel_call_cache<2, std::vector<std::vector<int>>> t_cache_x_i;
       typedef internal::mpi_parallel_call_cache<3, std::vector<int>> t_cache_f_out;
-      typedef internal::mpi_parallel_call_cache<4, std::vector<int>> t_cache_meta;
+      typedef internal::mpi_parallel_call_cache<4, std::vector<int>> t_cache_chunks;
+      //typedef internal::mpi_parallel_call_cache<5, int> t_cache_meta_shared_params;
       
       const int callsite_id_;
 
@@ -53,9 +56,6 @@ namespace stan {
 
       vector_d local_shared_params_dbl_;
       matrix_d local_job_params_dbl_;
-
-      int num_jobs_;
-      int num_local_jobs_;
 
     public:
       // called on root
@@ -111,15 +111,19 @@ namespace stan {
       // all data is cached and local parameters are also available
       result_type reduce() {
 
-        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
+        std::cout << "starting reduce on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+        
+        const std::vector<int>& job_chunks = t_cache_chunks::lookup(callsite_id_);
+        const int num_jobs = sum(job_chunks);
 
         // id of first job out of all
         int start_job = 0;
         for(std::size_t n=0; n != rank_; ++n)
           start_job += job_chunks[n];
 
-        matrix_d local_output(1, num_local_jobs_);
-        std::vector<int> local_f_out(num_local_jobs_);
+        const int num_local_jobs = local_job_params_dbl_.cols();
+        matrix_d local_output(1, num_local_jobs);
+        std::vector<int> local_f_out(num_local_jobs);
 
         t_cache_x_r::cache_t& local_x_r = t_cache_x_r::lookup(callsite_id_);
         t_cache_x_i::cache_t& local_x_i = t_cache_x_i::lookup(callsite_id_);
@@ -128,15 +132,17 @@ namespace stan {
         if(t_cache_f_out::is_cached(callsite_id_)) {
           t_cache_f_out::cache_t& f_out = t_cache_f_out::lookup(callsite_id_);
           int num_outputs = 0;
-          for(std::size_t j=start_job; j != start_job + num_local_jobs_; ++j)
+          for(std::size_t j=start_job; j != start_job + num_local_jobs; ++j)
             num_outputs += f_out[j];
           local_output.resize(1, num_outputs);
         }
 
         int offset = 0;
 
+        std::cout << "evaluating " << num_local_jobs << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+        
         // TODO: add exception handling
-        for(std::size_t i=0; i != num_local_jobs_; ++i) {
+        for(std::size_t i=0; i != num_local_jobs; ++i) {
           const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
           local_f_out[i] = job_output.cols();
           
@@ -154,8 +160,8 @@ namespace stan {
         // during first execution we distribute the output sizes from
         // local jobs to the root
         if(!t_cache_f_out::is_cached(callsite_id_)) {
-          std::vector<int> world_f_out(num_jobs_, 0);
-          boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs_, world_f_out.data(), job_chunks, 0);
+          std::vector<int> world_f_out(num_jobs, 0);
+          boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs, world_f_out.data(), job_chunks, 0);
           // on the root we now have all sizes from all childs. Copy
           // over the local sizes to the world vector on each local
           // node in order to cache this information locally
@@ -168,13 +174,15 @@ namespace stan {
         // check that cached sizes are the same as just collected from
         // this evaluation
 
-        return combine_.gather_outputs(local_output, world_f_out);
+        std::cout << "gathering outputs " << sum(local_f_out) << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+
+        return combine_.gather_outputs(local_output, world_f_out, job_chunks);
       }
 
     private:
 
       template <typename T_cache>
-      void cache_data(typename T_cache::cache_t& data) {
+      void scatter_array_2d_cached(typename T_cache::cache_t& data) {
         // distribute data only if not in cache yet
         if(T_cache::is_cached(callsite_id_)) {
           std::cout << "cache_data on remote " << rank_ << " HIT the cache " << std::endl;
@@ -183,83 +191,108 @@ namespace stan {
 
         // number of elements of each data item must be transferred to
         // the workers
-        std::size_t size_data;
+        std::vector<int> data_dims = dims(data);
+        data_dims.resize(2);
 
-        if(rank_ == 0)
-          size_data = data[0].size();
+        boost::mpi::broadcast(world_, data_dims.data(), 2, 0);
 
-        boost::mpi::broadcast(world_, size_data, 0);
-
-        const std::vector<int> data_chunks = mpi_map_chunks(num_jobs_, size_data);
-        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
+        const std::vector<int> job_chunks = mpi_map_chunks(data_dims[0], 1);
+        const std::vector<int> data_chunks = mpi_map_chunks(data_dims[0], data_dims[1]);
 
         auto flat_data = to_array_1d(data);
 
-        std::cout << "cache_data on remote " << rank_ << " input size " << flat_data.size()<< std::endl;
-        std::cout << "cache_data on remote " << rank_ << " expecting size " << data_chunks[rank_] << std::endl;
+        std::cout << "cache_const_data on remote " << rank_ << " input size " << flat_data.size()<< std::endl;
+        std::cout << "cache_const_data on remote " << rank_ << " expecting size " << data_chunks[rank_] << std::endl;
 
         // transfer it ...
         decltype(flat_data) local_flat_data(data_chunks[rank_]);
         boost::mpi::scatterv(world_, flat_data.data(), data_chunks, local_flat_data.data(), 0);
 
-        std::cout << "cache_data on remote " << rank_ << " got scatterd data of size " << local_flat_data.size() << std::endl;
+        std::cout << "cache_const_data on remote " << rank_ << " got scatterd data of size " << local_flat_data.size() << std::endl;
 
          // ... and rebuild 2D array
         std::vector<decltype(flat_data)> local_data;
         auto local_iter = local_flat_data.begin();
         for(std::size_t i=0; i != job_chunks[rank_]; ++i) {
-          typename T_cache::cache_t::value_type const data_elem(local_iter, local_iter + size_data);
+          typename T_cache::cache_t::value_type const data_elem(local_iter, local_iter + data_dims[1]);
           local_data.push_back(data_elem);
-          local_iter += size_data;
+          local_iter += data_dims[1];
         }
 
         // finally we cache it locally
         T_cache::cache(callsite_id_, local_data);
       }
 
+      template <typename T_cache>
+      void broadcast_1d_cached(typename T_cache::cache_t& data) {
+        if(T_cache::is_cached(callsite_id_)) {
+          return;
+        }
+
+        std::size_t data_size = data.size();
+        boost::mpi::broadcast(world_, data_size, 0);
+
+        typename std::remove_cv<typename T_cache::cache_t>::type local_data = data;
+        local_data.resize(data_size);
+        
+        boost::mpi::broadcast(world_, local_data.data(), data_size, 0);
+        T_cache::cache(callsite_id_, local_data);
+      }
+
+      template <int meta_cache_id>
+      vector_d broadcast_vector(const vector_d& data) {
+        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<int>> t_meta_cache;
+        std::vector<int> meta_info = { data.size() };
+        broadcast_1d_cached<t_meta_cache>(meta_info);
+
+        const std::vector<int>& data_size = t_meta_cache::lookup(callsite_id_);
+
+        vector_d local_data(data_size[0]);
+        
+        boost::mpi::broadcast(world_, local_data.data(), data_size[0], 0);
+        
+        return(local_data);
+      }
+
+
+      // scatters an Eigen matrix column wise over the cluster. Meta
+      // information as the data size is treated as static data and
+      // only transferred on the first call and read from cache
+      // subsequently.
+      template <int meta_cache_id>
+      matrix_d scatter_matrix(const matrix_d& data) {
+        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<int>> t_meta_cache;
+        std::vector<int> meta_info = { data.rows(), data.cols() };
+        broadcast_1d_cached<t_meta_cache>(meta_info);
+
+        const std::vector<int>& dims = t_meta_cache::lookup(callsite_id_);
+        const int rows = dims[0];
+        const int total_cols = dims[1];
+
+        const std::vector<int> job_chunks = mpi_map_chunks(total_cols, 1);
+        const std::vector<int> data_chunks = mpi_map_chunks(total_cols, rows);
+        matrix_d local_data(rows, job_chunks[rank_]);
+        boost::mpi::scatterv(world_, data.data(), data_chunks, local_data.data(), 0);
+
+        return(local_data);
+      }
+       
       void setup_call(const vector_d& shared_params, const matrix_d& job_params,
                       const std::vector<std::vector<double>>& x_r,
                       const std::vector<std::vector<int>>& x_i) {
 
         std::cout << "setup_call on remote " << rank_ << "; callsite_id_ = " << callsite_id_ << std::endl;
-        if(!t_cache_meta::is_cached(callsite_id_)) {
-          std::vector<int> meta(3);
-          meta[0] = shared_params.size();
-          meta[1] = job_params.rows();
-          meta[2] = job_params.cols();
-          boost::mpi::broadcast(world_, meta.data(), 3, 0);
-          t_cache_meta::cache(callsite_id_, meta);
-        }
 
-        const std::vector<int>& meta = t_cache_meta::lookup(callsite_id_);
-        const int num_shared_params = meta[0];
-        const int num_job_params = meta[1];
-        num_jobs_ = meta[2];
-
-        std::cout << "setup_call on remote " << rank_ << "; got meta-info" << std::endl;
-
-        // broadcast shared parameters
-        local_shared_params_dbl_ = shared_params;
-        local_shared_params_dbl_.resize(num_shared_params);
-        boost::mpi::broadcast(world_, local_shared_params_dbl_.data(), num_shared_params, 0);
-
-        std::cout << "setup_call on remote " << rank_ << "; got " << num_shared_params << " shared parameters" << std::endl;
-
-        // scatter job specific parameters
-        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs_, 1);
-
-        num_local_jobs_ = job_chunks[rank_];
-        local_job_params_dbl_.resize(num_job_params, num_local_jobs_);
-
-        const std::vector<int> job_params_chunks = mpi_map_chunks(num_jobs_, num_job_params);
-        boost::mpi::scatterv(world_, job_params.data(), job_params_chunks, local_job_params_dbl_.data(), 0);
-
-        std::cout << "setup_call on remote " << rank_ << "; got " << num_job_params << " job parameters" << std::endl;
+        std::vector<int> job_chunks = mpi_map_chunks(job_params.cols(), 1);
+        broadcast_1d_cached<t_cache_chunks>(job_chunks);
+ 
+        local_shared_params_dbl_ = broadcast_vector<-1>(shared_params);
+        local_job_params_dbl_ = scatter_matrix<-2>(job_params);
         
-        // distribute data if not yet cached
-        cache_data<t_cache_x_r>(x_r);
+        // distribute const data if not yet cached
+        scatter_array_2d_cached<t_cache_x_r>(x_r);
         std::cout << "setup_call on remote " << rank_ << "; got real data" << std::endl;
-        cache_data<t_cache_x_i>(x_i);
+        scatter_array_2d_cached<t_cache_x_i>(x_i);
         std::cout << "setup_call on remote " << rank_ << "; got int data" << std::endl;
       }
 
@@ -295,7 +328,7 @@ namespace stan {
                        const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
         : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
 
-      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out) const {
+      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) const {
 
         const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_size_per_job = local_result.rows();
@@ -304,7 +337,6 @@ namespace stan {
         
         matrix_d world_result(num_output_size_per_job, size_world_f_out);
 
-        const std::vector<int> job_chunks = mpi_map_chunks(num_jobs, 1);
         std::vector<int> chunks_result(world_size_,0);
         for(std::size_t i=0, ij=0; i != world_size_; ++i)
           for(std::size_t j=0; j != job_chunks[i]; ++j, ++ij)
