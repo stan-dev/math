@@ -3,7 +3,9 @@ N_TESTS ?= 100 # override this in make/local. If <= 0, N_TESTS + 1 is interprete
 ##
 # GTEST_MAIN is the file that contains the google test
 ##
-GTEST_MAIN = $(GTEST)/src/gtest_main.cc
+##GTEST_MAIN = $(GTEST)/src/gtest_main.cc
+## SW: for MPI tests we have to provide a different main which sets up MPI
+GTEST_MAIN = 
 GTEST_CXXFLAGS += -isystem $(GTEST)/include -isystem $(GTEST) -O$O
 
 ##

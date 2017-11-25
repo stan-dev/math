@@ -266,11 +266,11 @@ namespace stan {
 
       template <int meta_cache_id>
       vector_d broadcast_vector(const vector_d& data) {
-        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<int>> t_meta_cache;
-        std::vector<int> meta_info = { data.size() };
+        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<size_type>> t_meta_cache;
+        std::vector<size_type> meta_info = { data.size() };
         broadcast_1d_cached<t_meta_cache>(meta_info);
 
-        const std::vector<int>& data_size = t_meta_cache::lookup(callsite_id_);
+        const std::vector<size_type>& data_size = t_meta_cache::lookup(callsite_id_);
 
         vector_d local_data(data_size[0]);
         
@@ -286,13 +286,13 @@ namespace stan {
       // subsequently.
       template <int meta_cache_id>
       matrix_d scatter_matrix(const matrix_d& data) {
-        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<int>> t_meta_cache;
-        std::vector<int> meta_info = { data.rows(), data.cols() };
+        typedef internal::mpi_parallel_call_cache<meta_cache_id, std::vector<size_type>> t_meta_cache;
+        std::vector<size_type> meta_info = { data.rows(), data.cols() };
         broadcast_1d_cached<t_meta_cache>(meta_info);
 
-        const std::vector<int>& dims = t_meta_cache::lookup(callsite_id_);
-        const int rows = dims[0];
-        const int total_cols = dims[1];
+        const std::vector<size_type>& dims = t_meta_cache::lookup(callsite_id_);
+        const size_type rows = dims[0];
+        const size_type total_cols = dims[1];
 
         const std::vector<int> job_chunks = mpi_map_chunks(total_cols, 1);
         const std::vector<int> data_chunks = mpi_map_chunks(total_cols, rows);
@@ -326,7 +326,6 @@ namespace stan {
     template <typename F, typename T_shared_param, typename T_job_param>
     struct map_rect_reduce;
 
-    template <>
     template <typename F>
     struct map_rect_reduce<F, double, double> {
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {

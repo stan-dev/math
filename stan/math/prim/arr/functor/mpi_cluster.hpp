@@ -14,6 +14,13 @@ namespace stan {
   namespace math {
 
     // MPI command which will shut down a child gracefully
+    class mpi_stop_listen : public std::exception {
+      virtual const char* what() const throw()
+      {
+        return "Stopping MPI listening mode.";
+      }
+    };
+      
     struct mpi_stop_worker : public mpi_command {
       friend class boost::serialization::access;
       template<class Archive>
@@ -23,8 +30,9 @@ namespace stan {
       void run() const {
         boost::mpi::communicator world;
         std::cout << "Terminating worker " << world.rank() << std::endl;
-        MPI_Finalize();
-        std::exit(0);
+        //MPI_Finalize();
+        throw mpi_stop_listen();
+        //std::exit(0);
       }
     };
 
@@ -62,13 +70,27 @@ namespace stan {
     void mpi_broadcast_command();
 
     struct mpi_cluster {
+      boost::mpi::environment env;
       boost::mpi::communicator world_;
       std::size_t const rank_ = world_.rank();
       static std::mutex command_mutex;
       
-      mpi_cluster() {
-        if(rank_ != 0) {
-          std::cout << "Worker " << rank_ << " waiting for commands..." << std::endl;
+      mpi_cluster() : cluster_listens_(false) {}
+
+      ~mpi_cluster() {
+        // the destructor will ensure that the childs are being
+        // shutdown
+        stop_listen()
+      }
+
+      void listen() {
+        if(rank_ == 0) {
+          cluster_listens_ = true;
+          return;
+        }
+        std::cout << "Worker " << rank_ << " listening for commands..." << std::endl;
+        
+        try {
           while(1) {
             boost::shared_ptr<mpi_command> work;
             
@@ -76,16 +98,20 @@ namespace stan {
 
             work->run();
           }
+        } catch(const mpi_stop_listen& e) {
+          std::cout << "Wrapping up MPI on worker " << rank_ << " ..." << std::endl;
         }
       }
 
-      ~mpi_cluster() {
-        // the destructor will ensure that the childs are being
-        // shutdown
-        if(rank_ == 0) {
+      void stop_listen() {
+        if(rank_ == 0 && cluster_listens_) {
           mpi_broadcast_command<mpi_stop_worker>();
+          cluster_listens_ = false;
         }
-      }
+     }
+
+    private:
+      bool cluster_listens_;
     };
 
     std::mutex mpi_cluster::command_mutex;
