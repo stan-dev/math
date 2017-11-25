@@ -80,7 +80,7 @@ namespace stan {
       ~mpi_cluster() {
         // the destructor will ensure that the childs are being
         // shutdown
-        stop_listen()
+        stop_listen();
       }
 
       void listen() {
