@@ -23,7 +23,7 @@ namespace stan {
       int out_size = 0;
 
       for(std::size_t i = 0; i != num_jobs; ++i) {
-        const Eigen::Matrix<result_type, Eigen::Dynamic, 1> f = F::apply(shared_params, job_params[i], x_r[i], x_i[i]);
+        const Eigen::Matrix<result_type, Eigen::Dynamic, 1> f = F()(shared_params, job_params[i], x_r[i], x_i[i]);
         const int f_size = f.rows();
         out_size += f_size;
         if(i == 0) out.resize(num_jobs * f_size);
