@@ -74,7 +74,9 @@ namespace stan {
                         const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                         const std::vector<std::vector<double>>& x_r,
                         const std::vector<std::vector<int>>& x_i,
-                        int callsite_id) : callsite_id_(callsite_id), combine_(shared_params, job_params) {
+                        int callsite_id)
+        : callsite_id_(callsite_id),
+          combine_(shared_params, job_params) {
         if(rank_ != 0)
           throw std::runtime_error("problem sizes can only defined on the root.");
 
@@ -134,7 +136,8 @@ namespace stan {
           start_job += job_chunks[n];
 
         const int num_local_jobs = local_job_params_dbl_.cols();
-        matrix_d local_output(1, num_local_jobs);
+        const std::size_t num_outputs_per_job = ReduceF::get_output_size(local_shared_params_dbl_.rows(), local_job_params_dbl_.rows());
+        matrix_d local_output(num_outputs_per_job, num_local_jobs);
         std::vector<int> local_f_out(num_local_jobs, -1);
 
         t_cache_x_r::cache_t& local_x_r = cache_lookup<t_cache_x_r>();
@@ -146,7 +149,7 @@ namespace stan {
           int num_outputs = 0;
           for(std::size_t j=start_job; j != start_job + num_local_jobs; ++j)
             num_outputs += f_out[j];
-          local_output.resize(1, num_outputs);
+          local_output.resize(num_outputs_per_job, num_outputs);
         }
 
         int offset = 0;
@@ -158,9 +161,6 @@ namespace stan {
             const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
             local_f_out[i] = job_output.cols();
           
-            if(i==0)
-              local_output.resize(job_output.rows(), Eigen::NoChange);
-
             if(local_output.cols() < offset + local_f_out[i])
               local_output.conservativeResize(Eigen::NoChange, 2*(offset + local_f_out[i]));
 
@@ -196,6 +196,7 @@ namespace stan {
             if(world_f_out[i] == -1)
               all_ok = false;
           boost::mpi::broadcast(world_, all_ok, 0);
+          std::cout << "On rank = " << rank_ << "; all_ok = " << all_ok << std::endl;
           if(!all_ok) {
             // err out on the root
             if (rank_ == 0)
@@ -341,6 +342,9 @@ namespace stan {
 
     template <typename F>
     struct map_rect_reduce<F, double, double> {
+      static std::size_t get_output_size(std::size_t num_shared_params, std::size_t num_job_specific_params) {
+        return(1);
+      }
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
         const vector_d out = F::apply(shared_params, job_specific_params, x_r, x_i);
         return( out.transpose() );
@@ -366,12 +370,6 @@ namespace stan {
         : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
 
       result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) const {
-
-        // TODO: in rare cases, the local_result may have too few rows
-        // due to an exception thrown during the first evaluation of
-        // the local junk. We have to detect this here and ensure that
-        // the local chunk is of the correct size before sending
-        // content.
 
         const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_size_per_job = local_result.rows();
