@@ -33,19 +33,19 @@ namespace stan {
     class matrix_gpu {
       private:
         cl::Buffer oclBuffer;
+        const int rows_;
+        const int cols_;
 
       public:
-        int rows_;
-        int cols_;
-        int rows() {
+        int rows() const {
           return rows_;
         }
 
-        int cols() {
+        int cols() const  {
           return cols_;
         }
 
-        int size() {
+        int size() const {
           return rows_ * cols_;
         }
 
@@ -72,14 +72,14 @@ namespace stan {
          */
         matrix_gpu(int rows,  int cols)
         : rows_(rows), cols_(cols) {
-          try {
+          if ( size() > 0 ) {
             cl::Context& ctx = get_context();
-            if (rows_ > 0 && cols_ > 0) {
+            try {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-               sizeof(double) * rows_ * cols_);
+                 sizeof(double) * rows_ * cols_);
+            } catch (const cl::Error& e) {
+              check_ocl_error("matrix constructor", e);
             }
-          } catch (const cl::Error& e) {
-            check_ocl_error("matrix constructor", e);
           }
         }
 
@@ -97,21 +97,20 @@ namespace stan {
          */
         template<typename T, int R, int C>
         explicit matrix_gpu(const Eigen::Matrix<T, R, C> &A) {
-          try {
+          rows_ = A.rows();
+          cols_ = A.cols();
+          if ( size() > 0 ) {
             cl::Context& ctx = get_context();
             cl::CommandQueue& queue = get_queue();
-            rows_ = A.rows();
-            cols_ = A.cols();
-            if (rows_ > 0 && cols_ > 0) {
+            try {
               oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * A.size());
 
               queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
                sizeof(T) * A.size(), A.data());
-
-             }
-          } catch (const cl::Error& e) {
-            check_ocl_error("matrix constructor", e);
+            } catch (const cl::Error& e) {
+              check_ocl_error("matrix constructor", e);
+            }
           }
         }
     };
@@ -132,19 +131,19 @@ namespace stan {
     template <typename T, int R, int C>
     void copy(const Eigen::Matrix<T, R, C>& src,
      matrix_gpu& dst) {
-            check_size_match("copy (Eigen -> GPU)",
-             "src.rows()", src.rows(), "dst.rows()", dst.rows());
-            check_size_match("copy (Eigen -> GPU)",
-             "src.cols()", src.cols(), "dst.cols()", dst.cols());
-            try {
-              cl::CommandQueue queue = get_queue();
-
-              queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-               sizeof(T) * dst.size(), src.data());
-
-            } catch (const cl::Error& e) {
-              check_ocl_error("copy Eigen->GPU", e);
-            }
+      check_size_match("copy (Eigen -> GPU)",
+       "src.rows()", src.rows(), "dst.rows()", dst.rows());
+      check_size_match("copy (Eigen -> GPU)",
+       "src.cols()", src.cols(), "dst.cols()", dst.cols());
+      if ( src.size() > 0 ) {
+        cl::CommandQueue queue = get_queue();
+        try {
+          queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
+           sizeof(T) * dst.size(), src.data());
+        } catch (const cl::Error& e) {
+          check_ocl_error("copy Eigen->GPU", e);
+        }
+      }
     }
 
     /**
@@ -163,17 +162,19 @@ namespace stan {
     template <typename T, int R, int C>
     void copy(matrix_gpu & src,
      Eigen::Matrix<T, R, C> & dst) {
-            check_size_match("copy (GPU -> Eigen)",
-             "src.rows()", src.rows(), "dst.rows()", dst.rows());
-            check_size_match("copy (GPU -> Eigen)",
-             "src.cols()", src.cols(), "dst.cols()", dst.cols());
-            try {
-              cl::CommandQueue queue = get_queue();
-              queue.enqueueReadBuffer(src.buffer(),  CL_TRUE,  0,
-                sizeof(T) * dst.size(),  dst.data());
-            } catch (const cl::Error& e) {
-              check_ocl_error("copy GPU->Eigen", e);
-            }
+      check_size_match("copy (GPU -> Eigen)",
+       "src.rows()", src.rows(), "dst.rows()", dst.rows());
+      check_size_match("copy (GPU -> Eigen)",
+       "src.cols()", src.cols(), "dst.cols()", dst.cols());
+      if ( src.size() > 0 ) {
+        cl::CommandQueue queue = get_queue();
+        try {
+          queue.enqueueReadBuffer(src.buffer(),  CL_TRUE,  0,
+            sizeof(T) * dst.size(),  dst.data());
+        } catch (const cl::Error& e) {
+          check_ocl_error("copy GPU->Eigen", e);
+        }
+      }
     }
 
     /**
@@ -193,22 +194,24 @@ namespace stan {
         "src.rows()", src.rows(), "dst.rows()", dst.rows());
       check_size_match("copy (GPU -> GPU)",
         "src.cols()", src.cols(), "dst.cols()", dst.cols());
-      cl::Kernel kernel = get_kernel("copy");
-      cl::CommandQueue& cmdQueue = get_queue();
-      try {
-        kernel.setArg(0, src.buffer());
-        kernel.setArg(1, dst.buffer());
-        kernel.setArg(2, dst.rows());
-        kernel.setArg(3, dst.cols());
-        cmdQueue.enqueueNDRangeKernel(
-          kernel,
-          cl::NullRange,
-          cl::NDRange(dst.rows(), dst.cols()),
-          cl::NullRange,
-          NULL,
-          NULL);
-      } catch (const cl::Error& e) {
-        check_ocl_error("copy GPU->GPU", e);
+      if ( src.size() > 0 ) {
+        cl::Kernel kernel = get_kernel("copy");
+        cl::CommandQueue& cmdQueue = get_queue();
+        try {
+          kernel.setArg(0, src.buffer());
+          kernel.setArg(1, dst.buffer());
+          kernel.setArg(2, dst.rows());
+          kernel.setArg(3, dst.cols());
+          cmdQueue.enqueueNDRangeKernel(
+            kernel,
+            cl::NullRange,
+            cl::NDRange(dst.rows(), dst.cols()),
+            cl::NullRange,
+            NULL,
+            NULL);
+        } catch (const cl::Error& e) {
+          check_ocl_error("copy GPU->GPU", e);
+        }
       }
     }
 

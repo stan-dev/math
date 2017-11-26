@@ -14,10 +14,23 @@ namespace stan {
   namespace math {
 
     /**
-     * Throws the domain error with specifying the OpenCL error that occured.
-     * It outputs the OpenCL errors that are specified in OpenCL 2.0
-     * If no matching error number is found, it throws the error
-     * with the number. 
+     * Function that throws the OpenCL exception with the
+     * given explanation
+     *
+     * @param function the name of the function where the error occured
+     * @param msg information on the OpenCL error
+     * 
+     * @throw std::domain_error Always.
+     */
+    void throw_openCL(const std::string& function, const char* msg) {
+      throw std::domain_error(function +
+        ": The OpenCL application ended with the error: " + msg);
+    }
+    /**
+     * Throws the domain error with specifying the OpenCL error that
+     * occured. It outputs the OpenCL errors that are specified
+     * in OpenCL 2.0. If no matching error number is found,
+     * it throws the error with the number. 
      *
      * @param function the name of the function where the error occured
      * @param e The error number
@@ -26,277 +39,268 @@ namespace stan {
      */
     void check_ocl_error(const std::string& function,
                          const cl::Error& e) {
-      std::string error_string;
       switch (e.err()) {
         case 0:
-          error_string = "CL_SUCCESS";
-          break;
+          // CL_SUCCESS - no need to throw
+          return;
         case -1:
-          error_string = "CL_DEVICE_NOT_FOUND";
-          break;
+          throw_openCL(function,
+            "CL_DEVICE_NOT_FOUND");
         case -2:
-          error_string = "CL_DEVICE_NOT_AVAILABLE";
-          break;
+          throw_openCL(function,
+            "CL_DEVICE_NOT_AVAILABLE");
         case -3:
-          error_string = "CL_COMPILER_NOT_AVAILABLE";
-          break;
+          throw_openCL(function,
+            "CL_COMPILER_NOT_AVAILABLE");
         case -4:
-          error_string = "CL_MEM_OBJECT_ALLOCATION_FAILURE";
-          break;
+          throw_openCL(function,
+            "CL_MEM_OBJECT_ALLOCATION_FAILURE");
         case -5:
-          error_string = "CL_OUT_OF_RESOURCES";
-          break;
+          throw_openCL(function,
+            "CL_OUT_OF_RESOURCES");
         case -6:
-          error_string = "CL_OUT_OF_HOST_MEMORY";
-          break;
+          throw_openCL(function,
+            "CL_OUT_OF_HOST_MEMORY");
         case -7:
-          error_string = "CL_PROFILING_INFO_NOT_AVAILABLE";
-          break;
+          throw_openCL(function,
+            "CL_PROFILING_INFO_NOT_AVAILABLE");
         case -8:
-          error_string = "CL_MEM_COPY_OVERLAP";
-          break;
+          throw_openCL(function,
+            "CL_MEM_COPY_OVERLAP");
         case -9:
-          error_string = "CL_IMAGE_FORMAT_MISMATCH";
-          break;
+          throw_openCL(function,
+            "CL_IMAGE_FORMAT_MISMATCH");
         case -10:
-          error_string = "CL_IMAGE_FORMAT_NOT_SUPPORTED";
-          break;
+          throw_openCL(function,
+            "CL_IMAGE_FORMAT_NOT_SUPPORTED");
         case -11:
-          error_string = "CL_BUILD_PROGRAM_FAILURE";
-          break;
+          throw_openCL(function,
+            "CL_BUILD_PROGRAM_FAILURE");
         case -12:
-          error_string = "CL_MAP_FAILURE";
-          break;
+          throw_openCL(function,
+            "CL_MAP_FAILURE");
         case -13:
-          error_string = "CL_MISALIGNED_SUB_BUFFER_OFFSET";
-          break;
+          throw_openCL(function,
+            "CL_MISALIGNED_SUB_BUFFER_OFFSET");
         case -14:
-          error_string = "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST";
-          break;
+          throw_openCL(function,
+            "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST");
         case -15:
-          error_string = "CL_COMPILE_PROGRAM_FAILURE";
-          break;
+          throw_openCL(function,
+            "CL_COMPILE_PROGRAM_FAILURE");
         case -16:
-          error_string = "CL_LINKER_NOT_AVAILABLE";
-          break;
+          throw_openCL(function,
+            "CL_LINKER_NOT_AVAILABLE");
         case -17:
-          error_string = "CL_LINK_PROGRAM_FAILURE";
-          break;
+          throw_openCL(function,
+            "CL_LINK_PROGRAM_FAILURE");
         case -18:
-          error_string = "CL_DEVICE_PARTITION_FAILED";
-          break;
+          throw_openCL(function,
+            "CL_DEVICE_PARTITION_FAILED");
         case -19:
-          error_string = "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
-          break;
+          throw_openCL(function,
+            "CL_KERNEL_ARG_INFO_NOT_AVAILABLE");
         case -30:
-          error_string = "CL_INVALID_VALUE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_VALUE");
         case -31:
-          error_string = "CL_INVALID_DEVICE_TYPE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_DEVICE_TYPE");
         case -32:
-          error_string = "CL_INVALID_PLATFORM";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_PLATFORM");
         case -33:
-          error_string = "CL_INVALID_DEVICE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_DEVICE");
         case -34:
-          error_string = "CL_INVALID_CONTEXT";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_CONTEXT");
         case -35:
-          error_string = "CL_INVALID_QUEUE_PROPERTIES";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_QUEUE_PROPERTIES");
         case -36:
-          error_string = "CL_INVALID_COMMAND_QUEUE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_COMMAND_QUEUE");
         case -37:
-          error_string = "CL_INVALID_HOST_PTR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_HOST_PTR");
         case -38:
-          error_string = "CL_INVALID_MEM_OBJECT";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_MEM_OBJECT");
         case -39:
-          error_string = "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR");
         case -40:
-          error_string = "CL_INVALID_IMAGE_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_IMAGE_SIZE");
         case -41:
-          error_string = "CL_INVALID_SAMPLER";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_SAMPLER");
         case -42:
-          error_string = "CL_INVALID_BINARY";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_BINARY");
         case -43:
-          error_string = "CL_INVALID_BUILD_OPTIONS";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_BUILD_OPTIONS");
         case -44:
-          error_string = "CL_INVALID_PROGRAM";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_PROGRAM");
         case -45:
-          error_string = "CL_INVALID_PROGRAM_EXECUTABLE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_PROGRAM_EXECUTABLE");
         case -46:
-          error_string = "CL_INVALID_KERNEL_NAME";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_KERNEL_NAME");
         case -47:
-          error_string = "CL_INVALID_KERNEL_DEFINITION";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_KERNEL_DEFINITION");
         case -48:
-          error_string = "CL_INVALID_KERNEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_KERNEL");
         case -49:
-          error_string = "CL_INVALID_ARG_INDEX";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_ARG_INDEX");
         case -50:
-          error_string = "CL_INVALID_ARG_VALUE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_ARG_VALUE");
         case -51:
-          error_string = "CL_INVALID_ARG_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_ARG_SIZE");
         case -52:
-          error_string = "CL_INVALID_KERNEL_ARGS";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_KERNEL_ARGS");
         case -53:
-          error_string = "CL_INVALID_WORK_DIMENSION";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_WORK_DIMENSION");
         case -54:
-          error_string = "CL_INVALID_WORK_GROUP_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_WORK_GROUP_SIZE");
         case -55:
-          error_string = "CL_INVALID_WORK_ITEM_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_WORK_ITEM_SIZE");
         case -56:
-          error_string = "CL_INVALID_GLOBAL_OFFSET";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_GLOBAL_OFFSET");
         case -57:
-          error_string = "CL_INVALID_EVENT_WAIT_LIST";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_EVENT_WAIT_LIST");
         case -58:
-          error_string = "CL_INVALID_EVENT";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_EVENT");
         case -59:
-          error_string = "CL_INVALID_OPERATION";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_OPERATION");
         case -60:
-          error_string = "CL_INVALID_GL_OBJECT";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_GL_OBJECT");
         case -61:
-          error_string = "CL_INVALID_BUFFER_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_BUFFER_SIZE");
         case -62:
-          error_string = "CL_INVALID_MIP_LEVEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_MIP_LEVEL");
         case -63:
-          error_string = "CL_INVALID_GLOBAL_WORK_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_GLOBAL_WORK_SIZE");
         case -64:
-          error_string = "CL_INVALID_PROPERTY";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_PROPERTY");
         case -65:
-          error_string = "CL_INVALID_IMAGE_DESCRIPTOR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_IMAGE_DESCRIPTOR");
         case -66:
-          error_string = "CL_INVALID_COMPILER_OPTIONS";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_COMPILER_OPTIONS");
         case -67:
-          error_string = "CL_INVALID_LINKER_OPTIONS";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_LINKER_OPTIONS");
         case -68:
-          error_string = "CL_INVALID_DEVICE_PARTITION_COUNT";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_DEVICE_PARTITION_COUNT");
         case -69:
-          error_string = "CL_INVALID_PIPE_SIZE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_PIPE_SIZE");
         case -70:
-          error_string = "CL_INVALID_DEVICE_QUEUE";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_DEVICE_QUEUE");
         case -1000:
-          error_string = "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR";
-          break;
+          throw_openCL(function,
+           "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR");
         case -1001:
-          error_string = "CL_PLATFORM_NOT_FOUND_KHR";
-          break;
+          throw_openCL(function,
+            "CL_PLATFORM_NOT_FOUND_KHR");
         case -1002:
-          error_string = "CL_INVALID_D3D10_DEVICE_KHR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_D3D10_DEVICE_KHR");
         case -1003:
-          error_string = "CL_INVALID_D3D10_RESOURCE_KHR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_D3D10_RESOURCE_KHR");
         case -1004:
-          error_string = "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR";
-          break;
+          throw_openCL(function,
+            "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR");
         case -1005:
-          error_string = "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR";
-          break;
+          throw_openCL(function,
+            "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR");
         case -1006:
-          error_string = "CL_INVALID_D3D11_DEVICE_KHR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_D3D11_DEVICE_KHR");
         case -1007:
-          error_string = "CL_INVALID_D3D11_RESOURCE_KHR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_D3D11_RESOURCE_KHR");
         case -1008:
-          error_string = "CL_D3D11_RESOURCE_ALREADY_ACQUIRED_KHR";
-          break;
+          throw_openCL(function,
+            "CL_D3D11_RESOURCE_ALREADY_ACQUIRED_KHR");
         case -1009:
-          error_string = "CL_D3D11_RESOURCE_NOT_ACQUIRED_KHR";
-          break;
+          throw_openCL(function,
+            "CL_D3D11_RESOURCE_NOT_ACQUIRED_KHR");
         case -101:
-          error_string = "CL_INVALID_D3D9_DEVICE_NV "
-           "CL_INVALID_DX9_DEVICE_INTEL";
-          break;
+          throw_openCL(function,
+           "CL_INVALID_D3D9_DEVICE_NV ");
         case -1011:
-          error_string = "CL_INVALID_D3D9_RESOURCE_NV "
-           "CL_INVALID_DX9_RESOURCE_INTEL";
-          break;
+          throw_openCL(function, "CL_INVALID_D3D9_RESOURCE_NV ");
         case -1012:
-          error_string = "CL_D3D9_RESOURCE_ALREADY_ACQUIRED_NV "
-           "CL_DX9_RESOURCE_ALREADY_ACQUIRED_INTEL";
-          break;
+          throw_openCL(function, "CL_D3D9_RESOURCE_ALREADY_ACQUIRED_NV "
+           "CL_DX9_RESOURCE_ALREADY_ACQUIRED_INTEL");
         case -1013:
-          error_string = "CL_D3D9_RESOURCE_NOT_ACQUIRED_NV "
-           "CL_DX9_RESOURCE_NOT_ACQUIRED_INTEL";
-          break;
+          throw_openCL(function, "CL_D3D9_RESOURCE_NOT_ACQUIRED_NV "
+           "CL_DX9_RESOURCE_NOT_ACQUIRED_INTEL");
         case -1092:
-          error_string = "CL_EGL_RESOURCE_NOT_ACQUIRED_KHR";
-          break;
+          throw_openCL(function,
+            "CL_EGL_RESOURCE_NOT_ACQUIRED_KHR");
         case -1093:
-          error_string = "CL_INVALID_EGL_OBJECT_KHR";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_EGL_OBJECT_KHR");
         case -1094:
-          error_string = "CL_INVALID_ACCELERATOR_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_ACCELERATOR_INTEL");
         case -1095:
-          error_string = "CL_INVALID_ACCELERATOR_TYPE_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_ACCELERATOR_TYPE_INTEL");
         case -1096:
-          error_string = "CL_INVALID_ACCELERATOR_DESCRIPTOR_INTEL";
-          break;
+          throw_openCL(function,
+           "CL_INVALID_ACCELERATOR_DESCRIPTOR_INTEL");
         case -1097:
-          error_string = "CL_ACCELERATOR_TYPE_NOT_SUPPORTED_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_ACCELERATOR_TYPE_NOT_SUPPORTED_INTEL");
         case -1098:
-          error_string = "CL_INVALID_VA_API_MEDIA_ADAPTER_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_VA_API_MEDIA_ADAPTER_INTEL");
         case -1099:
-          error_string = "CL_INVALID_VA_API_MEDIA_SURFACE_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_INVALID_VA_API_MEDIA_SURFACE_INTEL");
         case -1100:
-          error_string = "CL_VA_API_MEDIA_SURFACE_ALREADY_ACQUIRED_INTEL";
-          break;
+          throw_openCL(function,
+            "CL_VA_API_MEDIA_SURFACE_ALREADY_ACQUIRED_INTEL");
         case -1101:
-          error_string = "CL_VA_API_MEDIA_SURFACE_NOT_ACQUIRED_INTEL";
-          break;
+          throw_openCL(function,
+           "CL_VA_API_MEDIA_SURFACE_NOT_ACQUIRED_INTEL");
         case -9999:
-          error_string = "ILLEGAL_READ_OR_WRITE_NVIDIA";
-          break;
+          throw_openCL(function,
+            "ILLEGAL_READ_OR_WRITE_NVIDIA");
         default:
-          error_string = "number " + std::to_string(e.err());
-          break;
+          throw_openCL(function,
+            std::to_string(e.err()).c_str());
       }
-      throw std::domain_error(function +
-        ": The OpenCL application ended with the error: "
-        + error_string);
     }
 
   }

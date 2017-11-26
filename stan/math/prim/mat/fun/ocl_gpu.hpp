@@ -147,18 +147,17 @@ namespace stan {
             cl::Program::Sources source(1,
              std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
             cl::Program program_ = cl::Program(oclContext_, source);
-
-            try {
+          } catch (const cl::Error& e) {
+            check_ocl_error("build", e);
+          }
+          try {
               program_.build(allDevices);
               kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
               compiled_kernels["timing"] = true;
-            } catch (const cl::Error& e) {
-                std::cout << "Building failed, " << e.what() << "(" << e.err()
-                 << ")" << "\nRetrieving build log\n" <<
-                 program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]);
-            }
           } catch (const cl::Error& e) {
-            check_ocl_error("build", e);
+              std::cout << "Building failed, " << e.what() << "(" << e.err()
+               << ")" << "\nRetrieving build log\n" <<
+              program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]);
           }
         }
 
