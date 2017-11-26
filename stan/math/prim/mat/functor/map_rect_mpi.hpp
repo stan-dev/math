@@ -153,7 +153,6 @@ namespace stan {
 
         std::cout << "evaluating " << num_local_jobs << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
         
-        // TODO: add exception handling
         try {
           for(std::size_t i=0; i != num_local_jobs; ++i) {
             const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
@@ -174,7 +173,9 @@ namespace stan {
           // wrong. We have to keep processing to keep the cluster in
           // sync and let the gather_outputs method detect on the root
           // that things went wrong
+          std::cout << "CAUGHT EXCEPTION on " << rank_ << std::endl;
           local_output(0,offset) = std::numeric_limits<double>::max();
+          //local_f_out[num_local_jobs-1] = -1;
         }
 
         // during first execution we distribute the output sizes from
@@ -365,6 +366,12 @@ namespace stan {
         : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
 
       result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) const {
+
+        // TODO: in rare cases, the local_result may have too few rows
+        // due to an exception thrown during the first evaluation of
+        // the local junk. We have to detect this here and ensure that
+        // the local chunk is of the correct size before sending
+        // content.
 
         const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_size_per_job = local_result.rows();

@@ -84,8 +84,8 @@ namespace stan {
       }
 
       void listen() {
+        cluster_listens_ = true;
         if(rank_ == 0) {
-          cluster_listens_ = true;
           return;
         }
         std::cout << "Worker " << rank_ << " listening for commands..." << std::endl;
@@ -106,8 +106,8 @@ namespace stan {
       void stop_listen() {
         if(rank_ == 0 && cluster_listens_) {
           mpi_broadcast_command<mpi_stop_worker>();
-          cluster_listens_ = false;
         }
+        cluster_listens_ = false;
      }
 
     private:

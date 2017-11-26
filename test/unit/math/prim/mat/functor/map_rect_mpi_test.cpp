@@ -22,36 +22,51 @@ BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<faulty_functor_parallel_c
 
 #endif
 
-/*
-int main(int argc, const char* argv[]) {
-#ifdef STAN_HAS_MPI
-  boost::mpi::environment env;
-  
-  // on non-root processes this makes the workers listen to commands
-  // send from the root
-  stan::math::mpi_cluster cluster;
-
-#endif
-*/
-
-TEST(map_rect_mpi, hard_work_dd) {
-  Eigen::VectorXd shared_params_d(2);
-  shared_params_d << 2, 0;
+struct MpiJob : public ::testing::Test {
+  Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
-
   const std::size_t N = 10;
+  std::vector<std::vector<double> > x_r = std::vector<std::vector<double>>(N, std::vector<double>(1,1.0));
+  std::vector<std::vector<int> > x_i = std::vector<std::vector<int>>(N, std::vector<int>(1,0));
 
-  for(std::size_t n = 0; n != N; ++n) {
-    Eigen::VectorXd job_d(2);
-    job_d << 0, n * n;
-    job_params_d.push_back(job_d);
-  }
+   virtual void SetUp() {
+     shared_params_d.resize(2);
+     shared_params_d << 2, 0;
+     
+     for(std::size_t n = 0; n != N; ++n) {
+       x_i[n][0] = n;
+       Eigen::VectorXd job_d(2);
+       job_d << n+1.0, n * n;
+       job_params_d.push_back(job_d);
+     }
+   }
+  
+};
 
-  std::vector<std::vector<double> > x_r(N, std::vector<double>(1,1.0));
-  std::vector<std::vector<int> > x_i(N, std::vector<int>(0));
-
+TEST_F(MpiJob, hard_work_dd) {
   Eigen::VectorXd result = stan::math::map_rect<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
+
+  EXPECT_EQ(result.rows(), 2*N );
 } 
+
+TEST_F(MpiJob, always_faulty_functor) {
+
+  Eigen::VectorXd result;
+
+  EXPECT_NO_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_d, job_params_d, x_r, x_i, 1));
+
+  // faulty functor throws on theta(0) being -1.0
+  // throwing during the first evaluation is quite severe and will
+  // lead to a respective runtime error
+  job_params_d[0](0) = -1;
+
+  // upon the second evaluation throwing is handled internally different
+  EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_d, job_params_d, x_r, x_i, 1));
+
+  // thorwing on the very first evaluation
+  EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_d, job_params_d, x_r, x_i, 2));
+  
+}
 
 // from :
 // http://www.parresianz.com/mpi/c++/mpi-unit-testing-googletests-cmake/
