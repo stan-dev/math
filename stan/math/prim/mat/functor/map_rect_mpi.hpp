@@ -12,10 +12,13 @@
 namespace stan {
   namespace math {
 
+    template <typename ReduceF, typename CombineF>
+    class mpi_parallel_call;
+
     namespace internal {
 
       template <int member, typename T>
-      struct mpi_parallel_call_cache {
+      class mpi_parallel_call_cache {
         // static members to hold locally cached data
         // of placing the cache inside mpi_parallel_call is that we will
         // cache the data multiple times (once for each ReduceF
@@ -23,9 +26,8 @@ namespace stan {
         typedef const T cache_t;
         static std::map<int, cache_t> local_;
 
-        static bool is_cached(int callsite_id) { return(local_.count(callsite_id) == 1); }
-        static cache_t& lookup(int callsite_id) { return(local_.find(callsite_id)->second); }
-        static void cache(int callsite_id, cache_t element) { local_.insert(std::make_pair(callsite_id, element)); }
+        template <typename, typename>
+        friend class stan::math::mpi_parallel_call;
       };
       
       template <int member, typename T>
@@ -46,7 +48,6 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<2, std::vector<std::vector<int>>> t_cache_x_i;
       typedef internal::mpi_parallel_call_cache<3, std::vector<int>> t_cache_f_out;
       typedef internal::mpi_parallel_call_cache<4, std::vector<int>> t_cache_chunks;
-      //typedef internal::mpi_parallel_call_cache<5, int> t_cache_meta_shared_params;
       
       const int callsite_id_;
 
@@ -57,6 +58,15 @@ namespace stan {
       vector_d local_shared_params_dbl_;
       matrix_d local_job_params_dbl_;
 
+      template <typename T_cache>
+      typename T_cache::cache_t& cache_lookup() { return(T_cache::local_.find(callsite_id_)->second); }
+      
+      template <typename T_cache>
+      bool cache_contains() { return(T_cache::local_.count(callsite_id_) == 1); }
+      
+      template <typename T_cache>
+      void cache_store(typename T_cache::cache_t element) { T_cache::local_.insert(std::make_pair(callsite_id_, element)); }
+      
     public:
       // called on root
       template <typename T_shared_param, typename T_job_param>
@@ -74,8 +84,10 @@ namespace stan {
         // send callsite id
         boost::mpi::broadcast(world_, callsite_id, 0);
 
-        const std::size_t num_jobs = job_params.size();
-        const std::size_t num_job_params = job_params[0].size();
+        std::vector<int> job_dims = dims(job_params);
+
+        const size_type num_jobs = job_dims[0];
+        const size_type num_job_params = job_dims[1];
         
         vector_d shared_params_dbl = value_of(shared_params);
         matrix_d job_params_dbl(num_job_params, num_jobs);
@@ -113,7 +125,7 @@ namespace stan {
 
         std::cout << "starting reduce on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
         
-        const std::vector<int>& job_chunks = t_cache_chunks::lookup(callsite_id_);
+        const std::vector<int>& job_chunks = cache_lookup<t_cache_chunks>();
         const int num_jobs = sum(job_chunks);
 
         // id of first job out of all
@@ -125,12 +137,12 @@ namespace stan {
         matrix_d local_output(1, num_local_jobs);
         std::vector<int> local_f_out(num_local_jobs, -1);
 
-        t_cache_x_r::cache_t& local_x_r = t_cache_x_r::lookup(callsite_id_);
-        t_cache_x_i::cache_t& local_x_i = t_cache_x_i::lookup(callsite_id_);
+        t_cache_x_r::cache_t& local_x_r = cache_lookup<t_cache_x_r>();
+        t_cache_x_i::cache_t& local_x_i = cache_lookup<t_cache_x_i>();
 
         // check if we know already output sizes
-        if(t_cache_f_out::is_cached(callsite_id_)) {
-          t_cache_f_out::cache_t& f_out = t_cache_f_out::lookup(callsite_id_);
+        if(cache_contains<t_cache_f_out>()) {
+          t_cache_f_out::cache_t& f_out = cache_lookup<t_cache_f_out>();
           int num_outputs = 0;
           for(std::size_t j=start_job; j != start_job + num_local_jobs; ++j)
             num_outputs += f_out[j];
@@ -167,7 +179,7 @@ namespace stan {
 
         // during first execution we distribute the output sizes from
         // local jobs to the root
-        if(!t_cache_f_out::is_cached(callsite_id_)) {
+        if(!cache_contains<t_cache_f_out>()) {
           std::vector<int> world_f_out(num_jobs, 0);
           boost::mpi::gatherv(world_, local_f_out.data(), num_local_jobs, world_f_out.data(), job_chunks, 0);
           // on the root we now have all sizes from all childs. Copy
@@ -191,10 +203,10 @@ namespace stan {
             // listening state
             return(result_type());
           }
-          t_cache_f_out::cache(callsite_id_, world_f_out);
+          cache_store<t_cache_f_out>(world_f_out);
         }
 
-        t_cache_f_out::cache_t& world_f_out = t_cache_f_out::lookup(callsite_id_);
+        t_cache_f_out::cache_t& world_f_out = cache_lookup<t_cache_f_out>();
 
         // check that cached sizes are the same as just collected from
         // this evaluation
@@ -209,7 +221,7 @@ namespace stan {
       template <typename T_cache>
       void scatter_array_2d_cached(typename T_cache::cache_t& data) {
         // distribute data only if not in cache yet
-        if(T_cache::is_cached(callsite_id_)) {
+        if(cache_contains<T_cache>()) {
           std::cout << "cache_data on remote " << rank_ << " HIT the cache " << std::endl;
           return;
         }
@@ -245,12 +257,12 @@ namespace stan {
         }
 
         // finally we cache it locally
-        T_cache::cache(callsite_id_, local_data);
+        cache_store<T_cache>(local_data);
       }
 
       template <typename T_cache>
       void broadcast_1d_cached(typename T_cache::cache_t& data) {
-        if(T_cache::is_cached(callsite_id_)) {
+        if(cache_contains<T_cache>()) {
           return;
         }
 
@@ -261,7 +273,7 @@ namespace stan {
         local_data.resize(data_size);
         
         boost::mpi::broadcast(world_, local_data.data(), data_size, 0);
-        T_cache::cache(callsite_id_, local_data);
+        cache_store<T_cache>(local_data);
       }
 
       template <int meta_cache_id>
@@ -270,7 +282,7 @@ namespace stan {
         std::vector<size_type> meta_info = { data.size() };
         broadcast_1d_cached<t_meta_cache>(meta_info);
 
-        const std::vector<size_type>& data_size = t_meta_cache::lookup(callsite_id_);
+        const std::vector<size_type>& data_size = cache_lookup<t_meta_cache>();
 
         vector_d local_data(data_size[0]);
         
@@ -290,7 +302,7 @@ namespace stan {
         std::vector<size_type> meta_info = { data.rows(), data.cols() };
         broadcast_1d_cached<t_meta_cache>(meta_info);
 
-        const std::vector<size_type>& dims = t_meta_cache::lookup(callsite_id_);
+        const std::vector<size_type>& dims = cache_lookup<t_meta_cache>();
         const size_type rows = dims[0];
         const size_type total_cols = dims[1];
 
