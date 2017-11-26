@@ -17,12 +17,4 @@ struct faulty_functor {
     }
     return(res);
   }
-
-  template<typename T1, typename T2>
-  static
-  Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>
-  apply(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta, const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta, const std::vector<double>& x_r, const std::vector<int>& x_i) {
-    const faulty_functor f;
-    return f(eta, theta, x_r, x_i);
-  }
 };

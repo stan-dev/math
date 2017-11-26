@@ -346,7 +346,7 @@ namespace stan {
         return(1);
       }
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
-        const vector_d out = F::apply(shared_params, job_specific_params, x_r, x_i);
+        const vector_d out = F()(shared_params, job_specific_params, x_r, x_i);
         return( out.transpose() );
       }
     };

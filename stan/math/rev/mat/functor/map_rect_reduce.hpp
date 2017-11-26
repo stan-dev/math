@@ -19,14 +19,13 @@ namespace stan {
           vector_v job_specific_params_v(job_specific_params);
 
           std::vector<var> z_vars(num_params);
-          std::vector<double> z_grad(num_params);
 
           for(size_type i = 0; i < num_shared_params; ++i)
             z_vars[i] = shared_params_v(i);
           for(size_type i = 0; i < num_job_specific_params; ++i)
             z_vars[num_shared_params + i] = job_specific_params_v(i);
 
-          vector_v fx_v = F::apply(shared_params_v, job_specific_params_v, x_r, x_i);
+          vector_v fx_v = F()(shared_params_v, job_specific_params_v, x_r, x_i);
 
           const size_t size_f = fx_v.rows();
 
@@ -34,10 +33,10 @@ namespace stan {
 
           for(size_type i = 0; i < size_f; ++i) {
             set_zero_all_adjoints_nested();
-            fx_v(i).grad(z_vars, z_grad);
-            out(0,i) = fx_v(i).val();
-            out.block(1,i,num_shared_params,1) = Eigen::Map<vector_d>(z_grad.data(), num_shared_params);
-            out.block(1+num_shared_params,i,num_job_specific_params,1) = Eigen::Map<vector_d>(z_grad.data() + num_shared_params, num_job_specific_params);
+            out(0,i) = fx_v(i).val();            
+            fx_v(i).grad();
+            for(std::size_t j = 0; j < num_params; ++j)
+              out(1+j,i) = z_vars[j].vi_->adj_;
           }
           recover_memory_nested();
         } catch(const std::exception& e) {
