@@ -2,6 +2,7 @@
 
 namespace stan {
   namespace math {
+
     template <typename F>
     struct map_rect_reduce<F, var, var> {
       static std::size_t get_output_size(std::size_t num_shared_params, std::size_t num_job_specific_params) {

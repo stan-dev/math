@@ -47,6 +47,8 @@ TEST_F(MpiJob, hard_work_dd) {
   Eigen::VectorXd result = stan::math::map_rect<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
 
   EXPECT_EQ(result.rows(), 2*N );
+
+  std::cout << result << std::endl;
 } 
 
 TEST_F(MpiJob, always_faulty_functor) {

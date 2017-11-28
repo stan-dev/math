@@ -114,7 +114,7 @@ namespace stan {
         boost::mpi::communicator world;
         boost::mpi::broadcast(world, callsite_id, 0);
 
-        std::cout << "Starting on remote " << world.rank() << "; callsite_id = " << callsite_id << std::endl;
+        //std::cout << "Starting on remote " << world.rank() << "; callsite_id = " << callsite_id << std::endl;
 
         // call constructor for the remotes
         mpi_parallel_call<ReduceF,CombineF> job_chunk(callsite_id);
@@ -125,7 +125,7 @@ namespace stan {
       // all data is cached and local parameters are also available
       result_type reduce() {
 
-        std::cout << "starting reduce on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+        //std::cout << "starting reduce on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
         
         const std::vector<int>& job_chunks = cache_lookup<t_cache_chunks>();
         const int num_jobs = sum(job_chunks);
@@ -154,7 +154,7 @@ namespace stan {
 
         int offset = 0;
 
-        std::cout << "evaluating " << num_local_jobs << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+        //std::cout << "evaluating " << num_local_jobs << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
         
         try {
           for(std::size_t i=0; i != num_local_jobs; ++i) {
@@ -173,7 +173,7 @@ namespace stan {
           // wrong. We have to keep processing to keep the cluster in
           // sync and let the gather_outputs method detect on the root
           // that things went wrong
-          std::cout << "CAUGHT EXCEPTION on " << rank_ << std::endl;
+          //std::cout << "CAUGHT EXCEPTION on " << rank_ << std::endl;
           local_output(0,offset) = std::numeric_limits<double>::max();
           //local_f_out[num_local_jobs-1] = -1;
         }
@@ -196,7 +196,7 @@ namespace stan {
             if(world_f_out[i] == -1)
               all_ok = false;
           boost::mpi::broadcast(world_, all_ok, 0);
-          std::cout << "On rank = " << rank_ << "; all_ok = " << all_ok << std::endl;
+          //std::cout << "On rank = " << rank_ << "; all_ok = " << all_ok << std::endl;
           if(!all_ok) {
             // err out on the root
             if (rank_ == 0)
@@ -213,7 +213,7 @@ namespace stan {
         // check that cached sizes are the same as just collected from
         // this evaluation
 
-        std::cout << "gathering outputs " << sum(local_f_out) << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
+        //std::cout << "gathering outputs " << sum(local_f_out) << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
 
         return combine_.gather_outputs(local_output, world_f_out, job_chunks);
       }
@@ -224,7 +224,7 @@ namespace stan {
       void scatter_array_2d_cached(typename T_cache::cache_t& data) {
         // distribute data only if not in cache yet
         if(cache_contains<T_cache>()) {
-          std::cout << "cache_data on remote " << rank_ << " HIT the cache " << std::endl;
+          //std::cout << "cache_data on remote " << rank_ << " HIT the cache " << std::endl;
           return;
         }
 
@@ -240,14 +240,14 @@ namespace stan {
 
         auto flat_data = to_array_1d(data);
 
-        std::cout << "cache_const_data on remote " << rank_ << " input size " << flat_data.size()<< std::endl;
-        std::cout << "cache_const_data on remote " << rank_ << " expecting size " << data_chunks[rank_] << std::endl;
+        //std::cout << "cache_const_data on remote " << rank_ << " input size " << flat_data.size()<< std::endl;
+        //std::cout << "cache_const_data on remote " << rank_ << " expecting size " << data_chunks[rank_] << std::endl;
 
         // transfer it ...
         decltype(flat_data) local_flat_data(data_chunks[rank_]);
         boost::mpi::scatterv(world_, flat_data.data(), data_chunks, local_flat_data.data(), 0);
 
-        std::cout << "cache_const_data on remote " << rank_ << " got scatterd data of size " << local_flat_data.size() << std::endl;
+        //std::cout << "cache_const_data on remote " << rank_ << " got scatterd data of size " << local_flat_data.size() << std::endl;
 
          // ... and rebuild 2D array
         std::vector<decltype(flat_data)> local_data;
@@ -286,7 +286,8 @@ namespace stan {
 
         const std::vector<size_type>& data_size = cache_lookup<t_meta_cache>();
 
-        vector_d local_data(data_size[0]);
+        vector_d local_data = data;
+        local_data.resize(data_size[0]);
         
         boost::mpi::broadcast(world_, local_data.data(), data_size[0], 0);
         
@@ -320,19 +321,22 @@ namespace stan {
                       const std::vector<std::vector<double>>& x_r,
                       const std::vector<std::vector<int>>& x_i) {
 
-        std::cout << "setup_call on remote " << rank_ << "; callsite_id_ = " << callsite_id_ << std::endl;
+        //std::cout << "setup_call on remote " << rank_ << "; callsite_id_ = " << callsite_id_ << std::endl;
 
         std::vector<int> job_chunks = mpi_map_chunks(job_params.cols(), 1);
         broadcast_1d_cached<t_cache_chunks>(job_chunks);
  
         local_shared_params_dbl_ = broadcast_vector<-1>(shared_params);
         local_job_params_dbl_ = scatter_matrix<-2>(job_params);
+
+        //std::cout << "rank_ = " << rank_ << " got shared params:" << std::endl << local_shared_params_dbl_ << std::endl;
+        //std::cout << "rank_ = " << rank_ << " got job params:" << std::endl << local_job_params_dbl_ << std::endl;
         
         // distribute const data if not yet cached
         scatter_array_2d_cached<t_cache_x_r>(x_r);
-        std::cout << "setup_call on remote " << rank_ << "; got real data" << std::endl;
+        //std::cout << "setup_call on remote " << rank_ << "; got real data" << std::endl;
         scatter_array_2d_cached<t_cache_x_i>(x_i);
-        std::cout << "setup_call on remote " << rank_ << "; got int data" << std::endl;
+        //std::cout << "setup_call on remote " << rank_ << "; got int data" << std::endl;
       }
 
     };
