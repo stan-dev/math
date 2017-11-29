@@ -27,7 +27,7 @@ namespace stan {
      * @param rng random number generator
      * @return Cauchy random variate
      * @throw std::domain_error if mu is infinite or sigma is nonpositive
-     * @throw std::invalid_argument if non-scalars arguments are of different
+     * @throw std::invalid_argument if non-scalar arguments are of different
      * lengths
      */
     template <typename T_loc, typename T_scale, class RNG>
