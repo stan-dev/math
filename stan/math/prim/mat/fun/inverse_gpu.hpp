@@ -32,22 +32,18 @@ namespace stan {
      */
     matrix_gpu lower_triangular_inverse(matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
-      matrix_gpu inv(A.rows
-      (), A.cols());
-      copy(A, inv);//NOLINT
+      matrix_gpu inv(A);
       cl::Kernel kernel_step1 = get_kernel("lower_tri_inv_step1");
       cl::Kernel kernel_step2 = get_kernel("lower_tri_inv_step2");
       cl::Kernel kernel_step3 = get_kernel("lower_tri_inv_step3");
       cl::CommandQueue cmdQueue = get_queue();
+      int parts = 32;
+      if (inv.rows() < 65)
+        parts = 1;
 
+      if (inv.rows() > 2500)
+        parts = 64;
       try {
-        int parts = 32;
-        if (inv.rows() < 65)
-          parts = 1;
-
-        if (inv.rows() > 2500)
-          parts = 64;
-
         matrix_gpu temp(inv.rows(),  inv.cols() * 2);
 
         int remainder = inv.rows() % parts;

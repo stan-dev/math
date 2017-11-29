@@ -57,12 +57,34 @@ namespace stan {
          : rows_(0), cols_(0) {
         }
 
-        matrix_gpu(matrix_gpu& a)
-         : rows_(a.rows()), cols_(a.cols()) {
-        }
-
         matrix_gpu(const matrix_gpu& a)
          : rows_(a.rows()), cols_(a.cols()) {
+          check_size_match("copy constructor (GPU -> GPU)",
+            "src.rows()", a.rows(), "dst.rows()", rows());
+          check_size_match("copy constructor (GPU -> GPU)",
+            "src.cols()", a.cols(), "dst.cols()", cols());
+          if ( a.size() > 0 ) {
+            cl::Kernel kernel = get_kernel("copy");
+            cl::CommandQueue& cmdQueue = get_queue();
+            cl::Context& ctx = get_context();
+            try {
+              oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+               sizeof(double) * size());
+              kernel.setArg(0, a.buffer());
+              kernel.setArg(1, buffer());
+              kernel.setArg(2, rows());
+              kernel.setArg(3, cols());
+              cmdQueue.enqueueNDRangeKernel(
+                kernel,
+                cl::NullRange,
+                cl::NDRange(rows(), cols()),
+                cl::NullRange,
+                NULL,
+                NULL);
+            } catch (const cl::Error& e) {
+              check_ocl_error("copy GPU->GPU", e);
+            }
+          }
         }
 
         // TODO(Rok): constructors with enumerator added when
@@ -210,20 +232,14 @@ namespace stan {
       check_size_match("copy (GPU -> GPU)",
         "src.cols()", src.cols(), "dst.cols()", dst.cols());
       if ( src.size() > 0 ) {
-        cl::Kernel kernel = get_kernel("copy");
-        cl::CommandQueue& cmdQueue = get_queue();
+        cl::CommandQueue& queue = get_queue();
         try {
-          kernel.setArg(0, src.buffer());
-          kernel.setArg(1, dst.buffer());
-          kernel.setArg(2, dst.rows());
-          kernel.setArg(3, dst.cols());
-          cmdQueue.enqueueNDRangeKernel(
-            kernel,
-            cl::NullRange,
-            cl::NDRange(dst.rows(), dst.cols()),
-            cl::NullRange,
-            NULL,
-            NULL);
+          queue.enqueueCopyBuffer(
+            src.buffer(),
+            dst.buffer(),
+            0,
+            0,
+            src.size() );
         } catch (const cl::Error& e) {
           check_ocl_error("copy GPU->GPU", e);
         }

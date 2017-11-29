@@ -27,7 +27,7 @@ namespace stan {
     inline void
     check_square(const std::string& function,
                  const std::string& name,
-                 matrix_gpu& y) {
+                 const matrix_gpu& y) {
       check_size_match(function,
                        "Expecting a square matrix; rows of ", name, y.rows(),
                        "columns of ", name, y.cols());
@@ -43,78 +43,17 @@ namespace stan {
      *    any element of the matrix is <code>NaN</code>.
      */
     inline void
-    check_positive_definite_gpu(const std::string& function,
-                           const std::string& name,
-                  matrix_gpu& y) {
-      if (y.size() == 0) return;
-
-      cl::Kernel kernel_check_nan = get_kernel("check_nan");
-      cl::Kernel kernel_check_diagonal_zeros =
-       get_kernel("check_diagonal_zeros");
-      cl::CommandQueue cmd_queue = get_queue();
-
-      try {
-        cl::Context& ctx = get_context();
-        int nan_flag = 0;
-        int diag_zeros_flag = 0;
-        cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE,
-         sizeof(int));
-
-        cmd_queue.enqueueWriteBuffer(buffer_flag, CL_TRUE, 0,
-         sizeof(int), &nan_flag);
-
-        kernel_check_nan.setArg(0, y.buffer());
-        kernel_check_nan.setArg(1, y.rows());
-        kernel_check_nan.setArg(2, y.cols());
-        kernel_check_nan.setArg(3, buffer_flag);
-
-        cmd_queue.enqueueNDRangeKernel(kernel_check_nan,
-         cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
-
-        cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
-         sizeof(int), &nan_flag);
-
-        kernel_check_diagonal_zeros.setArg(0, y.buffer());
-        kernel_check_diagonal_zeros.setArg(1, y.rows());
-        kernel_check_diagonal_zeros.setArg(2, y.cols());
-        kernel_check_diagonal_zeros.setArg(3, buffer_flag);
-
-        cmd_queue.enqueueNDRangeKernel(kernel_check_diagonal_zeros,
-         cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
-
-        cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
-         sizeof(int), &diag_zeros_flag);
-
-        //  if NaN values were found in the matrix
-        if (nan_flag || diag_zeros_flag) {
-          domain_error(function, name, "is not positive definite", "");
-        }
-      } catch (const cl::Error& e) {
-        check_ocl_error("pos_def_check", e);
-      }
-    }
-    /**
-     * Check if the specified matrix on the GPU has NaN values
-     *
-     * @param function Function name (for error messages)
-     * @param name Variable name (for error messages)
-     * @param y Matrix to test
-     *
-     * @throw <code>std::domain_error</code> if
-     *    any element of the matrix is <code>NaN</code>.
-     */
-    inline void
-    check_nan_gpu(const std::string& function,
-                           const std::string& name,
-                  matrix_gpu& y) {
+    check_nan(const std::string& function,
+              const std::string& name,
+              const matrix_gpu& y,
+              const int pos_def_check = 0) {
       if (y.size() == 0) return;
 
       cl::Kernel kernel_check_nan = get_kernel("check_nan");
       cl::CommandQueue cmd_queue = get_queue();
-
+      cl::Context& ctx = get_context();
+      int nan_flag = 0;
       try {
-        cl::Context& ctx = get_context();
-        int nan_flag = 0;
         cl::Buffer buffer_nan_flag(ctx, CL_MEM_READ_WRITE,
          sizeof(int));
 
@@ -131,12 +70,20 @@ namespace stan {
 
         cmd_queue.enqueueReadBuffer(buffer_nan_flag, CL_TRUE, 0,
          sizeof(int), &nan_flag);
-        //  if NaN values were found in the matrix
-        if (nan_flag) {
-          domain_error(function, name, "has NaN values", "");
-        }
       } catch (const cl::Error& e) {
         check_ocl_error("nan_check", e);
+      }
+      //  if NaN values were found in the matrix
+      if (nan_flag) {
+        // in case this is a part of the positive definite check
+        // output is different
+        if ( pos_def_check ) {
+          domain_error(function, name,
+           "is not positive definite", "");
+        } else {
+          domain_error(function, name,
+           "has NaN values", "");
+        }
       }
     }
     /**
@@ -150,17 +97,16 @@ namespace stan {
      *    the matrix is not symmetric.
      */
     inline void
-    check_symmetric_gpu(const std::string& function,
+    check_symmetric(const std::string& function,
                            const std::string& name,
-                  matrix_gpu& y) {
+                  const matrix_gpu& y) {
       if (y.size() == 0) return;
       check_square(function, name, y);
       cl::Kernel kernel_check_symmetric = get_kernel("check_symmetric");
       cl::CommandQueue cmd_queue = get_queue();
-
+      cl::Context& ctx = get_context();
+      int symmetric_flag = 0;
       try {
-        cl::Context& ctx = get_context();
-        int symmetric_flag = 0;
         cl::Buffer buffer_symmetric_flag(ctx, CL_MEM_READ_WRITE,
          sizeof(int));
 
@@ -178,12 +124,12 @@ namespace stan {
 
         cmd_queue.enqueueReadBuffer(buffer_symmetric_flag, CL_TRUE, 0,
          sizeof(int), &symmetric_flag);
-        //  if the matrix is not symmetric
-        if (symmetric_flag) {
-          domain_error(function, name, "is not symmetric", "");
-        }
       } catch (const cl::Error& e) {
         check_ocl_error("symmetric_check", e);
+      }
+      //  if the matrix is not symmetric
+      if (symmetric_flag) {
+        domain_error(function, name, "is not symmetric", "");
       }
     }
     /**
@@ -198,19 +144,17 @@ namespace stan {
      */
     inline void
     check_diagonal_zeros(const std::string& function,
-                           const std::string& name,
-                  matrix_gpu& y) {
+                         const std::string& name,
+                         const matrix_gpu& y,
+                         const int pos_def_check = 0) {
       if (y.size() == 0) return;
 
       cl::Kernel kernel_check_diagonal_zeros =
        get_kernel("check_diagonal_zeros");
       cl::CommandQueue cmd_queue = get_queue();
-
+      cl::Context ctx = get_context();
+      int flag = 0;
       try {
-        cl::Context ctx = get_context();
-
-        int flag = 0;
-
         cl::Buffer buffer_flag(ctx, CL_MEM_READ_WRITE,
          sizeof(int));
 
@@ -227,18 +171,38 @@ namespace stan {
 
         cmd_queue.enqueueReadBuffer(buffer_flag, CL_TRUE, 0,
          sizeof(int), &flag);
-
-        //  if zeros were found on the diagonal
-        if (flag) {
-          domain_error(function, name, "has zeros on the diagonal.", "");
-        }
       } catch (const cl::Error& e) {
         check_ocl_error("diag_zeros_check", e);
       }
+      //  if zeros were found on the diagonal
+      if (flag) {
+        if ( pos_def_check ) {
+          domain_error(function, name,
+           "is not positive definite", "");
+        } else {
+          domain_error(function, name,
+           "has zeros on the diagonal.", "");
+        }
+      }
     }
-
-
-
+     /**
+     * Check if the specified matrix on the GPU has NaN values
+     *
+     * @param function Function name (for error messages)
+     * @param name Variable name (for error messages)
+     * @param y Matrix to test
+     *
+     * @throw <code>std::domain_error</code> if
+     *    any element of the matrix is <code>NaN</code>.
+     */
+    inline void
+    check_positive_definite(const std::string& function,
+                           const std::string& name,
+                  const matrix_gpu& y) {
+      if (y.size() == 0) return;
+      check_nan(function, name, y, 1);
+      check_diagonal_zeros(function, name, y, 1);
+    }
     /**
      * Check if the two matrices on the GPU are of the same size.
      *
@@ -256,9 +220,9 @@ namespace stan {
      */
     inline void check_matching_dims(const std::string& function,
                                     const std::string& name1,
-                                    matrix_gpu& y1,
+                                    const matrix_gpu& y1,
                                     const std::string& name2,
-                                    matrix_gpu& y2) {
+                                    const matrix_gpu& y2) {
       check_size_match(function,
                        "Rows of ", name1, y1.rows(),
                        "rows of ", name2, y2.rows());

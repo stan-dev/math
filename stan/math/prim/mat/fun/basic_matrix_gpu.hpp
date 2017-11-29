@@ -34,7 +34,6 @@ namespace stan {
       if ( dst.size() == 0 ) return dst;
       cl::Kernel kernel = get_kernel("transpose");
       cl::CommandQueue cmdQueue = get_queue();
-
       try {
         kernel.setArg(0, dst.buffer());
         kernel.setArg(1, src.buffer());

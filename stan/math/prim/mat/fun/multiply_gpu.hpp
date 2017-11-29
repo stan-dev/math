@@ -25,10 +25,10 @@ namespace stan {
     void diagonal_multiply(matrix_gpu & A, double scalar) {
       cl::Kernel kernel = get_kernel("scalar_mul_diagonal");
       cl::CommandQueue cmdQueue = get_queue();
+      int min_dim = A.rows();
+      if (A.cols() < min_dim)
+        min_dim = A.cols();
       try {
-        int min_dim = A.rows();
-        if (A.cols() < min_dim)
-          min_dim = A.cols();
         kernel.setArg(0, A.buffer());
         kernel.setArg(1, scalar),
         kernel.setArg(2, A.rows());
@@ -120,11 +120,11 @@ namespace stan {
         return temp;
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue& cmdQueue = get_queue();
+      int local = 32;
+      int wpt = 4;
+      int Mpad = ((A.rows() + local-1)/local)*local;
+      int Npad = ((B.cols() + local-1)/local)*local;
       try {
-        int local = 32;
-        int wpt = 4;
-        int Mpad = ((A.rows() + local-1)/local)*local;
-        int Npad = ((B.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
         kernel.setArg(1, B.cols());
         kernel.setArg(2, B.rows());
@@ -167,11 +167,11 @@ namespace stan {
       cl::Kernel kernel = get_kernel("multiply_self_transposed");
       cl::CommandQueue& cmdQueue = get_queue();
       matrix_gpu AT = transpose(A);
+      int local = 32;
+      int wpt = 4;
+      int Mpad = ((A.rows() + local-1)/local)*local;
+      int Npad = ((AT.cols() + local-1)/local)*local;
       try {
-        int local = 32;
-        int wpt = 4;
-        int Mpad = ((A.rows() + local-1)/local)*local;
-        int Npad = ((AT.cols() + local-1)/local)*local;
         kernel.setArg(0, A.rows());
         kernel.setArg(1, AT.cols());
         kernel.setArg(2, AT.rows());
