@@ -232,14 +232,20 @@ namespace stan {
       check_size_match("copy (GPU -> GPU)",
         "src.cols()", src.cols(), "dst.cols()", dst.cols());
       if ( src.size() > 0 ) {
-        cl::CommandQueue& queue = get_queue();
+        cl::Kernel kernel = get_kernel("copy");
+        cl::CommandQueue& cmdQueue = get_queue();
         try {
-          queue.enqueueCopyBuffer(
-            src.buffer(),
-            dst.buffer(),
-            0,
-            0,
-            src.size() );
+          kernel.setArg(0, src.buffer());
+          kernel.setArg(1, dst.buffer());
+          kernel.setArg(2, dst.rows());
+          kernel.setArg(3, dst.cols());
+          cmdQueue.enqueueNDRangeKernel(
+            kernel,
+            cl::NullRange,
+            cl::NDRange(dst.rows(), dst.cols()),
+            cl::NullRange,
+            NULL,
+            NULL);
         } catch (const cl::Error& e) {
           check_ocl_error("copy GPU->GPU", e);
         }
