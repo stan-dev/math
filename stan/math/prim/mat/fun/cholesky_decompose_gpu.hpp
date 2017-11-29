@@ -41,8 +41,7 @@ namespace stan {
      * @throw std::domain_error if m is not
      *  positive definite (if m has more than 0 elements)
      */    
-    matrix_gpu cholesky_decompose_gpu(matrix_gpu & A, int block) {
-      if (A.size() == 0) return A;
+    matrix_gpu cholesky_decompose_gpu(matrix_gpu& A, int block) {
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
       try {
@@ -50,9 +49,9 @@ namespace stan {
         int offset = 0;
         matrix_gpu V(block, block);
         matrix_gpu D(block, block);
-        matrix_gpu Mid;
         while ((offset + block) < (A.rows())) {
           matrix_gpu L(A.rows()-offset-block, block);
+          matrix_gpu Mid(A.rows()-offset-block, A.rows()-offset-block);
           matrix_gpu Mid_temp(A.rows()-offset-block, A.rows()-offset-block);
 
           copy_submatrix(A, D, offset, offset, 0, 0, block, block);
@@ -144,10 +143,10 @@ namespace stan {
         int offset = 0;
         matrix_gpu V(block, block);
         matrix_gpu D(block, block);
-        matrix_gpu Mid;
 
         while ((offset + block) < (A.rows())) {
           matrix_gpu L(A.rows()-offset-block, block);
+          matrix_gpu Mid(A.rows()-offset-block, A.rows()-offset-block);
           matrix_gpu Mid_temp(A.rows()-offset-block, A.rows()-offset-block);
 
           copy_submatrix(A, D, offset, offset, 0, 0, block, block);

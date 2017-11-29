@@ -374,9 +374,8 @@ TEST(AgradRevMatrix,mat_cholesky) {
   AVAR d = 1.0;
   X << a, b, 
     c, d;
-
+  
   matrix_v L = cholesky_decompose_gpu(X);
-
   matrix_v LL_trans = multiply(L,transpose(L));
   EXPECT_FLOAT_EQ(a.val(),LL_trans(0,0).val());
   EXPECT_FLOAT_EQ(b.val(),LL_trans(0,1).val());

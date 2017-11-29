@@ -31,6 +31,7 @@ namespace stan {
      */
     matrix_gpu transpose(matrix_gpu & src) {
       matrix_gpu dst(src.cols(), src.rows());
+      if ( dst.size() == 0 ) return dst;
       cl::Kernel kernel = get_kernel("transpose");
       cl::CommandQueue cmdQueue = get_queue();
 
@@ -284,7 +285,7 @@ namespace stan {
      matrix_gpu& B) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
       matrix_gpu C(A.rows(), A.cols());
-      if (A.size() == 0) {
+      if (C.size() == 0) {
         return C;
       }
       cl::Kernel kernel = get_kernel("add");

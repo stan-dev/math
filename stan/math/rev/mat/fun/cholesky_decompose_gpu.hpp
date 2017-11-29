@@ -165,7 +165,6 @@ namespace stan {
             temp_gpu = multiply(Dbar_gpu, R_gpu);
             Rbar_gpu = subtract(Rbar_gpu, temp_gpu);
           }
-
           diagonal_multiply(Dbar2_gpu, 0.5);
           zeros(Dbar2_gpu, UPPER);
 

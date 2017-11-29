@@ -162,12 +162,11 @@ namespace stan {
      */
     matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
       matrix_gpu temp(A.rows(), A.rows());
-      matrix_gpu AT;
       if ( temp.size() == 0 )
         return temp;
       cl::Kernel kernel = get_kernel("multiply_self_transposed");
       cl::CommandQueue& cmdQueue = get_queue();
-      AT = transpose(A);
+      matrix_gpu AT = transpose(A);
       try {
         int local = 32;
         int wpt = 4;

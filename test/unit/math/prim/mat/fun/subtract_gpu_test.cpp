@@ -20,7 +20,7 @@ TEST(MathMatrixGPU,subtract_v_exception_pass_zero) {
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,0);
+  stan::math::matrix_gpu d33(0,1);
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
@@ -71,7 +71,7 @@ TEST(MathMatrixGPU,subtract_m_exception) {
   d2.resize(2,3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(3,1);
+  stan::math::matrix_gpu d33(2,3);
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
@@ -81,7 +81,7 @@ TEST(MathMatrixGPU,subtract_m_exception_pass_zero) {
   d2.resize(0,0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,1);
+  stan::math::matrix_gpu d33(0,0);
   EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 

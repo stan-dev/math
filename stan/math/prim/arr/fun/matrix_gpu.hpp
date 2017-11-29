@@ -27,12 +27,12 @@ namespace stan {
     /**
      * This class represents a matrix on the GPU. 
      * 
-     * The matrix data is stored in the oclBuffer.     
+     * The matrix data is stored in the oclBuffer_.     
      * 
      */
     class matrix_gpu {
       private:
-        cl::Buffer oclBuffer;
+        cl::Buffer oclBuffer_;
         const int rows_;
         const int cols_;
 
@@ -50,13 +50,21 @@ namespace stan {
         }
 
         const cl::Buffer& buffer() const {
-          return oclBuffer;
+          return oclBuffer_;
         }
 
-        matrix_gpu() {
-          rows_ = 0;
-          cols_ = 0;
+        matrix_gpu()
+         : rows_(0), cols_(0) {
         }
+
+        matrix_gpu(matrix_gpu& a)
+         : rows_(a.rows()), cols_(a.cols()) {
+        }
+
+        matrix_gpu(const matrix_gpu& a)
+         : rows_(a.rows()), cols_(a.cols()) {
+        }
+
         // TODO(Rok): constructors with enumerator added when
         //  the matrix_gpu does not need to be READ_WRITE
         /**
@@ -75,14 +83,13 @@ namespace stan {
           if ( size() > 0 ) {
             cl::Context& ctx = get_context();
             try {
-              oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+              oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                  sizeof(double) * rows_ * cols_);
             } catch (const cl::Error& e) {
               check_ocl_error("matrix constructor", e);
             }
           }
         }
-
         /**
          * Constructor for the matrix_gpu that 
          * creates a copy of the Eigen matrix on the GPU.
@@ -96,22 +103,30 @@ namespace stan {
          * 
          */
         template<typename T, int R, int C>
-        explicit matrix_gpu(const Eigen::Matrix<T, R, C> &A) {
-          rows_ = A.rows();
-          cols_ = A.cols();
+        explicit matrix_gpu(const Eigen::Matrix<T, R, C> &A)
+        : rows_(A.rows()), cols_(A.cols()) {
           if ( size() > 0 ) {
             cl::Context& ctx = get_context();
             cl::CommandQueue& queue = get_queue();
             try {
-              oclBuffer = cl::Buffer(ctx, CL_MEM_READ_WRITE,
+              oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
                sizeof(double) * A.size());
 
-              queue.enqueueWriteBuffer(oclBuffer, CL_TRUE, 0,
+              queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
                sizeof(T) * A.size(), A.data());
             } catch (const cl::Error& e) {
               check_ocl_error("matrix constructor", e);
             }
           }
+        }
+
+        matrix_gpu& operator= (const matrix_gpu& a){
+          check_size_match("assignment of GPU matrices",
+           "source.rows()", a.rows(), "destination.rows()", rows());
+          check_size_match("assignment of GPU matrices",
+           "source.cols()", a.cols(), "destination.cols()", cols());
+          oclBuffer_ = a.buffer();
+          return *this;
         }
     };
 
