@@ -12,6 +12,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return a pseudorandom Skew-normal variate for the given location, scale,
  * and shape using the specified random number generator.
@@ -31,15 +32,15 @@ namespace math {
  * @return Skew-normal random variate
  * @throw std::domain_error if mu is infinite, sigma is nonpositive, or
  * alpha is infinite
- * @throw std::invalid_argument if non-scalars arguments are of different
+ * @throw std::invalid_argument if non-scalar arguments are of different
  * lengths
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
 skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
                 RNG& rng) {
-  using boost::variate_generator;
   using boost::random::normal_distribution;
+  using boost::variate_generator;
   static const char* function = "skew_normal_rng";
 
   check_finite(function, "Location parameter", mu);
@@ -68,6 +69,7 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
 
   return output.data();
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

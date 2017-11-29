@@ -13,6 +13,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return a pseudorandom exponentially modified normal variate for the
  * given location, scale, and inverse scale using the specified random
@@ -33,7 +34,7 @@ namespace math {
  * @return Exponentially modified normal random variate
  * @throw std::domain_error if mu is infinite, sigma is nonpositive,
  * or lambda is nonpositive
- * @throw std::invalid_argument if non-scalars arguments are of different
+ * @throw std::invalid_argument if non-scalar arguments are of different
  * lengths
  */
 template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
@@ -60,6 +61,7 @@ exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
 
   return output.data();
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

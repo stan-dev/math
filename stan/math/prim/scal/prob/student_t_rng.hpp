@@ -12,6 +12,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return a pseudorandom student-t variate for the given degrees of freedom,
  * location, and scale using the specified random number generator.
@@ -31,15 +32,15 @@ namespace math {
  * @return Student-t random variate
  * @throw std::domain_error if nu is nonpositive, mu is infinite, or sigma
  * is nonpositive
- * @throw std::invalid_argument if non-scalars arguments are of different
+ * @throw std::invalid_argument if non-scalar arguments are of different
  * lengths
  */
 template <typename T_deg, typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type
 student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
               RNG& rng) {
-  using boost::variate_generator;
   using boost::random::student_t_distribution;
+  using boost::variate_generator;
   static const char* function = "student_t_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
