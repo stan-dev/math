@@ -10,9 +10,9 @@ struct faulty_functor {
     Eigen::Matrix<result_type, Eigen::Dynamic, 1> res(2);
     res(0) = theta(0)*theta(0);
     res(1) = x_r[0]*theta(1)*theta(0);
-    std::cout << "theta(0) = " << theta(0) << std::endl;
+    //std::cout << "theta(0) = " << theta(0) << std::endl;
     if(theta(0) == -1.0) {
-      std::cout << "THROWING! DEAL WITH IT!" << std::endl;
+      //std::cout << "THROWING! DEAL WITH IT!" << std::endl;
       throw std::domain_error("Illegal parameter!");
     }
     return(res);

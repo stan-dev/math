@@ -6,8 +6,6 @@
 
 #include <iostream>
 
-#ifdef STAN_HAS_MPI
-
 typedef stan::math::map_rect_reduce<hard_work, double, double> hard_work_reducer_dd;
 typedef stan::math::map_rect_combine<hard_work, double, double> hard_work_combiner_dd;
 typedef stan::math::mpi_parallel_call<hard_work_reducer_dd,hard_work_combiner_dd> hard_work_parallel_call;
@@ -19,8 +17,6 @@ typedef stan::math::map_rect_combine<faulty_functor, double, double> faulty_func
 typedef stan::math::mpi_parallel_call<faulty_functor_reducer_dd,faulty_functor_combiner_dd> faulty_functor_parallel_call;
 BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>);
 BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>,track_never);
-
-#endif
 
 struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
@@ -44,11 +40,16 @@ struct MpiJob : public ::testing::Test {
 };
 
 TEST_F(MpiJob, hard_work_dd) {
-  Eigen::VectorXd result = stan::math::map_rect<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
+  Eigen::VectorXd result_mpi = stan::math::map_rect_mpi<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
+  Eigen::VectorXd result_serial = stan::math::map_rect_serial<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
 
-  EXPECT_EQ(result.rows(), 2*N );
+  EXPECT_EQ(result_mpi.rows(), result_serial.rows() );
 
-  std::cout << result << std::endl;
+  for(int i = 0; i < result_mpi.rows(); ++i) {
+    EXPECT_DOUBLE_EQ(result_mpi(i), result_serial(i));
+  }
+
+  //std::cout << result_mpi << std::endl;
 } 
 
 TEST_F(MpiJob, always_faulty_functor) {
