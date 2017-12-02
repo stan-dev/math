@@ -1,6 +1,8 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 
+#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
+
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
@@ -52,6 +54,8 @@ struct MpiJob : public ::testing::Test {
 };
 
 TEST_F(MpiJob, hard_work_vv) {
+  if(rank != 0) return;
+  
   std::vector<stan::math::var> shared_params_v_vec = stan::math::to_array_1d(shared_params_v);
   std::vector<stan::math::var> shared_params_v2_vec = stan::math::to_array_1d(shared_params_v2);
 
@@ -99,6 +103,7 @@ TEST_F(MpiJob, hard_work_vv) {
 }
 
 TEST_F(MpiJob, always_faulty_functor_vv) {
+  if(rank != 0) return;
 
   stan::math::vector_v result;
 
@@ -115,55 +120,4 @@ TEST_F(MpiJob, always_faulty_functor_vv) {
   // throwing on the very first evaluation
   EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_v, job_params_v, x_r, x_i, 2));
 
-}
-
-// from :
-// http://www.parresianz.com/mpi/c++/mpi-unit-testing-googletests-cmake/
-// but does not work well with our MPI design
-/*
-class MPIEnvironment : public ::testing::Environment
-{
-public:
-  virtual void SetUp() {
-    char** argv;
-    int argc = 0;
-    int mpiError = MPI_Init(&argc, &argv);
-    ASSERT_FALSE(mpiError);
-  }
-  virtual void TearDown() {
-    int mpiError = MPI_Finalize();
-    ASSERT_FALSE(mpiError);
-  }
-  virtual ~MPIEnvironment() {}
-};
-*/
-
-int main(int argc, char* argv[]) {
-    int result = 0;
-    ::testing::InitGoogleTest(&argc, argv);
-    //::testing::AddGlobalTestEnvironment(new MPIEnvironment);
-
-    stan::math::mpi_cluster cluster;
-
-    //boost::mpi::environment env;
-    //boost::mpi::communicator world;
-
-    const std::size_t rank = cluster.rank_;
-
-    // disable output listeners on all workers
-    ::testing::TestEventListeners& listeners =
-        ::testing::UnitTest::GetInstance()->listeners();
-    if (rank != 0) {
-      delete listeners.Release(listeners.default_result_printer());
-    }
-
-    // send workers into listen mode
-    cluster.listen();
-    
-    // run all tests on the root
-    if (rank == 0) {
-      result = RUN_ALL_TESTS();
-    }
-
-    return result;
 }

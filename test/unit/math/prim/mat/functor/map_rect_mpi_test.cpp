@@ -1,6 +1,8 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 
+#include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
+
 #include <test/unit/math/prim/mat/functor/hard_work.hpp>
 #include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
 
@@ -17,6 +19,8 @@ typedef stan::math::map_rect_combine<faulty_functor, double, double> faulty_func
 typedef stan::math::mpi_parallel_call<faulty_functor_reducer_dd,faulty_functor_combiner_dd> faulty_functor_parallel_call;
 BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>);
 BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>,track_never);
+
+
 
 struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
@@ -40,6 +44,8 @@ struct MpiJob : public ::testing::Test {
 };
 
 TEST_F(MpiJob, hard_work_dd) {
+  if(rank != 0) return;
+  
   Eigen::VectorXd result_mpi = stan::math::map_rect_mpi<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
   Eigen::VectorXd result_serial = stan::math::map_rect_serial<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
 
@@ -49,10 +55,10 @@ TEST_F(MpiJob, hard_work_dd) {
     EXPECT_DOUBLE_EQ(result_mpi(i), result_serial(i));
   }
 
-  //std::cout << result_mpi << std::endl;
 } 
 
 TEST_F(MpiJob, always_faulty_functor) {
+  if(rank != 0) return;
 
   Eigen::VectorXd result;
 
@@ -68,56 +74,4 @@ TEST_F(MpiJob, always_faulty_functor) {
 
   // thorwing on the very first evaluation
   EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_d, job_params_d, x_r, x_i, 2));
-  
-}
-
-// from :
-// http://www.parresianz.com/mpi/c++/mpi-unit-testing-googletests-cmake/
-// but does not work well with our MPI design
-/*
-class MPIEnvironment : public ::testing::Environment
-{
-public:
-  virtual void SetUp() {
-    char** argv;
-    int argc = 0;
-    int mpiError = MPI_Init(&argc, &argv);
-    ASSERT_FALSE(mpiError);
-  }
-  virtual void TearDown() {
-    int mpiError = MPI_Finalize();
-    ASSERT_FALSE(mpiError);
-  }
-  virtual ~MPIEnvironment() {}
-};
-*/
-
-int main(int argc, char* argv[]) {
-    int result = 0;
-    ::testing::InitGoogleTest(&argc, argv);
-    //::testing::AddGlobalTestEnvironment(new MPIEnvironment);
-
-    stan::math::mpi_cluster cluster;
-
-    //boost::mpi::environment env;
-    //boost::mpi::communicator world;
-
-    const std::size_t rank = cluster.rank_;
-
-    // disable output listeners on all workers
-    ::testing::TestEventListeners& listeners =
-        ::testing::UnitTest::GetInstance()->listeners();
-    if (rank != 0) {
-      delete listeners.Release(listeners.default_result_printer());
-    }
-
-    // send workers into listen mode
-    cluster.listen();
-    
-    // run all tests on the root
-    if (rank == 0) {
-      result = RUN_ALL_TESTS();
-    }
-
-    return result;
 }
