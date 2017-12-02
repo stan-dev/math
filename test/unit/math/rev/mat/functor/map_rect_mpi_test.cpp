@@ -8,21 +8,8 @@
 
 #include <iostream>
 
-#ifdef STAN_HAS_MPI
-
-typedef stan::math::map_rect_reduce<hard_work, stan::math::var, stan::math::var> hard_work_reducer_vv;
-typedef stan::math::map_rect_combine<hard_work, stan::math::var, stan::math::var> hard_work_combiner_vv;
-typedef stan::math::mpi_parallel_call<hard_work_reducer_vv,hard_work_combiner_vv> hard_work_parallel_call;
-BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<hard_work_parallel_call>);
-BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<hard_work_parallel_call>,track_never);
-
-typedef stan::math::map_rect_reduce<faulty_functor, stan::math::var, stan::math::var> faulty_functor_reducer_vv;
-typedef stan::math::map_rect_combine<faulty_functor, stan::math::var, stan::math::var> faulty_functor_combiner_vv;
-typedef stan::math::mpi_parallel_call<faulty_functor_reducer_vv,faulty_functor_combiner_vv> faulty_functor_parallel_call;
-BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>);
-BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>,track_never);
-
-#endif
+STAN_REGISTER_MPI_MAP_RECT(hard_work, var, var)
+STAN_REGISTER_MPI_MAP_RECT(faulty_functor, var, var)
 
 struct MpiJob : public ::testing::Test {
   stan::math::vector_v shared_params_v;

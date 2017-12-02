@@ -1,11 +1,11 @@
 #pragma once
 
+#include <stan/math/prim/mat/functor/mpi_parallel_call.hpp>
+
 #include <vector>
 #include <map>
 #include <type_traits>
 
-#include <stan/math/prim/mat/functor/mpi_parallel_call.hpp>
-#include <stan/math/prim/arr/functor/mpi_command.hpp>
 
 namespace stan {
   namespace math {

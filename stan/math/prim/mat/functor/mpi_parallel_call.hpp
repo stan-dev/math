@@ -4,8 +4,11 @@
 #include <map>
 #include <type_traits>
 
+#include <boost/mpi.hpp>
+
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
-#include <stan/math/prim/arr/functor/mpi_command.hpp>
+//#include <stan/math/prim/arr/functor/mpi_command.hpp>
+#include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 
@@ -361,3 +364,13 @@ namespace stan {
 
   }
 }
+
+
+#define STAN_REGISTER_MPI_MAP_RECT(FUNCTOR, SHARED, JOB)                \
+  namespace stan { namespace math {                                     \
+      typedef map_rect_reduce<FUNCTOR, SHARED, JOB> FUNCTOR ## _red_ ## SHARED ## _ ## JOB; \
+      typedef map_rect_combine<FUNCTOR, SHARED, JOB> FUNCTOR ## _comb_ ## SHARED ## _ ## JOB; \
+      typedef mpi_parallel_call<FUNCTOR ## _red_ ## SHARED ## _ ## JOB, FUNCTOR ## _comb_ ## SHARED ## _ ## JOB> FUNCTOR ## _parcall_ ## SHARED ## _ ## JOB; \
+    } }                                                                 \
+  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<stan::math::FUNCTOR ## _parcall_ ## SHARED ## _ ## JOB>)
+

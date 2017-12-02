@@ -1,6 +1,8 @@
-#pragma once
+#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
+#define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
 
-#include <mutex>
+
+#include <stan/math/prim/arr/functor/mpi_command.hpp>
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/access.hpp>
@@ -8,7 +10,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <stan/math/prim/arr/functor/mpi_command.hpp>
+#include <mutex>
 
 namespace stan {
   namespace math {
@@ -33,18 +35,6 @@ namespace stan {
         //MPI_Finalize();
         throw mpi_stop_listen();
         //std::exit(0);
-      }
-    };
-
-    template<typename T>
-    struct mpi_distributed_apply : public mpi_command {
-      friend class boost::serialization::access;
-      template<class Archive>
-      void serialize(Archive & ar, const unsigned int version) {
-        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
-      }
-      void run() const {
-        T::distributed_apply();
       }
     };
 
@@ -135,6 +125,6 @@ namespace stan {
   }
 }
 
-BOOST_CLASS_EXPORT(stan::math::mpi_stop_worker)
-BOOST_CLASS_TRACKING(stan::math::mpi_stop_worker,track_never)
-BOOST_SERIALIZATION_FACTORY_0(stan::math::mpi_stop_worker)
+STAN_REGISTER_MPI_COMMAND(stan::math::mpi_stop_worker)
+
+#endif

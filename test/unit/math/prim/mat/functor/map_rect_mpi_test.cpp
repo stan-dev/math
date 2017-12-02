@@ -8,19 +8,8 @@
 
 #include <iostream>
 
-typedef stan::math::map_rect_reduce<hard_work, double, double> hard_work_reducer_dd;
-typedef stan::math::map_rect_combine<hard_work, double, double> hard_work_combiner_dd;
-typedef stan::math::mpi_parallel_call<hard_work_reducer_dd,hard_work_combiner_dd> hard_work_parallel_call;
-BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<hard_work_parallel_call>);
-BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<hard_work_parallel_call>,track_never);
-
-typedef stan::math::map_rect_reduce<faulty_functor, double, double> faulty_functor_reducer_dd;
-typedef stan::math::map_rect_combine<faulty_functor, double, double> faulty_functor_combiner_dd;
-typedef stan::math::mpi_parallel_call<faulty_functor_reducer_dd,faulty_functor_combiner_dd> faulty_functor_parallel_call;
-BOOST_CLASS_EXPORT(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>);
-BOOST_CLASS_TRACKING(stan::math::mpi_distributed_apply<faulty_functor_parallel_call>,track_never);
-
-
+STAN_REGISTER_MPI_MAP_RECT(hard_work, double, double)
+STAN_REGISTER_MPI_MAP_RECT(faulty_functor, double, double)
 
 struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
