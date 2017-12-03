@@ -21,7 +21,7 @@ TEST(map_rect_serial, hard_work_dd) {
   std::vector<std::vector<double> > x_r(N, std::vector<double>(1,1.0));
   std::vector<std::vector<int> > x_i(N, std::vector<int>(0));
 
-  Eigen::VectorXd result = stan::math::map_rect<hard_work>(shared_params_d, job_params_d, x_r, x_i, 0);
+  Eigen::VectorXd result = stan::math::map_rect<0,hard_work>(shared_params_d, job_params_d, x_r, x_i);
 }
 
 

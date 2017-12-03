@@ -93,17 +93,16 @@ namespace stan {
       }
     };
 
-    template <typename F, typename T_shared_param, typename T_job_param>
+    template <int call_id, typename F, typename T_shared_param, typename T_job_param>
     Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1>
     map_rect_mpi(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                  const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                  const std::vector<std::vector<double>>& x_r,
-                 const std::vector<std::vector<int>>& x_i,
-                 const int callsite_id) {
+                 const std::vector<std::vector<int>>& x_i) {
       typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
       typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
-      mpi_parallel_call<ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i, callsite_id);
+      mpi_parallel_call<call_id,ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i);
 
       return job_chunk.reduce();
     }

@@ -8,8 +8,9 @@
 
 #include <iostream>
 
-STAN_REGISTER_MPI_MAP_RECT(hard_work, var, var)
-STAN_REGISTER_MPI_MAP_RECT(faulty_functor, var, var)
+STAN_REGISTER_MPI_MAP_RECT(0, hard_work, var, var)
+STAN_REGISTER_MPI_MAP_RECT(1, faulty_functor, var, var)
+STAN_REGISTER_MPI_MAP_RECT(2, faulty_functor, var, var)
 
 struct MpiJob : public ::testing::Test {
   stan::math::vector_v shared_params_v;
@@ -54,9 +55,9 @@ TEST_F(MpiJob, hard_work_vv) {
     job_params_v2_vec.push_back(stan::math::to_array_1d(job_params_v2[i]));
   }
   
-  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<hard_work>(shared_params_v, job_params_v, x_r, x_i, 0);
+  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i);
 
-  stan::math::vector_v result_serial = stan::math::map_rect_serial<hard_work>(shared_params_v2, job_params_v2, x_r, x_i, 0);
+  stan::math::vector_v result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i);
 
   std::vector<double> z_grad1;
   std::vector<double> z_grad2;
@@ -94,7 +95,7 @@ TEST_F(MpiJob, always_faulty_functor_vv) {
 
   stan::math::vector_v result;
 
-  EXPECT_NO_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_v, job_params_v, x_r, x_i, 1));
+  EXPECT_NO_THROW((result = stan::math::map_rect<1,faulty_functor>(shared_params_v, job_params_v, x_r, x_i)));
 
   // faulty functor throws on theta(0) being -1.0
   // throwing during the first evaluation is quite severe and will
@@ -102,9 +103,9 @@ TEST_F(MpiJob, always_faulty_functor_vv) {
   job_params_v[0](0) = -1;
 
   // upon the second evaluation throwing is handled internally different
-  EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_v, job_params_v, x_r, x_i, 1));
+  EXPECT_ANY_THROW((result = stan::math::map_rect<1,faulty_functor>(shared_params_v, job_params_v, x_r, x_i)));
 
   // throwing on the very first evaluation
-  EXPECT_ANY_THROW(result = stan::math::map_rect<faulty_functor>(shared_params_v, job_params_v, x_r, x_i, 2));
+  EXPECT_ANY_THROW((result = stan::math::map_rect<2,faulty_functor>(shared_params_v, job_params_v, x_r, x_i)));
 
 }
