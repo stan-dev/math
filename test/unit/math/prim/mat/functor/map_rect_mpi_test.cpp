@@ -8,9 +8,10 @@
 
 #include <iostream>
 
-STAN_REGISTER_MPI_MAP_RECT(0, hard_work, double, double)
-STAN_REGISTER_MPI_MAP_RECT(1, faulty_functor, double, double)
-STAN_REGISTER_MPI_MAP_RECT(2, faulty_functor, double, double)
+STAN_REGISTER_MPI_MAP_RECT_ALL(1, faulty_functor)
+STAN_REGISTER_MPI_MAP_RECT_ALL(2, faulty_functor)
+
+STAN_REGISTER_MPI_MAP_RECT_ALL(0, hard_work)
 
 struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;

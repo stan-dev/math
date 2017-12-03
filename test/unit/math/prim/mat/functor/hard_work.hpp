@@ -3,7 +3,7 @@
 struct hard_work {
   template<typename T1, typename T2>
   Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta, const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta, const std::vector<double>& x_r, const std::vector<int>& x_i) const {
+  operator()(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta, const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta, const std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream* msgs = 0) const {
     typedef typename stan::return_type<T1, T2>::type result_type;
     Eigen::Matrix<result_type, Eigen::Dynamic, 1> res;
     res.resize(2);

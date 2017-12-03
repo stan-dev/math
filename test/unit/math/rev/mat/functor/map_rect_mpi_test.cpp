@@ -8,9 +8,9 @@
 
 #include <iostream>
 
-STAN_REGISTER_MPI_MAP_RECT(0, hard_work, var, var)
-STAN_REGISTER_MPI_MAP_RECT(1, faulty_functor, var, var)
-STAN_REGISTER_MPI_MAP_RECT(2, faulty_functor, var, var)
+STAN_REGISTER_MPI_MAP_RECT_ALL(0, hard_work)
+STAN_REGISTER_MPI_MAP_RECT_ALL(1, faulty_functor)
+STAN_REGISTER_MPI_MAP_RECT_ALL(2, faulty_functor)
 
 struct MpiJob : public ::testing::Test {
   stan::math::vector_v shared_params_v;

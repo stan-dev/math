@@ -359,12 +359,16 @@ namespace stan {
   }
 }
 
-
 #define STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, SHARED, JOB) \
-  namespace stan { namespace math {                                     \
-      typedef map_rect_reduce<FUNCTOR, SHARED, JOB> FUNCTOR ## _red_ ## SHARED ## _ ## JOB; \
-      typedef map_rect_combine<FUNCTOR, SHARED, JOB> FUNCTOR ## _comb_ ## SHARED ## _ ## JOB; \
-typedef mpi_parallel_call<CALLID, FUNCTOR ## _red_ ## SHARED ## _ ## JOB, FUNCTOR ## _comb_ ## SHARED ## _ ## JOB> FUNCTOR ## _par_callid_ ## CALLID ## _ ## SHARED ## _ ## JOB; \
-    } }                                                                 \
-  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<stan::math::FUNCTOR ## _par_callid_ ## CALLID ## _ ## SHARED ## _ ## JOB >)
+  namespace stan { namespace math { namespace internal {                \
+                       typedef FUNCTOR mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _; \
+                       typedef map_rect_reduce<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_ ; \
+                       typedef map_rect_combine<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_ ; \
+                       typedef mpi_parallel_call<CALLID, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_ ; \
+      } } }                                                             \
+  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_>)
+
+
+#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)           \
+  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)
 
