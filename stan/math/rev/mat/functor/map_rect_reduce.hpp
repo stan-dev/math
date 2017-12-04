@@ -26,7 +26,7 @@ namespace stan {
           for(size_type i = 0; i < num_job_specific_params; ++i)
             z_vars[num_shared_params + i] = job_specific_params_v(i);
 
-          vector_v fx_v = F()(shared_params_v, job_specific_params_v, x_r, x_i);
+          vector_v fx_v = F()(shared_params_v, job_specific_params_v, x_r, x_i, 0);
 
           const size_t size_f = fx_v.rows();
 
@@ -47,5 +47,12 @@ namespace stan {
         return( out );
       }
     };
+    
   }
 }
+
+#undef STAN_REGISTER_MPI_MAP_RECT_ALL
+
+#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)         \
+  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double) \
+  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, var, var)
