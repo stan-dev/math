@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -117,7 +118,9 @@ namespace stan {
         Matrix<T_partials_return, Dynamic, 1> theta_derivative =
           n_vec - exp_theta;
         if (!is_constant_struct<T_beta>::value) {
-          ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
+          assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                              x_dbl.transpose()
+                                                * theta_derivative);
         }
         if (!is_constant_struct<T_x>::value) {
           ops_partials.edge1_.partials_ = theta_derivative

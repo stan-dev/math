@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -158,7 +159,9 @@ namespace stan {
         theta_derivative = (n_arr - (n_plus_phi / (phi_arr / (theta_dbl.exp())
           + Array<double, Dynamic, 1>::Ones(N, 1)))).matrix();
         if (!is_constant_struct<T_beta>::value) {
-          ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
+          assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                              x_dbl.transpose()
+                                                * theta_derivative);
         }
         if (!is_constant_struct<T_x>::value) {
           ops_partials.edge1_.partials_ = theta_derivative
@@ -169,7 +172,9 @@ namespace stan {
         }
       }
       if (!is_constant_struct<T_precision>::value) {
-        ops_partials.edge4_.partials_ = (Array<double, Dynamic, 1>::Ones(N, 1)
+        assign_to_matrix_or_broadcast_array(
+          ops_partials.edge4_.partials_,
+          (Array<double, Dynamic, 1>::Ones(N, 1)
           - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
           - logsumexp_eta_logphi
           - phi_arr.unaryExpr([](const T_partials_return& xx) {
@@ -177,7 +182,7 @@ namespace stan {
                               })
           + n_plus_phi.unaryExpr([](const T_partials_return& xx) {
                                    return digamma(xx);
-                                 })).matrix();
+                                 })).matrix());
       }
       return ops_partials.build(logp);
     }

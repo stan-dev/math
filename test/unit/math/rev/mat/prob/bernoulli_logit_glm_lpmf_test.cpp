@@ -120,7 +120,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   x2 << -12, 46, -42;
   var beta2 = 6.3;
   var alpha2 = 0.6;
-  
+
   var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, beta2, alpha2);
   lp2.grad();
 

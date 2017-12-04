@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_NORMAL_ID_GLM_LPDF_HPP
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -127,21 +128,26 @@ namespace stan {
         Matrix<T_partials_return, Dynamic, 1> mu_derivative = (inv_sigma
           * n_minus_mu_over_sigma).matrix();
         if (!is_constant_struct<T_n>::value) {
-          ops_partials.edge1_.partials_ = - mu_derivative;
+          assign_to_matrix_or_broadcast_array(ops_partials.edge1_.partials_,
+                                              - mu_derivative);
         }
         if (!is_constant_struct<T_x>::value) {
           ops_partials.edge2_.partials_ = mu_derivative
             * beta_dbl.transpose();
         }
         if (!is_constant_struct<T_beta>::value) {
-          ops_partials.edge3_.partials_ = x_dbl.transpose() * mu_derivative;
+          assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
+                                              x_dbl.transpose()
+                                                * mu_derivative);
         }
         if (!is_constant_struct<T_alpha>::value) {
           ops_partials.edge4_.partials_[0] = mu_derivative.trace();
         }
         if (!is_constant_struct<T_scale>::value) {
-          ops_partials.edge5_.partials_ = ((inv_sigma - Array<double,
-            Dynamic, 1>::Ones(N, 1)) * n_minus_mu_over_sigma_squared).matrix();
+          assign_to_matrix_or_broadcast_array(
+            ops_partials.edge5_.partials_,
+            ((inv_sigma - Array<double, Dynamic, 1>::Ones(N, 1))
+              * n_minus_mu_over_sigma_squared).matrix());
         }
       }
 
