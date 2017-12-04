@@ -94,6 +94,47 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   }
 }
 
+
+//  We check the case where beta is a scalar.
+TEST(ProbDistributionsBernoulliLogitGLM,
+     glm_matches_bernoulli_logit_vars_beta_scalar) {
+  Matrix<int, Dynamic, 1> n(3, 1);
+  n << 1, 0, 1;
+  Matrix<var, Dynamic, Dynamic> x(3, 1);
+  x << -12, 46, -42;
+  var beta;
+  beta = 6.3;
+  var alpha = 0.6;
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> theta(3, 1);
+  theta = x * beta + alphavec;
+
+  var lp = stan::math::bernoulli_logit_lpmf(n, theta);
+  lp.grad();
+
+  stan::math::recover_memory();
+
+  Matrix<int, Dynamic, 1> n2(3, 1);
+  n2 << 1, 0, 1;
+  Matrix<var, Dynamic, Dynamic> x2(3, 1);
+  x2 << -12, 46, -42;
+  var beta2 = 6.3;
+  var alpha2 = 0.6;
+  
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(n2, x2, beta2, alpha2);
+  lp2.grad();
+
+  EXPECT_FLOAT_EQ(lp.val(),
+                  lp2.val());
+  EXPECT_FLOAT_EQ(beta.adj(), beta2.adj());
+  EXPECT_FLOAT_EQ(alpha.adj(), alpha2.adj());
+  for (size_t j = 0; j < 3; j++) {
+    for (size_t i = 0; i < 1; i++) {
+      EXPECT_FLOAT_EQ(x(j, i).adj(), x2(j, i).adj());
+    }
+  }
+}
+
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
 

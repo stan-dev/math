@@ -17,6 +17,10 @@ namespace stan {
         T& operator[](int /*i*/) {
           return prim_;
         }
+
+        void operator= (Eigen::Matrix<T, -1, -1> A) {
+          this[0][0] = A(0,0);
+        }
       };
 
       template <typename T, typename S>
@@ -27,6 +31,8 @@ namespace stan {
         * Not implemented so cannot be called.
         */
         T& operator[] (int /*i*/);
+
+        void operator= (Eigen::Matrix<T, -1, -1> /*A*/);
       };
     }
   }
