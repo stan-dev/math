@@ -55,12 +55,46 @@ TEST_F(MpiJob, hard_work_vv) {
     job_params_v2_vec.push_back(stan::math::to_array_1d(job_params_v2[i]));
   }
   
-  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i);
+  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i, 0);
 
-  stan::math::vector_v result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i);
+  stan::math::vector_v result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i, 0);
 
   std::vector<double> z_grad1;
   std::vector<double> z_grad2;
+
+  EXPECT_EQ(result_mpi.rows(), result_serial.rows() );
+
+  for(int i = 0, ij=0; i < job_params_v_vec.size(); ++i) {
+    for(int j = 0; j < 2; ++j, ++ij) {
+      EXPECT_DOUBLE_EQ(stan::math::value_of(result_mpi(ij)), stan::math::value_of(result_serial(ij)));
+
+      std::vector<stan::math::var> z_var1, z_var2;
+    
+      z_var1.insert(z_var1.end(), shared_params_v_vec.begin(), shared_params_v_vec.end());
+      z_var1.insert(z_var1.end(), job_params_v_vec[i].begin(), job_params_v_vec[i].end());
+      
+      z_var2.insert(z_var2.end(), shared_params_v2_vec.begin(), shared_params_v2_vec.end());
+      z_var2.insert(z_var2.end(), job_params_v2_vec[i].begin(), job_params_v2_vec[i].end());
+
+      //stan::math::set_zero_all_adjoints();
+      result_mpi(ij).grad(z_var1, z_grad1);
+      result_serial(ij).grad(z_var2, z_grad2);
+
+      stan::math::set_zero_all_adjoints();
+    
+      for(std::size_t k = 0; k < z_grad1.size(); ++k) {
+        EXPECT_DOUBLE_EQ(z_grad1[k], z_grad2[k]);
+      }
+    }
+  }
+
+  // repeat things (now things are cached)
+  result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i, 0);
+  
+  result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i, 0);
+  
+  //std::vector<double> z_grad1;
+  //std::vector<double> z_grad2;
 
   EXPECT_EQ(result_mpi.rows(), result_serial.rows() );
 

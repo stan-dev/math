@@ -19,7 +19,8 @@ namespace stan {
         return(1);
       }
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
-        const vector_d out = F()(shared_params, job_specific_params, x_r, x_i, 0);
+        const F f;
+        const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
         return( out.transpose() );
       }
     };
@@ -98,7 +99,8 @@ namespace stan {
     map_rect_mpi(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                  const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                  const std::vector<std::vector<double>>& x_r,
-                 const std::vector<std::vector<int>>& x_i) {
+                 const std::vector<std::vector<int>>& x_i,
+                 std::ostream* msgs = 0) {
       typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
       typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
