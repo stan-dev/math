@@ -71,14 +71,16 @@ namespace stan {
         const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
 
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
+          operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+                                Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
+            ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
+
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
             // check if the outputs flags a failure
-            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max()))
+            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
+              std::cout << "THROWING ON RANK " << rank_ << std::endl;
               throw std::runtime_error("MPI error.");
-
-            operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
-                                  Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
-              ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
+            }
 
             if (!is_constant_struct<T_shared_param>::value)
               ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
