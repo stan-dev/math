@@ -1,9 +1,9 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <cmath>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <cmath>
 
-TEST(AgradFwdFma,Fvar) { 
+TEST(AgradFwdFma, Fvar) {
   using stan::math::fvar;
   fvar<double> x(0.5);
   fvar<double> y(1.2);
@@ -45,7 +45,7 @@ TEST(AgradFwdFma,Fvar) {
 }
 
 
-TEST(AgradFwdFma,FvarFvarDouble) {
+TEST(AgradFwdFma, FvarFvarDouble) {
   using stan::math::fvar;
 
   fvar<fvar<double> > x;
@@ -59,9 +59,9 @@ TEST(AgradFwdFma,FvarFvarDouble) {
   fvar<fvar<double> > z;
   z.val_.val_ = 1.7;
 
-  fvar<fvar<double> > a = fma(x,y,z);
+  fvar<fvar<double> > a = fma(x, y, z);
 
-  EXPECT_FLOAT_EQ(fma(2.5,1.5,1.7), a.val_.val_);
+  EXPECT_FLOAT_EQ(fma(2.5, 1.5, 1.7), a.val_.val_);
   EXPECT_FLOAT_EQ(1.5, a.val_.d_);
   EXPECT_FLOAT_EQ(2.5, a.d_.val_);
   EXPECT_FLOAT_EQ(1, a.d_.d_);
@@ -70,15 +70,15 @@ TEST(AgradFwdFma,FvarFvarDouble) {
 struct fma_fun {
   template <typename T0, typename T1, typename T2>
   inline
-  typename stan::return_type<T0,T1,T2>::type
+  typename stan::return_type<T0, T1, T2>::type
   operator()(const T0& arg1,
              const T1& arg2,
              const T2& arg3) const {
-    return fma(arg1,arg2,arg3);
+    return fma(arg1, arg2, arg3);
   }
 };
 
-TEST(AgradFwdFma,fma_NaN) {
+TEST(AgradFwdFma, fma_NaN) {
   fma_fun fma_;
-  test_nan_fwd(fma_,0.6,0.3,0.5,false);
+  test_nan_fwd(fma_, 0.6, 0.3, 0.5, false);
 }

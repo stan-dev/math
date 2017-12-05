@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -18,7 +19,6 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -26,7 +26,7 @@ namespace stan {
     template <typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
-      static const std::string function = "rayleigh_lccdf";
+      static const char* function = "rayleigh_lccdf";
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
@@ -34,7 +34,7 @@ namespace stan {
 
       T_partials_return ccdf_log(0.0);
 
-      if (!(stan::length(y) && stan::length(sigma)))
+      if (size_zero(y, sigma))
         return ccdf_log;
 
       check_not_nan(function, "Random variable", y);

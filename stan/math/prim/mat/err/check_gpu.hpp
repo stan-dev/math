@@ -25,8 +25,8 @@ namespace stan {
      *    is not square
      */
     inline void
-    check_square(const std::string& function,
-                 const std::string& name,
+    check_square(const char* function,
+                 const char* name,
                  const matrix_gpu& y) {
       check_size_match(function,
                        "Expecting a square matrix; rows of ", name, y.rows(),
@@ -44,8 +44,8 @@ namespace stan {
      *    any element of the matrix is <code>NaN</code>.
      */
     inline void
-    check_nan(const std::string& function,
-              const std::string& name,
+    check_nan(const char* function,
+              const char* name,
               const matrix_gpu& y,
               const int pos_def_check = 0) {
       if (y.size() == 0) return;
@@ -98,8 +98,8 @@ namespace stan {
      *    the matrix is not symmetric.
      */
     inline void
-    check_symmetric(const std::string& function,
-                           const std::string& name,
+    check_symmetric(const char* function,
+                           const char* name,
                   const matrix_gpu& y) {
       if (y.size() == 0) return;
       check_square(function, name, y);
@@ -145,8 +145,8 @@ namespace stan {
      *    any diagonal element of the matrix is zero.
      */
     inline void
-    check_diagonal_zeros(const std::string& function,
-                         const std::string& name,
+    check_diagonal_zeros(const char* function,
+                         const char* name,
                          const matrix_gpu& y,
                          const int pos_def_check = 0) {
       if (y.size() == 0) return;
@@ -198,8 +198,8 @@ namespace stan {
      *    any element of the matrix is <code>NaN</code>.
      */
     inline void
-    check_positive_definite(const std::string& function,
-                           const std::string& name,
+    check_positive_definite(const char* function,
+                           const char* name,
                   const matrix_gpu& y) {
       if (y.size() == 0) return;
       check_nan(function, name, y, 1);
@@ -220,10 +220,10 @@ namespace stan {
      * @throw <code>std::invalid_argument</code>
      * if the dimensions of the matrices do not match
      */
-    inline void check_matching_dims(const std::string& function,
-                                    const std::string& name1,
+    inline void check_matching_dims(const char* function,
+                                    const char* name1,
                                     const matrix_gpu& y1,
-                                    const std::string& name2,
+                                    const char* name2,
                                     const matrix_gpu& y2) {
       check_size_match(function,
                        "Rows of ", name1, y1.rows(),

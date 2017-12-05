@@ -1,12 +1,13 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
-TEST(AgradRevErrorHandlingScalar,CheckFinite) {
+TEST(AgradRevErrorHandlingScalar, CheckFinite) {
   using stan::math::var;
   using stan::math::check_finite;
 
-  const std::string function = "check_bounded";
-  const std::string name = "x";
+  const char* function = "check_bounded";
+  const char* name = "x";
   var x = 0;
 
   EXPECT_NO_THROW(check_finite(function, name, x))
@@ -30,21 +31,21 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_finite;
 
-  const std::string function = "check_finite";
+  const char* function = "check_finite";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(1U,stack_size);
-  EXPECT_NO_THROW(check_finite(function,"a",a));
+  EXPECT_EQ(1U, stack_size);
+  EXPECT_NO_THROW(check_finite(function, "a", a));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(1U,stack_size_after_call);
+  EXPECT_EQ(1U, stack_size_after_call);
 
   a = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_finite(function,"a",a),std::domain_error);
+  EXPECT_THROW(check_finite(function, "a", a), std::domain_error);
   stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(2U,stack_size_after_call);
+  EXPECT_EQ(2U, stack_size_after_call);
 
   stan::math::recover_memory();
 }

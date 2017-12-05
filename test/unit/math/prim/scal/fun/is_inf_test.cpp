@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, is_inf) {
   using stan::math::is_inf;

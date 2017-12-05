@@ -2,19 +2,20 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
-TEST(AgradRev,log1m) {
+TEST(AgradRev, log1m) {
   using stan::math::log1m;
   AVAR a = 0.1;
   AVAR f = log1m(a);
   EXPECT_FLOAT_EQ(log(1 - 0.1), f.val());
-  
+
   AVEC x = createAVEC(a);
   VEC grad_f;
-  f.grad(x,grad_f);
+  f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(-1 / (1 - 0.1), grad_f[0]);
 }
-TEST(AgradRev,excepts) {
+TEST(AgradRev, excepts) {
   using stan::math::log1m;
   EXPECT_THROW(log1m(AVAR(10)), std::domain_error);
 }
@@ -32,9 +33,9 @@ struct log1m_fun {
   }
 };
 
-TEST(AgradRev,log1m_NaN) {
+TEST(AgradRev, log1m_NaN) {
   log1m_fun log1m_;
-  test_nan(log1m_,false,true);
+  test_nan(log1m_, false, true);
 }
 
 TEST(AgradRev, check_varis_on_stack) {

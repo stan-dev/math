@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
@@ -16,7 +17,6 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -26,14 +26,13 @@ namespace stan {
     typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
     exp_mod_normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                            const T_inv_scale& lambda) {
-      static const std::string function = "exp_mod_normal_lcdf";
+      static const char* function = "exp_mod_normal_lcdf";
       typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
                                                   T_inv_scale>::type
         T_partials_return;
 
       T_partials_return cdf_log(0.0);
-      if (!(stan::length(y) && stan::length(mu) && stan::length(sigma)
-            && stan::length(lambda)))
+      if (size_zero(y, mu, sigma, lambda))
         return cdf_log;
 
       check_not_nan(function, "Random variable", y);

@@ -2,10 +2,10 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_MATRIX_VALUE_HPP
 
 #include <stan/math/fwd/mat.hpp>
-#include <vector>
-#include <Eigen/Dense>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_matrix.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <Eigen/Dense>
+#include <vector>
 
 template <typename F, typename T>
 void expect_fwd_matrix_value() {
@@ -43,7 +43,7 @@ void expect_fwd_matrix_value() {
   int seed_i = num_inputs + 1;
   matrix_t a = build_fwd_matrix<F>(template_m, seed_i);
   matrix_t fab = F::template apply<matrix_t>(a.block(1, 1, 1, 1));
-  expect_val_deriv_eq(F::apply_base(a(1,1)), fab(0,0));
+  expect_val_deriv_eq(F::apply_base(a(1, 1)), fab(0, 0));
 }
 
 #endif

@@ -1,11 +1,12 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <string>
 
-const std::string function_ = "function";
-const std::string y_name_ = "y";
-const std::string msg1_ = "error_message ";
-const std::string msg2_ = " second message";
+const char* function_ = "function";
+const char* y_name_ = "y";
+const char* msg1_ = "error_message ";
+const char* msg2_ = " second message";
 
 class ErrorHandlingScalar_invalid_argument_vec : public ::testing::Test {
 public:
@@ -38,34 +39,36 @@ public:
     return expected_message.str();
   }
 
-
   template <class T>
   void test_throw(T y) {
     try {
       stan::math::invalid_argument_vec<T>
         (function_, y_name_, y, index_, msg1_, msg2_);
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw nothing";
     } catch(std::invalid_argument& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw a different type";
     }
 
     try {
       stan::math::invalid_argument_vec<T>
         (function_, y_name_, y, index_, msg1_);
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw nothing";
     } catch(std::invalid_argument& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+      FAIL() << "expecting call to invalid_argument_vec<> "
+             << "to throw a invalid_argument, "
              << "but threw a different type";
     }
   }
-
   size_t index_;
 };
 
@@ -90,14 +93,15 @@ TEST_F(ErrorHandlingScalar_invalid_argument_vec, one_indexed) {
   try {
     stan::math::invalid_argument_vec
       (function_, y_name_, y, n, msg1_, msg2_);
-    FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+    FAIL() << "expecting call to invalid_argument_vec<> "
+           << "to throw a invalid_argument, "
            << "but threw nothing";
   } catch(std::invalid_argument& e) {
     message = e.what();
   } catch(...) {
-    FAIL() << "expecting call to invalid_argument_vec<> to throw a invalid_argument,"
+    FAIL() << "expecting call to invalid_argument_vec<> "
+           << "to throw a invalid_argument, "
            << "but threw a different type";
   }
-
   EXPECT_NE(std::string::npos, message.find("[6]"));
 }

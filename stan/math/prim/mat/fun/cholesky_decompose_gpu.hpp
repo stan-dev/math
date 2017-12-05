@@ -194,7 +194,6 @@ namespace stan {
       copy(A, m_tmp); // NOLINT
       return m_tmp;
     }
-
   }
 }
 

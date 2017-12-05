@@ -1,5 +1,6 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::var;
@@ -7,7 +8,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::check_consistent_size;
 
   int N = 5;
-  const std::string function = "check_consistent_size";
+  const char* function = "check_consistent_size";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)
@@ -15,10 +16,10 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();
 
-  EXPECT_EQ(5U,stack_size);
-  EXPECT_NO_THROW(check_consistent_size(function,"a",a,5U));
+  EXPECT_EQ(5U, stack_size);
+  EXPECT_NO_THROW(check_consistent_size(function, "a", a, 5U));
 
   size_t stack_size_after_call = stan::math::ChainableStack::var_stack_.size();
-  EXPECT_EQ(5U,stack_size_after_call);
+  EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }

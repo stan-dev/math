@@ -21,7 +21,7 @@ namespace stan {
           : partial_(0), partials_(partial_), operand_(op) {}
 
       private:
-        template<typename, typename, typename, typename, typename>
+        template<typename, typename, typename, typename, typename, typename>
         friend class stan::math::operands_and_partials;
         const var& operand_;
 
@@ -59,14 +59,17 @@ namespace stan {
      * @tparam Op2 type of the second operand
      * @tparam Op3 type of the third operand
      * @tparam Op4 type of the fourth operand
+     * @tparam Op5 type of the fifth operand
      */
-    template <typename Op1, typename Op2, typename Op3, typename Op4>
-    class operands_and_partials<Op1, Op2, Op3, Op4, var> {
+    template <typename Op1, typename Op2, typename Op3, typename Op4,
+              typename Op5>
+    class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     public:
       internal::ops_partials_edge<double, Op1> edge1_;
       internal::ops_partials_edge<double, Op2> edge2_;
       internal::ops_partials_edge<double, Op3> edge3_;
       internal::ops_partials_edge<double, Op4> edge4_;
+      internal::ops_partials_edge<double, Op5> edge5_;
 
       explicit operands_and_partials(const Op1& o1)
         : edge1_(o1) { }
@@ -77,6 +80,9 @@ namespace stan {
       operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
                             const Op4& o4)
         : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) { }
+      operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
+                            const Op4& o4, const Op5& o5)
+        : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) { }
 
       /**
        * Build the node to be stored on the autodiff graph.
@@ -93,7 +99,7 @@ namespace stan {
        */
       var build(double value) {
         size_t size = edge1_.size() + edge2_.size() + edge3_.size()
-          + edge4_.size();
+          + edge4_.size() + edge5_.size();
         vari** varis = ChainableStack::memalloc_.alloc_array<vari*>(size);
         double* partials = ChainableStack::memalloc_.alloc_array<double>(size);
         int idx = 0;
@@ -105,6 +111,8 @@ namespace stan {
         edge3_.dump_partials(&partials[idx]);
         edge4_.dump_operands(&varis[idx += edge3_.size()]);
         edge4_.dump_partials(&partials[idx]);
+        edge5_.dump_operands(&varis[idx += edge4_.size()]);
+        edge5_.dump_partials(&partials[idx]);
 
         return var(new
                    precomputed_gradients_vari(value, size, varis, partials));

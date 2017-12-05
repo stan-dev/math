@@ -4,11 +4,11 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_ccdf_log.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -20,10 +20,10 @@ namespace stan {
     neg_binomial_2_lccdf(const T_n& n,
                             const T_location& mu,
                             const T_precision& phi) {
-      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
+      if (size_zero(n, mu, phi))
         return 0.0;
 
-      static const std::string function = "neg_binomial_2_lccdf";
+      static const char* function = "neg_binomial_2_lccdf";
       check_positive_finite(function, "Location parameter", mu);
       check_positive_finite(function, "Precision parameter", phi);
       check_not_nan(function, "Random variable", n);

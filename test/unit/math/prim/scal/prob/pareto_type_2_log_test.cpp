@@ -11,12 +11,22 @@ TEST(ProbParetoType2, log_matches_lpdf) {
                   (stan::math::pareto_type_2_log(y, mu, lambda, alpha)));
   EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lpdf<true>(y, mu, lambda, alpha)),
                   (stan::math::pareto_type_2_log<true>(y, mu, lambda, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lpdf<false>(y, mu, lambda, alpha)),
-                  (stan::math::pareto_type_2_log<false>(y, mu, lambda, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lpdf<true, double, double, double, double>(y, mu, lambda, alpha)),
-                  (stan::math::pareto_type_2_log<true, double, double, double, double>(y, mu, lambda, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lpdf<false, double, double, double, double>(y, mu, lambda, alpha)),
-                  (stan::math::pareto_type_2_log<false, double, double, double, double>(y, mu, lambda, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::pareto_type_2_lpdf<double, double, double, double>(y, mu, lambda, alpha)),
-                  (stan::math::pareto_type_2_log<double, double, double, double>(y, mu, lambda, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_type_2_lpdf<false>(y, mu, lambda, alpha)),
+    (stan::math::pareto_type_2_log<false>(y, mu, lambda, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_type_2_lpdf<true, double, double, double, double>
+                                                      (y, mu, lambda, alpha)),
+    (stan::math::pareto_type_2_log<true, double, double, double, double>
+                                                      (y, mu, lambda, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_type_2_lpdf<false, double, double, double, double>
+                                                      (y, mu, lambda, alpha)),
+    (stan::math::pareto_type_2_log<false, double, double, double, double>
+                                                      (y, mu, lambda, alpha)));
+  EXPECT_FLOAT_EQ(
+    (stan::math::pareto_type_2_lpdf<double, double, double, double>
+                                                      (y, mu, lambda, alpha)),
+    (stan::math::pareto_type_2_log<double, double, double, double>
+                                                      (y, mu, lambda, alpha)));
 }

@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/meta/length.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -14,7 +15,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/distributions.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -28,10 +28,9 @@ namespace stan {
     double
     hypergeometric_lpmf(const T_n& n, const T_N& N,
                        const T_a& a, const T_b& b) {
-      static const std::string function = "hypergeometric_lpmf";
+      static const char* function = "hypergeometric_lpmf";
 
-      if (!(stan::length(n) && stan::length(N) && stan::length(a)
-            && stan::length(b)))
+      if (size_zero(n, N, a, b))
         return 0.0;
 
       scalar_seq_view<T_n> n_vec(n);

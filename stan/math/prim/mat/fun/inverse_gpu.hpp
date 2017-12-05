@@ -67,7 +67,6 @@ namespace stan {
         kernel_step1.setArg(3, part_size_fixed);
         kernel_step1.setArg(4, inv.rows());
 
-
         cmdQueue.enqueueNDRangeKernel(
           kernel_step1,
           cl::NullRange,
@@ -97,13 +96,13 @@ namespace stan {
           kernel_step3.setArg(5, part_size_fixed);
           kernel_step3.setArg(6, inv.rows());
 
-           cmdQueue.enqueueNDRangeKernel(
-          kernel_step2,
-          cl::NullRange,
-          cl::NDRange(sizePad, sizePad / 4, pp / 2),
-          cl::NDRange(32, 8, 1),
-          NULL,
-          NULL);
+          cmdQueue.enqueueNDRangeKernel(
+           kernel_step2,
+           cl::NullRange,
+           cl::NDRange(sizePad, sizePad / 4, pp / 2),
+           cl::NDRange(32, 8, 1),
+           NULL,
+           NULL);
 
             cmdQueue.enqueueNDRangeKernel(
           kernel_step3,

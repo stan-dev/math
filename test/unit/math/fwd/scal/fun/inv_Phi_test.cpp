@@ -1,6 +1,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
 TEST(MathFunctions, inv_Phi) {
   using stan::math::fvar;
@@ -25,9 +26,9 @@ TEST(MathFunctions, inv_Phi_inf) {
   using stan::math::inv_Phi;
   fvar<double> p = 7e-311;
   const fvar<double> inf = std::numeric_limits<fvar<double> >::infinity();
-  EXPECT_EQ(inv_Phi(p),-inf);
+  EXPECT_EQ(inv_Phi(p), -inf);
   p = 1.0;
-  EXPECT_EQ(inv_Phi(p),inf);
+  EXPECT_EQ(inv_Phi(p), inf);
 }
 TEST(MathFunctions, inv_Phi_nan) {
   using stan::math::fvar;
@@ -38,7 +39,7 @@ TEST(MathFunctions, inv_Phi_nan) {
   EXPECT_THROW(inv_Phi(2.0), std::domain_error);
 }
 
-TEST(AgradFwdinv_Phi,Fvar) {
+TEST(AgradFwdinv_Phi, Fvar) {
   using stan::math::fvar;
   using stan::math::inv_Phi;
   using stan::math::Phi;
@@ -76,7 +77,7 @@ struct inv_Phi_fun {
   }
 };
 
-TEST(AgradFwdinv_Phi,inv_Phi_NaN) {
+TEST(AgradFwdinv_Phi, inv_Phi_NaN) {
   inv_Phi_fun foo;
-  test_nan_fwd(foo,true);
+  test_nan_fwd(foo, true);
 }

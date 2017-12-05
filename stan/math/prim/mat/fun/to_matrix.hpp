@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <string>
 #include <vector>
 
 namespace stan {
@@ -94,7 +93,7 @@ namespace stan {
     template <typename T, int R, int C>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const Eigen::Matrix<T, R, C>& x, int m, int n) {
-      static const std::string function = "to_matrix(matrix)";
+      static const char* function = "to_matrix(matrix)";
       check_size_match(function, "rows * columns", m * n, "vector size",
                        x.size());
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y = x;
@@ -117,7 +116,7 @@ namespace stan {
     template <typename T>
     inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector<T>& x, int m, int n) {
-      static const std::string function = "to_matrix(array)";
+      static const char* function = "to_matrix(array)";
       check_size_match(function, "rows * columns", m * n, "vector size",
                        x.size());
       return Eigen::Map<const
@@ -138,7 +137,7 @@ namespace stan {
      */
     inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
     to_matrix(const std::vector<int>& x, int m, int n) {
-      static const std::string function = "to_matrix(array)";
+      static const char* function = "to_matrix(array)";
       int size = x.size();
       check_size_match(function, "rows * columns", m * n,
                        "vector size", size);

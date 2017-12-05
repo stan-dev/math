@@ -1,9 +1,9 @@
 #ifndef TEST_UNIT_MATH_MIX_MAT_VECTORIZE_STD_VECTOR_VALUE_HPP
 #define TEST_UNIT_MATH_MIX_MAT_VECTORIZE_STD_VECTOR_VALUE_HPP
 
-#include <vector>
 #include <test/unit/math/mix/mat/vectorize/build_mix_vector.hpp>
 #include <test/unit/math/mix/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <vector>
 
 template <typename F, typename T>
 void expect_mix_std_vector_value() {
@@ -27,8 +27,7 @@ void expect_mix_std_vector_value() {
         if (i == k) {
           a.push_back(build_mix_vector<F>(vector<T>(), j));
           b.push_back(build_mix_vector<F>(vector<T>(), j));
-        }
-        else {
+        } else {
           a.push_back(build_mix_vector<F>(vector<T>()));
           b.push_back(build_mix_vector<F>(vector<T>()));
         }
@@ -40,6 +39,6 @@ void expect_mix_std_vector_value() {
                           fb[i][j], b[i][j]);
     }
   }
-}    
+}
 
 #endif

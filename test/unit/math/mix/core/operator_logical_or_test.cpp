@@ -1,6 +1,7 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 void test_logical_or(double x, double y) {
   using stan::math::fvar;
@@ -23,7 +24,7 @@ void test_logical_or(double x, double y) {
   EXPECT_EQ(x || y, x || fvar<fvar<var> >(y));
 }
 
-TEST(AgradRev,unaryNot) {
+TEST(AgradRev, unaryNot) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

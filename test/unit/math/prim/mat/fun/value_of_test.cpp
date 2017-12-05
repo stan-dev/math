@@ -1,14 +1,14 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix,value_of) {
+TEST(MathMatrix, value_of) {
   using stan::math::value_of;
 
-  Eigen::Matrix<double,2,5> a;
+  Eigen::Matrix<double, 2, 5> a;
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 5; j++)
       a(i, j) = i * 5 + j;
-  Eigen::Matrix<double,5,1> b;
+  Eigen::Matrix<double, 5, 1> b;
   for (int i = 0; i < 5; i++)
     for (int j = 0; j < 1; j++)
       b(i, j) = 10 + i * 5 + j;
@@ -21,5 +21,5 @@ TEST(MathMatrix,value_of) {
 
   for (int i = 0; i < 2; ++i)
     for (int j = 0; j < 5; ++j)
-      EXPECT_FLOAT_EQ(a(i,j), d_a(i,j));
+      EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
 }

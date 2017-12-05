@@ -4,12 +4,12 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 
-TEST(AgradFwdFabs,FvarVar_1stDeriv) {
+TEST(AgradFwdFabs, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::fabs;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = fabs(x);
 
   EXPECT_FLOAT_EQ(fabs(1.5), a.val_.val());
@@ -17,26 +17,26 @@ TEST(AgradFwdFabs,FvarVar_1stDeriv) {
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.val_.grad(y,g);
+  a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(1, g[0]);
 }
-TEST(AgradFwdFabs,FvarVar_2ndDeriv) {
+TEST(AgradFwdFabs, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::fabs;
 
-  fvar<var> x(1.5,1.3);
+  fvar<var> x(1.5, 1.3);
   fvar<var> a = fabs(x);
 
   AVEC y = createAVEC(x.val_);
   VEC g;
-  a.d_.grad(y,g);
+  a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 
 
 
-TEST(AgradFwdFabs,FvarFvarVar_1stDeriv) {
+TEST(AgradFwdFabs, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::fabs;
@@ -54,12 +54,12 @@ TEST(AgradFwdFabs,FvarFvarVar_1stDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.val_.grad(p,g);
+  a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(1.0, g[0]);
 
   fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
-  y.d_.val_ = 2.0;  
+  y.d_.val_ = 2.0;
 
   fvar<fvar<var> > b = fabs(y);
   EXPECT_FLOAT_EQ(fabs(1.5), b.val_.val_.val());
@@ -69,11 +69,11 @@ TEST(AgradFwdFabs,FvarFvarVar_1stDeriv) {
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.val_.val_.grad(q,r);
+  b.val_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(1.0, r[0]);
 }
 
-TEST(AgradFwdFabs,FvarFvarVar_2ndDeriv) {
+TEST(AgradFwdFabs, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using std::fabs;
@@ -86,21 +86,21 @@ TEST(AgradFwdFabs,FvarFvarVar_2ndDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.val_.d_.grad(p,g);
+  a.val_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0.0, g[0]);
 
   fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
-  y.d_.val_ = 2.0;  
+  y.d_.val_ = 2.0;
 
   fvar<fvar<var> > b = fabs(y);
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
-  b.d_.val_.grad(q,r);
+  b.d_.val_.grad(q, r);
   EXPECT_FLOAT_EQ(0.0, r[0]);
 }
-TEST(AgradFwdFabs,FvarFvarVar_3rdDeriv) {
+TEST(AgradFwdFabs, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -113,7 +113,7 @@ TEST(AgradFwdFabs,FvarFvarVar_3rdDeriv) {
 
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
-  a.d_.d_.grad(p,g);
+  a.d_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 
@@ -125,7 +125,7 @@ struct fabs_fun {
   }
 };
 
-TEST(AgradFwdFabs,fabs_NaN) {
+TEST(AgradFwdFabs, fabs_NaN) {
   fabs_fun fabs_;
-  test_nan_mix(fabs_,false);
+  test_nan_mix(fabs_, false);
 }

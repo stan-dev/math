@@ -38,6 +38,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -73,7 +74,7 @@ namespace stan {
     typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
     wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                const T_beta& beta, const T_delta& delta) {
-      static const std::string function = "wiener_lpdf";
+      static const char* function = "wiener_lpdf";
 
       using std::log;
       using std::exp;
@@ -91,8 +92,7 @@ namespace stan {
       static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
       static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)
-            && stan::length(tau) && stan::length(delta)))
+      if (size_zero(y, alpha, beta, tau, delta))
         return 0.0;
 
       typedef typename return_type<T_y, T_alpha, T_tau,

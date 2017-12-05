@@ -10,7 +10,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 /*
 *  @file stan/math/prim/mat/fun/matrix_gpu.hpp
 *    @brief The matrix_gpu class - allocates memory space on the GPU,

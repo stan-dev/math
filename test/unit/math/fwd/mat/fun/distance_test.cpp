@@ -1,12 +1,13 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
 
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixDistance, vector_fd_vector_fd) {
   stan::math::vector_fd v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -17,7 +18,7 @@ TEST(AgradFwdMatrixDistance, vector_fd_vector_fd) {
   v2(0).d_ = 4.0;
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
-  
+
   stan::math::fvar<double> a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_);
@@ -37,7 +38,7 @@ TEST(AgradFwdMatrixDistance, vector_fd_vector_fd) {
 TEST(AgradFwdMatrixDistance, rowvector_fd_vector_fd) {
   stan::math::row_vector_fd rv;
   stan::math::vector_fd v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -68,7 +69,7 @@ TEST(AgradFwdMatrixDistance, rowvector_fd_vector_fd) {
 TEST(AgradFwdMatrixDistance, vector_fd_rowvector_fd) {
   stan::math::row_vector_fd rv;
   stan::math::vector_fd v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -100,7 +101,7 @@ TEST(AgradFwdMatrixDistance, special_values_fd) {
   stan::math::vector_fd v1, v2;
   v1.resize(1);
   v2.resize(1);
-  
+
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));
@@ -124,7 +125,7 @@ TEST(AgradFwdMatrixDistance, special_values_fd) {
 
 TEST(AgradFwdMatrixDistance, vector_ffd_vector_ffd) {
   stan::math::vector_ffd v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
@@ -135,7 +136,7 @@ TEST(AgradFwdMatrixDistance, vector_ffd_vector_ffd) {
   v2(0).d_ = 4.0;
   v2(1).d_ = 5.0;
   v2(2).d_ = 6.0;
-  
+
   stan::math::fvar<fvar<double> > a = stan::math::distance(v1, v2);
 
   EXPECT_FLOAT_EQ(7.071068, a.val_.val_);
@@ -155,7 +156,7 @@ TEST(AgradFwdMatrixDistance, vector_ffd_vector_ffd) {
 TEST(AgradFwdMatrixDistance, rowvector_ffd_vector_ffd) {
   stan::math::row_vector_ffd rv;
   stan::math::vector_ffd v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -186,7 +187,7 @@ TEST(AgradFwdMatrixDistance, rowvector_ffd_vector_ffd) {
 TEST(AgradFwdMatrixDistance, vector_ffd_rowvector_ffd) {
   stan::math::row_vector_ffd rv;
   stan::math::vector_ffd v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -218,7 +219,7 @@ TEST(AgradFwdMatrixDistance, special_values_ffd) {
   stan::math::vector_ffd v1, v2;
   v1.resize(1);
   v2.resize(1);
-  
+
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(boost::math::isnan(stan::math::distance(v1, v2)));

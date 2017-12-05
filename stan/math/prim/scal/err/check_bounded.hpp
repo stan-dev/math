@@ -22,8 +22,8 @@ namespace stan {
       // throws if y, low, or high is nan
       template <typename T_y, typename T_low, typename T_high, bool y_is_vec>
       struct bounded {
-        static void check(const std::string& function,
-                          const std::string& name,
+        static void check(const char* function,
+                          const char* name,
                           const T_y& y,
                           const T_low& low,
                           const T_high& high) {
@@ -46,8 +46,8 @@ namespace stan {
 
       template <typename T_y, typename T_low, typename T_high>
       struct bounded<T_y, T_low, T_high, true> {
-        static void check(const std::string& function,
-                          const std::string& name,
+        static void check(const char* function,
+                          const char* name,
                           const T_y& y,
                           const T_low& low,
                           const T_high& high) {
@@ -88,8 +88,8 @@ namespace stan {
      *   if any of the arguments are NaN.
      */
     template <typename T_y, typename T_low, typename T_high>
-    inline void check_bounded(const std::string& function,
-                              const std::string& name,
+    inline void check_bounded(const char* function,
+                              const char* name,
                               const T_y& y,
                               const T_low& low,
                               const T_high& high) {

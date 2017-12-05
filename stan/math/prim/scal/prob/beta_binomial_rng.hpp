@@ -13,7 +13,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/prob/binomial_rng.hpp>
 #include <stan/math/prim/scal/prob/beta_rng.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -37,7 +36,7 @@ namespace stan {
                       double alpha,
                       double beta,
                       RNG& rng) {
-      static const std::string function = "beta_binomial_rng";
+      static const char* function = "beta_binomial_rng";
 
       check_nonnegative(function, "Population size parameter", N);
       check_positive_finite(function,

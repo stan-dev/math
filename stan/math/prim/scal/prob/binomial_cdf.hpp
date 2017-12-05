@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -24,7 +25,6 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -48,11 +48,11 @@ namespace stan {
     template <typename T_n, typename T_N, typename T_prob>
     typename return_type<T_prob>::type
     binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
-      static const std::string function = "binomial_cdf";
+      static const char* function = "binomial_cdf";
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
+      if (size_zero(n, N, theta))
         return 1.0;
 
       T_partials_return P(1.0);

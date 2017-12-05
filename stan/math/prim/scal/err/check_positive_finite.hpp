@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -24,8 +23,8 @@ namespace stan {
      *   if any element of y is NaN.
      */
     template <typename T_y>
-    inline void check_positive_finite(const std::string& function,
-                                      const std::string& name,
+    inline void check_positive_finite(const char* function,
+                                      const char* name,
                                       const T_y& y) {
       check_positive(function, name, y);
       check_finite(function, name, y);

@@ -127,6 +127,7 @@
 #include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log_mix.hpp>
+#include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/logical_and.hpp>
@@ -159,6 +160,7 @@
 #include <stan/math/prim/scal/fun/rising_factorial.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
 #include <stan/math/prim/scal/fun/sign.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/step.hpp>
