@@ -38,6 +38,7 @@ namespace stan {
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
      * @param y Matrix to test
+     * @param pos_def_check Test if matrix y is positive definite
      *
      * @throw <code>std::domain_error</code> if
      *    any element of the matrix is <code>NaN</code>.
@@ -138,6 +139,7 @@ namespace stan {
      * @param function Function name (for error messages)
      * @param name Variable name (for error messages)
      * @param y Matrix to test
+     * @param pos_def_check Test if matrix y is positive definite
      *
      * @throw <code>std::domain_error</code> if
      *    any diagonal element of the matrix is zero.
