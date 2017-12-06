@@ -67,12 +67,12 @@ struct BOOST_PP_CAT(trait,_detail_type_op) : \
 BOOST_TTI_DETAIL_TRAIT_HAS_TYPE_OP(trait,name) \
 template<class BOOST_TTI_DETAIL_TP_T,class BOOST_TTI_DETAIL_TP_U> \
 struct BOOST_PP_CAT(trait,_detail_type) : \
-	boost::mpl::eval_if \
-		< \
- 		boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
- 		BOOST_PP_CAT(trait,_detail_type_op)<BOOST_TTI_DETAIL_TP_T,BOOST_TTI_DETAIL_TP_U>, \
- 		boost::mpl::false_ \
-		> \
+    boost::mpl::eval_if \
+        < \
+        boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
+        BOOST_PP_CAT(trait,_detail_type_op)<BOOST_TTI_DETAIL_TP_T,BOOST_TTI_DETAIL_TP_U>, \
+        boost::mpl::false_ \
+        > \
   { \
   }; \
 /**/

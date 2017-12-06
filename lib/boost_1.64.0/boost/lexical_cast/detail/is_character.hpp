@@ -45,8 +45,8 @@ namespace boost {
                     #ifndef BOOST_NO_CXX11_CHAR32_T
                         boost::is_same< T, char32_t >::value ||
                     #endif
-                   	boost::is_same< T, unsigned char >::value ||
-                   	boost::is_same< T, signed char >::value
+                    boost::is_same< T, unsigned char >::value ||
+                    boost::is_same< T, signed char >::value
             > type;
 
             BOOST_STATIC_CONSTANT(bool, value = (type::value) );

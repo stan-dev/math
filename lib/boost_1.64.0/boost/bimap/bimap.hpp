@@ -182,7 +182,7 @@ class bimap
           left_map_view_type<base_>::type  left_map;
     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::
          right_map_view_type<base_>::type right_map;
-	
+    
     typedef BOOST_DEDUCED_TYPENAME
          left_map::iterator        left_iterator;
     typedef BOOST_DEDUCED_TYPENAME

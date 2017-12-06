@@ -201,7 +201,7 @@ private:
         const std::size_t _channels_in_image = mpl::eval_if< is_pixel< value_type >
                                                            , num_channels< view_t >
                                                            , mpl::int_< 1 > 
-														   >::type::value;
+                                                           >::type::value;
 
         std::size_t size_in_units = get_row_size_in_memunits(dimensions.x)*dimensions.y;
 

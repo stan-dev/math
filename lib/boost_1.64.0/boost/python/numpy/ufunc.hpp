@@ -189,7 +189,7 @@ struct binary_ufunc
   static object make()
   {
     return make_function(call, default_call_policies(),
-			    (arg("input1"), arg("input2"), arg("output")=object()));
+                (arg("input1"), arg("input2"), arg("output")=object()));
   }
 
 };

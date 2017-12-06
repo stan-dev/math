@@ -101,13 +101,13 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     // - it second element type is compatible to type stored at the key in map
     template <typename T, typename Attribute>
     struct is_substitute<T, Attribute
-	, typename enable_if<
-	      typename mpl::eval_if<
-		  mpl::and_<fusion::traits::is_sequence<T>
-			    , fusion::traits::is_sequence<Attribute>>
-		  , mpl::and_<traits::has_size<T, 2>
-			   , fusion::traits::is_associative<Attribute>>
-		  , mpl::false_>::type>::type>
+    , typename enable_if<
+          typename mpl::eval_if<
+          mpl::and_<fusion::traits::is_sequence<T>
+                , fusion::traits::is_sequence<Attribute>>
+          , mpl::and_<traits::has_size<T, 2>
+               , fusion::traits::is_associative<Attribute>>
+          , mpl::false_>::type>::type>
 
     {
         // checking that "p_key >> p_value" parser can

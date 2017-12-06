@@ -38,24 +38,24 @@ public:
 
 private:
     typedef context::wait_queue_t                       wait_queue_type;
-	typedef T                                           slot_type;
+    typedef T                                           slot_type;
 
     alignas(cache_alignment) mutable detail::spinlock   splk_{};
     wait_queue_type                                     waiting_producers_{};
     wait_queue_type                                     waiting_consumers_{};
-	slot_type                                       *   slots_;
-	std::size_t                                         pidx_{ 0 };
-	std::size_t                                         cidx_{ 0 };
-	std::size_t                                         capacity_;
+    slot_type                                       *   slots_;
+    std::size_t                                         pidx_{ 0 };
+    std::size_t                                         cidx_{ 0 };
+    std::size_t                                         capacity_;
     bool                                                closed_{ false };
 
-	bool is_full_() const noexcept {
-		return cidx_ == ((pidx_ + 1) % capacity_);
-	}
+    bool is_full_() const noexcept {
+        return cidx_ == ((pidx_ + 1) % capacity_);
+    }
 
-	bool is_empty_() const noexcept {
-		return cidx_ == pidx_;
-	}
+    bool is_empty_() const noexcept {
+        return cidx_ == pidx_;
+    }
 
     bool is_closed_() const noexcept {
         return closed_;

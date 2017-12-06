@@ -2,99 +2,99 @@
 #include <gtest/gtest.h>
 
 
-TEST(MathMatrixGPU,add_v_exception_pass) {
+TEST(MathMatrixGPU, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
   d2.resize(3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(3,1);
+  stan::math::matrix_gpu d33(3, 1);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_v_exception_pass_zero) {
+TEST(MathMatrixGPU, add_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(0,1);
+  stan::math::matrix_gpu d33(0, 1);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_v_exception_pass_invalid_arg) {
+TEST(MathMatrixGPU, add_v_exception_pass_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
   d2.resize(3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(3,0);
+  stan::math::matrix_gpu d33(3, 0);
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
 
-TEST(MathMatrixGPU,add_rv_exception_pass) {
+TEST(MathMatrixGPU, add_rv_exception_pass) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
   d2.resize(3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,3);
+  stan::math::matrix_gpu d33(1, 3);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_rv_exception_pass_zero) {
+TEST(MathMatrixGPU, add_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(0);
   d2.resize(0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(1,0);
+  stan::math::matrix_gpu d33(1, 0);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_rv_exception_fail_invalid_arg) {
+TEST(MathMatrixGPU, add_rv_exception_fail_invalid_arg) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(2);
   d2.resize(3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(3,1);
+  stan::math::matrix_gpu d33(3, 1);
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
 
-TEST(MathMatrixGPU,add_m_exception_pass_simple) {
+TEST(MathMatrixGPU, add_m_exception_pass_simple) {
   stan::math::matrix_d d1, d2;
 
-  d1.resize(2,3);
-  d2.resize(2,3);
+  d1.resize(2, 3);
+  d2.resize(2, 3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(2,3);
+  stan::math::matrix_gpu d33(2, 3);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_m_exception_pass_zero) {
+TEST(MathMatrixGPU, add_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
-  d1.resize(0,0);
-  d2.resize(0,0);
+  d1.resize(0, 0);
+  d2.resize(0, 0);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(0,0);
+  stan::math::matrix_gpu d33(0, 0);
   EXPECT_NO_THROW(d33 = stan::math::add(d11, d22));
 }
 
-TEST(MathMatrixGPU,add_m_exception_fail_invalid_arg) {
+TEST(MathMatrixGPU, add_m_exception_fail_invalid_arg) {
   stan::math::matrix_d d1, d2;
-  d1.resize(2,3);
-  d2.resize(3,3);
+  d1.resize(2, 3);
+  d2.resize(3, 3);
   stan::math::matrix_gpu d11(d1);
   stan::math::matrix_gpu d22(d2);
-  stan::math::matrix_gpu d33(2,3);
+  stan::math::matrix_gpu d33(2, 3);
   EXPECT_THROW(d33 = stan::math::add(d11, d22), std::invalid_argument);
 }
 
@@ -109,9 +109,9 @@ TEST(MathMatrixGPU, add) {
   stan::math::row_vector_d rv2(3);
   v2 << 10, 100, 1000;
 
-  stan::math::matrix_d m1(2,3);
+  stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
-  stan::math::matrix_d m2(3,2);
+  stan::math::matrix_d m2(3, 2);
   m2 << 10, 100, 1000, 0, -10, -12;
 
   using stan::math::add;

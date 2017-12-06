@@ -183,7 +183,7 @@ namespace boost {
             if (pos > size())
                 BOOST_THROW_EXCEPTION(std::out_of_range("string_view::copy" ));
             size_type rlen = (std::min)(n, len_ - pos);
-    		traits_type::copy(s, data() + pos, rlen);
+            traits_type::copy(s, data() + pos, rlen);
             return rlen;
             }
 

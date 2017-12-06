@@ -43,17 +43,17 @@ namespace boost { namespace algorithm {
 ///
   template<typename Iterator, typename Pred> 
   void sort_subrange (
-  	Iterator first,     Iterator last, 
-  	Iterator sub_first, Iterator sub_last,
-  	Pred p)
+    Iterator first,     Iterator last, 
+    Iterator sub_first, Iterator sub_last,
+    Pred p)
   {
-  	if (sub_first == sub_last) return; // the empty sub-range is already sorted.
-  	
-  	if (sub_first != first) { // sub-range is at the start, don't need to partition
-  		(void) std::nth_element(first, sub_first, last, p);
-  		++sub_first;
-  		}
-  	std::partial_sort(sub_first, sub_last, last, p);
+    if (sub_first == sub_last) return; // the empty sub-range is already sorted.
+    
+    if (sub_first != first) { // sub-range is at the start, don't need to partition
+        (void) std::nth_element(first, sub_first, last, p);
+        ++sub_first;
+        }
+    std::partial_sort(sub_first, sub_last, last, p);
   }
 
 
@@ -61,8 +61,8 @@ namespace boost { namespace algorithm {
   template<typename Iterator> 
   void sort_subrange (Iterator first, Iterator last, Iterator sub_first, Iterator sub_last)
   {
-  	typedef typename std::iterator_traits<Iterator>::value_type value_type;
-  	return sort_subrange(first, last, sub_first, sub_last, std::less<value_type>());
+    typedef typename std::iterator_traits<Iterator>::value_type value_type;
+    return sort_subrange(first, last, sub_first, sub_last, std::less<value_type>());
   }
 
 /// range versions?
@@ -84,24 +84,24 @@ namespace boost { namespace algorithm {
 ///
   template<typename Iterator, typename Pred> 
   void partition_subrange (
-  	Iterator first,     Iterator last, 
-  	Iterator sub_first, Iterator sub_last,
-  	Pred p)
+    Iterator first,     Iterator last, 
+    Iterator sub_first, Iterator sub_last,
+    Pred p)
   {
-  	if (sub_first != first) {
-  		(void) std::nth_element(first, sub_first, last, p);
-  		++sub_first;
-  		}
-  	
-  	if (sub_last != last)
-  		(void) std::nth_element(sub_first, sub_last, last, p);
+    if (sub_first != first) {
+        (void) std::nth_element(first, sub_first, last, p);
+        ++sub_first;
+        }
+    
+    if (sub_last != last)
+        (void) std::nth_element(sub_first, sub_last, last, p);
   }
 
   template<typename Iterator> 
   void partition_subrange (Iterator first, Iterator last, Iterator sub_first, Iterator sub_last)
   {
-  	typedef typename std::iterator_traits<Iterator>::value_type value_type;
-  	return partition_subrange(first, last, sub_first, sub_last, std::less<value_type>());
+    typedef typename std::iterator_traits<Iterator>::value_type value_type;
+    return partition_subrange(first, last, sub_first, sub_last, std::less<value_type>());
   }
 
 }}

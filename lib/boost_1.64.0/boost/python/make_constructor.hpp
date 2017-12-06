@@ -46,11 +46,11 @@ namespace detail
       void dispatch(U* x, mpl::true_) const
       {
 #if __cplusplus < 201103L
-	std::auto_ptr<U> owner(x);
-	dispatch(owner, mpl::false_());
+    std::auto_ptr<U> owner(x);
+    dispatch(owner, mpl::false_());
 #else
-	std::unique_ptr<U> owner(x);
-	dispatch(std::move(owner), mpl::false_());
+    std::unique_ptr<U> owner(x);
+    dispatch(std::move(owner), mpl::false_());
 #endif
       }
       

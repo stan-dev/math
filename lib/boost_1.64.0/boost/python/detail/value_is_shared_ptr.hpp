@@ -16,9 +16,9 @@ template <class X_>
 struct value_is_shared_ptr
 {
   static bool const value = is_shared_ptr<typename remove_cv<
-					    typename remove_reference<X_>
-					      ::type>
-					    ::type>
+                        typename remove_reference<X_>
+                          ::type>
+                        ::type>
     ::value;
   typedef mpl::bool_<value> type;
 };

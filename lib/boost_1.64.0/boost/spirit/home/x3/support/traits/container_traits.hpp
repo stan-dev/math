@@ -86,10 +86,10 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     // so that check can be done in traits::is_substitute specialisation
     template <typename T>
     struct container_value<T
-			   , typename enable_if<typename mpl::eval_if <
-						    fusion::traits::is_sequence<T>
-						    , fusion::traits::is_associative<T>
-						    , mpl::false_ >::type >::type>
+               , typename enable_if<typename mpl::eval_if <
+                            fusion::traits::is_sequence<T>
+                            , fusion::traits::is_associative<T>
+                            , mpl::false_ >::type >::type>
     : mpl::identity<T> {};
 
     template <>

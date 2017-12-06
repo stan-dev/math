@@ -37,9 +37,9 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         }
     };
 
-/*	$$$ clang reports: warning: class template partial specialization contains
- *	a template parameter that can not be deduced; this partial specialization
- *	will never be used $$$
+/*  $$$ clang reports: warning: class template partial specialization contains
+ *  a template parameter that can not be deduced; this partial specialization
+ *  will never be used $$$
  *
     // save to associative fusion container where Key
     // is variant over possible keys

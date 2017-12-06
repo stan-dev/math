@@ -25,7 +25,7 @@ namespace stan {
      * Returns std::numeric_limits<double>::quiet_NaN() for NaN inputs.
      *
      *
-       \f[		
+       \f[      
        \mbox{fabs}(x) =
        \begin{cases}
          |x| & \mbox{if } -\infty\leq x\leq \infty \\[6pt]

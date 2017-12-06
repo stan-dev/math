@@ -1,12 +1,13 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 using stan::math::check_nan;
 
 // ---------- check_nan: matrix tests ----------
-TEST(ErrorHandlingScalarGPU,Check_nan_Matrix) {
-  const std::string function = "check_nan";
-  Eigen::Matrix<double,Eigen::Dynamic,1> x;
+TEST(ErrorHandlingScalarGPU, Check_nan_Matrix) {
+  const char* function = "check_nan";
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
   x.resize(3);
   x << -1, 0, 1;
@@ -16,9 +17,9 @@ TEST(ErrorHandlingScalarGPU,Check_nan_Matrix) {
     << "check_nan should be true with finite xx";
 }
 
-TEST(ErrorHandlingScalarGPU,Check_nan_Matrix_quit_nan) {
-  const std::string function = "check_nan";
-  Eigen::Matrix<double,Eigen::Dynamic,1> x;
+TEST(ErrorHandlingScalarGPU, Check_nan_Matrix_quit_nan) {
+  const char* function = "check_nan";
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   using stan::math::matrix_gpu;
 
   x.resize(3);
@@ -28,11 +29,11 @@ TEST(ErrorHandlingScalarGPU,Check_nan_Matrix_quit_nan) {
     << "check_nan should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalarGPU,Check_nan_positions) {
-  const std::string function = "check_nan";
+TEST(ErrorHandlingScalarGPU, Check_nan_positions) {
+  const char* function = "check_nan";
   double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::matrix_gpu;
-  Eigen::Matrix<double,Eigen::Dynamic,1> x_mat(3);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << nan, 0, 1;
   matrix_gpu xx_mat1(x_mat);
   EXPECT_THROW(check_nan(function, "xx_mat1", xx_mat1),
@@ -49,8 +50,8 @@ TEST(ErrorHandlingScalarGPU,Check_nan_positions) {
                std::domain_error);
 }
 
-TEST(ErrorHandlingScalarGPU,check_rv_v_symmetric_gpu) {
-  const std::string function = "check_symmetric";
+TEST(ErrorHandlingScalarGPU, check_rv_v_symmetric_gpu) {
+  const char* function = "check_symmetric";
 
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
@@ -62,14 +63,13 @@ TEST(ErrorHandlingScalarGPU,check_rv_v_symmetric_gpu) {
                std::invalid_argument);
   EXPECT_THROW(check_symmetric(function, "v_non_symm", vv),
                std::invalid_argument);
-
 }
 
-TEST(ErrorHandlingScalarGPU,check_m_symmetric) {
-  const std::string function = "check_symmetric";
+TEST(ErrorHandlingScalarGPU, check_m_symmetric) {
+  const char* function = "check_symmetric";
 
-  stan::math::matrix_d m_ok(3,3);
-  stan::math::matrix_d m_fail(3,3);
+  stan::math::matrix_d m_ok(3, 3);
+  stan::math::matrix_d m_fail(3, 3);
   m_fail << 1, 2, 3,
        2, 4, -5,
        3, 5, 6;
@@ -81,5 +81,4 @@ TEST(ErrorHandlingScalarGPU,check_m_symmetric) {
   EXPECT_THROW(check_symmetric(function, "m_non_symm", mm_fail),
                std::domain_error);
   EXPECT_NO_THROW(check_symmetric(function, "m_symm_mat1", mm_ok));
-
 }
