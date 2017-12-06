@@ -12,3 +12,6 @@ TEST(MathMatrix, identity_m_exception_pass) {
   EXPECT_NO_THROW(m0 = stan::math::identity(0));
 }
 
+
+
+
