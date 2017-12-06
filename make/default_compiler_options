@@ -18,7 +18,12 @@ LDLIBS =
 EXE =
 WINE =
 
+uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 POST_LDLIBS =
 ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
+  ifeq ($(uname_S), Darwin)
+    POST_LDLIBS = -framework OpenCL
+  else
     POST_LDLIBS = -lOpenCL
+  endif
 endif
