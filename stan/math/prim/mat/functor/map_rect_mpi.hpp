@@ -66,7 +66,8 @@ namespace stan {
         result_type out(size_world_f_out);
 
         const std::size_t num_shared_operands = shared_params_operands_->size();
-        const std::size_t num_job_operands = (*job_params_operands_)[0].size();
+        const std::vector<int> dims_job_operands = dims(*job_params_operands_);
+        const std::size_t num_job_operands = dims_job_operands[1];
 
         const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
 
@@ -78,16 +79,17 @@ namespace stan {
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
             // check if the outputs flags a failure
             if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
-              std::cout << "THROWING ON RANK " << rank_ << std::endl;
               throw std::runtime_error("MPI error.");
             }
 
-            if (!is_constant_struct<T_shared_param>::value)
+            if (!is_constant_struct<T_shared_param>::value) {
               ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
+            }
               
-            if (!is_constant_struct<T_job_param>::value)
-                ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
-
+            if (!is_constant_struct<T_job_param>::value) {
+              ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
+            }
+            
             out(ij) = ops_partials.build(world_result(0,ij));
           }
         }

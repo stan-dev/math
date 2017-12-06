@@ -223,7 +223,7 @@ namespace stan {
         // this evaluation
         for(std::size_t i=0; i < num_local_jobs; ++i) {
           if(unlikely(world_f_out[start_job + i] != local_f_out[i])) {
-            std::cout << "MARKING FOR THROW ON RANK " << rank_ << std::endl;
+            //std::cout << "MARKING FOR THROW ON RANK " << rank_ << std::endl;
             local_output(0,0) = std::numeric_limits<double>::max();
             break;
           }

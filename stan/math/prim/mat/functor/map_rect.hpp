@@ -18,15 +18,16 @@ namespace stan {
       Eigen::Matrix<result_type, Eigen::Dynamic, 1> out;
       const std::size_t num_jobs = job_params.size();
       int out_size = 0;
-
+      const F f;
+      
       for(std::size_t i = 0; i != num_jobs; ++i) {
-        const Eigen::Matrix<result_type, Eigen::Dynamic, 1> f = F()(shared_params, job_params[i], x_r[i], x_i[i], msgs);
-        const int f_size = f.rows();
-        out_size += f_size;
-        if(i == 0) out.resize(num_jobs * f_size);
+        const Eigen::Matrix<result_type, Eigen::Dynamic, 1> fx = f(shared_params, job_params[i], x_r[i], x_i[i], msgs);
+        const int fx_size = fx.rows();
+        out_size += fx_size;
+        if(i == 0) out.resize(num_jobs * fx_size);
         if(out.rows() < out_size)
           out.conservativeResize(2*out_size);
-        out.segment(out_size - f_size, f_size) = f;
+        out.segment(out_size - fx_size, fx_size) = fx;
       }
       out.conservativeResize(out_size);
       return(out);
