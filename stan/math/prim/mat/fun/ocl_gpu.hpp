@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 
-#define DEVICE_FILTER CL_DEVICE_TYPE_GPU
+#define DEVICE_FILTER CL_DEVICE_TYPE_CPU
 
 /*
 *    @file stan/math/prim/mat/fun/ocl.hpp
