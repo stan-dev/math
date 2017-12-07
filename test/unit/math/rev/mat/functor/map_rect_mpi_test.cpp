@@ -55,9 +55,9 @@ TEST_F(MpiJob, hard_work_vv) {
     job_params_v2_vec.push_back(stan::math::to_array_1d(job_params_v2[i]));
   }
   
-  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i);
+  stan::math::vector_v result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_v, job_params_v, x_r, x_i, 0);
 
-  stan::math::vector_v result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i);
+  stan::math::vector_v result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_v2, job_params_v2, x_r, x_i, 0);
 
   std::vector<double> z_grad1;
   std::vector<double> z_grad2;
@@ -87,7 +87,6 @@ TEST_F(MpiJob, hard_work_vv) {
       }
     }
   }
-
 }
 
 TEST_F(MpiJob, always_faulty_functor_vv) {

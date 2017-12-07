@@ -19,7 +19,8 @@ namespace stan {
         return(1);
       }
       static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
-        const vector_d out = F()(shared_params, job_specific_params, x_r, x_i, 0);
+        const F f;
+        const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
         return( out.transpose() );
       }
     };
@@ -65,26 +66,30 @@ namespace stan {
         result_type out(size_world_f_out);
 
         const std::size_t num_shared_operands = shared_params_operands_->size();
-        const std::size_t num_job_operands = (*job_params_operands_)[0].size();
+        const std::vector<int> dims_job_operands = dims(*job_params_operands_);
+        const std::size_t num_job_operands = dims_job_operands[1];
 
         const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
 
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
+          operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+                                Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
+            ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
+
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
             // check if the outputs flags a failure
-            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max()))
+            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
               throw std::runtime_error("MPI error.");
+            }
 
-            operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
-                                  Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
-              ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
-
-            if (!is_constant_struct<T_shared_param>::value)
+            if (!is_constant_struct<T_shared_param>::value) {
               ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
+            }
               
-            if (!is_constant_struct<T_job_param>::value)
-                ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
-
+            if (!is_constant_struct<T_job_param>::value) {
+              ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
+            }
+            
             out(ij) = ops_partials.build(world_result(0,ij));
           }
         }
@@ -98,7 +103,8 @@ namespace stan {
     map_rect_mpi(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                  const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                  const std::vector<std::vector<double>>& x_r,
-                 const std::vector<std::vector<int>>& x_i) {
+                 const std::vector<std::vector<int>>& x_i,
+                 std::ostream* msgs = 0) {
       typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
       typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
