@@ -428,25 +428,25 @@ namespace boost {
             >::type::trait_t traits;
             
             typedef boost::mpl::bool_
-                <
+            	<
                 boost::is_same<char, src_char_t>::value &&                                 // source is not a wide character based type
                 (sizeof(char) != sizeof(target_char_t)) &&  // target type is based on wide character
                 (!(boost::detail::is_character<no_cv_src>::value))
-                > is_string_widening_required_t;
+            	> is_string_widening_required_t;
 
             typedef boost::mpl::bool_
-                <
-                !(boost::is_integral<no_cv_src>::value || 
+            	<
+            	!(boost::is_integral<no_cv_src>::value || 
                   boost::detail::is_character<
                     BOOST_DEDUCED_TYPENAME deduce_src_char_metafunc::stage1_type          // if we did not get character type at stage1
                   >::value                                                           // then we have no optimization for that type
-                 )
-                > is_source_input_not_optimized_t;
+            	 )
+            	> is_source_input_not_optimized_t;
             
             // If we have an optimized conversion for
             // Source, we do not need to construct stringbuf.
             BOOST_STATIC_CONSTANT(bool, requires_stringbuf = 
-                (is_string_widening_required_t::value || is_source_input_not_optimized_t::value)
+            	(is_string_widening_required_t::value || is_source_input_not_optimized_t::value)
             );
             
             typedef boost::detail::lcast_src_length<no_cv_src> len_t;

@@ -227,7 +227,7 @@ struct class_metadata
     template <class T2, class Callback>
     inline static void register_aux2(T2*, Callback) 
     {
-    objects::register_shared_ptr_from_python_and_casts((T2*)0, bases());
+	objects::register_shared_ptr_from_python_and_casts((T2*)0, bases());
         class_metadata::maybe_register_callback_class((T2*)0, Callback());
 
         class_metadata::maybe_register_class_to_python((T2*)0, is_noncopyable());
@@ -288,7 +288,7 @@ struct class_metadata
     template <class T2>
     inline static void maybe_register_callback_class(T2*, mpl::true_)
     {
-    objects::register_shared_ptr_from_python_and_casts(
+	objects::register_shared_ptr_from_python_and_casts(
             (wrapped*)0, mpl::single_view<T2>());
         // explicit qualification of type_id makes msvc6 happy
         objects::copy_class_object(python::type_id<T2>(), python::type_id<wrapped>());

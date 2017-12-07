@@ -67,7 +67,7 @@ struct in_place_init_t
 };            
 const in_place_init_t in_place_init ((in_place_init_t::init_tag()));
 
-// a tag for conditional in-place initialization of contained value 
+// a tag for conditional in-place initialization of contained value	
 struct in_place_init_if_t
 {
   struct init_tag{};
@@ -877,12 +877,12 @@ class optional : public optional_detail::optional_base<T>
     optional ( optional const& rhs ) : base( static_cast<base const&>(rhs) ) {}
 
 #ifndef  BOOST_OPTIONAL_DETAIL_NO_RVALUE_REFERENCES
-    // Creates a deep move of another optional<T>
-    // Can throw if T::T(T&&) does
-    optional ( optional && rhs ) 
-      BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value)
-      : base( boost::move(rhs) ) 
-    {}
+	// Creates a deep move of another optional<T>
+	// Can throw if T::T(T&&) does
+	optional ( optional && rhs ) 
+	  BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value)
+	  : base( boost::move(rhs) ) 
+	{}
 
 #endif
 
@@ -891,7 +891,7 @@ class optional : public optional_detail::optional_base<T>
     ~optional() {}
 #endif
 
-    
+	
 #if !defined(BOOST_OPTIONAL_NO_INPLACE_FACTORY_SUPPORT) && !defined(BOOST_OPTIONAL_WEAK_OVERLOAD_RESOLUTION)
     // Assigns from an expression. See corresponding constructor.
     // Basic Guarantee: If the resolved T ctor throws, this is left UNINITIALIZED
@@ -949,7 +949,7 @@ class optional : public optional_detail::optional_base<T>
 #ifndef  BOOST_OPTIONAL_DETAIL_NO_RVALUE_REFERENCES
     // Assigns from another optional<T> (deep-moves the rhs value)
     optional& operator= ( optional && rhs ) 
-      BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value && ::boost::is_nothrow_move_assignable<T>::value)
+	  BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value && ::boost::is_nothrow_move_assignable<T>::value)
       {
         this->assign( static_cast<base &&>(rhs) ) ;
         return *this ;
@@ -1093,7 +1093,7 @@ class optional : public optional_detail::optional_base<T>
 #endif
 
     void swap( optional & arg )
-      BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value && ::boost::is_nothrow_move_assignable<T>::value)
+	  BOOST_NOEXCEPT_IF(::boost::is_nothrow_move_constructible<T>::value && ::boost::is_nothrow_move_assignable<T>::value)
       {
         // allow for Koenig lookup
         boost::swap(*this, arg);

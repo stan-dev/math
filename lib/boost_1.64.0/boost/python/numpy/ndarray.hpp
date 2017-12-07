@@ -163,20 +163,20 @@ namespace detail
 {
 
 BOOST_NUMPY_DECL ndarray from_data_impl(void * data,
-                    dtype const & dt,
-                    std::vector<Py_intptr_t> const & shape,
-                    std::vector<Py_intptr_t> const & strides,
-                    object const & owner,
-                    bool writeable);
+					dtype const & dt,
+					std::vector<Py_intptr_t> const & shape,
+					std::vector<Py_intptr_t> const & strides,
+					object const & owner,
+					bool writeable);
 
 template <typename Container>
 ndarray from_data_impl(void * data,
-               dtype const & dt,
-               Container shape,
-               Container strides,
-               object const & owner,
-               bool writeable,
-               typename boost::enable_if< boost::is_integral<typename Container::value_type> >::type * enabled = NULL)
+		       dtype const & dt,
+		       Container shape,
+		       Container strides,
+		       object const & owner,
+		       bool writeable,
+		       typename boost::enable_if< boost::is_integral<typename Container::value_type> >::type * enabled = NULL)
 {
   std::vector<Py_intptr_t> shape_(shape.begin(),shape.end());
   std::vector<Py_intptr_t> strides_(strides.begin(), strides.end());
@@ -184,11 +184,11 @@ ndarray from_data_impl(void * data,
 }
 
 BOOST_NUMPY_DECL ndarray from_data_impl(void * data,
-                    dtype const & dt,
-                    object const & shape,
-                    object const & strides,
-                    object const & owner,
-                    bool writeable);
+					dtype const & dt,
+					object const & shape,
+					object const & strides,
+					object const & owner,
+					bool writeable);
 
 } // namespace boost::python::numpy::detail
 
@@ -207,10 +207,10 @@ BOOST_NUMPY_DECL ndarray from_data_impl(void * data,
  */
 template <typename Container>
 inline ndarray from_data(void * data,
-             dtype const & dt,
-             Container shape,
-             Container strides,
-             python::object const & owner)
+			 dtype const & dt,
+			 Container shape,
+			 Container strides,
+			 python::object const & owner)
 {
   return numpy::detail::from_data_impl(data, dt, shape, strides, owner, true);
 }    
@@ -232,10 +232,10 @@ inline ndarray from_data(void * data,
  */
 template <typename Container>
 inline ndarray from_data(void const * data,
-             dtype const & dt,
-             Container shape,
-             Container strides,
-             python::object const & owner)
+			 dtype const & dt,
+			 Container shape,
+			 Container strides,
+			 python::object const & owner)
 {
   return numpy::detail::from_data_impl(const_cast<void*>(data), dt, shape, strides, owner, false);
 }    
@@ -251,52 +251,52 @@ inline ndarray from_data(void const * data,
  *  @param[in] flags   Bitwise OR of flags specifying additional requirements.
  */
 BOOST_NUMPY_DECL ndarray from_object(object const & obj,
-                     dtype const & dt,
-                     int nd_min,
-                     int nd_max,
-                     ndarray::bitflag flags=ndarray::NONE);
+				     dtype const & dt,
+				     int nd_min,
+				     int nd_max,
+				     ndarray::bitflag flags=ndarray::NONE);
 
 BOOST_NUMPY_DECL inline ndarray from_object(object const & obj,
-                        dtype const & dt,
-                        int nd,
-                        ndarray::bitflag flags=ndarray::NONE)
+					    dtype const & dt,
+					    int nd,
+					    ndarray::bitflag flags=ndarray::NONE)
 {
   return from_object(obj, dt, nd, nd, flags);
 }
 
 BOOST_NUMPY_DECL inline ndarray from_object(object const & obj,
-                        dtype const & dt,
-                        ndarray::bitflag flags=ndarray::NONE)
+					    dtype const & dt,
+					    ndarray::bitflag flags=ndarray::NONE)
 {
   return from_object(obj, dt, 0, 0, flags);
 }
 
 BOOST_NUMPY_DECL ndarray from_object(object const & obj,
-                     int nd_min,
-                     int nd_max,
-                     ndarray::bitflag flags=ndarray::NONE);
+				     int nd_min,
+				     int nd_max,
+				     ndarray::bitflag flags=ndarray::NONE);
 
 BOOST_NUMPY_DECL inline ndarray from_object(object const & obj,
-                        int nd,
-                        ndarray::bitflag flags=ndarray::NONE)
+					    int nd,
+					    ndarray::bitflag flags=ndarray::NONE)
 {
   return from_object(obj, nd, nd, flags);
 }
 
 BOOST_NUMPY_DECL inline ndarray from_object(object const & obj,
-                        ndarray::bitflag flags=ndarray::NONE)
+					    ndarray::bitflag flags=ndarray::NONE)
 {
   return from_object(obj, 0, 0, flags);
 }
 
 BOOST_NUMPY_DECL inline ndarray::bitflag operator|(ndarray::bitflag a,
-                           ndarray::bitflag b)
+						   ndarray::bitflag b)
 {
   return ndarray::bitflag(int(a) | int(b));
 }
 
 BOOST_NUMPY_DECL inline ndarray::bitflag operator&(ndarray::bitflag a,
-                           ndarray::bitflag b)
+						   ndarray::bitflag b)
 {
   return ndarray::bitflag(int(a) & int(b));
 }

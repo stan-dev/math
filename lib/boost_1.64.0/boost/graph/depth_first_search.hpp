@@ -145,11 +145,11 @@ namespace boost {
         src_e = back.second.first;
         boost::tie(ei, ei_end) = back.second.second;
         stack.pop_back();
-    // finish_edge has to be called here, not after the
-    // loop. Think of the pop as the return from a recursive call.
+	// finish_edge has to be called here, not after the
+	// loop. Think of the pop as the return from a recursive call.
         if (src_e) {
-      call_finish_edge(vis, src_e.get(), g);
-    }
+	  call_finish_edge(vis, src_e.get(), g);
+	}
         while (ei != ei_end) {
           Vertex v = target(*ei, g);
           vis.examine_edge(*ei, g);

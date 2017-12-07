@@ -54,12 +54,12 @@
   struct trait \
     { \
     typedef typename \
-    boost::mpl::eval_if \
-        < \
-        boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
-        BOOST_PP_CAT(trait,_tht)<BOOST_TTI_DETAIL_TP_T>, \
-        boost::mpl::false_ \
-        >::type type; \
+  	boost::mpl::eval_if \
+  		< \
+  		boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
+  		BOOST_PP_CAT(trait,_tht)<BOOST_TTI_DETAIL_TP_T>, \
+  		boost::mpl::false_ \
+  		>::type type; \
     BOOST_STATIC_CONSTANT(bool,value=type::value); \
     }; \
 /**/

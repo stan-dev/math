@@ -37,10 +37,10 @@ private:
     typedef std::deque< context * >  rqueue_type;
     typedef scheduler::ready_queue_type lqueue_type;
 
-    static rqueue_type      rqueue_;
-    static std::mutex       rqueue_mtx_;
+    static rqueue_type     	rqueue_;
+    static std::mutex   	rqueue_mtx_;
 
-    lqueue_type             lqueue_{};
+    lqueue_type            	lqueue_{};
     std::mutex              mtx_{};
     std::condition_variable cnd_{};
     bool                    flag_{ false };
@@ -53,11 +53,11 @@ public:
         suspend_{ suspend } {
     }
 
-    shared_work( shared_work const&) = delete;
-    shared_work( shared_work &&) = delete;
+	shared_work( shared_work const&) = delete;
+	shared_work( shared_work &&) = delete;
 
-    shared_work & operator=( shared_work const&) = delete;
-    shared_work & operator=( shared_work &&) = delete;
+	shared_work & operator=( shared_work const&) = delete;
+	shared_work & operator=( shared_work &&) = delete;
 
     void awakened( context * ctx) noexcept;
 
@@ -68,9 +68,9 @@ public:
         return ! rqueue_.empty() || ! lqueue_.empty();
     }
 
-    void suspend_until( std::chrono::steady_clock::time_point const& time_point) noexcept;
+	void suspend_until( std::chrono::steady_clock::time_point const& time_point) noexcept;
 
-    void notify() noexcept;
+	void notify() noexcept;
 };
 
 }}}

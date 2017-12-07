@@ -281,10 +281,10 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typedef typename
             mpl::eval_if<
                 mpl::empty<filtered_types>
-        , mpl::identity<unused_type>
-        , mpl::if_<mpl::equal_to<mpl::size<filtered_types>, mpl::int_<1> >,
-        typename mpl::front<filtered_types>::type
-              , typename fusion::result_of::as_deque<filtered_types>::type >
+	    , mpl::identity<unused_type>
+	    , mpl::if_<mpl::equal_to<mpl::size<filtered_types>, mpl::int_<1> >,
+	    typename mpl::front<filtered_types>::type
+		      , typename fusion::result_of::as_deque<filtered_types>::type >
             >::type
         type;
     };
@@ -386,16 +386,16 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
       , typename RContext, typename Attribute>
     bool parse_sequence_assoc(
         Parser const& parser , Iterator& first, Iterator const& last
-      , Context const& context, RContext& rcontext, Attribute& attr, mpl::false_ /*should_split*/)
+	  , Context const& context, RContext& rcontext, Attribute& attr, mpl::false_ /*should_split*/)
     {
-        return parse_into_container(parser, first, last, context, rcontext, attr);
+	    return parse_into_container(parser, first, last, context, rcontext, attr);
     }
 
     template <typename Parser, typename Iterator, typename Context
       , typename RContext, typename Attribute>
     bool parse_sequence_assoc(
         Parser const& parser , Iterator& first, Iterator const& last
-      , Context const& context, RContext& rcontext, Attribute& attr, mpl::true_ /*should_split*/)
+	  , Context const& context, RContext& rcontext, Attribute& attr, mpl::true_ /*should_split*/)
     {
         Iterator save = first;
         if (parser.left.parse( first, last, context, rcontext, attr)
@@ -461,7 +461,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 
             Attribute attr_;
             if (!parse_sequence(parser
-                   , first, last, context, rcontext, attr_, traits::container_attribute()))
+			       , first, last, context, rcontext, attr_, traits::container_attribute()))
             {
                 return false;
             }
@@ -494,7 +494,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
             value_type;
 
             return call(parser, first, last, context, rcontext, attr
-            , typename traits::is_substitute<attribute_type, value_type>::type());
+	        , typename traits::is_substitute<attribute_type, value_type>::type());
         }
     };
 

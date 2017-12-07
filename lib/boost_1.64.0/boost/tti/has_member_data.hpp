@@ -59,10 +59,10 @@
     { \
     typedef typename \
     BOOST_PP_CAT(trait,_detail_hmd) \
-        < \
-        BOOST_TTI_TP_ET, \
-        BOOST_TTI_TP_TYPE \
-        >::type type; \
+      	< \
+      	BOOST_TTI_TP_ET, \
+      	BOOST_TTI_TP_TYPE \
+      	>::type type; \
     BOOST_STATIC_CONSTANT(bool,value=type::value); \
     }; \
 /**/

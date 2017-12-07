@@ -138,7 +138,7 @@
   BOOST_TTI_DETAIL_VM_TRAIT_HAS_TEMPLATE_CHECK_PARAMS(BOOST_PP_CAT(trait,_detail),name,__VA_ARGS__) \
   template<class BOOST_TTI_DETAIL_TP_T> \
   struct BOOST_PP_CAT(trait,_detail_vm_ct_invoke) : \
-    BOOST_PP_CAT(trait,_detail)<BOOST_TTI_DETAIL_TP_T> \
+  	BOOST_PP_CAT(trait,_detail)<BOOST_TTI_DETAIL_TP_T> \
     { \
     }; \
 /**/
@@ -149,12 +149,12 @@
   struct trait \
     { \
     typedef typename \
-    boost::mpl::eval_if \
-        < \
-        boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
-        BOOST_PP_CAT(trait,_detail_vm_ct_invoke)<BOOST_TTI_DETAIL_TP_T>, \
-        boost::mpl::false_ \
-        >::type type; \
+  	boost::mpl::eval_if \
+  		< \
+  		boost::is_class<BOOST_TTI_DETAIL_TP_T>, \
+  		BOOST_PP_CAT(trait,_detail_vm_ct_invoke)<BOOST_TTI_DETAIL_TP_T>, \
+  		boost::mpl::false_ \
+  		>::type type; \
     BOOST_STATIC_CONSTANT(bool,value=type::value); \
     }; \
 /**/

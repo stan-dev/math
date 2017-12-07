@@ -272,7 +272,7 @@ class format_date_parser
     while (itr != format_str.end() && (sitr != stream_end)) {
       if (*itr == '%') {
         if ( ++itr == format_str.end())
-            break;
+        	break;
         if (*itr != '%') {
           switch(*itr) {
           case 'a': 
@@ -478,7 +478,7 @@ class format_date_parser
     while (itr != format_str.end() && (sitr != stream_end)) {
       if (*itr == '%') {
         if ( ++itr == format_str.end())
-            break;
+        	break;
         if (*itr != '%') {
           switch(*itr) {
           case 'b': 
@@ -580,7 +580,7 @@ class format_date_parser
     while (itr != format_str.end() && (sitr != stream_end)) {
       if (*itr == '%') {
         if ( ++itr == format_str.end())
-            break;
+        	break;
         if (*itr != '%') {
           switch(*itr) {
           case 'a': 
@@ -670,7 +670,7 @@ class format_date_parser
     while (itr != format_str.end() && (sitr != stream_end)) {
       if (*itr == '%') {
         if ( ++itr == format_str.end())
-            break;
+        	break;
         if (*itr != '%') {
           //match_results mr;
           switch(*itr) {

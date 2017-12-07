@@ -22,10 +22,10 @@ namespace boost { namespace spirit { namespace x3
         static bool const has_attribute = true;
 
         bool_parser()
-            : policies() {}
+        	: policies() {}
 
         bool_parser(BoolPolicies const& policies)
-            : policies(policies) {}
+        	: policies(policies) {}
 
         template <typename Iterator, typename Context>
         bool parse(Iterator& first, Iterator const& last
@@ -62,11 +62,11 @@ namespace boost { namespace spirit { namespace x3
 
         template <typename Value>
         literal_bool_parser(Value const& n)
-            : policies(), n_(n) {}
+        	: policies(), n_(n) {}
 
         template <typename Value>
         literal_bool_parser(Value const& n, BoolPolicies const& policies)
-            : policies(policies), n_(n) {}
+        	: policies(policies), n_(n) {}
 
         template <typename Iterator, typename Context>
         bool parse_main(Iterator& first, Iterator const& last

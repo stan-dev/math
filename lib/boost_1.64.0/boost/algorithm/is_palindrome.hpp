@@ -28,7 +28,7 @@ namespace boost {  namespace algorithm {
 /// \return true if the entire sequence is palindrome
 ///
 /// \param begin    The start of the input sequence
-/// \param end      One past the end of the input sequence
+/// \param end		One past the end of the input sequence
 /// \param p        A predicate used to compare the values.
 ///
 /// \note This function will return true for empty sequences and for palindromes.
@@ -63,7 +63,7 @@ bool is_palindrome(BidirectionalIterator begin, BidirectionalIterator end, Predi
 /// \return true if the entire sequence is palindrome
 ///
 /// \param begin    The start of the input sequence
-/// \param end      One past the end of the input sequence
+/// \param end		One past the end of the input sequence
 ///
 /// \note This function will return true for empty sequences and for palindromes.
 ///     For other sequences function will return false.
@@ -134,7 +134,7 @@ bool is_palindrome(const R& range, Predicate p)
 bool is_palindrome(const char* str)
 {
     if(!str)
-        return true;
+	    return true;
     return is_palindrome(str, str + strlen(str));
 }
 
@@ -152,7 +152,7 @@ template<typename Predicate>
 bool is_palindrome(const char* str, Predicate p)
 {
     if(!str)
-        return true;
+	    return true;
     return is_palindrome(str, str + strlen(str), p);
 }
 

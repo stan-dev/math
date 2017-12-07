@@ -2851,7 +2851,7 @@ class hashtable_impl
    //!
    //!   If store_hash option is true, this method does not use the hash function.
    //!   If false, the implementation tries to minimize calls to the hash function
-   //!   (e.g. once for equivalent values if optimize_multikey<true> is true).
+   //!	 (e.g. once for equivalent values if optimize_multikey<true> is true).
    //!
    //!   If rehash is successful updates the internal bucket_traits with new_bucket_traits.
    //!

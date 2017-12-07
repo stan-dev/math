@@ -42,34 +42,34 @@ struct fp_t
 {
 #ifdef _LP64
     boost::uint64_t     fp_freg[32];
-    boost::uint64_t fp_fprs, fp_fsr;
+    boost::uint64_t	fp_fprs, fp_fsr;
 #else
     boost::uint64_t     fp_freg[16];
-    boost::uint32_t fp_fsr;
+    boost::uint32_t	fp_fsr;
 #endif
 
     fp_t() :
         fp_freg(),
 #ifdef _LP64
-    fp_fprs(),
+	fp_fprs(),
 #endif
-    fp_fsr()
+	fp_fsr()
     {}
 }
 #ifdef _LP64
-         __attribute__((__aligned__(64)))   // allow VIS instructions to be used
+		 __attribute__((__aligned__(64)))	// allow VIS instructions to be used
 #endif
 ;
 
 struct fcontext_t
 {
-    fp_t                fc_fp;  // fpu stuff first, for easier alignement
+    fp_t                fc_fp;	// fpu stuff first, for easier alignement
 #ifdef _LP64
     boost::uint64_t
 #else
     boost::uint32_t
 #endif
-            fc_greg[8];
+			fc_greg[8];
     stack_t             fc_stack;
 
     fcontext_t() :
