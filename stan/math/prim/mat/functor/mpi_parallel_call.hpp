@@ -69,7 +69,7 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>> cache_f_out;
       typedef internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>> cache_chunks;
       
-      const CombineF combine_;
+      CombineF combine_;
 
       typedef typename CombineF::result_type result_type;
 

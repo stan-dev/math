@@ -31,19 +31,28 @@ namespace stan {
       const std::size_t rank_ = world_.rank();
       const std::size_t world_size_ = world_.size();
 
-      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>* shared_params_operands_;
-      const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>* job_params_operands_;
+      typedef operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+                                    Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> > ops_partials_t;
+      std::vector<ops_partials_t> ops_partials_;
       
+      const std::size_t num_shared_operands_;
+      const std::size_t num_job_operands_;
+
     public:
 
       typedef Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1> result_type;
       
-      map_rect_combine() {}
+      map_rect_combine() : ops_partials_(), num_shared_operands_(0), num_job_operands_(0) {}
       map_rect_combine(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                        const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
-        : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
+        : ops_partials_(), num_shared_operands_(shared_params.rows()), num_job_operands_(dims(job_params)[1]) {
+        ops_partials_.reserve(job_params.size());
+        for(std::size_t i = 0; i < job_params.size(); i++) {
+          ops_partials_.push_back(ops_partials_t(shared_params, job_params[i]));
+        }
+      }
 
-      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) const {
+      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) {
 
         const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_size_per_job = local_result.rows();
@@ -65,17 +74,9 @@ namespace stan {
 
         result_type out(size_world_f_out);
 
-        const std::size_t num_shared_operands = shared_params_operands_->size();
-        const std::vector<int> dims_job_operands = dims(*job_params_operands_);
-        const std::size_t num_job_operands = dims_job_operands[1];
-
-        const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
+        const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands_ ;
 
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
-          operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
-                                Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
-            ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
-
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
             // check if the outputs flags a failure
             if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
@@ -83,14 +84,14 @@ namespace stan {
             }
 
             if (!is_constant_struct<T_shared_param>::value) {
-              ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
+              ops_partials_[i].edge1_.partials_ = world_result.block(1,ij,num_shared_operands_,1);
             }
               
             if (!is_constant_struct<T_job_param>::value) {
-              ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
+              ops_partials_[i].edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands_,1);
             }
             
-            out(ij) = ops_partials.build(world_result(0,ij));
+            out(ij) = ops_partials_[i].build(world_result(0,ij));
           }
         }
 
