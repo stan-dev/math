@@ -41,7 +41,7 @@ namespace stan {
      * @throw std::domain_error if m is not
      *  positive definite (if m has more than 0 elements)
      */    
-    matrix_gpu cholesky_decompose_gpu(matrix_gpu& A, int block) {
+    inline matrix_gpu cholesky_decompose_gpu(matrix_gpu& A, int block) {
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
 
@@ -127,7 +127,7 @@ namespace stan {
      */
     template <typename T>
     typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
+    inline  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
     cholesky_decompose_gpu(const Eigen::Matrix<T,
      Eigen::Dynamic, Eigen::Dynamic>& m) {
             if (m.size() == 0) return m;

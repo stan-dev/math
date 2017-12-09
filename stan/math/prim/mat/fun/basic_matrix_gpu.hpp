@@ -29,7 +29,7 @@ namespace stan {
      * @return transposed input matrix
      * 
      */
-    matrix_gpu transpose(matrix_gpu & src) {
+    inline matrix_gpu transpose(matrix_gpu & src) {
       matrix_gpu dst(src.cols(), src.rows());
       if ( dst.size() == 0 ) return dst;
       cl::Kernel kernel = get_kernel("transpose");
@@ -67,7 +67,7 @@ namespace stan {
      * zeros are assigned to the whole matrix.
      * 
      */
-    void zeros(matrix_gpu & A, triangularity part = NONE) {
+    inline void zeros(matrix_gpu & A, triangularity part = NONE) {
       cl::Kernel kernel = get_kernel("zeros");
       cl::CommandQueue cmdQueue = get_queue();
       try {
@@ -95,7 +95,7 @@ namespace stan {
      * @return the identity matrix
      * 
      */
-    matrix_gpu identity(int rows_cols) {
+    inline matrix_gpu identity(int rows_cols) {
       matrix_gpu A(rows_cols, rows_cols);
       if (rows_cols == 0) {
         return A;
@@ -135,7 +135,7 @@ namespace stan {
      * @return the matrix with the copied content
      * 
      */
-    matrix_gpu copy_triangular(matrix_gpu & src,
+    inline matrix_gpu copy_triangular(matrix_gpu & src,
      triangularity lower_upper) {
       matrix_gpu dst(src.rows(), src.cols());
       cl::Kernel kernel = get_kernel("copy_triangular");
@@ -180,7 +180,7 @@ namespace stan {
      * 
      * 
      */
-    void copy_submatrix(matrix_gpu & src,
+    inline void copy_submatrix(matrix_gpu & src,
      matrix_gpu & dst, int src_offset_rows, int src_offset_cols,
      int dst_offset_rows, int dst_offset_cols, int size_rows, int size_cols) {
       if (size_rows == 0 || size_cols == 0)
@@ -245,7 +245,7 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    void copy_triangular_transposed(matrix_gpu & A,
+    inline void copy_triangular_transposed(matrix_gpu & A,
      copy_transposed_triangular lower_upper) {
       check_square("copy_triangular_transposed (GPU)", "A", A);
       cl::Kernel kernel = get_kernel("copy_triangular_transposed");
@@ -280,7 +280,7 @@ namespace stan {
      * input matrices do not have matching dimensions
      * 
      */
-    matrix_gpu add(matrix_gpu& A,
+    inline matrix_gpu add(matrix_gpu& A,
      matrix_gpu& B) {
       check_matching_dims("add (GPU)", "A", A, "B", B);
       matrix_gpu C(A.rows(), A.cols());
@@ -323,7 +323,7 @@ namespace stan {
      * input matrices do not have matching dimensions
      * 
      */
-    matrix_gpu subtract(matrix_gpu & A, matrix_gpu & B) {
+    inline matrix_gpu subtract(matrix_gpu & A, matrix_gpu & B) {
       check_matching_dims("subtract (GPU)", "A", A, "B", B);
       matrix_gpu C(A.rows(), A.cols());
       if (A.size() == 0) {

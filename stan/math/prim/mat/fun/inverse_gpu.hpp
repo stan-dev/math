@@ -30,7 +30,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the matrix
      *    is not square
      */
-    matrix_gpu lower_triangular_inverse(matrix_gpu & A) {
+    inline matrix_gpu lower_triangular_inverse(matrix_gpu & A) {
       check_square("lower_triangular_inverse (GPU)", "A", A);
       matrix_gpu inv(A);
       cl::Kernel kernel_step1 = get_kernel("lower_tri_inv_step1");

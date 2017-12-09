@@ -22,7 +22,7 @@ namespace stan {
      * @param scalar scalar
      *      
      */
-    void diagonal_multiply(matrix_gpu & A, double scalar) {
+    inline void diagonal_multiply(matrix_gpu & A, double scalar) {
       cl::Kernel kernel = get_kernel("scalar_mul_diagonal");
       cl::CommandQueue cmdQueue = get_queue();
       int min_dim = A.rows();
@@ -55,7 +55,7 @@ namespace stan {
      * @return matrix multipled with scalar
      *      
      */
-    matrix_gpu multiply(matrix_gpu & A,  double scalar) {
+    inline matrix_gpu multiply(matrix_gpu & A,  double scalar) {
       matrix_gpu temp(A.rows(), A.cols());
       if (A.size() == 0)
         return temp;
@@ -90,7 +90,7 @@ namespace stan {
      * @return matrix multipled with scalar
      *      
      */
-    matrix_gpu multiply(double scalar, matrix_gpu & A) {
+    inline matrix_gpu multiply(double scalar, matrix_gpu & A) {
       return multiply(A, scalar);
     }
 
@@ -112,7 +112,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the 
      *   number of columns in A and rows in B do not match
      */
-    matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
+    inline matrix_gpu multiply(matrix_gpu & A, matrix_gpu & B) {
       check_size_match("multiply (GPU)", "A.cols()", A.cols(),
        "B.rows()", B.rows());
       matrix_gpu temp(A.rows(), B.cols());
@@ -160,7 +160,7 @@ namespace stan {
      * @throw <code>std::invalid_argument</code> if the 
      *   number of columns in A and rows in B do not match
      */
-    matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
+    inline matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
       matrix_gpu temp(A.rows(), A.rows());
       if ( temp.size() == 0 )
         return temp;

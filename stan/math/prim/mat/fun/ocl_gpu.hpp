@@ -29,7 +29,7 @@ namespace stan {
     std::map<std::string, std::string> kernel_strings;
     std::map<std::string, cl::Kernel> kernels;
     std::map<std::string, bool> compiled_kernels;
-    std::string dummy_kernel = "__kernel void dummy() { };";
+    inline std::string dummy_kernel = "__kernel void dummy() { };";
 
     /**
      * Initalizes the global std::map variables that 
@@ -38,7 +38,7 @@ namespace stan {
      * information about which kernel was already compiled.
      * 
      */
-    void init_kernel_groups() {
+    inline void init_kernel_groups() {
       // To identify the kernel group
       kernel_groups["transpose"] = "basic_matrix";
       kernel_groups["copy"] = "basic_matrix";
@@ -187,14 +187,14 @@ namespace stan {
         }
     };
 
-    ocl ocl_context_queue;
+    inline ocl ocl_context_queue;
 
     /**
      * Returns the description of the OpenCL 
      * platform and device that is used.
      * 
      */
-    std::string get_description() {
+    inline std::string get_description() {
       return ocl_context_queue.description();
     }
 
@@ -204,7 +204,7 @@ namespace stan {
      * a new context is created. 
      *  
      */
-    cl::Context& get_context() {
+    inline cl::Context& get_context() {
       return ocl_context_queue.context();
     }
     /**
@@ -215,7 +215,7 @@ namespace stan {
      * the reference to the new queue is returned.
      * 
      */
-    cl::CommandQueue& get_queue() {
+    inline cl::CommandQueue& get_queue() {
       return ocl_context_queue.queue();
     }
 
@@ -225,7 +225,7 @@ namespace stan {
      * @param group The kernel group name
      * 
      */
-    void compile_kernel_group(std::string group) {
+    inline void compile_kernel_group(std::string group) {
         cl::Context& ctx = get_context();
         std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
         std::string kernel_source = kernel_strings[group];
@@ -260,7 +260,7 @@ namespace stan {
      * @param name The kernel name
      * 
      */
-    cl::Kernel get_kernel(std::string name) {
+    inline cl::Kernel get_kernel(std::string name) {
       // Compile the kernel group and return the kernel
       if (!compiled_kernels[kernel_groups[name]]) {
         compile_kernel_group(kernel_groups[name]);
