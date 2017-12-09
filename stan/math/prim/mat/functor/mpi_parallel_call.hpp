@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
 
 #include <vector>
 #include <type_traits>
@@ -69,7 +70,7 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>> cache_f_out;
       typedef internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>> cache_chunks;
       
-      CombineF combine_;
+      CombineF mpi_combine_;
 
       typedef typename CombineF::result_type result_type;
 
@@ -83,7 +84,7 @@ namespace stan {
                         const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                         const std::vector<std::vector<double>>& x_r,
                         const std::vector<std::vector<int>>& x_i)
-        : combine_(shared_params, job_params) {
+        : mpi_combine_(shared_params, job_params) {
         if(rank_ != 0)
           throw std::runtime_error("problem sizes can only defined on the root.");
 
@@ -117,7 +118,7 @@ namespace stan {
       }
 
       // called on remote sites
-      mpi_parallel_call() : combine_() {
+      mpi_parallel_call() : mpi_combine_() {
         if(rank_ == 0)
           throw std::runtime_error("problem sizes must be defined on the root.");
 
@@ -231,7 +232,7 @@ namespace stan {
 
         //std::cout << "gathering outputs " << sum(local_f_out) << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
 
-        return combine_.gather_outputs(local_output, world_f_out, job_chunks);
+        return mpi_combine_(local_output, world_f_out, job_chunks);
       }
 
     private:
@@ -360,16 +361,5 @@ namespace stan {
   }
 }
 
-#define STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, SHARED, JOB) \
-  namespace stan { namespace math { namespace internal {                \
-                       typedef FUNCTOR mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _; \
-                       typedef map_rect_reduce<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_ ; \
-                       typedef map_rect_combine<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_ ; \
-                       typedef mpi_parallel_call<CALLID, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_ ; \
-      } } }                                                             \
-  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_>)
 
-
-#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)           \
-  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)
-
+#endif
