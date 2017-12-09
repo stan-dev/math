@@ -5,7 +5,7 @@
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
-
+#include <exception>
 
 /** @file stan/math/prim/arr/err/check_opencl.hpp
 *    @brief checking OpenCL error numbers
