@@ -225,7 +225,7 @@ namespace stan {
      * matrices do not have matching dimensions
      * 
      */
-    void copy(matrix_gpu& src,  matrix_gpu& dst) { // NOLINT
+    inline void copy(matrix_gpu& src,  matrix_gpu& dst) { // NOLINT
       check_size_match("copy (GPU -> GPU)",
         "src.rows()", src.rows(), "dst.rows()", dst.rows());
       check_size_match("copy (GPU -> GPU)",

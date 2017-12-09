@@ -22,14 +22,17 @@
 namespace stan {
   namespace math {
 
-    void compile_kernel_group(std::string group);
+    inline void compile_kernel_group(std::string group);
 
-    int initialized_ = 0;
-    std::map<std::string, std::string> kernel_groups;
-    std::map<std::string, std::string> kernel_strings;
-    std::map<std::string, cl::Kernel> kernels;
-    std::map<std::string, bool> compiled_kernels;
-    std::string dummy_kernel = "__kernel void dummy() { };";
+    static int initialized_ = 0;
+    typedef std::map<std::string, std::string> map_string;
+    typedef std::map<std::string, cl::Kernel> map_kernel;
+    typedef std::map<std::string, bool> map_bool;
+    static map_string kernel_groups;
+    static map_string kernel_strings;
+    static map_kernel kernels;
+    static map_bool compiled_kernels;
+    static std::string dummy_kernel = "__kernel void dummy() { };";
 
     /**
      * Initalizes the global std::map variables that 
@@ -187,7 +190,7 @@ namespace stan {
         }
     };
 
-    ocl ocl_context_queue;
+    static ocl ocl_context_queue;
 
     /**
      * Returns the description of the OpenCL 

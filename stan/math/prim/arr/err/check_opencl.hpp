@@ -23,7 +23,7 @@ namespace stan {
      * 
      * @throw std::domain_error Always.
      */
-    void throw_openCL(const std::string& function, const char* msg) {
+    inline void throw_openCL(const std::string& function, const char* msg) {
       throw std::domain_error(function +
         ": The OpenCL application ended with the error: " + msg);
     }
@@ -38,7 +38,7 @@ namespace stan {
      * 
      * @throw std::domain_error Always.
      */
-    void check_ocl_error(const std::string& function,
+    inline void check_ocl_error(const std::string& function,
                          const cl::Error& e) {
       switch (e.err()) {
         case 0:
