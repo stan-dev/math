@@ -127,7 +127,7 @@ namespace stan {
      */
     template <typename T>
     typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-    inline  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type
     cholesky_decompose_gpu(const Eigen::Matrix<T,
      Eigen::Dynamic, Eigen::Dynamic>& m) {
             if (m.size() == 0) return m;

@@ -29,7 +29,7 @@ namespace stan {
     std::map<std::string, std::string> kernel_strings;
     std::map<std::string, cl::Kernel> kernels;
     std::map<std::string, bool> compiled_kernels;
-    inline std::string dummy_kernel = "__kernel void dummy() { };";
+    std::string dummy_kernel = "__kernel void dummy() { };";
 
     /**
      * Initalizes the global std::map variables that 
@@ -187,7 +187,7 @@ namespace stan {
         }
     };
 
-    inline ocl ocl_context_queue;
+    ocl ocl_context_queue;
 
     /**
      * Returns the description of the OpenCL 
