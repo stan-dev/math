@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <type_traits>
+#include <typeindex>
+#include <unordered_map>
 
 #include <boost/mpi.hpp>
 
@@ -69,6 +71,9 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<call_id, 2, std::vector<std::vector<int>>> cache_x_i;
       typedef internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>> cache_f_out;
       typedef internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>> cache_chunks;
+
+      // # of outputs for given call_id+ReduceF+CombineF case
+      static std::size_t num_outputs_per_job_;
       
       CombineF mpi_combine_;
 
@@ -146,8 +151,7 @@ namespace stan {
           start_job += job_chunks[n];
 
         const int num_local_jobs = local_job_params_dbl_.cols();
-        const std::size_t num_outputs_per_job = ReduceF::get_output_size(local_shared_params_dbl_.rows(), local_job_params_dbl_.rows());
-        matrix_d local_output(num_outputs_per_job, num_local_jobs);
+        matrix_d local_output(num_outputs_per_job_, num_local_jobs);
         std::vector<int> local_f_out(num_local_jobs, -1);
 
         typename cache_x_r::cache_t& local_x_r = cache_x_r::data();
@@ -159,7 +163,7 @@ namespace stan {
           int num_outputs = 0;
           for(std::size_t j=start_job; j < start_job + num_local_jobs; ++j)
             num_outputs += f_out[j];
-          local_output.resize(num_outputs_per_job, num_outputs);
+          local_output.resize(num_outputs_per_job_, num_outputs);
         }
 
         int offset = 0;
@@ -168,8 +172,13 @@ namespace stan {
         
         try {
           for(std::size_t i=0; i < num_local_jobs; ++i) {
-            const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
+            const matrix_d job_output = ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
             local_f_out[i] = job_output.cols();
+
+            if(unlikely(num_outputs_per_job_ == 0)) {
+              num_outputs_per_job_ = job_output.rows();
+              local_output.conservativeResize(num_outputs_per_job_, Eigen::NoChange);
+            }
           
             if(local_output.cols() < offset + local_f_out[i])
               local_output.conservativeResize(Eigen::NoChange, 2*(offset + local_f_out[i]));
@@ -184,6 +193,8 @@ namespace stan {
           // sync and let the gather_outputs method detect on the root
           // that things went wrong
           //std::cout << "CAUGHT EXCEPTION on " << rank_ << std::endl;
+          if(local_output.rows() == 0)
+            local_output.conservativeResize(1, Eigen::NoChange);
           local_output(0,offset) = std::numeric_limits<double>::max();
           //local_f_out[num_local_jobs-1] = -1;
         }
@@ -357,6 +368,10 @@ namespace stan {
       }
 
     };
+
+    template <int call_id, typename ReduceF, typename CombineF>
+    std::size_t mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_ = 0;
+
 
   }
 }

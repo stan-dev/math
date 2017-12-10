@@ -5,10 +5,8 @@ namespace stan {
 
     template <typename F>
     struct map_rect_reduce<F, var, var> {
-      static std::size_t get_output_size(std::size_t num_shared_params, std::size_t num_job_specific_params) {
-        return(1+num_shared_params+num_job_specific_params);
-      }
-      static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
+      matrix_d operator()(const vector_d& shared_params, const vector_d& job_specific_params,
+                          const std::vector<double>& x_r, const std::vector<int>& x_i) const {
         const size_type num_shared_params = shared_params.rows();
         const size_type num_job_specific_params = job_specific_params.rows();
         const size_type num_params = num_shared_params  + num_job_specific_params;

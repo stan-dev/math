@@ -17,10 +17,8 @@ namespace stan {
     template <typename F>
     class map_rect_reduce<F, double, double> {
     public:
-      static std::size_t get_output_size(std::size_t num_shared_params, std::size_t num_job_specific_params) {
-        return(1);
-      }
-      static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
+      matrix_d operator()(const vector_d& shared_params, const vector_d& job_specific_params,
+                          const std::vector<double>& x_r, const std::vector<int>& x_i) const {
         const F f;
         const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
         return( out.transpose() );
@@ -62,17 +60,14 @@ namespace stan {
         for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
           for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
             // check if the outputs flags a failure
-            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
+            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max()))
               throw std::runtime_error("Error.");
-            }
 
-            if (!is_constant_struct<T_shared_param>::value) {
+            if (!is_constant_struct<T_shared_param>::value)
               ops_partials_[i].edge1_.partials_ = world_result.block(1,ij,num_shared_operands_,1);
-            }
               
-            if (!is_constant_struct<T_job_param>::value) {
+            if (!is_constant_struct<T_job_param>::value)
               ops_partials_[i].edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands_,1);
-            }
             
             out(ij) = ops_partials_[i].build(world_result(0,ij));
           }
@@ -81,8 +76,6 @@ namespace stan {
         return(out);
       }
     };
-
-
     
     template <int call_id, typename F, typename T_shared_param, typename T_job_param>
     Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1>
@@ -105,8 +98,7 @@ namespace stan {
       const std::vector<int> shared_params_dims = dims(job_params);
       const int num_shared_params = shared_params_dims[1];
       
-      const std::size_t num_outputs_per_job = ReduceF::get_output_size(num_shared_params, num_job_params);
-      matrix_d world_output(num_outputs_per_job, 0);
+      matrix_d world_output(0, 0);
       std::vector<int> world_f_out(num_jobs, -1);
 
       const vector_d shared_params_dbl = value_of(shared_params);
@@ -114,10 +106,10 @@ namespace stan {
       int offset = 0;
 
       for(std::size_t i=0; i < num_jobs; ++i) {
-        const matrix_d job_output = ReduceF::apply(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i]);
+        const matrix_d job_output = ReduceF()(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i]);
         world_f_out[i] = job_output.cols();
 
-        if(i == 0) world_output.resize(Eigen::NoChange, num_jobs * world_f_out[i]);
+        if(i == 0) world_output.resize(job_output.rows(), num_jobs * world_f_out[i]);
 
         if(world_output.cols() < offset + world_f_out[i])
           world_output.conservativeResize(Eigen::NoChange, 2*(offset + world_f_out[i]));
