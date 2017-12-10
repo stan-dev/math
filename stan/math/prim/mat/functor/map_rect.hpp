@@ -157,8 +157,9 @@ namespace stan {
 #endif
     }
 
-    
   }
 }
+
+#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR) 
 
 #endif

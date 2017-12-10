@@ -31,4 +31,7 @@ namespace stan {
   }
 }
 
+#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR) \
+  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply< APPLY_FUNCTOR >)
+
 #endif
