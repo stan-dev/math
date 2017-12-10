@@ -82,7 +82,7 @@ namespace stan {
                        typedef mpi_map_rect_combine<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_ ; \
                        typedef mpi_parallel_call<CALLID, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_ ; \
       } } }                                                             \
-  STAN_REGISTER_MPI_DISTRIBUTED_APPLY(stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_>)
+  STAN_REGISTER_MPI_DISTRIBUTED_APPLY(stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_)
 
 
 #define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)           \

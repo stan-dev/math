@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 
+#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR) 
+
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 
 #ifdef STAN_HAS_MPI
@@ -91,20 +93,13 @@ namespace stan {
       typedef map_rect_reduce< F, T_shared_param, T_job_param> ReduceF;
       typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
-      const std::vector<int> job_params_dims = dims(job_params);
-      const int num_jobs = job_params_dims[0];
-      const int num_job_params = job_params_dims[1];
-      
-      const std::vector<int> shared_params_dims = dims(job_params);
-      const int num_shared_params = shared_params_dims[1];
+      const int num_jobs = job_params.size();
+      const vector_d shared_params_dbl = value_of(shared_params);
       
       matrix_d world_output(0, 0);
       std::vector<int> world_f_out(num_jobs, -1);
 
-      const vector_d shared_params_dbl = value_of(shared_params);
-
       int offset = 0;
-
       for(std::size_t i=0; i < num_jobs; ++i) {
         const matrix_d job_output = ReduceF()(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i]);
         world_f_out[i] = job_output.cols();
@@ -159,7 +154,5 @@ namespace stan {
 
   }
 }
-
-#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR) 
 
 #endif
