@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_OPENCL_HPP_
 
 #define __CL_ENABLE_EXCEPTIONS
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
-
+#include <stdexcept>
 
 /** @file stan/math/prim/arr/err/check_opencl.hpp
 *    @brief checking OpenCL error numbers
@@ -25,8 +24,9 @@ namespace stan {
      * @throw std::domain_error Always.
      */
     inline void throw_openCL(const char* function, const char* msg) {
-      throw domain_error(function +
-        ": The OpenCL application ended with the error: " + msg);
+      std::string error_msg = std::string() + function + 
+       ": The OpenCL application ended with the error: " + msg;
+      throw std::domain_error(error_msg);
     }
     /**
      * Throws the domain error with specifying the OpenCL error that
