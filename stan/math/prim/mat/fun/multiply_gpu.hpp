@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPY_GPU_HPP
 
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
 #include <Eigen/Dense>
 #include <iostream>
@@ -162,11 +163,11 @@ namespace stan {
      */
     inline matrix_gpu multiply_with_self_transposed(matrix_gpu & A) {
       matrix_gpu temp(A.rows(), A.rows());
-      if ( temp.size() == 0 )
+      if (temp.size() == 0)
         return temp;
       cl::Kernel kernel = get_kernel("multiply_self_transposed");
       cl::CommandQueue& cmdQueue = get_queue();
-      matrix_gpu AT = transpose(A);
+      matrix_gpu AT = stan::math::transpose(A);
       int local = 32;
       int wpt = 4;
       int Mpad = ((A.rows() + local-1)/local)*local;
