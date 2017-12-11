@@ -24,7 +24,7 @@ namespace stan {
      * @throw std::domain_error Always.
      */
     inline void throw_openCL(const char* function, const char* msg) {
-      std::string error_msg = std::string() + function + 
+      std::string error_msg = std::string() + function +
        ": The OpenCL application ended with the error: " + msg;
       throw std::domain_error(error_msg);
     }
