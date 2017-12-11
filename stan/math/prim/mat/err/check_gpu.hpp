@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/fun/matrix_gpu.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
@@ -118,7 +119,7 @@ namespace stan {
         kernel_check_symmetric.setArg(1, y.rows());
         kernel_check_symmetric.setArg(2, y.cols());
         kernel_check_symmetric.setArg(3, buffer_symmetric_flag);
-        kernel_check_symmetric.setArg(4, CONSTRAINT_TOLERANCE);
+        kernel_check_symmetric.setArg(4, math::CONSTRAINT_TOLERANCE);
 
         cmd_queue.enqueueNDRangeKernel(kernel_check_symmetric,
          cl::NullRange, cl::NDRange(y.rows(), y.cols()),  cl::NullRange);
