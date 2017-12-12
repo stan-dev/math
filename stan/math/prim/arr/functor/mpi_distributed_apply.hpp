@@ -14,6 +14,10 @@ namespace stan {
      * MPI command template which calls the static method
      * distributed_apply of the given class F on remotes.
      *
+     * Distributed MPI commands should be registered using the macro
+     * STAN_REGISTER_MPI_DISTRIBUTED_APPLY called in the root
+     * namespace.
+     *
      * @tparam F type of functor containing static distributed_apply method.
      */
     template<typename T>
@@ -23,6 +27,11 @@ namespace stan {
       void serialize(Archive & ar, const unsigned int version) {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(mpi_command);
       }
+
+      /**
+       * Executes the static member distributed_apply of the given
+       * functor F.
+       */
       void run() const {
         T::distributed_apply();
       }
@@ -30,5 +39,8 @@ namespace stan {
     
   }
 }
+
+#define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR) \
+  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply< APPLY_FUNCTOR >)
 
 #endif

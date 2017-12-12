@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
 
 #include <vector>
 #include <type_traits>
@@ -6,7 +7,6 @@
 #include <boost/mpi.hpp>
 
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
-//#include <stan/math/prim/arr/functor/mpi_command.hpp>
 #include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
@@ -68,8 +68,11 @@ namespace stan {
       typedef internal::mpi_parallel_call_cache<call_id, 2, std::vector<std::vector<int>>> cache_x_i;
       typedef internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>> cache_f_out;
       typedef internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>> cache_chunks;
+
+      // # of outputs for given call_id+ReduceF+CombineF case
+      static std::size_t num_outputs_per_job_;
       
-      const CombineF combine_;
+      CombineF mpi_combine_;
 
       typedef typename CombineF::result_type result_type;
 
@@ -83,7 +86,7 @@ namespace stan {
                         const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
                         const std::vector<std::vector<double>>& x_r,
                         const std::vector<std::vector<int>>& x_i)
-        : combine_(shared_params, job_params) {
+        : mpi_combine_(shared_params, job_params) {
         if(rank_ != 0)
           throw std::runtime_error("problem sizes can only defined on the root.");
 
@@ -117,7 +120,7 @@ namespace stan {
       }
 
       // called on remote sites
-      mpi_parallel_call() : combine_() {
+      mpi_parallel_call() : mpi_combine_() {
         if(rank_ == 0)
           throw std::runtime_error("problem sizes must be defined on the root.");
 
@@ -145,8 +148,7 @@ namespace stan {
           start_job += job_chunks[n];
 
         const int num_local_jobs = local_job_params_dbl_.cols();
-        const std::size_t num_outputs_per_job = ReduceF::get_output_size(local_shared_params_dbl_.rows(), local_job_params_dbl_.rows());
-        matrix_d local_output(num_outputs_per_job, num_local_jobs);
+        matrix_d local_output(num_outputs_per_job_, num_local_jobs);
         std::vector<int> local_f_out(num_local_jobs, -1);
 
         typename cache_x_r::cache_t& local_x_r = cache_x_r::data();
@@ -158,7 +160,7 @@ namespace stan {
           int num_outputs = 0;
           for(std::size_t j=start_job; j < start_job + num_local_jobs; ++j)
             num_outputs += f_out[j];
-          local_output.resize(num_outputs_per_job, num_outputs);
+          local_output.resize(num_outputs_per_job_, num_outputs);
         }
 
         int offset = 0;
@@ -167,8 +169,13 @@ namespace stan {
         
         try {
           for(std::size_t i=0; i < num_local_jobs; ++i) {
-            const matrix_d job_output = ReduceF::apply(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
+            const matrix_d job_output = ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i), local_x_r[i], local_x_i[i]);
             local_f_out[i] = job_output.cols();
+
+            if(unlikely(num_outputs_per_job_ == 0)) {
+              num_outputs_per_job_ = job_output.rows();
+              local_output.conservativeResize(num_outputs_per_job_, Eigen::NoChange);
+            }
           
             if(local_output.cols() < offset + local_f_out[i])
               local_output.conservativeResize(Eigen::NoChange, 2*(offset + local_f_out[i]));
@@ -183,6 +190,8 @@ namespace stan {
           // sync and let the gather_outputs method detect on the root
           // that things went wrong
           //std::cout << "CAUGHT EXCEPTION on " << rank_ << std::endl;
+          if(local_output.rows() == 0)
+            local_output.conservativeResize(1, Eigen::NoChange);
           local_output(0,offset) = std::numeric_limits<double>::max();
           //local_f_out[num_local_jobs-1] = -1;
         }
@@ -231,7 +240,7 @@ namespace stan {
 
         //std::cout << "gathering outputs " << sum(local_f_out) << " on remote " << world_.rank() << "; callsite_id = " << callsite_id_ << std::endl;
 
-        return combine_.gather_outputs(local_output, world_f_out, job_chunks);
+        return mpi_combine_(local_output, world_f_out, job_chunks);
       }
 
     private:
@@ -357,19 +366,12 @@ namespace stan {
 
     };
 
+    template <int call_id, typename ReduceF, typename CombineF>
+    std::size_t mpi_parallel_call<call_id, ReduceF, CombineF>::num_outputs_per_job_ = 0;
+
+
   }
 }
 
-#define STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, SHARED, JOB) \
-  namespace stan { namespace math { namespace internal {                \
-                       typedef FUNCTOR mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _; \
-                       typedef map_rect_reduce<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_ ; \
-                       typedef map_rect_combine<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_ ; \
-                       typedef mpi_parallel_call<CALLID, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_ ; \
-      } } }                                                             \
-  STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_>)
 
-
-#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)           \
-  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)
-
+#endif

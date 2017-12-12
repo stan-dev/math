@@ -1,51 +1,41 @@
-#pragma once
+#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
+#define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 
+
+#include <stan/math/prim/mat/functor/map_rect.hpp>
 #include <stan/math/prim/mat/functor/mpi_parallel_call.hpp>
 
 #include <vector>
-#include <map>
-#include <type_traits>
-
 
 namespace stan {
   namespace math {
 
     template <typename F, typename T_shared_param, typename T_job_param>
-    struct map_rect_reduce;
+    class map_rect_reduce;
 
-    template <typename F>
-    struct map_rect_reduce<F, double, double> {
-      static std::size_t get_output_size(std::size_t num_shared_params, std::size_t num_job_specific_params) {
-        return(1);
-      }
-      static matrix_d apply(const vector_d& shared_params, const vector_d& job_specific_params, const std::vector<double>& x_r, const std::vector<int>& x_i) {
-        const F f;
-        const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
-        return( out.transpose() );
-      }
-    };
-      
     template <typename F, typename T_shared_param, typename T_job_param>
-    class map_rect_combine {
+    class map_rect_combine;
+
+    template <typename F, typename T_shared_param, typename T_job_param>
+    class mpi_map_rect_combine {
       boost::mpi::communicator world_;
       const std::size_t rank_ = world_.rank();
       const std::size_t world_size_ = world_.size();
-
-      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>* shared_params_operands_;
-      const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>* job_params_operands_;
       
+      typedef map_rect_combine<F, T_shared_param, T_job_param> combine_t;
+      combine_t combine_;
+
     public:
 
-      typedef Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type, Eigen::Dynamic, 1> result_type;
+      typedef typename combine_t::result_type result_type;
       
-      map_rect_combine() {}
-      map_rect_combine(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
-                       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
-        : shared_params_operands_(&shared_params), job_params_operands_(&job_params) {}
+      mpi_map_rect_combine() : combine_() {}
+      mpi_map_rect_combine(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+                           const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params)
+        : combine_(shared_params, job_params) {}
 
-      result_type gather_outputs(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) const {
+      result_type operator()(const matrix_d& local_result, const std::vector<int>& world_f_out, const std::vector<int>& job_chunks) {
 
-        const std::size_t num_jobs = world_f_out.size();
         const std::size_t num_output_size_per_job = local_result.rows();
         const std::size_t size_world_f_out = sum(world_f_out);
 
@@ -63,38 +53,7 @@ namespace stan {
         if(rank_ != 0)
           return(result_type());
 
-        result_type out(size_world_f_out);
-
-        const std::size_t num_shared_operands = shared_params_operands_->size();
-        const std::vector<int> dims_job_operands = dims(*job_params_operands_);
-        const std::size_t num_job_operands = dims_job_operands[1];
-
-        const std::size_t offset_job_params = is_constant_struct<T_shared_param>::value ? 1 : 1+num_shared_operands ;
-
-        for(std::size_t i=0, ij=0; i != num_jobs; ++i) {
-          operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
-                                Eigen::Matrix<T_job_param, Eigen::Dynamic, 1> >
-            ops_partials(*shared_params_operands_, (*job_params_operands_)[i]);
-
-          for(std::size_t j=0; j != world_f_out[i]; ++j, ++ij) {
-            // check if the outputs flags a failure
-            if(unlikely(world_result(0,ij) == std::numeric_limits<double>::max())) {
-              throw std::runtime_error("MPI error.");
-            }
-
-            if (!is_constant_struct<T_shared_param>::value) {
-              ops_partials.edge1_.partials_ = world_result.block(1,ij,num_shared_operands,1);
-            }
-              
-            if (!is_constant_struct<T_job_param>::value) {
-              ops_partials.edge2_.partials_ = world_result.block(offset_job_params,ij,num_job_operands,1);
-            }
-            
-            out(ij) = ops_partials.build(world_result(0,ij));
-          }
-        }
-
-        return(out);
+        return(combine_(world_result, world_f_out));
       }
     };
 
@@ -106,7 +65,7 @@ namespace stan {
                  const std::vector<std::vector<int>>& x_i,
                  std::ostream* msgs = 0) {
       typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-      typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+      typedef mpi_map_rect_combine<F, T_shared_param, T_job_param> CombineF;
       
       mpi_parallel_call<call_id,ReduceF,CombineF> job_chunk(shared_params, job_params, x_r, x_i);
 
@@ -114,3 +73,26 @@ namespace stan {
     }
   }
 }
+
+
+#define STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, SHARED, JOB) \
+  namespace stan { namespace math { namespace internal {                \
+                       typedef FUNCTOR mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _; \
+                       typedef map_rect_reduce<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_ ; \
+                       typedef mpi_map_rect_combine<mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _, SHARED, JOB> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_ ; \
+                       typedef mpi_parallel_call<CALLID, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _red_, mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _comb_> mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_ ; \
+      } } }                                                             \
+  STAN_REGISTER_MPI_DISTRIBUTED_APPLY(stan::math::internal::mpi_mr_ ## CALLID ## _ ## SHARED ## _ ## JOB ## _pcall_)
+
+
+#define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)           \
+  STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double)
+
+
+// redefine register macro to use MPI variant
+#undef STAN_REGISTER_MAP_RECT
+#define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR) \
+  STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)
+
+
+#endif
