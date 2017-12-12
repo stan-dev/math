@@ -145,7 +145,7 @@ pipeline {
                     ${setupCC(false)}
                     echo 'O=0' >> make/local
                     echo N_TESTS=${env.N_TESTS} >> make/local
-                    ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || head -n1000; echo "..."; tail -n 10000 dist_test.log; false
+                    ./runTests.py -j${env.PARALLEL} test/prob
                     """
 
             }
