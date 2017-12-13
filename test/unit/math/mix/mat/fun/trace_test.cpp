@@ -9,12 +9,11 @@ TEST(AgradMixMatrixTrace, fv) {
   using stan::math::var;
 
   matrix_fv a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
+  a << -1.0, 2.0, 5.0, 10.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
 
   fvar<var> s = trace(a);
   EXPECT_FLOAT_EQ(9.0, s.val_.val());
@@ -27,16 +26,15 @@ TEST(AgradMixMatrixTrace, ffv) {
   using stan::math::var;
 
   matrix_ffv a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
-   a(0, 0).val_.d_ = 1.0;
-   a(0, 1).val_.d_ = 1.0;
-   a(1, 0).val_.d_ = 1.0;
-   a(1, 1).val_.d_ = 1.0;
+  a << -1.0, 2.0, 5.0, 10.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
+  a(0, 0).val_.d_ = 1.0;
+  a(0, 1).val_.d_ = 1.0;
+  a(1, 0).val_.d_ = 1.0;
+  a(1, 1).val_.d_ = 1.0;
 
   fvar<fvar<var> > s = trace(a);
   EXPECT_FLOAT_EQ(9.0, s.val_.val().val());

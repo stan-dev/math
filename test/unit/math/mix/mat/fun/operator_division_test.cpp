@@ -442,8 +442,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
-                      v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                      v1(1, 1).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
@@ -470,8 +470,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
   matrix_fv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
-                      v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                      v1(1, 1).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
@@ -1154,4 +1154,3 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
   EXPECT_FLOAT_EQ(0, h[3]);
 }
-

@@ -37,7 +37,6 @@ TEST(MathMatrix, sd) {
   rv << 1.0, 2.0, 3.0;
   EXPECT_FLOAT_EQ(1.0, sd(rv));
 
-
   stan::math::matrix_d m;
   EXPECT_THROW(sd(m), std::invalid_argument);
   m = stan::math::matrix_d(1, 1);

@@ -19,7 +19,6 @@ TEST(AgradFwdBesselFirstKind, Fvar) {
   EXPECT_FLOAT_EQ(-0.7461432154878245145319, x.d_);
 }
 
-
 TEST(AgradFwdBesselFirstKind, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::bessel_first_kind;
@@ -48,8 +47,7 @@ TEST(AgradFwdBesselFirstKind, FvarFvarDouble) {
 
 struct bessel_first_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_first_kind(1, arg1);
   }
 };

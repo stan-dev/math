@@ -3,7 +3,6 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-
 TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
   using stan::math::var;
 
@@ -19,7 +18,7 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_dv) {
 
   size_t S = 1;
   size_t N = 2;
-  size_t size = N * (1+S);
+  size_t size = N * (1 + S);
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
@@ -57,7 +56,7 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vd) {
 
   size_t N = 2;
   size_t S = N;
-  size_t size = N * (1+S);
+  size_t size = N * (1 + S);
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
@@ -98,8 +97,8 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
   std::vector<var> theta_v(theta_d.begin(), theta_d.end());
 
   size_t N = 2;
-  size_t S = N+1;
-  size_t size = N * (1+S);
+  size_t S = N + 1;
+  size_t size = N * (1 + S);
   size_t T = 10;
   size_t k = 0;
   std::vector<std::vector<double> > ys_coupled(T);
@@ -125,4 +124,3 @@ TEST(StanMathRevDecoupleOdeStates, decouple_ode_states_vv) {
                       // + y0[n].val(),
                       ys[t][n].val());
 }
-

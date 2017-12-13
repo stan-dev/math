@@ -16,8 +16,10 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(1.0, d[0].d_);
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
-  e[0].d_ = 2.0;  e[1].d_ = 1.0;
+  e[0] = 5.9;
+  e[1] = -1.2;
+  e[0].d_ = 2.0;
+  e[1].d_ = 1.0;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0].val_, f[0].val_);
@@ -26,8 +28,12 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(3.0, f[1].d_);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
-  g[0].d_ = 4.0;  g[1].d_ = 2.0;   g[2].d_ = 3.0;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
+  g[0].d_ = 4.0;
+  g[1].d_ = 2.0;
+  g[2].d_ = 3.0;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0].val_, h[0].val_);
@@ -50,8 +56,10 @@ void test_cumulative_sum2() {
   EXPECT_FLOAT_EQ(1.0, d[0].d_.val());
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
-  e[0].d_ = 2.0;  e[1].d_ = 1.0;
+  e[0] = 5.9;
+  e[1] = -1.2;
+  e[0].d_ = 2.0;
+  e[1].d_ = 1.0;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0].val_.val(), f[0].val_.val());
@@ -64,8 +72,12 @@ void test_cumulative_sum2() {
   EXPECT_FLOAT_EQ(0.0, grad[1]);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
-  g[0].d_ = 4.0;  g[1].d_ = 2.0;   g[2].d_ = 3.0;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
+  g[0].d_ = 4.0;
+  g[1].d_ = 2.0;
+  g[2].d_ = 3.0;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0].val_.val(), h[0].val_.val());
@@ -93,8 +105,10 @@ void test_cumulative_sum3() {
   EXPECT_FLOAT_EQ(1.0, d[0].d_.val());
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
-  e[0].d_ = 2.0;  e[1].d_ = 1.0;
+  e[0] = 5.9;
+  e[1] = -1.2;
+  e[0].d_ = 2.0;
+  e[1].d_ = 1.0;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0].val_.val(), f[0].val_.val());
@@ -103,8 +117,12 @@ void test_cumulative_sum3() {
   EXPECT_FLOAT_EQ(3.0, f[1].d_.val());
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
-  g[0].d_ = 4.0;  g[1].d_ = 2.0;   g[2].d_ = 3.0;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
+  g[0].d_ = 4.0;
+  g[1].d_ = 2.0;
+  g[2].d_ = 3.0;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0].val_.val(), h[0].val_.val());
@@ -127,8 +145,10 @@ void test_cumulative_sum4() {
   EXPECT_FLOAT_EQ(1.0, d[0].d_.val().val());
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
-  e[0].d_ = 2.0;  e[1].d_ = 1.0;
+  e[0] = 5.9;
+  e[1] = -1.2;
+  e[0].d_ = 2.0;
+  e[1].d_ = 1.0;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0].val_.val().val(), f[0].val_.val().val());
@@ -141,8 +161,12 @@ void test_cumulative_sum4() {
   EXPECT_FLOAT_EQ(0.0, grad[1]);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
-  g[0].d_ = 4.0;  g[1].d_ = 2.0;   g[2].d_ = 3.0;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
+  g[0].d_ = 4.0;
+  g[1].d_ = 2.0;
+  g[2].d_ = 3.0;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0].val_.val().val(), h[0].val_.val().val());
@@ -151,8 +175,8 @@ void test_cumulative_sum4() {
   EXPECT_FLOAT_EQ(4.0, h[0].d_.val().val());
   EXPECT_FLOAT_EQ(6.0, h[1].d_.val().val());
   EXPECT_FLOAT_EQ(9.0, h[2].d_.val().val());
-  grad = cgrad(h[2].val().val(), g[0].val().val(),
-               g[1].val().val(), g[2].val().val());
+  grad = cgrad(h[2].val().val(), g[0].val().val(), g[1].val().val(),
+               g[2].val().val());
   EXPECT_EQ(3U, grad.size());
   EXPECT_FLOAT_EQ(1.0, grad[0]);
   EXPECT_FLOAT_EQ(1.0, grad[1]);

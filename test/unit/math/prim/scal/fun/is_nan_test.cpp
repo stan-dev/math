@@ -15,4 +15,3 @@ TEST(MathFunctions, is_nan) {
   EXPECT_FALSE(stan::math::is_nan(min));
   EXPECT_FALSE(stan::math::is_nan(max));
 }
-

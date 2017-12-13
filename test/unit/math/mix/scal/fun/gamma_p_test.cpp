@@ -5,7 +5,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -104,8 +103,6 @@ TEST(AgradFwdGammaP, FvarVar_Double_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(-0.21349931, g[0]);
 }
-
-
 
 TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -346,10 +343,8 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_3rdDeriv) {
 
 struct gamma_p_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return gamma_p(arg1, arg2);
   }
 };

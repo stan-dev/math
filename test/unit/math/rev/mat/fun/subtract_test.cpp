@@ -90,8 +90,8 @@ TEST(AgradRevMatrix, subtract_rowvector_rowvector) {
   using stan::math::row_vector_v;
 
   row_vector_d expected_output(5);
-  row_vector_d  output_d;
-  row_vector_v  output;
+  row_vector_d output_d;
+  row_vector_v output;
   row_vector_d rvd_1(5), rvd_2(5);
   row_vector_v rvv_1(5), rvv_2(5);
 

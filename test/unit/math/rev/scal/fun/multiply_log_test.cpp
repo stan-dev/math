@@ -42,13 +42,13 @@ TEST(AgradRev, multiply_log_var_var) {
   AVAR a = 2.2;
   AVAR b = 3.3;
   AVAR f = multiply_log(a, b);
-  EXPECT_FLOAT_EQ(2.2*std::log(3.3), f.val()) << "Reasonable values";
+  EXPECT_FLOAT_EQ(2.2 * std::log(3.3), f.val()) << "Reasonable values";
 
   AVEC x = createAVEC(a, b);
   VEC g;
   f.grad(x, g);
   EXPECT_FLOAT_EQ(std::log(b.val()), g[0]);
-  EXPECT_FLOAT_EQ(a.val()/b.val(), g[1]);
+  EXPECT_FLOAT_EQ(a.val() / b.val(), g[1]);
 
   a = 0.0;
   b = 0.0;
@@ -66,7 +66,7 @@ TEST(AgradRev, multiply_log_var_double) {
   AVAR a = 2.2;
   double b = 3.3;
   AVAR f = multiply_log(a, b);
-  EXPECT_FLOAT_EQ(2.2*std::log(3.3), f.val()) << "Reasonable values";
+  EXPECT_FLOAT_EQ(2.2 * std::log(3.3), f.val()) << "Reasonable values";
 
   AVEC x = createAVEC(a);
   VEC g;
@@ -87,12 +87,12 @@ TEST(AgradRev, multiply_log_double_var) {
   double a = 2.2;
   AVAR b = 3.3;
   AVAR f = multiply_log(a, b);
-  EXPECT_FLOAT_EQ(2.2*std::log(3.3), f.val()) << "Reasonable values";
+  EXPECT_FLOAT_EQ(2.2 * std::log(3.3), f.val()) << "Reasonable values";
 
   AVEC x = createAVEC(b);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(a/b.val(), g[0]);
+  EXPECT_FLOAT_EQ(a / b.val(), g[0]);
 
   a = 0.0;
   b = 0.0;
@@ -107,10 +107,8 @@ TEST(AgradRev, multiply_log_double_var) {
 
 struct multiply_log_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return multiply_log(arg1, arg2);
   }
 };

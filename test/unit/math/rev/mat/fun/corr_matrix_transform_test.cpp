@@ -21,8 +21,8 @@ TEST(prob_transform, corr_matrix_jacobian) {
   for (int i = 0; i < X.size(); ++i)
     x.push_back(X(i));
   var lp = 0.0;
-  Matrix<var, Dynamic, Dynamic> Sigma = stan::math::corr_matrix_constrain(X, K,
-                                                                          lp);
+  Matrix<var, Dynamic, Dynamic> Sigma
+      = stan::math::corr_matrix_constrain(X, K, lp);
   std::vector<var> y;
   for (int m = 0; m < K; ++m)
     for (int n = 0; n < m; ++n)

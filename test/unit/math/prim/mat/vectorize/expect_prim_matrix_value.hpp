@@ -14,7 +14,7 @@ void expect_prim_matrix_value() {
   MatrixXd a(valid_inputs.size(), 3);
 
   for (int i = 0; i < a.size(); i++) {
-    a(i) =  valid_inputs[(i % valid_inputs.size())];
+    a(i) = valid_inputs[(i % valid_inputs.size())];
   }
 
   MatrixXd fa = F::template apply<MatrixXd>(a);

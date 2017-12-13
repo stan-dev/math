@@ -28,7 +28,7 @@ TEST(MathMatrixTail, TailVector4) {
   Eigen::VectorXd v12 = tail(v, 2);
   EXPECT_EQ(2, v12.size());
   for (int n = 0; n < 2; ++n)
-    EXPECT_FLOAT_EQ(v[n+1], v12[n]);
+    EXPECT_FLOAT_EQ(v[n + 1], v12[n]);
 }
 
 TEST(MathMatrixTail, TailRowVector1) {
@@ -56,34 +56,41 @@ TEST(MathMatrixTail, TailRowVector4) {
   Eigen::RowVectorXd v12 = tail(v, 2);
   EXPECT_EQ(2, v12.size());
   for (int n = 0; n < 2; ++n)
-    EXPECT_FLOAT_EQ(v[n+1], v12[n]);
+    EXPECT_FLOAT_EQ(v[n + 1], v12[n]);
 }
-
 
 TEST(MathMatrixTail, TailStdVector1) {
   using stan::math::tail;
   std::vector<int> v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(0U, tail(v, 0).size());
 }
 TEST(MathMatrixTail, TailStdVector2) {
   using stan::math::tail;
   std::vector<int> v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(3U, tail(v, 3).size());
 }
 TEST(MathMatrixTail, TailStdVector3) {
   using stan::math::tail;
   std::vector<int> v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_THROW(tail(v, 4), std::out_of_range);
 }
 TEST(MathMatrixTail, TailStdVector4) {
   using stan::math::tail;
   std::vector<int> v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   std::vector<int> v12 = tail(v, 2);
   EXPECT_EQ(2U, v12.size());
   for (int n = 0; n < 2; ++n)
-    EXPECT_FLOAT_EQ(v[n+1], v12[n]);
+    EXPECT_FLOAT_EQ(v[n + 1], v12[n]);
 }

@@ -5,35 +5,34 @@
 #include <boost/math/special_functions/erf.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Structure to wrap erfc() so that it can be vectorized.
-     * @param x Variable.
-     * @tparam T Variable type.
-     * @return Complementary error function applied to x. 
-     */
-    struct erfc_fun {
-      template <typename T>
-      static inline T fun(const T& x) {
-        using boost::math::erfc;
-        return erfc(x);
-      }
-    };
-
-    /**
-     * Vectorized version of erfc().
-     * @param x Container.
-     * @tparam T Container type.
-     * @return Complementary error function applied to each value in x. 
-     */
-    template <typename T>
-    inline typename apply_scalar_unary<erfc_fun, T>::return_t
-    erfc(const T& x) {
-      return apply_scalar_unary<erfc_fun, T>::apply(x);
-    }
-
+/**
+ * Structure to wrap erfc() so that it can be vectorized.
+ * @param x Variable.
+ * @tparam T Variable type.
+ * @return Complementary error function applied to x.
+ */
+struct erfc_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    using boost::math::erfc;
+    return erfc(x);
   }
+};
+
+/**
+ * Vectorized version of erfc().
+ * @param x Container.
+ * @tparam T Container type.
+ * @return Complementary error function applied to each value in x.
+ */
+template <typename T>
+inline typename apply_scalar_unary<erfc_fun, T>::return_t erfc(const T& x) {
+  return apply_scalar_unary<erfc_fun, T>::apply(x);
 }
+
+}  // namespace math
+}  // namespace stan
 
 #endif

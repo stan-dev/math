@@ -13,8 +13,7 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix) {
   EXPECT_NO_THROW(check_corr_matrix("test", "y", y));
 
   y << 10, 0, 0, 10;
-  EXPECT_THROW(check_corr_matrix("test", "y", y),
-               std::domain_error);
+  EXPECT_THROW(check_corr_matrix("test", "y", y), std::domain_error);
 }
 
 TEST(ErrorHandlingMatrix, CheckCorrMatrix_one_indexed_message) {
@@ -32,11 +31,9 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("(1,1)"))
-    << message;
+  EXPECT_NE(std::string::npos, message.find("(1,1)")) << message;
 
-  EXPECT_EQ(std::string::npos, message.find("(0, 0)"))
-    << message;
+  EXPECT_EQ(std::string::npos, message.find("(0, 0)")) << message;
 }
 
 TEST(ErrorHandlingMatrix, CheckCorrMatrix_nan) {
@@ -51,7 +48,6 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix_nan) {
 
     y << 10, 0, 0, 10;
     y(i) = nan;
-    EXPECT_THROW(check_corr_matrix("test", "y", y),
-                 std::domain_error);
+    EXPECT_THROW(check_corr_matrix("test", "y", y), std::domain_error);
   }
 }

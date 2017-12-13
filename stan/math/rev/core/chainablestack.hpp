@@ -4,13 +4,13 @@
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    class vari;
-    class chainable_alloc;
+class vari;
+class chainable_alloc;
 
-    typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
+typedef AutodiffStackStorage<vari, chainable_alloc> ChainableStack;
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

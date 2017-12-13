@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 
-
 TEST(AgradMixMatrixSubCol, SubCol1_matrix_fv) {
   using stan::math::sub_col;
   stan::math::matrix_fv m(3, 4);
@@ -54,8 +53,8 @@ TEST(AgradMixMatrixSubCol, SubCol6_matrix_fv) {
   stan::math::row_vector_fv v = sub_col(m, 1, 2, 2);
   EXPECT_EQ(2, v.size());
   for (int i = 0; i < 2; ++i) {
-    EXPECT_FLOAT_EQ(m(0+i, 1).val_.val(), v(i).val_.val());
-    EXPECT_FLOAT_EQ(m(0+i, 1).d_.val(), v(i).d_.val());
+    EXPECT_FLOAT_EQ(m(0 + i, 1).val_.val(), v(i).val_.val());
+    EXPECT_FLOAT_EQ(m(0 + i, 1).d_.val(), v(i).d_.val());
   }
 }
 TEST(AgradMixMatrixSubCol, SubCol1_matrix_ffv) {
@@ -109,7 +108,7 @@ TEST(AgradMixMatrixSubCol, SubCol6_matrix_ffv) {
   stan::math::row_vector_ffv v = sub_col(m, 1, 2, 2);
   EXPECT_EQ(2, v.size());
   for (int i = 0; i < 2; ++i) {
-    EXPECT_FLOAT_EQ(m(0+i, 1).val_.val_.val(), v(i).val_.val_.val());
-    EXPECT_FLOAT_EQ(m(0+i, 1).d_.val_.val(), v(i).d_.val_.val());
+    EXPECT_FLOAT_EQ(m(0 + i, 1).val_.val_.val(), v(i).val_.val_.val());
+    EXPECT_FLOAT_EQ(m(0 + i, 1).d_.val_.val(), v(i).d_.val_.val());
   }
 }

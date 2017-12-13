@@ -4,9 +4,9 @@
 #include <tuple>
 
 /*
- * apply_template_permutations_helper is the entry point for the template recursion
- * needed for apply_template_permutations. It calls func<type[I], type[J], type[K]>(rig),
- * and continues the recursion by decrementing K.
+ * apply_template_permutations_helper is the entry point for the template
+ * recursion needed for apply_template_permutations. It calls func<type[I],
+ * type[J], type[K]>(rig), and continues the recursion by decrementing K.
  *
  * tparam T_typelist Tuple templated with list of types to iterate through
  * tparam T_functor Templated functor
@@ -15,17 +15,17 @@
  * tparam J Loop index for second type
  * tparam K Loop index for third type
  */
-template<typename T_typelist, typename T_functor, typename T_param, int I,
-         int J, int K>
+template <typename T_typelist, typename T_functor, typename T_param, int I,
+          int J, int K>
 struct apply_template_permutations_helper {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
                              typename std::tuple_element<J, T_typelist>::type,
-                             typename std::tuple_element<K, T_typelist>::type>
-      (param);
+                             typename std::tuple_element<K, T_typelist>::type>(
+        param);
 
-    apply_template_permutations_helper
-      <T_typelist, T_functor, T_param, I, J, K - 1>{}(func, param);
+    apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J,
+                                       K - 1>{}(func, param);
   }
 };
 
@@ -41,19 +41,19 @@ struct apply_template_permutations_helper {
  * tparam J Loop index for second type
  * tparam K Loop index for third type
  */
-template<typename T_typelist, typename T_functor, typename T_param, int I,
-         int J>
+template <typename T_typelist, typename T_functor, typename T_param, int I,
+          int J>
 struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J,
                                           0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
                              typename std::tuple_element<J, T_typelist>::type,
-                             typename std::tuple_element<0, T_typelist>::type>
-      (param);
+                             typename std::tuple_element<0, T_typelist>::type>(
+        param);
 
-    apply_template_permutations_helper
-      <T_typelist, T_functor, T_param, I, J - 1,
-       std::tuple_size<T_typelist>::value - 1>{}(func, param);
+    apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J - 1,
+                                       std::tuple_size<T_typelist>::value
+                                           - 1>{}(func, param);
   }
 };
 
@@ -67,19 +67,19 @@ struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, J,
  * tparam T_param Parameter to pass to functor
  * tparam I Loop index for first type
  */
-template<typename T_typelist, typename T_functor, typename T_param, int I>
+template <typename T_typelist, typename T_functor, typename T_param, int I>
 struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, 0,
                                           0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<I, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type,
-                             typename std::tuple_element<0, T_typelist>::type>
-      (param);
+                             typename std::tuple_element<0, T_typelist>::type>(
+        param);
 
     apply_template_permutations_helper<T_typelist, T_functor, T_param, I - 1,
-                             std::tuple_size<T_typelist>::value - 1,
-                             std::tuple_size<T_typelist>::value - 1>{}(func,
-                                                                       param);
+                                       std::tuple_size<T_typelist>::value - 1,
+                                       std::tuple_size<T_typelist>::value
+                                           - 1>{}(func, param);
   }
 };
 
@@ -92,17 +92,16 @@ struct apply_template_permutations_helper<T_typelist, T_functor, T_param, I, 0,
  * tparam T_functor Templated functor
  * tparam T_param Parameter to pass to functor
  */
-template<typename T_typelist, typename T_functor, typename T_param>
+template <typename T_typelist, typename T_functor, typename T_param>
 struct apply_template_permutations_helper<T_typelist, T_functor, T_param, 0, 0,
                                           0> {
   void operator()(const T_functor& func, const T_param& param) const {
     func.template operator()<typename std::tuple_element<0, T_typelist>::type,
                              typename std::tuple_element<0, T_typelist>::type,
-                             typename std::tuple_element<0, T_typelist>::type>
-      (param);
+                             typename std::tuple_element<0, T_typelist>::type>(
+        param);
   }
 };
-
 
 /*
  * apply_template_permutations uses template recursion to call the functor func
@@ -118,13 +117,13 @@ struct apply_template_permutations_helper<T_typelist, T_functor, T_param, 0, 0,
  * tparam T_functor Templated functor
  * tparam T_param Parameter to pass to functor
  */
-template<typename T_typelist, typename T_functor, typename T_param>
+template <typename T_typelist, typename T_functor, typename T_param>
 void apply_template_permutations(const T_functor& func, const T_param& param) {
-  apply_template_permutations_helper
-    <T_typelist, T_functor, T_param,
-     std::tuple_size<T_typelist>::value - 1,
-     std::tuple_size<T_typelist>::value - 1,
-     std::tuple_size<T_typelist>::value - 1>{}(func, param);
+  apply_template_permutations_helper<T_typelist, T_functor, T_param,
+                                     std::tuple_size<T_typelist>::value - 1,
+                                     std::tuple_size<T_typelist>::value - 1,
+                                     std::tuple_size<T_typelist>::value - 1>{}(
+      func, param);
 }
 
 #endif

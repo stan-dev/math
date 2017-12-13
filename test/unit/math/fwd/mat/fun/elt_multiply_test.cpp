@@ -7,12 +7,12 @@ TEST(AgradFwdMatrixEltMultiply, fd_vec_vv) {
 
   vector_fd x(2);
   x << 2, 5;
-   x(0).d_ = 1.0;
-   x(1).d_ = 1.0;
+  x(0).d_ = 1.0;
+  x(1).d_ = 1.0;
   vector_fd y(2);
   y << 10, 100;
-   y(0).d_ = 1.0;
-   y(1).d_ = 1.0;
+  y(0).d_ = 1.0;
+  y(1).d_ = 1.0;
 
   vector_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0).val_);
@@ -28,8 +28,8 @@ TEST(AgradFwdMatrixEltMultiply, fd_vec_vd) {
 
   vector_fd x(2);
   x << 2, 5;
-   x(0).d_ = 1.0;
-   x(1).d_ = 1.0;
+  x(0).d_ = 1.0;
+  x(1).d_ = 1.0;
   vector_d y(2);
   y << 10, 100;
 
@@ -48,8 +48,8 @@ TEST(AgradFwdMatrixEltMultiply, fd_vec_dv) {
   x << 2, 5;
   vector_fd y(2);
   y << 10, 100;
-   y(0).d_ = 1.0;
-   y(1).d_ = 1.0;
+  y(0).d_ = 1.0;
+  y(1).d_ = 1.0;
 
   vector_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0).val_);
@@ -64,12 +64,12 @@ TEST(AgradFwdMatrixEltMultiply, fd_row_vec_vv) {
 
   row_vector_fd x(2);
   x << 2, 5;
-   x(0).d_ = 1.0;
-   x(1).d_ = 1.0;
+  x(0).d_ = 1.0;
+  x(1).d_ = 1.0;
   row_vector_fd y(2);
   y << 10, 100;
-   y(0).d_ = 1.0;
-   y(1).d_ = 1.0;
+  y(0).d_ = 1.0;
+  y(1).d_ = 1.0;
 
   row_vector_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0).val_);
@@ -84,8 +84,8 @@ TEST(AgradFwdMatrixEltMultiply, fd_row_vec_vd) {
 
   row_vector_fd x(2);
   x << 2, 5;
-   x(0).d_ = 1.0;
-   x(1).d_ = 1.0;
+  x(0).d_ = 1.0;
+  x(1).d_ = 1.0;
   row_vector_d y(2);
   y << 10, 100;
 
@@ -104,8 +104,8 @@ TEST(AgradFwdMatrixEltMultiply, fd_row_vec_dv) {
   x << 2, 5;
   row_vector_fd y(2);
   y << 10, 100;
-   y(0).d_ = 1.0;
-   y(1).d_ = 1.0;
+  y(0).d_ = 1.0;
+  y(1).d_ = 1.0;
 
   row_vector_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0).val_);
@@ -120,20 +120,20 @@ TEST(AgradFwdMatrixEltMultiply, fd_matrix_vv) {
 
   matrix_fd x(2, 3);
   x << 2, 5, 6, 9, 13, 29;
-   x(0, 0).d_ = 1.0;
-   x(0, 1).d_ = 1.0;
-   x(0, 2).d_ = 1.0;
-   x(1, 0).d_ = 1.0;
-   x(1, 1).d_ = 1.0;
-   x(1, 2).d_ = 1.0;
+  x(0, 0).d_ = 1.0;
+  x(0, 1).d_ = 1.0;
+  x(0, 2).d_ = 1.0;
+  x(1, 0).d_ = 1.0;
+  x(1, 1).d_ = 1.0;
+  x(1, 2).d_ = 1.0;
   matrix_fd y(2, 3);
   y << 10, 100, 1000, 10000, 100000, 1000000;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
 
   matrix_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0, 0).val_);
@@ -150,12 +150,12 @@ TEST(AgradFwdMatrixEltMultiply, fd_matrix_vd) {
 
   matrix_fd x(2, 3);
   x << 2, 5, 6, 9, 13, 29;
-   x(0, 0).d_ = 1.0;
-   x(0, 1).d_ = 1.0;
-   x(0, 2).d_ = 1.0;
-   x(1, 0).d_ = 1.0;
-   x(1, 1).d_ = 1.0;
-   x(1, 2).d_ = 1.0;
+  x(0, 0).d_ = 1.0;
+  x(0, 1).d_ = 1.0;
+  x(0, 2).d_ = 1.0;
+  x(1, 0).d_ = 1.0;
+  x(1, 1).d_ = 1.0;
+  x(1, 2).d_ = 1.0;
   matrix_d y(2, 3);
   y << 10, 100, 1000, 10000, 100000, 1000000;
 
@@ -176,12 +176,12 @@ TEST(AgradFwdMatrixEltMultiply, fd_matrix_dv) {
   x << 2, 5, 6, 9, 13, 29;
   matrix_fd y(2, 3);
   y << 10, 100, 1000, 10000, 100000, 1000000;
-   y(0, 0).d_ = 1.0;
-   y(0, 1).d_ = 1.0;
-   y(0, 2).d_ = 1.0;
-   y(1, 0).d_ = 1.0;
-   y(1, 1).d_ = 1.0;
-   y(1, 2).d_ = 1.0;
+  y(0, 0).d_ = 1.0;
+  y(0, 1).d_ = 1.0;
+  y(0, 2).d_ = 1.0;
+  y(1, 0).d_ = 1.0;
+  y(1, 1).d_ = 1.0;
+  y(1, 2).d_ = 1.0;
 
   matrix_fd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0, 0).val_);
@@ -441,7 +441,6 @@ TEST(AgradFwdMatrixEltMultiply, ffd_matrix_dv) {
   x << 2, 5, 6, 9, 13, 29;
   matrix_ffd y(2, 3);
   y << g, h, i, j, k, l;
-
 
   matrix_ffd z = elt_multiply(x, y);
   EXPECT_FLOAT_EQ(20.0, z(0, 0).val_.val());

@@ -14,7 +14,6 @@ TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
   x_vec.resize(3);
   high_vec.resize(3);
 
-
   // x_vec, high
   x_vec << -5, 0, 5;
   high = 10;
@@ -26,18 +25,15 @@ TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
 
   x_vec << -5, 0, 5;
   high = 5;
-  EXPECT_THROW(check_less(function, "x", x_vec, high),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high), std::domain_error);
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = 5;
-  EXPECT_THROW(check_less(function, "x", x_vec, high),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high), std::domain_error);
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_less(function, "x", x_vec, high),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high), std::domain_error);
 
   // x_vec, high_vec
   x_vec << -5, 0, 5;
@@ -50,19 +46,15 @@ TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
 
   x_vec << -5, 0, 5;
   high_vec << 10, 10, 5;
-  EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high_vec), std::domain_error);
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, 10;
-  EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high_vec), std::domain_error);
 
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_less(function, "x", x_vec, high_vec),
-               std::domain_error);
-
+  EXPECT_THROW(check_less(function, "x", x_vec, high_vec), std::domain_error);
 
   // x, high_vec
   x = -100;
@@ -75,19 +67,16 @@ TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
 
   x = 5;
   high_vec << 100, 200, 5;
-  EXPECT_THROW(check_less(function, "x", x, high_vec),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x, high_vec), std::domain_error);
 
   x = std::numeric_limits<double>::infinity();
   high_vec << 10, 20, 30;
-  EXPECT_THROW(check_less(function, "x", x, high_vec),
-               std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x, high_vec), std::domain_error);
 
   x = std::numeric_limits<double>::infinity();
   high_vec << std::numeric_limits<double>::infinity(),
-    std::numeric_limits<double>::infinity(),
-    std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_less(function, "x", x, high_vec),
-               std::domain_error);
+      std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity();
+  EXPECT_THROW(check_less(function, "x", x, high_vec), std::domain_error);
   stan::math::recover_memory();
 }

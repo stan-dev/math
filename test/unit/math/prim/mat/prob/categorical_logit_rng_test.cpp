@@ -32,9 +32,7 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
   int K = 3;
   VectorXd beta(K);
 
-  beta << -0.5,
-    0.1,
-    0.3;
+  beta << -0.5, 0.1, 0.3;
 
   VectorXd theta = softmax(beta);
   boost::math::chi_squared mydist(K - 1);
@@ -46,7 +44,7 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
     expect[i] = N * theta(i);
   }
 
-  for (int i = 0;  i < N; i++) {
+  for (int i = 0; i < N; i++) {
     int a = stan::math::categorical_logit_rng(beta, rng);
     bin[a - 1]++;
   }

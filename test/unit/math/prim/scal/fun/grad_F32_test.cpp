@@ -5,15 +5,15 @@
 // converge
 TEST(MathPrimScalFun, grad_F32_converges_by_z) {
   std::vector<double> g(6);
-  g[0] =  2.290726829685388;
-  g[1] =  2.290726829685388;
-  g[2] =  2.290726829685388;
+  g[0] = 2.290726829685388;
+  g[1] = 2.290726829685388;
+  g[2] = 2.290726829685388;
   g[3] = -2.290726829685388;
   g[4] = -2.290726829685388;
-  g[5] =  6.249999999999999;
+  g[5] = 6.249999999999999;
   double g_calc[6];
   stan::math::grad_F32(g_calc, 1.0, 1.0, 1.0, 1.0, 1.0, 0.6, 1e-10);
-  for (int i=0; i < 6; ++i)
+  for (int i = 0; i < 6; ++i)
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
 }
 
@@ -47,9 +47,8 @@ TEST(MathPrimScalFun, grad_F32_converges_by_z) {
 // at pole, should throw
 TEST(MathPrimScalFun, grad_F32_short_polynomial_undef) {
   double g_calc[6];
-  EXPECT_THROW(
-    stan::math::grad_F32(g_calc, 1.0, 12.0, -1.0, 10.0, -1.0, 1.0),
-    std::domain_error);
+  EXPECT_THROW(stan::math::grad_F32(g_calc, 1.0, 12.0, -1.0, 10.0, -1.0, 1.0),
+               std::domain_error);
 }
 
 // FIXME: Can't run until we use a continuation, crosses pole in digamma
@@ -73,23 +72,22 @@ TEST(MathPrimScalFun, grad_F32_diverge_by_z) {
   // This should throw
   // (Mathematica claims the answer is -10 but it's by continuation
   double g_calc[6];
-  EXPECT_THROW(
-    stan::math::grad_F32(g_calc, 1.0, 12.0, 1.0, 10.0, 1.0, 1.1),
-    std::domain_error);
+  EXPECT_THROW(stan::math::grad_F32(g_calc, 1.0, 12.0, 1.0, 10.0, 1.0, 1.1),
+               std::domain_error);
 }
 
 // convergence, double sign flip
 TEST(MathPrimScalFun, grad_F32_double_sign_flip_1) {
   double g_calc[6];
   std::vector<double> g(6);
-  g[0] =  0.03692914737912187;
+  g[0] = 0.03692914737912187;
   g[1] = -0.0749983829996620;
   g[2] = -0.0145982785371077;
   g[3] = -0.00367744563081578;
   g[4] = -0.0369291473791218;
-  g[5] =  0.1224673892640317;
+  g[5] = 0.1224673892640317;
   stan::math::grad_F32(g_calc, 1.0, -.5, -2.5, 10.0, 1.0, 0.3, 1e-10);
-  for (int i=0; i < 6; ++i)
+  for (int i = 0; i < 6; ++i)
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
 }
 
@@ -97,14 +95,14 @@ TEST(MathPrimScalFun, grad_F32_double_sign_flip_1) {
 TEST(MathPrimScalFun, grad_F32_double_sign_flip_2) {
   double g_calc[6];
   std::vector<double> g(6);
-  g[0] =  0.06517384196658483;
+  g[0] = 0.06517384196658483;
   g[1] = -0.1349675922478992;
   g[2] = -0.01422583581177123;
   g[3] = -0.00645591019603955;
   g[4] = -0.0651738419665848;
-  g[5] =  0.2147503542109778;
+  g[5] = 0.2147503542109778;
   stan::math::grad_F32(g_calc, 1.0, -.5, -4.5, 10.0, 1.0, 0.3, 1e-10);
-  for (int i=0; i < 6; ++i)
+  for (int i = 0; i < 6; ++i)
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
 }
 

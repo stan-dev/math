@@ -711,7 +711,6 @@ TEST(AgradMixMatrixSquaredDistance, vector_fv_rowvector_ffv2) {
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
 
-
   stan::math::fvar<fvar<var> > a = stan::math::squared_distance(v, rv);
 
   EXPECT_FLOAT_EQ(50, a.val_.val_.val());
@@ -755,7 +754,6 @@ TEST(AgradMixMatrixSquaredDistance, vector_fv_rowvector_ffv3) {
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
 
-
   stan::math::fvar<fvar<var> > a = stan::math::squared_distance(v, rv);
 
   EXPECT_FLOAT_EQ(50, a.val_.val_.val());
@@ -798,7 +796,6 @@ TEST(AgradMixMatrixSquaredDistance, vector_fv_rowvector_ffv4) {
   v(0).val_.d_ = 4.0;
   v(1).val_.d_ = 5.0;
   v(2).val_.d_ = 6.0;
-
 
   stan::math::fvar<fvar<var> > a = stan::math::squared_distance(v, rv);
 

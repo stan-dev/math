@@ -190,7 +190,6 @@ TEST(MathMatrixAssign, eigenRowVectorShapeMismatch) {
   EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
-
 TEST(MathMatrixAssign, eigenMatrixDoubleToDouble) {
   using stan::math::assign;
   using Eigen::Matrix;
@@ -276,12 +275,10 @@ TEST(MathMatrix, block2) {
   using stan::math::assign;
 
   MatrixXd a(2, 3);
-  a << 1, 2, 3,
-    4, 5, 6;
+  a << 1, 2, 3, 4, 5, 6;
 
   MatrixXd b(2, 2);
-  b << 10, 20,
-    30, 40;
+  b << 10, 20, 30, 40;
 
   assign(a.block(0, 0, 2, 2), b);
 
@@ -292,7 +289,6 @@ TEST(MathMatrix, block2) {
   EXPECT_FLOAT_EQ(a(0, 2), 3.0);
   EXPECT_FLOAT_EQ(a(1, 2), 6.0);
 }
-
 
 TEST(MathMatrix, vectorVector) {
   using std::vector;
@@ -314,19 +310,18 @@ TEST(MathMatrix, vectorVector) {
   }
 }
 
-
 TEST(MathMatrix, vectorVectorVector) {
   using std::vector;
   using stan::math::assign;
-  vector<vector<vector<double> > >
-    x(4, vector<vector<double> >(3, vector<double>(2)));
+  vector<vector<vector<double> > > x(
+      4, vector<vector<double> >(3, vector<double>(2)));
   for (size_t k = 0; k < 4; ++k)
     for (size_t i = 0; i < 3; ++i)
       for (size_t j = 0; j < 2; ++j)
         x[k][i][j] = (i + 1) * (j - 10) * (20 * k + 100);
 
-  vector<vector<vector<double> > >
-    y(4, vector<vector<double> >(3, vector<double>(2)));
+  vector<vector<vector<double> > > y(
+      4, vector<vector<double> >(3, vector<double>(2)));
 
   assign(y, x);
   EXPECT_EQ(4U, y.size());
@@ -381,4 +376,3 @@ TEST(MathMatrix, getAssignRow) {
   EXPECT_FLOAT_EQ(100.0, m(0, 1));
   EXPECT_FLOAT_EQ(1000.0, m(0, 2));
 }
-

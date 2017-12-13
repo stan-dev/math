@@ -51,7 +51,7 @@ TEST(ProbWelfordVarEstimator, sample_mean) {
   estimator.sample_mean(mean);
 
   for (int i = 0; i < n; ++i)
-  EXPECT_EQ(9.0 / 2.0, mean(i));
+    EXPECT_EQ(9.0 / 2.0, mean(i));
 }
 
 TEST(ProbWelfordVarEstimator, sample_variance) {

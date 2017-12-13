@@ -81,7 +81,6 @@ TEST(MathMatrix, subtract_c_rv) {
   EXPECT_FLOAT_EQ(1.0, result(2));
 }
 
-
 TEST(MathMatrix, subtract_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;

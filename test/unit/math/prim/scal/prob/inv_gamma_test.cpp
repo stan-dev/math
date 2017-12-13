@@ -13,11 +13,11 @@ TEST(ProbDistributionsInvGamma, error_check) {
   EXPECT_THROW(stan::math::inv_gamma_rng(-4.0, 3.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::inv_gamma_rng(4.0, -3.0, rng), std::domain_error);
   EXPECT_THROW(
-    stan::math::inv_gamma_rng(stan::math::positive_infinity(), 3.0, rng),
-    std::domain_error);
+      stan::math::inv_gamma_rng(stan::math::positive_infinity(), 3.0, rng),
+      std::domain_error);
   EXPECT_THROW(
-    stan::math::inv_gamma_rng(4, stan::math::positive_infinity(), rng),
-    std::domain_error);
+      stan::math::inv_gamma_rng(4, stan::math::positive_infinity(), rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsInvGamma, chiSquareGoodnessFitTest) {
@@ -31,7 +31,7 @@ TEST(ProbDistributionsInvGamma, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's Inverse Gamma distribution
-  boost::math::inverse_gamma_distribution<>dist(2.0, 1.0);
+  boost::math::inverse_gamma_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

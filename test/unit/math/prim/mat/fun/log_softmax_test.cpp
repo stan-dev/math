@@ -1,7 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-
 void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
   using std::log;
   using Eigen::Matrix;
@@ -11,21 +10,17 @@ void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
 
   int size = theta.size();
 
-  Matrix<double, Dynamic, 1> log_softmax_theta
-    = log_softmax(theta);
+  Matrix<double, Dynamic, 1> log_softmax_theta = log_softmax(theta);
 
-  Matrix<double, Dynamic, 1> softmax_theta
-    = softmax(theta);
+  Matrix<double, Dynamic, 1> softmax_theta = softmax(theta);
 
   Matrix<double, Dynamic, 1> log_softmax_theta_expected(size);
   for (int i = 0; i < size; ++i)
     log_softmax_theta_expected(i) = log(softmax_theta(i));
 
-  EXPECT_EQ(log_softmax_theta_expected.size(),
-            log_softmax_theta.size());
+  EXPECT_EQ(log_softmax_theta_expected.size(), log_softmax_theta.size());
   for (int i = 0; i < theta.size(); ++i)
-    EXPECT_FLOAT_EQ(log_softmax_theta_expected(i),
-                    log_softmax_theta(i));
+    EXPECT_FLOAT_EQ(log_softmax_theta_expected(i), log_softmax_theta(i));
 }
 
 TEST(MathMatrix, softmax) {
