@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_REDUCE_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_REDUCE_HPP
 
 namespace stan {
   namespace math {
@@ -55,8 +56,14 @@ namespace stan {
   }
 }
 
+#ifdef STAN_REGISTER_MPI_MAP_RECT_ALL
+
 #undef STAN_REGISTER_MPI_MAP_RECT_ALL
 
 #define STAN_REGISTER_MPI_MAP_RECT_ALL(CALLID, FUNCTOR)         \
   STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, double, double) \
   STAN_REGISTER_MPI_MAP_RECT(CALLID, FUNCTOR, var, var)
+
+#endif
+
+#endif
