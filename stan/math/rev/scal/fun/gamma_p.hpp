@@ -32,9 +32,8 @@ namespace stan {
           avi_->adj_ += adj_
             * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_, 1.0e-10);
           bvi_->adj_ += adj_ * exp(
-            - bvi_->val_ + (avi_->val_ - 1.0) * log(bvi_->val_) 
+            - bvi_->val_ + (avi_->val_ - 1.0) * log(bvi_->val_)
             - lgamma(avi_->val_));
-
         }
       };
 

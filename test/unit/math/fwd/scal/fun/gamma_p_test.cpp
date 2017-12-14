@@ -11,23 +11,24 @@ TEST(AgradFwdGammaP, gamma_p) {
 
   fvar<double> x(0.5001);
   x.d_ = 1.0;
-  fvar<double> y (1.0001);
+  fvar<double> y(1.0001);
   y.d_ = 1.0;
 
-  fvar<double> a = gamma_p(x,y);
-  EXPECT_FLOAT_EQ(gamma_p(0.5001,1.0001), a.val_);
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001,1.0001) - 0.3898178624664172, a.d_);
+  fvar<double> a = gamma_p(x, y);
+  EXPECT_FLOAT_EQ(gamma_p(0.5001, 1.0001), a.val_);
+  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001)
+                  - 0.3898178624664172, a.d_);
 
   double z = 1.0001;
   double w = 0.5001;
 
-  a = gamma_p(x,z);
-  EXPECT_FLOAT_EQ(gamma_p(0.5001,1.0001), a.val_);
+  a = gamma_p(x, z);
+  EXPECT_FLOAT_EQ(gamma_p(0.5001, 1.0001), a.val_);
   EXPECT_FLOAT_EQ(-0.3898178624664172, a.d_);
 
-  a = gamma_p(w,y);
-  EXPECT_FLOAT_EQ(gamma_p(0.5001,1.0001), a.val_);
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001,1.0001), a.d_);
+  a = gamma_p(w, y);
+  EXPECT_FLOAT_EQ(gamma_p(0.5001, 1.0001), a.val_);
+  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001), a.d_);
 
   EXPECT_THROW(gamma_p(-x, y), std::domain_error);
   EXPECT_THROW(gamma_p(x, -y), std::domain_error);
@@ -47,9 +48,9 @@ TEST(AgradFwdGammaP, FvarFvarDouble) {
 
   fvar<fvar<double> > a = gamma_p(x, y);
 
-  EXPECT_FLOAT_EQ(gamma_p(0.5001,1.0001), a.val_.val_);
+  EXPECT_FLOAT_EQ(gamma_p(0.5001, 1.0001), a.val_.val_);
   EXPECT_FLOAT_EQ(-0.3898178624664172, a.val_.d_);
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001,1.0001), a.d_.val_);
+  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001), a.d_.val_);
 
   EXPECT_FLOAT_EQ(0.40747109, a.d_.d_);
 }

@@ -10,18 +10,19 @@ TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  fvar<var> x(0.5001,1.0);
-  fvar<var> z(1.0001,1.0);
-  fvar<var> a = stan::math::gamma_p(x,z);
+  fvar<var> x(0.5001, 1.0);
+  fvar<var> z(1.0001, 1.0);
+  fvar<var> a = stan::math::gamma_p(x, z);
 
-  EXPECT_FLOAT_EQ(boost::math::gamma_p(0.5001,1.0001), a.val_.val());
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001,1.0001) - 0.3898178624664172, a.d_.val());
+  EXPECT_FLOAT_EQ(boost::math::gamma_p(0.5001, 1.0001), a.val_.val());
+  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001)
+                  - 0.3898178624664172, a.d_.val());
 
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;
-  a.val_.grad(y,g);
-  EXPECT_FLOAT_EQ(-0.3898178624664172,g[0]);
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001,1.0001),g[1]);
+  a.val_.grad(y, g);
+  EXPECT_FLOAT_EQ(-0.3898178624664172, g[0]);
+  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001), g[1]);
 }
 TEST(AgradFwdGammaP, Double_FvarVar_1stDeriv) {
   using stan::math::fvar;

@@ -40,7 +40,7 @@ namespace stan {
 
       T u = gamma_p(x1.val_, x2);
 
-      T der1 = grad_reg_lower_inc_gamma(x1.val_, x2, 1.0e-10); 
+      T der1 = grad_reg_lower_inc_gamma(x1.val_, x2, 1.0e-10);
 
       return fvar<T>(u, x1.d_ * der1);
     }
