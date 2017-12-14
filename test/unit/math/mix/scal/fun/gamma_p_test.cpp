@@ -5,8 +5,14 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
+struct AgradFwdGammaP : public testing::Test {
+  void SetUp() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+};
 
-TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
+TEST_F(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -24,7 +30,7 @@ TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.3898178624664172, g[0]);
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001), g[1]);
 }
-TEST(AgradFwdGammaP, Double_FvarVar_1stDeriv) {
+TEST_F(AgradFwdGammaP, Double_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -40,7 +46,7 @@ TEST(AgradFwdGammaP, Double_FvarVar_1stDeriv) {
   a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5, 1.0), g[0]);
 }
-TEST(AgradFwdGammaP, FvarVar_Double_1stDeriv) {
+TEST_F(AgradFwdGammaP, FvarVar_Double_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -56,7 +62,7 @@ TEST(AgradFwdGammaP, FvarVar_Double_1stDeriv) {
   a.val_.grad(y, g);
   EXPECT_FLOAT_EQ(-0.38983709, g[0]);
 }
-TEST(AgradFwdGammaP, FvarVar_FvarVar_2ndDeriv) {
+TEST_F(AgradFwdGammaP, FvarVar_FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -73,7 +79,7 @@ TEST(AgradFwdGammaP, FvarVar_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.19403456, g[0]);
   EXPECT_FLOAT_EQ(0.096204743, g[1]);
 }
-TEST(AgradFwdGammaP, Double_FvarVar_2ndDeriv) {
+TEST_F(AgradFwdGammaP, Double_FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -89,7 +95,7 @@ TEST(AgradFwdGammaP, Double_FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(-0.31133062, g[0]);
 }
-TEST(AgradFwdGammaP, FvarVar_Double_2ndDeriv) {
+TEST_F(AgradFwdGammaP, FvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -108,7 +114,7 @@ TEST(AgradFwdGammaP, FvarVar_Double_2ndDeriv) {
 
 
 
-TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -134,7 +140,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.38983709, g[0]);
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5, 1.0), g[1]);
 }
-TEST(AgradFwdGammaP, Double_FvarFvarVar_1stDeriv) {
+TEST_F(AgradFwdGammaP, Double_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -157,7 +163,7 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_1stDeriv) {
   a.val_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5, 1.0), g[0]);
 }
-TEST(AgradFwdGammaP, FvarFvarVar_Double_1stDeriv) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_Double_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -181,7 +187,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.38983709, g[0]);
 }
 
-TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -207,7 +213,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   EXPECT_FLOAT_EQ(-0.21349931, g[0]);
   EXPECT_FLOAT_EQ(0.40753537, g[1]);
 }
-TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -233,7 +239,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   EXPECT_FLOAT_EQ(0.40753385, g[0]);
   EXPECT_FLOAT_EQ(-0.31133062, g[1]);
 }
-TEST(AgradFwdGammaP, Double_FvarFvarVar_2ndDeriv) {
+TEST_F(AgradFwdGammaP, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -256,7 +262,7 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_2ndDeriv) {
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(-0.31133062, g[0]);
 }
-TEST(AgradFwdGammaP, FvarFvarVar_Double_2ndDeriv) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -280,7 +286,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.21349931, g[0]);
 }
 
-TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_3rdDeriv) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -306,7 +312,7 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(-0.22403987, g[0]);
   EXPECT_FLOAT_EQ(-0.40374705, g[1]);
 }
-TEST(AgradFwdGammaP, Double_FvarFvarVar_3rdDeriv) {
+TEST_F(AgradFwdGammaP, Double_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -325,7 +331,7 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_3rdDeriv) {
   a.d_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0.57077283, g[0]);
 }
-TEST(AgradFwdGammaP, FvarFvarVar_Double_3rdDeriv) {
+TEST_F(AgradFwdGammaP, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using boost::math::gamma_p;
@@ -355,7 +361,7 @@ struct gamma_p_fun {
   }
 };
 
-TEST(AgradFwdGammaP, nan) {
+TEST_F(AgradFwdGammaP, nan) {
   gamma_p_fun gamma_p_;
   test_nan_mix(gamma_p_, 3.0, 5.0, false);
 }
