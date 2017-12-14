@@ -1,5 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 using stan::math::check_ordered;
 
@@ -37,7 +40,7 @@ TEST(ErrorHandling, checkOrdered_one_indexed_message) {
   y.push_back(0);
   y.push_back(5);
   y.push_back(1);
-  
+
   try {
     check_ordered("check_ordered", "y", y);
     FAIL() << "should have thrown";

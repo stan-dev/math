@@ -2,9 +2,9 @@
 #define TEST_UNIT_MATH_FWD_MAT_VECTORIZE_EXPECT_FWD_STD_VECTOR_VALUE_HPP
 
 #include <stan/math/fwd/mat.hpp>
-#include <vector>
 #include <test/unit/math/fwd/mat/vectorize/build_fwd_vector.hpp>
 #include <test/unit/math/fwd/mat/vectorize/expect_val_deriv_eq.hpp>
+#include <vector>
 
 template <typename F, typename T>
 void expect_fwd_std_vector_value() {
@@ -28,13 +28,13 @@ void expect_fwd_std_vector_value() {
         else
           z.push_back(build_fwd_vector<F>(vector<T>()));
       }
-      vector<vector<T> > fz = 
+      vector<vector<T> > fz =
         F::template apply<vector<vector<T> > >(z);
       EXPECT_EQ(z.size(), fz.size());
       EXPECT_EQ(z[i].size(), fz[i].size());
       expect_val_deriv_eq(F::apply_base(z[i][j]), fz[i][j]);
     }
   }
-}    
+}
 
 #endif

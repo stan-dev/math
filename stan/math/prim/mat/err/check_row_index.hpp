@@ -27,8 +27,8 @@ namespace stan {
      * @throw <code>std::out_of_range</code> if the index is out of range.
      */
     template <typename T_y, int R, int C>
-    inline void check_row_index(const std::string& function,
-                                const std::string& name,
+    inline void check_row_index(const char* function,
+                                const char* name,
                                 const Eigen::Matrix<T_y, R, C>& y,
                                 size_t i) {
       if (i >= stan::error_index::value

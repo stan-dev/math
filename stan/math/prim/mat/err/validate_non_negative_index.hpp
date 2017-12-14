@@ -9,8 +9,8 @@ namespace stan {
   namespace math {
 
     inline void
-    validate_non_negative_index(const std::string& var_name,
-                                const std::string& expr,
+    validate_non_negative_index(const char* var_name,
+                                const char* expr,
                                 int val) {
       if (val < 0) {
         std::stringstream msg;

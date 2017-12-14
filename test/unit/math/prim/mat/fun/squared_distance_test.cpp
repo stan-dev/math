@@ -1,15 +1,16 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <limits>
 
 TEST(MathMatrix, squared_distance_vector_vector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;
-  
+
   v1.resize(3);
   v2.resize(3);
   v1 << 1, 3, -5;
   v2 << 4, -2, -1;
-  
+
   EXPECT_FLOAT_EQ(50, stan::math::squared_distance(v1, v2));
 
   v1.resize(0);
@@ -26,7 +27,7 @@ TEST(MathMatrix, squared_distance_vector_vector) {
 TEST(MathMatrix, squared_distance_rowvector_vector) {
   Eigen::Matrix<double, 1, Eigen::Dynamic> rv;
   Eigen::Matrix<double, Eigen::Dynamic, 1> v;
-  
+
   rv.resize(3);
   v.resize(3);
   rv << 1, 3, -5;
@@ -47,7 +48,7 @@ TEST(MathMatrix, squared_distance_rowvector_vector) {
 TEST(MathMatrix, squared_distance_vector_rowvector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v;
   Eigen::Matrix<double, 1, Eigen::Dynamic> rv;
-  
+
   v.resize(3);
   rv.resize(3);
   v << 1, 3, -5;
@@ -69,7 +70,7 @@ TEST(MathMatrix, squared_distance_special_values) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;
   v1.resize(1);
   v2.resize(1);
-  
+
   v1 << 0;
   v2 << std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(boost::math::isnan(stan::math::squared_distance(v1, v2)));

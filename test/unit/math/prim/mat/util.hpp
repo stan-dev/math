@@ -22,7 +22,7 @@ namespace stan {
       }
 
       /**
-       * Return a randomly generated symmetric, positive-definite 
+       * Return a randomly generated symmetric, positive-definite
        * matrix of the specified dimensionality using the specified
        * rng.
        *

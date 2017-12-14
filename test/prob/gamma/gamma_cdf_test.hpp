@@ -29,13 +29,13 @@ public:
     parameters.push_back(param);
     cdf.push_back(0.6321205588285576659757);       // expected cdf
   }
- 
-  void invalid_values(vector<size_t>& index, 
+
+  void invalid_values(vector<size_t>& index,
                       vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1.0);
-    
+
     // alpha
     index.push_back(1U);
     value.push_back(0.0);
@@ -66,27 +66,27 @@ public:
   bool has_lower_bound() {
     return true;
   }
-    
+
   double lower_bound() {
     return 0.0;
   }
-  
+
   bool has_upper_bound() {
     return false;
   }
 
   template <typename T_y, typename T_shape, typename T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
+  typename stan::return_type<T_y, T_shape, T_inv_scale>::type
   cdf(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
       const T3&, const T4&, const T5&) {
     return stan::math::gamma_cdf(y, alpha, beta);
   }
-  
-  
+
+
   template <typename T_y, typename T_shape, typename T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_inv_scale>::type 
+  typename stan::return_type<T_y, T_shape, T_inv_scale>::type
   cdf_function(const T_y& y, const T_shape& alpha, const T_inv_scale& beta,
                const T3&, const T4&, const T5&) {
     using stan::math::gamma_p;

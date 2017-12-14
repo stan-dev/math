@@ -1,6 +1,7 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
+#include <random>
 #include <ctime>
 #include <algorithm>
 
@@ -68,7 +69,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
 
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
-  // Compare to result from http://comnuan.com/cmnn01015/
+  // Compare to result from http:// comnuan.com/cmnn01015/
   // Don't test derivatives, since goal is to see that
   // matrix_exp picks the right algorithm
   fvar<double> a, b, c, d;
@@ -140,15 +141,16 @@ TEST(MathMatrix, matrix_exp_100x100) {
   using Eigen::Dynamic;
 
   int size = 100;
-  srand(1);  // set seed
+  std::random_device rd;
+  std::mt19937 mt(rd());
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
     I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
-    col1 = rand() % size;
-    col2 = rand() % size;
-    while (col1 == col2) col2 = rand() % size;
-    S.col(col1) += S.col(col2) * std::pow(-1, rand());
+    col1 = rd() % size;
+    col2 = rd() % size;
+    while (col1 == col2) col2 = rd() % size;
+    S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements_d(size);

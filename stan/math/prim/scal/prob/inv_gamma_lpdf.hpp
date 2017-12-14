@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
@@ -24,7 +25,6 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -49,14 +49,14 @@ namespace stan {
               typename T_y, typename T_shape, typename T_scale>
     typename return_type<T_y, T_shape, T_scale>::type
     inv_gamma_lpdf(const T_y& y, const T_shape& alpha, const T_scale& beta) {
-      static const std::string function = "inv_gamma_lpdf";
+      static const char* function = "inv_gamma_lpdf";
       typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
         T_partials_return;
 
       using stan::is_constant_struct;
       using boost::math::tools::promote_args;
 
-      if (!(stan::length(y) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(y, alpha, beta))
         return 0.0;
 
       T_partials_return logp(0.0);

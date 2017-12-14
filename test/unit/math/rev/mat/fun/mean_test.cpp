@@ -10,14 +10,14 @@ TEST(AgradRevMatrix, mean_vector) {
 
   vector_d d1(3);
   vector_v v1(3);
-  
+
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-  
+
   AVAR output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
-                   
+
   output = mean(v1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
 }
@@ -38,14 +38,14 @@ TEST(AgradRevMatrix, mean_rowvector) {
 
   row_vector_d d1(3);
   row_vector_v v1(3);
-  
+
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-  
+
   AVAR output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
-                   
+
   output = mean(v1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
 }
@@ -64,16 +64,16 @@ TEST(AgradRevMatrix, mean_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
 
-  matrix_d d1(3,1);
-  matrix_v v1(1,3);
-  
+  matrix_d d1(3, 1);
+  matrix_v v1(1, 3);
+
   d1 << 100, 0, -3;
   v1 << 100, 0, -3;
-  
+
   AVAR output;
   output = mean(d1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
-                   
+
   output = mean(v1);
   EXPECT_FLOAT_EQ(97.0/3.0, output.val());
 }
@@ -81,14 +81,15 @@ TEST(AgradRevMatrix, mean_matrix_exception) {
   using stan::math::mean;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
- 
+
   matrix_d d;
   matrix_v v;
   EXPECT_THROW(mean(d), std::invalid_argument);
   EXPECT_THROW(mean(v), std::invalid_argument);
 }
 TEST(AgradRevMatrix, meanStdVector) {
-  using stan::math::mean; // should use arg-dep lookup
+  // should use arg-dep lookup
+  using stan::math::mean;
   AVEC x(0);
   EXPECT_THROW(mean(x), std::invalid_argument);
   x.push_back(1.0);
@@ -96,7 +97,7 @@ TEST(AgradRevMatrix, meanStdVector) {
   x.push_back(2.0);
   EXPECT_FLOAT_EQ(1.5, mean(x).val());
 
-  AVEC y = createAVEC(1.0,2.0);
+  AVEC y = createAVEC(1.0, 2.0);
   AVAR f = mean(y);
   VEC grad = cgrad(f, y[0], y[1]);
   EXPECT_FLOAT_EQ(0.5, grad[0]);

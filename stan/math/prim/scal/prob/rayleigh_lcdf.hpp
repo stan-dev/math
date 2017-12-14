@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -19,7 +20,6 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,7 +27,7 @@ namespace stan {
     template <typename T_y, typename T_scale>
     typename return_type<T_y, T_scale>::type
     rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
-      static const std::string function = "rayleigh_lcdf";
+      static const char* function = "rayleigh_lcdf";
       typedef typename stan::partials_return_type<T_y, T_scale>::type
         T_partials_return;
 
@@ -36,7 +36,7 @@ namespace stan {
 
       T_partials_return cdf_log(0.0);
 
-      if (!(stan::length(y) && stan::length(sigma)))
+      if (size_zero(y, sigma))
         return cdf_log;
 
       check_not_nan(function, "Random variable", y);

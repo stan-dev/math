@@ -1,10 +1,11 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
+#include <string>
 
-const std::string function_ = "function";
-const std::string y_name_ = "y";
-const std::string msg1_ = "error_message ";
-const std::string msg2_ = " after y";
+const char* function_ = "function";
+const char* y_name_ = "y";
+const char* msg1_ = "error_message ";
+const char* msg2_ = " after y";
 
 class ErrorHandlingScalar_domain_error : public ::testing::Test {
 public:
@@ -39,27 +40,26 @@ public:
     try {
       stan::math::domain_error<T>
         (function_, y_name_, y, msg1_, msg2_);
-      FAIL() << "expecting call to domain_error<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error<> to throw a domain_error, "
              << "but threw nothing";
     } catch(std::domain_error& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to domain_error<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error<> to throw a domain_error, "
              << "but threw a different type";
     }
 
     try {
       stan::math::domain_error<T>
         (function_, y_name_, y, msg1_);
-      FAIL() << "expecting call to domain_error<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error<> to throw a domain_error, "
              << "but threw nothing";
     } catch(std::domain_error& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch(...) {
-      FAIL() << "expecting call to domain_error<> to throw a domain_error,"
+      FAIL() << "expecting call to domain_error<> to throw a domain_error, "
              << "but threw a different type";
     }
-
   }
 };
 

@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -15,8 +14,8 @@ namespace stan {
     namespace {
       template <typename T_y, bool is_vec>
       struct nonnegative {
-        static void check(const std::string& function,
-                          const std::string& name,
+        static void check(const char* function,
+                          const char* name,
                           const T_y& y) {
           // have to use not is_unsigned. is_signed will be false
           // floating point types that have no unsigned versions.
@@ -28,8 +27,8 @@ namespace stan {
 
       template <typename T_y>
       struct nonnegative<T_y, true> {
-        static void check(const std::string& function,
-                          const std::string& name,
+        static void check(const char* function,
+                          const char* name,
                           const T_y& y) {
           using stan::length;
 
@@ -59,8 +58,8 @@ namespace stan {
      *   if any element of y is NaN.
      */
     template <typename T_y>
-    inline void check_nonnegative(const std::string& function,
-                                  const std::string& name,
+    inline void check_nonnegative(const char* function,
+                                  const char* name,
                                   const T_y& y) {
       nonnegative<T_y, is_vector_like<T_y>::value>::check(function, name, y);
     }

@@ -16,7 +16,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -27,7 +26,7 @@ namespace stan {
     multi_normal_lpdf(const T_y& y,
                      const T_loc& mu,
                      const T_covar& Sigma) {
-      static const std::string function = "multi_normal_lpdf";
+      static const char* function = "multi_normal_lpdf";
       typedef typename scalar_type<T_covar>::type T_covar_elem;
       typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
       lp_type lp(0.0);

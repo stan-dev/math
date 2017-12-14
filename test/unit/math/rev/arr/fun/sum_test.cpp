@@ -1,6 +1,7 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/arr/util.hpp>
+#include <vector>
 
 TEST(AgradRev, sum_std_vector) {
   using stan::math::sum;
@@ -10,7 +11,7 @@ TEST(AgradRev, sum_std_vector) {
   vector<var> x;
   for (size_t i = 0; i < 6; ++i)
     x.push_back(i + 1);
-  
+
   var fx = 3.7 * sum(x);
   EXPECT_FLOAT_EQ(3.7 * 21.0, fx.val());
 

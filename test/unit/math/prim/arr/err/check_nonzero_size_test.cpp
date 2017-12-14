@@ -1,6 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <limits>
+#include <vector>
 
 TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   using stan::math::check_nonzero_size;
@@ -20,7 +22,7 @@ TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix) {
                                                  "a", a));
 
   a.resize(0);
-  EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a), 
+  EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a),
                    std::invalid_argument,
                    "has size 0");
 }
@@ -42,7 +44,7 @@ TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
                                                  "a", a));
 
   a.resize(0);
-  EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a), 
+  EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a),
                    std::invalid_argument,
                    "has size 0");
 }

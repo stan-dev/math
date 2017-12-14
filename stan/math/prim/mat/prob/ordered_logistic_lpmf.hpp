@@ -21,7 +21,6 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <Eigen/StdVector>
-#include <string>
 #include <vector>
 
 namespace stan {
@@ -66,7 +65,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int K = c.size() + 1;
 
@@ -129,7 +128,7 @@ namespace stan {
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int N = lambda.size();
       int K = c.size() + 1;
@@ -195,13 +194,13 @@ namespace stan {
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
+                                            T_cut, Eigen::Dynamic, 1> >& c) {
       typename return_type<T_loc, T_cut>::type logp_n(0.0);
 
       using std::exp;
       using std::log;
 
-      static const std::string function = "ordered_logistic";
+      static const char* function = "ordered_logistic";
 
       int N = lambda.size();
 
@@ -238,7 +237,7 @@ namespace stan {
     ordered_logistic_lpmf(const std::vector<int>& y,
                           const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
                           const std::vector<Eigen::Matrix<
-                                                T_cut, Eigen::Dynamic, 1>>& c) {
+                                            T_cut, Eigen::Dynamic, 1> >& c) {
       return ordered_logistic_lpmf<false>(y, lambda, c);
     }
   }

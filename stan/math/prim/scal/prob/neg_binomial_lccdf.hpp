@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
@@ -24,7 +25,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -34,12 +34,12 @@ namespace stan {
     typename return_type<T_shape, T_inv_scale>::type
     neg_binomial_lccdf(const T_n& n, const T_shape& alpha,
                           const T_inv_scale& beta) {
-      static const std::string function = "neg_binomial_lccdf";
+      static const char* function = "neg_binomial_lccdf";
       typedef typename stan::partials_return_type<T_n, T_shape,
                                                   T_inv_scale>::type
         T_partials_return;
 
-      if (!(stan::length(n) && stan::length(alpha) && stan::length(beta)))
+      if (size_zero(n, alpha, beta))
         return 0.0;
 
       T_partials_return P(0.0);

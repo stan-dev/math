@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -24,7 +25,6 @@
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -57,9 +57,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
         T_partials_return;
 
-      static const std::string function = "binomial_lpmf";
+      static const char* function = "binomial_lpmf";
 
-      if (!(stan::length(n) && stan::length(N) && stan::length(theta)))
+      if (size_zero(n, N, theta))
         return 0.0;
 
       T_partials_return logp = 0;

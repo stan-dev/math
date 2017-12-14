@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
@@ -25,7 +26,6 @@
 #include <boost/random/negative_binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
-#include <string>
 
 namespace stan {
   namespace math {
@@ -42,9 +42,9 @@ namespace stan {
                                                   T_precision>::type
         T_partials_return;
 
-      static const std::string function = "neg_binomial_2_lpmf";
+      static const char* function = "neg_binomial_2_lpmf";
 
-      if (!(stan::length(n) && stan::length(mu) && stan::length(phi)))
+      if (size_zero(n, mu, phi))
         return 0.0;
 
       T_partials_return logp(0.0);

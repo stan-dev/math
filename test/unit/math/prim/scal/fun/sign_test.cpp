@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, sign) {
   double x;
@@ -15,6 +16,6 @@ TEST(MathFunctions, sign) {
 
 TEST(MathFunctions, sign_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  
+
   EXPECT_EQ(1, stan::math::sign(nan));
 }

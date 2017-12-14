@@ -4,10 +4,10 @@
 #include <vector>
 #include <stdexcept>
 
-TEST(ProbAutocovariance,test1) {
+TEST(ProbAutocovariance, test1) {
   // ar1.csv generated in R with
-  //   > x[1] <- rnorm(1,0,1)
-  //   > for (n in 2:1000) x[n] <- rnorm(1,0.8 * x[n-1],1)
+  //   > x[1] <- rnorm(1, 0, 1)
+  //   > for (n in 2:1000) x[n] <- rnorm(1, 0.8 * x[n-1], 1)
   std::fstream f("test/unit/math/prim/mat/fun/ar1.csv");
   std::vector<double> y;
   for (size_t i = 0; i < 1000; ++i) {
@@ -21,7 +21,7 @@ TEST(ProbAutocovariance,test1) {
 
    size_t ITS = 1;  // only need one for test
    for (size_t n = 0; n < ITS; ++n) {
-     stan::math::autocovariance(y,ac);
+     stan::math::autocovariance(y, ac);
    }
 
    EXPECT_EQ(1000U, ac.size());
