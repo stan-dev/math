@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
 
 namespace stan {
@@ -109,7 +109,8 @@ namespace stan {
       if (is_nan(z)) return std::numeric_limits<TP>::quiet_NaN();
 
       if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
-          || a < sqrt(-756 - z * z + 60 * z)) {
+          || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
+                      + 60 * value_of_rec(z))) {
         T1 tg = tgamma(a);
         T1 dig = digamma(a);
         return -grad_reg_inc_gamma(a, z, tg, dig, max_steps, precision);
