@@ -5,6 +5,23 @@
 // if(rank != 0) return
 // line at the test start
 
+// moreover, the MPI tests have to be setup with the MPI_TEST_F macro
+// which will disable all MPI tests whenever no STAN_HAS_MPI is
+// defined
+
+#ifdef STAN_HAS_MPI
+
+#define MPI_TEST_F(test_fixture, test_name)     \
+  TEST_F(test_fixture, test_name)
+
+#else
+
+#define MPI_TEST_F(test_fixture, test_name)     \
+  TEST_F(test_fixture, DISABLED_ ## test_name)
+
+#endif
+
+
 #include <gtest/gtest.h>
 
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
