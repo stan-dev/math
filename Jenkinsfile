@@ -28,8 +28,10 @@ def runTests(String testPath) {
 
 def utils = new org.stan.Utils()
 
+def isDevelop() { env.BRANCH_NAME == 'develop' }
+
 def updateUpstream(String upstreamRepo) {
-    if (env.BRANCH_NAME == 'develop') {
+    if (isDevelop()) {
         node('master') {
             retry(3) {
                 checkout([$class: 'GitSCM',
@@ -62,6 +64,9 @@ pipeline {
           description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, description:
+        'Run additional distribution tests on RowVectors (takes 5x as long)',
+        name: 'withRowVector')
     }
     options { skipDefaultCheckout() }
     stages {
@@ -145,8 +150,13 @@ pipeline {
                     ${setupCC(false)}
                     echo 'O=0' >> make/local
                     echo N_TESTS=${env.N_TESTS} >> make/local
-                    ./runTests.py -j${env.PARALLEL} test/prob
                     """
+                script {
+                    if (withRowVector || isDevelop()) {
+                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                    }
+                }
+                sh "./runTests.py -j${env.PARALLEL} test/prob"
 
             }
             post { always { retry(3) { deleteDir() } } }
