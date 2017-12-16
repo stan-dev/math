@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // sets up the MPI environment. All tests have to be skipped on
 // non-root nodes with a
 // if(rank != 0) return
@@ -13,16 +15,6 @@
 
 #define MPI_TEST_F(test_fixture, test_name)     \
   TEST_F(test_fixture, test_name)
-
-#else
-
-#define MPI_TEST_F(test_fixture, test_name)     \
-  TEST_F(test_fixture, DISABLED_ ## test_name)
-
-#endif
-
-
-#include <gtest/gtest.h>
 
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 
@@ -55,4 +47,14 @@ public:
 
 // register MPI global
  ::testing::Environment* const mpi_env = ::testing::AddGlobalTestEnvironment(new MPIEnvironment);
+
+#else
+
+#define MPI_TEST_F(test_fixture, test_name)     \
+  TEST_F(test_fixture, DISABLED_ ## test_name)
+
+std::size_t rank = 0;
+
+#endif
+
 

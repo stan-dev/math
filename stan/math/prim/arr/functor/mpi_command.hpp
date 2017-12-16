@@ -45,5 +45,4 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT( stan::math::mpi_command )
   BOOST_CLASS_EXPORT(command) \
   BOOST_CLASS_TRACKING(command, boost::serialization::track_never)
 
-
 #endif

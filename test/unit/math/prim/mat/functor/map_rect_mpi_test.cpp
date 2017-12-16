@@ -31,7 +31,6 @@ struct MpiJob : public ::testing::Test {
        job_params_d.push_back(job_d);
      }
    }
-  
 };
 
 MPI_TEST_F(MpiJob, hard_work_dd) {
