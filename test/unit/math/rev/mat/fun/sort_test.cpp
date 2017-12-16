@@ -105,8 +105,6 @@ void test_sort_desc(Eigen::Matrix<T, R, C> val) {
         EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
 
-
-
 TEST(AgradRev, sort) {
   VEC a;
   a.push_back(1);

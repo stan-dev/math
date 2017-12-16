@@ -6,8 +6,8 @@
 #include <vector>
 
 template <typename F, int R, int C>
-static inline Eigen::Matrix<stan::math::var, R, C>
-build_rev_matrix(const Eigen::Matrix<stan::math::var, R, C>& x) {
+static inline Eigen::Matrix<stan::math::var, R, C> build_rev_matrix(
+    const Eigen::Matrix<stan::math::var, R, C>& x) {
   using Eigen::Matrix;
   using std::vector;
   using stan::math::var;

@@ -20,15 +20,10 @@ TEST(MathMatrix, tcrossprod) {
   test_tcrossprod(x);
 
   x = stan::math::matrix_d(2, 2);
-  x <<
-    1.0, 0.0,
-    2.0, 3.0;
+  x << 1.0, 0.0, 2.0, 3.0;
   test_tcrossprod(x);
 
   x = stan::math::matrix_d(3, 3);
-  x <<
-    1.0, 0.0, 0.0,
-    2.0, 3.0, 0.0,
-    4.0, 5.0, 6.0;
+  x << 1.0, 0.0, 0.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0;
   test_tcrossprod(x);
 }

@@ -8,10 +8,10 @@ TEST(AgradFwdMatrixDeterminant, matrix_fd) {
 
   matrix_fd a(2, 2);
   a << 2.0, 3.0, 5.0, 7.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
 
   fvar<double> a_det = stan::math::determinant(a);
 

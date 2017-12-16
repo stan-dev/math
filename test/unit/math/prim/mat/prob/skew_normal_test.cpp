@@ -6,32 +6,23 @@
 #include <limits>
 #include <vector>
 
-
 class SkewNormalTestRig : public VectorRNGTestRig {
-public:
-  SkewNormalTestRig() :
-    VectorRNGTestRig(10000, 10,
-                     {-2.5, -1.7, -0.1, 0.0, 2.0},
-                     {-3, -2, -1, 0, 2, 6},
-                     {},
-                     {},
-                     {0.1, 1.0, 2.5, 4.0},
-                     {1, 2, 3, 4},
-                     {-2.7, -1.5, -0.5, 0.0},
-                     {-3, -2, -1, 0},
-                     {-2.0, -1.0, -0.5, 0.0, 0.7, 0.5},
-                     {-2, -1, 0, 1, 2},
-                     {},
-                     {}) {}
+ public:
+  SkewNormalTestRig()
+      : VectorRNGTestRig(10000, 10, {-2.5, -1.7, -0.1, 0.0, 2.0},
+                         {-3, -2, -1, 0, 2, 6}, {}, {}, {0.1, 1.0, 2.5, 4.0},
+                         {1, 2, 3, 4}, {-2.7, -1.5, -0.5, 0.0}, {-3, -2, -1, 0},
+                         {-2.0, -1.0, -0.5, 0.0, 0.7, 0.5}, {-2, -1, 0, 1, 2},
+                         {}, {}) {}
 
-  template<typename T1, typename T2, typename T3, typename T_rng>
+  template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& mu, const T2& sigma, const T3& alpha,
                         T_rng& rng) const {
     return stan::math::skew_normal_rng(mu, sigma, alpha, rng);
   }
 
-  std::vector<double> generate_quantiles(double mu, double sigma, double alpha)
-    const {
+  std::vector<double> generate_quantiles(double mu, double sigma,
+                                         double alpha) const {
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::skew_normal_distribution<> dist(mu, sigma, alpha);
@@ -53,4 +44,3 @@ TEST(ProbDistributionsSkewNormal, errorCheck) {
 TEST(ProbDistributionsSkewNormal, chiSquareGoodnessFitTest) {
   check_quantiles_all_types(SkewNormalTestRig());
 }
-

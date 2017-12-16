@@ -30,12 +30,9 @@ TEST(AgradRev, logitDeriv) {
   test_logit(0.5);
 }
 
-
-
 struct logit_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return stan::math::logit(arg1);
   }
 };

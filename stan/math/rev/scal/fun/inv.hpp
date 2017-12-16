@@ -6,43 +6,37 @@
 #include <valarray>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    namespace {
-      class inv_vari : public op_v_vari {
-      public:
-        explicit inv_vari(vari* avi) :
-          op_v_vari(inv(avi->val_), avi) {
-        }
-        void chain() {
-          avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_);
-        }
-      };
-    }
+namespace {
+class inv_vari : public op_v_vari {
+ public:
+  explicit inv_vari(vari* avi) : op_v_vari(inv(avi->val_), avi) {}
+  void chain() { avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_); }
+};
+}  // namespace
 
-    /**
-     *
-       \f[
-       \mbox{inv}(x) =
-       \begin{cases}
-         \frac{1}{x} & \mbox{if } -\infty\leq x \leq \infty \\[6pt]
-         \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-       \end{cases}
-       \f]
+/**
+ *
+   \f[
+   \mbox{inv}(x) =
+   \begin{cases}
+     \frac{1}{x} & \mbox{if } -\infty\leq x \leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
 
-       \f[
-       \frac{\partial\, \mbox{inv}(x)}{\partial x} =
-       \begin{cases}
-         -\frac{1}{x^2} & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
-         \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-       \end{cases}
-       \f]
-     *
-     */
-    inline var inv(const var& a) {
-      return var(new inv_vari(a.vi_));
-    }
+   \f[
+   \frac{\partial\, \mbox{inv}(x)}{\partial x} =
+   \begin{cases}
+     -\frac{1}{x^2} & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ */
+inline var inv(const var& a) { return var(new inv_vari(a.vi_)); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

@@ -12,14 +12,11 @@ TEST(AgradMixMatrixAppendRow, fv) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -31,11 +28,11 @@ TEST(AgradMixMatrixAppendRow, fv) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val(), ab_append_row(i , j).d_.val());
+      EXPECT_EQ(a(i, j).d_.val(), ab_append_row(i, j).d_.val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_);
@@ -103,14 +100,11 @@ TEST(AgradMixMatrixAppendRow, fv2) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -122,11 +116,11 @@ TEST(AgradMixMatrixAppendRow, fv2) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val(), ab_append_row(i , j).d_.val());
+      EXPECT_EQ(a(i, j).d_.val(), ab_append_row(i, j).d_.val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_);
@@ -166,10 +160,10 @@ TEST(AgradMixVectorAppendRow, fv2) {
   VectorXd adb_append_row = append_row(ad, b);
 
   for (int i = 0; i < 4; i++)
-      EXPECT_EQ(a(i).d_, ab_append_row(i).d_);
+    EXPECT_EQ(a(i).d_, ab_append_row(i).d_);
 
   for (int i = 0; i < 7; i++)
-      EXPECT_EQ(ab_append_row(i).val_, adb_append_row(i));
+    EXPECT_EQ(ab_append_row(i).val_, adb_append_row(i));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0).val_);
@@ -185,7 +179,6 @@ TEST(AgradMixVectorAppendRow, fv2) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 
-
 TEST(AgradMixMatrixAppendRow, ffv1) {
   using stan::math::append_row;
   using stan::math::matrix_ffv;
@@ -195,14 +188,11 @@ TEST(AgradMixMatrixAppendRow, ffv1) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -214,11 +204,11 @@ TEST(AgradMixMatrixAppendRow, ffv1) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i , j).d_.val().val());
+      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i, j).d_.val().val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_.val_);
@@ -286,14 +276,11 @@ TEST(AgradMixMatrixAppendRow, ffv2) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -309,11 +296,11 @@ TEST(AgradMixMatrixAppendRow, ffv2) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i , j).d_.val().val());
+      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i, j).d_.val().val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_.val_);
@@ -385,14 +372,11 @@ TEST(AgradMixMatrixAppendRow, ffv3) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -408,11 +392,11 @@ TEST(AgradMixMatrixAppendRow, ffv3) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i , j).d_.val().val());
+      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i, j).d_.val().val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_.val_);
@@ -484,14 +468,11 @@ TEST(AgradMixMatrixAppendRow, ffv4) {
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-       9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -507,11 +488,11 @@ TEST(AgradMixMatrixAppendRow, ffv4) {
 
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i , j).d_.val().val());
+      EXPECT_EQ(a(i, j).d_.val().val(), ab_append_row(i, j).d_.val().val());
 
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i , j));
+      EXPECT_EQ(ab_append_row(i, j).val_.val().val(), adb_append_row(i, j));
 
   std::vector<stan::math::var> vars;
   vars.push_back(a(0, 0).val_.val_);

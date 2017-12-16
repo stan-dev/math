@@ -245,8 +245,8 @@ TEST(AgradFwdMatrixOperatorMultiplication, fd_rowvector_vector) {
   EXPECT_FLOAT_EQ(3, multiply(v1, d2).val_);
   EXPECT_FLOAT_EQ(3, multiply(d1, v2).val_);
   EXPECT_FLOAT_EQ(0, multiply(v1, v2).d_);
-  EXPECT_FLOAT_EQ(1, multiply(v1 , d2).d_);
-  EXPECT_FLOAT_EQ(-1, multiply(d1 , v2).d_);
+  EXPECT_FLOAT_EQ(1, multiply(v1, d2).d_);
+  EXPECT_FLOAT_EQ(-1, multiply(d1, v2).d_);
 
   d1.resize(1);
   v1.resize(1);
@@ -806,8 +806,8 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_vector) {
   EXPECT_FLOAT_EQ(3, multiply(v1, d2).val_.val());
   EXPECT_FLOAT_EQ(3, multiply(d1, v2).val_.val());
   EXPECT_FLOAT_EQ(0, multiply(v1, v2).d_.val());
-  EXPECT_FLOAT_EQ(1, multiply(v1 , d2).d_.val());
-  EXPECT_FLOAT_EQ(-1, multiply(d1 , v2).d_.val());
+  EXPECT_FLOAT_EQ(1, multiply(v1, d2).d_.val());
+  EXPECT_FLOAT_EQ(-1, multiply(d1, v2).d_.val());
 
   d1.resize(1);
   v1.resize(1);

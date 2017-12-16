@@ -28,8 +28,7 @@ void expect_fwd_std_vector_value() {
         else
           z.push_back(build_fwd_vector<F>(vector<T>()));
       }
-      vector<vector<T> > fz =
-        F::template apply<vector<vector<T> > >(z);
+      vector<vector<T> > fz = F::template apply<vector<vector<T> > >(z);
       EXPECT_EQ(z.size(), fz.size());
       EXPECT_EQ(z[i].size(), fz[i].size());
       expect_val_deriv_eq(F::apply_base(z[i][j]), fz[i][j]);

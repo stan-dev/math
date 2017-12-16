@@ -49,9 +49,8 @@ TEST(MathPrimScalFun, grad2F1_4) {
 
   double grad_a1;
   double grad_b1;
-  EXPECT_THROW(
-    stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z),
-    std::domain_error);
+  EXPECT_THROW(stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z),
+               std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_5) {
@@ -62,9 +61,8 @@ TEST(MathPrimScalFun, grad2F1_5) {
 
   double grad_a1;
   double grad_b1;
-  EXPECT_THROW(
-    stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z),
-    std::domain_error);
+  EXPECT_THROW(stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z),
+               std::domain_error);
 }
 
 TEST(MathPrimScalFun, grad2F1_6) {
@@ -79,7 +77,6 @@ TEST(MathPrimScalFun, grad2F1_6) {
   EXPECT_NEAR(-0.01443822031245647, grad_a1, 1e-8);
   EXPECT_NEAR(0.00136986255602642, grad_b1, 1e-8);
 }
-
 
 TEST(MathPrimScalFun, grad2F1_7) {
   double a1 = 1.0;
@@ -132,5 +129,3 @@ TEST(MathPrimScalFun, grad2F1_10) {
   EXPECT_NEAR(0.4617734323582945, grad_a1, 1e-8);
   EXPECT_NEAR(-0.4617734323582945, grad_b1, 1e-8);
 }
-
-

@@ -3,8 +3,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCosh, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -137,8 +135,7 @@ TEST(AgradFwdCosh, FvarFvarVar_3rdDeriv) {
 
 struct cosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cosh(arg1);
   }
 };

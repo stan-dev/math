@@ -30,4 +30,3 @@ TEST(MathFunctionsScalPromote_Elements, double2var) {
   bool same = boost::is_same<var, result_t>::value;
   EXPECT_TRUE(same);
 }
-

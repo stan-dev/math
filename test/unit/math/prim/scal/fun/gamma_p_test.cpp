@@ -17,12 +17,9 @@ TEST(MathFunctions, gamma_p) {
 TEST(MathFunctions, gamma_p_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_p(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_p(1.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_p(nan, 1.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_p(nan, 1.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_p(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_p(nan, nan));
 }

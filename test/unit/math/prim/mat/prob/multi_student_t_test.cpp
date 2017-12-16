@@ -16,17 +16,15 @@ TEST(ProbDistributionsMultiStudentT, NotVectorized) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
   double lp = multi_student_t_log(y, nu, mu, Sigma);
   // calc using R's mnormt package's dmt function
   EXPECT_NEAR(-10.1246, lp, 0.0001);
 }
 TEST(ProbDistributionsMultiStudentT, Vectorized) {
-  vector< Matrix<double, Dynamic, 1> > vec_y(2);
-  vector< Matrix<double, 1, Dynamic> > vec_y_t(2);
+  vector<Matrix<double, Dynamic, 1> > vec_y(2);
+  vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
   Matrix<double, 1, Dynamic> y_t(3);
   y << 3.0, -2.0, 10.0;
@@ -37,8 +35,8 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   vec_y_t[1] = y;
   y_t = y;
 
-  vector< Matrix<double, Dynamic, 1> > vec_mu(2);
-  vector< Matrix<double, 1, Dynamic> > vec_mu_t(2);
+  vector<Matrix<double, Dynamic, 1> > vec_mu(2);
+  vector<Matrix<double, 1, Dynamic> > vec_mu_t(2);
   Matrix<double, Dynamic, 1> mu(3);
   Matrix<double, 1, Dynamic> mu_t(3);
   mu << 2.0, -1.0, 4.0;
@@ -50,41 +48,38 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   mu_t = mu;
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 10.0, -3.0, 0.0,
-          -3.0,  5.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 10.0, -3.0, 0.0, -3.0, 5.0, 0.0, 0.0, 0.0, 5.0;
 
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
                   stan::math::multi_student_t_log(vec_y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
                   stan::math::multi_student_t_log(vec_y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839,
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
                   stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-8.92867-6.81839,
-                  stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t,
-                                                  Sigma));
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_log(
+                                          vec_y_t, nu, vec_mu_t, Sigma));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
                   stan::math::multi_student_t_log(vec_y, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
                   stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
                   stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-9.167054-6.81839,
+  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
                   stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
                   stan::math::multi_student_t_log(y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
                   stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
                   stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-5.528012-6.81839,
+  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
                   stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
 }
 TEST(ProbDistributionsMultiStudentT, Sigma) {
@@ -93,9 +88,7 @@ TEST(ProbDistributionsMultiStudentT, Sigma) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0, 4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 
@@ -110,9 +103,7 @@ TEST(ProbDistributionsMultiStudentT, Mu) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 
@@ -132,9 +123,7 @@ TEST(ProbDistributionsMultiStudentT, Y) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 
@@ -154,9 +143,7 @@ TEST(ProbDistributionsMultiStudentT, Nu) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 
@@ -177,16 +164,13 @@ TEST(ProbDistributionsMultiStudentT, Nu) {
   EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
 }
 
-
 TEST(ProbDistributionsMultiStudentT, ErrorSize1) {
   Matrix<double, Dynamic, 1> y(2, 1);
   y << 2.0, -2.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::invalid_argument);
@@ -198,8 +182,7 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize2) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 2);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0;
   double nu = 4.0;
 
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::invalid_argument);
@@ -211,8 +194,7 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize3) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0;
   double nu = 4.0;
 
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::invalid_argument);
@@ -224,43 +206,30 @@ TEST(ProbDistributionsMultiStudentT, ProptoAllDoublesZero) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   EXPECT_FLOAT_EQ(0.0, multi_student_t_log<true>(y, nu, mu, Sigma));
 }
 
-
 TEST(ProbDistributionsMultiStudentT, error_check) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
-  mu << 2.0,
-        3.0,
-        11.0;
+  mu << 2.0, 3.0, 11.0;
 
   Matrix<double, Dynamic, Dynamic> s(3, 3);
-  s << 10.0, 3.0, 11.0,
-       3.0, 9.0, 1.2,
-       11.0, 1.2, 16.0;
+  s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
 
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(2.0, mu, s, rng));
   EXPECT_THROW(stan::math::multi_student_t_rng(-2.0, mu, s, rng),
                std::domain_error);
 
-  s << 10.0, 3.0, 11.0,
-       3.0, 9.0, 1.2,
-       11.0, -1.2, 16.0;
+  s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, -1.2, 16.0;
   EXPECT_THROW(stan::math::multi_student_t_rng(2.0, mu, s, rng),
                std::domain_error);
 
-  mu << stan::math::positive_infinity(),
-        3.0,
-        11.0;
-  s << 10.0, 3.0, 11.0,
-       3.0, 9.0, 1.2,
-       11.0, 1.2, 16.0;
+  mu << stan::math::positive_infinity(), 3.0, 11.0;
+  s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
   EXPECT_THROW(stan::math::multi_student_t_rng(2.0, mu, s, rng),
                std::domain_error);
 }
@@ -268,18 +237,14 @@ TEST(ProbDistributionsMultiStudentT, error_check) {
 TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
-  mu << 2.0,
-        3.0,
-        11.0;
+  mu << 2.0, 3.0, 11.0;
 
   Matrix<double, Dynamic, Dynamic> s(3, 3);
-  s << 10.0, 3.0, 11.0,
-       3.0, 9.0, 1.2,
-       11.0, 1.2, 16.0;
+  s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::students_t_distribution<>dist(3.0);
-  boost::math::chi_squared mydist(K-1);
+  boost::math::students_t_distribution<> dist(3.0);
+  boost::math::chi_squared mydist(K - 1);
 
   double loc[K - 1];
   for (int i = 1; i < K; i++)
@@ -288,7 +253,7 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
   int count = 0;
   int bin[K];
   double expect[K];
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
   }
@@ -298,7 +263,7 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
     a = stan::math::multi_student_t_rng(3.0, mu, s, rng);
     a(0) = (a(0) - mu(0, 0)) / std::sqrt(s(0, 0));
     int i = 0;
-    while (i < K-1 && a(0) > loc[i])
+    while (i < K - 1 && a(0) > loc[i])
       ++i;
     ++bin[i];
     count++;
@@ -314,18 +279,14 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
 TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> mu(3, 1);
-  mu << 2.0,
-        3.0,
-        11.0;
+  mu << 2.0, 3.0, 11.0;
 
   Matrix<double, Dynamic, Dynamic> s(3, 3);
-  s << 10.0, 3.0, 11.0,
-       3.0, 9.0, 1.2,
-       11.0, 1.2, 16.0;
+  s << 10.0, 3.0, 11.0, 3.0, 9.0, 1.2, 11.0, 1.2, 16.0;
   int N = 10000;
   int K = boost::math::round(2 * std::pow(N, 0.4));
-  boost::math::students_t_distribution<>dist(3.0);
-  boost::math::chi_squared mydist(K-1);
+  boost::math::students_t_distribution<> dist(3.0);
+  boost::math::chi_squared mydist(K - 1);
 
   double loc[K - 1];
   for (int i = 1; i < K; i++)
@@ -334,7 +295,7 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
   int count = 0;
   int bin[K];
   double expect[K];
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N / K;
   }
@@ -344,7 +305,7 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
     a = stan::math::multi_student_t_rng(3.0, mu, s, rng);
     a(1) = (a(1) - mu(1, 0)) / std::sqrt(s(1, 1));
     int i = 0;
-    while (i < K-1 && a(1) > loc[i])
+    while (i < K - 1 && a(1) > loc[i])
       ++i;
     ++bin[i];
     count++;

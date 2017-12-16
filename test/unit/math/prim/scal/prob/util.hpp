@@ -8,10 +8,9 @@
 /**
  * Uses a chi-squared test to assert that a vector of observed counts
  * is consistent with a vector of expected counts. Useful for testing RNGs.
-*/
+ */
 void assert_chi_squared(const std::vector<int>& counts,
-                        const std::vector<double>& expected,
-                        double tolerance) {
+                        const std::vector<double>& expected, double tolerance) {
   int bins = counts.size();
   EXPECT_EQ(bins, expected.size());
 

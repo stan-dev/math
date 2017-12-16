@@ -3,8 +3,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdInvSqrt, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -99,8 +97,7 @@ TEST(AgradFwdInvSqrt, FvarFvarVar_3rdDeriv) {
 
 struct inv_sqrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_sqrt(arg1);
   }
 };

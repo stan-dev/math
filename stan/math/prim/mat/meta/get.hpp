@@ -5,11 +5,10 @@
 
 namespace stan {
 
-  template <typename T, int R, int C>
-  inline T get(const Eigen::Matrix<T, R, C>& m, size_t n) {
-    return m(static_cast<int>(n));
-  }
-
+template <typename T, int R, int C>
+inline T get(const Eigen::Matrix<T, R, C>& m, size_t n) {
+  return m(static_cast<int>(n));
 }
-#endif
 
+}  // namespace stan
+#endif

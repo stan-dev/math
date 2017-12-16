@@ -39,8 +39,8 @@ TEST(stack_alloc, bytes_allocated) {
     size_t bytes_requested = (n * (n + 1)) / 2;
     size_t bytes_allocated = allocator.bytes_allocated();
     EXPECT_TRUE(bytes_requested <= bytes_allocated)
-      << "bytes_requested: " << bytes_requested << std::endl
-      << "bytes_allocated: " << bytes_allocated;
+        << "bytes_requested: " << bytes_requested << std::endl
+        << "bytes_allocated: " << bytes_allocated;
     // 1 << 16 is initial allocation;  *3 is to account for slop at end
     EXPECT_TRUE(bytes_allocated < ((1 << 16) + bytes_requested * 3));
   }
@@ -53,7 +53,7 @@ TEST(stack_alloc, is_aligned) {
   EXPECT_TRUE(stan::math::is_aligned(ptr, 4U));
   EXPECT_TRUE(stan::math::is_aligned(ptr, 8U));
 
-  EXPECT_FALSE(stan::math::is_aligned(ptr+1, 8U));
+  EXPECT_FALSE(stan::math::is_aligned(ptr + 1, 8U));
   // not very safe, but just a test
   free(ptr);
 }
@@ -100,7 +100,6 @@ TEST(stack_alloc, in_stack) {
   EXPECT_TRUE(allocator.in_stack(x));
   EXPECT_FALSE(allocator.in_stack(&y));
 }
-
 
 TEST(stack_alloc, in_stack_second_block) {
   stan::math::stack_alloc allocator;

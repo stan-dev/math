@@ -6,5 +6,5 @@ TEST(MetaTraits, containsFvar) {
   using stan::math::fvar;
   using stan::contains_fvar;
   EXPECT_FALSE(contains_fvar<var>::value);
-  EXPECT_TRUE((contains_fvar<double, fvar<var>, int >::value));
+  EXPECT_TRUE((contains_fvar<double, fvar<var>, int>::value));
 }

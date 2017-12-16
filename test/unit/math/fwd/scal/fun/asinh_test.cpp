@@ -4,8 +4,7 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 class AgradFwdAsinh : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
 
 TEST_F(AgradFwdAsinh, Fvar) {
@@ -29,7 +28,6 @@ TEST_F(AgradFwdAsinh, Fvar) {
   EXPECT_FLOAT_EQ(asinh(-0.5), c.val_);
   EXPECT_FLOAT_EQ(-1 / sqrt(1 + (-0.5) * (-0.5)), c.d_);
 }
-
 
 TEST_F(AgradFwdAsinh, FvarFvarDouble) {
   using stan::math::fvar;
@@ -58,8 +56,7 @@ TEST_F(AgradFwdAsinh, FvarFvarDouble) {
 }
 struct asinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return asinh(arg1);
   }
 };

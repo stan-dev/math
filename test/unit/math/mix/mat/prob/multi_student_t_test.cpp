@@ -16,9 +16,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
   Matrix<fvar<var>, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<var>, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {
@@ -41,9 +39,7 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
   Matrix<fvar<fvar<var> >, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {

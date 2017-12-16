@@ -37,5 +37,3 @@ TEST(AgradRev, unaryNot) {
     for (size_t j = 0; j < xs.size(); ++j)
       test_logical_or(xs[i], xs[j]);
 }
-
-
