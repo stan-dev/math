@@ -7,7 +7,6 @@ TEST(MetaTraits, VectorBuilderHelper_false_false) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
 
-
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
 

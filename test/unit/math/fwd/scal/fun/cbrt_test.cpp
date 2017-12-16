@@ -36,7 +36,6 @@ TEST(AgradFwdCbrt, Fvar) {
   isnan(f.d_);
 }
 
-
 TEST(AgradFwdCbrt, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::cbrt;
@@ -63,11 +62,9 @@ TEST(AgradFwdCbrt, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct cbrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cbrt(arg1);
   }
 };

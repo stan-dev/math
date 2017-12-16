@@ -24,11 +24,11 @@ TEST(AgradRev, log_diff_exp_vv) {
   x = createAVEC(a, b);
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+      grad_f[0]);
   EXPECT_FLOAT_EQ(
-    std::exp(10.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-    grad_f[1]);
+      std::exp(10.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+      grad_f[1]);
 }
 
 TEST(AgradRev, log_diff_exp_vd) {
@@ -46,14 +46,13 @@ TEST(AgradRev, log_diff_exp_vd) {
   a = 1000;
   b = 10;
   f = log_diff_exp(a, b);
-  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) - std::exp(-990.0)) + 1000.0,
-                   f.val());
+  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) - std::exp(-990.0)) + 1000.0, f.val());
 
   x = createAVEC(a);
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
+      grad_f[0]);
 }
 
 TEST(AgradRev, log_diff_exp_dv) {
@@ -79,8 +78,7 @@ TEST(AgradRev, log_diff_exp_dv) {
   EXPECT_FLOAT_EQ(0, grad_f[0]);
 }
 
-void test_log_diff_exp_2_vv(double a_val,
-                           double b_val) {
+void test_log_diff_exp_2_vv(double a_val, double b_val) {
   using std::exp;
   using std::log;
   using stan::math::log_diff_exp;
@@ -108,8 +106,7 @@ void test_log_diff_exp_2_vv(double a_val,
   EXPECT_FLOAT_EQ(g2[0], g[0]);
   EXPECT_FLOAT_EQ(g2[1], g[1]);
 }
-void test_log_diff_exp_2_vd(double a_val,
-                           double b) {
+void test_log_diff_exp_2_vd(double a_val, double b) {
   using std::exp;
   using std::log;
   using stan::math::log_diff_exp;
@@ -133,8 +130,7 @@ void test_log_diff_exp_2_vd(double a_val,
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
 }
-void test_log_diff_exp_2_dv(double a,
-                           double b_val) {
+void test_log_diff_exp_2_dv(double a, double b_val) {
   using std::exp;
   using std::log;
   using stan::math::log_diff_exp;
@@ -181,10 +177,8 @@ TEST(AgradRev, log_diff_exp_exception) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return log_diff_exp(arg1, arg2);
   }
 };

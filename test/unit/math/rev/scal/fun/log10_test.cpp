@@ -10,13 +10,12 @@ TEST(AgradRev, log10_a) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(log(10.0) * 5.0), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (log(10.0) * 5.0), g[0]);
 }
 
 struct log10_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log10(arg1);
   }
 };

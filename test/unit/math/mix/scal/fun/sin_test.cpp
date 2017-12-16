@@ -4,7 +4,6 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdSin, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -106,8 +105,7 @@ TEST(AgradFwdSin, FvarFvarVar_3rdDeriv) {
 
 struct sin_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sin(arg1);
   }
 };

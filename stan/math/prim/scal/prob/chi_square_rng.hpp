@@ -16,34 +16,32 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return a pseudorandom chi squared variate with the nu degrees of freedom
-     * using the specified random number generator.
-     *
-     * @tparam RNG class of random number generator
-     * @param nu positive degrees of freedom parameter
-     * @param rng random number generator
-     * @return chi squared random variate
-     * @throw std::domain_error if nu is nonpositive
-     */
-    template <class RNG>
-    inline double
-    chi_square_rng(double nu,
-                   RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::chi_squared_distribution;
+/**
+ * Return a pseudorandom chi squared variate with the nu degrees of freedom
+ * using the specified random number generator.
+ *
+ * @tparam RNG class of random number generator
+ * @param nu positive degrees of freedom parameter
+ * @param rng random number generator
+ * @return chi squared random variate
+ * @throw std::domain_error if nu is nonpositive
+ */
+template <class RNG>
+inline double chi_square_rng(double nu, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::chi_squared_distribution;
 
-      static const char* function = "chi_square_rng";
+  static const char* function = "chi_square_rng";
 
-      check_positive_finite(function, "Degrees of freedom parameter", nu);
+  check_positive_finite(function, "Degrees of freedom parameter", nu);
 
-      variate_generator<RNG&, chi_squared_distribution<> >
-        chi_square_rng(rng, chi_squared_distribution<>(nu));
-      return chi_square_rng();
-    }
-
-  }
+  variate_generator<RNG&, chi_squared_distribution<> > chi_square_rng(
+      rng, chi_squared_distribution<>(nu));
+  return chi_square_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

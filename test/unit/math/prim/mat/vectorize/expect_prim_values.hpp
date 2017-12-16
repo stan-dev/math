@@ -7,7 +7,6 @@
 #include <test/unit/math/prim/mat/vectorize/expect_prim_vector_value.hpp>
 #include <test/unit/math/prim/mat/vectorize/expect_prim_row_vector_value.hpp>
 
-
 // CALL THIS TO TEST EVERYTHING
 // see: apply_scalar_unary_test.cpp for an example
 template <typename F>

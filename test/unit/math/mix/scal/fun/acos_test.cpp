@@ -3,7 +3,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdAcos, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -33,7 +32,6 @@ TEST(AgradFwdAcos, FvarVar_2ndDeriv) {
   a.d_.grad(z, h);
   EXPECT_FLOAT_EQ(-0.5 * 0.3 / (sqrt(1.0 - 0.5 * 0.5) * 0.75), h[0]);
 }
-
 
 TEST(AgradFwdAcos, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -119,8 +117,7 @@ TEST(AgradFwdAcos, FvarFvarVar_3rdDeriv) {
 
 struct acos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return acos(arg1);
   }
 };

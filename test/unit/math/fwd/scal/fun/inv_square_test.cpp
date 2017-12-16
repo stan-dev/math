@@ -7,7 +7,7 @@ TEST(AgradFwdInvSquare, Fvar) {
   using stan::math::inv_square;
 
   fvar<double> x(0.5);
-  x.d_ = 1.0;   // Derivatives w.r.t. x
+  x.d_ = 1.0;  // Derivatives w.r.t. x
   fvar<double> a = inv_square(x);
 
   EXPECT_FLOAT_EQ(inv_square(0.5), a.val_);
@@ -39,8 +39,7 @@ TEST(AgradFwdInvSquare, FvarFvarDouble) {
 
 struct inv_square_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_square(arg1);
   }
 };

@@ -35,9 +35,8 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
 TEST(MathMatrix, matrix_exp_pade_3x3_2) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 89, -66, -18, 20, -14, -4, 360, -270, -73;
-  m2 << 245.95891, -182.43047, -49.11821,
-        93.41549, -67.3433, -18.68310,
-        842.54120, -631.90590, -168.14036;
+  m2 << 245.95891, -182.43047, -49.11821, 93.41549, -67.3433, -18.68310,
+      842.54120, -631.90590, -168.14036;
 
   expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
 }
@@ -48,15 +47,16 @@ TEST(MathMatrix, matrix_exp_100x100) {
 
   int size = 100;
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
-    I = Eigen::MatrixXd::Identity(size, size);
+                                   I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   std::random_device rd;
   std::mt19937 mt(rd());
   for (int i = 0; i < 5 * size; i++) {
-      col1 = rd() % size;
+    col1 = rd() % size;
+    col2 = rd() % size;
+    while (col1 == col2)
       col2 = rd() % size;
-      while (col1 == col2) col2 = rd() % size;
-      S.col(col1) += S.col(col2) * std::pow(-1, rd());
+    S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements(size);
@@ -70,10 +70,11 @@ TEST(MathMatrix, matrix_exp_100x100) {
   exp_A = S * exp_diag_elements.asDiagonal() * S_inv;
   expm_A = stan::math::matrix_exp_pade(A);
 
-  double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
-    expm_A.cwiseAbs().maxCoeff());
+  double rel_err
+      = 1e-10
+        * std::max(exp_A.cwiseAbs().maxCoeff(), expm_A.cwiseAbs().maxCoeff());
 
   for (int i = 0; i < size; i++)
-      for (int j = 0; j < size; j++)
-          EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
+    for (int j = 0; j < size; j++)
+      EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }

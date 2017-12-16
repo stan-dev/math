@@ -14,26 +14,23 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    lognormal_rng(double mu,
-                  double sigma,
-                  RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::lognormal_distribution;
+template <class RNG>
+inline double lognormal_rng(double mu, double sigma, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::lognormal_distribution;
 
-      static const char* function = "lognormal_rng";
+  static const char* function = "lognormal_rng";
 
-      check_finite(function, "Location parameter", mu);
-      check_positive_finite(function, "Scale parameter", sigma);
+  check_finite(function, "Location parameter", mu);
+  check_positive_finite(function, "Scale parameter", sigma);
 
-      variate_generator<RNG&, lognormal_distribution<> >
-        lognorm_rng(rng, lognormal_distribution<>(mu, sigma));
-      return lognorm_rng();
-    }
-
-  }
+  variate_generator<RNG&, lognormal_distribution<> > lognorm_rng(
+      rng, lognormal_distribution<>(mu, sigma));
+  return lognorm_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

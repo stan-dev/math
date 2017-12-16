@@ -40,8 +40,7 @@ void expect_mix_matrix_value() {
       vector<matrix_t> fb = F::template apply<vector<matrix_t> >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_val_deriv_eq(F::apply_base(a[i](j)), a[i](j),
-                          fb[i](j), b[i](j));
+      expect_val_deriv_eq(F::apply_base(a[i](j)), a[i](j), fb[i](j), b[i](j));
     }
   }
 

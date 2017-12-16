@@ -8,10 +8,10 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_scalar_matrix) {
 
   matrix_fd v(2, 2);
   v << 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
   matrix_fd result;
 
   result = subtract(2.0, v);
@@ -40,10 +40,10 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_scalar_vector) {
 
   vector_fd v(4);
   v << 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
   vector_fd result;
 
   result = subtract(2.0, v);
@@ -72,10 +72,10 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_scalar_rowvector) {
 
   row_vector_fd v(4);
   v << 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
   row_vector_fd result;
 
   result = subtract(2.0, v);
@@ -111,18 +111,18 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_vector_vector) {
 
   vd_1 << 0, 2, -6, 10, 6;
   vv_1 << 0, 2, -6, 10, 6;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
-   vv_1(3).d_ = 1.0;
-   vv_1(4).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
+  vv_1(3).d_ = 1.0;
+  vv_1(4).d_ = 1.0;
   vd_2 << 2, 3, 4, 5, 6;
   vv_2 << 2, 3, 4, 5, 6;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
-   vv_2(3).d_ = 1.0;
-   vv_2(4).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
+  vv_2(3).d_ = 1.0;
+  vv_2(4).d_ = 1.0;
 
   expected_output << -2, -1, -10, 5, 0;
 
@@ -189,25 +189,25 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_rowvector_rowvector) {
   using stan::math::row_vector_fd;
 
   row_vector_d expected_output(5);
-  row_vector_d  output_d;
-  row_vector_fd  output;
+  row_vector_d output_d;
+  row_vector_fd output;
   row_vector_d rvd_1(5), rvd_2(5);
   row_vector_fd rvv_1(5), rvv_2(5);
 
   rvd_1 << 0, 2, -6, 10, 6;
   rvv_1 << 0, 2, -6, 10, 6;
-   rvv_1(0).d_ = 1.0;
-   rvv_1(1).d_ = 1.0;
-   rvv_1(2).d_ = 1.0;
-   rvv_1(3).d_ = 1.0;
-   rvv_1(4).d_ = 1.0;
+  rvv_1(0).d_ = 1.0;
+  rvv_1(1).d_ = 1.0;
+  rvv_1(2).d_ = 1.0;
+  rvv_1(3).d_ = 1.0;
+  rvv_1(4).d_ = 1.0;
   rvd_2 << 2, 3, 4, 5, 6;
   rvv_2 << 2, 3, 4, 5, 6;
-   rvv_2(0).d_ = 1.0;
-   rvv_2(1).d_ = 1.0;
-   rvv_2(2).d_ = 1.0;
-   rvv_2(3).d_ = 1.0;
-   rvv_2(4).d_ = 1.0;
+  rvv_2(0).d_ = 1.0;
+  rvv_2(1).d_ = 1.0;
+  rvv_2(2).d_ = 1.0;
+  rvv_2(3).d_ = 1.0;
+  rvv_2(4).d_ = 1.0;
 
   expected_output << -2, -1, -10, 5, 0;
 
@@ -282,16 +282,16 @@ TEST(AgradFwdMatrixOperatorSubtraction, fd_matrix_matrix) {
 
   md_1 << -10, 1, 10, 0;
   mv_1 << -10, 1, 10, 0;
-   mv_1(0, 0).d_ = 1.0;
-   mv_1(0, 1).d_ = 1.0;
-   mv_1(1, 0).d_ = 1.0;
-   mv_1(1, 1).d_ = 1.0;
+  mv_1(0, 0).d_ = 1.0;
+  mv_1(0, 1).d_ = 1.0;
+  mv_1(1, 0).d_ = 1.0;
+  mv_1(1, 1).d_ = 1.0;
   md_2 << 10, -10, 1, 2;
   mv_2 << 10, -10, 1, 2;
-   mv_2(0, 0).d_ = 1.0;
-   mv_2(0, 1).d_ = 1.0;
-   mv_2(1, 0).d_ = 1.0;
-   mv_2(1, 1).d_ = 1.0;
+  mv_2(0, 0).d_ = 1.0;
+  mv_2(0, 1).d_ = 1.0;
+  mv_2(1, 0).d_ = 1.0;
+  mv_2(1, 1).d_ = 1.0;
 
   expected_output << -20, 11, 9, -2;
 
@@ -348,7 +348,7 @@ TEST(AgradFwdMatrixOperatorSubtraction, ffd_scalar_matrix) {
   using stan::math::subtract;
   using stan::math::matrix_ffd;
 
- fvar<fvar<double> > a, b, c, d, e, f, g, h;
+  fvar<fvar<double> > a, b, c, d, e, f, g, h;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -424,7 +424,7 @@ TEST(AgradFwdMatrixOperatorSubtraction, ffd_scalar_rowvector) {
   using stan::math::subtract;
   using stan::math::row_vector_ffd;
 
- fvar<fvar<double> > a, b, c, d;
+  fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 1.0;
   b.val_.val_ = 2.0;
   c.val_.val_ = 3.0;
@@ -557,8 +557,8 @@ TEST(AgradFwdMatrixOperatorSubtraction, ffd_rowvector_rowvector) {
   using stan::math::row_vector_ffd;
 
   row_vector_d expected_output(5);
-  row_vector_d  output_d;
-  row_vector_ffd  output;
+  row_vector_d output_d;
+  row_vector_ffd output;
   row_vector_d rvd_1(5), rvd_2(5);
   row_vector_ffd rvv_1(5), rvv_2(5);
 

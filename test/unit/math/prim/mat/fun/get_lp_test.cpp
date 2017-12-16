@@ -13,4 +13,3 @@ TEST(mathMatrix, getLp) {
   lp_accum.add(3);
   EXPECT_FLOAT_EQ(17.5, get_lp(lp, lp_accum));
 }
-

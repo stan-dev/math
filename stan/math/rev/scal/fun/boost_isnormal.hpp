@@ -5,24 +5,22 @@
 #include <stan/math/rev/core.hpp>
 
 namespace boost {
-  namespace math {
+namespace math {
 
-    /**
-     * Checks if the given number is normal.
-     *
-     * Return <code>true</code> if the specified variable
-     * has a value that is normal.
-     *
-     * @param v Variable to test.
-     * @return <code>true</code> if variable is normal.
-     */
-    template <>
-    inline
-    bool isnormal(const stan::math::var& v) {
-      return (boost::math::isnormal)(v.val());
-    }
-
-  }
+/**
+ * Checks if the given number is normal.
+ *
+ * Return <code>true</code> if the specified variable
+ * has a value that is normal.
+ *
+ * @param v Variable to test.
+ * @return <code>true</code> if variable is normal.
+ */
+template <>
+inline bool isnormal(const stan::math::var& v) {
+  return (boost::math::isnormal)(v.val());
 }
-#endif
 
+}  // namespace math
+}  // namespace boost
+#endif

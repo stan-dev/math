@@ -6,9 +6,7 @@
 #include <limits>
 
 template <typename F>
-void test_nan_fv1(const F& f,
-                  const double& arg1,
-                  const bool& throws) {
+void test_nan_fv1(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   stan::math::fvar<var> arg1_v = arg1;
 
@@ -28,9 +26,7 @@ void test_nan_fv1(const F& f,
 }
 
 template <typename F>
-void test_nan_fv2(const F& f,
-                  const double& arg1,
-                  const bool& throws) {
+void test_nan_fv2(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   stan::math::fvar<var> arg1_v = arg1;
 
@@ -49,9 +45,7 @@ void test_nan_fv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv1(const F& f,
-                   const double& arg1,
-                   const bool& throws) {
+void test_nan_ffv1(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v = arg1;
@@ -74,9 +68,7 @@ void test_nan_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv2(const F& f,
-                   const double& arg1,
-                   const bool& throws) {
+void test_nan_ffv2(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
@@ -97,9 +89,7 @@ void test_nan_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv3(const F& f,
-                   const double& arg1,
-                   const bool& throws) {
+void test_nan_ffv3(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v = arg1;
@@ -122,9 +112,7 @@ void test_nan_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv4(const F& f,
-                   const double& arg1,
-                   const bool& throws) {
+void test_nan_ffv4(const F& f, const double& arg1, const bool& throws) {
   using stan::math::var;
   using stan::math::fvar;
   stan::math::fvar<fvar<var> > arg1_v(fvar<var>(arg1, 1.0),
@@ -146,8 +134,7 @@ void test_nan_ffv4(const F& f,
 }
 
 template <typename F>
-void test_nan_mix(const F& f,
-                  const bool& throws) {
+void test_nan_mix(const F& f, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   test_nan_fv1(f, nan, throws);
   test_nan_fv2(f, nan, throws);
@@ -158,10 +145,8 @@ void test_nan_mix(const F& f,
 }
 
 template <typename F>
-void test_nan_fv_fv1(const F& f,
-                    const double& arg1,
-                    const double& arg2,
-                    const bool& throws) {
+void test_nan_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -184,10 +169,8 @@ void test_nan_fv_fv1(const F& f,
 }
 
 template <typename F>
-void test_nan_fv_fv2(const F& f,
-                    const double& arg1,
-                    const double& arg2,
-                    const bool& throws) {
+void test_nan_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -210,9 +193,7 @@ void test_nan_fv_fv2(const F& f,
 }
 
 template <typename F>
-void test_nan_fv_d1(const F& f,
-                    const double& arg1,
-                    const double& arg2,
+void test_nan_fv_d1(const F& f, const double& arg1, const double& arg2,
                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -234,9 +215,7 @@ void test_nan_fv_d1(const F& f,
 }
 
 template <typename F>
-void test_nan_fv_d2(const F& f,
-                    const double& arg1,
-                    const double& arg2,
+void test_nan_fv_d2(const F& f, const double& arg1, const double& arg2,
                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -258,9 +237,7 @@ void test_nan_fv_d2(const F& f,
 }
 
 template <typename F>
-void test_nan_d_fv1(const F& f,
-                    const double& arg1,
-                    const double& arg2,
+void test_nan_d_fv1(const F& f, const double& arg1, const double& arg2,
                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -282,9 +259,7 @@ void test_nan_d_fv1(const F& f,
 }
 
 template <typename F>
-void test_nan_d_fv2(const F& f,
-                    const double& arg1,
-                    const double& arg2,
+void test_nan_d_fv2(const F& f, const double& arg1, const double& arg2,
                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -305,9 +280,7 @@ void test_nan_d_fv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv1(const F& f,
-                       const double& arg1,
-                       const double& arg2,
+void test_nan_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
                        const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -336,9 +309,7 @@ void test_nan_ffv_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv2(const F& f,
-                       const double& arg1,
-                       const double& arg2,
+void test_nan_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
                        const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -367,9 +338,7 @@ void test_nan_ffv_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv3(const F& f,
-                       const double& arg1,
-                       const double& arg2,
+void test_nan_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
                        const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -398,9 +367,7 @@ void test_nan_ffv_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv4(const F& f,
-                       const double& arg1,
-                       const double& arg2,
+void test_nan_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
                        const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
@@ -430,10 +397,8 @@ void test_nan_ffv_ffv4(const F& f,
 }
 
 template <typename F>
-void test_nan_ffv_d1(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v = arg1;
@@ -456,10 +421,8 @@ void test_nan_ffv_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d2(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v = arg1;
@@ -482,10 +445,8 @@ void test_nan_ffv_d2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d3(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v = arg1;
@@ -508,10 +469,8 @@ void test_nan_ffv_d3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d4(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v = arg1;
@@ -535,10 +494,8 @@ void test_nan_ffv_d4(const F& f,
 }
 
 template <typename F>
-void test_nan_d_ffv1(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v = arg2;
@@ -561,10 +518,8 @@ void test_nan_d_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv2(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v = arg2;
@@ -587,10 +542,8 @@ void test_nan_d_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv3(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v = arg2;
@@ -613,10 +566,8 @@ void test_nan_d_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv4(const F& f,
-                       const double& arg1,
-                       const double& arg2,
-                       const bool& throws) {
+void test_nan_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                     const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v = arg2;
@@ -639,16 +590,14 @@ void test_nan_d_ffv4(const F& f,
   }
 }
 template <typename F>
-void test_nan_mix(const F& f,
-                  const double& arg1,
-                  const double& arg2,
+void test_nan_mix(const F& f, const double& arg1, const double& arg2,
                   const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(3);
   Eigen::VectorXd arg2_vec(3);
   arg1_vec << nan, arg1, nan;
   arg2_vec << arg2, nan, nan;
-  for (int i = 0 ; i < arg1_vec.size(); i++) {
+  for (int i = 0; i < arg1_vec.size(); i++) {
     test_nan_fv_fv1(f, arg1_vec(i), arg2_vec(i), throws);
     test_nan_fv_fv2(f, arg1_vec(i), arg2_vec(i), throws);
     test_nan_fv_d1(f, arg1_vec(i), arg2_vec(i), throws);
@@ -670,11 +619,8 @@ void test_nan_mix(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_fv_fv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                        const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -683,13 +629,12 @@ void test_nan_fv_fv_fv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val())) << fail_msg.str();
@@ -705,11 +650,8 @@ void test_nan_fv_fv_fv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_fv_fv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                        const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -718,13 +660,12 @@ void test_nan_fv_fv_fv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     stan::math::fvar<var> res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val())) << fail_msg.str();
@@ -741,11 +682,8 @@ void test_nan_fv_fv_fv2(const F& f,
 }
 
 template <typename F>
-void test_nan_d_fv_fv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_fv_fv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -753,9 +691,8 @@ void test_nan_d_fv_fv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -773,11 +710,8 @@ void test_nan_d_fv_fv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_fv_fv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_fv_fv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
@@ -785,9 +719,8 @@ void test_nan_d_fv_fv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -805,11 +738,8 @@ void test_nan_d_fv_fv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_d_fv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_d_fv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -817,9 +747,8 @@ void test_nan_fv_d_fv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -837,11 +766,8 @@ void test_nan_fv_d_fv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_d_fv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_d_fv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -849,9 +775,8 @@ void test_nan_fv_d_fv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -869,11 +794,8 @@ void test_nan_fv_d_fv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_fv_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_fv_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -881,9 +803,8 @@ void test_nan_fv_fv_d1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -901,11 +822,8 @@ void test_nan_fv_fv_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_fv_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_fv_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
@@ -913,9 +831,8 @@ void test_nan_fv_fv_d2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -933,20 +850,16 @@ void test_nan_fv_fv_d2(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_d_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_d_d1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -963,20 +876,16 @@ void test_nan_fv_d_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_fv_d_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_fv_d_d2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg1_v(arg1, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -994,20 +903,16 @@ void test_nan_fv_d_d2(const F& f,
 }
 
 template <typename F>
-void test_nan_d_fv_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_fv_d1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1024,20 +929,16 @@ void test_nan_d_fv_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_fv_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_fv_d2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg2_v(arg2, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1055,20 +956,16 @@ void test_nan_d_fv_d2(const F& f,
 }
 
 template <typename F>
-void test_nan_d_d_fv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_fv1(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1085,20 +982,16 @@ void test_nan_d_d_fv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_d_fv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_fv2(const F& f, const double& arg1, const double& arg2,
+                      const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> arg3_v(arg3, 1.0);
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1115,11 +1008,8 @@ void test_nan_d_d_fv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1134,13 +1024,12 @@ void test_nan_ffv_ffv_ffv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.val_.val())) << fail_msg.str();
@@ -1156,11 +1045,8 @@ void test_nan_ffv_ffv_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1175,13 +1061,12 @@ void test_nan_ffv_ffv_ffv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.val_.val())) << fail_msg.str();
@@ -1197,11 +1082,8 @@ void test_nan_ffv_ffv_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_ffv3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1216,13 +1098,12 @@ void test_nan_ffv_ffv_ffv3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.val_.d_.val())) << fail_msg.str();
@@ -1239,11 +1120,8 @@ void test_nan_ffv_ffv_ffv3(const F& f,
 }
 
 template <typename F>
-void test_nan_ffv_ffv_ffv4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
+                           const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1258,13 +1136,12 @@ void test_nan_ffv_ffv_ffv4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3_v), std::domain_error)
-      << fail_msg.str();
+        << fail_msg.str();
   } else {
     fvar<fvar<var> > res = f(arg1_v, arg2_v, arg3_v);
     EXPECT_TRUE(boost::math::isnan(res.d_.d_.val())) << fail_msg.str();
@@ -1280,11 +1157,8 @@ void test_nan_ffv_ffv_ffv4(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_ffv1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1296,9 +1170,8 @@ void test_nan_d_ffv_ffv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -1316,11 +1189,8 @@ void test_nan_d_ffv_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_ffv2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1332,9 +1202,8 @@ void test_nan_d_ffv_ffv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -1352,11 +1221,8 @@ void test_nan_d_ffv_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_ffv3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1368,9 +1234,8 @@ void test_nan_d_ffv_ffv3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -1388,11 +1253,8 @@ void test_nan_d_ffv_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_ffv4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_ffv4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1404,9 +1266,8 @@ void test_nan_d_ffv_ffv4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3_v), std::domain_error) << fail_msg.str();
@@ -1424,11 +1285,8 @@ void test_nan_d_ffv_ffv4(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1440,9 +1298,8 @@ void test_nan_ffv_d_ffv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1460,11 +1317,8 @@ void test_nan_ffv_d_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1476,9 +1330,8 @@ void test_nan_ffv_d_ffv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1496,11 +1349,8 @@ void test_nan_ffv_d_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1512,9 +1362,8 @@ void test_nan_ffv_d_ffv3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1532,11 +1381,8 @@ void test_nan_ffv_d_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_ffv4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1548,9 +1394,8 @@ void test_nan_ffv_d_ffv4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -1568,11 +1413,8 @@ void test_nan_ffv_d_ffv4(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1584,9 +1426,8 @@ void test_nan_ffv_ffv_d1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1604,11 +1445,8 @@ void test_nan_ffv_ffv_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1620,9 +1458,8 @@ void test_nan_ffv_ffv_d2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1640,11 +1477,8 @@ void test_nan_ffv_ffv_d2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1656,9 +1490,8 @@ void test_nan_ffv_ffv_d3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1676,11 +1509,8 @@ void test_nan_ffv_ffv_d3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_ffv_d4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                         const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1692,9 +1522,8 @@ void test_nan_ffv_ffv_d4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1712,11 +1541,8 @@ void test_nan_ffv_ffv_d4(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1725,9 +1551,8 @@ void test_nan_ffv_d_d1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -1744,11 +1569,8 @@ void test_nan_ffv_d_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1757,9 +1579,8 @@ void test_nan_ffv_d_d2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -1776,11 +1597,8 @@ void test_nan_ffv_d_d2(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_d3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1789,9 +1607,8 @@ void test_nan_ffv_d_d3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -1808,11 +1625,8 @@ void test_nan_ffv_d_d3(const F& f,
   }
 }
 template <typename F>
-void test_nan_ffv_d_d4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_ffv_d_d4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg1_v(arg1, 1.0);
@@ -1821,9 +1635,8 @@ void test_nan_ffv_d_d4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1_v
-            << " second argument " << arg2
-            << " and third argument " << arg3;
+           << "first argument " << arg1_v << " second argument " << arg2
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1_v, arg2, arg3), std::domain_error) << fail_msg.str();
@@ -1841,11 +1654,8 @@ void test_nan_ffv_d_d4(const F& f,
 }
 
 template <typename F>
-void test_nan_d_ffv_d1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_d1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1854,9 +1664,8 @@ void test_nan_d_ffv_d1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1873,11 +1682,8 @@ void test_nan_d_ffv_d1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_d2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1886,9 +1692,8 @@ void test_nan_d_ffv_d2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1905,11 +1710,8 @@ void test_nan_d_ffv_d2(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_d3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1918,9 +1720,8 @@ void test_nan_d_ffv_d3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1937,11 +1738,8 @@ void test_nan_d_ffv_d3(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_ffv_d4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_ffv_d4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg2_v(arg2, 1.0);
@@ -1950,9 +1748,8 @@ void test_nan_d_ffv_d4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2_v
-            << " and third argument " << arg3;
+           << "first argument " << arg1 << " second argument " << arg2_v
+           << " and third argument " << arg3;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2_v, arg3), std::domain_error) << fail_msg.str();
@@ -1970,11 +1767,8 @@ void test_nan_d_ffv_d4(const F& f,
 }
 
 template <typename F>
-void test_nan_d_d_ffv1(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_ffv1(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg3_v(arg3, 1.0);
@@ -1983,9 +1777,8 @@ void test_nan_d_d_ffv1(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -2002,11 +1795,8 @@ void test_nan_d_d_ffv1(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv2(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_ffv2(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg3_v(arg3, 1.0);
@@ -2015,9 +1805,8 @@ void test_nan_d_d_ffv2(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -2034,11 +1823,8 @@ void test_nan_d_d_ffv2(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv3(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_ffv3(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg3_v(arg3, 1.0);
@@ -2047,9 +1833,8 @@ void test_nan_d_d_ffv3(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -2066,11 +1851,8 @@ void test_nan_d_d_ffv3(const F& f,
   }
 }
 template <typename F>
-void test_nan_d_d_ffv4(const F& f,
-                        const double& arg1,
-                        const double& arg2,
-                        const double& arg3,
-                        const bool& throws) {
+void test_nan_d_d_ffv4(const F& f, const double& arg1, const double& arg2,
+                       const double& arg3, const bool& throws) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<fvar<var> > arg3_v(arg3, 1.0);
@@ -2079,9 +1861,8 @@ void test_nan_d_d_ffv4(const F& f,
 
   std::ostringstream fail_msg;
   fail_msg << "Failed for "
-            << "first argument " << arg1
-            << " second argument " << arg2
-            << " and third argument " << arg3_v;
+           << "first argument " << arg1 << " second argument " << arg2
+           << " and third argument " << arg3_v;
 
   if (throws) {
     EXPECT_THROW(f(arg1, arg2, arg3_v), std::domain_error) << fail_msg.str();
@@ -2099,11 +1880,8 @@ void test_nan_d_d_ffv4(const F& f,
 }
 
 template <typename F>
-void test_nan_mix(const F& f,
-                  const double& arg1,
-                  const double& arg2,
-                  const double& arg3,
-                  const bool& throws) {
+void test_nan_mix(const F& f, const double& arg1, const double& arg2,
+                  const double& arg3, const bool& throws) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd arg1_vec(7);
   Eigen::VectorXd arg2_vec(7);

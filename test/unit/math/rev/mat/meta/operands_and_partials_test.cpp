@@ -10,7 +10,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   using stan::math::vector_d;
 
   vector_d d_vec(4);
-  operands_and_partials<vector_d > o3(d_vec);
+  operands_and_partials<vector_d> o3(d_vec);
   EXPECT_EQ(5, sizeof(o3));
 
   vector_v v_vec(4);
@@ -26,7 +26,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   v_stdvec.push_back(v3);
   v_stdvec.push_back(v4);
 
-  operands_and_partials<vector_v > o4(v_vec);
+  operands_and_partials<vector_v> o4(v_vec);
   o4.edge1_.partials_[0] += 10.0;
   o4.edge1_.partials_[1] += 20.0;
   o4.edge1_.partials_[2] += 30.0;
@@ -76,7 +76,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
   EXPECT_FLOAT_EQ(40.0, grad[3]);
 }
 
-
 TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -85,7 +84,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
 
   matrix_d d_mat(2, 2);
   d_mat << 10.0, 20.0, 30.0, 40.0;
-  operands_and_partials<matrix_d > o3(d_mat);
+  operands_and_partials<matrix_d> o3(d_mat);
 
   EXPECT_EQ(5, sizeof(o3));
 
@@ -102,7 +101,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   v_stdvec.push_back(v3);
   v_stdvec.push_back(v4);
 
-  operands_and_partials<matrix_v > o4(v_mat);
+  operands_and_partials<matrix_v> o4(v_mat);
   o4.edge1_.partials_ += d_mat;
   o4.edge1_.partials_vec_[1] += d_mat;
   // Should affect the same vars as the call above
@@ -263,14 +262,13 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   v_stdvec.push_back(v3);
   v_stdvec.push_back(v4);
 
-  operands_and_partials<std::vector<vector_v>,
-                        std::vector<vector_d>,
-                        vector_v> o4(v_vec, d_vec_vec, v_vec2);
+  operands_and_partials<std::vector<vector_v>, std::vector<vector_d>, vector_v>
+      o4(v_vec, d_vec_vec, v_vec2);
   o4.edge1_.partials_vec_[0] += d_vec1;
   o4.edge3_.partials_vec_[0] += d_vec2;
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands vecs
-  EXPECT_EQ(2*sizeof(d_vec1) + 6*sizeof(&v_vec), sizeof(o4));
+  EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec), sizeof(o4));
 
   std::vector<double> grad;
   var v = o4.build(10.0);

@@ -70,6 +70,3 @@ TEST(SparseStuff, csr_extract_u_sparse_compressed) {
   EXPECT_EQ(4, result[2]);
   EXPECT_EQ(3, result.size());
 }
-
-
-
