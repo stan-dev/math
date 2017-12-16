@@ -10,9 +10,9 @@ Required Libraries
 ------------------
 Stan Math depends on three libraries:
 
-- Boost (version 1.62.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.64.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- Cvodes (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- CVODES (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
 These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
 
@@ -47,15 +47,15 @@ The `-I` includes provide paths pointing to the four necessary includes:
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
 * Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
-* Cvodes: path to source directory that contains `cvodes` as a subdirectory
+* CVODES: path to source directory that contains `cvodes` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.62.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.64.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.62.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.64.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
 
 Other Compilers
 ---------------
