@@ -96,6 +96,8 @@ pipeline {
             }
             post {
                 always {
+                    warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                    warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     retry(3) { deleteDir() }
@@ -138,37 +140,29 @@ pipeline {
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
-            }
-        }
-        stage('Distribution tests') {
-            agent { label "distribution-tests" }
-            // XXX Add conditional back in so we don't run this if we haven't
-            // changed code or makefiles
-            steps { 
-                unstash 'MathSetup'
-                sh """
-                    ${setupCC(false)}
-                    echo 'O=0' >> make/local
-                    echo N_TESTS=${env.N_TESTS} >> make/local
-                    """
-                script {
-                    if (withRowVector || isDevelop()) {
-                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                    }
-                }
-                sh "./runTests.py -j${env.PARALLEL} test/prob"
+                stage('Distribution tests') {
+                    agent { label "distribution-tests" }
+                    steps { 
+                        unstash 'MathSetup'
+                        sh """
+                            ${setupCC(false)}
+                            echo 'O=0' >> make/local
+                            echo N_TESTS=${env.N_TESTS} >> make/local
+                            """
+                        script {
+                            if (withRowVector || isDevelop()) {
+                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                            }
+                        }
+                        sh "./runTests.py -j${env.PARALLEL} test/prob"
 
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
             }
-            post { always { retry(3) { deleteDir() } } }
         }
     }
     post {
-        always {
-            node('master') {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-            }
-        }
         success {
             updateUpstream('stan')
             mailBuildResults("SUCCESSFUL")
