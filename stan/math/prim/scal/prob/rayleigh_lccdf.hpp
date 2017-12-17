@@ -19,6 +19,9 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

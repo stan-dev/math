@@ -15,6 +15,9 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

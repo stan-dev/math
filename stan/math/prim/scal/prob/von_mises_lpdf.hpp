@@ -18,6 +18,9 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <cmath>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

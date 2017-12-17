@@ -19,6 +19,9 @@
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

@@ -17,6 +17,9 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

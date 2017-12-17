@@ -45,6 +45,9 @@
 #include <boost/math/distributions.hpp>
 #include <algorithm>
 #include <cmath>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 #include <string>
 
 namespace stan {

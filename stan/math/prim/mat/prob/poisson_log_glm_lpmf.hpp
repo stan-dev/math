@@ -14,6 +14,9 @@
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 #include <limits>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

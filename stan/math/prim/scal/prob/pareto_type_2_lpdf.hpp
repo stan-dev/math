@@ -19,6 +19,9 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

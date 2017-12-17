@@ -19,6 +19,9 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {

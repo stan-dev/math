@@ -20,6 +20,9 @@
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <cmath>
 #include <limits>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {
