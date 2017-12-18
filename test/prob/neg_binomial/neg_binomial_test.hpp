@@ -1,5 +1,6 @@
 // Arguments: Ints, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
+#include <stdexcept>
 
 using std::vector;
 using std::numeric_limits;
@@ -76,5 +77,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_shape>::type>(n + alpha - 1.0, n)
              - n * log1p(beta) + alpha * log(beta / (1 + beta));
+    return log(0.0);
   }
 };
