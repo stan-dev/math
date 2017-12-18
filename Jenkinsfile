@@ -96,8 +96,6 @@ pipeline {
             }
             post {
                 always {
-                    warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                    warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
                     retry(3) { deleteDir() }
@@ -124,7 +122,13 @@ pipeline {
                         runTests("test/unit")
                         retry(2) { junit 'test/**/*.xml' }
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post {
+                        always {
+                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                            retry(3) { deleteDir() }
+                        }
+                    }
                 }
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
