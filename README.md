@@ -37,7 +37,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp  -I /path/to/cvodes
+> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/cvodes -std=c++11 foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
@@ -52,7 +52,7 @@ The `-I` includes provide paths pointing to the four necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.64.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.64.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include -std=c++11 foo.cpp
 ```
 
 The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.64.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
