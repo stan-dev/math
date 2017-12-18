@@ -112,7 +112,15 @@ pipeline {
                         sh setupCC()
                         sh "make -j${env.PARALLEL} test-headers"
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post {
+                        always {
+                            retry(3) {
+                                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                                deleteDir()
+                            }
+                        }
+                    }
                 }
                 stage('Unit') {
                     agent any
