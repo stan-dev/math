@@ -13,8 +13,8 @@ In make/local you need to set
 
 BOOST=...path to you 1.65 boost...
 CXX=mpicxx
-CXXFLAGS=-DSTAN_HAS_MPI
-LDFLAGS=-L...path to installed boost libs... -lboost_mpi -lboost_serialization
+CXXFLAGS+=-DSTAN_HAS_MPI
+LDFLAGS+=-L...path to installed boost libs... -lboost_mpi -lboost_serialization
 
 and ensure that the LDFLAGS finds the boost installation of mpi and serialization
 
