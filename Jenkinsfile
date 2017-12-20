@@ -117,9 +117,9 @@ pipeline {
                     }
                     post {
                         always {
-                            retry(3) {
-                                deleteDir()
-                            }
+                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                            retry(3) { deleteDir() }
                         }
                     }
                 }
@@ -133,6 +133,8 @@ pipeline {
                     }
                     post {
                         always {
+                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
                             retry(3) { deleteDir() }
                         }
                     }
@@ -169,14 +171,6 @@ pipeline {
 
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-            }
-            post {
-                always {
-                    node('master') {
-                        warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                        warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-                    }
                 }
             }
         }
