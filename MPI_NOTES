@@ -11,15 +11,18 @@ Build boost serialization and boost mpi as shared libraries
 
 In make/local you need to set
 
-CC=mpicxx
+BOOST=...path to you 1.65 boost...
+CXX=mpicxx
+CXXFLAGS=-DSTAN_HAS_MPI
+LDFLAGS=-L...path to installed boost libs... -lboost_mpi -lboost_serialization
 
 and ensure that the LDFLAGS finds the boost installation of mpi and serialization
 
 ... and of course, the openmpi implementation needs to be
 available. The macports openmpi works great.
 
-The use of mpicxx is recommended by openmp, but not required. That is,
-for openmp you can find out the extra compiler flags needed for
+The use of mpicxx is recommended by openmpi, but not required. That is,
+for openmpi you can find out the extra compiler flags needed for
 linking to openmpi with the command.
 
 mpicxx --showme
@@ -28,12 +31,11 @@ The mpicxx man page has more details on this.
 
 The minimal tests are in
 
-test/unit/math/rev/arr/functor
+test/unit/math/rev/mat/functor
 
 map_rect_mpi_test.cpp
-map_rect_lpdf_mpi_test.cpp
 
-To compile these, there is a makefile in their directory. After
+These can be compiled the usual way. After
 compilation they can be started with
 
 mpirun -np 4 ./map_rect_mpi_test
