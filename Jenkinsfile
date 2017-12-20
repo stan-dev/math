@@ -28,10 +28,10 @@ def runTests(String testPath) {
 
 def utils = new org.stan.Utils()
 
-def isDevelop() { env.BRANCH_NAME == 'develop' }
+def isBranch(String b) { env.BRANCH_NAME == b }
 
 def updateUpstream(String upstreamRepo) {
-    if (isDevelop()) {
+    if (isBranch('develop')) {
         node('master') {
             retry(3) {
                 checkout([$class: 'GitSCM',
@@ -71,9 +71,19 @@ pipeline {
     options { skipDefaultCheckout() }
     stages {
         stage('Kill previous builds') {
-            when { not { branch 'develop' } }
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
             steps { 
+                echo "HI"
+                echo "${params.withRowVector}"
+                echo "${isBranch('develop')}"
+                echo "${isBranch('master')}"
                 script {
+                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                        echo "WTF"
+                    } else { echo "ok well good" }
                     utils.killOldBuilds()
                 }
             }
@@ -132,8 +142,6 @@ pipeline {
                     }
                     post {
                         always {
-                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
                             retry(3) { deleteDir() }
                         }
                     }
@@ -162,7 +170,7 @@ pipeline {
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
                         script {
-                            if (withRowVector || isDevelop()) {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
