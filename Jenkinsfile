@@ -76,14 +76,7 @@ pipeline {
                 not { branch 'master' }
             }
             steps { 
-                echo "HI"
-                echo "${params.withRowVector}"
-                echo "${isBranch('develop')}"
-                echo "${isBranch('master')}"
                 script {
-                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                        echo "WTF"
-                    } else { echo "ok well good" }
                     utils.killOldBuilds()
                 }
             }
@@ -125,8 +118,6 @@ pipeline {
                     post {
                         always {
                             retry(3) {
-                                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
                                 deleteDir()
                             }
                         }
@@ -178,6 +169,14 @@ pipeline {
 
                     }
                     post { always { retry(3) { deleteDir() } } }
+                }
+            }
+            post {
+                always {
+                    node('master') {
+                        warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                        warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                    }
                 }
             }
         }
