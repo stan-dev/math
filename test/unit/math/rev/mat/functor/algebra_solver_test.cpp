@@ -238,3 +238,22 @@ TEST(MathMatrix, degenerate_dbl) {
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(0));
 }
+
+// unit test to demo issue #696
+// system functor init bug issue #696
+TEST(MathMatrix, system_functor_constructor) {
+  using stan::math::system_functor;
+
+  Eigen::VectorXd y(2);
+  y << 5, 8;
+  Eigen::VectorXd x(2);
+  x << 10, 1;
+  std::vector<double> dat{0.0, 0.0};
+  std::vector<int> dat_int{0, 0};
+  std::ostream* msgs = 0;
+  int f = 99;
+
+  system_functor<int, double, double, true> fs(f, x, y, dat, dat_int, msgs);
+
+  EXPECT_EQ(fs.f_, f);
+}
