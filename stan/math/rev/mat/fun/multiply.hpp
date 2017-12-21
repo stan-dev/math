@@ -28,13 +28,13 @@ namespace math {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam TA Scalar type for matrix A
- * @tparam RA Rows for matrix A
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam TB Scalar type for matrix B
- * @tparam CB Columns for matrix B
+ * @tparam Ta Scalar type for matrix A
+ * @tparam Ra Rows for matrix A
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Tb Scalar type for matrix B
+ * @tparam Cb Columns for matrix B
  */
-template <typename TA, int RA, int CA, typename TB, int CB>
+template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
 class multiply_mat_vari : public vari {
  public:
   int A_rows_;
@@ -64,8 +64,8 @@ class multiply_mat_vari : public vari {
    * @param A matrix
    * @param B matrix
    */
-  multiply_mat_vari(const Eigen::Matrix<TA, RA, CA>& A,
-                    const Eigen::Matrix<TB, CA, CB>& B)
+  multiply_mat_vari(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, Cb>& B)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -123,12 +123,12 @@ class multiply_mat_vari : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam TA Scalar type for matrix A
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam TB Scalar type for matrix B
+ * @tparam Ta Scalar type for matrix A
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Tb Scalar type for matrix B
  */
-template <typename TA, int CA, typename TB>
-class multiply_mat_vari<TA, 1, CA, TB, 1> : public vari {
+template <typename Ta, int Ca, typename Tb>
+class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -153,8 +153,8 @@ class multiply_mat_vari<TA, 1, CA, TB, 1> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const Eigen::Matrix<TA, 1, CA>& A,
-                    const Eigen::Matrix<TB, CA, 1>& B)
+  multiply_mat_vari(const Eigen::Matrix<Ta, 1, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
         Ad_(ChainableStack::memalloc_.alloc_array<double>(size_)),
@@ -205,13 +205,13 @@ class multiply_mat_vari<TA, 1, CA, TB, 1> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam RA Rows for matrix A
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam TB Scalar type for matrix B
- * @tparam CB Columns for matrix B
+ * @tparam Ra Rows for matrix A
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Tb Scalar type for matrix B
+ * @tparam Cb Columns for matrix B
  */
-template <int RA, int CA, typename TB, int CB>
-class multiply_mat_vari<double, RA, CA, TB, CB> : public vari {
+template <int Ra, int Ca, typename Tb, int Cb>
+class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
  public:
   int A_rows_;
   int A_cols_;
@@ -239,8 +239,8 @@ class multiply_mat_vari<double, RA, CA, TB, CB> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const Eigen::Matrix<double, RA, CA>& A,
-                    const Eigen::Matrix<TB, CA, CB>& B)
+  multiply_mat_vari(const Eigen::Matrix<double, Ra, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, Cb>& B)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -292,11 +292,11 @@ class multiply_mat_vari<double, RA, CA, TB, CB> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam TB Scalar type for matrix B
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Tb Scalar type for matrix B
  */
-template <int CA, typename TB>
-class multiply_mat_vari<double, 1, CA, TB, 1> : public vari {
+template <int Ca, typename Tb>
+class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -320,8 +320,8 @@ class multiply_mat_vari<double, 1, CA, TB, 1> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const Eigen::Matrix<double, 1, CA>& A,
-                    const Eigen::Matrix<TB, CA, 1>& B)
+  multiply_mat_vari(const Eigen::Matrix<double, 1, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
         Ad_(ChainableStack::memalloc_.alloc_array<double>(size_)),
@@ -366,13 +366,13 @@ class multiply_mat_vari<double, 1, CA, TB, 1> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam TA Scalar type for matrix A
- * @tparam RA Rows for matrix A
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam CB Columns for matrix B
+ * @tparam Ta Scalar type for matrix A
+ * @tparam Ra Rows for matrix A
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Cb Columns for matrix B
  */
-template <typename TA, int RA, int CA, int CB>
-class multiply_mat_vari<TA, RA, CA, double, CB> : public vari {
+template <typename Ta, int Ra, int Ca, int Cb>
+class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
  public:
   int A_rows_;
   int A_cols_;
@@ -400,8 +400,8 @@ class multiply_mat_vari<TA, RA, CA, double, CB> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const Eigen::Matrix<TA, RA, CA>& A,
-                    const Eigen::Matrix<double, CA, CB>& B)
+  multiply_mat_vari(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                    const Eigen::Matrix<double, Ca, Cb>& B)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -454,14 +454,14 @@ class multiply_mat_vari<TA, RA, CA, double, CB> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam TA Scalar type for matrix A
- * @tparam RA Rows for matrix A
- * @tparam CA Columns for matrix A, Rows for matrix B
- * @tparam TB Scalar type for matrix B
- * @tparam CB Columns for matrix B
+ * @tparam Ta Scalar type for matrix A
+ * @tparam Ra Rows for matrix A
+ * @tparam Ca Columns for matrix A, Rows for matrix B
+ * @tparam Tb Scalar type for matrix B
+ * @tparam Cb Columns for matrix B
  */
-template <typename TA, int CA>
-class multiply_mat_vari<TA, 1, CA, double, 1> : public vari {
+template <typename Ta, int Ca>
+class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -485,8 +485,8 @@ class multiply_mat_vari<TA, 1, CA, double, 1> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const Eigen::Matrix<TA, 1, CA>& A,
-                    const Eigen::Matrix<double, CA, 1>& B)
+  multiply_mat_vari(const Eigen::Matrix<Ta, 1, Ca>& A,
+                    const Eigen::Matrix<double, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
         Ad_(ChainableStack::memalloc_.alloc_array<double>(size_)),
@@ -574,30 +574,30 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
 
 /**
  * Return the product of two matrices.
- * @tparam TA scalar type matrix A
- * @tparam RA Rows matrix A
- * @tparam CA Columns matrix A
- * @tparam TB scalar type matrix B
+ * @tparam Ta scalar type matrix A
+ * @tparam Ra Rows matrix A
+ * @tparam Ca Columns matrix A
+ * @tparam Tb scalar type matrix B
  * @tparam RB Rows matrix B
- * @tparam CB Columns matrix B
+ * @tparam Cb Columns matrix B
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <typename TA, int RA, int CA, typename TB, int CB>
-inline typename boost::enable_if_c<boost::is_same<TA, var>::value
-                                       || boost::is_same<TB, var>::value,
-                                   Eigen::Matrix<var, RA, CB> >::type
-multiply(const Eigen::Matrix<TA, RA, CA>& A,
-         const Eigen::Matrix<TB, CA, CB>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
+inline typename boost::enable_if_c<boost::is_same<Ta, var>::value
+                                       || boost::is_same<Tb, var>::value,
+                                   Eigen::Matrix<var, Ra, Cb> >::type
+multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
+         const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  multiply_mat_vari<TA, RA, CA, TB, CB>* baseVari
-      = new multiply_mat_vari<TA, RA, CA, TB, CB>(A, B);
-  Eigen::Matrix<var, RA, CB> AB_v(A.rows(), B.cols());
+  multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari
+      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
+  Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
   for (size_type i = 0; i < AB_v.size(); ++i) {
     AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
   }
@@ -607,24 +607,24 @@ multiply(const Eigen::Matrix<TA, RA, CA>& A,
 /**
  * Return the scalar product of a row vector and
  * a vector.
- * @tparam TA scalar type row vector A
- * @tparam CA Columns matrix A
- * @tparam TB scalar type vector B
+ * @tparam Ta scalar type row vector A
+ * @tparam Ca Columns matrix A
+ * @tparam Tb scalar type vector B
  * @param[in] A Row vector
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename TA, int CA, typename TB>
+template <typename Ta, int Ca, typename Tb>
 inline typename boost::enable_if_c<
-    boost::is_same<TA, var>::value || boost::is_same<TB, var>::value, var>::type
-multiply(const Eigen::Matrix<TA, 1, CA>& A, const Eigen::Matrix<TB, CA, 1>& B) {
+    boost::is_same<Ta, var>::value || boost::is_same<Tb, var>::value, var>::type
+multiply(const Eigen::Matrix<Ta, 1, Ca>& A, const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  multiply_mat_vari<TA, 1, CA, TB, 1>* baseVari
-      = new multiply_mat_vari<TA, 1, CA, TB, 1>(A, B);
+  multiply_mat_vari<Ta, 1, Ca, Tb, 1>* baseVari
+      = new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;
