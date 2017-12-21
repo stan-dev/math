@@ -115,13 +115,7 @@ pipeline {
                         sh setupCC()
                         sh "make -j${env.PARALLEL} test-headers"
                     }
-                    post {
-                        always {
-                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-                            retry(3) { deleteDir() }
-                        }
-                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Unit') {
                     agent any
@@ -131,13 +125,7 @@ pipeline {
                         runTests("test/unit")
                         retry(2) { junit 'test/**/*.xml' }
                     }
-                    post {
-                        always {
-                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-                            retry(3) { deleteDir() }
-                        }
-                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
@@ -176,6 +164,12 @@ pipeline {
         }
     }
     post {
+        always {
+            node('master') {
+                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+            }
+        }
         success {
             updateUpstream('stan')
             mailBuildResults("SUCCESSFUL")
