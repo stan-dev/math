@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 // Every test exists in duplicate to test the case
 // where y (the auxiliary parameters) are passed as
