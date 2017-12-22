@@ -6,24 +6,22 @@
 
 namespace boost {
 
-  namespace math {
+namespace math {
 
-    /**
-     * Checks if the given number is infinite.
-     *
-     * Return <code>true</code> if the specified variable's
-     * value is infinite.
-     *
-     * @param v Variable to test.
-     * @return <code>true</code> if variable is infinite.
-     */
-    template <>
-    inline
-    bool isinf(const stan::math::var& v) {
-      return (boost::math::isinf)(v.val());
-    }
-
-  }
+/**
+ * Checks if the given number is infinite.
+ *
+ * Return <code>true</code> if the specified variable's
+ * value is infinite.
+ *
+ * @param v Variable to test.
+ * @return <code>true</code> if variable is infinite.
+ */
+template <>
+inline bool isinf(const stan::math::var& v) {
+  return (boost::math::isinf)(v.val());
 }
-#endif
 
+}  // namespace math
+}  // namespace boost
+#endif

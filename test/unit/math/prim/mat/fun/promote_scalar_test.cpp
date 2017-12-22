@@ -9,9 +9,7 @@ TEST(MathMatrixPromoteScalar, MatrixMismatch) {
   using stan::math::promote_scalar;
 
   Matrix<int, Dynamic, Dynamic> x(2, 3);
-  x <<
-    1, 2, 3,
-    4, 5, 6;
+  x << 1, 2, 3, 4, 5, 6;
 
   Matrix<double, Dynamic, Dynamic> y = promote_scalar<double>(x);
   EXPECT_EQ(6, y.size());
@@ -28,9 +26,7 @@ TEST(MathMatrixPromoteScalar, MatrixMatch) {
   using stan::math::promote_scalar;
 
   Matrix<double, Dynamic, Dynamic> x(2, 3);
-  x <<
-    1.1, 2.2, 3.3,
-    4.4, 5.5, 6.6;
+  x << 1.1, 2.2, 3.3, 4.4, 5.5, 6.6;
 
   Matrix<double, Dynamic, Dynamic> y = promote_scalar<double>(x);
   EXPECT_EQ(6, y.size());
@@ -49,14 +45,10 @@ TEST(MathMatrixPromoteScalar, VectorMatrixMismatch) {
 
   vector<Matrix<int, Dynamic, Dynamic> > x(2);
   Matrix<int, Dynamic, Dynamic> x0(2, 3);
-  x0 <<
-    1, 2, 3,
-    4, 5, 6;
+  x0 << 1, 2, 3, 4, 5, 6;
   x[0] = x0;
   Matrix<int, Dynamic, Dynamic> x1(2, 3);
-  x1 <<
-    10, 20, 30,
-    40, 50, 60;
+  x1 << 10, 20, 30, 40, 50, 60;
   x[1] = x1;
 
   vector<Matrix<double, Dynamic, Dynamic> > y = promote_scalar<double>(x);
@@ -112,7 +104,7 @@ TEST(MathMatrixPromoteScalar, VectorColVectorMismatch) {
 
   vector<Matrix<int, Dynamic, 1> > x(2);
   Matrix<int, Dynamic, 1> x0(3);
-  x0 <<  1, 2, 3;
+  x0 << 1, 2, 3;
   x[0] = x0;
   Matrix<int, Dynamic, 1> x1(3);
   x1 << 10, 20, 30;
@@ -165,7 +157,7 @@ TEST(MathMatrixPromoteScalar, VectorRowVectorMismatch) {
 
   vector<Matrix<int, 1, Dynamic> > x(2);
   Matrix<int, 1, Dynamic> x0(3);
-  x0 <<  1, 2, 3;
+  x0 << 1, 2, 3;
   x[0] = x0;
   Matrix<int, 1, Dynamic> x1(3);
   x1 << 10, 20, 30;

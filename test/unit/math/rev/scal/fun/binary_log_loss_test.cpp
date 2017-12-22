@@ -17,8 +17,8 @@ double finite_diff(const int y, const double y_hat) {
   using stan::math::binary_log_loss;
   static const double e = 1e-10;
 
-  double p = binary_log_loss(y, y_hat+e);
-  double m = binary_log_loss(y, y_hat-e);
+  double p = binary_log_loss(y, y_hat + e);
+  double m = binary_log_loss(y, y_hat - e);
 
   return (p - m) / (2 * e);
 }
@@ -86,8 +86,7 @@ TEST(AgradRev, binary_log_loss) {
 
 struct binary_log_loss_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return binary_log_loss(1, arg1);
   }
 };

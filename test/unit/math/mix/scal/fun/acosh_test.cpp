@@ -122,8 +122,7 @@ TEST(AgradFwdAcosh, FvarFvarVar_3rdDeriv) {
 
 struct acosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return acosh(arg1);
   }
 };

@@ -15,7 +15,7 @@ TEST(prob_transform, prob_j) {
   EXPECT_FLOAT_EQ(L + (U - L) * stan::math::inv_logit(x),
                   stan::math::prob_constrain(x, lp));
   EXPECT_FLOAT_EQ(-17.0 + log(U - L) + log(stan::math::inv_logit(x))
-                  + log(1.0 - stan::math::inv_logit(x)),
+                      + log(1.0 - stan::math::inv_logit(x)),
                   lp);
 }
 TEST(prob_transform, prob_f) {

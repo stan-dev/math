@@ -78,8 +78,8 @@ TEST(AgradMixMatrixLogDeterminant, ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(std::log(2.0), det.val_.val().val());
   EXPECT_FLOAT_EQ(1.5, det.d_.val().val());
 
-  AVEC q = createAVEC(a.val().val(), b.val().val(),
-                      c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   det.val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-1.5, h[0]);
@@ -103,8 +103,8 @@ TEST(AgradMixMatrixLogDeterminant, ffv_2ndDeriv_1) {
   fvar<fvar<var> > det;
   det = log_determinant(v);
 
-  AVEC q = createAVEC(a.val().val(), b.val().val(),
-                      c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   det.val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -128,8 +128,8 @@ TEST(AgradMixMatrixLogDeterminant, ffv_2ndDeriv_2) {
   fvar<fvar<var> > det;
   det = log_determinant(v);
 
-  AVEC q = createAVEC(a.val().val(), b.val().val(),
-                      c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   det.d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.25, h[0]);
@@ -158,8 +158,8 @@ TEST(AgradMixMatrixLogDeterminant, ffv_3rdDeriv) {
   fvar<fvar<var> > det;
   det = log_determinant(v);
 
-  AVEC q = createAVEC(a.val().val(), b.val().val(),
-                      c.val().val(), d.val().val());
+  AVEC q
+      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
   VEC h;
   det.d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(1.5, h[0]);

@@ -120,8 +120,7 @@ TEST(AgradFwdLog1mInvLogit, FvarFvarVar_3rdDeriv) {
 
 struct log1m_inv_logit_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1m_inv_logit(arg1);
   }
 };

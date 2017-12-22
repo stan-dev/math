@@ -13,14 +13,17 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(c[0], d[0]);
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
+  e[0] = 5.9;
+  e[1] = -1.2;
   T f = cumulative_sum(e);
   EXPECT_EQ(e.size(), f.size());
   EXPECT_FLOAT_EQ(e[0], f[0]);
   EXPECT_FLOAT_EQ(e[0] + e[1], f[1]);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
   T h = cumulative_sum(g);
   EXPECT_EQ(g.size(), h.size());
   EXPECT_FLOAT_EQ(g[0], h[0]);

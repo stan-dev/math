@@ -9,8 +9,7 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-class rev_scalar_unary_test : public ::testing::Test {
-};
+class rev_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(rev_scalar_unary_test);
 
@@ -26,8 +25,6 @@ TYPED_TEST_P(rev_scalar_unary_test, expect_errors) {
   expect_rev_errors<TypeParam>();
 }
 
-REGISTER_TYPED_TEST_CASE_P(rev_scalar_unary_test,
-                           expect_scalar_types,
-                           expect_values,
-                           expect_errors);
+REGISTER_TYPED_TEST_CASE_P(rev_scalar_unary_test, expect_scalar_types,
+                           expect_values, expect_errors);
 #endif

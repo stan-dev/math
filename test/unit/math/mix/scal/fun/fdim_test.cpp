@@ -3,8 +3,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdFdim, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -116,7 +114,6 @@ TEST(AgradFwdFdim, Double_FvarVar_2nd_Deriv) {
   a.d_.grad(y, g);
   isnan(g[0]);
 }
-
 
 TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -364,10 +361,8 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_3rdDeriv) {
 
 struct fdim_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fdim(arg1, arg2);
   }
 };

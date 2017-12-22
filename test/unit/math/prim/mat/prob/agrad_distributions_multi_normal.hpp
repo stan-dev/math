@@ -1,5 +1,5 @@
 class agrad_distributions_multi_normal : public ::testing::Test {
-protected:
+ protected:
   virtual void SetUp() {
     y.resize(3, 1);
     y << 2.0, -2.0, 11.0;
@@ -12,13 +12,9 @@ protected:
     mu2 << 6.0, 2.0, -6.0;
 
     Sigma.resize(3, 3);
-    Sigma << 9.0, -3.0, 0.0,
-      -3.0,  4.0, 0.0,
-      0.0, 0.0, 5.0;
+    Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
     Sigma2.resize(3, 3);
-    Sigma2 << 3.0, 1.0, 0.0,
-      1.0,  5.0, -2.0,
-      0.0, -2.0, 9.0;
+    Sigma2 << 3.0, 1.0, 0.0, 1.0, 5.0, -2.0, 0.0, -2.0, 9.0;
   }
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;

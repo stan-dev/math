@@ -15,9 +15,7 @@ TEST(MathFunctions, binary_log_loss) {
 TEST(MathFunctions, binary_log_loss_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binary_log_loss(0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::binary_log_loss(0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binary_log_loss(1, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::binary_log_loss(1, nan));
 }

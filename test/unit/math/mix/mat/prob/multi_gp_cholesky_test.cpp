@@ -11,16 +11,12 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
   mu.setZero();
 
   Matrix<fvar<var>, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-      11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<var>, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-    -3.0,  4.0, 0.0,  0.0, 0.0,
-    0.0,  0.0, 5.0,  1.0, 0.0,
-    0.0,  0.0, 1.0, 10.0, 0.0,
-    0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<var>, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -41,7 +37,7 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
   fvar<var> lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<var>, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<fvar<var>, Dynamic, Dynamic> cSigma((1.0/w[i])*Sigma);
+    Matrix<fvar<var>, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 
@@ -58,16 +54,12 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
   mu.setZero();
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-      11.0, 2.0, -5.0, 11.0, 0.0,
-      -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-    -3.0,  4.0, 0.0,  0.0, 0.0,
-    0.0,  0.0, 5.0,  1.0, 0.0,
-    0.0,  0.0, 1.0, 10.0, 0.0,
-    0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> w(3, 1);
   w << 1.0, 0.5, 1.5;
@@ -88,7 +80,7 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
   fvar<fvar<var> > lp_ref(0);
   for (size_t i = 0; i < 3; i++) {
     Matrix<fvar<fvar<var> >, Dynamic, 1> cy(y.row(i).transpose());
-    Matrix<fvar<fvar<var> >, Dynamic, Dynamic> cSigma((1.0/w[i])*Sigma);
+    Matrix<fvar<fvar<var> >, Dynamic, Dynamic> cSigma((1.0 / w[i]) * Sigma);
     lp_ref += stan::math::multi_normal_log(cy, mu, cSigma);
   }
 

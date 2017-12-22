@@ -13,4 +13,3 @@ TEST(MathMatrix, eigenvectors_sym) {
   EXPECT_NO_THROW(eigenvectors_sym(ev_m1));
   EXPECT_THROW(eigenvectors_sym(m1), std::invalid_argument);
 }
-

@@ -14,21 +14,18 @@
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    pareto_type_2_rng(double mu,
-                      double lambda,
-                      double alpha,
-                      RNG& rng) {
-      static const char* function = "pareto_type_2_rng";
+template <class RNG>
+inline double pareto_type_2_rng(double mu, double lambda, double alpha,
+                                RNG& rng) {
+  static const char* function = "pareto_type_2_rng";
 
-      check_positive(function, "scale parameter", lambda);
-      double uniform_01 = uniform_rng(0.0, 1.0, rng);
-      return (std::pow(1.0 - uniform_01, -1.0 / alpha) - 1.0) * lambda + mu;
-    }
-
-  }
+  check_positive(function, "scale parameter", lambda);
+  double uniform_01 = uniform_rng(0.0, 1.0, rng);
+  return (std::pow(1.0 - uniform_01, -1.0 / alpha) - 1.0) * lambda + mu;
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

@@ -24,10 +24,10 @@ TEST(AgradFwdLog1mExp, Fvar) {
   EXPECT_FLOAT_EQ(2.0 * -exp(-1.0) / (1 - exp(-1.0)), b.d_);
   EXPECT_FLOAT_EQ(2.0 * -1 / ::expm1(1), b.d_);
 
-  fvar<double> a2 = log(1-exp(x));
+  fvar<double> a2 = log(1 - exp(x));
   EXPECT_FLOAT_EQ(a.d_, a2.d_);
 
-  fvar<double> b2 = log(1-exp(y));
+  fvar<double> b2 = log(1 - exp(y));
   EXPECT_FLOAT_EQ(b.d_, b2.d_);
 }
 
@@ -37,7 +37,6 @@ TEST(AgradFwdLog1mExp, Fvar_exception) {
   EXPECT_NO_THROW(log1m_exp(fvar<double>(-3)));
   EXPECT_NO_THROW(log1m_exp(fvar<double>(3)));
 }
-
 
 TEST(AgradFwdLog1mExp, FvarFvarDouble) {
   using stan::math::fvar;
@@ -57,8 +56,7 @@ TEST(AgradFwdLog1mExp, FvarFvarDouble) {
 
 struct log1m_exp_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1m_exp(arg1);
   }
 };

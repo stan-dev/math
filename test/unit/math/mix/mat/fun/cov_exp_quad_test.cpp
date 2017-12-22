@@ -418,110 +418,70 @@ TEST(AgradMixMath, fv_cov_exp_quad1_vec_invalid_values) {
   std::vector<fvar<var> > x_fv_bad(x_fv);
   x_fv_bad[1] = nan_d;
 
-
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d_bad),
                std::domain_error);
 }
@@ -568,110 +528,70 @@ TEST(AgradMixMath, fv_cov_exp_quad1_vec_nan_values) {
   std::vector<fvar<var> > x_fv_bad(x_fv);
   x_fv_bad[1] = nan_d;
 
-
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d_bad),
                std::domain_error);
 }
@@ -709,48 +629,39 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -769,14 +680,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -784,14 +692,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -799,14 +704,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -848,48 +750,39 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -908,14 +801,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -923,14 +813,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -938,14 +825,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -987,48 +871,39 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -1047,14 +922,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -1062,14 +934,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -1077,14 +946,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -1126,48 +992,39 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<var>, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -1186,14 +1043,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -1201,14 +1055,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -1216,14 +1067,11 @@ TEST(AgradMixMath, fv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -1557,14 +1405,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -2028,14 +1873,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -2483,14 +2325,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -2938,14 +2777,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -3393,14 +3229,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -3848,14 +3681,11 @@ TEST(AgradMixMath, fv_cov_exp_quad2_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -4037,110 +3867,70 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_vec_invalid_values) {
   std::vector<fvar<fvar<var> > > x_fv_bad(x_fv);
   x_fv_bad[1] = nan_d;
 
-
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d_bad),
                std::domain_error);
 }
@@ -4187,110 +3977,70 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_vec_nan_values) {
   std::vector<fvar<fvar<var> > > x_fv_bad(x_fv);
   x_fv_bad[1] = nan_d;
 
-
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv, sigma_d_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_d_bad, l_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d, sigma_bad, l_d_bad), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_d_bad, sigma_bad, l_d_bad),
                std::domain_error);
 }
@@ -4328,48 +4078,39 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -4388,14 +4129,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -4403,14 +4141,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -4418,14 +4153,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -4467,48 +4199,39 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -4527,14 +4250,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -4542,14 +4262,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -4557,14 +4274,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -4606,48 +4320,39 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -4666,14 +4371,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -4681,14 +4383,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -4696,14 +4395,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -4745,48 +4441,39 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   x_vec_fv_bad[1](1) = nan_d;
 
   Eigen::Matrix<fvar<fvar<var> >, -1, -1> cov;
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_d_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv, sigma_bad, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d_bad),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_bad, l_d_bad),
                std::domain_error);
 
@@ -4805,14 +4492,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_fv_bad, sigma_d_bad, l_d_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_bad),
@@ -4820,14 +4504,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_d_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d, l_bad),
@@ -4835,14 +4516,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad1_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_d_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma, l_d_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d, sigma_bad, l_d_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma_bad, l_d),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x_vec_d_bad, sigma, l_d_bad),
@@ -5176,14 +4854,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -5647,14 +5322,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -6102,14 +5774,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -6557,14 +6226,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -7012,14 +6678,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_invalid_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -7467,14 +7130,11 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_nan_values) {
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_fv_bad, sigma_bad, l_bad),
                std::domain_error);
 
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l),
-               std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l), std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma, l_bad), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d, x2_d, sigma_bad, l_bad),
                std::domain_error);
-  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l),
-               std::domain_error);
+  EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l), std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma_bad, l),
                std::domain_error);
   EXPECT_THROW(cov = cov_exp_quad(x1_d_bad, x2_d, sigma, l_bad),
@@ -7783,7 +7443,6 @@ TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_vec_dim_error) {
   EXPECT_THROW(cov = cov_exp_quad(x1_ffv, x2_d, sigma_ffv, l_ffv),
                std::invalid_argument);
 }
-
 
 TEST(AgradMixMath, ffv_cov_exp_quad2_eigen_rvec_dim_error) {
   using stan::math::cov_exp_quad;

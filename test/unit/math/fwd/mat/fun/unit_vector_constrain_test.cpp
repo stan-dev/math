@@ -22,7 +22,8 @@ TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
 
   Matrix<fvar<double>, Dynamic, 1> x3(3);
   x3.setRandom();
-  for (int i = 0; i < x3.size(); ++i) x3(i).d_ = 1.0;
+  for (int i = 0; i < x3.size(); ++i)
+    x3(i).d_ = 1.0;
 
   Matrix<fvar<double>, Dynamic, 1> theta3 = unit_vector_constrain(x3);
   EXPECT_EQ(3, theta3.size());
@@ -35,7 +36,8 @@ TEST(AgradFwdMatrixUnitVectorConstrain, fd) {
     cx3.imag().coeffRef(2) = eps;
     // should be cx3.squaredNorm() but Eigen has a bug?
     std::complex<double> SN(0.0);
-    for (int j = 0; j < x3.size(); ++j) SN += cx3(j) * cx3(j);
+    for (int j = 0; j < x3.size(); ++j)
+      SN += cx3(j) * cx3(j);
     Matrix<double, Dynamic, 1> d = ((cx3 / sqrt(SN)) / eps).imag();
     EXPECT_FLOAT_EQ(d.coeff(i), theta3[i].d_);
   }
@@ -52,7 +54,7 @@ TEST(AgradFwdMatrixSoftmax, ffd) {
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> x(1);
   x << 0.7;
-   x(0).d_ = 1.0;
+  x(0).d_ = 1.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta = unit_vector_constrain(x);
   EXPECT_EQ(1, theta.size());
@@ -61,7 +63,8 @@ TEST(AgradFwdMatrixSoftmax, ffd) {
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> x3(3);
   x3.setRandom();
-  for (int i = 0; i < x3.size(); ++i) x3(i).d_ = 1.0;
+  for (int i = 0; i < x3.size(); ++i)
+    x3(i).d_ = 1.0;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta3 = unit_vector_constrain(x3);
   EXPECT_EQ(3, theta3.size());
@@ -74,7 +77,8 @@ TEST(AgradFwdMatrixSoftmax, ffd) {
     cx3.imag().coeffRef(2) = eps;
     // should be cx3.squaredNorm() but Eigen has a bug?
     std::complex<double> SN(0.0);
-    for (int j = 0; j < x3.size(); ++j) SN += cx3(j) * cx3(j);
+    for (int j = 0; j < x3.size(); ++j)
+      SN += cx3(j) * cx3(j);
     Matrix<double, Dynamic, 1> d = ((cx3 / sqrt(SN)) / eps).imag();
     EXPECT_FLOAT_EQ(d.coeff(i), theta3[i].d_.val());
   }

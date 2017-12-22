@@ -5,19 +5,18 @@
 #include <stan/math/rev/mat/fun/tcrossprod.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Returns the result of pre-multiplying a matrix by its
-     * own transpose.
-     * @param M Matrix to multiply.
-     * @return Transpose of M times M
-     */
-    inline matrix_v
-    crossprod(const matrix_v& M) {
-      return tcrossprod(static_cast<matrix_v>(M.transpose()));
-    }
-
-  }
+/**
+ * Returns the result of pre-multiplying a matrix by its
+ * own transpose.
+ * @param M Matrix to multiply.
+ * @return Transpose of M times M
+ */
+inline matrix_v crossprod(const matrix_v& M) {
+  return tcrossprod(static_cast<matrix_v>(M.transpose()));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

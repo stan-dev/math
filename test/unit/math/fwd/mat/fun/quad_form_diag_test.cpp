@@ -12,7 +12,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_fd) {
   vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -41,7 +41,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_fd) {
   row_vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -101,7 +101,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_fd) {
   vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -127,7 +127,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_fd) {
   row_vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -183,7 +183,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_d) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -210,7 +210,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_d) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -268,7 +268,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_ffd) {
   vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -297,7 +297,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_ffd) {
   row_vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -357,7 +357,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_ffd) {
   vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -383,7 +383,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_ffd) {
   row_vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -439,7 +439,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_d) {
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -466,7 +466,7 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_d) {
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;

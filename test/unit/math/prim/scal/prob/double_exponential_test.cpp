@@ -12,14 +12,12 @@ TEST(ProbDistributionsDoubleExponential, error_check) {
 
   EXPECT_THROW(stan::math::double_exponential_rng(2.0, -1.0, rng),
                std::domain_error);
-  EXPECT_THROW(
-    stan::math::double_exponential_rng(2.0, stan::math:: positive_infinity(),
-                                       rng),
-    std::domain_error);
-  EXPECT_THROW(
-    stan::math::double_exponential_rng(stan::math:: positive_infinity(), 1,
-                                       rng),
-    std::domain_error);
+  EXPECT_THROW(stan::math::double_exponential_rng(
+                   2.0, stan::math::positive_infinity(), rng),
+               std::domain_error);
+  EXPECT_THROW(stan::math::double_exponential_rng(
+                   stan::math::positive_infinity(), 1, rng),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
@@ -33,7 +31,7 @@ TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's double exponential distribution
-  boost::math::laplace_distribution<>dist(2.0, 1.0);
+  boost::math::laplace_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

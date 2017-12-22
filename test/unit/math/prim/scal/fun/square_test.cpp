@@ -17,6 +17,5 @@ TEST(MathsFunctions, square) {
 TEST(MathFunctions, square_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::square(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::square(nan));
 }

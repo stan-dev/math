@@ -42,7 +42,6 @@ TEST(MetaTraits, VectorBuilderHelper_true_true) {
   EXPECT_NO_THROW(data3 = dvv3.data());
   EXPECT_EQ(length(a_vector), data3.size());
 
-
   VectorBuilderHelper<double, true, true> dvv4(length(a_row_vector));
   dvv4[0] = 0.0;
   dvv4[1] = 1.0;

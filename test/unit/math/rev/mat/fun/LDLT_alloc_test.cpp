@@ -12,9 +12,9 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
   EXPECT_NO_THROW(alloc->log_abs_det());
   EXPECT_NO_THROW(alloc->ldlt_.info());
 #else
-  // Note: If -DEIGEN_NO_DEBUG is not included in the compilation flags
-  //       asserts will force these calls to die instead of the above
-  //       behavior
+// Note: If -DEIGEN_NO_DEBUG is not included in the compilation flags
+//       asserts will force these calls to die instead of the above
+//       behavior
 
 #ifndef _WIN32
   // Google test under Windows is having trouble with these tests.
@@ -52,7 +52,6 @@ TEST(AgradRevMatrix, LDLT_alloc_constructor) {
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
 }
-
 
 TEST(AgradRevMatrix, LDLT_alloc_compute) {
   using stan::math::LDLT_alloc;

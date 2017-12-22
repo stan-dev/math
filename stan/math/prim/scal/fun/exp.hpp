@@ -4,19 +4,17 @@
 #include <cmath>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return the natural exponential of the specified argument.  This
-     * version is required to disambiguate <code>exp(int)</code>.
-     *
-     * @param[in] x Argument.
-     * @return Natural exponential of argument.
-     */
-    inline double exp(int x) {
-      return std::exp(static_cast<double>(x));
-    }
+/**
+ * Return the natural exponential of the specified argument.  This
+ * version is required to disambiguate <code>exp(int)</code>.
+ *
+ * @param[in] x Argument.
+ * @return Natural exponential of argument.
+ */
+inline double exp(int x) { return std::exp(static_cast<double>(x)); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

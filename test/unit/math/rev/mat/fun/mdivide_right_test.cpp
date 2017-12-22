@@ -12,10 +12,8 @@ TEST(AgradRevMatrix, mdivide_right_val) {
   matrix_d Ad(2, 2);
   matrix_v I;
 
-  Av << 2.0, 3.0,
-    5.0, 7.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 2.0, 3.0, 5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right(Av, Av);
   EXPECT_NEAR(1.0, I(0, 0).val(), 1.0E-12);
@@ -39,8 +37,7 @@ TEST(AgradRevMatrix, mdivide_right_val) {
 TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v m(2, 2);
-  m << 2.0, 3.0,
-    5.0, 7.0;
+  m << 2.0, 3.0, 5.0, 7.0;
 
   test::check_varis_on_stack(stan::math::mdivide_right(m, m));
   test::check_varis_on_stack(stan::math::mdivide_right(m, value_of(m)));

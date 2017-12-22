@@ -12,7 +12,7 @@ TEST(AgradRev, tanh_var) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(cosh(0.68) * cosh(0.68)), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (cosh(0.68) * cosh(0.68)), g[0]);
 }
 
 TEST(AgradRev, tanh_neg_var) {
@@ -23,7 +23,7 @@ TEST(AgradRev, tanh_neg_var) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(cosh(-0.68) * cosh(-0.68)), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (cosh(-0.68) * cosh(-0.68)), g[0]);
 }
 
 TEST(AgradRev, tanh_inf) {
@@ -35,7 +35,7 @@ TEST(AgradRev, tanh_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(cosh(inf) * cosh(inf)), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (cosh(inf) * cosh(inf)), g[0]);
 }
 
 TEST(AgradRev, tanh_neg_inf) {
@@ -47,13 +47,12 @@ TEST(AgradRev, tanh_neg_inf) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1.0/(cosh(-inf) * cosh(-inf)), g[0]);
+  EXPECT_FLOAT_EQ(1.0 / (cosh(-inf) * cosh(-inf)), g[0]);
 }
 
 struct tanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tanh(arg1);
   }
 };

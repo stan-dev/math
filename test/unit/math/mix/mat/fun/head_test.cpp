@@ -56,7 +56,7 @@ TEST(AgradMixMatrixHead, HeadRowVector3_fv) {
 }
 TEST(AgradMixMatrixHead, HeadRowVector4_fv) {
   using stan::math::head;
-   stan::math::row_vector_fv v(3);
+  stan::math::row_vector_fv v(3);
   v << 1, 2, 3;
 
   stan::math::row_vector_fv v01 = head(v, 2);
@@ -66,29 +66,36 @@ TEST(AgradMixMatrixHead, HeadRowVector4_fv) {
   }
 }
 
-
 TEST(AgradMixMatrixHead, HeadStdVector1_fv) {
   using stan::math::head;
   std::vector<fvar<var> > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(0U, head(v, 0).size());
 }
 TEST(AgradMixMatrixHead, HeadStdVector2_fv) {
   using stan::math::head;
   std::vector<fvar<var> > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(3U, head(v, 3).size());
 }
 TEST(AgradMixMatrixHead, HeadStdVector3_fv) {
   using stan::math::head;
   std::vector<fvar<var> > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_THROW(head(v, 4), std::out_of_range);
 }
 TEST(AgradMixMatrixHead, HeadStdVector4_fv) {
   using stan::math::head;
   std::vector<fvar<var> > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   std::vector<fvar<var> > v01 = head(v, 2);
   EXPECT_EQ(2U, v01.size());
   for (int n = 0; n < 2; ++n) {
@@ -145,7 +152,7 @@ TEST(AgradMixMatrixHead, HeadRowVector3_ffv) {
 }
 TEST(AgradMixMatrixHead, HeadRowVector4_ffv) {
   using stan::math::head;
-   stan::math::row_vector_ffv v(3);
+  stan::math::row_vector_ffv v(3);
   v << 1, 2, 3;
 
   stan::math::row_vector_ffv v01 = head(v, 2);
@@ -155,29 +162,36 @@ TEST(AgradMixMatrixHead, HeadRowVector4_ffv) {
   }
 }
 
-
 TEST(AgradMixMatrixHead, HeadStdVector1_ffv) {
   using stan::math::head;
   std::vector<fvar<fvar<var> > > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(0U, head(v, 0).size());
 }
 TEST(AgradMixMatrixHead, HeadStdVector2_ffv) {
   using stan::math::head;
   std::vector<fvar<fvar<var> > > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_EQ(3U, head(v, 3).size());
 }
 TEST(AgradMixMatrixHead, HeadStdVector3_ffv) {
   using stan::math::head;
   std::vector<fvar<fvar<var> > > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   EXPECT_THROW(head(v, 4), std::out_of_range);
 }
 TEST(AgradMixMatrixHead, HeadStdVector4_ffv) {
   using stan::math::head;
   std::vector<fvar<fvar<var> > > v;
-  v.push_back(1); v.push_back(2); v.push_back(3);
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
   std::vector<fvar<fvar<var> > > v01 = head(v, 2);
   EXPECT_EQ(2U, v01.size());
   for (int n = 0; n < 2; ++n) {

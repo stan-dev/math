@@ -5,14 +5,14 @@
 #include <cmath>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline fvar<T> ceil(const fvar<T>& x) {
-      using std::ceil;
-      return fvar<T>(ceil(x.val_), 0);
-    }
-
-  }
+template <typename T>
+inline fvar<T> ceil(const fvar<T>& x) {
+  using std::ceil;
+  return fvar<T>(ceil(x.val_), 0);
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

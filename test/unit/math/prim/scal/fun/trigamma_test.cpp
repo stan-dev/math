@@ -15,6 +15,5 @@ TEST(MathFunctions, trigamma) {
 TEST(MathFunctions, trigamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::trigamma(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::trigamma(nan));
 }

@@ -7,20 +7,18 @@
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return the value of the trigamma function at the specified
-     * argument (i.e., the second derivative of the log Gamma function
-     * at the specified argument).
-     *
-     * @param u argument
-     * @return trigamma function at argument
-     */
-    inline var trigamma(const var& u) {
-      return trigamma_impl(u);
-    }
+/**
+ * Return the value of the trigamma function at the specified
+ * argument (i.e., the second derivative of the log Gamma function
+ * at the specified argument).
+ *
+ * @param u argument
+ * @return trigamma function at argument
+ */
+inline var trigamma(const var& u) { return trigamma_impl(u); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif
