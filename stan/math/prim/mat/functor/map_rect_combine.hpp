@@ -62,7 +62,7 @@ class map_rect_combine {
       }
     }
 
-    return (out);
+    return out;
   }
 };
 

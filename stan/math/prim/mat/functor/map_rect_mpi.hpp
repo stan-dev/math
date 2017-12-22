@@ -11,14 +11,6 @@
 namespace stan {
 namespace math {
 
-/*
-template <typename F, typename T_shared_param, typename T_job_param>
-class map_rect_reduce;
-
-template <typename F, typename T_shared_param, typename T_job_param>
-class map_rect_combine;
-*/
-
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
 Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,

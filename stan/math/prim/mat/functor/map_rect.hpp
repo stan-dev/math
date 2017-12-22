@@ -22,11 +22,11 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<std::vector<double>>& x_r,
          const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
 #ifdef STAN_HAS_MPI
-  return (map_rect_mpi<call_id, F, T_shared_param, T_job_param>(
-      shared_params, job_params, x_r, x_i, msgs));
+  return map_rect_mpi<call_id, F, T_shared_param, T_job_param>(
+      shared_params, job_params, x_r, x_i, msgs);
 #else
-  return (map_rect_serial<call_id, F, T_shared_param, T_job_param>(
-      shared_params, job_params, x_r, x_i, msgs));
+  return map_rect_serial<call_id, F, T_shared_param, T_job_param>(
+      shared_params, job_params, x_r, x_i, msgs);
 #endif
 }
 

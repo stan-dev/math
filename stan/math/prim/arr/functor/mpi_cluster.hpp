@@ -76,7 +76,7 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
   for (std::size_t i = 0; i != world_size; i++)
     chunks[i] *= chunk_size;
 
-  return (chunks);
+  return chunks;
 }
 
 template <typename T>
@@ -200,7 +200,7 @@ template <typename T>
 void mpi_broadcast_command() {
   boost::shared_ptr<mpi_command> command(new T);
 
-  return (mpi_broadcast_command(command));
+  return mpi_broadcast_command(command);
 }
 
 }  // namespace math

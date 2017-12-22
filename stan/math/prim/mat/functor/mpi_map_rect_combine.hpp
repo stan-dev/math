@@ -54,7 +54,7 @@ class mpi_map_rect_combine {
       j += world_f_out[i];
     }
 
-    return (combine_(world_result, world_f_out));
+    return combine_(world_result, world_f_out);
   }
 };
 

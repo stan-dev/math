@@ -16,7 +16,7 @@ class map_rect_reduce<F, double, double> {
                       const std::vector<int>& x_i) const {
     const F f;
     const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
-    return (out.transpose());
+    return out.transpose();
   }
 };
 

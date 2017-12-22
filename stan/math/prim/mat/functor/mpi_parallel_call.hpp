@@ -14,9 +14,6 @@
 namespace stan {
 namespace math {
 
-// template <int typename ReduceF, typename CombineF>
-// class mpi_parallel_call;
-
 namespace internal {
 
 template <int call_id, int member, typename T>
@@ -243,7 +240,7 @@ class mpi_parallel_call {
           throw std::runtime_error("MPI error on first evaluation.");
         // and ensure on the workers that they return into their
         // listening state
-        return (result_type());
+        return result_type();
       }
       cache_f_out::store(world_f_out);
     }
@@ -346,7 +343,7 @@ class mpi_parallel_call {
 
     boost::mpi::broadcast(world_, local_data.data(), data_size[0], 0);
 
-    return (local_data);
+    return local_data;
   }
 
   // scatters an Eigen matrix column wise over the cluster. Meta
@@ -371,7 +368,7 @@ class mpi_parallel_call {
     boost::mpi::scatterv(world_, data.data(), data_chunks, local_data.data(),
                          0);
 
-    return (local_data);
+    return local_data;
   }
 
   void setup_call(const vector_d& shared_params, const matrix_d& job_params,
