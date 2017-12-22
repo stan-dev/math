@@ -28,8 +28,10 @@ def runTests(String testPath) {
 
 def utils = new org.stan.Utils()
 
+def isBranch(String b) { env.BRANCH_NAME == b }
+
 def updateUpstream(String upstreamRepo) {
-    if (env.BRANCH_NAME == 'develop') {
+    if (isBranch('develop')) {
         node('master') {
             retry(3) {
                 checkout([$class: 'GitSCM',
@@ -62,11 +64,17 @@ pipeline {
           description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, description:
+        'Run additional distribution tests on RowVectors (takes 5x as long)',
+        name: 'withRowVector')
     }
     options { skipDefaultCheckout() }
     stages {
         stage('Kill previous builds') {
-            when { not { branch 'develop' } }
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
             steps { 
                 script {
                     utils.killOldBuilds()
@@ -135,16 +143,19 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    // XXX Add conditional back in so we don't run this if we haven't
-                    // changed code or makefiles
                     steps { 
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
-                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log; false
-                           """
+                            """
+                        script {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                            }
+                        }
+                        sh "./runTests.py -j${env.PARALLEL} test/prob"
 
                     }
                     post { always { retry(3) { deleteDir() } } }
