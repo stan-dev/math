@@ -19,8 +19,9 @@ TEST(AgradRev, rising_factorial_var_int) {
 
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 1)
-                  - stan::math::rising_factorial(4.0 - eps, 1))
-                  / (2 * eps), g[1]);
+                   - stan::math::rising_factorial(4.0 - eps, 1))
+                      / (2 * eps),
+                  g[1]);
 }
 
 TEST(AgradRev, rising_factorial_exceptions) {
@@ -32,10 +33,8 @@ TEST(AgradRev, rising_factorial_exceptions) {
 
 struct rising_factorial_fun {
   template <typename T>
-  inline
-  typename stan::return_type<T>::type
-  operator()(const T& arg1,
-             int arg2) const {
+  inline typename stan::return_type<T>::type operator()(const T& arg1,
+                                                        int arg2) const {
     return rising_factorial(arg1, arg2);
   }
 };

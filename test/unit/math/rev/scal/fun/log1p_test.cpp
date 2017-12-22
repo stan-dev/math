@@ -31,8 +31,7 @@ TEST(AgradRevLog1p, overflows) {
 
 struct log1p_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

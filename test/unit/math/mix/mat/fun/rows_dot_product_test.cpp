@@ -11,14 +11,14 @@ TEST(AgradMixMatrixRowsDotProduct, fv_vector_vector_1stDeriv) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_fv output(3);
   output = rows_dot_product(vv_1, vd_2);
@@ -61,14 +61,14 @@ TEST(AgradMixMatrixRowsDotProduct, fv_vector_vector_2ndDeriv) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_fv output(3);
 
@@ -132,14 +132,14 @@ TEST(AgradMixMatrixRowsDotProduct, fv_rowvector_rowvector_1stDeriv) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_fv output;
   output = rows_dot_product(v1, d2);
@@ -170,14 +170,14 @@ TEST(AgradMixMatrixRowsDotProduct, fv_rowvector_rowvector_2ndDeriv) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_fv output;
   output = rows_dot_product(v1, v2);
@@ -199,26 +199,26 @@ TEST(AgradMixMatrixRowsDotProduct, fv_matrix_matrix_1stDeriv) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_fv output;
   output = rows_dot_product(v1, d2);
@@ -245,8 +245,8 @@ TEST(AgradMixMatrixRowsDotProduct, fv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1).d_.val());
   EXPECT_FLOAT_EQ(0, output(2).d_.val());
 
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
-                      v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                      v1(1, 1).val());
   VEC h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -264,32 +264,32 @@ TEST(AgradMixMatrixRowsDotProduct, fv_matrix_matrix_2ndDeriv) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_fv output;
   output = rows_dot_product(v1, v2);
 
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(),
-                      v1(1, 0).val(), v1(1, 1).val());
+  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                      v1(1, 1).val());
   VEC h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -353,14 +353,14 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_1stDeriv) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_ffv output(3);
   output = rows_dot_product(vv_1, vd_2);
@@ -404,14 +404,14 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_2ndDeriv_1) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_ffv output(3);
 
@@ -433,14 +433,14 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_2ndDeriv_2) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_ffv output(3);
 
@@ -462,21 +462,21 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_vector_vector_3rdDeriv) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
-   vv_1(0).val_.d_ = 1.0;
-   vv_1(1).val_.d_ = 1.0;
-   vv_1(2).val_.d_ = 1.0;
-   vv_2(0).val_.d_ = 1.0;
-   vv_2(1).val_.d_ = 1.0;
-   vv_2(2).val_.d_ = 1.0;
+  vv_1(0).val_.d_ = 1.0;
+  vv_1(1).val_.d_ = 1.0;
+  vv_1(2).val_.d_ = 1.0;
+  vv_2(0).val_.d_ = 1.0;
+  vv_2(1).val_.d_ = 1.0;
+  vv_2(2).val_.d_ = 1.0;
 
   vector_ffv output(3);
 
@@ -541,14 +541,14 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_rowvector_rowvector_1stDeriv) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_ffv output;
   output = rows_dot_product(v1, d2);
@@ -563,8 +563,7 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(3, output(0).val_.val().val());
   EXPECT_FLOAT_EQ(0, output(0).d_.val().val());
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(),
-                      v1(2).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
   VEC h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(4, h[0]);
@@ -580,20 +579,19 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_rowvector_rowvector_2ndDeriv_1) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_ffv output;
   output = rows_dot_product(v1, v2);
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(),
-                      v1(2).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
   VEC h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -609,14 +607,14 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_rowvector_rowvector_2ndDeriv_2) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_ffv output;
   output = rows_dot_product(v1, v2);
@@ -637,27 +635,26 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_rowvector_rowvector_3rdDeriv) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
-   v1(0).val_.d_ = 1.0;
-   v1(1).val_.d_ = 1.0;
-   v1(2).val_.d_ = 1.0;
-   v2(0).val_.d_ = 1.0;
-   v2(1).val_.d_ = 1.0;
-   v2(2).val_.d_ = 1.0;
+  v1(0).val_.d_ = 1.0;
+  v1(1).val_.d_ = 1.0;
+  v1(2).val_.d_ = 1.0;
+  v2(0).val_.d_ = 1.0;
+  v2(1).val_.d_ = 1.0;
+  v2(2).val_.d_ = 1.0;
 
   row_vector_ffv output;
   output = rows_dot_product(v1, v2);
 
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(),
-                      v1(2).val().val());
+  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
   VEC h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -674,26 +671,26 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_matrix_matrix_1stDeriv) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_ffv output;
   output = rows_dot_product(v1, d2);
@@ -739,26 +736,26 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_matrix_matrix_2ndDeriv_1) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_ffv output;
   output = rows_dot_product(v1, v2);
@@ -782,26 +779,26 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_matrix_matrix_2ndDeriv_2) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_ffv output;
   output = rows_dot_product(v1, v2);
@@ -825,44 +822,44 @@ TEST(AgradMixMatrixRowsDotProduct, ffv_matrix_matrix_3rdDeriv) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
-   v1(0, 0).val_.d_ = 1.0;
-   v1(0, 1).val_.d_ = 1.0;
-   v1(0, 2).val_.d_ = 1.0;
-   v1(1, 0).val_.d_ = 1.0;
-   v1(1, 1).val_.d_ = 1.0;
-   v1(1, 2).val_.d_ = 1.0;
-   v1(2, 0).val_.d_ = 1.0;
-   v1(2, 1).val_.d_ = 1.0;
-   v1(2, 2).val_.d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
+  v1(0, 0).val_.d_ = 1.0;
+  v1(0, 1).val_.d_ = 1.0;
+  v1(0, 2).val_.d_ = 1.0;
+  v1(1, 0).val_.d_ = 1.0;
+  v1(1, 1).val_.d_ = 1.0;
+  v1(1, 2).val_.d_ = 1.0;
+  v1(2, 0).val_.d_ = 1.0;
+  v1(2, 1).val_.d_ = 1.0;
+  v1(2, 2).val_.d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
-   v2(0, 0).val_.d_ = 1.0;
-   v2(0, 1).val_.d_ = 1.0;
-   v2(0, 2).val_.d_ = 1.0;
-   v2(1, 0).val_.d_ = 1.0;
-   v2(1, 1).val_.d_ = 1.0;
-   v2(1, 2).val_.d_ = 1.0;
-   v2(2, 0).val_.d_ = 1.0;
-   v2(2, 1).val_.d_ = 1.0;
-   v2(2, 2).val_.d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
+  v2(0, 0).val_.d_ = 1.0;
+  v2(0, 1).val_.d_ = 1.0;
+  v2(0, 2).val_.d_ = 1.0;
+  v2(1, 0).val_.d_ = 1.0;
+  v2(1, 1).val_.d_ = 1.0;
+  v2(1, 2).val_.d_ = 1.0;
+  v2(2, 0).val_.d_ = 1.0;
+  v2(2, 1).val_.d_ = 1.0;
+  v2(2, 2).val_.d_ = 1.0;
 
   vector_ffv output;
   output = rows_dot_product(v1, v2);

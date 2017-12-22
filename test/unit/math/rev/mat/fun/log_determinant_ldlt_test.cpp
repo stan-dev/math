@@ -49,14 +49,13 @@ TEST(AgradRevMatrix, log_determinant_ldlt) {
   f = log_determinant_ldlt(ldlt_v);
   f.grad(v_vec, grad);
 
-
   // derivative is: 1/det(A) * adj(A)
   EXPECT_FLOAT_EQ(std::log(3.0), f.val());
   ASSERT_EQ(4U, grad.size());
   EXPECT_FLOAT_EQ(1.0, grad[0]);
   EXPECT_FLOAT_EQ(0, grad[1]);
   EXPECT_FLOAT_EQ(0, grad[2]);
-  EXPECT_FLOAT_EQ(1.0/3.0, grad[3]);
+  EXPECT_FLOAT_EQ(1.0 / 3.0, grad[3]);
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {

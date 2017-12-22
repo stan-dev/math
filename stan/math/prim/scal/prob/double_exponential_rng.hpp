@@ -12,52 +12,52 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-  namespace math {
-    /**
-     * Return a pseudorandom double exponential variate with the given location
-     * and scale using the specified random number generator.
-     *
-     * mu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
-     * an Eigen::RowVector. Any non-scalar inputs must be the same length.
-     *
-     * @tparam T_loc Type of location parameter
-     * @tparam T_scale Type of scale parameter
-     * @tparam RNG class of random number generator
-     * @param mu (Sequence of) location parameter(s)
-     * @param sigma (Sequence of) scale parameter(s)
-     * @param rng random number generator
-     * @return double exponential random variate
-     * @throw std::domain_error if mu is infinite or sigma is nonpositive
-     * @throw std::invalid_argument if non-scalar arguments are of different
-     * lengths
-     */
-    template <typename T_loc, typename T_scale, class RNG>
-    inline typename VectorBuilder<true, double, T_loc, T_scale>::type
-    double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::uniform_real_distribution;
-      static const char* function = "double_exponential_rng";
+namespace math {
+/**
+ * Return a pseudorandom double exponential variate with the given location
+ * and scale using the specified random number generator.
+ *
+ * mu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
+ * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ *
+ * @tparam T_loc Type of location parameter
+ * @tparam T_scale Type of scale parameter
+ * @tparam RNG class of random number generator
+ * @param mu (Sequence of) location parameter(s)
+ * @param sigma (Sequence of) scale parameter(s)
+ * @param rng random number generator
+ * @return double exponential random variate
+ * @throw std::domain_error if mu is infinite or sigma is nonpositive
+ * @throw std::invalid_argument if non-scalar arguments are of different
+ * lengths
+ */
+template <typename T_loc, typename T_scale, class RNG>
+inline typename VectorBuilder<true, double, T_loc, T_scale>::type
+double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
+  static const char* function = "double_exponential_rng";
 
-      check_finite(function, "Location parameter", mu);
-      check_positive_finite(function, "Scale parameter", sigma);
-      check_consistent_sizes(function, "Location parameter", mu,
-                             "Scale Parameter", sigma);
+  check_finite(function, "Location parameter", mu);
+  check_positive_finite(function, "Scale parameter", sigma);
+  check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
+                         sigma);
 
-      scalar_seq_view<T_loc> mu_vec(mu);
-      scalar_seq_view<T_scale> sigma_vec(sigma);
-      size_t N = max_size(mu, sigma);
-      VectorBuilder<true, double, T_loc, T_scale> output(N);
+  scalar_seq_view<T_loc> mu_vec(mu);
+  scalar_seq_view<T_scale> sigma_vec(sigma);
+  size_t N = max_size(mu, sigma);
+  VectorBuilder<true, double, T_loc, T_scale> output(N);
 
-      variate_generator<RNG&, uniform_real_distribution<> >
-        z_rng(rng, uniform_real_distribution<>(-1.0, 1.0));
-      for (size_t n = 0; n < N; ++n) {
-        double z = z_rng();
-        output[n] = mu_vec[n]
-          - ((z > 0) ? 1.0 : -1.0) * sigma_vec[n] * std::log(std::abs(z));
-      }
-
-      return output.data();
-    }
+  variate_generator<RNG&, uniform_real_distribution<> > z_rng(
+      rng, uniform_real_distribution<>(-1.0, 1.0));
+  for (size_t n = 0; n < N; ++n) {
+    double z = z_rng();
+    output[n] = mu_vec[n]
+                - ((z > 0) ? 1.0 : -1.0) * sigma_vec[n] * std::log(std::abs(z));
   }
+
+  return output.data();
 }
+}  // namespace math
+}  // namespace stan
 #endif

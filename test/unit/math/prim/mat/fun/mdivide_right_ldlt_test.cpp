@@ -6,8 +6,7 @@ TEST(MathMatrix, mdivide_right_ldlt_val) {
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;
 
-  Ad << 2.0, 3.0,
-        3.0, 7.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
 
   ldlt_Ad.compute(Ad);
   ASSERT_TRUE(ldlt_Ad.success());

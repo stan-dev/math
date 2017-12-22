@@ -16,8 +16,8 @@ void expect_prim_scalar_value() {
     expect_val_eq(exp_v, v);
   }
   for (size_t i = 0; i < valid_inputs.size(); ++i) {
-    expect_val_eq(F::apply_base(valid_inputs[i]), F::template
-    apply<double>(valid_inputs[i]));
+    expect_val_eq(F::apply_base(valid_inputs[i]),
+                  F::template apply<double>(valid_inputs[i]));
   }
 }
 

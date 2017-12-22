@@ -5,9 +5,9 @@
 
 TEST(MathFunctions, Phi) {
   EXPECT_EQ(0.5 + 0.5 * boost::math::erf(0.0), stan::math::Phi(0.0));
-  EXPECT_FLOAT_EQ(0.5 + 0.5 * boost::math::erf(0.9/std::sqrt(2.0)),
+  EXPECT_FLOAT_EQ(0.5 + 0.5 * boost::math::erf(0.9 / std::sqrt(2.0)),
                   stan::math::Phi(0.9));
-  EXPECT_EQ(0.5 + 0.5 * boost::math::erf(-5.0/std::sqrt(2.0)),
+  EXPECT_EQ(0.5 + 0.5 * boost::math::erf(-5.0 / std::sqrt(2.0)),
             stan::math::Phi(-5.0));
 }
 
@@ -117,6 +117,5 @@ TEST(MathFunctions, PhiTails) {
 
 TEST(MathFunctions, Phi_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::Phi(nan),
-               std::domain_error);
+  EXPECT_THROW(stan::math::Phi(nan), std::domain_error);
 }

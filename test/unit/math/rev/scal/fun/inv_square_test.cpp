@@ -25,8 +25,7 @@ TEST(AgradRev, inv_square) {
 
 struct inv_square_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_square(arg1);
   }
 };

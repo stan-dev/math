@@ -5,7 +5,6 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 #include <limits>
 
-
 TEST(AgradFwdAbs, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -91,8 +90,7 @@ TEST(AgradFwdAbs, FvarFvarVar_3rdDeriv) {
 
 struct abs_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return abs(arg1);
   }
 };

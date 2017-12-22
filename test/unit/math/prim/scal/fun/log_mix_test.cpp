@@ -27,4 +27,3 @@ TEST(MathFunctions, log_mix_values) {
   test_log_mix(0.0001, 197, -3000);
   test_log_mix(0.999999, 197, -3000);
 }
-

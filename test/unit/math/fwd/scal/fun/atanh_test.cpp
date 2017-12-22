@@ -20,7 +20,6 @@ TEST(AgradFwdAtanh, Fvar) {
   EXPECT_FLOAT_EQ(1 / (1 - 0.9 * 0.9), b.d_);
 }
 
-
 TEST(AgradFwdAtanh, FvarFvarDouble) {
   using stan::math::fvar;
   using boost::math::atanh;
@@ -47,11 +46,9 @@ TEST(AgradFwdAtanh, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct atanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atanh(arg1);
   }
 };

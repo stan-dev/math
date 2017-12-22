@@ -16,7 +16,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
   Eigen::Matrix<fvar<var>, -1, -1> m1(2, 2);
   // Set d_ to 1 for one variable we care about;
   m1 << fvar<var>(val_dxs[0], 1.0), fvar<var>(val_dxs[1], 0.0),
-    fvar<var>(val_dxs[2], 0.0), fvar<var>(val_dxs[3], 0.0);
+      fvar<var>(val_dxs[2], 0.0), fvar<var>(val_dxs[3], 0.0);
 
   Eigen::Matrix<var, -1, -1> dxm1(2, 2);
   dxm1 << 4.0, 5.0, 6.0, 7.0;

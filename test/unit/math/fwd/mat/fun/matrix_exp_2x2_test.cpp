@@ -22,7 +22,6 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
   EXPECT_FLOAT_EQ(0, output(1, 1).d_);
 }
 
-
 TEST(MathMatrix, matrix_exp_2x2_2) {
   // example from Moler & Van Loan, 2003, section 3
   stan::math::fvar<double> a, b;
@@ -32,8 +31,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
   b.d_ = 1.0;
 
   stan::math::matrix_fd input(2, 2);
-  input << -2*a + 3*b, 1.5*a - 1.5*b,
-           -4*a + 4*b, 3*a - 2*b;
+  input << -2 * a + 3 * b, 1.5 * a - 1.5 * b, -4 * a + 4 * b, 3 * a - 2 * b;
 
   stan::math::matrix_fd output;
   output = stan::math::matrix_exp_2x2(input);

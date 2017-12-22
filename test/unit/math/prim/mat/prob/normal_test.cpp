@@ -8,23 +8,20 @@
 #include <vector>
 
 class NormalTestRig : public VectorRNGTestRig {
-public:
+ public:
   /*
    * The default NormalTestRig constructor initializes the TestRig with
    * valid and invalid parameters for a random number generator with two
    * arguments.
    */
-  NormalTestRig() :
-    VectorRNGTestRig(10000,  // Number of samples used for quantiles tests
-                     10,  // Length of vectors for vectorization tests
-                     {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},  // Valid values for p1
-                     {-3, -2, -1, 0, 2, 6},  // Valid integer values for p1
-                     {},
-                     {},
-                     {0.1, 1.0, 2.5, 4.0},
-                     {1, 2, 3, 4},
-                     {-2.7, -1.5, -0.5, 0.0},
-                     {-3, -2, -1, 0}) {}
+  NormalTestRig()
+      : VectorRNGTestRig(
+            10000,  // Number of samples used for quantiles tests
+            10,     // Length of vectors for vectorization tests
+            {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},  // Valid values for p1
+            {-3, -2, -1, 0, 2, 6},              // Valid integer values for p1
+            {}, {}, {0.1, 1.0, 2.5, 4.0}, {1, 2, 3, 4}, {-2.7, -1.5, -0.5, 0.0},
+            {-3, -2, -1, 0}) {}
 
   /*
    * This function wraps up the random number generator for testing.
@@ -32,7 +29,7 @@ public:
    * The tested rng can have up to three parameters. Any unused parameters can
    * be ignored.
    */
-  template<typename T1, typename T2, typename T3, typename T_rng>
+  template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& mean, const T2& sd, const T3& unused,
                         T_rng& rng) const {
     return stan::math::normal_rng(mean, sd, rng);
@@ -42,8 +39,8 @@ public:
    * This function builds the quantiles that we will supply to
    * assert_matches_quantiles to test the normal_rng
    */
-  std::vector<double> generate_quantiles(double mu, double sigma, double unused)
-    const {
+  std::vector<double> generate_quantiles(double mu, double sigma,
+                                         double unused) const {
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::normal_distribution<> dist(mu, sigma);

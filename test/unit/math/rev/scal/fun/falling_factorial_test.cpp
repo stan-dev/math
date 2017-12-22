@@ -14,13 +14,13 @@ TEST(AgradRev, falling_factorial_var_int) {
   VEC g;
   f.grad(x, g);
   EXPECT_FLOAT_EQ(0, g[0]);
-  EXPECT_FLOAT_EQ((digamma(5) - digamma(3))
-                  * 12.0, g[1]);
+  EXPECT_FLOAT_EQ((digamma(5) - digamma(3)) * 12.0, g[1]);
 
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::falling_factorial(4.0 + eps, 2)
-                  - stan::math::falling_factorial(4.0 - eps, 2))
-                  / (2 * eps), g[1]);
+                   - stan::math::falling_factorial(4.0 - eps, 2))
+                      / (2 * eps),
+                  g[1]);
 }
 
 TEST(AgradRev, falling_factorial_exceptions) {
@@ -32,10 +32,8 @@ TEST(AgradRev, falling_factorial_exceptions) {
 
 struct falling_factorial_fun {
   template <typename T>
-  inline
-  typename stan::return_type<T>::type
-  operator()(const T& arg1,
-             int arg2) const {
+  inline typename stan::return_type<T>::type operator()(const T& arg1,
+                                                        int arg2) const {
     return falling_factorial(arg1, arg2);
   }
 };

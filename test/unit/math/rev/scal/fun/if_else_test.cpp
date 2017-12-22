@@ -29,37 +29,25 @@ TEST(AgradRev, if_else_nan) {
   EXPECT_FLOAT_EQ(1.2, if_else(true, 1.2, nan_v).val());
   EXPECT_FLOAT_EQ(1.2, if_else(true, a_v, nan).val());
   EXPECT_FLOAT_EQ(1.2, if_else(true, a_v, nan_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, 1.2, nan_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, a_v, nan).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, a_v, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, 1.2, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, a_v, nan).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, a_v, nan_v).val());
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan_v, 2.4).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan, a_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan_v, a_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan_v, 2.4).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan, a_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan_v, a_v).val());
 
   a_v = 2.4;
   EXPECT_FLOAT_EQ(2.4, if_else(false, nan_v, 2.4).val());
   EXPECT_FLOAT_EQ(2.4, if_else(false, nan, a_v).val());
   EXPECT_FLOAT_EQ(2.4, if_else(false, nan_v, a_v).val());
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan_v, nan).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan, nan_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(true, nan_v, nan_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, nan, nan_v).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, nan_v, nan).val());
-  EXPECT_PRED1(boost::math::isnan<double>,
-               if_else(false, nan_v, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan_v, nan).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(true, nan_v, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, nan, nan_v).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, nan_v, nan).val());
+  EXPECT_PRED1(boost::math::isnan<double>, if_else(false, nan_v, nan_v).val());
 }
 
 TEST(AgradRev, check_varis_on_stack) {

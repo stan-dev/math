@@ -36,7 +36,6 @@ TEST(AgradFwdExpm1, Fvar) {
   EXPECT_FLOAT_EQ(exp(0.0), f.d_);
 }
 
-
 TEST(AgradFwdExpm1, FvarFvarDouble) {
   using stan::math::fvar;
   using std::exp;
@@ -65,8 +64,7 @@ TEST(AgradFwdExpm1, FvarFvarDouble) {
 
 struct expm1_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return expm1(arg1);
   }
 };
@@ -75,4 +73,3 @@ TEST(AgradFwdExpm1, expm1_NaN) {
   expm1_fun expm1_;
   test_nan_fwd(expm1_, false);
 }
-

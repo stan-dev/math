@@ -36,7 +36,6 @@ TEST(AgradFwdLog, Fvar) {
   isnan(f.d_);
 }
 
-
 TEST(AgradFwdLog, FvarFvarDouble) {
   using stan::math::fvar;
   using std::log;
@@ -65,8 +64,7 @@ TEST(AgradFwdLog, FvarFvarDouble) {
 
 struct log_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log(arg1);
   }
 };

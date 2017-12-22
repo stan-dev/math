@@ -6,14 +6,14 @@
 #include <cmath>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline fvar<T> atan(const fvar<T>& x) {
-      using std::atan;
-      return fvar<T>(atan(x.val_), x.d_ / (1 + square(x.val_)));
-    }
-
-  }
+template <typename T>
+inline fvar<T> atan(const fvar<T>& x) {
+  using std::atan;
+  return fvar<T>(atan(x.val_), x.d_ / (1 + square(x.val_)));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

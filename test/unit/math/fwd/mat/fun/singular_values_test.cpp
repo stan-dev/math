@@ -38,4 +38,3 @@ TEST(AgradFwdMatrixSingularValues, mat_ffd) {
   EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val_);
   EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val_);
 }
-

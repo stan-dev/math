@@ -83,4 +83,3 @@ TEST(AgradRevMatrix, log_determinant_grad) {
   EXPECT_FLOAT_EQ(-2.0, g[3]);
 }
 #endif
-
