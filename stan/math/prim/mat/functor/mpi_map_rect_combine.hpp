@@ -47,6 +47,13 @@ class mpi_map_rect_combine {
     if (rank_ != 0)
       return (result_type());
 
+    // check if any of the workers flagged an error
+    for (std::size_t i = 0, j = 0; i < world_f_out.size(); i++) {
+      if (unlikely(world_result(0, j) == std::numeric_limits<double>::max()))
+        throw std::runtime_error("Error.");
+      j += world_f_out[i];
+    }
+
     return (combine_(world_result, world_f_out));
   }
 };

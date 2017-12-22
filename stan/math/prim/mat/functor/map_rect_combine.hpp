@@ -50,10 +50,6 @@ class map_rect_combine {
 
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (std::size_t j = 0; j != world_f_out[i]; ++j, ++ij) {
-        // check if the outputs flags a failure
-        if (unlikely(world_result(0, ij) == std::numeric_limits<double>::max()))
-          throw std::runtime_error("Error.");
-
         if (!is_constant_struct<T_shared_param>::value)
           ops_partials_[i].edge1_.partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
