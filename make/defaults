@@ -1,0 +1,59 @@
+##
+# Library locations
+##
+MATH ?= 
+BOOST ?= $(MATH)lib/boost_1.64.0
+CVODES ?= $(MATH)lib/cvodes_2.9.0
+EIGEN ?= $(MATH)lib/eigen_3.3.3
+GTEST ?= $(MATH)lib/gtest_1.7.0
+CPPLINT ?= $(MATH)lib/cpplint_4.45
+
+##
+# Compiler options
+##
+O ?= 3
+
+INC = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include
+CXXFLAGS_LANG ?= -std=c++11
+CXXFLAGS_WARNINGS ?= -Wno-unused-function -Wno-uninitialized -Wall 
+CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
+CXXFLAGS_CVODES ?= -DNO_FPRINTF_OUTPUT -pipe
+CXXFLAGS_EIGEN ?= 
+CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+CXXFLAGS_OS ?=
+
+ifneq ($(OS),Windows_NT)
+  OS := $(shell uname -s)
+endif
+
+ifeq ($(OS),Windows)
+  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  ## Detecting Process Bitness:
+  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+  ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
+    CXXFLAGS_OS += -m32
+  else
+    CXXFLAGS_OS += -m64
+  endif
+  CXXFLAGS_OS += -Wno-unused-but-set-variable
+
+  LDLIBS += -static-libgcc
+  ## FIXME(dl): shouldn't need this for cygwin? test.
+  LDLIBS += -static-libstdc++
+
+  EXE := .exe
+endif
+ifeq ($(OS),Darwin)  # Mac OS X
+  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
+endif
+ifeq ($(OS),Linux)
+  CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  ifneq (,($findstring mingw32-g++,$(CXX)))
+    LDFLAGS += -static -lwinpthread
+    EXE := .exe
+  else
+    LDFLAGS += -lpthread  
+  endif
+endif
+
+CXXFLAGS := $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_CVODES) $(CXXFLAGS_EIGEN) $(INC) 
