@@ -91,6 +91,13 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
+                        ClangFormat: {
+                            sh """find stan test -name '*.hpp' -o -name '*.cpp' | xargs clang-format -i
+                                git status
+                                if [[ -n \$(git status --porcelain) ]]; then
+                                    echo "clang-format found things to change with these files - failing build."
+                                    false
+                                fi""" },
                         dependencies: { sh 'make test-math-dependencies' } ,
                         documentation: { sh 'make doxygen' },
                         failFast: true
