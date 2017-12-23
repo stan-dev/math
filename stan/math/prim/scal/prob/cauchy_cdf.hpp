@@ -77,6 +77,8 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_cdf(
 
   using std::atan;
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials) reduction(* : P)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -106,14 +108,20 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
+    #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
+    #pragma omp parallel for default(none) if (stan::length(mu) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
+    #pragma omp parallel for default(none) if (stan::length(sigma) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

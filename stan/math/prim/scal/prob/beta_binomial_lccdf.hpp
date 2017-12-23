@@ -82,15 +82,14 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lccdf(
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) <= 0)
       return ops_partials.build(0.0);
-  }
-
-  for (size_t i = 0; i < size; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
       return ops_partials.build(negative_infinity());
     }
+  }
 
+  #pragma omp parallel for default(none) if (size <= 0) reduction(+ : P) \
+    shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials, size)
+  for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);

@@ -77,12 +77,16 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
                 T_inv_scale>
       log_beta(length(beta));
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(beta_vec, log_beta, beta)
   for (size_t i = 0; i < length(beta); i++)
     if (include_summand<propto, T_inv_scale>::value)
       log_beta[i] = log(value_of(beta_vec[i]));
 
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(beta_vec, y_vec, log_beta, ops_partials, N) reduction(+ : logp)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);

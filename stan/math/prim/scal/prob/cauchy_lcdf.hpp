@@ -71,6 +71,8 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lcdf(
   using std::atan;
   using std::log;
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials, N) reduction(+ : cdf_log)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

@@ -58,14 +58,13 @@ typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0)
       return ops_partials.build(0.0);
-  }
-
-  for (size_t i = 0; i < size; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
       return ops_partials.build(negative_infinity());
+  }
 
+  #pragma omp parallel for default(none) if (size <= 0) \
+    shared(n_vec, lambda_vec, ops_partials, size) reduction(+ : P)
+  for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
     const T_partials_return log_Pi = log(gamma_p(n_dbl + 1, lambda_dbl));

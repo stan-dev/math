@@ -66,21 +66,21 @@ typename return_type<T_prob>::type bernoulli_lccdf(const T_n& n,
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0)
       return ops_partials.build(0.0);
+    if (value_of(n_vec[i]) >= 1)
+      return ops_partials.build(negative_infinity());
   }
 
+  #pragma omp parallel for default(none) if (size <= 0) \
+    shared(theta_vec, ops_partials, size) reduction(+ : P)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) >= 1) {
-      return ops_partials.build(negative_infinity());
-    } else {
-      const T_partials_return Pi = value_of(theta_vec[i]);
+    const T_partials_return Pi = value_of(theta_vec[i]);
 
-      P += log(Pi);
+    P += log(Pi);
 
-      if (!is_constant_struct<T_prob>::value)
-        ops_partials.edge1_.partials_[i] += 1 / Pi;
-    }
+    if (!is_constant_struct<T_prob>::value)
+      ops_partials.edge1_.partials_[i] += 1 / Pi;
   }
 
   return ops_partials.build(P);

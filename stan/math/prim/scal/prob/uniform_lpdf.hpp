@@ -84,6 +84,8 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
+  #pragma omp parallel for default(none) if (max_size(alpha, beta) <= 0) \
+    shared(inv_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
       inv_beta_minus_alpha[i]
@@ -92,12 +94,16 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
+  #pragma omp parallel for default(none) if (max_size(alpha, beta) <= 0) \
+    shared(log_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
       log_beta_minus_alpha[i]
           = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+    shared(log_beta_minus_alpha, inv_beta_minus_alpha, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     if (include_summand<propto, T_low, T_high>::value)
       logp -= log_beta_minus_alpha[n];

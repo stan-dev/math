@@ -61,6 +61,8 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
       return ops_partials.build(0.0);
   }
 
+  #pragma omp parallel for default(none) if (size <= 0) \
+    shared(n_vec, lambda_vec, ops_partials) reduction(* : P)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -79,6 +81,8 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
   }
 
   if (!is_constant_struct<T_rate>::value) {
+    #pragma omp parallel for default(none) if (stan::length(lambda) <= 0) \
+      shared(ops_partials, P)
     for (size_t i = 0; i < stan::length(lambda); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

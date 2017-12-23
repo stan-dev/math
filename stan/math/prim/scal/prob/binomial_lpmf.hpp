@@ -80,14 +80,20 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
   operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
+    #pragma omp parallel for default(none) if (size <= 0) \
+      shared(N_vec, n_vec, size) reduction(+ : logp)
     for (size_t i = 0; i < size; ++i)
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
+  #pragma omp parallel for default(none) if (length(theta) <= 0) \
+    shared(log1m_theta, theta_vec, theta)
   for (size_t i = 0; i < length(theta); ++i)
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
 
+  #pragma omp parallel for default(none) if (size <= 0) \
+    shared(n_vec, theta_vec, N_vec, log1m_theta, size) reduction(+ : logp)
   for (size_t i = 0; i < size; ++i)
     logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
             + (N_vec[i] - n_vec[i]) * log1m_theta[i];
@@ -106,6 +112,8 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
+      #pragma omp parallel for default(none) if (size <= 0) \
+        shared(ops_partials, n_vec, theta_vec, N_vec, size)
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]
             += n_vec[i] / value_of(theta_vec[i])

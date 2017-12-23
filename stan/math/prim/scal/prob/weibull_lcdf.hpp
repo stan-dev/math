@@ -67,6 +67,8 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lcdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, sigma, alpha);
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, sigma_vec, alpha_vec, ops_partials, N) reduction(+ : cdf_log)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);

@@ -55,6 +55,8 @@ typename return_type<T_y, T_low, T_high>::type uniform_cdf(const T_y& y,
   }
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, alpha_vec, beta_vec, ops_partials) reduction(* : cdf)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
@@ -74,14 +76,20 @@ typename return_type<T_y, T_low, T_high>::type uniform_cdf(const T_y& y,
   }
 
   if (!is_constant_struct<T_y>::value) {
+  #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
+    shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_low>::value) {
+    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
+      shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_high>::value) {
+    #pragma omp parallel for default(none) if (stan::length(beta) <= 0) \
+      shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

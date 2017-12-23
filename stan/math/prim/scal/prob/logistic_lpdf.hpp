@@ -64,6 +64,8 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
+  #pragma omp parallel for default(none) if (length(sigma) <= 0) \
+    shared(inv_sigma, sigma_vec, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value)
@@ -77,12 +79,19 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
                 T_scale>
       exp_y_div_sigma(max_size(y, sigma));
   if (!is_constant_struct<T_loc>::value) {
+    #pragma omp parallel for default(none) if (max_size(mu, sigma) <= 0) \
+      shared(exp_mu_div_sigma, mu_vec, sigma_vec, mu, sigma)
     for (size_t n = 0; n < max_size(mu, sigma); n++)
       exp_mu_div_sigma[n] = exp(value_of(mu_vec[n]) / value_of(sigma_vec[n]));
+    #pragma omp parallel for default(none) if (max_size(y, sigma) <= 0) \
+      shared(exp_y_div_sigma, y_vec, sigma_vec, y, sigma)
     for (size_t n = 0; n < max_size(y, sigma); n++)
       exp_y_div_sigma[n] = exp(value_of(y_vec[n]) / value_of(sigma_vec[n]));
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+    shared(y_vec, mu_vec, inv_sigma, log_sigma, ops_partials, \
+           exp_y_div_sigma, exp_mu_div_sigma, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

@@ -66,6 +66,8 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_cdf(
       return ops_partials.build(0.0);
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials) reduction(* : P)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -76,7 +78,7 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_cdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
+    const T_partials_return sigma_inv_vec = 1.0 / sigma_dbl;
 
     const T_partials_return Pn
         = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
@@ -96,14 +98,20 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
+    #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
+    #pragma omp parallel for default(none) if (stan::length(mu) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
+    #pragma omp parallel for default(none) if (stan::length(sigma) <= 0) \
+      shared(ops_partials, P)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

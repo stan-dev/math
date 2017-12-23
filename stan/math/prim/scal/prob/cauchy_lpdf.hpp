@@ -89,6 +89,9 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials, inv_sigma, log_sigma, \
+           sigma_squared, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

@@ -61,6 +61,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
       return ops_partials.build(0.0);
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials) reduction(* : cdf)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -83,14 +85,20 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
+    #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
+      shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_loc>::value) {
+    #pragma omp parallel for default(none) if (stan::length(mu) <= 0) \
+      shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_scale>::value) {
+    #pragma omp parallel for default(none) if (stan::length(sigma) <= 0) \
+      shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

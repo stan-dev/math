@@ -69,6 +69,8 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
   scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, mu, beta);
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_vec, mu_vec, beta_vec, ops_partials, N) reduction(+ : ccdf_log)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

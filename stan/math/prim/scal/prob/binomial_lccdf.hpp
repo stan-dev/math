@@ -80,19 +80,18 @@ typename return_type<T_prob>::type binomial_lccdf(const T_n& n, const T_N& N,
   operands_and_partials<T_prob> ops_partials(theta);
 
   // Explicit return for extreme values
-  // The gradients are technically ill-defined,
-  // but treated as negative infinity
+  // The gradients are technically ill-defined
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0)
       return ops_partials.build(0.0);
-  }
-
-  for (size_t i = 0; i < size; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
       return ops_partials.build(negative_infinity());
     }
+  }
+
+  #pragma omp parallel for default(none) if (size <= 0) \
+    shared(n_vec, N_vec, theta_vec, ops_partials, size) reduction(+ : P)
+  for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return theta_dbl = value_of(theta_vec[i]);

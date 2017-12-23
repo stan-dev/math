@@ -71,6 +71,8 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0)
       return ops_partials.build(negative_infinity());
+    if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity())
+      return ops_partials.build(0.0);
   }
 
   using boost::math::tgamma;
@@ -85,6 +87,8 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
+    #pragma omp parallel for default(none) if (length(nu) <= 0) \
+      shared(nu_vec, gamma_vec, digamma_vec, nu)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -92,12 +96,9 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
     }
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : cdf_log) \
+    shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-      return ops_partials.build(0.0);
-
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
     const T_partials_return beta_dbl = 0.5;

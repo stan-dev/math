@@ -77,12 +77,16 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_beta(length(beta));
+  #pragma omp parallel for default(none) if (length(beta) <= 0) \
+    shared(beta_vec, log_beta, inv_beta, beta)
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
     if (include_summand<propto, T_scale>::value)
       log_beta[i] = log(value_of(beta_vec[i]));
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+    shared(y_vec, mu_vec, beta_vec, ops_partials, inv_beta, log_beta, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

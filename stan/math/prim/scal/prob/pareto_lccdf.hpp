@@ -60,15 +60,14 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
       return ops_partials.build(0.0);
-  }
-
-  for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
+    if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity()) {
       return ops_partials.build(negative_infinity());
     }
+  }
 
+  #pragma omp parallel for default(none) if (N <= 0) \
+    shared(y_min_vec, y_vec, alpha_vec, ops_partials, N) reduction(+ : P)
+  for (size_t n = 0; n < N; n++) {
     const T_partials_return log_dbl
         = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
     const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);

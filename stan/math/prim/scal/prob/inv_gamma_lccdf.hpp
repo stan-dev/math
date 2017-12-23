@@ -68,6 +68,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lccdf(
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0)
       return ops_partials.build(0.0);
+    if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity())
+      return ops_partials.build(negative_infinity());
   }
 
   using boost::math::tgamma;
@@ -81,6 +83,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lccdf(
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
+    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
+      shared(alpha_vec, gamma_vec, digamma_vec, alpha)
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -88,12 +92,9 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lccdf(
     }
   }
 
+  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : P) \
+    shared(y_vec, alpha_vec, beta_vec, ops_partials, gamma_vec, digamma_vec, N)
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
-      return ops_partials.build(negative_infinity());
-
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_inv_dbl = 1.0 / y_dbl;
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
