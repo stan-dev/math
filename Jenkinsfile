@@ -57,6 +57,12 @@ def updateUpstream(String upstreamRepo) {
     }
 }
 
+def alsoNotify() {
+    if (isBranch('master') || isBranch('develop')) {
+        "stan-buildbot@googlegroups.com"
+    } else ""
+}
+
 pipeline {
     agent none
     parameters {
@@ -190,7 +196,7 @@ pipeline {
             updateUpstream('stan')
             mailBuildResults("SUCCESSFUL")
         }
-        unstable { mailBuildResults("UNSTABLE", "stan-buildbot@googlegroups.com") }
-        failure { mailBuildResults("FAILURE", "stan-buildbot@googlegroups.com") }
+        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
+        failure { mailBuildResults("FAILURE", alsoNotify()) }
     }
 }
