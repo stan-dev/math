@@ -87,8 +87,8 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
   {
     scalar_seq_view<T_n> n_vec(n);
     scalar_seq_view<T_scale> sigma_vec(sigma);
-    #pragma omp parallel for default(none) if (N <= 0) \
-      shared(sigma_dbl, sigma_vec, n_dbl, n_vec)
+    #pragma omp parallel for default(none) if (N > \
+      3 * omp_get_max_threads()) shared(sigma_dbl, sigma_vec, n_dbl, n_vec, N)
     for (size_t n = 0; n < N; ++n) {
       sigma_dbl[n] = value_of(sigma_vec[n]);
       n_dbl[n] = value_of(n_vec[n]);
@@ -98,8 +98,8 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
-    #pragma omp parallel for default(none) if (M <= 0) \
-      shared(beta_dbl, beta_vec)
+    #pragma omp parallel for default(none) if (M > \
+      3 * omp_get_max_threads()) shared(beta_dbl, beta_vec, M)
     for (size_t m = 0; m < M; ++m) {
       beta_dbl[m] = value_of(beta_vec[m]);
     }

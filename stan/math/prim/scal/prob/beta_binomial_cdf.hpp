@@ -83,7 +83,8 @@ typename return_type<T_size1, T_size2>::type beta_binomial_cdf(
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (size <= 0) \
+  #pragma omp parallel for default(none) if (size > \
+    3 * omp_get_max_threads()) \
     shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials) reduction(* : P)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
@@ -141,14 +142,14 @@ typename return_type<T_size1, T_size2>::type beta_binomial_cdf(
   }
 
   if (!is_constant_struct<T_size1>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
-      shared(ops_partials, P)
+    #pragma omp parallel for default(none) if (stan::length(alpha) \
+      3 * omp_get_max_threads()) shared(ops_partials, P)
     for (size_t i = 0; i < stan::length(alpha); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
   if (!is_constant_struct<T_size2>::value) {
-    #pragma omp parallel for default(none) if (stan::length(beta) <= 0) \
-      shared(ops_partials, P)
+    #pragma omp parallel for default(none) if (stan::length(beta) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P)
     for (size_t i = 0; i < stan::length(beta); ++i)
       ops_partials.edge2_.partials_[i] *= P;
   }

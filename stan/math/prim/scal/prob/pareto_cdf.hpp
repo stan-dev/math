@@ -62,8 +62,9 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_cdf(
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) \
-    shared(y_min_vec, y_vec, alpha_vec, ops_partials) reduction(* : P)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(* : P) \
+    shared(y_min_vec, y_vec, alpha_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -92,20 +93,20 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
-      shared(ops_partials, P)
+    #pragma omp parallel for default(none) if (stan::length(y) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y_min) <= 0) \
-      shared(ops_partials, P)
+    #pragma omp parallel for default(none) if (stan::length(y_min) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P, y_min)
     for (size_t n = 0; n < stan::length(y_min); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
-      shared(ops_partials, P)
+    #pragma omp parallel for default(none) if (stan::length(alpha) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P, alpha)
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

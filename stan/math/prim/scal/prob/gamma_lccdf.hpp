@@ -90,7 +90,7 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : P) \
+  #pragma omp parallel for default(none) if (N > 0) reduction(+ : P) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, gamma_vec, digamma_vec, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

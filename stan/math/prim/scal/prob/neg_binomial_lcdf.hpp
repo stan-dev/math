@@ -78,7 +78,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
       digammaSum_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
+    #pragma omp parallel for default(none) if (stan::length(alpha) > 0) \
       shared(n_vec, alpha_vec, digammaN_vec, digammaAlpha_vec, \
              digammaSum_vec, alpha)
     for (size_t i = 0; i < stan::length(alpha); i++) {
@@ -91,7 +91,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (size <= 0) reduction(+ : P) \
+  #pragma omp parallel for default(none) if (size > 0) reduction(+ : P) \
     shared(n_vec, alpha_vec, beta_vec, ops_partials, digammaN_vec, \
            digammaAlpha_vec, digammaSum_vec, size)
   for (size_t i = 0; i < size; i++) {

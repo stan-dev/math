@@ -78,6 +78,9 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
+  #pragma omp parallel for default(none) if (length(sigma) > \
+    3 * omp_get_max_threads()) \
+    shared(sigma_vec, inv_sigma, sigma_squared, log_sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     inv_sigma[i] = 1.0 / sigma_dbl;
@@ -89,9 +92,9 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
-    shared(y_vec, mu_vec, sigma_vec, ops_partials, inv_sigma, log_sigma, \
-           sigma_squared, N)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : logp) shared(y_vec, mu_vec, \
+    sigma_vec, ops_partials, inv_sigma, log_sigma, sigma_squared, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

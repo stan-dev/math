@@ -82,8 +82,9 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
 
   if (!is_constant_struct<T_dof>::value) {
     digammaHalf = digamma(0.5);
-    #pragma omp parallel for default(none) if (N <= 0) \
-      shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec)
+    #pragma omp parallel for default(none) if (N > \
+      3 * omp_get_max_threads()) \
+      shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec, nu)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);
@@ -91,9 +92,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) \
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(* : P) \
     shared(y_vec, sigma_vec, mu_vec, ops_partials, digammaNu_vec, digammaHalf, \
-           digammaNuPlusHalf_vec) reduction(* : P)
+           digammaNuPlusHalf_vec, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -179,18 +181,26 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
+    #pragma omp parallel for default(none) if (stan::length(y) \
+      3 * omp_get_max_threads()) shared(ops_partials, P, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_dof>::value) {
+    #pragma omp parallel for default(none) if (stan::length(nu) \
+      3 * omp_get_max_threads()) shared(ops_partials, P, nu)
     for (size_t n = 0; n < stan::length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
+    #pragma omp parallel for default(none) if (stan::length(mu) \
+      3 * omp_get_max_threads()) shared(ops_partials, P, mu)
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
+    #pragma omp parallel for default(none) if (stan::length(sigma) \
+      3 * omp_get_max_threads()) shared(ops_partials, P, sigma)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge4_.partials_[n] *= P;
   }

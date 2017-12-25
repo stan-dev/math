@@ -80,16 +80,16 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-  #pragma omp parallel for default(none) if (length(y) <= 0) \
-    shared(log_y, y_vec, y)
+  #pragma omp parallel for default(none) if (length(y) > \
+    3 * omp_get_max_threads()) shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y, T_dof>::value)
       log_y[i] = log(value_of(y_vec[i]));
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
       inv_y(length(y));
-  #pragma omp parallel for default(none) if (length(y) <= 0) \
-    shared(inv_y, y_vec, y)
+  #pragma omp parallel for default(none) if (length(y) > \
+    3 * omp_get_max_threads()) shared(inv_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y>::value)
       inv_y[i] = 1.0 / value_of(y_vec[i]);
@@ -98,7 +98,8 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
       lgamma_half_nu(length(nu));
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
-  #pragma omp parallel for default(none) if (length(nu) <= 0) \
+  #pragma omp parallel for default(none) if (length(nu) > \
+    3 * omp_get_max_threads()) \
     shared(nu_vec, lgamma_half_nu, digamma_half_nu_over_two, nu)
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
@@ -109,9 +110,10 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   }
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
-  #pragma omp parallel for default(none) if (N <= 0) \
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : logp) \
     shared(nu_vec, lgamma_half_nu, log_y, inv_y, ops_partials, \
-      digamma_half_nu_over_two, N) reduction(+ : logp)
+      digamma_half_nu_over_two, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     const T_partials_return half_nu = 0.5 * nu_dbl;

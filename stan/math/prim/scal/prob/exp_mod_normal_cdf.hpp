@@ -17,6 +17,9 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace stan {
 namespace math {
@@ -60,7 +63,11 @@ typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type exp_mod_normal_cdf(
       if (y_vec[n] < 0.0)
         return ops_partials.build(0.0);
     }
-
+  }
+  #pragma omp parallel for default(none) if(N > \
+    3 * omp_get_max_threads()) reduction(* : cdf) \
+    shared(y_vec, mu_vec, sigma_vec, lambda_vec, ops_partials, N)
+  for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);

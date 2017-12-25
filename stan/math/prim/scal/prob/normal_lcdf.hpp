@@ -54,8 +54,9 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lcdf(
   size_t N = max_size(y, mu, sigma);
 
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
-  #pragma omp parallel for default(none) if (N <= 0) \
-    shared(y_vec, mu_vec, sigma_vec, ops_partials, N) reduction(+ : cdf_log)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : cdf_log) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials, N, SQRT_TWO_OVER_PI)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

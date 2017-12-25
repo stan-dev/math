@@ -67,8 +67,8 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
 
   if (length(theta) == 1) {
     size_t sum = 0;
-    #pragma omp parallel for default(none) if (N <= 0) \
-      shared(n_vec, N) reduction(+ : sum)
+    #pragma omp parallel for default(none) if(N > \
+      3 * omp_get_max_threads()) shared(n_vec, N) reduction(+ : sum)
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);
     }
@@ -95,7 +95,8 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
       }
     }
   } else {
-    #pragma omp parallel for default(none) if (N <= 0) \
+    #pragma omp parallel for default(none) if (N > \
+      3 * omp_get_max_threads()) \
       shared(n_vec, theta_vec, ops_partials, N) reduction(+ : logp)
     for (size_t n = 0; n < N; n++) {
       const int n_int = value_of(n_vec[n]);

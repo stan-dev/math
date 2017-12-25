@@ -67,7 +67,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
       digamma_sum_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
+    #pragma omp parallel for default(none) if (stan::length(alpha) > 0) \
       shared(n_vec, alpha_vec, digamma_alpha_vec, digamma_sum_vec)
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -78,7 +78,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (size <= 0) reduction(* : P) \
+  #pragma omp parallel for default(none) if (size > 0) reduction(* : P) \
     shared(n_vec, alpha_vec, beta_vec, ops_partials, digamma_alpha_vec, digamma_sum_vec)
   for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -105,14 +105,14 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
   }
 
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) <= 0) \
+    #pragma omp parallel for default(none) if (stan::length(alpha) > 0) \
       shared(ops_partials, P)
     for (size_t i = 0; i < stan::length(alpha); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 
   if (!is_constant_struct<T_inv_scale>::value) {
-    #pragma omp parallel for default(none) if (stan::length(beta) <= 0) \
+    #pragma omp parallel for default(none) if (stan::length(beta) > 0) \
       shared(ops_partials, P)
     for (size_t i = 0; i < stan::length(beta); ++i)
       ops_partials.edge2_.partials_[i] *= P;

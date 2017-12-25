@@ -69,8 +69,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
                 T_scale>
       log_sigma(length(sigma));
   if (include_summand<propto, T_scale>::value) {
-    #pragma omp parallel for default(none) if (length(sigma) <= 0) \
-      shared(log_sigma, sigma_vec, sigma)
+    #pragma omp parallel for default(none) if (length(sigma) > \
+      3 * omp_get_max_threads()) shared(log_sigma, sigma_vec, sigma)
     for (size_t n = 0; n < length(sigma); n++)
       log_sigma[n] = log(value_of(sigma_vec[n]));
   }
@@ -82,7 +82,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
                 T_partials_return, T_scale>
       inv_sigma_sq(length(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    #pragma omp parallel for default(none) if (length(sigma) <= 0) \
+    #pragma omp parallel for default(none) if (length(sigma) > \
+      3 * omp_get_max_threads()) \
       shared(inv_sigma, sigma_vec, inv_sigma_sq, sigma)
     for (size_t n = 0; n < length(sigma); n++) {
       inv_sigma[n] = 1 / value_of(sigma_vec[n]);
@@ -94,8 +95,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
                 T_partials_return, T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    #pragma omp parallel for default(none) if (length(y) <= 0) \
-      shared(log_y, y_vec, y)
+    #pragma omp parallel for default(none) if (length(y) > \
+      3 * omp_get_max_threads()) shared(log_y, y_vec, y)
     for (size_t n = 0; n < length(y); n++)
       log_y[n] = log(value_of(y_vec[n]));
   }
@@ -103,8 +104,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
   VectorBuilder<!is_constant_struct<T_y>::value, T_partials_return, T_y> inv_y(
       length(y));
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (length(y) <= 0) \
-      shared(inv_y, y_vec, y)
+    #pragma omp parallel for default(none) if (length(y) > \
+      3 * omp_get_max_threads()) shared(inv_y, y_vec, y)
     for (size_t n = 0; n < length(y); n++)
       inv_y[n] = 1 / value_of(y_vec[n]);
   }
@@ -112,7 +113,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
   if (include_summand<propto>::value)
     logp += N * NEG_LOG_SQRT_TWO_PI;
 
-  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : logp) \
     shared(mu_vec, log_y, ops_partials, inv_y, inv_sigma_sq, inv_sigma, \
            log_sigma, N)
   for (size_t n = 0; n < N; n++) {

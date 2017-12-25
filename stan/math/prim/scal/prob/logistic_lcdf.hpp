@@ -66,8 +66,9 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lcdf(
       return ops_partials.build(-std::numeric_limits<double>::infinity());
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) \
-    shared(y_vec, mu_vec, sigma_vec, ops_partials, N) reduction(+ : P)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : P) \
+    shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero

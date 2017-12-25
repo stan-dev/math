@@ -52,6 +52,7 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
   if (!include_summand<propto>::value)
     return 0.0;
 
+  // Cannot use openMP because of the autodiff within this loop
   for (size_t i = 0; i < size; i++)
     logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
             + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])

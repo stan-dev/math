@@ -84,8 +84,8 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (stan::length(nu) <= 0) \
-      shared(gamma_vec, nu_vec, digamma_vec)
+    #pragma omp parallel for default(none) if (stan::length(nu) > \
+      3 * omp_get_max_threads()) shared(gamma_vec, nu_vec, digamma_vec)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -93,8 +93,9 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
     }
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) \
-    shared(y_vec, nu_vec, ops_partials) reduction(* : cdf)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(* : cdf) \
+    shared(y_vec, nu_vec, ops_partials)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -122,14 +123,14 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y) <= 0) \
-      shared(ops_partials, cdf)
+    #pragma omp parallel for default(none) if (stan::length(y) > \
+      3 * omp_get_max_threads()) shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (stan::length(nu) <= 0) \
-      shared(ops_partials, cdf)
+    #pragma omp parallel for default(none) if (stan::length(nu) > \
+      3 * omp_get_max_threads()) shared(ops_partials, cdf)
     for (size_t n = 0; n < stan::length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }

@@ -93,7 +93,7 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_scale>::value, T_partials_return,
                 T_y>
       inv_y(length(y));
-  #pragma omp parallel for default(none) if (length(y) <= 0) \
+  #pragma omp parallel for default(none) if (length(y) > 0) \
     shared(y_vec, log_y, inv_y, y)
   for (size_t n = 0; n < length(y); n++) {
     if (include_summand<propto, T_y, T_shape>::value)
@@ -108,7 +108,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
-  #pragma omp parallel for default(none) if (length(alpha) <= 0) \
+  #pragma omp parallel for default(none) if (length(alpha) > \
+    3 * omp_get_max_threads()) \
     shared(lgamma_alpha, alpha_vec, digamma_alpha, alpha)
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value)
@@ -121,13 +122,14 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
                 T_partials_return, T_scale>
       log_beta(length(beta));
   if (include_summand<propto, T_shape, T_scale>::value) {
-    #pragma omp parallel for default(none) if (length(beta) <= 0) \
-      shared(log_beta, beta_vec, beta)
+    #pragma omp parallel for default(none) if (length(beta) > \
+      3 * omp_get_max_threads()) shared(log_beta, beta_vec, beta)
     for (size_t n = 0; n < length(beta); n++)
       log_beta[n] = log(value_of(beta_vec[n]));
   }
 
-  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : logp) \
     shared(alpha_vec, beta_vec, lgamma_alpha, inv_y, ops_partials, log_beta, \
            log_y, digamma_alpha, N)
   for (size_t n = 0; n < N; n++) {

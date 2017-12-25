@@ -78,7 +78,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   operands_and_partials<T_prob> ops_partials(alpha);
 
   if (include_summand<propto>::value) {
-    #pragma omp parallel for default(none) if (size <= 0) \
+    #pragma omp parallel for default(none) if (size > 0) \
       shared(N_vec, n_vec, size) reduction(+ : logp)
     for (size_t i = 0; i < size; ++i)
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
@@ -88,7 +88,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
       length(alpha));
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
       length(alpha));
-  #pragma omp parallel for default(none) if (length(alpha) <= 0) \
+  #pragma omp parallel for default(none) if (length(alpha) > 0) \
     shared(log_inv_logit_alpha, alpha_vec, alpha, log_inv_logit_neg_alpha)
   for (size_t i = 0; i < length(alpha); ++i) {
     double alpha_dbl = value_of(alpha_vec[i]);
@@ -96,7 +96,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
     log_inv_logit_neg_alpha[i] = log_inv_logit(-alpha_dbl);
   }
 
-  #pragma omp parallel for default(none) if (size <= 0) reduction(+ : logp) \
+  #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
     shared(n_vec, log_inv_logit_alpha, N_vec, log_inv_logit_neg_alpha, size)
   for (size_t i = 0; i < size; ++i)
     logp += n_vec[i] * log_inv_logit_alpha[i]
@@ -116,7 +116,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
-      #pragma omp parallel for default(none) if (size <= 0) \
+      #pragma omp parallel for default(none) if (size > 0) \
         shared(ops_partials, alpha_vec, size, n_vec, N_vec)
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]

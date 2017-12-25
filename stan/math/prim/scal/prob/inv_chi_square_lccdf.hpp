@@ -74,9 +74,13 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++)
+  for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0)
       return ops_partials.build(0.0);
+    if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity()) {
+      return ops_partials.build(negative_infinity());
+    }
+  }
 
   using boost::math::tgamma;
   using std::exp;
@@ -89,6 +93,8 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
+    #pragma omp parallel for default(none) if (stan::length(nu) > \
+      3 * omp_get_max_threads()) shared(nu_vec, gamma_vec, digamma_vec)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
@@ -96,13 +102,10 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
     }
   }
 
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : P) \
+    shared(y_vec, nu_vec, ops_partials, gamma_vec, digamma_vec)
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(negative_infinity());
-    }
-
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_inv_dbl = 1.0 / y_dbl;
     const T_partials_return nu_dbl = value_of(nu_vec[n]);

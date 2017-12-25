@@ -77,7 +77,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
       log_alpha(length(alpha));
-  #pragma omp parallel for default(none) if (length(alpha) <= 0) \
+  #pragma omp parallel for default(none) if (length(alpha) > 0) \
     shared(log_alpha, alpha_vec, alpha)
   for (size_t i = 0; i < length(alpha); i++)
     if (include_summand<propto, T_shape>::value)
@@ -86,7 +86,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-  #pragma omp parallel for default(none) if (length(y) <= 0) \
+  #pragma omp parallel for default(none) if (length(y) > 0) \
     shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y, T_shape>::value)
@@ -95,7 +95,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
       log_sigma(length(sigma));
-  #pragma omp parallel for default(none) if (length(sigma) <= 0) \
+  #pragma omp parallel for default(none) if (length(sigma) > 0) \
     shared(log_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_shape, T_scale>::value)
@@ -104,7 +104,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
       inv_sigma(length(sigma));
-  #pragma omp parallel for default(none) if (length(sigma) <= 0) \
+  #pragma omp parallel for default(none) if (length(sigma) > 0) \
     shared(inv_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
@@ -113,7 +113,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_y, T_shape, T_scale>
       y_div_sigma_pow_alpha(N);
-  #pragma omp parallel for default(none) if (N <= 0) \
+  #pragma omp parallel for default(none) if (N > 0) \
     shared(y_vec, alpha_vec, y_div_sigma_pow_alpha, N, inv_sigma)
   for (size_t i = 0; i < N; i++)
     if (include_summand<propto, T_y, T_shape, T_scale>::value) {
@@ -123,7 +123,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
     }
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
-  #pragma omp parallel for default(none) if (N <= 0) reduction(+ : logp) \
+  #pragma omp parallel for default(none) if (N > 0) reduction(+ : logp) \
     shared(y_vec, sigma_vec, alpha_vec, ops_partials, inv_sigma, log_alpha, \
            log_y, y_div_sigma_pow_alpha, log_sigma, N)
   for (size_t n = 0; n < N; n++) {

@@ -68,7 +68,8 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
       digamma_sum_vec(stan::length(phi));
 
   if (!is_constant_struct<T_precision>::value) {
-    #pragma omp parallel for default(none) if (size <= 0) \
+    #pragma omp parallel for default(none) if (size > \
+      3 * omp_get_max_threads()) \
       shared(n_vec, phi_vec, digamma_phi_vec, digamma_sum_vec, phi)
     for (size_t i = 0; i < stan::length(phi); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -79,7 +80,8 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (size <= 0) reduction(* : P) \
+  #pragma omp parallel for default(none) if (size > \
+    3 * omp_get_max_threads()) reduction(* : P) \
     shared(n_vec, mu_vec, phi_vec, ops_partials, digamma_phi_vec, \
            digamma_sum_vec, size)
   for (size_t i = 0; i < size; i++) {
@@ -109,15 +111,15 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
   }
 
   if (!is_constant_struct<T_location>::value) {
-    #pragma omp parallel for default(none) if (stan::length(mu) <= 0) \
-      shared(ops_partials, P, mu)
+    #pragma omp parallel for default(none) if (stan::length(mu) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P, mu)
     for (size_t i = 0; i < stan::length(mu); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 
   if (!is_constant_struct<T_precision>::value) {
-    #pragma omp parallel for default(none) if (stan::length(phi) <= 0) \
-      shared(ops_partials, P, phi)
+    #pragma omp parallel for default(none) if (stan::length(phi) > \
+      3 * omp_get_max_threads()) shared(ops_partials, P, phi)
     for (size_t i = 0; i < stan::length(phi); ++i)
       ops_partials.edge2_.partials_[i] *= P;
   }

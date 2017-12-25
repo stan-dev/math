@@ -48,8 +48,9 @@ typename return_type<T_y, T_inv_scale>::type exponential_lccdf(
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
-  #pragma omp parallel for default(none) if (N <= 0) \
-    shared(beta_vec, y_vec, ops_partials, N) reduction(+ : ccdf_log)
+  #pragma omp parallel for default(none) if (N > \
+    3 * omp_get_max_threads()) reduction(+ : ccdf_log) \
+    shared(beta_vec, y_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);
