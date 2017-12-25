@@ -70,17 +70,22 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y>
-      inv_y(length(y));
   #pragma omp parallel for default(none) if (length(y) > \
-    3 * omp_get_max_threads()) shared(log_y, y_vec, inv_y, y)
+    3 * omp_get_max_threads()) shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++) {
     double y_dbl = value_of(y_vec[i]);
     if (include_summand<propto, T_y, T_shape>::value)
       log_y[i] = log(y_dbl);
+  }
+
+  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
+                T_partials_return, T_y>
+      inv_y(length(y));
+  #pragma omp parallel for default(none) if (length(y) > \
+    3 * omp_get_max_threads()) shared(inv_y, y_vec, y)
+  for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
-      inv_y[i] = 1.0 / y_dbl;
+      inv_y[i] = 1.0 / value_of(y_vec[i]);
   }
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
