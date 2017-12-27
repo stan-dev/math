@@ -1,7 +1,7 @@
 ##
 # Library locations
 ##
-MATH ?= 
+MATH ?=
 BOOST ?= $(MATH)lib/boost_1.64.0
 CVODES ?= $(MATH)lib/cvodes_2.9.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
@@ -13,18 +13,20 @@ CPPLINT ?= $(MATH)lib/cpplint_4.45
 ##
 O ?= 3
 
-INC = -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include
+INC = -I . -I $(EIGEN) -I $(BOOST) -I $(CVODES)/include
+INC_GTEST = -I $(GTEST)/include -I $(GTEST)
 CXXFLAGS_LANG ?= -std=c++11
-CXXFLAGS_WARNINGS ?= -Wno-unused-function -Wno-uninitialized -Wall 
+CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
 CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
 CXXFLAGS_CVODES ?= -DNO_FPRINTF_OUTPUT -pipe
-CXXFLAGS_EIGEN ?= 
+CXXFLAGS_EIGEN ?=
 CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
 CXXFLAGS_OS ?=
 
 ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
+
 
 ifeq ($(OS),Windows)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
@@ -43,17 +45,20 @@ ifeq ($(OS),Windows)
 
   EXE := .exe
 endif
+
+
 ifeq ($(OS),Darwin)  # Mac OS X
-  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
+  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare -Wno-unneeded-internal-declaration
 endif
+
 ifeq ($(OS),Linux)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   ifneq (,($findstring mingw32-g++,$(CXX)))
     LDFLAGS += -static -lwinpthread
     EXE := .exe
   else
-    LDFLAGS += -lpthread  
+    LDFLAGS += -lpthread
   endif
 endif
 
-CXXFLAGS := $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_CVODES) $(CXXFLAGS_EIGEN) $(INC) 
+CXXFLAGS := $(CXXFLAGS) $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_CVODES) $(CXXFLAGS_EIGEN) $(INC)

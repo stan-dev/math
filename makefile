@@ -15,43 +15,17 @@ help:
 -include make/local                       # user-defined variables
 
 include make/defaults
+#include make/libraries
+include make/tests
+include make/cpplint
 
-
-
-
-
-# ##
-# # Get information about the compiler used.
-# # - CC_TYPE: {g++, clang++, mingw32-g++, other}
-# # - CC_MAJOR: major version of CC
-# # - CC_MINOR: minor version of CC
-# ##
-# -include make/detect_cc
-
-# # OS_TYPE is set automatically by this script
-# ##
-# # These includes should update the following variables
-# # based on the OS:
-# #   - CFLAGS
-# #   - GTEST_CXXFLAGS
-# #   - EXE
-# ##
-# -include make/detect_os
-
-# include make/tests    # tests
-# include make/cpplint  # cpplint
-
-# ##
-# # Dependencies
-# ##
-# ifneq (,$(filter-out test-headers generate-tests clean% %-test %.d,$(MAKECMDGOALS)))
-#   -include $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
-# endif
 
 
 .PHONY: help
 help:
 	@echo 'MAKECMDGOALS: ' $(MAKECMDGOALS)
+	@echo '...           ' $(patsubst %$(EXE),%.d,$(filter test/%,help))
+#	@echo 'includes:     ' $(addsuffix .d,$(subst $(EXE),,$(MAKECMDGOALS)))
 	@echo '--------------------------------------------------------------------------------'
 	@echo 'Stan Math Library'
 	@echo '  https://github.com/stan-dev/math'
