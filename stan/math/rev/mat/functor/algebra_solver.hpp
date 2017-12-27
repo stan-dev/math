@@ -177,7 +177,7 @@ Eigen::VectorXd algebra_solver(
     message2 << "algebra_solver: the norm of the algebraic function is: "
              << system_norm << " but should be lower than the function "
              << "tolerance: " << function_tolerance << ". Consider "
-             << "increasing the relative tolerance and the "
+             << "decreasing the relative tolerance and increasing the "
              << "max_num_steps.";
     throw boost::math::evaluation_error(message2.str());
   }

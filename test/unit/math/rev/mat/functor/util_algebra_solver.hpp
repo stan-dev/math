@@ -230,8 +230,8 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
           << 1.41421  // sqrt(2)
           << " but should be lower than the function tolerance: "
           << function_tolerance
-          << ". Consider increasing the relative tolerance and the"
-          << " max_num_steps.";
+          << ". Consider decreasing the relative tolerance and increasing"
+          << " the max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
       algebra_solver(unsolvable_eq_functor(), x, y, dat, dat_int, 0,
