@@ -76,6 +76,28 @@ TEST(MathMatrix, simple_Eq_tuned_dbl) {
       = simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
 }
 
+TEST(MathMatrix, simple_Eq_nopara) {
+  std::vector<double> dat(3);
+  dat[0] = 5;
+  dat[1] = 4;
+  dat[2] = 2;
+  
+  int n_x = 2;
+  Eigen::VectorXd x(n_x);
+  x << 1, 1;  // initial guess
+  Eigen::VectorXd y_dummy;
+  std::vector<int> dummy_dat_int;
+  
+  Eigen::Matrix<double, Eigen::Dynamic, 1> theta;
+  
+  theta = stan::math::algebra_solver(simple_eq_functor_nopara(), 
+                                     x, y_dummy, dat, dummy_dat_int);
+
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+
 TEST(MathMatrix, non_linear_eq) {
   using stan::math::var;
 

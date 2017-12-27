@@ -102,7 +102,6 @@ struct algebra_solver_vari : public vari {
  * @param[in] max_num_steps  maximum number of function evaluations.
  * @return theta Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if y has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
@@ -126,7 +125,6 @@ Eigen::VectorXd algebra_solver(
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
-  check_nonzero_size("algebra_solver", "parameter vector", y);
   for (int i = 0; i < x.size(); i++)
     check_finite("algebra_solver", "initial guess", x(i));
   for (int i = 0; i < y.size(); i++)
@@ -214,7 +212,6 @@ Eigen::VectorXd algebra_solver(
  * @param[in] max_num_steps  maximum number of function evaluations.
  * @return theta Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if y has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
