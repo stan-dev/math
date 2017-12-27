@@ -11,6 +11,7 @@
 // Every test exists in duplicate to test the case
 // where y (the auxiliary parameters) are passed as
 // data (double type) or parameters (var types).
+
 TEST(MathMatrix, simple_Eq) {
   using stan::math::var;
 
@@ -97,6 +98,24 @@ TEST(MathMatrix, simple_Eq_nopara) {
   EXPECT_EQ(2, theta(1));
 }
 
+TEST(MathMatrix, simple_Eq_init_is_para) {
+  using stan::math::var;
+  Eigen::VectorXd y(3);
+  y << 5, 4, 2;
+
+  int n_x = 2;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x(n_x);
+  x << 1, 1;
+
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+
+  Eigen::VectorXd theta = stan::math::algebra_solver(simple_eq_functor(), 
+                                                     x, y, dat, dat_int);
+  
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
 
 TEST(MathMatrix, non_linear_eq) {
   using stan::math::var;
