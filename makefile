@@ -15,7 +15,7 @@ help:
 -include make/local                       # user-defined variables
 
 include make/defaults
-#include make/libraries
+include make/libraries
 include make/tests
 include make/cpplint
 
@@ -37,6 +37,10 @@ help:
 	@echo '  - AR (archiver):                 ' $(AR)
 	@echo '  - OS                             ' $(OS)
 	@echo ''
+	@echo 'CVODES:                            ' $(CVODES)
+	@echo 'SUNDIALS_CVODES:                   ' $(SUNDIALS_CVODES)
+	@echo 'LIBCVODES:                         ' $(LIBCVODES)
+
 # 	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
 # 	@echo '  - CC (Compiler):              ' $(CC)
 # 	@echo '  - CC_TYPE                     ' $(CC_TYPE)
