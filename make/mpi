@@ -1,0 +1,9 @@
+# to enable MPI support we need a working boost.mpi installation
+# stan-math has a bundeled installation which can be build using boost
+# build defaults with the stan-mpi target
+
+CXX=mpic++
+CC=mpic++
+LDFLAGS+=-L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi
+CXXFLAGS+=-DSTAN_HAS_MPI
+GTEST_CXXFLAGS+=-DSTAN_HAS_MPI
