@@ -114,6 +114,9 @@ class mpi_parallel_call {
     mpi_broadcast_command<stan::math::mpi_distributed_apply<
         mpi_parallel_call<call_id, ReduceF, CombineF>>>();
 
+    // lock the cluster
+    mpi_cluster::command_running_ = true;
+
     const std::vector<int> job_dims = dims(job_params);
 
     const size_type num_jobs = job_dims[0];
@@ -133,8 +136,16 @@ class mpi_parallel_call {
     if (rank_ == 0)
       throw std::runtime_error("problem sizes must be defined on the root.");
 
+    // lock the cluster
+    mpi_cluster::command_running_ = true;
+
     setup_call(vector_d(), matrix_d(), std::vector<std::vector<double>>(),
                std::vector<std::vector<int>>());
+  }
+
+  ~mpi_parallel_call() {
+    // unlock the cluster
+    mpi_cluster::command_running_ = false;
   }
 
   static void distributed_apply() {

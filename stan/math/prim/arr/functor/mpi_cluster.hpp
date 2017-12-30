@@ -9,7 +9,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <mutex>
+#include <atomic>
 
 namespace stan {
 namespace math {
@@ -107,6 +107,7 @@ struct mpi_cluster {
   boost::mpi::environment env;
   boost::mpi::communicator world_;
   std::size_t const rank_ = world_.rank();
+  static std::atomic<bool> command_running_;
 
   mpi_cluster() {}
 
@@ -169,6 +170,7 @@ struct mpi_cluster {
 };
 
 bool mpi_cluster::cluster_listens_ = false;
+std::atomic<bool> mpi_cluster::command_running_(false);
 
 /**
  * Broadcasts a command instance to the listening cluster. This
@@ -186,6 +188,11 @@ inline void mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
 
   if (!mpi_cluster::is_listening())
     throw std::runtime_error("cluster is not listening to commands.");
+
+  if (mpi_cluster::command_running_)
+    throw std::runtime_error("a cluster command is already running");
+
+  // not that we leave it up to the command to lock the cluster or not
 
   boost::mpi::broadcast(world, command, 0);
 }

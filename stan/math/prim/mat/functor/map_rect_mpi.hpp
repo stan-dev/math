@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_MPI_HPP
 
+#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 #include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/mpi_map_rect_combine.hpp>
@@ -23,6 +24,13 @@ map_rect_mpi(
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
   typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
   typedef mpi_map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+
+  // whenever the cluster is already busy with some command we fall
+  // back to serial execution
+  if (mpi_cluster::command_running_) {
+    return map_rect_serial<call_id, F>(shared_params, job_params, x_r, x_i,
+                                       msgs);
+  }
 
   mpi_parallel_call<call_id, ReduceF, CombineF> job_chunk(shared_params,
                                                           job_params, x_r, x_i);
