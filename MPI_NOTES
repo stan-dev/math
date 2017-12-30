@@ -3,29 +3,29 @@ installation on your system. Macports or homebrew have openmpi and
 mpich ready for installation, both work well. As a next step the boost
 mpi and serialization library need to be installed. For standard
 systems the boost build system should be able to figure out all
-necessary bits and pieces. The requires boost libraries are bundled
+necessary bits and pieces. The required boost libraries are bundled
 with stan-math and a simple
 
 make stan-mpi
 
-should suffices to get a working system. All what is left to be done
-is add a
+should suffice to get a working system. All what is left to be done
+is to add the line
 
 include make/mpi
 
-to you make/local file.
+to your make/local file.
 
 The make/mpi file ensures that all required build flags are set. In
-particular it sets as the CXX and CC variable to mpic++ which calls
-the compiler which was used to build mpi with adequate flags. This is
-the recommended way to build MPI programs. However, should you need to
-change these flags for some reason, you can find out what these flags
-are with
+particular it sets as the CXX and CC variable equal to mpic++ which
+calls the compiler which was used to build mpi with adequate
+flags. This is the recommended way to build MPI programs. However,
+should you need to change these flags for some reason, you can find
+out what these flags are with
 
 mpic++ --showme
 
-If all of the above works, then the MPI tests part of stan-math can be
-executed with
+and adapt accordingly to your needs. If all of the above works, then
+the MPI tests part of stan-math can be executed with
 
 make test/unit/math/prim/mat/functor/map_rect_mpi_test.cpp
 make test/unit/math/rev/mat/functor/map_rect_mpi_test.cpp
