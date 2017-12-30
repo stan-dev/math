@@ -10,7 +10,7 @@ Required Libraries
 ------------------
 Stan Math depends on three libraries:
 
-- Boost (version 1.64.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.65.1): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - CVODES (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
@@ -27,8 +27,8 @@ A simple hello world program using Stan Math is as follows:
 #include <iostream>
 
 int main() {
-  std::cout << "log normal(1 | 2, 3)=" 
-            << stan::math::normal_log(1, 2, 3) 
+  std::cout << "log normal(1 | 2, 3)="
+            << stan::math::normal_log(1, 2, 3)
             << std::endl;
 }
 ```
@@ -52,10 +52,10 @@ The `-I` includes provide paths pointing to the four necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.64.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.65.1/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.64.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.65.1/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
 
 Other Compilers
 ---------------
