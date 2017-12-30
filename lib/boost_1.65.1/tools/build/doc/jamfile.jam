@@ -1,0 +1,42 @@
+# Copyright 2004,2006 Vladimir Prus
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
+
+import quickbook ;
+using boostbook ;
+
+project tools/build/doc
+    ;
+
+boostbook userman : src/standalone.xml 
+    :   <xsl:param>toc.section.depth=1
+        <xsl:param>doc.standalone=true 
+        <xsl:param>nav.layout=none
+        <xsl:param>boost.root=..
+        <xsl:param>boost.graphics.root=../images/
+        <xsl:param>html.stylesheet=../boostbook.css
+        <xsl:param>chunk.first.sections=0
+        <xsl:param>admon.graphics=0
+
+        <xsl:param>boost.defaults=Boost
+
+        <implicit-dependency>jam_docs
+        <dependency>jam_docs
+
+        <implicit-dependency>examples_docs
+        <dependency>examples_docs
+    ;
+
+xml jam_docs : bjam.qbk ;
+
+local examples = [ glob-tree-ex [ glob ../example/* ] : *.* : bin .DS_Store ] ;
+xml examples_docs : examples.qbk : <dependency>$(examples) ;
+
+###############################################################################
+
+alias boostdoc : src/userman.xml
+    : : : <dependency>examples_docs <implicit-dependency>examples_docs ;
+explicit boostdoc ;
+
+alias boostrelease ;
+explicit boostrelease ;
