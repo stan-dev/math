@@ -47,8 +47,13 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
-  typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
-  lp_type lp(0.0);
+  typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
+      T_partials_return;
+
+  T_partials_return logp(0.0);
+
+  // typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
+  // lp_type lp(0.0);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
@@ -101,25 +106,33 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     check_not_nan(function, "Random variable", y_vec[i]);
   }
 
+  operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
+
   if (size_y == 0)
-    return lp;
+    return ops_partials.build(0.0);
 
   if (include_summand<propto>::value)
-    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
+    logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  if (include_summand<propto, T_covar_elem>::value)
-    lp -= L.diagonal().array().log().sum() * size_vec;
+  matrix_d L_dbl = value_of(L);
+  matrix_d inv_Sigma_dbl = chol2inv(L_dbl);
+
+  matrix_d grad_L(matrix_d::Zero(size_y, size_y));
+
+  if (include_summand<propto, T_covar_elem>::value) {
+    // is a 0.5 missing here? We need the square root of det
+    logp -= L_dbl.diagonal().array().log().sum() * size_vec;
+    if (!is_constant_struct<T_covar>::value)
+      grad_L += size_vec * inv_Sigma_dbl * L_dbl;
+  }
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
-    lp_type sum_lp_vec(0.0);
+    matrix_d trans_inv_L_dbl = L_dbl.inverse().transpose();
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<typename return_type<T_y, T_loc>::type, Eigen::Dynamic, 1>
-          y_minus_mu(size_y);
+      vector_d y_minus_mu_dbl(size_y);
       for (int j = 0; j < size_y; j++)
-        y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      Eigen::Matrix<typename return_type<T_y, T_loc, T_covar>::type,
-                    Eigen::Dynamic, 1>
-          half(mdivide_left_tri_low(L, y_minus_mu));
+        y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
+      vector_d half(mdivide_left_tri_low(L_dbl, y_minus_mu_dbl));
       // FIXME: this code does not compile. revert after fixing subtract()
       // Eigen::Matrix<typename
       //               boost::math::tools::promote_args<T_covar,
@@ -127,11 +140,24 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //                 typename value_type<T_y>::type>::type>::type,
       //               Eigen::Dynamic, 1>
       //   half(mdivide_left_tri_low(L, subtract(y, mu)));
-      sum_lp_vec += dot_self(half);
+      logp -= 0.5 * dot_self(half);
+      if (!is_constant_struct<T_y>::value) {
+        for (int j = 0; j < size_y; j++)
+          ops_partials.edge1_.partials_[j] += -1 * half(j);
+      }
+      if (!is_constant_struct<T_loc>::value) {
+        for (int j = 0; j < size_y; j++)
+          ops_partials.edge2_.partials_[j] += half(j);
+      }
+      if (!is_constant_struct<T_covar>::value)
+        grad_L += trans_inv_L_dbl * half * half.transpose();
     }
-    lp -= 0.5 * sum_lp_vec;
   }
-  return lp;
+
+  if (!is_constant_struct<T_covar>::value)
+    ops_partials.edge3_.partials_ = grad_L;
+
+  return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
