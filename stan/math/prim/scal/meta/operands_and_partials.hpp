@@ -33,10 +33,7 @@ class ops_partials_edge {
   broadcast_array<partials_t> partials_vec_;
 
   ops_partials_edge() : partials_vec_(partials_) {}
-  explicit ops_partials_edge(const Op& /* op
-                                        *
-  */)
-      : partials_vec_(partials_) {}
+  explicit ops_partials_edge(const Op&) : partials_vec_(partials_) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
