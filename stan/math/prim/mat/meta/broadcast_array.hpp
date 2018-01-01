@@ -16,6 +16,7 @@ class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
    * Not implemented so cannot be called.
    */
   ViewElt& operator[](int /*i*/);
+  ViewElt& operator()(int /*i*/);
   /**
    * Not implemented so cannot be called.
    */

@@ -15,6 +15,7 @@ class broadcast_array {
   explicit broadcast_array(T& prim) : prim_(prim) {}
 
   T& operator[](int /*i*/) { return prim_; }
+  T& operator()(int /*i*/) { return prim_; }
 };
 
 template <typename T, typename S>
@@ -25,6 +26,7 @@ class empty_broadcast_array {
    * Not implemented so cannot be called.
    */
   T& operator[](int /*i*/);
+  T& operator()(int /*i*/);
 };
 }  // namespace internal
 }  // namespace math

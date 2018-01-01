@@ -142,12 +142,14 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //   half(mdivide_left_tri_low(L, subtract(y, mu)));
       logp -= 0.5 * dot_self(half);
       if (!is_constant_struct<T_y>::value) {
+        // ops_partials.edge1_.partials_vec_[i] += -1 * half;
         for (int j = 0; j < size_y; j++)
-          ops_partials.edge1_.partials_[j] += -1 * half(j);
+          ops_partials.edge1_.partials_vec_[i](j) += -1 * half(j);
       }
       if (!is_constant_struct<T_loc>::value) {
+        // ops_partials.edge2_.partials_vec_[i] += half;
         for (int j = 0; j < size_y; j++)
-          ops_partials.edge2_.partials_[j] += half(j);
+          ops_partials.edge2_.partials_vec_[i](j) += half(j);
       }
       if (!is_constant_struct<T_covar>::value)
         grad_L += trans_inv_L_dbl * half * half.transpose();
