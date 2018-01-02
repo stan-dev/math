@@ -49,6 +49,9 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
       T_partials_return;
+  typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
+      matrix_partials_t;
+  typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
 
   T_partials_return logp(0.0);
 
@@ -111,9 +114,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  matrix_d L_dbl = value_of(L);
+  matrix_partials_t L_dbl = value_of(L);
+  matrix_partials_t trans_L_dbl = L_dbl.transpose();
 
-  matrix_d grad_L;
+  matrix_partials_t grad_L;
 
   // analytic expressions taken from
   // http://qwone.com/~jason/writing/multivariateNormal.pdf
@@ -121,20 +125,26 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   // expressions adapted to avoid inversions
 
   if (!is_constant_struct<T_covar>::value)
-    grad_L = matrix_d::Zero(size_y, size_y);
+    grad_L = matrix_partials_t::Zero(size_y, size_y);
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
-      vector_d y_minus_mu_dbl(size_y);
+      vector_partials_t y_minus_mu_dbl(size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
 
-      vector_d half
-          = L_dbl.triangularView<Eigen::Lower>().solve(y_minus_mu_dbl);
+      vector_partials_t half
+          = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
+      vector_partials_t scaled_diff
+          = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
 
+      // vector_d half
+      //    = L_dbl.template
+      //    triangularView<Eigen::Lower>().solve(y_minus_mu_dbl);
       // vector_d scaled_diff = inv_Sigma_dbl * y_minus_mu_dbl;
-      vector_d scaled_diff
-          = L_dbl.triangularView<Eigen::Lower>().transpose().solve(half);
+      // vector_d scaled_diff
+      //    = L_dbl.template
+      //    triangularView<Eigen::Lower>().transpose().solve(half);
 
       logp -= 0.5 * dot_self(half);
 
@@ -147,20 +157,25 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
       }
       if (!is_constant_struct<T_covar>::value) {
-        // grad_L2 += trans_inv_L_dbl * half * half.transpose();
         grad_L += half * half.transpose();
       }
     }
-    if (!is_constant_struct<T_covar>::value)
-      L_dbl.triangularView<Eigen::Lower>().transpose().solveInPlace(grad_L);
+    if (!is_constant_struct<T_covar>::value) {
+      grad_L = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, grad_L);
+      // L_dbl.template
+      // triangularView<Eigen::Lower>().transpose().solveInPlace(grad_L);
+    }
   }
 
   if (include_summand<propto, T_covar_elem>::value) {
     logp -= L_dbl.diagonal().array().log().sum() * size_vec;
-    if (!is_constant_struct<T_covar>::value)
-      grad_L -= size_vec
-                * L_dbl.triangularView<Eigen::Lower>().transpose().solve(
-                      matrix_d::Identity(size_y, size_y));
+    if (!is_constant_struct<T_covar>::value) {
+      // grad_L -= size_vec
+      //           * L_dbl.template
+      //           triangularView<Eigen::Lower>().transpose().solve(
+      //                  matrix_d::Identity(size_y, size_y));
+      grad_L -= size_vec * mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
+    }
   }
 
   if (!is_constant_struct<T_covar>::value)
