@@ -28,18 +28,15 @@ mdivide_right_tri(const Eigen::Matrix<T1, R1, C1> &b,
                   const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
-  // FIXME: This is nice and general but requires some extra memory
-  //        and copying.
-  if (TriView == Eigen::Lower) {
-    return transpose(
-        mdivide_left_tri<Eigen::Upper>(transpose(A), transpose(b)));
-  } else if (TriView == Eigen::Upper) {
-    return transpose(
-        mdivide_left_tri<Eigen::Lower>(transpose(A), transpose(b)));
-  }
-
-  domain_error("mdivide_left_tri",
-               "triangular view must be Eigen::Lower or Eigen::Upper", "", "");
+  return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
+             A)
+      .template triangularView<TriView>()
+      .transpose()
+      .solve(
+          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
+              b)
+              .transpose())
+      .transpose();
 }
 
 }  // namespace math
