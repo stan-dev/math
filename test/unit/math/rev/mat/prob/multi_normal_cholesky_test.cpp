@@ -78,8 +78,8 @@ TEST(ProbDistributionsMultiNormalCholesky, mvn_speed) {
   std::chrono::duration_cast<std::chrono::microseconds>(a).count()
 #define timeNow() std::chrono::high_resolution_clock::now()
 
-  const int R = 5000;
-  const int C = 200;
+  const int R = 1000;
+  const int C = 600;
 
   boost::random::mt19937 rng;
 
