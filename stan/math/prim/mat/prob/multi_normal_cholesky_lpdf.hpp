@@ -115,14 +115,16 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
   matrix_partials_t L_dbl = value_of(L);
-  matrix_partials_t trans_L_dbl = L_dbl.transpose();
+  // matrix_partials_t trans_L_dbl = L_dbl.transpose();
+  matrix_partials_t inv_trans_L_dbl
+      = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
 
   matrix_partials_t grad_L;
 
   // analytic expressions taken from
   // http://qwone.com/~jason/writing/multivariateNormal.pdf
   // written by Jason D. M. Rennie
-  // expressions adapted to avoid inversions
+  // expressions adapted to avoid (most) inversions
 
   if (!is_constant_struct<T_covar>::value)
     grad_L = matrix_partials_t::Zero(size_y, size_y);
@@ -135,8 +137,9 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
       vector_partials_t half
           = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
-      vector_partials_t scaled_diff
-          = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
+      // vector_partials_t scaled_diff
+      //    = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
+      vector_partials_t scaled_diff = inv_trans_L_dbl * half;
 
       // vector_d half
       //    = L_dbl.template
@@ -169,7 +172,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //           * L_dbl.template
       //           triangularView<Eigen::Lower>().transpose().solve(
       //                  matrix_d::Identity(size_y, size_y));
-      grad_L -= size_vec * mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
+      // grad_L -= size_vec * mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
+      grad_L -= size_vec * inv_trans_L_dbl;
     }
   }
 
