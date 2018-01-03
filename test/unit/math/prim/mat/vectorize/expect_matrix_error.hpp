@@ -11,7 +11,8 @@ void expect_matrix_error() {
   using std::vector;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
   vector<double> invalid_inputs = F::invalid_inputs();
-  if (invalid_inputs.size() == 0) return;
+  if (invalid_inputs.size() == 0)
+    return;
   matrix_t a(3, invalid_inputs.size());
   for (int i = 0; i < a.rows(); ++i)
     for (int j = 0; j < a.cols(); ++j)
@@ -23,8 +24,7 @@ void expect_matrix_error() {
   vector<matrix_t> d;
   d.push_back(a);
   d.push_back(a);
-  EXPECT_THROW(F::template apply<vector<matrix_t> >(d),
-               std::exception);
+  EXPECT_THROW(F::template apply<vector<matrix_t> >(d), std::exception);
 }
 
 #endif

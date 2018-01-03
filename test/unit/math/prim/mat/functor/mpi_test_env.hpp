@@ -1,11 +1,20 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // sets up the MPI environment. All tests have to be skipped on
 // non-root nodes with a
 // if(rank != 0) return
 // line at the test start
 
-#include <gtest/gtest.h>
+// moreover, the MPI tests have to be setup with the MPI_TEST_F macro
+// which will disable all MPI tests whenever no STAN_HAS_MPI is
+// defined
+
+#ifdef STAN_HAS_MPI
+
+#define MPI_TEST_F(test_fixture, test_name)     \
+  TEST_F(test_fixture, test_name)
 
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
 
@@ -38,4 +47,14 @@ public:
 
 // register MPI global
  ::testing::Environment* const mpi_env = ::testing::AddGlobalTestEnvironment(new MPIEnvironment);
+
+#else
+
+#define MPI_TEST_F(test_fixture, test_name)     \
+  TEST_F(test_fixture, DISABLED_ ## test_name)
+
+std::size_t rank = 0;
+
+#endif
+
 

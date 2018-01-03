@@ -12,7 +12,7 @@ struct faulty_functor {
     res(0) = theta(0)*theta(0);
     res(1) = x_r[0]*theta(1)*theta(0);
     //std::cout << "theta(0) = " << theta(0) << std::endl;
-    if(theta(0) == -1.0) {
+    if(stan::math::abs(theta(0) + 1.0) < 1E-7) { // check for param being 1.0
       //std::cout << "THROWING! DEAL WITH IT!" << std::endl;
       throw std::domain_error("Illegal parameter!");
     }

@@ -15,6 +15,5 @@ TEST(MathFunctions, round) {
 
 TEST(MathFunctions, roundNaN) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::round(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::round(nan));
 }

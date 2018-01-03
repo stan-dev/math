@@ -17,8 +17,8 @@ TEST(AgradRevMatrix, promote_common_scal) {
   double a = promote_common<double, double>(3.0);
   var b = promote_common<double, var>(4.0);
   var c = promote_common<double, var>(var(5.0));
-  var d =  promote_common<var, double>(4);
-  var e =  promote_common<var, double>(var(4.0));
+  var d = promote_common<var, double>(4);
+  var e = promote_common<var, double>(var(4.0));
   EXPECT_FLOAT_EQ(3.0, a);
   EXPECT_FLOAT_EQ(4.0, b.val());
   EXPECT_FLOAT_EQ(5.0, c.val());
@@ -28,7 +28,8 @@ TEST(AgradRevMatrix, promote_common_scal) {
 
 TEST(AgradRevMatrix, promote_common_stdvec) {
   vector<double> x(5);
-  for (int i = 0; i < 5; ++i) x[i] = i * i;
+  for (int i = 0; i < 5; ++i)
+    x[i] = i * i;
 
   vector<double> y = promote_common<vector<double>, vector<double> >(x);
   EXPECT_EQ(5U, y.size());
@@ -72,7 +73,6 @@ TEST(AgradRevMatrix, promote_common_vec_d) {
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(U(i), Y(i).val());
 }
-
 
 TEST(AgradRevMatrix, promote_common_row_vec_d) {
   row_vector_d G(3);

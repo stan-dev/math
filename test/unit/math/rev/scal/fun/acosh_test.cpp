@@ -15,7 +15,7 @@ TEST(AgradRev, acosh_val) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(1 / sqrt(1.3 * 1.3  - 1.0), g[0]);
+  EXPECT_FLOAT_EQ(1 / sqrt(1.3 * 1.3 - 1.0), g[0]);
 }
 
 TEST(AgradRev, acosh_1) {
@@ -43,7 +43,6 @@ TEST(AgradRevAcosh, overflows) {
   EXPECT_EQ(std::numeric_limits<double>::infinity(),
             stan::math::acosh(b).val());
 }
-
 
 struct acosh_fun {
   template <typename T0>

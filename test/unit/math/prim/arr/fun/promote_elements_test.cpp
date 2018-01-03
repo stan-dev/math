@@ -41,4 +41,3 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
   bool same = boost::is_same<vector<var>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

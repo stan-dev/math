@@ -6,22 +6,21 @@
 
 namespace stan {
 
-  /**
-   * Template metaprogram indicates whether a type is vector_like.
-   *
-   * A type is vector_like if an instance can be accessed like a
-   * vector, i.e. square brackets.
-   *
-   * Access is_vector_like::value for the result.
-   *
-   * This metaprogram removes the const qualifier.
-   *
-   * @tparam T Type to test
-   */
-  template <typename T>
-  struct is_vector_like<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
-    enum { value = true };
-  };
-}
+/**
+ * Template metaprogram indicates whether a type is vector_like.
+ *
+ * A type is vector_like if an instance can be accessed like a
+ * vector, i.e. square brackets.
+ *
+ * Access is_vector_like::value for the result.
+ *
+ * This metaprogram removes the const qualifier.
+ *
+ * @tparam T Type to test
+ */
+template <typename T>
+struct is_vector_like<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > {
+  enum { value = true };
+};
+}  // namespace stan
 #endif
-

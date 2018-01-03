@@ -26,5 +26,5 @@ TEST(MathFunctions, primiviteValueNaN) {
   using stan::math::primitive_value;
 
   EXPECT_TRUE(
-    isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
+      isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
 }

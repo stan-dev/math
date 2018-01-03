@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(mathVectorBuilder, test1) {
   using test::math::vector_builder;
   vector_builder<double> x;

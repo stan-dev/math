@@ -18,8 +18,7 @@ TEST(probTransform, simplex_jacobian) {
   y << a, b, c;
 
   var lp(0);
-  Matrix<var, Dynamic, 1> x
-    = stan::math::simplex_constrain(y, lp);
+  Matrix<var, Dynamic, 1> x = stan::math::simplex_constrain(y, lp);
 
   vector<var> indeps;
   indeps.push_back(a);

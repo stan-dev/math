@@ -8,10 +8,8 @@ using Eigen::Dynamic;
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {
   template <typename T>
-  inline
-  T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return x(0) * x(0) * x(1)
-      + 3.0 * x(1) * x(1);
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
 

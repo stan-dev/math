@@ -5,17 +5,17 @@
 #include <stan/math/prim/scal/prob/logistic_lcdf.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * @deprecated use <code>logistic_lcdf</code>
-     */
-    template <typename T_y, typename T_loc, typename T_scale>
-    typename return_type<T_y, T_loc, T_scale>::type
-    logistic_cdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-      return logistic_lcdf<T_y, T_loc, T_scale>(y, mu, sigma);
-    }
-
-  }
+/**
+ * @deprecated use <code>logistic_lcdf</code>
+ */
+template <typename T_y, typename T_loc, typename T_scale>
+typename return_type<T_y, T_loc, T_scale>::type logistic_cdf_log(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+  return logistic_lcdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

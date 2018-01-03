@@ -8,10 +8,10 @@
 
 #include <iostream>
 
-STAN_REGISTER_MPI_MAP_RECT_ALL(1, faulty_functor)
-STAN_REGISTER_MPI_MAP_RECT_ALL(2, faulty_functor)
+STAN_REGISTER_MAP_RECT(1, faulty_functor)
+STAN_REGISTER_MAP_RECT(2, faulty_functor)
 
-STAN_REGISTER_MPI_MAP_RECT_ALL(0, hard_work)
+STAN_REGISTER_MAP_RECT(0, hard_work)
 
 struct MpiJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
@@ -31,13 +31,12 @@ struct MpiJob : public ::testing::Test {
        job_params_d.push_back(job_d);
      }
    }
-  
 };
 
-TEST_F(MpiJob, hard_work_dd) {
+MPI_TEST_F(MpiJob, hard_work_dd) {
   if(rank != 0) return;
   
-  Eigen::VectorXd result_mpi = stan::math::map_rect_mpi<0,hard_work>(shared_params_d, job_params_d, x_r, x_i);
+  Eigen::VectorXd result_mpi = stan::math::map_rect<0,hard_work>(shared_params_d, job_params_d, x_r, x_i);
   Eigen::VectorXd result_serial = stan::math::map_rect_serial<0,hard_work>(shared_params_d, job_params_d, x_r, x_i);
 
   EXPECT_EQ(result_mpi.rows(), result_serial.rows() );
@@ -48,7 +47,7 @@ TEST_F(MpiJob, hard_work_dd) {
 
 } 
 
-TEST_F(MpiJob, always_faulty_functor) {
+MPI_TEST_F(MpiJob, always_faulty_functor) {
   if(rank != 0) return;
 
   Eigen::VectorXd result;

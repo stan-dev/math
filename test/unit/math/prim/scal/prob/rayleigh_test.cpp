@@ -6,7 +6,6 @@
 #include <limits>
 #include <vector>
 
-
 TEST(ProbDistributionsRayleigh, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::rayleigh_rng(2.0, rng));
@@ -25,7 +24,7 @@ TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's rayleigh distribution
-  boost::math::rayleigh_distribution<>dist(2.0);
+  boost::math::rayleigh_distribution<> dist(2.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
@@ -36,4 +35,3 @@ TEST(ProbDistributionsRayleigh, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-

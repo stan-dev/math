@@ -5,9 +5,8 @@
 
 const char* function = "function";
 class ErrorHandlingMatrix : public ::testing::Test {
-public:
-  void SetUp() {
-  }
+ public:
+  void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
 };
@@ -21,8 +20,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
 
   y << -1.0;
-  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
-                   std::domain_error,
+  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
                    "function: y is not positive semi-definite.");
 }
 
@@ -33,13 +31,13 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::invalid_argument,
                    "function: y must have a positive size, but is 0; "
-                    "dimension size expression = rows");
+                   "dimension size expression = rows");
 
   y.resize(2, 3);
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
                    std::invalid_argument,
                    "function: Expecting a square matrix; "
-                    "rows of y (2) and columns of y (3) must match in size");
+                   "rows of y (2) and columns of y (3) must match in size");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
@@ -51,8 +49,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
 
   y << -1, 0, 0, 1;
-  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y),
-                   std::domain_error,
+  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
                    "function: y is not positive semi-definite.");
 }
 
@@ -61,9 +58,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   y.resize(3, 3);
-  y << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   EXPECT_NO_THROW(check_pos_semidefinite(function, "y", y));
   for (int i = 0; i < y.rows(); i++)
     for (int j = 0; j < y.cols(); j++) {

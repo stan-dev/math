@@ -25,4 +25,3 @@ TEST(MathFunctionsMatPromote_Elements, doubleMat2varMat) {
   bool same = boost::is_same<Matrix<var, 2, 3>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

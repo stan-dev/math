@@ -246,6 +246,9 @@
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 #include <stan/math/prim/mat/functor/map_rect.hpp>
+#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
@@ -290,9 +293,12 @@
 #include <stan/math/prim/mat/prob/multinomial_log.hpp>
 #include <stan/math/prim/mat/prob/multinomial_lpmf.hpp>
 #include <stan/math/prim/mat/prob/multinomial_rng.hpp>
+#include <stan/math/prim/mat/prob/neg_binomial_2_log_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
+#include <stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
@@ -303,6 +309,5 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
-
 
 #endif

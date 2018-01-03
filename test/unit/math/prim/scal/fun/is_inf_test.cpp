@@ -15,4 +15,3 @@ TEST(MathFunctions, is_inf) {
   EXPECT_FALSE(stan::math::is_inf(min));
   EXPECT_FALSE(stan::math::is_inf(max));
 }
-

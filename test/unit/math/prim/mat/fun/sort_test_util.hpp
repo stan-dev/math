@@ -18,7 +18,6 @@ void test_sort_asc_throws() {
   xs1[0] = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(sort_asc(xs1), std::domain_error);
 
-
   C xs2(2);
   xs2[0] = 1;
   xs2[1] = 2;
@@ -43,7 +42,6 @@ void test_sort_desc_throws() {
   EXPECT_NO_THROW(sort_desc(xs1));
   xs1[0] = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(sort_desc(xs1), std::domain_error);
-
 
   C xs2(2);
   xs2[0] = 1;

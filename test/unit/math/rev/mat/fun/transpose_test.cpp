@@ -12,8 +12,7 @@ TEST(AgradRevMatrix, transpose_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_v a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 2), a(1, 1));
 
@@ -76,8 +75,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::vector_v b(3);
   b << 1.0, 2.0, 3.0;
   stan::math::matrix_v c(2, 3);
-  c << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
+  c << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
 
   test::check_varis_on_stack(stan::math::transpose(a));
   test::check_varis_on_stack(stan::math::transpose(b));

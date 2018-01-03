@@ -10,8 +10,7 @@ using Eigen::Dynamic;
 
 struct fun0 {
   template <typename T>
-  inline
-  T operator()(const T& x) const {
+  inline T operator()(const T& x) const {
     return 5.0 * x * x * x;
   }
 };
@@ -19,19 +18,16 @@ struct fun0 {
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {
   template <typename T>
-  inline
-  T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return x(0) * x(0) * x(1)
-      + 3.0 * x(1) * x(1);
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
 
 // fun2: R^2 --> R^2 | (x, y) --> [(x + x), (3 * x * y)]
 struct fun2 {
   template <typename T>
-  inline
-  Matrix<T, Dynamic, 1>
-  operator()(const Matrix<T, Dynamic, 1>& x) const {
+  inline Matrix<T, Dynamic, 1> operator()(
+      const Matrix<T, Dynamic, 1>& x) const {
     Matrix<T, Dynamic, 1> z(2);
     z << x(0) + x(0), 3 * x(0) * x(1);
     return z;
@@ -40,8 +36,8 @@ struct fun2 {
 
 struct norm_functor {
   template <typename T>
-  inline
-  T operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
+  inline T operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& inp_vec) const {
     return stan::math::normal_log(inp_vec(0), inp_vec(1), inp_vec(2));
   }
 };
@@ -158,7 +154,7 @@ TEST(AgradAutoDiff, hessian) {
   stan::math::hessian(f, x, fx, grad, H);
 
   // x^2 * y + 3 * y^2
-  EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7  * 7, fx);
+  EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx);
 
   EXPECT_FLOAT_EQ(2, grad.size());
   EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad(0));
@@ -176,7 +172,7 @@ TEST(AgradAutoDiff, hessian) {
   Matrix<double, Dynamic, Dynamic> H2;
   stan::math::hessian<double>(f, x, fx2, grad2, H2);
 
-  EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7  * 7, fx2);
+  EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx2);
 
   EXPECT_FLOAT_EQ(2, grad2.size());
   EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad2(0));
@@ -233,14 +229,11 @@ TEST(AgradAutoDiff, GradientHessian) {
   Matrix<double, Dynamic, 1> poly_grad_agrad_hessian;
 
   stan::math::hessian(log_normal_density, normal_eval_vec,
-                       normal_eval_agrad_hessian,
-                       norm_grad_agrad_hessian,
-                       norm_hess_agrad_hessian);
+                      normal_eval_agrad_hessian, norm_grad_agrad_hessian,
+                      norm_hess_agrad_hessian);
 
-  stan::math::hessian(mixed_third_poly, poly_eval_vec,
-                       poly_eval_agrad_hessian,
-                       poly_grad_agrad_hessian,
-                       poly_hess_agrad_hessian);
+  stan::math::hessian(mixed_third_poly, poly_eval_vec, poly_eval_agrad_hessian,
+                      poly_grad_agrad_hessian, poly_hess_agrad_hessian);
 
   Matrix<double, Dynamic, Dynamic> norm_hess_analytic;
   Matrix<double, Dynamic, Dynamic> poly_hess_analytic;
@@ -255,11 +248,10 @@ TEST(AgradAutoDiff, GradientHessian) {
   poly_eval_analytic = mixed_third_poly(poly_eval_vec);
 
   stan::math::grad_hessian(log_normal_density, normal_eval_vec,
-                            normal_eval_agrad, norm_hess_agrad,
+                           normal_eval_agrad, norm_hess_agrad,
                            norm_grad_hess_agrad);
-  stan::math::grad_hessian(mixed_third_poly, poly_eval_vec,
-                            poly_eval_agrad, poly_hess_agrad,
-                           poly_grad_hess_agrad);
+  stan::math::grad_hessian(mixed_third_poly, poly_eval_vec, poly_eval_agrad,
+                           poly_hess_agrad, poly_grad_hess_agrad);
   norm_hess_analytic = norm_hess(normal_eval_vec);
   poly_hess_analytic = third_order_mixed_hess(poly_eval_vec);
 

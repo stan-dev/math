@@ -1,41 +1,37 @@
+To make stan-math work with MPI we assume that you have a working MPI
+installation on your system. Macports or homebrew have openmpi and
+mpich ready for installation, both work well. As a next step the boost
+mpi and serialization library need to be installed. For standard
+systems the boost build system should be able to figure out all
+necessary bits and pieces. The required boost libraries are bundled
+with stan-math and a simple
 
-WARNING: Boost MPI is BROKEN in 1.64.0; I used 1.65.1, but 1.65.0
-seems to be OK as well, see here:
-https://svn.boost.org/trac10/ticket/12723
+make stan-mpi
 
-Install 1.65+ version of Boost with b2 and
+should suffice to get a working system. All what is left to be done
+is to add the line
 
-Build boost serialization and boost mpi as shared libraries
+include make/mpi
 
-./b2 --prefix=$HOME/local --with-mpi --with-serialization -j4 install
+to your make/local file.
 
-In make/local you need to set
+The make/mpi file ensures that all required build flags are set. In
+particular it sets as the CXX and CC variable equal to mpic++ which
+calls the compiler which was used to build mpi with adequate
+flags. This is the recommended way to build MPI programs. However,
+should you need to change these flags for some reason, you can find
+out what these flags are with
 
-CC=mpicxx
+mpic++ --showme
 
-and ensure that the LDFLAGS finds the boost installation of mpi and serialization
+and adapt accordingly to your needs. If all of the above works, then
+the MPI tests part of stan-math can be executed with
 
-... and of course, the openmpi implementation needs to be
-available. The macports openmpi works great.
+make test/unit/math/prim/mat/functor/map_rect_mpi_test.cpp
+make test/unit/math/rev/mat/functor/map_rect_mpi_test.cpp
 
-The use of mpicxx is recommended by openmp, but not required. That is,
-for openmp you can find out the extra compiler flags needed for
-linking to openmpi with the command.
+and then starting them with the mpirun command as
 
-mpicxx --showme
+mpirun -np 4 test/unit/math/prim/mat/functor/map_rect_mpi_test
+mpirun -np 4 test/unit/math/rev/mat/functor/map_rect_mpi_test
 
-The mpicxx man page has more details on this.
-
-The minimal tests are in
-
-test/unit/math/rev/arr/functor
-
-map_rect_mpi_test.cpp
-map_rect_lpdf_mpi_test.cpp
-
-To compile these, there is a makefile in their directory. After
-compilation they can be started with
-
-mpirun -np 4 ./map_rect_mpi_test
-
-with 4 cpus.
