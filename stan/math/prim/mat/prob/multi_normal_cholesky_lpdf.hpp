@@ -146,7 +146,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //    = L_dbl.template
       //    triangularView<Eigen::Lower>().transpose().solve(half);
 
-      logp -= 0.5 * dot_self(half);
+      logp -= 0.5 * half.squaredNorm();
 
       if (!is_constant_struct<T_y>::value) {
         for (int j = 0; j < size_y; j++)
@@ -157,13 +157,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
       }
       if (!is_constant_struct<T_covar>::value) {
-        grad_L += half * half.transpose();
+        grad_L += scaled_diff * half.transpose();
       }
-    }
-    if (!is_constant_struct<T_covar>::value) {
-      grad_L = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, grad_L);
-      // L_dbl.template
-      // triangularView<Eigen::Lower>().transpose().solveInPlace(grad_L);
     }
   }
 
