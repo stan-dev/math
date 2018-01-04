@@ -53,7 +53,7 @@ namespace stan {
       check_positive(fun, "length-scale", l);
       check_positive(fun, "period", p);
       for (size_t n = 0; n < x.size(); ++n)
-        check_not_nan(fun, "x", x[n]);
+        check_not_nan(fun, "element of x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l, T_p>::type,
                     Eigen::Dynamic, Eigen::Dynamic> cov(x.size(), x.size());
@@ -119,9 +119,9 @@ namespace stan {
       check_positive(fun, "length-scale", l);
       check_positive(fun, "period", p);
       for (size_t n = 0; n < x1.size(); ++n)
-        check_not_nan(fun, "x1", x1[n]);
+        check_not_nan(fun, "element of x1", x1[n]);
       for (size_t n = 0; n < x2.size(); ++n)
-        check_not_nan(fun, "x2", x2[n]);
+        check_not_nan(fun, "element of x2", x2[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l, T_p>::type,
                     Eigen::Dynamic, Eigen::Dynamic> cov(x1.size(), x2.size());

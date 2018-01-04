@@ -299,7 +299,7 @@ namespace stan {
       check_positive(fun, "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan(fun, "x", x[i]);
+        check_not_nan(fun, "element of x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
@@ -354,7 +354,7 @@ namespace stan {
       check_positive(fun, "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan(fun, "x", x[i]);
+        check_not_nan(fun, "element of x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
