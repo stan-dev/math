@@ -26,20 +26,6 @@ class empty_broadcast_array {
    */
   T& operator[](int /*i*/);
 };
-
-template <typename T, typename S>
-class empty_nested_broadcast_array {
-  typedef empty_broadcast_array<T, S> empty_broadcast_array_t;
-
- public:
-  empty_nested_broadcast_array() {}
-  /**
-   * Not implemented so cannot be called.
-   */
-  empty_broadcast_array_t operator[](int /*i*/) {
-    return empty_broadcast_array_t();
-  }
-};
 }  // namespace internal
 }  // namespace math
 }  // namespace stan
