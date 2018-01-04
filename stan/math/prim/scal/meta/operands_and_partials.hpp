@@ -28,8 +28,8 @@ namespace internal {
 template <typename ViewElt, typename Op>
 class ops_partials_edge {
  public:
-  empty_broadcast_array<ViewElt, Op> partials_;
-  empty_nested_broadcast_array<ViewElt, Op> partials_vec_;
+  typedef empty_broadcast_array<ViewElt, Op> partials_t;
+  partials_t partials_;
 
   ops_partials_edge() {}
   explicit ops_partials_edge(const Op&) {}
