@@ -5,6 +5,8 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
+#include <vector>
+
 namespace stan {
 namespace math {
 namespace internal {
