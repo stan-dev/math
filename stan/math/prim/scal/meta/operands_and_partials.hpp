@@ -28,12 +28,19 @@ namespace internal {
 template <typename ViewElt, typename Op>
 class ops_partials_edge {
  public:
-  typedef empty_broadcast_array<ViewElt, Op> partials_t;
-  partials_t partials_;
-  broadcast_array<partials_t> partials_vec_;
+  empty_broadcast_array<ViewElt, Op> partials_;
+  empty_nested_broadcast_array<ViewElt, Op> partials_vec_;
 
-  ops_partials_edge() : partials_vec_(partials_) {}
-  explicit ops_partials_edge(const Op&) : partials_vec_(partials_) {}
+  ops_partials_edge() {}
+  explicit ops_partials_edge(const Op&) {}
+
+  // typedef empty_broadcast_array<ViewElt, Op> partials_t;
+  // partials_t partials_;
+  // broadcast_array<partials_t> partials_vec_;
+  // broadcast_array<partials_t> partials_vec_;
+
+  // ops_partials_edge() : partials_vec_(partials_) {}
+  // explicit ops_partials_edge(const Op&) : partials_vec_(partials_) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
