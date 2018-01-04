@@ -293,12 +293,13 @@ namespace stan {
                        Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
       cov_periodic(const std::vector<T_x>& x, const var& sigma, const var& l,
                    const var& p) {
-      check_positive("cov_periodic", "signal standard deviation", sigma);
-      check_positive("cov_periodic", "length-scale", l);
-      check_positive("cov_periodic", "period", p);
+      const char* fun = "cov_periodic";
+      check_positive(fun, "signal standard deviation", sigma);
+      check_positive(fun, "length-scale", l);
+      check_positive(fun, "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan("cov_periodic", "x", x[i]);
+        check_not_nan(fun, "x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
@@ -347,12 +348,13 @@ namespace stan {
       cov_periodic(const std::vector<T_x>& x, double sigma, const var& l,
                    const var& p) {
 
-      check_positive("cov_periodic", "signal standard deviation", sigma);
-      check_positive("cov_periodic", "length-scale", l);
-      check_positive("cov_periodic", "period", p);
+      const char* fun = "cov_periodic";
+      check_positive(fun, "signal standard deviation", sigma);
+      check_positive(fun, "length-scale", l);
+      check_positive(fun, "period", p);
       size_t x_size = x.size();
       for (size_t i = 0; i < x_size; ++i)
-        check_not_nan("cov_periodic", "x", x[i]);
+        check_not_nan(fun, "x", x[i]);
 
       Eigen::Matrix<var, -1, -1>
         cov(x_size, x_size);
