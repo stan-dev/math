@@ -44,7 +44,19 @@ class empty_broadcast_array<ViewElt,
   /**
    * Not implemented so cannot be called.
    */
+  ViewElt& operator()(int /*i*/);
+  /**
+   * Not implemented so cannot be called.
+   */
   void operator=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+  /**
+   * Not implemented so cannot be called.
+   */
+  void operator+=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+  /**
+   * Not implemented so cannot be called.
+   */
+  void operator-=(Eigen::Matrix<ViewElt, R, C> /*A*/);
   /**
    * Not implemented so cannot be called.
    */
@@ -57,5 +69,4 @@ class empty_broadcast_array<ViewElt,
 }  // namespace internal
 }  // namespace math
 }  // namespace stan
-
 #endif
