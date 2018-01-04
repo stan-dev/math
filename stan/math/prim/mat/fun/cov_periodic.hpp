@@ -64,7 +64,7 @@ namespace stan {
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-      T_p pi_div_p = M_PI * inv(p);
+      T_p pi_div_p = M_PI / p;
 
       for (size_t j = 0; j < x_size; ++j) {
         cov(j, j) = sigma_sq;
@@ -130,7 +130,7 @@ namespace stan {
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-      T_p pi_div_p = M_PI * inv(p);
+      T_p pi_div_p = M_PI / p;
 
       for (size_t i = 0; i < x1.size(); ++i) {
         for (size_t j = 0; j < x2.size(); ++j) {
