@@ -68,8 +68,8 @@ exp_mod_normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
         return ops_partials.build(0.0);
     }
   }
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : cdf_log) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : cdf_log) default(none) \
     shared(y_vec, mu_vec, sigma_vec, lambda_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

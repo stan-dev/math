@@ -91,9 +91,8 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   #pragma omp parallel for default(none) if (length(alpha) > 0) \
     shared(log_inv_logit_alpha, alpha_vec, alpha, log_inv_logit_neg_alpha)
   for (size_t i = 0; i < length(alpha); ++i) {
-    double alpha_dbl = value_of(alpha_vec[i]);
-    log_inv_logit_alpha[i] = log_inv_logit(alpha_dbl);
-    log_inv_logit_neg_alpha[i] = log_inv_logit(-alpha_dbl);
+    log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
+    log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
   }
 
   #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \

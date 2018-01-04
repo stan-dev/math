@@ -89,8 +89,8 @@ typename return_type<T_prob>::type binomial_lccdf(const T_n& n, const T_N& N,
     }
   }
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) reduction(+ : P) \
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) \
     shared(n_vec, N_vec, theta_vec, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);

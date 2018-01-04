@@ -99,9 +99,9 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
       digamma_sum_vec(max_size(alpha, beta));
 
   if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-    #pragma omp parallel for default(none) if (N > \
-      3 * omp_get_max_threads()) shared(alpha_vec, beta_vec, \
-      digamma_alpha_vec, digamma_beta_vec, digamma_sum_vec, N)
+    #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+      default(none) shared(alpha_vec, beta_vec, digamma_alpha_vec, \
+                           digamma_beta_vec, digamma_sum_vec, N)
     for (size_t i = 0; i < N; i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       const T_partials_return beta_dbl = value_of(beta_vec[i]);
@@ -112,8 +112,8 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : ccdf_log) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : ccdf_log) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, N, \
            digamma_alpha_vec, digamma_beta_vec, digamma_sum_vec)
   for (size_t n = 0; n < N; n++) {

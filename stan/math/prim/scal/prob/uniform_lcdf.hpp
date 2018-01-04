@@ -60,8 +60,9 @@ typename return_type<T_y, T_low, T_high>::type uniform_lcdf(
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (N > 0) \
-    shared(y_vec, alpha_vec, beta_vec, ops_partials, N) reduction(+ : cdf_log)
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : cdf_log) default(none) \
+    shared(y_vec, alpha_vec, beta_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);

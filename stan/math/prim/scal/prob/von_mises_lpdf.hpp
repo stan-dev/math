@@ -66,8 +66,8 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_bessel0(length(kappa));
-  #pragma omp parallel for default(none) \
-    shared(kappa_dbl, kappa_vec, log_bessel0, kappa)
+  #pragma omp parallel for if (length(kappa) > 3 * omp_get_max_threads()) \
+    default(none) shared(kappa_dbl, kappa_vec, log_bessel0, kappa)
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
     if (include_summand<propto, T_scale>::value)
@@ -78,7 +78,8 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
 
   size_t N = max_size(y, mu, kappa);
-  #pragma omp parallel for default(none) if (N > 0) reduction(+ : logp) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, ops_partials, kappa_dbl, log_bessel0, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_ = value_of(y_vec[n]);

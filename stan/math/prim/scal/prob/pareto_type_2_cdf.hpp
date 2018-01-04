@@ -71,9 +71,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
                 T_partials_return, T_y, T_loc, T_scale, T_shape>
       grad_3(N);
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) \
-    shared(lambda_vec, alpha_vec, grad_1_2, grad_3, N)
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    default(none) shared(lambda_vec, alpha_vec, grad_1_2, grad_3, N)
   for (size_t i = 0; i < N; i++) {
     const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -88,8 +87,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
       grad_3[i] = log(temp) * p1_pow_alpha[i];
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(* : P) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(* : P) default(none) \
     shared(y_vec, mu_vec, lambda_vec, ops_partials, grad_1_2, grad_3, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -112,27 +111,27 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, y)
-    for (size_t n = 0; n < stan::length(y); ++n)
+    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, y)
+    for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for default(none) if (stan::length(mu) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, mu)
-    for (size_t n = 0; n < stan::length(mu); ++n)
+    #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, mu)
+    for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for default(none) if (stan::length(lambda) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, lambda)
-    for (size_t n = 0; n < stan::length(lambda); ++n)
+    #pragma omp parallel for if (length(lambda) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, lambda)
+    for (size_t n = 0; n < length(lambda); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, alpha)
-    for (size_t n = 0; n < stan::length(alpha); ++n)
+    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, alpha)
+    for (size_t n = 0; n < length(alpha); ++n)
       ops_partials.edge4_.partials_[n] *= P;
   }
   return ops_partials.build(P);

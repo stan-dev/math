@@ -66,9 +66,8 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) \
-    shared(n_vec, theta_vec, ops_partials) reduction(* : P)
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(* : P) default(none) shared(n_vec, theta_vec, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -84,9 +83,10 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
   }
 
   if (!is_constant_struct<T_prob>::value) {
-    #pragma omp parallel for default(none) if (stan::length(theta) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P)
-    for (size_t i = 0; i < stan::length(theta); ++i)
+    size_t local_size = stan::length(theta);
+    #pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, local_size)
+    for (size_t i = 0; i < local_size; ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
   return ops_partials.build(P);

@@ -83,9 +83,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lcdf(
 
   if (!is_constant_struct<T_dof>::value) {
     digammaHalf = digamma(0.5);
-    #pragma omp parallel for default(none) if (stan::length(nu) > \
-      3 * omp_get_max_threads()) \
-      shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec, nu)
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec, nu)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);
@@ -93,8 +92,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lcdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : P) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) \
     shared(sigma_vec, y_vec, mu_vec, nu_vec, ops_partials, digammaNu_vec, \
            digammaHalf, digammaNuPlusHalf_vec, N)
   for (size_t n = 0; n < N; n++) {

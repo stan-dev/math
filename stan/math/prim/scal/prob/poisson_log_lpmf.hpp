@@ -71,14 +71,15 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
       exp_alpha(length(alpha));
-  #pragma omp parallel for default(none) if (length(alpha) > 0) \
-    shared(alpha_vec, exp_alpha, alpha)
+  #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
+    default(none) shared(alpha_vec, exp_alpha, alpha)
   for (size_t i = 0; i < length(alpha); i++)
     if (include_summand<propto, T_log_rate>::value)
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
 
-  #pragma omp parallel for default(none) if (size > 0) \
-    shared(alpha_vec, n_vec, exp_alpha, ops_partials, size) reduction(+ : logp)
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
+    shared(alpha_vec, n_vec, exp_alpha, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
           && n_vec[i] == 0)) {

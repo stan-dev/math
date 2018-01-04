@@ -88,18 +88,18 @@ typename return_type<T_y, T_dof>::type inv_chi_square_cdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (length(nu) > \
-      3 * omp_get_max_threads()) shared(nu_vec, gamma_vec, digamma_vec, nu)
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) shared(nu_vec, gamma_vec, digamma_vec, nu)
+    for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
       digamma_vec[i] = digamma(0.5 * nu_dbl);
     }
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(* : P) \
-    shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials)
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(* : P) default(none) \
+    shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -129,15 +129,15 @@ typename return_type<T_y, T_dof>::type inv_chi_square_cdf(const T_y& y,
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (length(y) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, y)
-    for (size_t n = 0; n < stan::length(y); ++n)
+    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, y)
+    for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (length(nu) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, nu)
-    for (size_t n = 0; n < stan::length(nu); ++n)
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, nu)
+    for (size_t n = 0; n < length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   return ops_partials.build(P);

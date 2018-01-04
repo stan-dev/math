@@ -64,8 +64,8 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
-  #pragma omp parallel for default(none) if (length(sigma) > \
-    3 * omp_get_max_threads()) shared(inv_sigma, sigma_vec, log_sigma, sigma)
+  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+    default(none) shared(inv_sigma, sigma_vec, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value)
@@ -79,20 +79,20 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
                 T_scale>
       exp_y_div_sigma(max_size(y, sigma));
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for default(none) if (max_size(mu, sigma) > \
-      3 * omp_get_max_threads()) \
-      shared(exp_mu_div_sigma, mu_vec, sigma_vec, mu, sigma)
-    for (size_t n = 0; n < max_size(mu, sigma); n++)
+    size_t local_size = max_size(mu, sigma);
+    #pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) \
+      default(none) shared(exp_mu_div_sigma, mu_vec, sigma_vec, local_size)
+    for (size_t n = 0; n < local_size; n++)
       exp_mu_div_sigma[n] = exp(value_of(mu_vec[n]) / value_of(sigma_vec[n]));
-    #pragma omp parallel for default(none) if (max_size(y, sigma) > \
-      3 * omp_get_max_threads()) \
-      shared(exp_y_div_sigma, y_vec, sigma_vec, y, sigma)
-    for (size_t n = 0; n < max_size(y, sigma); n++)
+    local_size = max_size(y, sigma);
+    #pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) \
+      default(none) shared(exp_y_div_sigma, y_vec, sigma_vec, local_size)
+    for (size_t n = 0; n < local_size; n++)
       exp_y_div_sigma[n] = exp(value_of(y_vec[n]) / value_of(sigma_vec[n]));
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : logp) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, inv_sigma, log_sigma, ops_partials, \
            exp_y_div_sigma, exp_mu_div_sigma, N)
   for (size_t n = 0; n < N; n++) {

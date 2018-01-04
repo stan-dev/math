@@ -87,17 +87,17 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (length(nu) > \
-      3 * omp_get_max_threads()) shared(nu_vec, gamma_vec, digamma_vec, nu)
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) shared(nu_vec, gamma_vec, digamma_vec, nu)
+    for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
     }
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : cdf_log) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : cdf_log) default(none) \
     shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

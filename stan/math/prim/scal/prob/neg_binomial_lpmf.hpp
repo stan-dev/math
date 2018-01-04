@@ -68,16 +68,16 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
 
   size_t len_ab = max_size(alpha, beta);
   VectorBuilder<true, T_partials_return, T_shape, T_inv_scale> lambda(len_ab);
-  #pragma omp parallel for default(none) if (len_ab > 0) \
-    shared(lambda, alpha_vec, beta_vec, len_ab)
+  #pragma omp parallel for if (len_ab > 3 * omp_get_max_threads()) \
+    default(none) shared(lambda, alpha_vec, beta_vec, len_ab)
   for (size_t i = 0; i < len_ab; ++i)
     lambda[i] = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(length(beta));
   VectorBuilder<true, T_partials_return, T_inv_scale> log_beta_m_log1p_beta(
       length(beta));
-  #pragma omp parallel for default(none) if (length(beta) > 0) \
-    shared(log1p_beta, beta_vec, log_beta_m_log1p_beta, beta)
+  #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
+    default(none) shared(log1p_beta, beta_vec, log_beta_m_log1p_beta, beta)
   for (size_t i = 0; i < length(beta); ++i) {
     log1p_beta[i] = log1p(value_of(beta_vec[i]));
     log_beta_m_log1p_beta[i] = log(value_of(beta_vec[i])) - log1p_beta[i];
@@ -85,8 +85,9 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
 
   VectorBuilder<true, T_partials_return, T_inv_scale, T_shape>
       alpha_times_log_beta_over_1p_beta(len_ab);
-  #pragma omp parallel for default(none) if (len_ab > 0) \
-    shared(alpha_times_log_beta_over_1p_beta, alpha_vec, beta_vec, len_ab)
+  #pragma omp parallel for if (len_ab > 3 * omp_get_max_threads()) \
+    default(none) shared(alpha_times_log_beta_over_1p_beta, alpha_vec, \
+                         beta_vec, len_ab)
   for (size_t i = 0; i < len_ab; ++i)
     alpha_times_log_beta_over_1p_beta[i]
         = value_of(alpha_vec[i])
@@ -95,8 +96,8 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (length(alpha) > 0) \
-      shared(digamma_alpha, alpha_vec, alpha)
+    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
+      default(none) shared(digamma_alpha, alpha_vec, alpha)
     for (size_t i = 0; i < length(alpha); ++i)
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
   }
@@ -105,8 +106,8 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
                 T_inv_scale>
       log_beta(length(beta));
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (length(beta) > 0) \
-      shared(log_beta, beta_vec, beta)
+    #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
+      default(none) shared(log_beta, beta_vec, beta)
     for (size_t i = 0; i < length(beta); ++i)
       log_beta[i] = log(value_of(beta_vec[i]));
   }
@@ -115,15 +116,17 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
                 T_shape, T_inv_scale>
       lambda_m_alpha_over_1p_beta(len_ab);
   if (!is_constant_struct<T_inv_scale>::value) {
-    #pragma omp parallel for default(none) if (len_ab > 0) \
-      shared(lambda_m_alpha_over_1p_beta, lambda, alpha_vec, beta_vec, len_ab)
+    #pragma omp parallel for if (len_ab > 3 * omp_get_max_threads()) \
+      default(none) shared(lambda_m_alpha_over_1p_beta, lambda, alpha_vec, \
+                           beta_vec, len_ab)
     for (size_t i = 0; i < len_ab; ++i)
       lambda_m_alpha_over_1p_beta[i]
           = lambda[i]
             - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
   }
 
-  #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(n_vec, lambda, ops_partials, alpha_vec, beta_vec, \
            alpha_times_log_beta_over_1p_beta, log1p_beta, digamma_alpha, \
            log_beta_m_log1p_beta, lambda_m_alpha_over_1p_beta, size)

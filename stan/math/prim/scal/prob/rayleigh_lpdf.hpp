@@ -62,16 +62,16 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
-  #pragma omp parallel for default(none) if (length(sigma) > \
-    3 * omp_get_max_threads()) shared(inv_sigma, sigma_vec, log_sigma, sigma)
+  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+    default(none) shared(inv_sigma, sigma_vec, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value)
       log_sigma[i] = log(value_of(sigma_vec[i]));
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : logp) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(y_vec, inv_sigma, ops_partials, log_sigma, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

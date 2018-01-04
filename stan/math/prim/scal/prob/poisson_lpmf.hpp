@@ -63,8 +63,8 @@ typename return_type<T_rate>::type poisson_lpmf(const T_n& n,
 
   operands_and_partials<T_rate> ops_partials(lambda);
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) reduction(+ : logp) \
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(n_vec, lambda_vec, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {

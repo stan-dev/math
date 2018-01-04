@@ -68,9 +68,8 @@ typename return_type<T_prob>::type bernoulli_lcdf(const T_n& n,
       return ops_partials.build(negative_infinity());
   }
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) \
-    shared(n_vec, theta_vec, ops_partials, size) reduction(+ : P)
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) shared(n_vec, theta_vec, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero

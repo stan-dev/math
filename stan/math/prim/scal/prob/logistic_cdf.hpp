@@ -66,8 +66,8 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_cdf(
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(* : P) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(* : P) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
@@ -99,20 +99,20 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, y)
+    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for default(none) if (stan::length(mu) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, mu)
+    #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, mu)
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for default(none) if (stan::length(sigma) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, sigma)
+    #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P, sigma)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

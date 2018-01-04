@@ -95,8 +95,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>
       half_nu(length(nu));
-  #pragma omp parallel for default(none) if (length(nu) > \
-    3 * omp_get_max_threads()) shared(half_nu, nu_vec, nu)
+  #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+    default(none) shared(half_nu, nu_vec, nu)
   for (size_t i = 0; i < length(nu); i++)
     if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value)
       half_nu[i] = 0.5 * value_of(nu_vec[i]);
@@ -106,8 +106,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu_plus_half(length(nu));
   if (include_summand<propto, T_dof>::value) {
-    #pragma omp parallel for default(none) if (length(nu) > \
-      3 * omp_get_max_threads()) \
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) \
       shared(lgamma_half_nu, lgamma_half_nu_plus_half, half_nu, nu)
     for (size_t i = 0; i < length(nu); i++) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
@@ -120,8 +120,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_plus_half(length(nu));
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for default(none) if (length(nu) > \
-      3 * omp_get_max_threads()) \
+    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+      default(none) \
       shared(digamma_half_nu, digamma_half_nu_plus_half, half_nu, nu)
     for (size_t i = 0; i < length(nu); i++) {
       digamma_half_nu[i] = digamma(half_nu[i]);
@@ -131,8 +131,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       log_nu(length(nu));
-  #pragma omp parallel for default(none) if (length(nu) > \
-    3 * omp_get_max_threads()) shared(log_nu, nu_vec, nu)
+  #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
+    default(none) shared(log_nu, nu_vec, nu)
   for (size_t i = 0; i < length(nu); i++)
     if (include_summand<propto, T_dof>::value)
       log_nu[i] = log(value_of(nu_vec[i]));
@@ -140,8 +140,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
-  #pragma omp parallel for default(none) if (length(sigma) > \
-    3 * omp_get_max_threads()) shared(log_sigma, sigma_vec, sigma)
+  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+    default(none) shared(log_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_scale>::value)
       log_sigma[i] = log(value_of(sigma_vec[i]));
@@ -155,8 +155,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
       log1p_exp(N);
 
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) shared(y_vec, mu_vec, sigma_vec, log1p_exp, \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    default(none) shared(y_vec, mu_vec, sigma_vec, log1p_exp, \
     square_y_minus_mu_over_sigma__over_nu, nu_vec, N)
   for (size_t i = 0; i < N; i++)
     if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
@@ -171,8 +171,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
 
   operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
                                                                  sigma);
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : logp) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, lgamma_half_nu_plus_half, \
            lgamma_half_nu, log_nu, log_sigma, half_nu, log1p_exp, \
            square_y_minus_mu_over_sigma__over_nu, nu_vec, \

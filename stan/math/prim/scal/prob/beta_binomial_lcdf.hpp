@@ -84,10 +84,11 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
       return ops_partials.build(negative_infinity());
   }
 
-  // This causes a test failure with F32()
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) reduction(+ : P) \
+  /* This causes a test failure with F32()
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) \
     shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials, size)
+   */
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero

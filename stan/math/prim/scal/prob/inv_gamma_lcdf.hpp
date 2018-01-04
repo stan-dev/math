@@ -81,9 +81,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lcdf(
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for default(none) if (stan::length(alpha) > \
-      3 * omp_get_max_threads()) \
-      shared(alpha_vec, gamma_vec, digamma_vec, alpha)
+    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
+      default(none) shared(alpha_vec, gamma_vec, digamma_vec, alpha)
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -91,8 +90,8 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lcdf(
     }
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : P) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, gamma_vec, digamma_vec, N)
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values

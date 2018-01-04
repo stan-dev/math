@@ -85,8 +85,8 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
       return ops_partials.build(0.0);
   }
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) reduction(* : P) \
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(* : P) default(none) \
     shared(n_vec, N_vec, theta_vec, ops_partials)
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
@@ -111,9 +111,9 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_struct<T_prob>::value) {
-    #pragma omp parallel for default(none) if (stan::length(theta) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P)
-    for (size_t i = 0; i < stan::length(theta); ++i)
+    #pragma omp parallel for if (length(theta) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, P)
+    for (size_t i = 0; i < length(theta); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 

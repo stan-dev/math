@@ -81,8 +81,8 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lpdf(
                 T_scale>
       log_sigma(length(sigma));
 
-  #pragma omp parallel for default(none) if (length(sigma) > \
-    3 * omp_get_max_threads()) \
+  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+    default(none) \
     shared(sigma_vec, inv_sigma, log_sigma, inv_sigma_squared, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
@@ -94,8 +94,8 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lpdf(
       inv_sigma_squared[i] = inv_sigma[i] * inv_sigma[i];
   }
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(+ : logp) shared(y_vec, mu_vec, \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(+ : logp) default(none) shared(y_vec, mu_vec, \
     inv_sigma, inv_sigma_squared, ops_partials, log_sigma, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

@@ -67,8 +67,8 @@ typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
   size_t N = max_size(y, mu, sigma);
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
-  #pragma omp parallel for default(none) if (N > \
-    3 * omp_get_max_threads()) reduction(* : cdf) \
+  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+    reduction(* : cdf) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -104,20 +104,20 @@ typename return_type<T_y, T_loc, T_scale>::type normal_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for default(none) if (stan::length(y) > \
-      3 * omp_get_max_threads()) shared(ops_partials, cdf, y)
+    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, cdf, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for default(none) if (stan::length(mu) > \
-      3 * omp_get_max_threads()) shared(ops_partials, cdf, mu)
-    for (size_t n = 0; n < stan::length(mu); ++n)
+    #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, cdf, mu)
+    for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for default(none) if (stan::length(sigma) > \
-      3 * omp_get_max_threads()) shared(ops_partials, cdf, sigma)
+    #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
+      default(none) shared(ops_partials, cdf, sigma)
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

@@ -62,8 +62,8 @@ typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
       return ops_partials.build(negative_infinity());
   }
 
-  #pragma omp parallel for default(none) if (size > \
-    3 * omp_get_max_threads()) reduction(+ : P) \
+  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+    reduction(+ : P) default(none) \
     shared(n_vec, lambda_vec, ops_partials, size)
   for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
