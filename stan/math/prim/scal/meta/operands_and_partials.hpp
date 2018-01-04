@@ -28,10 +28,10 @@ namespace internal {
 template <typename ViewElt, typename Op>
 class ops_partials_edge {
  public:
-  empty_broadcast_array<ViewElt, Op> partials_;
-
+  typedef empty_broadcast_array<ViewElt, Op> partials_t;
+  partials_t partials_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* op */) {}
+  explicit ops_partials_edge(const Op&) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
