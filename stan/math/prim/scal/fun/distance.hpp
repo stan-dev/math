@@ -8,13 +8,12 @@ namespace stan {
   namespace math {
 
     /**
-     * Returns the squared distance.
+     * Returns the distance between two scalars.
      *
-     * @param x1 First vector.
-     * @param x2 Second vector.
+     * @param x1 First scalar.
+     * @param x2 Second scalar.
      * @return Distance between two scalars
-     * @throw std::domain_error If the vectors are not the same
-     * size or if they are both not vector dimensioned.
+     * @throw std::domain_error If the arguments are not finite.
      */
     template<typename T1, typename T2>
     inline typename boost::math::tools::promote_args<T1, T2>::type
