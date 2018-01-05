@@ -59,8 +59,7 @@ namespace stan {
       const double p_d_;
       const double sigma_sq_d_;
       double* dist_;
-      double* sin_dist_;
-      double* cos_dist_;
+      double* sin_2_dist_;
       double* sin_dist_sq_;
       vari* l_vari_;
       vari* sigma_vari_;
@@ -96,8 +95,7 @@ namespace stan {
           p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-          sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-          cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_2_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_), sigma_vari_(sigma.vi_),
           p_vari_(p.vi_),
@@ -113,8 +111,7 @@ namespace stan {
             double sin_dist = sin(pi_div_p * dist);
             double sin_dist_sq = square(sin_dist);
             dist_[pos] = dist;
-            sin_dist_[pos] = sin_dist;
-            cos_dist_[pos] = cos(pi_div_p * dist);
+            sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);;
             sin_dist_sq_[pos] = sin_dist_sq;
             cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
                                        * neg_two_inv_l_sq), false);
@@ -134,7 +131,7 @@ namespace stan {
           double prod_add = el_low->adj_ * el_low->val_;
           adjl += prod_add * sin_dist_sq_[i];
           adjsigma += prod_add;
-          adjp += prod_add * sin_dist_[i] * cos_dist_[i] * dist_[i];
+          adjp += prod_add * sin_2_dist_[i] * dist_[i];
         }
         for (size_t i = 0; i < size_; ++i) {
           vari* el = cov_diag_[i];
@@ -143,7 +140,7 @@ namespace stan {
         double l_d_sq = l_d_ * l_d_;
         l_vari_->adj_ +=  adjl * 4 / (l_d_sq * l_d_);
         sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
-        p_vari_->adj_ +=  adjp * 4 * M_PI / l_d_sq / (p_d_ * p_d_);
+        p_vari_->adj_ +=  adjp * 2 * M_PI / l_d_sq / (p_d_ * p_d_);
       }
     };
 
@@ -186,8 +183,7 @@ namespace stan {
       const double p_d_;
       const double sigma_sq_d_;
       double* dist_;
-      double* sin_dist_;
-      double* cos_dist_;
+      double* sin_2_dist_;
       double* sin_dist_sq_;
       vari* l_vari_;
       vari* p_vari_;
@@ -222,8 +218,7 @@ namespace stan {
           p_d_(value_of(p)),
           sigma_sq_d_(sigma_d_ * sigma_d_),
           dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-          sin_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-          cos_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
+          sin_2_dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           sin_dist_sq_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
           l_vari_(l.vi_),
           p_vari_(p.vi_),
@@ -240,8 +235,7 @@ namespace stan {
             double sin_dist = sin(pi_div_p * dist);
             double sin_dist_sq = square(sin_dist);
             dist_[pos] = dist;
-            sin_dist_[pos] = sin_dist;
-            cos_dist_[pos] = cos(pi_div_p * dist);
+            sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);;
             sin_dist_sq_[pos] = sin_dist_sq;
             cov_lower_[pos] = new vari(sigma_sq_d_ * std::exp(sin_dist_sq
                                        * neg_two_inv_l_sq), false);
@@ -259,11 +253,11 @@ namespace stan {
           vari* el_low = cov_lower_[i];
           double prod_add = el_low->adj_ * el_low->val_;
           adjl += prod_add * sin_dist_sq_[i];
-          adjp += prod_add * sin_dist_[i] * cos_dist_[i] * dist_[i];
+          adjp += prod_add * sin_2_dist_[i] * dist_[i];
         }
         double l_d_sq = l_d_ * l_d_;
         l_vari_->adj_ +=  adjl * 4  / (l_d_sq * l_d_);
-        p_vari_->adj_ +=  adjp * 4 * M_PI / l_d_sq / (p_d_ * p_d_);
+        p_vari_->adj_ +=  adjp * 2 * M_PI / l_d_sq / (p_d_ * p_d_);
       }
     };
 
