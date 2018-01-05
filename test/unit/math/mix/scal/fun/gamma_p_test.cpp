@@ -9,23 +9,38 @@ struct op_gamma_p_f {
   }
 };
 
-TEST(mathMixCore, GammPCommonArgs) {
-  stan::math::test::test_common_args<op_gamma_p_f, false>();
-}
+//TEST(mathMixCore, GammPCommonArgs) {
+//  stan::math::test::test_common_args<op_gamma_p_f, false>();
+//}
 
-TEST(mathMixCore, GammaP) {
-  // This doesn't work b/c the common args include negative  values... (?)
-  //stan::math::test::test_common_args<op_gamma_p_f, false>();
+TEST(mathMixScalFunGammaP, GoodGammaP) {
   std::vector<double> xs;
         xs.push_back(2.5);
         xs.push_back(3.1);
         xs.push_back(1.3);
-//        xs.push_back(stan::math::positive_infinity());
-//        xs.push_back(stan::math::negative_infinity());
         xs.push_back(stan::math::not_a_number());
   stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
 
 }
 
+TEST(mathMixScalFunGammaP, PosInfGammaP) {
+  std::vector<double> xs;
+        xs.push_back(stan::math::positive_infinity());
+  stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
 
+}
+
+TEST(mathMixScalFunGammaP, NegInfGammaP) {
+  std::vector<double> xs;
+        xs.push_back(stan::math::negative_infinity());
+  stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
+
+}
+
+TEST(mathMixScalFunGammaP, NaNGammaP) {
+  std::vector<double> xs;
+        xs.push_back(stan::math::not_a_number());
+  stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
+
+}
 

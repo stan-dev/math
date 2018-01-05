@@ -106,13 +106,19 @@ namespace stan {
       using std::pow;
       typedef typename return_type<T1, T2>::type TP;
 
-      if (z < 0) return std::numeric_limits<TP>::quiet_NaN();
-      if (a < 0) return std::numeric_limits<TP>::quiet_NaN();
-      if (z == 0.0) return 0.0;
-      if (is_inf(a)) return std::numeric_limits<TP>::infinity();
-      if (is_inf(z)) return tgamma(a) * digamma(a); 
       if (is_nan(a)) return std::numeric_limits<TP>::quiet_NaN();
       if (is_nan(z)) return std::numeric_limits<TP>::quiet_NaN();
+      if (a > 0 && is_inf(a)) domain_error("d_lower_reg_inc_gamma_da", "a", a, 
+        "The value ", " is not finite.");
+      if (z > 0 && is_inf(z)) domain_error("d_lower_reg_inc_gamma_da", "z", z, 
+        "The value ", " is not finite.");
+      // if (is_inf(z)) return tgamma(a) * digamma(a); 
+      if (a < 0) domain_error("d_lower_reg_inc_gamma_da", "a", a,
+        "The value ", " can not be negative.");
+      if (z < 0) domain_error("d_lower_reg_inc_gamma_da", "z", z,
+        "The value ", " can not be negative.");
+
+      if (z == 0.0) return 0.0;
 
       if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
           || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)

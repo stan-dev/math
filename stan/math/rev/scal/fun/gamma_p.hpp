@@ -2,9 +2,11 @@
 #define STAN_MATH_REV_SCAL_FUN_GAMMA_P_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <valarray>
 
@@ -22,8 +24,26 @@ namespace stan {
           using std::fabs;
           using std::log;
           using std::exp;
-          using std::pow;
           using boost::math::lgamma;
+
+
+
+          if (avi_->val_ < 0.0)
+            domain_error("gamma_p grad", "a", avi_->val_,
+              "first argument ", " can not be negative.");
+          if (bvi_->val_ < 0.0)
+            domain_error("gamma_p grad", "z", bvi_->val_,
+              "second argument ", " can not be negative.");
+          if (is_inf(avi_->val_)) {
+            avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
+          if (is_inf(bvi_->val_)) {
+            avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
 
           // return zero derivative as gamma_p is flat
           // to machine precision for b / a > 10
@@ -45,6 +65,22 @@ namespace stan {
                      avi, b) {
         }
         void chain() {
+
+          if (avi_->val_ < 0.0)
+            domain_error("gamma_p grad", "a", avi_->val_,
+              "first argument ", " can not be negative.");
+          if (bd_ < 0.0)
+            domain_error("gamma_p grad", "z", bd_,
+              "second argument ", " can not be negative.");
+          if (is_inf(avi_->val_)) {
+            avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
+          if (is_inf(bd_)) {
+            avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
+
           // return zero derivative as gamma_p is flat
           // to machine precision for b / a > 10
           if (std::fabs(bd_ / avi_->val_) > 10)
@@ -62,13 +98,30 @@ namespace stan {
                      a, bvi) {
         }
         void chain() {
+
+          if (ad_ < 0.0)
+            domain_error("gamma_p grad", "a", ad_,
+              "first argument ", " can not be negative.");
+          if (bvi_->val_ < 0.0)
+            domain_error("gamma_p grad", "z", bvi_->val_,
+              "second argument ", " can not be negative.");
+          if (is_inf(ad_)) {
+            bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
+          if (is_inf(bvi_->val_)) {
+            bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+            return;
+          }
+
           // return zero derivative as gamma_p is flat to
           // machine precision for b / a > 10
           if (std::fabs(bvi_->val_ / ad_) > 10)
             return;
-          bvi_->adj_ += adj_
-            * (std::exp(-bvi_->val_) * std::pow(bvi_->val_, ad_ - 1.0)
-               / tgamma(ad_));
+
+          bvi_->adj_ += std::exp(
+            std::log(adj_) - bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_)
+              - lgamma(ad_));
         }
       };
     }
