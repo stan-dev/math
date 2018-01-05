@@ -24,6 +24,7 @@ namespace stan {
           using std::exp;
           using std::pow;
           using boost::math::lgamma;
+
           // return zero derivative as gamma_p is flat
           // to machine precision for b / a > 10
           if (std::fabs(bvi_->val_ / avi_->val_) > 10)

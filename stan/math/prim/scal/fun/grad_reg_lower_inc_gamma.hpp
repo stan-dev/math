@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
@@ -105,6 +106,11 @@ namespace stan {
       using std::pow;
       typedef typename return_type<T1, T2>::type TP;
 
+      if (z < 0) return std::numeric_limits<TP>::quiet_NaN();
+      if (a < 0) return std::numeric_limits<TP>::quiet_NaN();
+      if (z == 0.0) return 0.0;
+      if (is_inf(a)) return std::numeric_limits<TP>::infinity();
+      if (is_inf(z)) return tgamma(a) * digamma(a); 
       if (is_nan(a)) return std::numeric_limits<TP>::quiet_NaN();
       if (is_nan(z)) return std::numeric_limits<TP>::quiet_NaN();
 
