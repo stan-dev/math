@@ -139,9 +139,6 @@ namespace stan {
              " on the platform " + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
             allDevices[0].getInfo< size_t >(
               CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_workgroup_size);
-            std::cout << "Max WG size: "
-                      << get_maximum_workgroup_size()
-                      << std::endl;
             oclContext_ = cl::Context(allDevices);
             oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
              CL_QUEUE_PROFILING_ENABLE, NULL);
