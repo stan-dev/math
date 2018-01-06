@@ -165,10 +165,12 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       digamma_alpha_beta[n] = digamma(alpha_beta);
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, alpha_vec, \
     beta_vec, lgamma_alpha_beta, lgamma_alpha, lgamma_beta, log_y, log1m_y, \
     N, ops_partials, digamma_alpha_beta, digamma_alpha, digamma_beta)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);

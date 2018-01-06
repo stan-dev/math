@@ -91,10 +91,12 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(n_vec, alpha_vec, beta_vec, ops_partials, digammaN_vec, \
            digammaAlpha_vec, digammaSum_vec, size)
+#endif
   for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);

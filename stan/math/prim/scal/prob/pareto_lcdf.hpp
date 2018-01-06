@@ -65,9 +65,11 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lcdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(y_min_vec, y_vec, alpha_vec, ops_partials, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return log_dbl
         = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));

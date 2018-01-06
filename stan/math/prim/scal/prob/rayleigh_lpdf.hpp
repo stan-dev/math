@@ -70,9 +70,11 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
       log_sigma[i] = log(value_of(sigma_vec[i]));
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, inv_sigma, ops_partials, log_sigma, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_over_sigma = y_dbl * inv_sigma[n];

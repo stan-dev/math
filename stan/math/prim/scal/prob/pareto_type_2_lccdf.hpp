@@ -91,10 +91,12 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lccdf(
       log_1p_y_over_lambda[i] = log_temp;
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(y_vec, mu_vec, lambda_vec, ccdf_log, ops_partials, \
            a_over_lambda_plus_y, log_1p_y_over_lambda, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

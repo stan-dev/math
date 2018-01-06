@@ -78,9 +78,11 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
 
   size_t N = max_size(y, mu, kappa);
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, ops_partials, kappa_dbl, log_bessel0, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_ = value_of(y_vec[n]);
     const T_partials_return y_dbl = y_ - floor(y_ / TWO_PI) * TWO_PI;

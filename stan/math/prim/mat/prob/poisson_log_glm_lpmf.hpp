@@ -102,9 +102,10 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
   Matrix<T_partials_return, Dynamic, 1> exp_theta
       = theta_dbl.array().exp().matrix();
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-    reduction(+ : logp) default(none) \
-    shared(theta_dbl, n_vec, exp_theta)
+    reduction(+ : logp) default(none) shared(theta_dbl, n_vec, exp_theta)
+#endif
   for (size_t i = 0; i < N; i++) {
     // Compute the log-density.
     if (!(theta_dbl[i] == -std::numeric_limits<double>::infinity()

@@ -114,10 +114,12 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > omp_get_max_threads()) \
     reduction(+ : cdf_log) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, N, \
            digamma_sum_vec, digamma_alpha_vec, digamma_beta_vec)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);

@@ -159,12 +159,14 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
     if (!is_constant_struct<T_size2>::value)
       digamma_beta[i] = digamma(value_of(beta_vec[i]));
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(normalizing_constant, lbeta_numerator, lbeta_denominator, \
            ops_partials, digamma_n_plus_alpha, digamma_alpha, size, \
            N_vec, n_vec, beta_vec, digamma_N_plus_alpha_plus_beta, \
            digamma_alpha_plus_beta, digamma_beta)
+#endif
   for (size_t i = 0; i < size; i++) {
     if (include_summand<propto>::value)
       logp += normalizing_constant[i];

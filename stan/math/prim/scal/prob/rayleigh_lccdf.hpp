@@ -60,9 +60,11 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : ccdf_log) default(none) \
     shared(y_vec, inv_sigma, ops_partials, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_sqr = y_dbl * y_dbl;

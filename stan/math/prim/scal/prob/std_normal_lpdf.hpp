@@ -49,8 +49,10 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
   operands_and_partials<T_y> ops_partials(y);
   scalar_seq_view<T_y> y_vec(y);
   T_partials_return logp(0.0);
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, ops_partials, y)
+#endif
   for (size_t n = 0; n < length(y); n++) {
     const T_partials_return y_val = value_of(y_vec[n]);
     logp += y_val * y_val;

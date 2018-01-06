@@ -91,10 +91,12 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(y_vec, sigma_vec, mu_vec, ops_partials, digammaNu_vec, digammaHalf, \
            digammaNuPlusHalf_vec, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero

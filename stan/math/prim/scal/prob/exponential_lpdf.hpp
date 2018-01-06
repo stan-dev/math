@@ -85,9 +85,11 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
 
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(beta_vec, y_vec, log_beta, ops_partials, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);

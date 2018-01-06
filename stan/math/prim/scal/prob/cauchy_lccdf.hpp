@@ -71,9 +71,11 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
   using std::atan;
   using std::log;
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : ccdf_log) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

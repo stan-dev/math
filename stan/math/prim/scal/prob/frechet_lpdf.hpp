@@ -108,11 +108,13 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
           = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
     }
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);  
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(alpha_vec, log_alpha, log_y, log_sigma, \
            sigma_div_y_pow_alpha, inv_y, ops_partials, sigma_vec, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value)

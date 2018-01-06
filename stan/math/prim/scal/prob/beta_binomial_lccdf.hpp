@@ -87,9 +87,11 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lccdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials, size)
+#endif
   for (size_t i = 0; i < size; i++) {
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);

@@ -95,10 +95,12 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(sigma_vec, y_vec, mu_vec, ops_partials, digammaNu_vec, digammaHalf, \
            digammaNuPlusHalf_vec, nu_vec, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
     const T_partials_return t

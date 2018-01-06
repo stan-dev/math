@@ -85,9 +85,11 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
       log_beta[i] = log(value_of(beta_vec[i]));
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, beta_vec, ops_partials, inv_beta, log_beta, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

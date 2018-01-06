@@ -109,10 +109,12 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   }
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(nu_vec, lgamma_half_nu, log_y, inv_y, ops_partials, \
            digamma_half_nu_over_two, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     const T_partials_return half_nu = 0.5 * nu_dbl;

@@ -125,11 +125,13 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
             - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, lambda, ops_partials, alpha_vec, beta_vec, \
            alpha_times_log_beta_over_1p_beta, log1p_beta, digamma_alpha, \
            log_beta_m_log1p_beta, lambda_m_alpha_over_1p_beta, size)
+#endif
   for (size_t i = 0; i < size; i++) {
     if (alpha_vec[i] > 1e10) {  // reduces numerically to Poisson
       if (include_summand<propto>::value)

@@ -104,10 +104,12 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
   scalar_seq_view<const T_scale> sigma_vec(sigma);
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_bar_vec, s_squared_vec, n_obs_vec, mu_vec, sigma_vec, \
            ops_partials, N)
+#endif
   for (size_t i = 0; i < N; i++) {
     const T_partials_return y_bar_dbl = value_of(y_bar_vec[i]);
     const T_partials_return s_squared_dbl = value_of(s_squared_vec[i]);

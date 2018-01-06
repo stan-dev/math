@@ -78,8 +78,10 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   operands_and_partials<T_prob> ops_partials(alpha);
 
   if (include_summand<propto>::value) {
-    #pragma omp parallel for default(none) if (size > 0) \
-      shared(N_vec, n_vec, size) reduction(+ : logp)
+    #ifndef STAN_MATH_MIX_SCAL_HPP
+      #pragma omp parallel for default(none) if (size > 0) \
+        shared(N_vec, n_vec, size) reduction(+ : logp)
+    #endif
     for (size_t i = 0; i < size; ++i)
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
   }
@@ -95,8 +97,10 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
     shared(n_vec, log_inv_logit_alpha, N_vec, log_inv_logit_neg_alpha, size)
+#endif
   for (size_t i = 0; i < size; ++i)
     logp += n_vec[i] * log_inv_logit_alpha[i]
             + (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];

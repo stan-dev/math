@@ -90,9 +90,11 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lcdf(
     }
   }
 
+#ifndef STAN_MATH_MIX_SCAL_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, gamma_vec, digamma_vec, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
