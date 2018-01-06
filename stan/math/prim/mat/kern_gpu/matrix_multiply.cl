@@ -40,7 +40,6 @@ __kernel void scalar_mul(
 #define C(i,j)  C[j*M+i]
 
 #define WPT 4
-#define TS 32
 #define RTS TS/WPT
 __kernel void basic_multiply(const int M, const int N, const int K,
                       const __global double* A,
@@ -97,7 +96,6 @@ __kernel void basic_multiply(const int M, const int N, const int K,
 }
 
 #define WPT1 4
-#define TS1 32
 #define RTS1 TS1/WPT1
 __kernel void multiply_self_transposed(const int M, const int N, const int K,
                       const __global double* A,

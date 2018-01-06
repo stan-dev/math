@@ -69,8 +69,7 @@ __kernel void lower_tri_inv_step1(
 #define temp(i,j) temp[(n/2)*(sizeM)*(sizeM)+j*part_size2+i]
 
 #define WPT 4
-#define RTS 8
-#define TS2 32
+#define RTS TS2/WPT
 __kernel void lower_tri_inv_step2(
                 __global double* A,
                 __global int* sizes,

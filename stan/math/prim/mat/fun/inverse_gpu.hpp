@@ -77,6 +77,14 @@ namespace stan {
 
         int repeat = 1;
         int sizePad;
+
+        int local = 32;
+        int gpu_local_max = sqrt(get_maximum_workgroup_size());
+        if (gpu_local_max < local) {
+          local = gpu_local_max;
+        }
+        int wpt = 4;
+
         for (int pp = parts; pp > 1; pp /= 2) {
           sizePad = (((part_size_fixed + 1) * repeat + 31) / 32) * 32;
 
@@ -99,16 +107,16 @@ namespace stan {
           cmdQueue.enqueueNDRangeKernel(
            kernel_step2,
            cl::NullRange,
-           cl::NDRange(sizePad, sizePad / 4, pp / 2),
-           cl::NDRange(32, 8, 1),
+           cl::NDRange(sizePad, sizePad / wpt, pp / 2),
+           cl::NDRange(local, local/wpt, 1),
            NULL,
            NULL);
 
             cmdQueue.enqueueNDRangeKernel(
           kernel_step3,
           cl::NullRange,
-          cl::NDRange(sizePad, sizePad / 4, pp / 2),
-          cl::NDRange(32, 8, 1),
+          cl::NDRange(sizePad, sizePad / wpt, pp / 2),
+          cl::NDRange(local, local/wpt, 1),
           NULL,
           NULL);
 

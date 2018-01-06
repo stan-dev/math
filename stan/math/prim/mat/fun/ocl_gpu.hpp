@@ -116,8 +116,7 @@ namespace stan {
         cl::Platform oclPlatform_;
         cl::Device oclDevice_;
 
-        std::vector<size_t> maxWorkgroupDimensions;
-        size_t maxWorkgroupSize;
+        size_t max_workgroup_size;
 
         void init() {
           try {
@@ -138,10 +137,11 @@ namespace stan {
             oclDevice_ = allDevices[0];
             description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>() +
              " on the platform " + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
-            allDevices[0].getInfo< std::vector<size_t> >(
-              CL_DEVICE_MAX_WORK_ITEM_SIZES, &maxWorkgroupDimensions);
             allDevices[0].getInfo< size_t >(
-              CL_DEVICE_MAX_WORK_GROUP_SIZE, &maxWorkgroupSize);
+              CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_workgroup_size);
+            std::cout << "Max WG size: "
+                      << get_maximum_workgroup_size()
+                      << std::endl;
             oclContext_ = cl::Context(allDevices);
             oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
              CL_QUEUE_PROFILING_ENABLE, NULL);
@@ -188,6 +188,9 @@ namespace stan {
           }
           return oclQueue_;
         }
+        int maxWorkgroupSize(){
+          return max_workgroup_size;
+        }
     };
 
     static ocl ocl_context_queue;
@@ -221,6 +224,17 @@ namespace stan {
     inline cl::CommandQueue& get_queue() {
       return ocl_context_queue.queue();
     }
+    /**
+     * Returns the reference to the active
+     * OpenCL command queue. If no context 
+     * and queue were created,
+     * a new context and queue are created and
+     * the reference to the new queue is returned.
+     * 
+     */
+    inline int get_maximum_workgroup_size() {
+      return ocl_context_queue.maxWorkgroupSize();
+    }
 
     /**
      * Compiles all the kernel in the specified group
@@ -236,7 +250,17 @@ namespace stan {
         std::make_pair(kernel_source.c_str(), kernel_source.size()));
         cl::Program program_ = cl::Program(ctx, source);
         try {
-          program_.build(devices);
+          char temp[100];
+          int local = 32;
+          int gpu_local_max = sqrt(get_maximum_workgroup_size());
+          if (gpu_local_max < local)
+            local = gpu_local_max;
+          // parameters that have special limits are for now handled here
+          // kernels with paramters will be compiled separately
+          // for now we have static parameters, so this will be OK
+          snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
+            local, local, local);
+          program_.build(devices, temp);
 
           cl_int err = CL_SUCCESS;
           // Iterate over the kernel list

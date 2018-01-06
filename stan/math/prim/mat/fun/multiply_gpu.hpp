@@ -122,6 +122,10 @@ namespace stan {
       cl::Kernel kernel = get_kernel("basic_multiply");
       cl::CommandQueue& cmdQueue = get_queue();
       int local = 32;
+      int gpu_local_max = sqrt(get_maximum_workgroup_size());
+      if (gpu_local_max < local) {
+        local = gpu_local_max;
+      }
       int wpt = 4;
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((B.cols() + local-1)/local)*local;
@@ -169,6 +173,10 @@ namespace stan {
       cl::CommandQueue& cmdQueue = get_queue();
       matrix_gpu AT = stan::math::transpose(A);
       int local = 32;
+      int gpu_local_max = sqrt(get_maximum_workgroup_size());
+      if (gpu_local_max < local) {
+        local = gpu_local_max;
+      }
       int wpt = 4;
       int Mpad = ((A.rows() + local-1)/local)*local;
       int Npad = ((AT.cols() + local-1)/local)*local;

@@ -44,7 +44,6 @@ namespace stan {
     inline matrix_gpu cholesky_decompose_gpu(matrix_gpu& A, int block) {
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
       cl::CommandQueue cmd_queue = get_queue();
-
       // Will be managed by the library core system
       int offset = 0;
       matrix_gpu V(block, block);
@@ -141,9 +140,9 @@ namespace stan {
 
       cl::CommandQueue cmd_queue = get_queue();
       cl::Kernel kernel_chol_block = get_kernel("cholesky_block");
-
+      int max_workgroup_size = get_maximum_workgroup_size();
       // Will be managed by the library core system
-      int block = 400;
+      int block = std::min(400, max_workgroup_size);
       int offset = 0;
       matrix_gpu V(block, block);
       matrix_gpu D(block, block);
@@ -155,7 +154,8 @@ namespace stan {
 
         copy_submatrix(A, D, offset, offset, 0, 0, block, block);
         zeros(V);
-        V = cholesky_decompose_gpu(D, 100);
+        int block_level2 = std::min(100, max_workgroup_size);
+        V = cholesky_decompose_gpu(D, block_level2);
         copy(V, D);
         copy_submatrix(V, A, 0, 0, offset, offset, block, block);
 
