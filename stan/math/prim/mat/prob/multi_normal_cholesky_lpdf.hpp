@@ -111,18 +111,15 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
   matrix_partials_t L_dbl = value_of(L);
   // matrix_partials_t trans_L_dbl = L_dbl.transpose();
+  // once mdivide_right_tri has analytic gradients it would be good to
+  // avoid transposition here which causes a deep copy
   matrix_partials_t inv_trans_L_dbl
       = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
-
-  matrix_partials_t grad_L;
 
   // analytic expressions taken from
   // http://qwone.com/~jason/writing/multivariateNormal.pdf
   // written by Jason D. M. Rennie
   // expressions adapted to avoid (most) inversions
-
-  if (!is_constant_struct<T_covar>::value)
-    grad_L = matrix_partials_t::Zero(size_y, size_y);
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
@@ -155,7 +152,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
       }
       if (!is_constant_struct<T_covar>::value) {
-        grad_L += scaled_diff * half.transpose();
+        ops_partials.edge3_.partials_ += scaled_diff * half.transpose();
       }
     }
   }
@@ -168,12 +165,9 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //           triangularView<Eigen::Lower>().transpose().solve(
       //                  matrix_d::Identity(size_y, size_y));
       // grad_L -= size_vec * mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
-      grad_L -= size_vec * inv_trans_L_dbl;
+      ops_partials.edge3_.partials_ -= size_vec * inv_trans_L_dbl;
     }
   }
-
-  if (!is_constant_struct<T_covar>::value)
-    ops_partials.edge3_.partials_ = grad_L;
 
   return ops_partials.build(logp);
 }
