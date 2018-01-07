@@ -1,17 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 
-#include <stan/math/prim/mat/fun/columns_dot_product.hpp>
-#include <stan/math/prim/mat/fun/columns_dot_self.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/log_determinant.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -149,7 +144,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       //    = L_dbl.template
       //    triangularView<Eigen::Lower>().transpose().solve(half);
 
-      logp -= 0.5 * half.squaredNorm();
+      logp -= 0.5 * dot_self(half);
 
       if (!is_constant_struct<T_y>::value) {
         for (int j = 0; j < size_y; j++)
