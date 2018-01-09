@@ -21,14 +21,12 @@ TEST(AgradRev, excepts) {
 }
 
 TEST(MathFunctions, log1m_inf_return) {
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            stan::math::log1m(1));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), stan::math::log1m(1));
 }
 
 struct log1m_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1m(arg1);
   }
 };

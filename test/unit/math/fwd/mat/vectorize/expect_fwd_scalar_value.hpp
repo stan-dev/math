@@ -10,8 +10,7 @@ template <typename F, typename T>
 void expect_fwd_scalar_value() {
   using std::vector;
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
-    vector<T> y =
-      build_fwd_vector<F>(vector<T>(), i);
+    vector<T> y = build_fwd_vector<F>(vector<T>(), i);
     T fy = F::template apply<T>(y[i]);
     T exp_y = F::apply_base(y[i]);
     expect_val_deriv_eq(exp_y, fy);

@@ -19,9 +19,9 @@ TEST(ProbLkjCov, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::lkj_cov_lpdf<false>(y, mu, sigma, eta)),
                   (stan::math::lkj_cov_log<false>(y, mu, sigma, eta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::lkj_cov_lpdf<true, double, double>(y, mu, sigma, eta)),
-    (stan::math::lkj_cov_log<true, double, double>(y, mu, sigma, eta)));
+      (stan::math::lkj_cov_lpdf<true, double, double>(y, mu, sigma, eta)),
+      (stan::math::lkj_cov_log<true, double, double>(y, mu, sigma, eta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::lkj_cov_lpdf<false, double, double>(y, mu, sigma, eta)),
-    (stan::math::lkj_cov_log<false, double, double>(y, mu, sigma, eta)));
+      (stan::math::lkj_cov_lpdf<false, double, double>(y, mu, sigma, eta)),
+      (stan::math::lkj_cov_log<false, double, double>(y, mu, sigma, eta)));
 }

@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 typedef std::vector<double> VEC;
 using stan::math::fvar;
 using stan::math::var;

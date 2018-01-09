@@ -16,15 +16,15 @@ TEST(AgradFwdLogDiffExp, Fvar) {
 
   fvar<double> a = log_diff_exp(x, y);
   EXPECT_FLOAT_EQ(log_diff_exp(1.2, 0.5), a.val_);
-  EXPECT_FLOAT_EQ(1 / (1 - exp(0.5 - 1.2) ) + 2 / (1 - exp(1.2 - 0.5) ), a.d_);
+  EXPECT_FLOAT_EQ(1 / (1 - exp(0.5 - 1.2)) + 2 / (1 - exp(1.2 - 0.5)), a.d_);
 
   fvar<double> b = log_diff_exp(x, z);
   EXPECT_FLOAT_EQ(log_diff_exp(1.2, 1.1), b.val_);
-  EXPECT_FLOAT_EQ(1 / (1 - exp(1.1 - 1.2) ), b.d_);
+  EXPECT_FLOAT_EQ(1 / (1 - exp(1.1 - 1.2)), b.d_);
 
   fvar<double> c = log_diff_exp(z, y);
   EXPECT_FLOAT_EQ(log_diff_exp(1.1, 0.5), c.val_);
-  EXPECT_FLOAT_EQ(2 / (1 - exp(1.1 - 0.5) ), c.d_);
+  EXPECT_FLOAT_EQ(2 / (1 - exp(1.1 - 0.5)), c.d_);
 }
 
 TEST(AgradFwdLogDiffExp, AgradFvar_exception) {
@@ -57,10 +57,8 @@ TEST(AgradFwdLogDiffExp, FvarFvarDouble) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_diff_exp(arg1, arg2);
   }
 };

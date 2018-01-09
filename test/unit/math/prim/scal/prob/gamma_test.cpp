@@ -12,8 +12,7 @@ TEST(ProbDistributionGamma, error_check) {
 
   EXPECT_THROW(stan::math::gamma_rng(-2.0, 3.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::gamma_rng(2.0, -3.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::gamma_rng(stan::math::positive_infinity(),
-                                      3.0, rng),
+  EXPECT_THROW(stan::math::gamma_rng(stan::math::positive_infinity(), 3.0, rng),
                std::domain_error);
   EXPECT_THROW(stan::math::gamma_rng(2, stan::math::positive_infinity(), rng),
                std::domain_error);
@@ -31,7 +30,7 @@ TEST(ProbDistributionGamma, chiSquareGoodnessFitTest) {
 
   // Generate quantiles from boost's gamma_distribution (uses shape/scale)
   // Avoid generating the top quantile because it would overflow.
-  boost::math::gamma_distribution<>dist(2.0, 2.0);
+  boost::math::gamma_distribution<> dist(2.0, 2.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

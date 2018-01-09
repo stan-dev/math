@@ -13,11 +13,7 @@ TEST(MathFunctions, owens_t) {
 TEST(MathFunctions, owens_t_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::owens_t(1.0, nan));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::owens_t(nan, 2.0));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::owens_t(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(nan, 2.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(nan, nan));
 }
-

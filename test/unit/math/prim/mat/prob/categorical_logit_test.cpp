@@ -33,9 +33,9 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   ms[0] = 1;
   ms[1] = 2;
   ms[2] = 1;
-  EXPECT_FLOAT_EQ(theta_log_softmax[0] + theta_log_softmax[1]
-                                       + theta_log_softmax[0],
-                  stan::math::categorical_logit_log(ms, theta));
+  EXPECT_FLOAT_EQ(
+      theta_log_softmax[0] + theta_log_softmax[1] + theta_log_softmax[0],
+      stan::math::categorical_logit_log(ms, theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, Propto) {
@@ -56,7 +56,7 @@ TEST(ProbDistributionsCategoricalLogit, error) {
   EXPECT_NO_THROW(categorical_logit_log(N, theta));
   EXPECT_NO_THROW(categorical_logit_log(n, theta));
   EXPECT_NO_THROW(categorical_logit_log(2, theta));
-  EXPECT_THROW(categorical_logit_log(N+1, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_log(N + 1, theta), std::domain_error);
   EXPECT_THROW(categorical_logit_log(0, theta), std::domain_error);
 
   theta(1) = std::numeric_limits<double>::quiet_NaN();

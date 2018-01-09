@@ -19,10 +19,8 @@ TEST(MathFunctions, atanh_exception) {
 }
 
 TEST(MathFunctions, atanh_inf_return) {
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            stan::math::atanh(-1));
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
-            stan::math::atanh(1));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), stan::math::atanh(-1));
+  EXPECT_EQ(std::numeric_limits<double>::infinity(), stan::math::atanh(1));
 }
 
 TEST(MathFunctions, atanh_nan) {

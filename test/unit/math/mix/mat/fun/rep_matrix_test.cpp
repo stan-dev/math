@@ -43,9 +43,9 @@ TEST(AgradMixMatrixRepMatrix, fv_rowvector) {
 
   row_vector_fv a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_fv output;
   output = rep_matrix(a, 3);
 
@@ -85,9 +85,9 @@ TEST(AgradMixMatrixRepMatrix, fv_vector) {
 
   vector_fv a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_fv output;
   output = rep_matrix(a, 3);
 
@@ -160,9 +160,9 @@ TEST(AgradMixMatrixRepMatrix, ffv_rowvector) {
 
   row_vector_ffv a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_ffv output;
   output = rep_matrix(a, 3);
 
@@ -202,9 +202,9 @@ TEST(AgradMixMatrixRepMatrix, ffv_vector) {
 
   vector_ffv a(3);
   a << 3.0, 3.0, 3.0;
-   a(0).d_ = 2.0;
-   a(1).d_ = 2.0;
-   a(2).d_ = 2.0;
+  a(0).d_ = 2.0;
+  a(1).d_ = 2.0;
+  a(2).d_ = 2.0;
   matrix_ffv output;
   output = rep_matrix(a, 3);
 

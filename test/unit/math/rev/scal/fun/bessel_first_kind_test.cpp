@@ -14,8 +14,7 @@ TEST(AgradRev, bessel_first_kind_int_var) {
   VEC g;
   f.grad(x, g);
   EXPECT_FLOAT_EQ(0, g[0]);
-  EXPECT_FLOAT_EQ(0.0660433280235491361431854208032750287274234195317,
-                  g[1]);
+  EXPECT_FLOAT_EQ(0.0660433280235491361431854208032750287274234195317, g[1]);
 
   a = 1;
   b = -3.0;
@@ -27,15 +26,13 @@ TEST(AgradRev, bessel_first_kind_int_var) {
   x = createAVEC(a, b);
   f.grad(x, g);
   EXPECT_FLOAT_EQ(0, g[0]);
-  EXPECT_FLOAT_EQ(
-    0.5 * -0.7461432154878245145319857900923154716212709191545920,
-    g[1]);
+  EXPECT_FLOAT_EQ(0.5 * -0.7461432154878245145319857900923154716212709191545920,
+                  g[1]);
 }
 
 struct bessel_first_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_first_kind(1, arg1);
   }
 };

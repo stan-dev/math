@@ -6,11 +6,10 @@
 
 namespace stan {
 
-  template <typename T>
-  inline T get(const std::vector<T>& x, size_t n) {
-    return x[n];
-  }
-
+template <typename T>
+inline T get(const std::vector<T>& x, size_t n) {
+  return x[n];
 }
-#endif
 
+}  // namespace stan
+#endif

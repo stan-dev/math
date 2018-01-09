@@ -55,13 +55,10 @@ TEST(AgradFwdGammaP, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0.40747109, a.d_.d_);
 }
 
-
 struct gamma_p_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return gamma_p(arg1, arg2);
   }
 };

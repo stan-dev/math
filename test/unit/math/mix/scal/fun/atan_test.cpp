@@ -4,13 +4,8 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 class AgradFwdAtan : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
-
-
-
 
 TEST_F(AgradFwdAtan, FvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -45,8 +40,6 @@ TEST_F(AgradFwdAtan, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(1.3 * -0.28402368, g[0]);
 }
-
-
 
 TEST_F(AgradFwdAtan, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -134,8 +127,7 @@ TEST_F(AgradFwdAtan, FvarFvarVar_3rdDeriv) {
 
 struct atan_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atan(arg1);
   }
 };

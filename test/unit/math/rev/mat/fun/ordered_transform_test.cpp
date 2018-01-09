@@ -25,7 +25,6 @@ TEST(prob_transform, ordered_jacobian_ad) {
 
   Matrix<var, Dynamic, 1> yv = ordered_constrain(xv);
 
-
   EXPECT_EQ(y.size(), yv.size());
   for (int i = 0; i < y.size(); ++i)
     EXPECT_FLOAT_EQ(y(i), yv(i).val());

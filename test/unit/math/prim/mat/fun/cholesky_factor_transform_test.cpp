@@ -14,11 +14,9 @@ TEST(ProbTransform, choleskyFactor) {
   Matrix<double, Dynamic, 1> x(3);
   x << 1, 2, 3;
 
-  Matrix<double, Dynamic, Dynamic> y
-    = cholesky_factor_constrain(x, 2, 2);
+  Matrix<double, Dynamic, Dynamic> y = cholesky_factor_constrain(x, 2, 2);
 
-  Matrix<double, Dynamic, 1> x2
-    = cholesky_factor_free(y);
+  Matrix<double, Dynamic, 1> x2 = cholesky_factor_free(y);
 
   EXPECT_EQ(x2.size(), x.size());
   EXPECT_EQ(x2.rows(), x.rows());
@@ -41,29 +39,20 @@ TEST(ProbTransform, choleskyFactorLogJacobian) {
   EXPECT_FLOAT_EQ(1.9 + 2.3, lp);
 
   x.resize(3);
-  x <<
-    1,
-    2, 3;
+  x << 1, 2, 3;
   lp = 7.2;
   cholesky_factor_constrain(x, 2, 2, lp);
   EXPECT_FLOAT_EQ(7.2 + 1 + 3, lp);
 
   x.resize(6);
-  x <<
-    1.001,
-    2, 3.01,
-    4, 5, 6.1;
+  x << 1.001, 2, 3.01, 4, 5, 6.1;
   lp = 1.2;
   cholesky_factor_constrain(x, 3, 3, lp);
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
 
   x.resize(9);
   lp = 1.2;
-  x <<
-    1.001,
-    2, 3.01,
-    4, 5, 6.1,
-    7, 8, 9;
+  x << 1.001, 2, 3.01, 4, 5, 6.1, 7, 8, 9;
   cholesky_factor_constrain(x, 4, 3, lp);
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
 }
@@ -93,8 +82,6 @@ TEST(ProbTransform, choleskyFactorFreeError) {
   EXPECT_THROW(cholesky_factor_free(y), std::domain_error);
 
   y.resize(2, 3);
-  y << 1, 0, 0,
-    2, 3, 0;
+  y << 1, 0, 0, 2, 3, 0;
   EXPECT_THROW(cholesky_factor_free(y), std::domain_error);
 }
-

@@ -15,12 +15,9 @@ TEST(MathFunctions, lbeta) {
 TEST(MathFunctions, lbeta_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(nan, 1.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(nan, 1.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(1.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::lbeta(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lbeta(nan, nan));
 }

@@ -3,7 +3,6 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-
 TEST(StanMathDecoupleOdeStates, decouple_ode_states_dd) {
   using stan::math::decouple_ode_states;
 
@@ -35,7 +34,6 @@ TEST(StanMathDecoupleOdeStates, decouple_ode_states_dd) {
   for (int t = 0; t < T; t++)
     for (int n = 0; n < 2; n++)
       EXPECT_FLOAT_EQ(ys_coupled[t][n], ys[t][n])
-        << "(" << n << ", " << t << "): "
-        << "for (double, double) the coupled system is the base system";
+          << "(" << n << ", " << t << "): "
+          << "for (double, double) the coupled system is the base system";
 }
-

@@ -14,9 +14,9 @@ TEST(AgradFwdMatrixDiagonal, matrix_fd) {
 
   matrix_fd v(3, 3);
   v << 1, 4, 9, 1, 4, 9, 1, 4, 9;
-   v(0, 0).d_ = 1.0;
-   v(1, 1).d_ = 2.0;
-   v(2, 2).d_ = 3.0;
+  v(0, 0).d_ = 1.0;
+  v(1, 1).d_ = 2.0;
+  v(2, 2).d_ = 3.0;
   vector_fd m = diagonal(v);
   EXPECT_EQ(1, m(0).val_);
   EXPECT_EQ(4, m(1).val_);

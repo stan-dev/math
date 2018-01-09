@@ -16,7 +16,7 @@ TEST(AgradFwdMatrixProd, fd_vector) {
   vv = vector_fd(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_);
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_);
@@ -25,8 +25,8 @@ TEST(AgradFwdMatrixProd, fd_vector) {
   vd << 2.0, 3.0;
   vv = vector_fd(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<double> f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
@@ -49,7 +49,7 @@ TEST(AgradFwdMatrixProd, fd_rowvector) {
   vv = row_vector_fd(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_);
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_);
@@ -58,8 +58,8 @@ TEST(AgradFwdMatrixProd, fd_rowvector) {
   vd << 2.0, 3.0;
   vv = row_vector_fd(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<double> f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
@@ -81,7 +81,7 @@ TEST(AgradFwdMatrixProd, fd_matrix) {
   vv = matrix_fd(1, 1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_);
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_);
@@ -90,10 +90,10 @@ TEST(AgradFwdMatrixProd, fd_matrix) {
   vd << 2.0, 3.0, 2.0, 3.0;
   vv = matrix_fd(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<double> f = prod(vv);
   EXPECT_FLOAT_EQ(36.0, prod(vd));
@@ -115,7 +115,7 @@ TEST(AgradFwdMatrixProd, ffd_vector) {
   vv = vector_ffd(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -124,8 +124,8 @@ TEST(AgradFwdMatrixProd, ffd_vector) {
   vd << 2.0, 3.0;
   vv = vector_ffd(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<double> > f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
@@ -148,7 +148,7 @@ TEST(AgradFwdMatrixProd, ffd_rowvector) {
   vv = row_vector_ffd(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -157,8 +157,8 @@ TEST(AgradFwdMatrixProd, ffd_rowvector) {
   vd << 2.0, 3.0;
   vv = row_vector_ffd(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
   row_vector_ffd x(2);
   x[0] = vv[0];
   x[1] = vv[1];
@@ -183,7 +183,7 @@ TEST(AgradFwdMatrixProd, ffd_matrix) {
   vv = matrix_ffd(1, 1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -192,10 +192,10 @@ TEST(AgradFwdMatrixProd, ffd_matrix) {
   vd << 2.0, 3.0, 2.0, 3.0;
   vv = matrix_ffd(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<fvar<double> > f = prod(vv);
   EXPECT_FLOAT_EQ(36.0, prod(vd));

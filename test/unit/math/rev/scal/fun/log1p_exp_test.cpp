@@ -27,7 +27,7 @@ void test_log1p_exp(double val) {
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
   // analytic deriv
-  EXPECT_FLOAT_EQ(g2[0], 1.0/(1.0 + exp(-val)));
+  EXPECT_FLOAT_EQ(g2[0], 1.0 / (1.0 + exp(-val)));
   EXPECT_FLOAT_EQ(f2.val(), f_val);
 }
 
@@ -43,8 +43,7 @@ TEST(AgradRev, log1p_exp) {
 
 struct log1p_exp_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p_exp(arg1);
   }
 };

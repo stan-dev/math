@@ -10,14 +10,12 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_fd_lower) {
   matrix_fd Ad(2, 2);
   matrix_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -42,8 +40,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_row_vector_fd_lower) {
   row_vector_fd Ad(2);
   row_vector_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -67,14 +64,12 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_d_lower) {
   matrix_d Ad(2, 2);
   matrix_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
   EXPECT_FLOAT_EQ(0.416666667, I(0, 0).val_);
@@ -96,8 +91,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_row_vector_d_lower) {
   row_vector_d Ad(2);
   row_vector_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -119,10 +113,8 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_d_matrix_fd_lower) {
   matrix_fd Ad(2, 2);
   matrix_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -147,8 +139,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_d_row_vector_fd_lower) {
   row_vector_fd Ad(2);
   row_vector_fd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -236,14 +227,12 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_ffd_matrix_ffd_lower) {
   matrix_ffd Ad(2, 2);
   matrix_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -268,8 +257,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_ffd_row_vector_ffd_lower) {
   row_vector_ffd Ad(2);
   row_vector_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -293,14 +281,12 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_ffd_matrix_d_lower) {
   matrix_d Ad(2, 2);
   matrix_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
   EXPECT_FLOAT_EQ(0.416666667, I(0, 0).val_.val_);
@@ -322,8 +308,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_ffd_row_vector_d_lower) {
   row_vector_d Ad(2);
   row_vector_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -345,10 +330,8 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_d_matrix_ffd_lower) {
   matrix_ffd Ad(2, 2);
   matrix_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -373,8 +356,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_d_row_vector_ffd_lower) {
   row_vector_ffd Ad(2);
   row_vector_ffd I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;

@@ -35,7 +35,7 @@ TEST(AgradFwdFmax, Fvar) {
   fvar<double> f = fmax(z, x);
   EXPECT_FLOAT_EQ(2.0, f.val_);
   EXPECT_FLOAT_EQ(1.0, f.d_);
- }
+}
 
 TEST(AgradFwdFmax, FvarFvarDouble) {
   using stan::math::fvar;
@@ -58,10 +58,8 @@ TEST(AgradFwdFmax, FvarFvarDouble) {
 
 struct fmax_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fmax(arg1, arg2);
   }
 };

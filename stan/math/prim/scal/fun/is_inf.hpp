@@ -4,22 +4,19 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Returns 1 if the input is infinite and 0 otherwise.
-     *
-     * Delegates to <code>boost::math::isinf</code>.
-     *
-     * @param x Value to test.
-     * @return <code>1</code> if the value is infinite.
-     */
-    inline int
-    is_inf(double x) {
-      return boost::math::isinf(x);
-    }
+/**
+ * Returns 1 if the input is infinite and 0 otherwise.
+ *
+ * Delegates to <code>boost::math::isinf</code>.
+ *
+ * @param x Value to test.
+ * @return <code>1</code> if the value is infinite.
+ */
+inline int is_inf(double x) { return boost::math::isinf(x); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

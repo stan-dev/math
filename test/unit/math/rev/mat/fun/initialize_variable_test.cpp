@@ -21,7 +21,7 @@ TEST(AgradRevMatrix, initializeVariable) {
   EXPECT_FLOAT_EQ(2.0, b[1].val());
   EXPECT_FLOAT_EQ(2.0, b[2].val());
 
-  vector<AVEC > c(4, AVEC(3));
+  vector<AVEC> c(4, AVEC(3));
   initialize_variable(c, AVAR(3.0));
   for (size_t m = 0; m < c.size(); ++m)
     for (size_t n = 0; n < c[0].size(); ++n)
