@@ -68,6 +68,7 @@ endif
 	@echo '  - BOOST                       ' $(BOOST)
 	@echo '  - CVODES                      ' $(CVODES)
 	@echo '  - GTEST                       ' $(GTEST)
+	@echo '  - OPENCL                      ' $(OPENCL)
 	@echo ''
 	@echo 'Tests:'
 	@echo ''
