@@ -1,6 +1,20 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
+TEST(AgradFwdMatrixMdivideRightTri, simple) {
+  using Eigen::Lower;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using stan::math::mdivide_right_tri;
+
+  MatrixXd b(1, 2);
+  b << 2, 3;
+  MatrixXd A(2, 2);
+  A << 3, 0, 1, 4;
+  MatrixXd b_under_A = mdivide_right_tri<Lower>(b, A);
+  SUCCEED();
+}
+
 using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_fd_lower) {
   using stan::math::matrix_fd;
@@ -81,7 +95,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_d_lower) {
   EXPECT_FLOAT_EQ(-0.7986111, I(1, 0).d_);
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_);
 }
-/* WITHOUT THESE IT COMPILES, BUT IT FAILS ...
+
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_row_vector_d_lower) {
   using stan::math::matrix_fd;
   using stan::math::row_vector_fd;
@@ -436,4 +450,3 @@ TEST(AgradFwdMatrixMdivideRightTri, ffd_exceptions_lower) {
   EXPECT_THROW(mdivide_right_tri<Eigen::Lower>(vf1, fd2),
                std::invalid_argument);
 }
-*/
