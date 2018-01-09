@@ -21,16 +21,6 @@ namespace stan {
       using boost::math::lgamma;
       using boost::math::digamma;
 
-
-
-      if (x1.val_ < 0.0)
-        domain_error("gamma_p grad, argument", "a", value_of_rec(x1),
-          "is ", ", can not be negative.");
-      if (x2.val_ < 0.0)
-        domain_error("gamma_p grad, argument", "z", value_of_rec(x2),
-          "is ", ", can not be negative.");
-
-
       T u = gamma_p(x1.val_, x2.val_);
       if (is_inf(x1.val_))
         return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
@@ -53,15 +43,6 @@ namespace stan {
       using std::fabs;
       using boost::math::digamma;
 
-
-      if (x1.val_ < 0.0)
-        domain_error("gamma_p grad, argument", "a", value_of_rec(x1),
-          "is ", ", can not be negative.");
-      if (x2 < 0.0)
-        domain_error("gamma_p grad, argument", "z", x2,
-          "is ", ", can not be negative.");
-
-
       T u = gamma_p(x1.val_, x2);
       if (is_inf(x1.val_))
         return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
@@ -79,15 +60,6 @@ namespace stan {
     gamma_p(double x1, const fvar<T>& x2) {
       using std::log;
       using std::exp;
-
-
-      if (x1 < 0.0)
-        domain_error("gamma_p grad, argument", "a", x1,
-          "is ", ", can not be negative.");
-      if (x2 < 0.0)
-        domain_error("gamma_p grad, argument", "z", value_of_rec(x2),
-          "is ", ", can not be negative.");
-
 
       T u = gamma_p(x1, x2.val_);
       if (is_inf(x1))

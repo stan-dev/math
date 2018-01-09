@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 
+#include <iostream>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {

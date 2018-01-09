@@ -1,4 +1,5 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
 
 struct op_gamma_p_f {
@@ -8,10 +9,6 @@ struct op_gamma_p_f {
     return stan::math::gamma_p(x1, x2);
   }
 };
-
-//TEST(mathMixCore, GammPCommonArgs) {
-//  stan::math::test::test_common_args<op_gamma_p_f, false>();
-//}
 
 TEST(mathMixScalFunGammaP, GoodGammaP) {
   std::vector<double> xs;
@@ -30,16 +27,16 @@ TEST(mathMixScalFunGammaP, PosInfGammaP) {
 
 }
 
-TEST(mathMixScalFunGammaP, NegInfGammaP) {
+TEST(mathMixScalFunGammaP, NaNGammaP) {
   std::vector<double> xs;
-        xs.push_back(stan::math::negative_infinity());
+        xs.push_back(stan::math::not_a_number());
   stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
 
 }
 
-TEST(mathMixScalFunGammaP, NaNGammaP) {
+TEST(mathMixScalFunGammaP, NegInfGammaP) {
   std::vector<double> xs;
-        xs.push_back(stan::math::not_a_number());
+        xs.push_back(stan::math::negative_infinity());
   stan::math::test::test_args<op_gamma_p_f, false>(xs, xs);
 
 }

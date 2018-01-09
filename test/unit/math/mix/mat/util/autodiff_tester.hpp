@@ -243,8 +243,7 @@ namespace stan {
           x_t(i) = x(i);
         try {
           f(x_t);
-          FAIL()
-            << "double throws, expect autodiff version to throw";
+          FAIL() << "double throws, expect autodiff version to throw";
         } catch (...) {
           SUCCEED();
         }

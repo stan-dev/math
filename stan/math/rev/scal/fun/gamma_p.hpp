@@ -26,14 +26,6 @@ namespace stan {
           using std::exp;
           using boost::math::lgamma;
 
-
-
-          if (avi_->val_ < 0.0)
-            domain_error("gamma_p grad", "a", avi_->val_,
-              "first argument ", " can not be negative.");
-          if (bvi_->val_ < 0.0)
-            domain_error("gamma_p grad", "z", bvi_->val_,
-              "second argument ", " can not be negative.");
           if (is_inf(avi_->val_)) {
             avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
             bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
@@ -65,13 +57,6 @@ namespace stan {
                      avi, b) {
         }
         void chain() {
-
-          if (avi_->val_ < 0.0)
-            domain_error("gamma_p grad", "a", avi_->val_,
-              "first argument ", " can not be negative.");
-          if (bd_ < 0.0)
-            domain_error("gamma_p grad", "z", bd_,
-              "second argument ", " can not be negative.");
           if (is_inf(avi_->val_)) {
             avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
             return;
@@ -98,13 +83,6 @@ namespace stan {
                      a, bvi) {
         }
         void chain() {
-
-          if (ad_ < 0.0)
-            domain_error("gamma_p grad", "a", ad_,
-              "first argument ", " can not be negative.");
-          if (bvi_->val_ < 0.0)
-            domain_error("gamma_p grad", "z", bvi_->val_,
-              "second argument ", " can not be negative.");
           if (is_inf(ad_)) {
             bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
             return;
