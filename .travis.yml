@@ -22,6 +22,21 @@ linux_gcc: &linux_gcc
       sources: [ 'ubuntu-toolchain-r-test' ]
       packages: [ 'g++-4.9' ]
 
+before_install:
+  - if [ $TRAVIS_OS_NAME = "linux" ]; then
+      bash .travis/amd_sdk.sh;
+      tar -xjf AMD-SDK.tar.bz2;
+      AMDAPPSDK=${HOME}/AMDAPPSDK;
+      export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
+      mkdir -p ${OPENCL_VENDOR_PATH};
+      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
+      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
+      export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64:${LD_LIBRARY_PATH};
+      chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
+      ${AMDAPPSDK}/bin/x86_64/clinfo;
+    fi;
+  - sudo ln -s ${AMDAPPSDK}/lib/x86_64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+
 matrix:
   fast_finish: true
   include:
@@ -110,5 +125,5 @@ matrix:
 
 script: ./runTests.py -j2 $TESTFOLDER
 
-sudo: false
+sudo: true
 dist: trusty
