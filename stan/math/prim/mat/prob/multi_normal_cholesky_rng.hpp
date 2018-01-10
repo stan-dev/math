@@ -27,8 +27,8 @@ template <class RNG>
 inline Eigen::VectorXd multi_normal_cholesky_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
-  using boost::variate_generator;
   using boost::normal_distribution;
+  using boost::variate_generator;
 
   static const char* function = "multi_normal_cholesky_rng";
   check_finite(function, "Location parameter", mu);

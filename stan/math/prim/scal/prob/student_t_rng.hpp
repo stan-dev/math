@@ -38,8 +38,8 @@ template <typename T_deg, typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type
 student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
               RNG& rng) {
-  using boost::variate_generator;
   using boost::random::student_t_distribution;
+  using boost::variate_generator;
   static const char* function = "student_t_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);

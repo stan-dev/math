@@ -136,8 +136,8 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
                                     const RhsScalar* rhs, Index rhsIncr,
                                     ResScalar* res, Index resIncr,
                                     const ResScalar& alpha) {
-    using stan::math::var;
     using stan::math::gevv_vvv_vari;
+    using stan::math::var;
     for (Index i = 0; i < rows; ++i) {
       res[i * resIncr] += var(
           new gevv_vvv_vari(&alpha, &lhs[i], lhsStride, rhs, rhsIncr, cols));

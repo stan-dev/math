@@ -33,8 +33,8 @@ namespace math {
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
     const T_loc& mu, const T_scale& beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::uniform_01;
+  using boost::variate_generator;
   static const char* function = "gumbel_rng";
 
   check_finite(function, "Location parameter", mu);

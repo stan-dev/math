@@ -30,8 +30,8 @@ namespace math {
  */
 template <class RNG>
 inline double weibull_rng(double alpha, double sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::weibull_distribution;
+  using boost::variate_generator;
 
   static const char* function = "weibull_rng";
 

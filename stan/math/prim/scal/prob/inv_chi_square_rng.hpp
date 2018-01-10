@@ -33,8 +33,8 @@ namespace math {
  */
 template <class RNG>
 inline double inv_chi_square_rng(double nu, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::chi_squared_distribution;
+  using boost::variate_generator;
 
   static const char* function = "inv_chi_square_rng";
 

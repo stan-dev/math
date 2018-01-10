@@ -19,8 +19,8 @@ namespace math {
 
 template <class RNG>
 inline double exponential_rng(double beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::exponential_distribution;
+  using boost::variate_generator;
 
   static const char* function = "exponential_rng";
 
