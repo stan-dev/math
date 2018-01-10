@@ -26,7 +26,7 @@ TEST(AgradFwdRound, Fvar) {
 
   fvar<double> d = round(2 * z);
   EXPECT_FLOAT_EQ(round(2 * 1.25), d.val_);
-   EXPECT_FLOAT_EQ(0.0, d.d_);
+  EXPECT_FLOAT_EQ(0.0, d.d_);
 }
 
 TEST(AgradFwdRound, FvarFvarDouble) {
@@ -57,8 +57,7 @@ TEST(AgradFwdRound, FvarFvarDouble) {
 
 struct round_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return round(arg1);
   }
 };

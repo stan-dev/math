@@ -26,4 +26,3 @@ TEST(MetaTraits, VectorBuilderHelper_true_false) {
   double data = dvv1.data();
   EXPECT_FLOAT_EQ(0.0, data);
 }
-

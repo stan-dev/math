@@ -33,7 +33,6 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_TRUE(contains_nonconstant_struct<var_v3>::value);
 
   bool temp
-        = contains_nonconstant_struct<var_v3, var_v2,
-                                      var_v1, double, int>::value;
+      = contains_nonconstant_struct<var_v3, var_v2, var_v1, double, int>::value;
   EXPECT_TRUE(temp);
 }

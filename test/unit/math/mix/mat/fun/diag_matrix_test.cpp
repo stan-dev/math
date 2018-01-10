@@ -165,4 +165,3 @@ TEST(AgradMixMatrixDiagMatrix, vector_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
-

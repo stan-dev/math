@@ -270,4 +270,3 @@ TEST(AgradMixMatrixQrR, ffv4) {
   EXPECT_FLOAT_EQ(0.0082790619, grads[4]);
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
-

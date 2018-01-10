@@ -46,4 +46,3 @@ TEST(AgradFwdIsNan, FvarFvar) {
   EXPECT_FALSE(is_nan(d.val_.val_));
   EXPECT_FALSE(is_nan(e.val_.val_));
 }
-

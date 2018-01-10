@@ -135,4 +135,3 @@ TEST(AgradMixMatrixDotSelf, vec_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
   EXPECT_FLOAT_EQ(0, h[2]);
 }
-

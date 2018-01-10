@@ -7,26 +7,25 @@
 #include <limits>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return the closest integer to the specified argument, with
-     * halfway cases rounded away from zero.
-     *
-     * The derivative is always zero.
-     *
-     * @tparam T Scalar type for autodiff variable.
-     * @param x Argument.
-     * @return The rounded value of the argument.
-     */
-    template <typename T>
-    inline fvar<T> round(const fvar<T>& x) {
-      return fvar<T>(round(x.val_),
-                     is_nan(x.val_)
-                     ? std::numeric_limits<double>::quiet_NaN()
-                     : 0.0);
-    }
-
-  }
+/**
+ * Return the closest integer to the specified argument, with
+ * halfway cases rounded away from zero.
+ *
+ * The derivative is always zero.
+ *
+ * @tparam T Scalar type for autodiff variable.
+ * @param x Argument.
+ * @return The rounded value of the argument.
+ */
+template <typename T>
+inline fvar<T> round(const fvar<T>& x) {
+  return fvar<T>(round(x.val_), is_nan(x.val_)
+                                    ? std::numeric_limits<double>::quiet_NaN()
+                                    : 0.0);
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

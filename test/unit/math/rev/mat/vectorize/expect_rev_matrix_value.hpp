@@ -39,8 +39,7 @@ void expect_rev_matrix_value() {
       EXPECT_EQ(d[i].size(), fd[i].size());
       EXPECT_EQ(d[i].rows(), fd[i].rows());
       EXPECT_EQ(d[i].cols(), fd[i].cols());
-      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j),
-                          fd[i](j), d[i](j));
+      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j), fd[i](j), d[i](j));
     }
   }
 

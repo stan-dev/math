@@ -5,16 +5,15 @@
 #include <cstddef>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    inline void scaled_add(std::vector<double>& x,
-                           const std::vector<double>& y,
-                           double lambda) {
-      for (size_t i = 0; i < x.size(); ++i)
-        x[i] += lambda * y[i];
-    }
-
-  }
+inline void scaled_add(std::vector<double>& x, const std::vector<double>& y,
+                       double lambda) {
+  for (size_t i = 0; i < x.size(); ++i)
+    x[i] += lambda * y[i];
 }
+
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -120,10 +120,8 @@ TEST(AgradRev, fdim_dv_2) {
 
 struct fdim_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return fdim(arg1, arg2);
   }
 };

@@ -9,11 +9,10 @@ TEST(ProbDistributionsUniform, error_check) {
   EXPECT_NO_THROW(stan::math::uniform_rng(1.0, 2.0, rng));
 
   EXPECT_THROW(
-    stan::math::uniform_rng(stan::math::negative_infinity(), 2.0, rng),
-    std::domain_error);
-  EXPECT_THROW(
-    stan::math::uniform_rng(1, stan::math::positive_infinity(), rng),
-    std::domain_error);
+      stan::math::uniform_rng(stan::math::negative_infinity(), 2.0, rng),
+      std::domain_error);
+  EXPECT_THROW(stan::math::uniform_rng(1, stan::math::positive_infinity(), rng),
+               std::domain_error);
   EXPECT_THROW(stan::math::uniform_rng(2, 1, rng), std::domain_error);
 }
 
@@ -38,4 +37,3 @@ TEST(ProbDistributionsUniform, chiSquareGoodnessFitTest) {
   // Assert that they match.
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-

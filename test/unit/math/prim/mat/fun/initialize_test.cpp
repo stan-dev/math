@@ -17,7 +17,6 @@ TEST(MathMatrix, initialize) {
   EXPECT_FLOAT_EQ(z, y);
 }
 
-
 TEST(MathMatrix, initMatrix) {
   using stan::math::initialize;
   using Eigen::Matrix;
@@ -53,8 +52,8 @@ TEST(MathMatrix, initStdVector) {
     // template 4, 2
     EXPECT_FLOAT_EQ(2.2, x[i]);
 
-  vector<Matrix<double, Dynamic, Dynamic> >
-    z(4, Matrix<double, Dynamic, Dynamic>(3, 2));
+  vector<Matrix<double, Dynamic, Dynamic> > z(
+      4, Matrix<double, Dynamic, Dynamic>(3, 2));
   initialize(z, 3.7);
   for (size_t i = 0; i < 4; ++i)
     for (int m = 0; m < 3; ++m)

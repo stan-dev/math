@@ -9,8 +9,7 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_TRUE(contains_nonconstant_struct<stan::math::var>::value);
   EXPECT_TRUE(contains_nonconstant_struct<vector<stan::math::var> >::value);
   EXPECT_TRUE(
-    contains_nonconstant_struct<vector<vector<stan::math::var> > >::value);
-  EXPECT_TRUE(
-    contains_nonconstant_struct<vector<vector<vector<
-                                              stan::math::var> > > >::value);
+      contains_nonconstant_struct<vector<vector<stan::math::var> > >::value);
+  EXPECT_TRUE(contains_nonconstant_struct<
+              vector<vector<vector<stan::math::var> > > >::value);
 }

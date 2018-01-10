@@ -17,12 +17,9 @@ TEST(MathFunctions, gamma_q) {
 TEST(MathFunctions, gamma_q_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_q(1.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_q(1.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_q(nan, 1.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_q(nan, 1.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::gamma_q(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_q(nan, nan));
 }

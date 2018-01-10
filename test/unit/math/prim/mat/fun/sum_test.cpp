@@ -20,7 +20,6 @@ TEST(MathMatrix, sumVector) {
   EXPECT_FLOAT_EQ(115.0, sum(v));
 }
 
-
 TEST(MathMatrix, sumRowVector) {
   using stan::math::sum;
   using Eigen::Matrix;

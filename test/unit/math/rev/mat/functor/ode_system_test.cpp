@@ -17,8 +17,8 @@ struct StanMathRevOdeSystem : public ::testing::Test {
     M = 1;
 
     Jy_ref.resize(N, N);
-    Jy_ref(0, 0) =  0;
-    Jy_ref(0, 1) =  1;
+    Jy_ref(0, 0) = 0;
+    Jy_ref(0, 1) = 1;
     Jy_ref(1, 0) = -1;
     Jy_ref(1, 1) = -theta[0];
 
@@ -41,7 +41,6 @@ struct StanMathRevOdeSystem : public ::testing::Test {
   Eigen::MatrixXd Jtheta_ref;
 };
 
-
 // ************ ODE RHS functor ************************
 
 TEST_F(StanMathRevOdeSystem, ode_system_rhs) {
@@ -59,18 +58,16 @@ TEST_F(StanMathRevOdeSystem, ode_system_rhs) {
 TEST_F(StanMathRevOdeSystem, ode_system_rhs_wrong_size) {
   Eigen::VectorXd dy_dt(N);
 
-  stan::math::ode_system<harm_osc_ode_wrong_size_1_fun>
-    ode_system1(ode_wrong_size_1_rhs, theta, x, x_int, &msgs);
-  EXPECT_THROW_MSG(ode_system1(t0, y0, dy_dt),
-                   std::runtime_error,
+  stan::math::ode_system<harm_osc_ode_wrong_size_1_fun> ode_system1(
+      ode_wrong_size_1_rhs, theta, x, x_int, &msgs);
+  EXPECT_THROW_MSG(ode_system1(t0, y0, dy_dt), std::runtime_error,
                    "ode_system: size of state vector y (2) and derivative "
                    "vector dy_dt (3) in the ODE functor do not match in "
                    "size.");
 
-  stan::math::ode_system<harm_osc_ode_wrong_size_2_fun>
-    ode_system2(ode_wrong_size_2_rhs, theta, x, x_int, &msgs);
-  EXPECT_THROW_MSG(ode_system2(t0, y0, dy_dt),
-                   std::runtime_error,
+  stan::math::ode_system<harm_osc_ode_wrong_size_2_fun> ode_system2(
+      ode_wrong_size_2_rhs, theta, x, x_int, &msgs);
+  EXPECT_THROW_MSG(ode_system2(t0, y0, dy_dt), std::runtime_error,
                    "ode_system: size of state vector y (2) and derivative "
                    "vector dy_dt (1) in the ODE functor do not match in "
                    "size.");
@@ -118,7 +115,7 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_v_Mm) {
                                                       &msgs);
 
   Eigen::VectorXd dy_dt(N);
-  std::vector<double> Jy_raw(N*N, 0);
+  std::vector<double> Jy_raw(N * N, 0);
   Eigen::Map<Eigen::MatrixXd> Jy(&Jy_raw[0], N, N);
 
   ode_system.jacobian(t0, y0, dy_dt, Jy);
@@ -137,7 +134,7 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_Mv_Mm) {
 
   std::vector<double> dy_dt_raw(N, 0);
   Eigen::Map<Eigen::VectorXd> dy_dt(&dy_dt_raw[0], N);
-  std::vector<double> Jy_raw(N*N, 0);
+  std::vector<double> Jy_raw(N * N, 0);
   Eigen::Map<Eigen::MatrixXd> Jy(&Jy_raw[0], N, N);
 
   ode_system.jacobian(t0, y0, dy_dt, Jy);
@@ -149,7 +146,6 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_Mv_Mm) {
     for (size_t j = 0; j < N; j++)
       EXPECT_FLOAT_EQ(Jy_ref(i, j), Jy(i, j));
 }
-
 
 // ********** jacobian wrt to states + parameters *************
 
@@ -203,9 +199,9 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_v_Mm_Mm) {
                                                       &msgs);
 
   Eigen::VectorXd dy_dt(N);
-  std::vector<double> Jy_raw(N*N, 0);
+  std::vector<double> Jy_raw(N * N, 0);
   Eigen::Map<Eigen::MatrixXd> Jy(&Jy_raw[0], N, N);
-  std::vector<double> Jtheta_raw(N*M, 0);
+  std::vector<double> Jtheta_raw(N * M, 0);
   Eigen::Map<Eigen::MatrixXd> Jtheta(&Jtheta_raw[0], N, M);
 
   ode_system.jacobian(t0, y0, dy_dt, Jy, Jtheta);
@@ -222,15 +218,14 @@ TEST_F(StanMathRevOdeSystem, ode_system_jac_v_Mm_Mm) {
       EXPECT_FLOAT_EQ(Jtheta_ref(i, j), Jtheta(i, j));
 }
 
-
 TEST_F(StanMathRevOdeSystem, ode_system_jac_Mv_Mm_Mm) {
   stan::math::ode_system<harm_osc_ode_fun> ode_system(ode_rhs, theta, x, x_int,
                                                       &msgs);
   std::vector<double> dy_dt_raw(N, 0);
   Eigen::Map<Eigen::VectorXd> dy_dt(&dy_dt_raw[0], N);
-  std::vector<double> Jy_raw(N*N, 0);
+  std::vector<double> Jy_raw(N * N, 0);
   Eigen::Map<Eigen::MatrixXd> Jy(&Jy_raw[0], N, N);
-  std::vector<double> Jtheta_raw(N*M, 0);
+  std::vector<double> Jtheta_raw(N * M, 0);
   Eigen::Map<Eigen::MatrixXd> Jtheta(&Jtheta_raw[0], N, M);
 
   ode_system.jacobian(t0, y0, dy_dt, Jy, Jtheta);

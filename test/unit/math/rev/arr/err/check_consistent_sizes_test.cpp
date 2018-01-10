@@ -13,7 +13,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   vector<var> b;
 
   for (int i = 0; i < N; ++i) {
-    b.push_back(var(i+1));
+    b.push_back(var(i + 1));
     a.push_back(var(i));
   }
 

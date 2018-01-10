@@ -6,7 +6,6 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
-
 TEST(ProbDistributions, fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
@@ -22,8 +21,7 @@ TEST(ProbDistributions, fvar_var) {
 
   EXPECT_FLOAT_EQ(0.6931472,
                   stan::math::dirichlet_log(theta, alpha).val_.val());
-  EXPECT_FLOAT_EQ(0.99344212,
-                  stan::math::dirichlet_log(theta, alpha).d_.val());
+  EXPECT_FLOAT_EQ(0.99344212, stan::math::dirichlet_log(theta, alpha).d_.val());
 
   Matrix<fvar<var>, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;

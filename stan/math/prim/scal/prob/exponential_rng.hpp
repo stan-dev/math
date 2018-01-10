@@ -15,24 +15,22 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    exponential_rng(double beta,
-                    RNG& rng) {
-      using boost::variate_generator;
-      using boost::exponential_distribution;
+template <class RNG>
+inline double exponential_rng(double beta, RNG& rng) {
+  using boost::variate_generator;
+  using boost::exponential_distribution;
 
-      static const char* function = "exponential_rng";
+  static const char* function = "exponential_rng";
 
-      check_positive_finite(function, "Inverse scale parameter", beta);
+  check_positive_finite(function, "Inverse scale parameter", beta);
 
-      variate_generator<RNG&, exponential_distribution<> >
-        exp_rng(rng, exponential_distribution<>(beta));
-      return exp_rng();
-    }
-
-  }
+  variate_generator<RNG&, exponential_distribution<> > exp_rng(
+      rng, exponential_distribution<>(beta));
+  return exp_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

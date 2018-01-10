@@ -17,10 +17,7 @@ TEST(MathMatrix, diagPreMultiply2_vv) {
   v << 1, 2, 3;
 
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   Matrix<var, Dynamic, Dynamic> v_m_times_m = v_m * m;
 
@@ -40,10 +37,7 @@ TEST(MathMatrix, diagPreMultiply2_vd) {
   v << 1, 2, 3;
 
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   Matrix<var, Dynamic, Dynamic> v_m_times_m1 = v_m * m1;
 
@@ -60,21 +54,16 @@ TEST(MathMatrix, diagPreMultiply2_dv) {
   Matrix<var, Dynamic, 1> v(3);
   v << 1, 2, 3;
 
-
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   Matrix<var, Dynamic, Dynamic> v_m_times_m2 = v_m * m2;
 
   expect_matrix_eq(v_m_times_m2, diag_pre_multiply(v, m1));
 }
-
 
 TEST(MathMatrix, diagPreMultiplyGrad_vv) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
@@ -96,22 +85,17 @@ TEST(MathMatrix, diagPreMultiplyGrad_vv) {
   std::vector<double> g1;
   norm1.grad(xs1, g1);
 
-
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
   for (int i = 0; i < 9; ++i)
     xs2.push_back(m2(i));
   for (int i = 0; i < 3; ++i)
     xs2.push_back(v_m(i, i));
-
 
   Matrix<var, Dynamic, Dynamic> v_m_times_m = v_m * m2;
 
@@ -142,16 +126,12 @@ TEST(MathMatrix, diagPreMultiplyGrad_vd) {
   std::vector<double> g1;
   norm1.grad(xs1, g1);
 
-
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   // OK to use var, just for comparison
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
   for (int i = 0; i < 9; ++i)
@@ -186,16 +166,12 @@ TEST(MathMatrix, diagPreMultiplyGrad_dv) {
   std::vector<double> g1;
   norm1.grad(xs1, g1);
 
-
   Matrix<var, Dynamic, Dynamic> m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   // OK to use var, just for comparison
   Matrix<var, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
   for (int i = 0; i < 3; ++i)
@@ -212,12 +188,9 @@ TEST(MathMatrix, diagPreMultiplyGrad_dv) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-
 TEST(MathMatrix, diagPreMultiplyException) {
   Matrix<var, Dynamic, Dynamic> m(2, 2);
-  m <<
-    2, 3,
-    4, 5;
+  m << 2, 3, 4, 5;
   EXPECT_THROW(diag_pre_multiply(m, m), std::invalid_argument);
 
   Matrix<var, Dynamic, 1> v(3);

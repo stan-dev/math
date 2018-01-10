@@ -11,16 +11,14 @@ TEST(AgradRev, erfc) {
   AVEC x = createAVEC(a);
   VEC grad_f;
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(
-    -2.0 / std::sqrt(boost::math::constants::pi<double>())
-         * std::exp(- 1.3 * 1.3),
-    grad_f[0]);
+  EXPECT_FLOAT_EQ(-2.0 / std::sqrt(boost::math::constants::pi<double>())
+                      * std::exp(-1.3 * 1.3),
+                  grad_f[0]);
 }
 
 struct erfc_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return erfc(arg1);
   }
 };

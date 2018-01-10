@@ -1249,12 +1249,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_1stDeriv) {
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -1288,12 +1288,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_1) {
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -1320,12 +1320,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_2) {
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -1352,12 +1352,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_3rdDeriv) {
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -1408,12 +1408,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_1stDeriv) {
   vector_d d2(3);
   vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1451,12 +1451,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_1) {
   vector_d d2(3);
   vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1487,12 +1487,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_2) {
   vector_d d2(3);
   vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1523,12 +1523,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_3rdDeriv) {
   vector_d d2(3);
   vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -1581,12 +1581,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_1stDeriv) {
   row_vector_d d2(3);
   row_vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1624,12 +1624,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_1) {
   row_vector_d d2(3);
   row_vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1660,12 +1660,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_2) {
   row_vector_d d2(3);
   row_vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1696,12 +1696,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_3rdDeriv) {
   row_vector_d d2(3);
   row_vector_ffv v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -1751,12 +1751,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   row_vector_d d1(3), d2(3);
   row_vector_ffv v1(3), v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1780,7 +1780,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
-}TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_1) {
+}
+TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_1) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -1789,12 +1790,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   row_vector_d d1(3), d2(3);
   row_vector_ffv v1(3), v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1821,12 +1822,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   row_vector_d d1(3), d2(3);
   row_vector_ffv v1(3), v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -1843,7 +1844,8 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
-}TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_3rdDeriv) {
+}
+TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_3rdDeriv) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
   using stan::math::fvar;
@@ -1852,12 +1854,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   row_vector_d d1(3), d2(3);
   row_vector_ffv v1(3), v2(3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -1899,13 +1901,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -1936,13 +1938,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -1966,13 +1968,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -1996,13 +1998,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2041,12 +2043,12 @@ TEST(AgradMixMatrixDotProduct, matrix_matrix_ffv_exception) {
   matrix_ffv v5(2, 3);
   matrix_ffv v6(2, 3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   d2 << 1, 3, -5, 1, 3, -5;
@@ -2100,12 +2102,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_1stDeriv) {
   vector_ffv vv_1(3), vv_2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -2146,12 +2148,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_1) {
   vector_ffv vv_1(3), vv_2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -2179,12 +2181,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_2) {
   vector_ffv vv_1(3), vv_2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   vd_1 << 1, 3, -5;
   vv_1 << a, b, c;
@@ -2212,12 +2214,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
   vector_ffv vv_1(3), vv_2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2241,8 +2243,7 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixDotProduct,
-     vector_vector_ffv_no_exception_length_1stDeriv) {
+TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::fvar;
@@ -2254,12 +2255,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2285,7 +2286,7 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct,
-      vector_vector_ffv_no_exception_length_2ndDeriv_1) {
+     vector_vector_ffv_no_exception_length_2ndDeriv_1) {
   using stan::math::vector_d;
   using stan::math::vector_ffv;
   using stan::math::fvar;
@@ -2297,12 +2298,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2333,12 +2334,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2368,12 +2369,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_3rdDeriv) {
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2411,12 +2412,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_1stDeriv) {
   vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2455,12 +2456,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_1) {
   vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2492,12 +2493,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_2) {
   vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2529,12 +2530,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_3rdDeriv) {
   vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2573,12 +2574,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2618,12 +2619,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2656,12 +2657,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2694,12 +2695,12 @@ TEST(AgradMixMatrixDotProduct,
   vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2737,12 +2738,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_1stDeriv) {
   row_vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2781,12 +2782,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_1) {
   row_vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2818,12 +2819,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_2) {
   row_vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2855,12 +2856,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_3rdDeriv) {
   row_vector_ffv v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -2899,12 +2900,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2944,12 +2945,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -2982,12 +2983,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3020,12 +3021,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -3059,12 +3060,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_1stDeriv) {
   row_vector_ffv v1(3), v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3099,12 +3100,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_1) {
   row_vector_ffv v1(3), v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3132,12 +3133,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_2) {
   row_vector_ffv v1(3), v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3165,12 +3166,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_3rdDeriv) {
   row_vector_ffv v1(3), v2(3);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -3205,12 +3206,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v1(3), v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3246,12 +3247,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v1(3), v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3280,12 +3281,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v1(3), v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5;
   v1 << a, b, c;
@@ -3314,12 +3315,12 @@ TEST(AgradMixMatrixDotProduct,
   row_vector_ffv v1(3), v2(4);
   stan::math::size_type length = 2;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -3348,13 +3349,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
   stan::math::size_type length = 2;
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -3385,13 +3386,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
   stan::math::size_type length = 2;
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -3422,13 +3423,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
   stan::math::size_type length = 2;
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
 
   fv1.push_back(a);
   fv1.push_back(b);
@@ -3459,13 +3460,13 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
 
-  vector<fvar<fvar<var> >  > fv1;
-  vector<fvar<fvar<var> >  > fv2;
+  vector<fvar<fvar<var> > > fv1;
+  vector<fvar<fvar<var> > > fv2;
   vector<double> dv;
   stan::math::size_type length = 2;
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(5.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(5.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;
@@ -3505,12 +3506,12 @@ TEST(AgradMixMatrixDotProduct, matrix_matrix_ffv_exception_length) {
   matrix_d d1(3, 3), d2(3, 2), d3(2, 3);
   matrix_ffv v1(3, 3), v2(3, 3), v3(3, 2), v4(3, 2), v5(2, 3), v6(2, 3);
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(3.0, 1.0);
-  fvar<fvar<var> >  c(-5.0, 1.0);
-  fvar<fvar<var> >  d(4.0, 1.0);
-  fvar<fvar<var> >  e(-2.0, 1.0);
-  fvar<fvar<var> >  f(-1.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(3.0, 1.0);
+  fvar<fvar<var> > c(-5.0, 1.0);
+  fvar<fvar<var> > d(4.0, 1.0);
+  fvar<fvar<var> > e(-2.0, 1.0);
+  fvar<fvar<var> > f(-1.0, 1.0);
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   d2 << 1, 3, -5, 1, 3, -5;

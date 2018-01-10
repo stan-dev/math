@@ -28,8 +28,10 @@ def runTests(String testPath) {
 
 def utils = new org.stan.Utils()
 
+def isBranch(String b) { env.BRANCH_NAME == b }
+
 def updateUpstream(String upstreamRepo) {
-    if (env.BRANCH_NAME == 'develop') {
+    if (isBranch('develop')) {
         node('master') {
             retry(3) {
                 checkout([$class: 'GitSCM',
@@ -55,6 +57,12 @@ def updateUpstream(String upstreamRepo) {
     }
 }
 
+def alsoNotify() {
+    if (isBranch('master') || isBranch('develop')) {
+        "stan-buildbot@googlegroups.com"
+    } else ""
+}
+
 pipeline {
     agent none
     parameters {
@@ -62,11 +70,17 @@ pipeline {
           description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, description:
+        'Run additional distribution tests on RowVectors (takes 5x as long)',
+        name: 'withRowVector')
     }
     options { skipDefaultCheckout() }
     stages {
         stage('Kill previous builds') {
-            when { not { branch 'develop' } }
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
             steps { 
                 script {
                     utils.killOldBuilds()
@@ -83,6 +97,22 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
+                        ClangFormat: {
+                            sh """
+                            clang-format --version
+                            set +x
+                            output=""
+                            for f in `find stan test -name '*.hpp' -o -name '*.cpp'`; 
+                            do 
+                              if [[ \$(clang-format -output-replacements-xml \$f | grep -c "<replacement ") != 0 ]];
+                              then
+                                output+="\$f is not formatted correctly according to clang-format\\n"
+                              fi
+                            done
+                            if [[ \$output != "" ]]; then
+                              echo \$output
+                              exit 1
+                            fi""" },
                         dependencies: { sh 'make test-math-dependencies' } ,
                         documentation: { sh 'make doxygen' },
                         failFast: true
@@ -135,16 +165,19 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    // XXX Add conditional back in so we don't run this if we haven't
-                    // changed code or makefiles
                     steps { 
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
-                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log; false
-                           """
+                            """
+                        script {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                            }
+                        }
+                        sh "./runTests.py -j${env.PARALLEL} test/prob"
 
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -163,7 +196,7 @@ pipeline {
             updateUpstream('stan')
             mailBuildResults("SUCCESSFUL")
         }
-        unstable { mailBuildResults("UNSTABLE", "stan-buildbot@googlegroups.com") }
-        failure { mailBuildResults("FAILURE", "stan-buildbot@googlegroups.com") }
+        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
+        failure { mailBuildResults("FAILURE", alsoNotify()) }
     }
 }

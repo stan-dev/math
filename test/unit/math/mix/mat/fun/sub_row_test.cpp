@@ -53,8 +53,8 @@ TEST(AgradMixMatrixSubRow, SubRow6_matrix_fv) {
   stan::math::row_vector_fv v = sub_row(m, 1, 2, 2);
   EXPECT_EQ(2, v.size());
   for (int i = 0; i < 2; ++i) {
-    EXPECT_FLOAT_EQ(m(0, 1+i).val_.val(), v(i).val_.val());
-    EXPECT_FLOAT_EQ(m(0, 1+i).d_.val(), v(i).d_.val());
+    EXPECT_FLOAT_EQ(m(0, 1 + i).val_.val(), v(i).val_.val());
+    EXPECT_FLOAT_EQ(m(0, 1 + i).d_.val(), v(i).d_.val());
   }
 }
 TEST(AgradMixMatrixSubRow, SubRow1_matrix_ffv) {
@@ -108,7 +108,7 @@ TEST(AgradMixMatrixSubRow, SubRow6_matrix_ffv) {
   stan::math::row_vector_ffv v = sub_row(m, 1, 2, 2);
   EXPECT_EQ(2, v.size());
   for (int i = 0; i < 2; ++i) {
-    EXPECT_FLOAT_EQ(m(0, 1+i).val_.val_.val(), v(i).val_.val_.val());
-    EXPECT_FLOAT_EQ(m(0, 1+i).d_.val_.val(), v(i).d_.val_.val());
+    EXPECT_FLOAT_EQ(m(0, 1 + i).val_.val_.val(), v(i).val_.val_.val());
+    EXPECT_FLOAT_EQ(m(0, 1 + i).d_.val_.val(), v(i).d_.val_.val());
   }
 }

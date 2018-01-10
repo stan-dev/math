@@ -18,8 +18,8 @@ TEST(MetaTraits, contains_vector) {
   EXPECT_FALSE(contains_vector<temp_matrix_d>::value);
   EXPECT_FALSE(contains_vector<const temp_matrix_d>::value);
 
-  bool temp = contains_vector<temp_vec_d, temp_vec_d,
-                              double, temp_matrix_d>::value;
+  bool temp
+      = contains_vector<temp_vec_d, temp_vec_d, double, temp_matrix_d>::value;
   EXPECT_TRUE(temp);
 
   temp = contains_vector<double, temp_matrix_d, temp_matrix_d>::value;

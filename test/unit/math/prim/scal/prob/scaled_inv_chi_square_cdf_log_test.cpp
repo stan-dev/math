@@ -9,8 +9,8 @@ TEST(ProbScaledInvChiSquare, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::scaled_inv_chi_square_lcdf(y, nu, sigma)),
                   (stan::math::scaled_inv_chi_square_cdf_log(y, nu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::scaled_inv_chi_square_lcdf<double, double, double>
-                                                              (y, nu, sigma)),
-    (stan::math::scaled_inv_chi_square_cdf_log<double, double, double>
-                                                              (y, nu, sigma)));
+      (stan::math::scaled_inv_chi_square_lcdf<double, double, double>(y, nu,
+                                                                      sigma)),
+      (stan::math::scaled_inv_chi_square_cdf_log<double, double, double>(
+          y, nu, sigma)));
 }
