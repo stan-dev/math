@@ -7,6 +7,7 @@
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
+#include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -110,9 +111,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
   matrix_partials_t L_dbl = value_of(L);
-  // matrix_partials_t trans_L_dbl = L_dbl.transpose();
-  // once mdivide_right_tri has analytic gradients it would be good to
-  // avoid transposition here which causes a deep copy
+  // do a single inversion
   matrix_partials_t inv_trans_L_dbl
       = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
 
@@ -129,17 +128,10 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
       vector_partials_t half
           = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
+      // alternative which avoids inversions
       // vector_partials_t scaled_diff
       //    = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
       vector_partials_t scaled_diff = inv_trans_L_dbl * half;
-
-      // vector_d half
-      //    = L_dbl.template
-      //    triangularView<Eigen::Lower>().solve(y_minus_mu_dbl);
-      // vector_d scaled_diff = inv_Sigma_dbl * y_minus_mu_dbl;
-      // vector_d scaled_diff
-      //    = L_dbl.template
-      //    triangularView<Eigen::Lower>().transpose().solve(half);
 
       logp -= 0.5 * dot_self(half);
 
@@ -160,11 +152,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   if (include_summand<propto, T_covar_elem>::value) {
     logp -= L_dbl.diagonal().array().log().sum() * size_vec;
     if (!is_constant_struct<T_covar>::value) {
-      // grad_L -= size_vec
-      //           * L_dbl.template
-      //           triangularView<Eigen::Lower>().transpose().solve(
-      //                  matrix_d::Identity(size_y, size_y));
-      // grad_L -= size_vec * mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
+      // ops_partials.edge3_.partials_ -= size_vec *
+      // mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
       ops_partials.edge3_.partials_ -= size_vec * inv_trans_L_dbl;
     }
   }

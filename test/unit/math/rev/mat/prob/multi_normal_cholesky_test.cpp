@@ -3,10 +3,10 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
 // For speed comparisons
-#include <chrono>
-#include <test/unit/math/rev/mat/prob/multi_normal_cholesky_old.hpp>
-#include <stan/math/prim/mat/prob/lkj_corr_cholesky_rng.hpp>
-#include <boost/random/mersenne_twister.hpp>
+//#include <chrono>
+//#include <test/unit/math/rev/mat/prob/multi_normal_cholesky_old.hpp>
+//#include <stan/math/prim/mat/prob/lkj_corr_cholesky_rng.hpp>
+//#include <boost/random/mersenne_twister.hpp>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -67,7 +67,7 @@ TEST(AgradRev, check_varis_on_stack) {
 
 //  Here, we compare the speed of the new regression to that of one built from
 //  existing primitives.
-
+/*
 TEST(ProbDistributionsMultiNormalCholesky, mvn_speed) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -78,6 +78,7 @@ TEST(ProbDistributionsMultiNormalCholesky, mvn_speed) {
   std::chrono::duration_cast<std::chrono::microseconds>(a).count()
 #define timeNow() std::chrono::high_resolution_clock::now()
 
+  // approx 2.3x faster for the new code
   const int R = 1500;
   const int C = 500;
 
@@ -143,3 +144,4 @@ TEST(ProbDistributionsMultiNormalCholesky, mvn_speed) {
             << "New Primitives:" << std::endl
             << T2 << std::endl;
 }
+*/
