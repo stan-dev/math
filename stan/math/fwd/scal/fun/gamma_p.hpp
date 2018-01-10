@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
