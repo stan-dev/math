@@ -1,12 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -26,16 +25,15 @@ mdivide_right(const Eigen::Matrix<T1, R1, C1> &b,
               const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right", "A", A);
   check_multiplicable("mdivide_right", "b", b, "A", A);
-  // FIXME: This is nice and general but likely slow.
-  return transpose(mdivide_left(transpose(A), transpose(b)));
-  //      return promote_common<Eigen::Matrix<T1, R2, C2>,
-  //                            Eigen::Matrix<T2, R2, C2> >(A)
-  //        .transpose()
-  //        .lu()
-  //        .solve(promote_common<Eigen::Matrix<T1, R1, C1>,
-  //                              Eigen::Matrix<T2, R1, C1> >(b)
-  //               .transpose())
-  //        .transpose();
+  return promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
+             A)
+      .transpose()
+      .lu()
+      .solve(
+          promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
+              b)
+              .transpose())
+      .transpose();
 }
 
 }  // namespace math
