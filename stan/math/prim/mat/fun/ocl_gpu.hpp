@@ -15,7 +15,7 @@
 #define DEVICE_FILTER CL_DEVICE_TYPE_CPU
 #else
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
-#endif 
+#endif
 
 /*
 *    @file stan/math/prim/mat/fun/ocl.hpp
