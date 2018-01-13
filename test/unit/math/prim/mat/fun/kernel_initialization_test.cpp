@@ -3,8 +3,8 @@
 #include <CL/cl.hpp>
 
 TEST(MathMatrix, kernel_initialize) {
-      EXPECT_NO_THROW(cl::Kernel kernel_transpose =
-      stan::math::get_kernel("transpose"));
+      cl::Kernel kernel_transpose =
+      stan::math::get_kernel("transpose");
       EXPECT_NO_THROW(cl::Kernel kernel_copy =
       stan::math::get_kernel("copy"));
       EXPECT_NO_THROW(cl::Kernel kernel_zeros =
