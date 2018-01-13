@@ -3,7 +3,7 @@
 #include <CL/cl.hpp>
 
 TEST(MathMatrix, kernel_initialize) {
-      stan::math::matrix_gpu a(10, 10);		
+      stan::math::matrix_gpu a(10, 10);
       a = stan::math::transpose(a);
       EXPECT_NO_THROW(cl::Kernel kernel_transpose =
         stan::math::get_kernel("transpose"));
