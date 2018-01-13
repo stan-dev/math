@@ -303,6 +303,10 @@
 #include <stan/math/prim/mat/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
 
+#ifdef STAN_GPU
+  #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#endif
+
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>

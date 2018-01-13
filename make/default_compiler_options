@@ -12,8 +12,18 @@ AR = ar
 # CPPFLAGS are used for both C and C++ compilation
 CPPFLAGS = -DNO_FPRINTF_OUTPUT -pipe
 # CXXFLAGS are just used for C++
-CXXFLAGS = -Wall -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -Wno-unused-function -Wno-uninitialized
+CXXFLAGS = -Wall -I . -isystem $(EIGEN) -isystem $(BOOST) -isystem $(CVODES)/include -isystem $(OPENCL) -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -Wno-unused-function -Wno-uninitialized -DSTAN_GPU -DOPENCL_DEVICE_TYPE_CPU
 GTEST_CXXFLAGS = -DGTEST_USE_OWN_TR1_TUPLE
 LDLIBS =
 EXE =
 WINE =
+
+uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
+POST_LDLIBS =
+ifneq (,$(findstring STAN_GPU, $(CXXFLAGS)))
+  ifeq ($(uname_S), Darwin)
+    POST_LDLIBS = -framework OpenCL
+  else
+    POST_LDLIBS = -lOpenCL
+  endif
+endif
