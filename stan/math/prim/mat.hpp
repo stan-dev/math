@@ -245,6 +245,7 @@
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
 #ifdef STAN_GPU
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
 #endif
 
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
