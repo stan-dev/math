@@ -44,6 +44,9 @@
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/err/check_gpu.hpp>
+#endif
 
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/acos.hpp>
