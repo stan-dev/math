@@ -11,7 +11,7 @@ namespace stan {
      *
      * Delegates to <code>fabs()</code> (see for doc).
      *
-       \f[		
+       \f[      
        \mbox{abs}(x) =
        \begin{cases}
          |x| & \mbox{if } -\infty\leq x\leq \infty \\[6pt]

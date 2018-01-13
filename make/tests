@@ -13,7 +13,7 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^
+	$(LINK.cpp) -o $@ $^ $(POST_LDLIBS)
 
 
 
@@ -36,10 +36,10 @@ test/%.d : test/%.cpp
 ##
 
 test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
-	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION)
+	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION) $(POST_LDLIBS)
 
 test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
-	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
+	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^ $(POST_LDLIBS)
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 

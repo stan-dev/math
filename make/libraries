@@ -6,6 +6,7 @@ BOOST ?= $(MATH)lib/boost_1.64.0
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 CVODES ?= $(MATH)lib/cvodes_2.9.0
+OPENCL ?= $(MATH)lib/opencl22
 
 ##
 # Build rules for cvodes
