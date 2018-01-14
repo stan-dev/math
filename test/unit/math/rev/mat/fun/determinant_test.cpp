@@ -74,6 +74,6 @@ TEST(AgradRevMatrix, determinant3by3) {
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v X(2, 2);
-  X <<  2, 3, 5, 7;
+  X << 2, 3, 5, 7;
   test::check_varis_on_stack(stan::math::determinant(X));
 }

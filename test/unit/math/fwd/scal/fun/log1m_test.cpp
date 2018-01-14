@@ -24,10 +24,8 @@ TEST(AgradFwdLog1m, FvarExcepts) {
 TEST(MathFunctions, log1m_inf_return) {
   using stan::math::fvar;
   using stan::math::log1m;
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            log1m(fvar<double>(1.0)));
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            log1m(fvar<double>(1)));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), log1m(fvar<double>(1.0)));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), log1m(fvar<double>(1)));
 }
 
 TEST(AgradFwdLog1m, FvarFvarDouble) {
@@ -58,8 +56,7 @@ TEST(AgradFwdLog1m, FvarFvarDouble) {
 
 struct log1m_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1m(arg1);
   }
 };

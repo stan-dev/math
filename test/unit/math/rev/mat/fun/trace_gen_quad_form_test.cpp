@@ -18,23 +18,12 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat) {
   AVEC vars;
   VEC grad;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
@@ -88,29 +77,18 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvd) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqda(bd*cd.transpose()*bd.transpose());
-  matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
-  matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
+  matrix_d dqda(bd * cd.transpose() * bd.transpose());
+  matrix_d dqdb(ad * bd * cd.transpose() + ad.transpose() * bd * cd);
+  matrix_d dqdc(bd.transpose() * ad.transpose() * bd);
 
   // var-var
   res = trace_gen_quad_form(cd, av, bd);
@@ -143,27 +121,16 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_ddv) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
+  matrix_d dqdb(ad * bd * cd.transpose() + ad.transpose() * bd * cd);
 
   // var-var
   res = trace_gen_quad_form(cd, ad, bv);
@@ -196,27 +163,16 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdd) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
+  matrix_d dqdc(bd.transpose() * ad.transpose() * bd);
 
   res = trace_gen_quad_form(cv, ad, bd);
 
@@ -248,28 +204,17 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvd) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqda(bd*cd.transpose()*bd.transpose());
-  matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
+  matrix_d dqda(bd * cd.transpose() * bd.transpose());
+  matrix_d dqdc(bd.transpose() * ad.transpose() * bd);
 
   res = trace_gen_quad_form(cv, av, bd);
 
@@ -307,28 +252,17 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vdv) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
-  matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
+  matrix_d dqdb(ad * bd * cd.transpose() + ad.transpose() * bd * cd);
+  matrix_d dqdc(bd.transpose() * ad.transpose() * bd);
 
   res = trace_gen_quad_form(cv, ad, bv);
 
@@ -366,28 +300,17 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_dvv) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqda(bd*cd.transpose()*bd.transpose());
-  matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
+  matrix_d dqda(bd * cd.transpose() * bd.transpose());
+  matrix_d dqdb(ad * bd * cd.transpose() + ad.transpose() * bd * cd);
 
   res = trace_gen_quad_form(cd, av, bv);
 
@@ -425,29 +348,18 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
   VEC grad;
   size_t i, j, pos;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   cd.setIdentity(2, 2);
   cv.setIdentity(2, 2);
 
-  matrix_d dqda(bd*cd.transpose()*bd.transpose());
-  matrix_d dqdb(ad*bd*cd.transpose() + ad.transpose()*bd*cd);
-  matrix_d dqdc(bd.transpose()*ad.transpose()*bd);
+  matrix_d dqda(bd * cd.transpose() * bd.transpose());
+  matrix_d dqdb(ad * bd * cd.transpose() + ad.transpose() * bd * cd);
+  matrix_d dqdc(bd.transpose() * ad.transpose() * bd);
 
   // var-var
   res = trace_gen_quad_form(cv, av, bv);
@@ -475,33 +387,26 @@ TEST(AgradRevMatrix, trace_gen_quad_form_mat_grad_vvv) {
       EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
-
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_d a(4, 4);
   stan::math::matrix_d b(4, 2);
   stan::math::matrix_d c(2, 2);
 
-  b << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  a << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
+  b << 100, 10, 0, 1, -3, -3, 5, 2;
+  a << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
   c.setIdentity(2, 2);
 
   using stan::math::to_var;
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c),
-                                                             to_var(a),
-                                                             to_var(b)));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c),
-                                                             to_var(a), b));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a,
-                                                             to_var(b)));
+  test::check_varis_on_stack(
+      stan::math::trace_gen_quad_form(to_var(c), to_var(a), to_var(b)));
+  test::check_varis_on_stack(
+      stan::math::trace_gen_quad_form(to_var(c), to_var(a), b));
+  test::check_varis_on_stack(
+      stan::math::trace_gen_quad_form(to_var(c), a, to_var(b)));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(to_var(c), a, b));
-  test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a),
-                                                             to_var(b)));
+  test::check_varis_on_stack(
+      stan::math::trace_gen_quad_form(c, to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, to_var(a), b));
   test::check_varis_on_stack(stan::math::trace_gen_quad_form(c, a, to_var(b)));
 }

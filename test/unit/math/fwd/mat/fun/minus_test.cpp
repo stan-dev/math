@@ -7,7 +7,7 @@ TEST(AgradFwdMatrixMinus, fd_scalar) {
   using stan::math::minus;
   double x = 10;
   fvar<double> v = 11;
-   v.d_ = 1.0;
+  v.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(-10, minus(x));
   EXPECT_FLOAT_EQ(-11, minus(v).val_);
@@ -23,9 +23,9 @@ TEST(AgradFwdMatrixMinus, fd_vector) {
 
   d << -100, 0, 1;
   v << -100, 0, 1;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
 
   vector_d output_d;
   output_d = minus(d);
@@ -52,9 +52,9 @@ TEST(AgradFwdMatrixMinus, fd_rowvector) {
 
   d << -100, 0, 1;
   v << -100, 0, 1;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
 
   row_vector_d output_d;
   output_d = minus(d);
@@ -81,12 +81,12 @@ TEST(AgradFwdMatrixMinus, fd_matrix) {
 
   d << -100, 0, 1, 20, -40, 2;
   v << -100, 0, 1, 20, -40, 2;
-   v(0, 0).d_ = 1.0;
-   v(0, 1).d_ = 1.0;
-   v(0, 2).d_ = 1.0;
-   v(1, 0).d_ = 1.0;
-   v(1, 1).d_ = 1.0;
-   v(1, 2).d_ = 1.0;
+  v(0, 0).d_ = 1.0;
+  v(0, 1).d_ = 1.0;
+  v(0, 2).d_ = 1.0;
+  v(1, 0).d_ = 1.0;
+  v(1, 1).d_ = 1.0;
+  v(1, 2).d_ = 1.0;
 
   matrix_d output_d = minus(d);
   EXPECT_FLOAT_EQ(100, output_d(0, 0));
@@ -114,7 +114,7 @@ TEST(AgradFwdMatrixMinus, ffd_scalar) {
   using stan::math::minus;
   double x = 10;
   fvar<fvar<double> > v = 11;
-   v.d_ = 1.0;
+  v.d_ = 1.0;
 
   EXPECT_FLOAT_EQ(-10, minus(x));
   EXPECT_FLOAT_EQ(-11, minus(v).val_.val());

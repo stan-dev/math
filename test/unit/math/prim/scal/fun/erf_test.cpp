@@ -18,6 +18,5 @@ TEST(MathFunctions, erfOverflow) {
 
 TEST(MathFunctions, erfNan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::erf(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::erf(nan));
 }

@@ -33,6 +33,5 @@ TEST(MathFunctions, exp2_int) {
 TEST(MathFunctions, exp2_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::exp2(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::exp2(nan));
 }

@@ -11,19 +11,19 @@ TEST(AgradRevErrorHandlingScalar, CheckFinite) {
   var x = 0;
 
   EXPECT_NO_THROW(check_finite(function, name, x))
-    << "check_finite should be TRUE with x: " << x;
+      << "check_finite should be TRUE with x: " << x;
 
   x = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(check_finite(function, name, x), std::domain_error)
-    << "check_finite should throw with x: " << x;
+      << "check_finite should throw with x: " << x;
 
   x = -std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, name, x), std::domain_error)
-    << "check_finite should throw with x: " << x;
+      << "check_finite should throw with x: " << x;
 
   x = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, name, x), std::domain_error)
-    << "check_finite should throw with x: " << x;
+      << "check_finite should throw with x: " << x;
   stan::math::recover_memory();
 }
 

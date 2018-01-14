@@ -15,9 +15,9 @@ stan::math::matrix_v generate_large_L_tri_mat() {
 
   vals[0] = 0.1;
   for (int i = 1; i < 10000; ++i)
-    vals[i] = vals[i- 1] + 0.1123456;
+    vals[i] = vals[i - 1] + 0.1123456;
 
-  x = Eigen::Map< Eigen::Matrix<double, 100, 100> >(vals);
+  x = Eigen::Map<Eigen::Matrix<double, 100, 100> >(vals);
   x *= 1e10;
 
   for (int i = 0; i < x.cols(); ++i)
@@ -31,7 +31,7 @@ void test_mult_LLT(const stan::math::matrix_v& L) {
   using stan::math::matrix_v;
   matrix_v Lp = L;
   for (int m = 0; m < L.rows(); ++m)
-    for (int n = (m+1); n < L.cols(); ++n)
+    for (int n = (m + 1); n < L.cols(); ++n)
       Lp(m, n) = 0;
   matrix_v LLT_eigen = Lp * Lp.transpose();
   matrix_v LLT_stan = multiply_lower_tri_self_transpose(L);
@@ -57,7 +57,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
 
   EXPECT_FLOAT_EQ(9.0, LLt(0, 0).val());
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   EXPECT_FLOAT_EQ(6.0, J[0][0]);
@@ -68,9 +68,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
   using stan::math::matrix_v;
 
   matrix_v L(2, 2);
-  L <<
-    1, 0,
-    2, 3;
+  L << 1, 0, 2, 3;
   AVEC x(3);
   x[0] = L(0, 0);
   x[1] = L(1, 0);
@@ -88,7 +86,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
   EXPECT_FLOAT_EQ(2.0, LLt(1, 0).val());
   EXPECT_FLOAT_EQ(13.0, LLt(1, 1).val());
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   // L = 1 0
@@ -120,10 +118,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
-  L <<
-    1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   AVEC x(6);
   x[0] = L(0, 0);
   x[1] = L(1, 0);
@@ -144,7 +139,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
   y[7] = LLt(2, 1);
   y[8] = LLt(2, 2);
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   // L = 1 0 0
@@ -176,7 +171,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
   EXPECT_FLOAT_EQ(0.0, J[1][5]);
 
   EXPECT_FLOAT_EQ(4.0, J[2][0]);
-  EXPECT_FLOAT_EQ(0.0, J[2][1]);  EXPECT_FLOAT_EQ(0.0, J[2][2]);
+  EXPECT_FLOAT_EQ(0.0, J[2][1]);
+  EXPECT_FLOAT_EQ(0.0, J[2][2]);
   EXPECT_FLOAT_EQ(1.0, J[2][3]);
   EXPECT_FLOAT_EQ(0.0, J[2][4]);
   EXPECT_FLOAT_EQ(0.0, J[2][5]);
@@ -231,31 +227,23 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
   matrix_v L;
 
   L = matrix_v(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   test_mult_LLT(L);
 
   L = matrix_v(3, 3);
-  L << 1, 0, 100000,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 100000, 2, 3, 0, 4, 5, 6;
   test_mult_LLT(L);
 
   L = matrix_v(2, 3);
-  L << 1, 0, 0,
-    2, 3, 0;
+  L << 1, 0, 0, 2, 3, 0;
   test_mult_LLT(L);
 
   L = matrix_v(3, 2);
-  L << 1, 0,
-    2, 3,
-    4, 5;
+  L << 1, 0, 2, 3, 4, 5;
   test_mult_LLT(L);
 
   matrix_v I(2, 2);
-  I << 3, 0,
-    4, -3;
+  I << 3, 0, 4, -3;
   test_mult_LLT(I);
 
   L = generate_large_L_tri_mat();
@@ -272,9 +260,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::matrix_v;
 
   stan::math::matrix_v L(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   test::check_varis_on_stack(stan::math::multiply_lower_tri_self_transpose(L));
 }

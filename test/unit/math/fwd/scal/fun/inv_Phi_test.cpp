@@ -71,8 +71,7 @@ TEST(AgradFwdinv_Phi, FvarFvarDouble) {
 
 struct inv_Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_Phi(arg1);
   }
 };

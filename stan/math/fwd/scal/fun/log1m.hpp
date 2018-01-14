@@ -6,13 +6,12 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline fvar<T>
-    log1m(const fvar<T>& x) {
-      return fvar<T>(log1m(x.val_), -x.d_ / (1 - x.val_));
-    }
-  }
+template <typename T>
+inline fvar<T> log1m(const fvar<T>& x) {
+  return fvar<T>(log1m(x.val_), -x.d_ / (1 - x.val_));
 }
+}  // namespace math
+}  // namespace stan
 #endif

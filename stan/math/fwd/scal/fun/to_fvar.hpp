@@ -4,22 +4,18 @@
 #include <stan/math/fwd/core.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template<typename T>
-    inline
-    fvar<T>
-    to_fvar(const T& x) {
-      return fvar<T>(x);
-    }
-
-    template<typename T>
-    inline
-    fvar<T>
-    to_fvar(const fvar<T>& x) {
-      return x;
-    }
-
-  }
+template <typename T>
+inline fvar<T> to_fvar(const T& x) {
+  return fvar<T>(x);
 }
+
+template <typename T>
+inline fvar<T> to_fvar(const fvar<T>& x) {
+  return x;
+}
+
+}  // namespace math
+}  // namespace stan
 #endif

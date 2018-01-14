@@ -9,6 +9,6 @@ TEST(ProbGumbel, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::gumbel_lcdf(y, mu, sigma)),
                   (stan::math::gumbel_cdf_log(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::gumbel_lcdf<double, double, double>(y, mu, sigma)),
-    (stan::math::gumbel_cdf_log<double, double, double>(y, mu, sigma)));
+      (stan::math::gumbel_lcdf<double, double, double>(y, mu, sigma)),
+      (stan::math::gumbel_cdf_log<double, double, double>(y, mu, sigma)));
 }

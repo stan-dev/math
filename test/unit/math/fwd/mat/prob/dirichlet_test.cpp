@@ -60,6 +60,5 @@ TEST(ProbDistributions, fvar_fvar_double) {
 
   EXPECT_FLOAT_EQ(-43.40045,
                   stan::math::dirichlet_log(theta2, alpha2).val_.val_);
-  EXPECT_FLOAT_EQ(2017.2858,
-                  stan::math::dirichlet_log(theta2, alpha2).d_.val_);
+  EXPECT_FLOAT_EQ(2017.2858, stan::math::dirichlet_log(theta2, alpha2).d_.val_);
 }

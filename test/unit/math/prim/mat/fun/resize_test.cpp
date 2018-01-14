@@ -131,4 +131,3 @@ TEST(MathMatrix, resize_svec_svec_matrix_double) {
   EXPECT_EQ(6, mm[1][2].rows());
   EXPECT_EQ(3, mm[3][4].cols());
 }
-

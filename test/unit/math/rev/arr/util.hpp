@@ -8,11 +8,11 @@
 
 namespace test {
 
-  void check_varis_on_stack(const std::vector<stan::math::var>& x) {
-    for (size_t n = 0; n < x.size(); ++n)
-      EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x[n].vi_))
+void check_varis_on_stack(const std::vector<stan::math::var>& x) {
+  for (size_t n = 0; n < x.size(); ++n)
+    EXPECT_TRUE(stan::math::ChainableStack::memalloc_.in_stack(x[n].vi_))
         << n << " is not on the stack";
-  }
-
 }
+
+}  // namespace test
 #endif

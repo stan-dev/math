@@ -112,13 +112,12 @@ TEST(AgradFwdLog1p, FvarFvarVar_3rdDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.d_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ(2 / (1.5*1.5*1.5), g[0]);
+  EXPECT_FLOAT_EQ(2 / (1.5 * 1.5 * 1.5), g[0]);
 }
 
 struct log1p_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

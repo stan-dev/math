@@ -14,8 +14,7 @@ TEST(AgradRev, bessel_second_kind_int_var) {
   VEC g;
   f.grad(x, g);
   EXPECT_FLOAT_EQ(0, g[0]);
-  EXPECT_FLOAT_EQ(-0.39792571055710000525397997245079185227118918162290,
-                  g[1]);
+  EXPECT_FLOAT_EQ(-0.39792571055710000525397997245079185227118918162290, g[1]);
 
   a = 1;
   b = 3.0;
@@ -36,8 +35,7 @@ TEST(AgradRev, bessel_second_kind_int_var) {
 
 struct bessel_second_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_second_kind(2, arg1);
   }
 };

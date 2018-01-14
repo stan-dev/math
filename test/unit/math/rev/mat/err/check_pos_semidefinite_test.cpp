@@ -17,9 +17,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
                std::domain_error);
 
   y.resize(3, 3);
-  y << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));
 
   for (int i = 0; i < y.rows(); i++)
@@ -51,9 +49,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
   //              std::domain_error);
 
   y.resize(3, 3);
-  y << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
 
   size_t stack_before_call = stan::math::ChainableStack::var_stack_.size();
   EXPECT_EQ(10U, stack_before_call);
@@ -63,4 +59,3 @@ TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
 
   EXPECT_EQ(10U, stack_after_call);
 }
-

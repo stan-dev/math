@@ -10,19 +10,19 @@ TEST(AgradFwdInvCLogLog, Fvar) {
 
   fvar<double> a = inv_cloglog(x);
   EXPECT_FLOAT_EQ(inv_cloglog(0.5), a.val_);
-  EXPECT_FLOAT_EQ(exp(0.5 -exp(0.5)), a.d_);
+  EXPECT_FLOAT_EQ(exp(0.5 - exp(0.5)), a.d_);
 
   fvar<double> y(-1.2, 1.0);
 
   fvar<double> b = inv_cloglog(y);
   EXPECT_FLOAT_EQ(inv_cloglog(-1.2), b.val_);
-  EXPECT_FLOAT_EQ(exp(-1.2 -exp(-1.2)), b.d_);
+  EXPECT_FLOAT_EQ(exp(-1.2 - exp(-1.2)), b.d_);
 
   fvar<double> z(1.5, 2.0);
 
   fvar<double> c = inv_cloglog(z);
   EXPECT_FLOAT_EQ(inv_cloglog(1.5), c.val_);
-  EXPECT_FLOAT_EQ(2.0 * exp(1.5 -exp(1.5)), c.d_);
+  EXPECT_FLOAT_EQ(2.0 * exp(1.5 - exp(1.5)), c.d_);
 }
 
 TEST(AgradFwdInvCLogLog, FvarFvarDouble) {
@@ -54,8 +54,7 @@ TEST(AgradFwdInvCLogLog, FvarFvarDouble) {
 
 struct inv_cloglog_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_cloglog(arg1);
   }
 };

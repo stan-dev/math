@@ -19,7 +19,6 @@ TEST(ProbDistributionsCategorical, log_matches_lpmf) {
   EXPECT_FLOAT_EQ((stan::math::categorical_lpmf<false>(1, theta)),
                   (stan::math::categorical_log<false>(1, theta)));
 
-
   std::vector<int> ns(5);
   ns[0] = 1;
   ns[1] = 2;

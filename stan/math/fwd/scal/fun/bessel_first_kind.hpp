@@ -5,17 +5,15 @@
 #include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline
-    fvar<T>
-    bessel_first_kind(int v, const fvar<T>& z) {
-      T bessel_first_kind_z(bessel_first_kind(v, z.val_));
-      return fvar<T>(bessel_first_kind_z,
-                     v * z.d_ * bessel_first_kind_z / z.val_
+template <typename T>
+inline fvar<T> bessel_first_kind(int v, const fvar<T>& z) {
+  T bessel_first_kind_z(bessel_first_kind(v, z.val_));
+  return fvar<T>(bessel_first_kind_z,
+                 v * z.d_ * bessel_first_kind_z / z.val_
                      - z.d_ * bessel_first_kind(v + 1, z.val_));
-    }
-  }
 }
+}  // namespace math
+}  // namespace stan
 #endif

@@ -78,20 +78,14 @@ TEST(ProbDistributionsLkjCorrCholesky, gradients) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
   double fx_ad;
 
-  finite_diff_gradient(test_func_3,
-                       x3,
-                       fx, grad);
-  gradient(test_func_3,
-           x3, fx_ad, grad_ad);
+  finite_diff_gradient(test_func_3, x3, fx, grad);
+  gradient(test_func_3, x3, fx_ad, grad_ad);
 
   test_grad_eq(grad, grad_ad);
   EXPECT_FLOAT_EQ(fx, fx_ad);
 
-  finite_diff_gradient(test_func_2,
-                       x2,
-                       fx, grad);
-  gradient(test_func_2,
-           x2, fx_ad, grad_ad);
+  finite_diff_gradient(test_func_2, x2, fx, grad);
+  gradient(test_func_2, x2, fx_ad, grad_ad);
   test_grad_eq(grad, grad_ad);
   EXPECT_FLOAT_EQ(fx, fx_ad);
 
@@ -100,12 +94,8 @@ TEST(ProbDistributionsLkjCorrCholesky, gradients) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad_1;
   double fx_ad_1;
 
-  finite_diff_gradient(test_func_1,
-                       x1,
-                       fx_1, grad_1);
-  gradient(test_func_1,
-           x1, fx_ad_1, grad_ad_1);
+  finite_diff_gradient(test_func_1, x1, fx_1, grad_1);
+  gradient(test_func_1, x1, fx_ad_1, grad_ad_1);
   test_grad_eq(grad_1, grad_ad_1);
   EXPECT_FLOAT_EQ(fx, fx_ad);
 }
-

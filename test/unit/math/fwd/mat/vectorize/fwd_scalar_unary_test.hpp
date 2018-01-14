@@ -9,8 +9,7 @@
 #include <test/unit/math/fwd/mat/vectorize/expect_fwd_errors.hpp>
 
 template <typename T>
-class fwd_scalar_unary_test : public ::testing::Test {
-};
+class fwd_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(fwd_scalar_unary_test);
 
@@ -29,8 +28,6 @@ TYPED_TEST_P(fwd_scalar_unary_test, expect_errors) {
   expect_fwd_errors<TypeParam>();
 }
 
-REGISTER_TYPED_TEST_CASE_P(fwd_scalar_unary_test,
-                           expect_scalar_types,
-                           expect_values,
-                           expect_errors);
+REGISTER_TYPED_TEST_CASE_P(fwd_scalar_unary_test, expect_scalar_types,
+                           expect_values, expect_errors);
 #endif

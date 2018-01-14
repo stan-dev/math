@@ -7,26 +7,21 @@
 #include <vector>
 
 class GumbelTestRig : public VectorRNGTestRig {
-public:
-  GumbelTestRig() :
-    VectorRNGTestRig(10000, 10,
-                     {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
-                     {-3, -2, -1, 0, 2, 6},
-                     {},
-                     {},
-                     {0.1, 1.0, 2.5, 4.0},
-                     {1, 2, 3, 4},
-                     {-1.0, -1.5, -2.5, -0.7, 0.0},
-                     {-1, -2, -3, -4, 0}) {}
+ public:
+  GumbelTestRig()
+      : VectorRNGTestRig(10000, 10, {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
+                         {-3, -2, -1, 0, 2, 6}, {}, {}, {0.1, 1.0, 2.5, 4.0},
+                         {1, 2, 3, 4}, {-1.0, -1.5, -2.5, -0.7, 0.0},
+                         {-1, -2, -3, -4, 0}) {}
 
-  template<typename T1, typename T2, typename T3, typename T_rng>
+  template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& mu, const T2& sigma, const T3& unused,
                         T_rng& rng) const {
     return stan::math::gumbel_rng(mu, sigma, rng);
   }
 
-  std::vector<double> generate_quantiles(double mu, double sigma, double unused)
-    const {
+  std::vector<double> generate_quantiles(double mu, double sigma,
+                                         double unused) const {
     std::vector<double> quantiles;
     double K = boost::math::round(2 * std::pow(N_, 0.4));
     boost::math::extreme_value_distribution<> dist(mu, sigma);
