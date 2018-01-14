@@ -14,12 +14,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Skew-normal variate for the given location, scale,
+ * Return a Skew-normal random variate for the given location, scale,
  * and shape using the specified random number generator.
  *
- * mu, sigma, and alpha can each be a scalar, a std::vector, an
- * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
- * same length.
+ * mu, sigma, and alpha can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
@@ -29,11 +28,11 @@ namespace math {
  * @param sigma (Sequence of) scale parameter(s)
  * @param alpha (Sequence of) shape parameter(s)
  * @param rng random number generator
- * @return Skew-normal random variate
+ * @return (Sequence of) Skew-normal random variate(s)
  * @throw std::domain_error if mu is infinite, sigma is nonpositive, or
  * alpha is infinite
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type

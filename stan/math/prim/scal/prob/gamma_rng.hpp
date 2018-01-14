@@ -14,11 +14,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom gamma variate for the given shape and inverse
+ * Return a gamma random variate for the given shape and inverse
  * scale parameters using the specified random number generator.
  *
- * alpha and beta can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * alpha and beta can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_shape Type of shape parameter
  * @tparam T_inv Type of inverse scale parameter
@@ -26,10 +26,10 @@ namespace math {
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param beta (Sequence of) positive inverse scale parameter(s)
  * @param rng random number generator
- * @return gamma random variate
+ * @return (Sequence of) gamma random variate(s)
  * @throw std::domain_error if alpha or beta are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
@@ -49,13 +49,10 @@ inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
   VectorBuilder<true, double, T_shape, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    /*
-      the boost gamma distribution is defined by
-      shape and scale, whereas the stan one is defined
-      by shape and rate (inverse scale)
-    */
+    // Convert rate (inverse scale) argument to scale for boost
     variate_generator<RNG&, gamma_distribution<> > gamma_rng(
-        rng, gamma_distribution<>(alpha_vec[n], 1.0 / beta_vec[n]));
+        rng, gamma_distribution<>(alpha_vec[n],
+                                  1 / static_cast<double>(beta_vec[n])));
     output[n] = gamma_rng();
   }
 

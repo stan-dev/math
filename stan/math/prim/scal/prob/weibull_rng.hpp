@@ -13,11 +13,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Weibull variate for the given shape
+ * Return a Weibull random variate for the given shape
  * and scale parameters using the specified random number generator.
  *
- * alpha and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * alpha and sigma can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_shape Type of shape parameter
  * @tparam T_scale Type of scale parameter
@@ -25,10 +25,10 @@ namespace math {
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param sigma (Sequence of) positive scale parameter(s)
  * @param rng random number generator
- * @return Weibull random variate
+ * @return (Sequence of) Weibull random variate(s)
  * @throw std::domain_error if alpha is nonpositive or sigma is nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(

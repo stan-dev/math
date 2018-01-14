@@ -14,12 +14,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom student-t variate for the given degrees of freedom,
+ * Return a student-t random variate for the given degrees of freedom,
  * location, and scale using the specified random number generator.
  *
- * nu, mu, and sigma can each be a scalar, a std::vector, an
- * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
- * same length.
+ * nu, mu, and sigma can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_deg Type of degrees of freedom parameter
  * @tparam T_loc Type of location parameter
@@ -33,7 +32,7 @@ namespace math {
  * @throw std::domain_error if nu is nonpositive, mu is infinite, or sigma
  * is nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_deg, typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type

@@ -14,12 +14,12 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom scaled chi square variate for the given
+ * Return a scaled chi square random variate for the given
  * number of degrees of freedom and scale using the specified random
  * number generator.
  *
- * nu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * nu and sigma can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_deg Type of degrees of freedom parameter
  * @tparam T_scale Type of scale parameter
@@ -27,10 +27,10 @@ namespace math {
  * @param nu (Sequence of) positive degrees of freedom parameter(s)
  * @param s (Sequence of) positive scale parameter(s)
  * @param rng random number generator
- * @return scaled chi square random variate
+ * @return (Sequence of) scaled chi square random variate(s)
  * @throw std::domain_error if nu or sigma are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_deg, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_scale>::type

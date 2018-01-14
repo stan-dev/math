@@ -12,17 +12,16 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Rayleigh variate with scale parameter sigma
+ * Return a Rayleigh random variate with scale parameter sigma
  * using the specified random number generator.
  *
- * sigma can be a scalar, a std::vector, an Eigen::Vector, or an
- * Eigen::RowVector.
+ * sigma can be a scalar or a one-dimensional container.
  *
  * @tparam T_scale Type of scale parameter
  * @tparam RNG class of random number generator
  * @param sigma (Sequence of) positive scale parameter(s)
  * @param rng random number generator
- * @return Rayleigh random variate
+ * @return (Sequence of) Rayleigh random variate(s)
  * @throw std::domain_error if sigma is nonpositive
  */
 template <typename T_scale, class RNG>

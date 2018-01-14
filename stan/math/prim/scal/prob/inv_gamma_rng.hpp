@@ -16,8 +16,8 @@ namespace math {
  * Return a pseudorandom inverse gamma variate for the given shape
  * and scale parameters using the specified random number generator.
  *
- * alpha and beta can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * alpha and beta can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_shape Type of shape parameter
  * @tparam T_scale Type of scale parameter
@@ -25,10 +25,10 @@ namespace math {
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param beta (Sequence of) positive scale parameter(s)
  * @param rng random number generator
- * @return inverse gamma random variate
+ * @return (Sequence of) inverse gamma random variate(s)
  * @throw std::domain_error if alpha or beta are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type
@@ -49,7 +49,8 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
 
   for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, gamma_distribution<> > gamma_rng(
-        rng, gamma_distribution<>(alpha_vec[n], 1.0 / beta_vec[n]));
+        rng, gamma_distribution<>(alpha_vec[n],
+                                  1 / static_cast<double>(beta_vec[n])));
     output[n] = 1 / gamma_rng();
   }
 

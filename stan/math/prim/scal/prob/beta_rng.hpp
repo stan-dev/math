@@ -15,11 +15,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Beta variate with the supplied success and failure
- * parameters and specified random number generator.
+ * Return a Beta random variate with the supplied success and failure
+ * parameters using the given random number generator.
  *
- * alpha and beta can each be a scalar, a std::vector, an Eigen::Vector,
- * or an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * alpha and beta can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_shape1 Type of success parameter
  * @tparam T_shape2 Type of failure parameter
@@ -27,10 +27,10 @@ namespace math {
  * @param alpha (Sequence of) positive finite success parameter(s)
  * @param beta (Sequence of) positive finite failure parameter(s)
  * @param rng random number generator
- * @return beta random variate
+ * @return (Sequence of) beta random variate(s)
  * @throw std::domain_error if alpha or beta are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_shape1, typename T_shape2, class RNG>
 inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(

@@ -13,11 +13,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Pareto variate for the given shape and scale
+ * Return a Pareto random variate for the given shape and scale
  * parameters using the specified random number generator.
  *
- * y_min and alpha can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * y_min and alpha can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_scale Type of scale parameter
  * @tparam T_shape Type of shape parameter
@@ -25,10 +25,10 @@ namespace math {
  * @param y_min (Sequence of) positive scale parameter(s)
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param rng random number generator
- * @return pareto random variate
+ * @return (Sequence of) Pareto random variate(s)
  * @throw std::domain_error if y_min or alpha are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(

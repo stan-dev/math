@@ -15,12 +15,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom Pareto type 2 variate for the given location,
+ * Return a Pareto type 2 random variate for the given location,
  * scale, and shape using the specified random number generator.
  *
- * mu, lambda, and alpha can each be a scalar, a std::vector, an
- * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
- * same length.
+ * mu, lambda, and alpha can each be a scalar or a one-dimensional container.
+ * Any non-scalar inputs must be the same size.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
@@ -30,11 +29,11 @@ namespace math {
  * @param lambda (Sequence of) scale parameter(s)
  * @param alpha (Sequence of) shape parameter(s)
  * @param rng random number generator
- * @return Pareto type 2 random variate
+ * @return (Sequence of) Pareto type 2 random variate(s)
  * @throw std::domain_error if mu is infinite or lambda or alpha are
  * nonpositive,
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type

@@ -15,13 +15,12 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom exponentially modified normal variate for the
+ * Return an exponentially modified normal random variate for the
  * given location, scale, and inverse scale using the specified random
  * number generator.
  *
- * mu, sigma, and lambda can each be a scalar, a std::vector, an
- * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
- * same length.
+ * mu, sigma, and lambda can each be a scalar or a one-dimensional container.
+ * Any non-scalar inputs must be the same size.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
@@ -31,11 +30,11 @@ namespace math {
  * @param sigma (Sequence of) scale parameter(s)
  * @param lambda (Sequence of) inverse scale parameter(s)
  * @param rng random number generator
- * @return Exponentially modified normal random variate
+ * @return (Sequence of) Exponentially modified normal random variate(s)
  * @throw std::domain_error if mu is infinite, sigma is nonpositive,
  * or lambda is nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
- * lengths
+ * sizes
  */
 template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type

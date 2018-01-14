@@ -14,17 +14,16 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom chi squared variate with the nu degrees of
+ * Return a chi squared random variate with nu degrees of
  * freedom using the specified random number generator.
  *
- * nu can be a scalar, a std::vector, an Eigen::Vector, or an
- * Eigen::RowVector.
+ * nu can be a scalar or a one-dimensional container.
  *
  * @tparam T_deg Type of degrees of freedom parameter
  * @tparam RNG class of random number generator
  * @param nu (Sequence of) positive degrees of freedom parameter(s)
  * @param rng random number generator
- * @return chi squared random variate
+ * @return (Sequence of) chi squared random variate(s)
  * @throw std::domain_error if nu is nonpositive
  */
 template <typename T_deg, class RNG>

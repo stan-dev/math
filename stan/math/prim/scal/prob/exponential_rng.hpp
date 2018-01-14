@@ -12,17 +12,16 @@ namespace stan {
 namespace math {
 
 /**
- * Return a pseudorandom exponential variate with inverse scale beta
+ * Return a exponential random variate with inverse scale beta
  * using the specified random number generator.
  *
- * beta can be a scalar, a std::vector, an Eigen::Vector, or an
- * Eigen::RowVector.
+ * beta can be a scalar or a one-dimensional container.
  *
  * @tparam T_inv Type of inverse scale parameter
  * @tparam RNG class of random number generator
  * @param beta (Sequence of) positive inverse scale parameter(s)
  * @param rng random number generator
- * @return exponential random variate
+ * @return (Sequence of) exponential random variate(s)
  * @throw std::domain_error if beta is nonpositive
  */
 template <typename T_inv, class RNG>
