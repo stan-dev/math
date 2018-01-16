@@ -159,7 +159,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int,Dynamic,1> n(3, 1);
     for (size_t i = 0; i < 3; i++) {
       n[i] = rand()%200;

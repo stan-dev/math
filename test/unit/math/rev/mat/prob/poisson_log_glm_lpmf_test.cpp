@@ -134,7 +134,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int,Dynamic,1> n(3, 1);
     for (size_t i = 0; i < 3; i++) {
       n[i] = rand()%200;

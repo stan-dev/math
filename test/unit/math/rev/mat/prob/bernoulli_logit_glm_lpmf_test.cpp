@@ -53,7 +53,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_doubles_rand) {
-  for (size_t ii = 0; ii < 20000; ii++) {
+  for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int,Dynamic,1> n(3, 1);
     for (size_t i = 0; i < 3; i++) {
       n[i] = rand()%2;
