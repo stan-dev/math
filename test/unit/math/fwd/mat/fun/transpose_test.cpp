@@ -10,14 +10,13 @@ TEST(AgradFwdMatrixTranspose, fd_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_fd a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(0, 2).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
-   a(1, 2).d_ = 1.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(0, 2).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
+  a(1, 2).d_ = 1.0;
 
   matrix_fd c = transpose(a);
   EXPECT_FLOAT_EQ(-1.0, c(0, 0).val_);
@@ -44,9 +43,9 @@ TEST(AgradFwdMatrixTranspose, fd_vector) {
 
   vector_fd a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   row_vector_fd a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -65,9 +64,9 @@ TEST(AgradFwdMatrixTranspose, fd_row_vector) {
 
   row_vector_fd a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   vector_fd a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -87,14 +86,13 @@ TEST(AgradFwdMatrixTranspose, ffd_matrix) {
   EXPECT_EQ(0, transpose(matrix_d()).size());
 
   matrix_ffd a(2, 3);
-  a << -1.0, 2.0, -3.0,
-    5.0, 10.0, 100.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(0, 2).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
-   a(1, 2).d_ = 1.0;
+  a << -1.0, 2.0, -3.0, 5.0, 10.0, 100.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(0, 2).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
+  a(1, 2).d_ = 1.0;
 
   matrix_ffd c = transpose(a);
   EXPECT_FLOAT_EQ(-1.0, c(0, 0).val_.val());
@@ -121,9 +119,9 @@ TEST(AgradFwdMatrixTranspose, ffd_vector) {
 
   vector_ffd a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   row_vector_ffd a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());
@@ -142,9 +140,9 @@ TEST(AgradFwdMatrixTranspose, ffd_row_vector) {
 
   row_vector_ffd a(3);
   a << 1.0, 2.0, 3.0;
-   a(0).d_ = 1.0;
-   a(1).d_ = 1.0;
-   a(2).d_ = 1.0;
+  a(0).d_ = 1.0;
+  a(1).d_ = 1.0;
+  a(2).d_ = 1.0;
 
   vector_ffd a_tr = transpose(a);
   EXPECT_EQ(a.size(), a_tr.size());

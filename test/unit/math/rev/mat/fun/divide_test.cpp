@@ -7,7 +7,7 @@
 TEST(AgradRevMatrix, divide_scalar) {
   using stan::math::divide;
   double d1, d2;
-  AVAR   v1, v2;
+  AVAR v1, v2;
 
   d1 = 10;
   v1 = 10;
@@ -73,7 +73,6 @@ TEST(AgradRevMatrix, divide_vector) {
   EXPECT_FLOAT_EQ(-50, output(0).val());
   EXPECT_FLOAT_EQ(0, output(1).val());
   EXPECT_FLOAT_EQ(1.5, output(2).val());
-
 
   d2 = 0;
   v2 = 0;
@@ -206,8 +205,7 @@ TEST(AgradRevMatrix, divide_matrix) {
   output = divide(d1, v2);
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0, 0).val());
   EXPECT_TRUE(std::isnan(output(0, 1).val()));
-  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
-                  output(1, 0).val());
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), output(1, 0).val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1, 1).val());
 
   output = divide(v1, d2);

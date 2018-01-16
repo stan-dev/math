@@ -7,30 +7,28 @@
 #include <Eigen/QR>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    qr_R(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-      typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
-      check_nonzero_size("qr_R", "m", m);
-      check_greater_or_equal("qr_R",
-                             "m.rows()",
-                             static_cast<size_t>(m.rows()),
-                             static_cast<size_t>(m.cols()));
-      Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
-      qr.compute(m);
-      matrix_t R = qr.matrixQR();
-      if (m.rows() > m.cols())
-        R.bottomRows(m.rows() - m.cols()).setZero();
-      for (int i = 0; i < R.cols(); i++) {
-        for (int j = 0; j < i; j++)
-          R.coeffRef(i, j) = 0.0;
-        if (R(i, i) < 0)
-          R.row(i) *= -1.0;
-      }
-      return R;
-    }
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_R(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+  check_nonzero_size("qr_R", "m", m);
+  check_greater_or_equal("qr_R", "m.rows()", static_cast<size_t>(m.rows()),
+                         static_cast<size_t>(m.cols()));
+  Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
+  qr.compute(m);
+  matrix_t R = qr.matrixQR();
+  if (m.rows() > m.cols())
+    R.bottomRows(m.rows() - m.cols()).setZero();
+  for (int i = 0; i < R.cols(); i++) {
+    for (int j = 0; j < i; j++)
+      R.coeffRef(i, j) = 0.0;
+    if (R(i, i) < 0)
+      R.row(i) *= -1.0;
   }
+  return R;
 }
+}  // namespace math
+}  // namespace stan
 #endif

@@ -6,22 +6,18 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, fd_3x3_matrix) {
   using stan::math::matrix_fd;
   using stan::math::matrix_d;
   matrix_d Z(3, 3);
-  Z << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   matrix_fd Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
   matrix_d X = stan::math::multiply_lower_tri_self_transpose(Z);
   matrix_fd output = stan::math::multiply_lower_tri_self_transpose(Y);
   for (int i = 0; i < 3; i++) {
@@ -43,17 +39,15 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, fd_3x2_matrix) {
   using stan::math::matrix_fd;
   using stan::math::matrix_d;
   matrix_d Z(3, 2);
-  Z << 1, 0, 0,
-    2, 3, 0;
+  Z << 1, 0, 0, 2, 3, 0;
   matrix_fd Y(3, 2);
-  Y << 1, 0, 0,
-    2, 3, 0;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
   matrix_d X = stan::math::multiply_lower_tri_self_transpose(Z);
   matrix_fd output = stan::math::multiply_lower_tri_self_transpose(Y);
   for (int i = 0; i < 3; i++) {
@@ -75,9 +69,7 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, ffd_3x3_matrix) {
   using stan::math::matrix_ffd;
   using stan::math::matrix_d;
   matrix_d Z(3, 3);
-  Z << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   fvar<fvar<double> > a, b, c, d, e, f, g;
   a.val_.val_ = 0.0;
@@ -118,8 +110,7 @@ TEST(AgradFwdMatrixMultiplyLowerTriSelfTranspose, ffd_3x2_matrix) {
   using stan::math::matrix_ffd;
   using stan::math::matrix_d;
   matrix_d Z(3, 2);
-  Z << 1, 0, 0,
-    2, 3, 0;
+  Z << 1, 0, 0, 2, 3, 0;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 0.0;

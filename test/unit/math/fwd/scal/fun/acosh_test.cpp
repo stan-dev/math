@@ -26,11 +26,10 @@ TEST(AgradFwdAcosh, excepts) {
 TEST(MathFunctions, acosh_inf_return) {
   using stan::math::fvar;
   using stan::math::acosh;
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
-            stan::math::acosh(fvar<double>(std::numeric_limits<double>
-                                           ::infinity())));
+  EXPECT_EQ(
+      std::numeric_limits<double>::infinity(),
+      stan::math::acosh(fvar<double>(std::numeric_limits<double>::infinity())));
 }
-
 
 TEST(AgradFwdAcosh, FvarFvarDouble) {
   using stan::math::fvar;

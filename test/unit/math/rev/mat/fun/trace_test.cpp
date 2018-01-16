@@ -8,8 +8,7 @@ TEST(AgradRevMatrix, mv_trace) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
+  a << -1.0, 2.0, 5.0, 10.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -25,7 +24,6 @@ TEST(AgradRevMatrix, mv_trace) {
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
+  a << -1.0, 2.0, 5.0, 10.0;
   test::check_varis_on_stack(stan::math::trace(a));
 }

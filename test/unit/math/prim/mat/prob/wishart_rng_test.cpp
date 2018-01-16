@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <vector>
 
-
 TEST(ProbDistributionsWishartRng, rng) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
@@ -16,9 +15,7 @@ TEST(ProbDistributionsWishartRng, rng) {
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
 
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 0.0,
-          -3.0,  4.0, 0.0,
-           2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 2.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);
@@ -47,11 +44,8 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
 
   boost::random::mt19937 rng;
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 2.0,
-          -3.0,  4.0, 0.0,
-           2.0, 0.0, 3.0;
+  sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
   int N = 10000;
-
 
   double avg = 0;
   double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
@@ -63,7 +57,7 @@ TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
     a = wishart_rng(5.0, sigma, rng);
     avg += log(determinant(a)) / N;
     count++;
-   }
+  }
   double chi = (expect - avg) * (expect - avg) / expect;
   chi_squared mydist(1);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
@@ -85,13 +79,9 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   MatrixXd sigma_sym(3, 3);
 
   // wishart_rng should take only the lower part
-  sigma << 9.0, -3.0, 1.0,
-           2.0,  4.0, -1.0,
-           2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 1.0, 2.0, 4.0, -1.0, 2.0, 1.0, 3.0;
 
-  sigma_sym << 9.0, 2.0, 2.0,
-               2.0,  4.0, 1.0,
-               2.0, 1.0, 3.0;
+  sigma_sym << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
 
   VectorXd C(3);
   C << 2, 1, 3;

@@ -47,23 +47,22 @@ TEST(AgradRevMatrix, softmax) {
   x2 << -1.0, 1.0;
   Matrix<AVAR, Dynamic, 1> theta2 = softmax(x2);
   EXPECT_EQ(2, theta2.size());
-  EXPECT_FLOAT_EQ(exp(-1)/(exp(-1) + exp(1)), theta2[0].val());
-  EXPECT_FLOAT_EQ(exp(1)/(exp(-1) + exp(1)), theta2[1].val());
+  EXPECT_FLOAT_EQ(exp(-1) / (exp(-1) + exp(1)), theta2[0].val());
+  EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1)), theta2[1].val());
 
   Matrix<AVAR, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   Matrix<AVAR, Dynamic, 1> theta3 = softmax(x3);
   EXPECT_EQ(3, theta3.size());
-  EXPECT_FLOAT_EQ(exp(-1)/(exp(-1) + exp(1) + exp(10.0)), theta3[0].val());
-  EXPECT_FLOAT_EQ(exp(1)/(exp(-1) + exp(1) + exp(10.0)), theta3[1].val());
-  EXPECT_FLOAT_EQ(exp(10)/(exp(-1) + exp(1) + exp(10.0)), theta3[2].val());
+  EXPECT_FLOAT_EQ(exp(-1) / (exp(-1) + exp(1) + exp(10.0)), theta3[0].val());
+  EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1) + exp(10.0)), theta3[1].val());
+  EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2].val());
 }
 
 // compute grad using templated definition in math
 // to check custom derivatives
-std::vector<double>
-softmax_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl,
-             int k) {
+std::vector<double> softmax_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl, int k) {
   using Eigen::Matrix;
   using Eigen::Dynamic;
   using stan::math::var;

@@ -48,11 +48,11 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
   ms[1] = 2;
   ms[2] = 1;
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_.val()
-                  + theta_log_softmax[1].val_.val()
-                  + theta_log_softmax[0].val_.val(),
+                      + theta_log_softmax[1].val_.val()
+                      + theta_log_softmax[0].val_.val(),
                   stan::math::categorical_logit_log(ms, theta).val_.val());
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_.val() + theta_log_softmax[1].d_.val()
-                  + theta_log_softmax[0].d_.val(),
+                      + theta_log_softmax[0].d_.val(),
                   stan::math::categorical_logit_log(ms, theta).d_.val());
 }
 
@@ -97,11 +97,11 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var_vectorized) {
   ms[1] = 2;
   ms[2] = 1;
   EXPECT_FLOAT_EQ(theta_log_softmax[0].val_.val_.val()
-                  + theta_log_softmax[1].val_.val_.val()
-                  + theta_log_softmax[0].val_.val_.val(),
+                      + theta_log_softmax[1].val_.val_.val()
+                      + theta_log_softmax[0].val_.val_.val(),
                   stan::math::categorical_logit_log(ms, theta).val_.val_.val());
   EXPECT_FLOAT_EQ(theta_log_softmax[0].d_.val_.val()
-                  + theta_log_softmax[1].d_.val_.val()
-                  + theta_log_softmax[0].d_.val_.val(),
+                      + theta_log_softmax[1].d_.val_.val()
+                      + theta_log_softmax[0].d_.val_.val(),
                   stan::math::categorical_logit_log(ms, theta).d_.val_.val());
 }

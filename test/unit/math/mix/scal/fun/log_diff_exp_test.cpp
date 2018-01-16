@@ -72,12 +72,15 @@ TEST(AgradFwdLogDiffExp, FvarVar_FvarVar_2ndDeriv) {
   AVEC y = createAVEC(x.val_, z.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ((1.3 * exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0)
-                   * (1.3 * exp(9.0) - exp(6.0))) / (exp(9.0) - exp(6.0))
-                  / (exp(9.0) - exp(6.0)) , g[0]);
-  EXPECT_FLOAT_EQ((-exp(6.0) * (exp(9.0) - exp(6.0)) + exp(6.0)
-                   * (1.3 * exp(9.0) - exp(6.0))) / (exp(9.0) - exp(6.0))
-                  / (exp(9.0) - exp(6.0)) , g[1]);}
+  EXPECT_FLOAT_EQ((1.3 * exp(9.0) * (exp(9.0) - exp(6.0))
+                   - exp(9.0) * (1.3 * exp(9.0) - exp(6.0)))
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[0]);
+  EXPECT_FLOAT_EQ((-exp(6.0) * (exp(9.0) - exp(6.0))
+                   + exp(6.0) * (1.3 * exp(9.0) - exp(6.0)))
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[1]);
+}
 TEST(AgradFwdLogDiffExp, FvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -91,9 +94,10 @@ TEST(AgradFwdLogDiffExp, FvarVar_Double_2ndDeriv) {
   AVEC y = createAVEC(x.val_);
   VEC g;
   a.d_.grad(y, g);
-  EXPECT_FLOAT_EQ((1.3 * exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0) * 1.3
-                   * exp(9.0)) / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0))
-                  , g[0]);
+  EXPECT_FLOAT_EQ(
+      (1.3 * exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0) * 1.3 * exp(9.0))
+          / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+      g[0]);
 }
 TEST(AgradFwdLogDiffExp, Double_FvarVar_2ndDeriv) {
   using stan::math::fvar;
@@ -109,7 +113,8 @@ TEST(AgradFwdLogDiffExp, Double_FvarVar_2ndDeriv) {
   VEC g;
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ((-exp(6.0) * (exp(9.0) - exp(6.0)) + exp(6.0) * -exp(6.0))
-                  / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)), g[0]);
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[0]);
 }
 TEST(AgradFwdLogDiffExp, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -205,9 +210,9 @@ TEST(AgradFwdLogDiffExp, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   AVEC p = createAVEC(x.val_.val_, y.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ((exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0)
-                   * exp(9.0)) / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0))
-                  , g[0]);
+  EXPECT_FLOAT_EQ((exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0) * exp(9.0))
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[0]);
   EXPECT_FLOAT_EQ(0.055141006, g[1]);
 }
 TEST(AgradFwdLogDiffExp, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
@@ -231,7 +236,8 @@ TEST(AgradFwdLogDiffExp, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ(0.055141006, g[0]);
   EXPECT_FLOAT_EQ((-exp(6.0) * (exp(9.0) - exp(6.0)) + exp(6.0) * -exp(6.0))
-                  / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)), g[1]);
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[1]);
 }
 TEST(AgradFwdLogDiffExp, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
@@ -250,9 +256,9 @@ TEST(AgradFwdLogDiffExp, FvarFvarVar_Double_2ndDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.val_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ((exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0)
-                   * exp(9.0)) / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0))
-                  , g[0]);
+  EXPECT_FLOAT_EQ((exp(9.0) * (exp(9.0) - exp(6.0)) - exp(9.0) * exp(9.0))
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[0]);
 }
 
 TEST(AgradFwdLogDiffExp, Double_FvarFvarVar_2ndDeriv) {
@@ -272,7 +278,8 @@ TEST(AgradFwdLogDiffExp, Double_FvarFvarVar_2ndDeriv) {
   VEC g;
   a.d_.val_.grad(p, g);
   EXPECT_FLOAT_EQ((-exp(6.0) * (exp(9.0) - exp(6.0)) + exp(6.0) * -exp(6.0))
-                  / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)), g[0]);
+                      / (exp(9.0) - exp(6.0)) / (exp(9.0) - exp(6.0)),
+                  g[0]);
 }
 TEST(AgradFwdLogDiffExp, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
@@ -339,10 +346,8 @@ TEST(AgradFwdLogDiffExp, Double_FvarFvarVar_3rdDeriv) {
 
 struct log_diff_exp_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_diff_exp(arg1, arg2);
   }
 };

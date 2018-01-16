@@ -15,6 +15,7 @@
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/mat/meta/length_mvt.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/seq_view.hpp>
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
@@ -310,6 +311,5 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
-
 
 #endif

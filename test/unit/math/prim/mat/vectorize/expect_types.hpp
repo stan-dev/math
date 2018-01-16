@@ -12,8 +12,7 @@ void expect_int_types() {
 
   expect_match_return_t<F, double, int>();
   expect_match_return_t<F, vector<double>, vector<int> >();
-  expect_match_return_t<F, vector<vector<double> >,
-                               vector<vector<int> > >();
+  expect_match_return_t<F, vector<vector<double> >, vector<vector<int> > >();
 }
 
 template <typename F, typename T>

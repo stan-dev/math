@@ -16,7 +16,6 @@ void assert_val_grad(Eigen::Matrix<stan::math::var, R, C>& v) {
   EXPECT_FLOAT_EQ(6.0, g[2]);
 }
 
-
 TEST(AgradRevMatrix, dot_self_vec) {
   using stan::math::dot_self;
 

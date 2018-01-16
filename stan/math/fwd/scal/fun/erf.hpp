@@ -8,15 +8,14 @@
 #include <cmath>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline fvar<T> erf(const fvar<T>& x) {
-      using std::exp;
-      return fvar<T>(erf(x.val_),
-                     x.d_ * exp(-square(x.val_)) * TWO_OVER_SQRT_PI);
-    }
-
-  }
+template <typename T>
+inline fvar<T> erf(const fvar<T>& x) {
+  using std::exp;
+  return fvar<T>(erf(x.val_), x.d_ * exp(-square(x.val_)) * TWO_OVER_SQRT_PI);
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

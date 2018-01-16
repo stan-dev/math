@@ -7,8 +7,7 @@ TEST(AgradRevMatrix, mv_squaredNorm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 10.0;
+  a << -1.0, 2.0, 5.0, 10.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -34,15 +33,14 @@ TEST(AgradRevMatrix, mv_norm) {
 
   // (see hypot in special_functions_test)
   VEC g = cgradvec(s, x);
-  EXPECT_FLOAT_EQ(-3.0/5.0, g[0]);
-  EXPECT_FLOAT_EQ(4.0/5.0, g[1]);
+  EXPECT_FLOAT_EQ(-3.0 / 5.0, g[0]);
+  EXPECT_FLOAT_EQ(4.0 / 5.0, g[1]);
 }
 TEST(AgradRevMatrix, mv_lp_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    5.0, 0.0;
+  a << -1.0, 2.0, 5.0, 0.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -60,8 +58,7 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << -1.0, 2.0,
-    -5.0, 0.0;
+  a << -1.0, 2.0, -5.0, 0.0;
 
   AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
 
@@ -113,8 +110,7 @@ TEST(AgradRevMatrix, UserCase1) {
 
   for (size_t h = 1; h <= H; ++h) {
     assign(vk, multiply(transpose(L_etaprec),
-                        subtract(get_base1(eta, h, "eta", 1),
-                                 etamu)));
+                        subtract(get_base1(eta, h, "eta", 1), etamu)));
     assign(lp__, (lp__ - (0.5 * dot_product(vk, vk))));
   }
 

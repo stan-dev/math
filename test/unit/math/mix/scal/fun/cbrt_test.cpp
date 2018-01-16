@@ -4,8 +4,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -37,8 +35,6 @@ TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-2.0 * 1.3 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), g[0]);
 }
 
-
-
 TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -69,7 +65,6 @@ TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, b.val_.d_.val());
   EXPECT_FLOAT_EQ(2.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), b.d_.val_.val());
   EXPECT_FLOAT_EQ(0, b.d_.d_.val());
-
 
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
@@ -124,8 +119,7 @@ TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
 
 struct cbrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cbrt(arg1);
   }
 };

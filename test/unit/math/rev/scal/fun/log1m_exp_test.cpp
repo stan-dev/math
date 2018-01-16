@@ -47,8 +47,7 @@ TEST(AgradRev, log1m_exp_exception) {
 
 struct log1m_exp_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1m_exp(arg1);
   }
 };

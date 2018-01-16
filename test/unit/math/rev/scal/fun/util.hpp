@@ -47,8 +47,8 @@ AVEC createAVEC(AVAR x1, AVAR x2, AVAR x3, AVAR x4, AVAR x5, AVAR x6, AVAR x7) {
   v.push_back(x7);
   return v;
 }
-AVEC createAVEC(AVAR x1, AVAR x2, AVAR x3, AVAR x4,
-                AVAR x5, AVAR x6, AVAR x7, AVAR x8) {
+AVEC createAVEC(AVAR x1, AVAR x2, AVAR x3, AVAR x4, AVAR x5, AVAR x6, AVAR x7,
+                AVAR x8) {
   AVEC v = createAVEC(x1, x2, x3, x4, x5, x6, x7);
   v.push_back(x8);
   return v;

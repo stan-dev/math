@@ -21,30 +21,27 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    gamma_rng(double alpha,
-              double beta,
-              RNG& rng) {
-      using boost::variate_generator;
-      using boost::gamma_distribution;
+template <class RNG>
+inline double gamma_rng(double alpha, double beta, RNG& rng) {
+  using boost::variate_generator;
+  using boost::gamma_distribution;
 
-      static const char* function = "gamma_rng";
-      check_positive_finite(function, "Shape parameter", alpha);
-      check_positive_finite(function, "Inverse scale parameter", beta);
+  static const char* function = "gamma_rng";
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Inverse scale parameter", beta);
 
-      /*
-        the boost gamma distribution is defined by
-        shape and scale, whereas the stan one is defined
-        by shape and rate (inverse scale)
-      */
-      variate_generator<RNG&, gamma_distribution<> >
-        gamma_rng(rng, gamma_distribution<>(alpha, 1.0 / beta));
-      return gamma_rng();
-    }
-
-  }
+  /*
+    the boost gamma distribution is defined by
+    shape and scale, whereas the stan one is defined
+    by shape and rate (inverse scale)
+  */
+  variate_generator<RNG&, gamma_distribution<> > gamma_rng(
+      rng, gamma_distribution<>(alpha, 1.0 / beta));
+  return gamma_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif
