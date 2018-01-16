@@ -141,7 +141,7 @@ namespace stan {
                                                 * mu_derivative);
         }
         if (!is_constant_struct<T_alpha>::value) {
-          ops_partials.edge4_.partials_[0] = mu_derivative.trace();
+          ops_partials.edge4_.partials_[0] = mu_derivative.sum();
         }
         if (!is_constant_struct<T_scale>::value) {
           assign_to_matrix_or_broadcast_array(

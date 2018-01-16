@@ -168,7 +168,7 @@ namespace stan {
             * beta_dbl.transpose();
         }
         if (!is_constant_struct<T_alpha>::value) {
-          ops_partials.edge3_.partials_[0] = theta_derivative.trace();
+          ops_partials.edge3_.partials_[0] = theta_derivative.sum();
         }
       }
       if (!is_constant_struct<T_precision>::value) {
