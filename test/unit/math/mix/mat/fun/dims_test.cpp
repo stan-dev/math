@@ -6,11 +6,11 @@ using stan::math::fvar;
 using stan::math::var;
 
 TEST(AgradMixMatrixDims, matrix_fv) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_fv;
+  using std::vector;
 
   fvar<var> x1;
   vector<int> dims1 = dims(x1);
@@ -61,11 +61,11 @@ TEST(AgradMixMatrixDims, matrix_fv) {
 }
 
 TEST(AgradMixMatrixDims, matrix_ffv) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_ffv;
+  using std::vector;
 
   fvar<fvar<var> > x1;
   vector<int> dims1 = dims(x1);

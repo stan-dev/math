@@ -3,8 +3,8 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-using stan::return_type;
 using stan::math::var;
+using stan::return_type;
 using std::vector;
 
 TEST(MetaTraits, ReturnTypeVarArray) {

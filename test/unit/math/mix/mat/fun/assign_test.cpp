@@ -43,9 +43,9 @@ TEST(AgradMixMatrixAssign, vector_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_to_fvar_var) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<var>, 1, Dynamic> y(3);
   y[0] = 1.2;
@@ -76,9 +76,9 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_to_fvar_var) {
   EXPECT_FLOAT_EQ(0, grads[2]);
 }
 TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_shape_mismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<var>, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -101,9 +101,9 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_shape_mismatch) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<var>, Dynamic, Dynamic> y(3, 2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
@@ -146,9 +146,9 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<var>, Dynamic, Dynamic> x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -170,10 +170,10 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_shape_mismatch) {
 }
 
 TEST(AgradMixMatrixAssign, block_fvar_var) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<fvar<var>, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -188,8 +188,8 @@ TEST(AgradMixMatrixAssign, block_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_vector_fvar_var) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   vector<vector<fvar<var> > > x(3, vector<fvar<var> >(2));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j) {
@@ -228,8 +228,8 @@ TEST(AgradMixMatrixAssign, vector_vector_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_var) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   std::vector<var> vars;
   vector<vector<vector<fvar<var> > > > x(
       4, vector<vector<fvar<var> > >(3, vector<fvar<var> >(2)));
@@ -266,10 +266,10 @@ TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using std::vector;
   std::vector<var> vars;
   vector<Matrix<fvar<var>, Dynamic, 1> > x(2, Matrix<fvar<var>, Dynamic, 1>(3));
   for (size_t i = 0; i < 2; ++i)
@@ -299,10 +299,10 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, get_assign_row_fvar_var) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<fvar<var>, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -361,9 +361,9 @@ TEST(AgradMixMatrixAssign, vector_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<fvar<var> >, 1, Dynamic> y(3);
   y[0] = 1.2;
@@ -403,9 +403,9 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_to_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<fvar<var> >, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -428,9 +428,9 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> y(3, 2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
@@ -487,9 +487,9 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
-  using stan::math::assign;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::assign;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -511,10 +511,10 @@ TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_shape_mismatch) {
 }
 
 TEST(AgradMixMatrixAssign, block_fvar_fvar_var) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -529,8 +529,8 @@ TEST(AgradMixMatrixAssign, block_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_vector_fvar_fvar_var) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   vector<vector<fvar<fvar<var> > > > x(3, vector<fvar<fvar<var> > >(2));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j) {
@@ -573,8 +573,8 @@ TEST(AgradMixMatrixAssign, vector_vector_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_fvar_var) {
-  using std::vector;
   using stan::math::assign;
+  using std::vector;
   std::vector<var> vars;
   vector<vector<vector<fvar<fvar<var> > > > > x(
       4, vector<vector<fvar<fvar<var> > > >(3, vector<fvar<fvar<var> > >(2)));
@@ -615,10 +615,10 @@ TEST(AgradMixMatrixAssign, vector_vector_vector_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using std::vector;
   std::vector<var> vars;
   vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > x(
       2, Matrix<fvar<fvar<var> >, Dynamic, 1>(3));
@@ -654,10 +654,10 @@ TEST(AgradMixMatrixAssign, vector_eigen_vector_fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAssign, get_assign_row_fvar_fvar_var) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;

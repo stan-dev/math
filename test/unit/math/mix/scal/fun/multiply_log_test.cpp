@@ -5,9 +5,9 @@
 
 TEST(AgradFwdMultiplyLog, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> z(1.8, 1.1);
@@ -24,9 +24,9 @@ TEST(AgradFwdMultiplyLog, FvarVar_FvarVar_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarVar_Double_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<var> x(1.5, 1.3);
   double z(1.8);
@@ -42,9 +42,9 @@ TEST(AgradFwdMultiplyLog, FvarVar_Double_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, Double_FvarVar_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   double x(1.5);
   fvar<var> z(1.8, 1.1);
@@ -60,9 +60,9 @@ TEST(AgradFwdMultiplyLog, Double_FvarVar_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarVar_FvarVar_2ndDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> z(1.8, 1.1);
@@ -76,9 +76,9 @@ TEST(AgradFwdMultiplyLog, FvarVar_FvarVar_2ndDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<var> x(1.5, 1.3);
   double z(1.8);
@@ -91,9 +91,9 @@ TEST(AgradFwdMultiplyLog, FvarVar_Double_2ndDeriv) {
 }
 TEST(AgradFwdMultiplyLog, Double_FvarVar_2ndDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   double x(1.5);
   fvar<var> z(1.8, 1.1);
@@ -107,9 +107,9 @@ TEST(AgradFwdMultiplyLog, Double_FvarVar_2ndDeriv) {
 
 TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -134,9 +134,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -157,9 +157,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   double x(1.5);
   fvar<fvar<var> > y;
@@ -180,9 +180,9 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -207,9 +207,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -234,9 +234,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -257,9 +257,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_2ndDeriv) {
 }
 TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   double x(1.5);
   fvar<fvar<var> > y;
@@ -275,9 +275,9 @@ TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -297,9 +297,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
 }
 TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -316,9 +316,9 @@ TEST(AgradFwdMultiplyLog, FvarFvarVar_Double_3rdDeriv) {
 }
 TEST(AgradFwdMultiplyLog, Double_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
+  using stan::math::multiply_log;
   using stan::math::var;
   using std::log;
-  using stan::math::multiply_log;
 
   double x(1.5);
   fvar<fvar<var> > y;

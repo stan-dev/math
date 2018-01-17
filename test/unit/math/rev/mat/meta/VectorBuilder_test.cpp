@@ -3,11 +3,11 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_true) {
-  using stan::VectorBuilder;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
+  using stan::VectorBuilder;
   using stan::length;
+  using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
@@ -23,11 +23,11 @@ TEST(MetaTraits, VectorBuilder_false_true) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_true) {
-  using stan::VectorBuilder;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
+  using stan::VectorBuilder;
   using stan::length;
+  using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);

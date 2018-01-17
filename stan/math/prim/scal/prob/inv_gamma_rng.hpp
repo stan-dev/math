@@ -25,8 +25,8 @@ namespace math {
 
 template <class RNG>
 inline double inv_gamma_rng(double alpha, double beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "inv_gamma_rng";
 

@@ -18,8 +18,8 @@ namespace math {
 
 template <class RNG>
 inline int poisson_log_rng(double alpha, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::poisson_distribution;
+  using boost::variate_generator;
 
   static const char* function = "poisson_log_rng";
   static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);

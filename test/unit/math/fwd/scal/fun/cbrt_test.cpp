@@ -4,8 +4,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdCbrt, Fvar) {
-  using stan::math::fvar;
   using boost::math::cbrt;
+  using stan::math::fvar;
   using std::isnan;
 
   fvar<double> x(0.5, 1.0);
@@ -37,8 +37,8 @@ TEST(AgradFwdCbrt, Fvar) {
 }
 
 TEST(AgradFwdCbrt, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::cbrt;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;

@@ -3,12 +3,12 @@
 
 #include <stan/math/mix/mat.hpp>
 
-using std::vector;
-using stan::math::var;
-using stan::math::fvar;
-using stan::is_vector;
 using stan::is_constant_struct;
+using stan::is_vector;
+using stan::math::fvar;
+using stan::math::var;
 using stan::scalar_type;
+using std::vector;
 
 typedef stan::math::index_type<Eigen::Matrix<double, 1, 1> >::type size_type;
 

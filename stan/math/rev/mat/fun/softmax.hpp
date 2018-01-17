@@ -51,8 +51,8 @@ class softmax_elt_vari : public vari {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   check_nonzero_size("softmax", "alpha", alpha);
 

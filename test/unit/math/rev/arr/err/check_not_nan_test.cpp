@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
+  using stan::math::check_not_nan;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_not_nan;
 
   int N = 5;
   const char* function = "check_not_nan";
@@ -25,9 +25,9 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
 }
 
 TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
+  using stan::math::check_not_nan;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_not_nan;
 
   int N = 5;
   const char* function = "check_not_nan";

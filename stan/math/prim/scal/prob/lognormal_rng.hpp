@@ -18,8 +18,8 @@ namespace math {
 
 template <class RNG>
 inline double lognormal_rng(double mu, double sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::lognormal_distribution;
+  using boost::variate_generator;
 
   static const char* function = "lognormal_rng";
 

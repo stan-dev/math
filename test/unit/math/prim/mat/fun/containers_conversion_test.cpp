@@ -3,13 +3,13 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::to_matrix;
-using stan::math::to_vector;
-using stan::math::to_row_vector;
-using stan::math::to_array_2d;
-using stan::math::to_array_1d;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::to_array_1d;
+using stan::math::to_array_2d;
+using stan::math::to_matrix;
+using stan::math::to_row_vector;
+using stan::math::to_vector;
 using std::vector;
 
 TEST(MathMatrix, conversions_1) {

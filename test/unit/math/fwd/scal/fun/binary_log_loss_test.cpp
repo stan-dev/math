@@ -45,8 +45,8 @@ double finite_diff_2(const int y, const double y_hat) {
 }
 
 TEST(AgradFwdBinaryLogLoss, Fvar) {
-  using stan::math::fvar;
   using stan::math::binary_log_loss;
+  using stan::math::fvar;
 
   int y;
   fvar<double> y_hat;
@@ -94,8 +94,8 @@ TEST(AgradFwdBinaryLogLoss, Fvar) {
 }
 
 TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::binary_log_loss;
+  using stan::math::fvar;
 
   fvar<fvar<double> > y;
   y.val_.val_ = 0.4;

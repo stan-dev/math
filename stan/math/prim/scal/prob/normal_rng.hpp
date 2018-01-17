@@ -33,8 +33,8 @@ namespace math {
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::normal_distribution;
+  using boost::variate_generator;
   static const char* function = "normal_rng";
 
   check_finite(function, "Location parameter", mu);

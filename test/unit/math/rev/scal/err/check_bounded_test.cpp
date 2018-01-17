@@ -3,8 +3,8 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckBounded_X) {
-  using stan::math::var;
   using stan::math::check_bounded;
+  using stan::math::var;
 
   const char* function = "check_bounded";
   const char* name = "x";
@@ -54,8 +54,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBounded_X) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckBounded_Low) {
-  using stan::math::var;
   using stan::math::check_bounded;
+  using stan::math::var;
 
   const char* function = "check_bounded";
   const char* name = "x";
@@ -84,8 +84,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBounded_Low) {
   stan::math::recover_memory();
 }
 TEST(AgradRevErrorHandlingScalar, CheckBounded_High) {
-  using stan::math::var;
   using stan::math::check_bounded;
+  using stan::math::var;
 
   const char* function = "check_bounded";
   const char* name = "x";
@@ -115,8 +115,8 @@ TEST(AgradRevErrorHandlingScalar, CheckBounded_High) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_bounded;
+  using stan::math::var;
 
   const char* function = "check_bounded";
   var a(5.0);

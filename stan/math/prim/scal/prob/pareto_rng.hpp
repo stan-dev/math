@@ -17,8 +17,8 @@ namespace math {
 
 template <class RNG>
 inline double pareto_rng(double y_min, double alpha, RNG& rng) {
-  using boost::variate_generator;
   using boost::exponential_distribution;
+  using boost::variate_generator;
 
   static const char* function = "pareto_rng";
 

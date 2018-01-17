@@ -38,11 +38,11 @@ namespace math {
  */
 template <class RNG>
 inline double beta_rng(double alpha, double beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
-  using std::log;
+  using boost::variate_generator;
   using std::exp;
+  using std::log;
   static const char* function = "beta_rng";
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);

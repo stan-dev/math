@@ -20,8 +20,8 @@ TEST(MathMatrix, append_row) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using std::vector;
 
   MatrixXd m33(3, 3);

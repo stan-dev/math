@@ -18,8 +18,8 @@ namespace math {
 template <typename T, int R, int C>
 inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
     const Eigen::Matrix<fvar<T>, R, C>& y) {
-  using std::sqrt;
   using Eigen::Matrix;
+  using std::sqrt;
 
   Matrix<T, R, C> y_t(y.size());
   for (int k = 0; k < y.size(); ++k)

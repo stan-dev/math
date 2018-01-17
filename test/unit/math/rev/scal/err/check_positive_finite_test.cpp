@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_positive_finite;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
   const char* function = "check_positive_finite";
@@ -31,8 +31,8 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_positive_finite;
+  using stan::math::var;
 
   const char* function = "check_positive_finite";
   var a(5.0);
