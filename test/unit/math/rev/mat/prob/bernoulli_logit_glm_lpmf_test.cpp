@@ -53,7 +53,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   for (size_t ii = 0; ii < 200; ii++) {
     Matrix<int, Dynamic, 1> n(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      n[i] = rand() % 2;
+      n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
     Matrix<double, Dynamic, Dynamic> x
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -139,7 +139,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   for (size_t ii = 0; ii < 20000; ii++) {
     Matrix<int, Dynamic, 1> n(3, 1);
     for (size_t i = 0; i < 3; i++) {
-      n[i] = rand() % 2;
+      n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0] % 2;
     }
     Matrix<double, Dynamic, Dynamic> xreal
         = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
@@ -235,7 +235,7 @@ timeNow() std::chrono::high_resolution_clock::now()
 
   Matrix<int, Dynamic, 1> n(R, 1);
   for (size_t i = 0; i < R; i++) {
-    n[i] = rand()%2;
+    n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0]%2;
   }
 
   int T1 = 0;
@@ -248,7 +248,7 @@ Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
 1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R,
 1>::Ones() * alphareal;
 
-    
+    
     Matrix<var, Dynamic, 1> beta2 = betareal;
 
     TimeVar t3 = timeNow();
