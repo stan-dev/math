@@ -1,21 +1,6 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradFwdMatrixMdivideRightTri, simple) {
-  using Eigen::Lower;
-  using Eigen::MatrixXd;
-  using Eigen::RowVectorXd;
-  using stan::math::mdivide_right_tri;
-
-  MatrixXd b(1, 2);
-  b << 2, 3;
-  MatrixXd A(2, 2);
-  A << 3, 0, 1, 4;
-  MatrixXd b_under_A = mdivide_right_tri<Lower>(b, A);
-  SUCCEED();
-}
-
-using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_fd_lower) {
   using stan::math::matrix_fd;
   using stan::math::mdivide_right_tri;
