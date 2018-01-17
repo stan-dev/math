@@ -224,6 +224,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_speed)
   int T1 = 0;
   int T2 = 0;
   
+
   for (size_t testnumber = 0; testnumber < 30; testnumber++){
     Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic,
 Dynamic>::Random(R, C); Matrix<double, Dynamic, 1> betareal = Matrix<double,
@@ -233,11 +234,13 @@ Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
 Dynamic, Dynamic>::Random(R, 1) + Matrix<double, Dynamic, 1>::Ones(R, 1);  // We
 want phireal to be positive.
     
+
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> phi = phireal;
     Matrix<var, Dynamic, 1> theta(R, 1);
 
   
+
     TimeVar t1 = timeNow();
     theta = (xreal * beta) + alpharealvec;
     var lp = stan::math::neg_binomial_2_log_lpmf(n, theta, phi);
@@ -250,6 +253,7 @@ want phireal to be positive.
     Matrix<var, Dynamic, 1> beta2 = betareal;
     Matrix<var, Dynamic, 1> phi2 = phireal;
     
+
     TimeVar t3 = timeNow();
     var lp2 = stan::math::neg_binomial_2_log_glm_lpmf(n, xreal, beta2,
 alphareal[0], phi2); lp2.grad(); TimeVar t4 = timeNow();
@@ -259,6 +263,7 @@ alphareal[0], phi2); lp2.grad(); TimeVar t4 = timeNow();
 
   }
   
+
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New
 Primitives:" << std::endl << T2 << std::endl;
 }
