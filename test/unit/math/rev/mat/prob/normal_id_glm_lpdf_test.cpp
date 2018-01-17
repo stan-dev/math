@@ -203,15 +203,15 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_speed) {
   const int R = 30000;
   const int C = 1000;
-  
+  
   Matrix<int,Dynamic,1> n(R, 1);
   for (size_t i = 0; i < R; i++) {
     n[i] = Matrix<uint, 1, 1>::Random(1, 1)[0]%2000;
   }
-  
+  
   int T1 = 0;
   int T2 = 0;
-  
+  
   for (size_t testnumber = 0; testnumber < 1; testnumber++){
     Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic,
 Dynamic>::Random(R, C); Matrix<double, Dynamic, 1> betareal = Matrix<double,
@@ -221,12 +221,12 @@ Matrix<double, Dynamic, Dynamic>::Random(R, 1)
 and 1. We add 1 to it to get positive entries. Matrix<double, 1, 1> alphareal =
 Matrix<double, 1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec =
 Matrix<double, R, 1>::Ones() * alphareal;
-    
+    
     Matrix<var, Dynamic, 1> beta = betareal;
     Matrix<var, Dynamic, 1> sigma = sigmareal;
     Matrix<var, Dynamic, 1> theta(R, 1);
 
-  
+  
     TimeVar t1 = timeNow();
     theta = (xreal * beta) + alpharealvec;
     var lp = stan::math::normal_lpdf(n, theta, sigma);
@@ -238,7 +238,7 @@ Matrix<double, R, 1>::Ones() * alphareal;
 
     Matrix<var, Dynamic, 1> beta2 = betareal;
     Matrix<var, Dynamic, 1> sigma2 = sigmareal;
-    
+    
     TimeVar t3 = timeNow();
     var lp2 = stan::math::normal_id_glm_lpdf(n, xreal, beta2, alphareal[0],
       sigma2);
@@ -249,7 +249,7 @@ Matrix<double, R, 1>::Ones() * alphareal;
     T2 += duration(t4 - t3);
 
   }
-  
+  
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New
 Primitives:" << std::endl << T2 << std::endl;
 }
