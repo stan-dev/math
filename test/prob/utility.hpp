@@ -755,6 +755,5 @@ void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4, T5& p5) {
   if (!is_constant_struct<T5>::value)
     add_var(x, p5);
 }
-// ------------------------------------------------------------
 
 #endif
