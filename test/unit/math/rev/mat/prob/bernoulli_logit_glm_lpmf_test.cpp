@@ -248,7 +248,7 @@ Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
 1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R,
 1>::Ones() * alphareal;
 
-    
+    
     Matrix<var, Dynamic, 1> beta2 = betareal;
 
     TimeVar t3 = timeNow();

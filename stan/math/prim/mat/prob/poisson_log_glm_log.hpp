@@ -5,30 +5,27 @@
 #include <stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * @deprecated use <code>poisson_logit_glm_lpmf</code>
-     */
-    template <bool propto, typename T_n, typename T_x, typename T_beta,
-              typename T_alpha>
-    typename return_type<T_x, T_beta, T_alpha>::type
-    poisson_log_glm_log(const T_n &n, const T_x &x, const T_beta &beta,
-                             const T_alpha &alpha) {
-      return poisson_log_glm_lpmf<propto, T_n, T_x, T_beta, T_alpha>
-        (n, x, beta, alpha);
-    }
+/**
+ * @deprecated use <code>poisson_logit_glm_lpmf</code>
+ */
+template <bool propto, typename T_n, typename T_x, typename T_beta,
+          typename T_alpha>
+typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_log(
+    const T_n &n, const T_x &x, const T_beta &beta, const T_alpha &alpha) {
+  return poisson_log_glm_lpmf<propto, T_n, T_x, T_beta, T_alpha>(n, x, beta,
+                                                                 alpha);
+}
 
-    /**
-     * @deprecated use <code>poisson_logit_glm_lpmf</code>
-     */
-    template <typename T_n, typename T_x, typename T_beta, typename T_alpha>
-    inline
-        typename return_type<T_x, T_beta, T_alpha>::type
-        poisson_log_glm_log(const T_n &n, const T_x &x, const T_beta &beta,
-                                 const T_alpha &alpha) {
-      return poisson_log_glm_lpmf<false>(n, x, beta, alpha);
-    }
-  }  // namespace math
+/**
+ * @deprecated use <code>poisson_logit_glm_lpmf</code>
+ */
+template <typename T_n, typename T_x, typename T_beta, typename T_alpha>
+inline typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_log(
+    const T_n &n, const T_x &x, const T_beta &beta, const T_alpha &alpha) {
+  return poisson_log_glm_lpmf<false>(n, x, beta, alpha);
+}
+}  // namespace math
 }  // namespace stan
 #endif
