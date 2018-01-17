@@ -52,7 +52,7 @@ then
     fi
   done
   # format the files
-  echo $files | xargs clang-format -i
+  echo $files | xargs -n20 -P4 clang-format -i
   
   echo $files | xargs git diff --name-only
   
