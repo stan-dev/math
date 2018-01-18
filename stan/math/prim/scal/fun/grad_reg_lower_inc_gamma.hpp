@@ -86,6 +86,10 @@ namespace math {
  * centered at a=0, z=30 although both implementations are
  * satisfactory near the intersection.
  *
+ * Some limits that could be treated, e.g., infinite z should
+ * return tgamma(a) * digamma(a), throw instead to match the behavior of,
+ * e.g., boost::math::gamma_p
+ *
  * @tparam T1 type of a
  * @tparam T2 type of z
  * @param[in] a shared with complete Gamma
@@ -115,7 +119,6 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   if (z > 0 && is_inf(z))
     domain_error("d_lower_reg_inc_gamma_da", "z", z, "The value ",
                  " is not finite.");
-  // if (is_inf(z)) return tgamma(a) * digamma(a);
   if (a < 0)
     domain_error("d_lower_reg_inc_gamma_da", "a", a, "The value ",
                  " can not be negative.");
