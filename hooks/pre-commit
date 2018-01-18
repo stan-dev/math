@@ -37,22 +37,10 @@ then
   IFS=$'\n'
 
   echo "Files formatted:"
-  files=""
+  files=$(git diff --diff-filter=AM --name-only | grep -E ".hpp$|.cpp$" | grep -v "^lib/")
 
-  for line in $(git status -s --porcelain)
-  do
-    # if the file is added or modified
-    if [[ $line == A* ]] || [[ $line == M* ]]
-    then
-      # and the file is a c or cpp file
-      if [[ $line == *.hpp || $line == *.cpp ]]
-      then
-        files="$files ${line:3}"
-      fi
-    fi
-  done
   # format the files
-  echo $files | xargs -n20 -P4 clang-format -i
+  echo $files | xargs -n20 -P6 clang-format -i
   
   echo $files | xargs git diff --name-only
   
