@@ -96,17 +96,27 @@ pipeline {
             steps {
                 sh "printenv"
                 checkoutScm(env.CHANGE_BRANCH)
-                sh """#!/bin/bash
-                    set -x
-                    clang-format --version;
-                    find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i;
-                    if [[ `git diff` != "" ]]; then
-                        git add stan test;
-                        git commit -m \"[Jenkins] auto-formatting by `clang-format --version`\" --author="Stan Jenkins <mc.stanislaw@gmail.com>";
-                        git push origin ${env.CHANGE_BRANCH};
-                        exit 1 # this will kill this build and trigger a new one
-                    fi"""
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                    usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        git status
+                        git remote -v
+                        git checkout ${env.CHANGE_BRANCH}
+                        clang-format --version;
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i;
+                        if [[ `git diff` != "" ]]; then
+                            git config --global user.email "mc.stanislaw@gmail.com";
+                            git config --global user.name "Stan Jenkins";
+                            git add stan test;
+                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`";
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${env.CHANGE_BRANCH};
+                            echo "Exiting build because clang-format found changes."
+                            exit 1
+                        fi"""
+                }
             }
+            post { always { deleteDir() } }
         }
         stage('Linting & Doc checks') {
             agent any
