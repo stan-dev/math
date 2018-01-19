@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 @Library('StanUtils')
 import org.stan.Utils
 
@@ -67,6 +68,10 @@ def alsoNotify() {
     } else ""
 }
 
+def isFork() { !env.CHANGE_URL.startsWith("https://github.com/stan-dev/math/") }
+def branchName() { (isFork() ? "autoformat/" : "") + env.CHANGE_BRANCH }
+def newBranch() { isFork() ? "-b" : "" }
+
 pipeline {
     agent none
     parameters {
@@ -95,12 +100,12 @@ pipeline {
             agent any
             steps {
                 sh "printenv"
-                checkoutScm(env.CHANGE_BRANCH)
+                retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
-                        git checkout ${env.CHANGE_BRANCH}
+                        git checkout ${newBranch()} ${branchName()}
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
@@ -108,8 +113,10 @@ pipeline {
                             git config --global user.name "Stan Jenkins"
                             git add stan test
                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${env.CHANGE_BRANCH}
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${branchName()} 
                             echo "Exiting build because clang-format found changes."
+                            echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
+                            echo "Please merge those into your branch before continuing"
                             exit 1
                         fi"""
                 }
