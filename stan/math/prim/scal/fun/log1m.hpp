@@ -33,10 +33,15 @@ namespace math {
  *
  * @param[in] x Argument.
  * @return Natural log of one minus the argument.
- * @throw std::domain_error If the argument is greater than 1.
- * @throw std::overflow_error If the computation overflows.
+ * @throw <code>std::domain_error</code> If the argument is greater than 1.
+ * @throw <code>std::overflow_error</code> If the computation overflows.
  */
-inline double log1m(double x) { return stan::math::log1p(-x); }
+inline double log1m(double x) {
+  if (x > 1)
+    domain_error("Error in function log1m(double)", "log1m(x)", x,
+                 "requires x < 1, but got x = ");
+  return stan::math::log1p(-x);
+}
 
 }  // namespace math
 }  // namespace stan
