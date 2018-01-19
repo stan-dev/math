@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 
 namespace stan {
 namespace math {
@@ -37,9 +38,7 @@ namespace math {
  * @throw <code>std::overflow_error</code> If the computation overflows.
  */
 inline double log1m(double x) {
-  if (x > 1)
-    domain_error("Error in function log1m(double)", "log1m(x)", x,
-                 "requires x < 1, but got x = ");
+  check_less_or_equal("log1m(x)", "x", x, 1);
   return stan::math::log1p(-x);
 }
 
