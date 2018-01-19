@@ -5,9 +5,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdGammaP, gamma_p) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::gamma_p;
-  using boost::math::gamma_p;
 
   fvar<double> x(0.5001);
   x.d_ = 1.0;
@@ -16,8 +16,9 @@ TEST(AgradFwdGammaP, gamma_p) {
 
   fvar<double> a = gamma_p(x, y);
   EXPECT_FLOAT_EQ(gamma_p(0.5001, 1.0001), a.val_);
-  EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5001, 1.0001)
-                  - 0.3898178624664172, a.d_);
+  EXPECT_FLOAT_EQ(
+      boost::math::gamma_p_derivative(0.5001, 1.0001) - 0.3898178624664172,
+      a.d_);
 
   double z = 1.0001;
   double w = 0.5001;
@@ -35,8 +36,8 @@ TEST(AgradFwdGammaP, gamma_p) {
 }
 
 TEST(AgradFwdGammaP, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::gamma_p;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5001;
