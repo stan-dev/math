@@ -15,7 +15,7 @@ TEST(MathFunctions, log1mOverflow) {
 
 TEST(MathFunctions, log1m_exception) {
   EXPECT_THROW_MSG(stan::math::log1m(10.0), std::domain_error,
-                   "log1m(x): x is 10, but must be less than or equal to 1");
+                   "log1m: x is 10, but must be less than or equal to 1");
 }
 
 TEST(MathFunctions, log1m_nan) {

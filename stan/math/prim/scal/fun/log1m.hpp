@@ -38,7 +38,7 @@ namespace math {
  * @throw <code>std::overflow_error</code> If the computation overflows.
  */
 inline double log1m(double x) {
-  check_less_or_equal("log1m(x)", "x", x, 1);
+  check_less_or_equal("log1m", "x", x, 1);
   return stan::math::log1p(-x);
 }
 
