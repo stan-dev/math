@@ -248,7 +248,7 @@ class mpi_parallel_call {
       if (!all_ok) {
         // err out on the root
         if (rank_ == 0)
-          throw std::runtime_error("MPI error on first evaluation.");
+          throw std::domain_error("MPI error on first evaluation.");
         // and ensure on the workers that they return into their
         // listening state
         return result_type();
