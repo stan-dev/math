@@ -38,6 +38,7 @@ $(STAN_CVODES_HEADERS) : $(LIBCVODES)
 
 $(BOOST)/stage/lib/mpi.so :
 	cd $(BOOST); ./bootstrap.sh
+	cd $(BOOST); echo "using mpi ;" >> user-config.jam
 	cd $(BOOST); ./b2 --with-mpi --with-serialization
 
 stan-mpi : $(BOOST)/stage/lib/mpi.so
