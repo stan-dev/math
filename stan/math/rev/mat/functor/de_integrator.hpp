@@ -28,7 +28,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
-*/
+ */
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_DEINTEGRATOR_HPP
 
@@ -38,110 +38,110 @@
 
 namespace stan {
 
-  namespace math {
+namespace math {
 
-    /**
-     * Double Exponential Integrator.
-     *
-     * @tparam T Type of f.
-     * @param f a functor with signature double (double).
-     * @param a lower limit of integration, must be double type.
-     * @param b upper limit of integration, must be double type.
-     * @param tre target relative error.
-     * @param tae target absolute error.
-     * @return numeric integral of function f.
-     */
-    template <typename F>
-    inline
-    double de_integrator(const F& f, double a, double b, double tre,
-                         double tae) {
-      using std::log;
-      using std::fabs;
+/**
+ * Double Exponential Integrator.
+ *
+ * @tparam T Type of f.
+ * @param f a functor with signature double (double).
+ * @param a lower limit of integration, must be double type.
+ * @param b upper limit of integration, must be double type.
+ * @param tre target relative error.
+ * @param tae target absolute error.
+ * @return numeric integral of function f.
+ */
+template <typename F>
+inline double de_integrator(const F& f, double a, double b, double tre,
+                            double tae) {
+  using std::fabs;
+  using std::log;
 
-      // Apply the linear change of variables x = ct + d
-      // $$\int_a^b f(x) dx = c \int_{-1}^1 f( ct + d ) dt$$
-      // c = (b-a)/2, d = (a+b)/2
-      double c = 0.5 * (b - a);
-      double d = 0.5 * (a + b);
-      int num_function_evaluations;
+  // Apply the linear change of variables x = ct + d
+  // $$\int_a^b f(x) dx = c \int_{-1}^1 f( ct + d ) dt$$
+  // c = (b-a)/2, d = (a+b)/2
+  double c = 0.5 * (b - a);
+  double d = 0.5 * (a + b);
+  int num_function_evaluations;
 
-      tae /= c;
+  tae /= c;
 
-      // Offsets to where each level's integration constants start.
-      // The last element is not a beginning but an end.
-      static int offsets[] = {1, 4, 7, 13, 25, 49, 97, 193};
-      int num_levels = sizeof(offsets) / sizeof(int) - 1;
+  // Offsets to where each level's integration constants start.
+  // The last element is not a beginning but an end.
+  static int offsets[] = {1, 4, 7, 13, 25, 49, 97, 193};
+  int num_levels = sizeof(offsets) / sizeof(int) - 1;
 
-      double new_contribution = 0.0;
-      double integral = 0.0;
-      double previous_integral = 0.0;
-      double error_estimate = DBL_MAX;
-      double h = 1.0;
-      double previous_delta, current_delta = DBL_MAX;
+  double new_contribution = 0.0;
+  double integral = 0.0;
+  double previous_integral = 0.0;
+  double error_estimate = DBL_MAX;
+  double h = 1.0;
+  double previous_delta, current_delta = DBL_MAX;
 
-      integral = f(c * de_abcissas[0] + d) * de_weights[0];
+  integral = f(c * de_abcissas[0] + d) * de_weights[0];
 
-      int i;
-      for (i = offsets[0]; i != offsets[1]; ++i)
-        integral += de_weights[i] * (f(c * de_abcissas[i] + d)
-                                     + f(-c * de_abcissas[i] + d));
+  int i;
+  for (i = offsets[0]; i != offsets[1]; ++i)
+    integral += de_weights[i]
+                * (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
 
-      for (int level = 1; level != num_levels; ++level) {
-        h *= 0.5;
-        new_contribution = 0.0;
-        for (i = offsets[level]; i != offsets[level+1]; ++i)
-          new_contribution += de_weights[i] * (f(c * de_abcissas[i] + d)
-                                          + f(-c * de_abcissas[i] + d));
-        new_contribution *= h;
+  for (int level = 1; level != num_levels; ++level) {
+    h *= 0.5;
+    new_contribution = 0.0;
+    for (i = offsets[level]; i != offsets[level + 1]; ++i)
+      new_contribution
+          += de_weights[i]
+             * (f(c * de_abcissas[i] + d) + f(-c * de_abcissas[i] + d));
+    new_contribution *= h;
 
-        // difference in consecutive integral estimates
-        previous_delta = current_delta;
-        current_delta = fabs(0.5 * integral - new_contribution);
-        previous_integral = integral;
-        integral = 0.5 * integral + new_contribution;
+    // difference in consecutive integral estimates
+    previous_delta = current_delta;
+    current_delta = fabs(0.5 * integral - new_contribution);
+    previous_integral = integral;
+    integral = 0.5 * integral + new_contribution;
 
-        // Once convergence kicks in, error is approximately squared
-        // at each step.
-        // Determine whether we're in the convergent region by looking
-        // at the trend in the error.
-        if (level == 1)
-          // previous_delta meaningless, so cannot check
-          // convergence.
-          continue;
+    // Once convergence kicks in, error is approximately squared
+    // at each step.
+    // Determine whether we're in the convergent region by looking
+    // at the trend in the error.
+    if (level == 1)
+      // previous_delta meaningless, so cannot check
+      // convergence.
+      continue;
 
-        // Exact comparison with zero is harmless here. Could possibly
-        // be replaced with a small positive upper limit on the size
-        // of current_delta, but determining that upper limit would be
-        // difficult. At worse, the loop is executed more times than
-        // necessary. But no infinite loop can result since there is
-        // an upper bound on the loop variable.
-        if (current_delta == 0.0)
-          break;
-        // previous_delta != 0 or would have been kicked out
-        // previously
-        double r = log(current_delta) / log(previous_delta);
+    // Exact comparison with zero is harmless here. Could possibly
+    // be replaced with a small positive upper limit on the size
+    // of current_delta, but determining that upper limit would be
+    // difficult. At worse, the loop is executed more times than
+    // necessary. But no infinite loop can result since there is
+    // an upper bound on the loop variable.
+    if (current_delta == 0.0)
+      break;
+    // previous_delta != 0 or would have been kicked out
+    // previously
+    double r = log(current_delta) / log(previous_delta);
 
-        if (r > 1.9 && r < 2.1) {
-          // If convergence theory applied perfectly, r would be 2 in
-          // the convergence region. r close to 2 is good enough. We
-          // expect the difference between this integral estimate and
-          // the next one to be roughly delta^2.
-          error_estimate = current_delta * current_delta;
-        } else {
-          // Not in the convergence region. Assume only that error is
-          // decreasing.
-          error_estimate = current_delta;
-        }
-
-        if (error_estimate < 0.1 * tae
-            && fabs(1 - integral / previous_integral) < tre)
-          break;
-      }
-
-      num_function_evaluations = 2 * i - 1;
-      error_estimate *= c;
-      return c * integral;
+    if (r > 1.9 && r < 2.1) {
+      // If convergence theory applied perfectly, r would be 2 in
+      // the convergence region. r close to 2 is good enough. We
+      // expect the difference between this integral estimate and
+      // the next one to be roughly delta^2.
+      error_estimate = current_delta * current_delta;
+    } else {
+      // Not in the convergence region. Assume only that error is
+      // decreasing.
+      error_estimate = current_delta;
     }
+
+    if (error_estimate < 0.1 * tae
+        && fabs(1 - integral / previous_integral) < tre)
+      break;
   }
+
+  num_function_evaluations = 2 * i - 1;
+  error_estimate *= c;
+  return c * integral;
 }
+}  // namespace math
+}  // namespace stan
 #endif
