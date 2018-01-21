@@ -6,23 +6,23 @@
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Returns the inverse logit function applied to the argument.
-     *
-     * @tparam T scalar type of forward-mode autodiff variable
-     * argument.
-     * @param x argument
-     * @return inverse logit of argument
-     */
-    template <typename T>
-    inline fvar<T> inv_logit(const fvar<T>& x) {
-      using std::exp;
-      using std::pow;
-      return fvar<T>(inv_logit(x.val_),
-           x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
-    }
-  }
+/**
+ * Returns the inverse logit function applied to the argument.
+ *
+ * @tparam T scalar type of forward-mode autodiff variable
+ * argument.
+ * @param x argument
+ * @return inverse logit of argument
+ */
+template <typename T>
+inline fvar<T> inv_logit(const fvar<T>& x) {
+  using std::exp;
+  using std::pow;
+  return fvar<T>(inv_logit(x.val_),
+                 x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
 }
+}  // namespace math
+}  // namespace stan
 #endif

@@ -17,7 +17,7 @@ TEST(SparseStuff, csr_matrix_times_vector_dense_multiply) {
   b << 22, 33, 44;
 
   stan::math::vector_d result
-    = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
+      = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
   EXPECT_FLOAT_EQ(440.0, result(0));
   EXPECT_FLOAT_EQ(1034.0, result(1));
 }
@@ -37,7 +37,7 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_row_multiply) {
   b << 22, 33, 44;
 
   stan::math::vector_d result
-    = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
+      = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
   EXPECT_FLOAT_EQ(176.0, result(0));
   EXPECT_FLOAT_EQ(506.0, result(1));
 }
@@ -57,7 +57,7 @@ TEST(SparseStuff, csr_matrix_times_vector_empty_column_multiply) {
   b << 22, 33, 44;
 
   stan::math::vector_d result
-    = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
+      = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
 
   EXPECT_FLOAT_EQ(308.0, result(0));
   EXPECT_FLOAT_EQ(704.0, result(1));
@@ -146,11 +146,10 @@ TEST(SparseStuff, csr_matrix_times_vector_v_short) {
   stan::math::vector_d X_w = stan::math::csr_extract_w(a);
   std::vector<int> X_v = stan::math::csr_extract_v(a);
   std::vector<int> X_u = stan::math::csr_extract_u(a);
-  X_v.erase(X_v.begin()+4);  // make a short v:
+  X_v.erase(X_v.begin() + 4);  // make a short v:
 
   stan::math::vector_d b(3);
   b << 22, 33, 44;
   EXPECT_THROW(stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b),
                std::invalid_argument);
 }
-

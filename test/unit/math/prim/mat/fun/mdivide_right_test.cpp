@@ -6,8 +6,7 @@ TEST(MathMatrix, mdivide_right_val) {
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;
 
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right(Ad, Ad);
   EXPECT_NEAR(1.0, I(0, 0), 1.0E-12);
@@ -24,12 +23,8 @@ TEST(MathMatrix, mdivide_right_val2) {
   stan::math::row_vector_d x;
 
   b << 19, 150, -170, 140, 31;
-  A <<
-    1, 8, -9, 7, 5,
-    0, 1, 0, 4, 4,
-    0, 0, 1, 2, 5,
-    0, 0, 0, 1, -5,
-    0, 0, 0, 0, 1;
+  A << 1, 8, -9, 7, 5, 0, 1, 0, 4, 4, 0, 0, 1, 2, 5, 0, 0, 0, 1, -5, 0, 0, 0, 0,
+      1;
   expected << 19, -2, 1, 13, 4;
   x = mdivide_right(b, A);
 

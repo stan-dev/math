@@ -37,7 +37,7 @@ TEST(AgradRev, atan2_var_var__integration) {
   AVAR a = 1.2;
   AVAR b = 3.9;
   AVAR f = atan2(a, b) * c;
-  EXPECT_FLOAT_EQ(atan2(1.2, 3.9)*c, f.val());
+  EXPECT_FLOAT_EQ(atan2(1.2, 3.9) * c, f.val());
 
   AVEC x = createAVEC(a, b);
   VEC g;
@@ -45,7 +45,6 @@ TEST(AgradRev, atan2_var_var__integration) {
   EXPECT_FLOAT_EQ(3.9 / (1.2 * 1.2 + 3.9 * 3.9) * c, g[0]);
   EXPECT_FLOAT_EQ(-1.2 / (1.2 * 1.2 + 3.9 * 3.9) * c, g[1]);
 }
-
 
 TEST(AgradRev, atan2_var_double) {
   AVAR a = 1.2;
@@ -74,10 +73,8 @@ TEST(AgradRev, atan2_double_var) {
 
 struct atan2_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return atan2(arg1, arg2);
   }
 };

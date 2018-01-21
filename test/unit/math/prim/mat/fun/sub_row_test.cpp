@@ -1,7 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MathMatrixSubRow, SubRow1) {
   using stan::math::sub_row;
   Eigen::MatrixXd m(3, 4);
@@ -51,5 +50,5 @@ TEST(MathMatrixSubRow, SubRow6) {
   Eigen::RowVectorXd v = sub_row(m, 1, 2, 2);
   EXPECT_EQ(2, v.size());
   for (int i = 0; i < 2; ++i)
-    EXPECT_FLOAT_EQ(m(0, 1+i), v(i));
+    EXPECT_FLOAT_EQ(m(0, 1 + i), v(i));
 }

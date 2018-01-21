@@ -13,8 +13,8 @@ TEST(ProbInternalMath, F32_fd) {
   fvar<double> z = 1.0;
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    stan::math::F32(a, b, c, d, e, z).val_);
+      11.28915378492300834453857665243661995978358572684678329916652,
+      stan::math::F32(a, b, c, d, e, z).val_);
 }
 TEST(ProbInternalMath, F32_ffd) {
   using stan::math::fvar;
@@ -27,8 +27,8 @@ TEST(ProbInternalMath, F32_ffd) {
   fvar<fvar<double> > z = 1.0;
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    stan::math::F32(a, b, c, d, e, z).val_.val_);
+      11.28915378492300834453857665243661995978358572684678329916652,
+      stan::math::F32(a, b, c, d, e, z).val_.val_);
 }
 TEST(ProbInternalMath, F32_fv_1stderiv1) {
   using stan::math::fvar;
@@ -45,8 +45,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv1) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(a.val_);
   VEC grad1;
@@ -69,8 +69,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv2) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(b.val_);
   VEC grad1;
@@ -93,8 +93,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv3) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(c.val_);
   VEC grad1;
@@ -116,8 +116,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv4) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(d.val_);
   VEC grad1;
@@ -140,8 +140,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv5) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(e.val_);
   VEC grad1;
@@ -165,8 +165,8 @@ TEST(ProbInternalMath, F32_fv_1stderiv6) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(z.val_);
   VEC grad1;
@@ -190,8 +190,8 @@ TEST(ProbInternalMath, F32_fv_2ndderiv1) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(a.val_);
   VEC grad1;
@@ -215,8 +215,8 @@ TEST(ProbInternalMath, F32_fv_2ndderiv2) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(b.val_);
   VEC grad1;
@@ -239,8 +239,8 @@ TEST(ProbInternalMath, F32_fv_2ndderiv3) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(c.val_);
   VEC grad1;
@@ -303,8 +303,8 @@ TEST(ProbInternalMath, F32_fv_2ndderiv6) {
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
   EXPECT_FLOAT_EQ(
-    11.28915378492300834453857665243661995978358572684678329916652,
-    z1.val_.val());
+      11.28915378492300834453857665243661995978358572684678329916652,
+      z1.val_.val());
 
   AVEC y1 = createAVEC(z.val_);
   VEC grad1;

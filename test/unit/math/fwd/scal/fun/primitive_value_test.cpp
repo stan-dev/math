@@ -46,4 +46,3 @@ TEST(AgradFwd, primitiveValueNanNested) {
   EXPECT_TRUE(boost::math::isnan(primitive_value(a)));
   EXPECT_TRUE(boost::math::isnan(primitive_value(nan)));
 }
-

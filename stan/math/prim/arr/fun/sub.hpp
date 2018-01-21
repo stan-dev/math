@@ -5,16 +5,16 @@
 #include <cstddef>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    inline void sub(std::vector<double>& x, std::vector<double>& y,
-                    std::vector<double>& result) {
-      result.resize(x.size());
-      for (size_t i = 0; i < x.size(); ++i)
-        result[i] = x[i] - y[i];
-    }
-
-  }
+inline void sub(std::vector<double>& x, std::vector<double>& y,
+                std::vector<double>& result) {
+  result.resize(x.size());
+  for (size_t i = 0; i < x.size(); ++i)
+    result[i] = x[i] - y[i];
 }
+
+}  // namespace math
+}  // namespace stan
 
 #endif

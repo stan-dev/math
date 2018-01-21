@@ -28,9 +28,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular) {
                std::domain_error);
 
   y.resize(3, 2);
-  y << 1, 0,
-    2, 3,
-    4, 5;
+  y << 1, 0, 2, 3, 4, 5;
   EXPECT_NO_THROW(check_lower_triangular("checkLowerTriangular", "y", y));
 
   y(0, 1) = 1.5;
@@ -38,9 +36,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular) {
                std::domain_error);
 
   y.resize(2, 3);
-  y <<
-    1, 0, 0,
-    4, 5, 0;
+  y << 1, 0, 0, 4, 5, 0;
   EXPECT_NO_THROW(check_lower_triangular("checkLowerTriangular", "y", y));
   y(0, 2) = 3;
 }
@@ -51,9 +47,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_one_indexed_message) {
   std::string message;
 
   y.resize(2, 3);
-  y <<
-    1, 0, 3,
-    4, 5, 0;
+  y << 1, 0, 3, 4, 5, 0;
   try {
     check_lower_triangular("checkLowerTriangular", "y", y);
     FAIL() << "should have thrown";
@@ -63,8 +57,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("[1,3]"))
-    << message;
+  EXPECT_NE(std::string::npos, message.find("[1,3]")) << message;
 }
 
 TEST(ErrorHandlingMatrix, checkLowerTriangular_nan) {
@@ -93,9 +86,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_nan) {
                std::domain_error);
 
   y.resize(3, 2);
-  y << nan, 0,
-    2, nan,
-    4, 5;
+  y << nan, 0, 2, nan, 4, 5;
   EXPECT_NO_THROW(check_lower_triangular("checkLowerTriangular", "y", y));
 
   y(0, 1) = nan;
@@ -103,9 +94,7 @@ TEST(ErrorHandlingMatrix, checkLowerTriangular_nan) {
                std::domain_error);
 
   y.resize(2, 3);
-  y <<
-    nan, 0, 0,
-    4, nan, 0;
+  y << nan, 0, 0, 4, nan, 0;
   EXPECT_NO_THROW(check_lower_triangular("checkLowerTriangular", "y", y));
 
   y(0, 2) = nan;

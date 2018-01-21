@@ -8,14 +8,11 @@ TEST(ProbBetaBinomial, cdf_log_matches_lcdf) {
   double alpha = 1.1;
   double beta = 0.3;
 
-  EXPECT_NEAR(
-    stan::math::beta_binomial_lcdf(n, N, alpha, beta),
-    stan::math::beta_binomial_cdf_log(n, N, alpha, beta), 1e-8);
-  EXPECT_NEAR(
-    (stan::math::beta_binomial_lcdf(n, N, alpha, beta)),
-    stan::math::beta_binomial_cdf_log(n, N, alpha, beta), 1e-8);
+  EXPECT_NEAR(stan::math::beta_binomial_lcdf(n, N, alpha, beta),
+              stan::math::beta_binomial_cdf_log(n, N, alpha, beta), 1e-8);
+  EXPECT_NEAR((stan::math::beta_binomial_lcdf(n, N, alpha, beta)),
+              stan::math::beta_binomial_cdf_log(n, N, alpha, beta), 1e-8);
 }
-
 
 TEST(ProbBetaBinomial, lcdf_like_lcdf) {
   int n = 10;
@@ -25,8 +22,7 @@ TEST(ProbBetaBinomial, lcdf_like_lcdf) {
 
   EXPECT_NEAR(0.0, stan::math::beta_binomial_lcdf(n, N, alpha, beta), 1e-8);
   EXPECT_NEAR(
-    0.0,
-    std::exp(stan::math::beta_binomial_lcdf(0.0, N, alpha, beta)), 1e-8);
+      0.0, std::exp(stan::math::beta_binomial_lcdf(0.0, N, alpha, beta)), 1e-8);
 }
 
 TEST(ProbBetaBinomial, lcdf_matches_lpmf) {
@@ -39,10 +35,9 @@ TEST(ProbBetaBinomial, lcdf_matches_lpmf) {
   for (int i = 0; i <= n; ++i)
     pmf_sum += std::exp(stan::math::beta_binomial_lpmf(i, N, alpha, beta));
 
-  EXPECT_NEAR(
-    pmf_sum,
-    std::exp(stan::math::beta_binomial_lcdf(n, N, alpha, beta)),
-    1e-8);
+  EXPECT_NEAR(pmf_sum,
+              std::exp(stan::math::beta_binomial_lcdf(n, N, alpha, beta)),
+              1e-8);
 }
 
 TEST(ProbBetaBinomial, lcdf_matches_mathematica) {
@@ -60,5 +55,3 @@ TEST(ProbBetaBinomial, lcdf_matches_mathematica) {
   EXPECT_THROW(stan::math::beta_binomial_lcdf(n, N, alpha, beta),
                std::domain_error);
 }
-
-

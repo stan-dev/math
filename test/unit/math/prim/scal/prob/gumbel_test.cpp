@@ -11,8 +11,8 @@ TEST(ProbDistributionsGumbel, error_check) {
   EXPECT_NO_THROW(stan::math::gumbel_rng(10.0, 2.0, rng));
 
   EXPECT_THROW(
-    stan::math::gumbel_rng(stan::math::positive_infinity(), 2.0, rng),
-    std::domain_error);
+      stan::math::gumbel_rng(stan::math::positive_infinity(), 2.0, rng),
+      std::domain_error);
   EXPECT_THROW(stan::math::gumbel_rng(10.0, -2, rng), std::domain_error);
 }
 
@@ -27,7 +27,7 @@ TEST(ProbDistributionsGumbel, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's Gumbel distribution
-  boost::math::extreme_value_distribution<>dist(2.0, 1.0);
+  boost::math::extreme_value_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;

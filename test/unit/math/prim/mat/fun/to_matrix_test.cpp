@@ -7,18 +7,16 @@
 using stan::math::to_matrix;
 
 template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C>
-row_major_to_column_major(const Eigen::Matrix<T, R, C>& x) {
+inline Eigen::Matrix<T, R, C> row_major_to_column_major(
+    const Eigen::Matrix<T, R, C>& x) {
   int rows = x.rows();
   int cols = x.cols();
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-    result(rows, cols);
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
   for (int i = 0, ij = 0; i < rows; i++)
     for (int j = 0; j < cols; j++, ij++)
       result(ij) = x(i, j);
   return result;
 }
-
 
 // [T] -> Matrix
 void test_to_matrix_array_answers(int m, int n) {
@@ -35,12 +33,10 @@ void test_to_matrix_array_answers(int m, int n) {
   expect_matrix_eq(a, to_matrix(vec, m, n, 1));
   expect_matrix_eq(a, to_matrix(vec, m, n, -1));
   expect_matrix_eq(a, to_matrix(vec, m, n, 2));
-  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec,
-                                                          m, n, 0)));
+  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec, m, n, 0)));
   expect_matrix_eq(a, to_matrix(vec_int, m, n));
   expect_matrix_eq(a, to_matrix(vec_int, m, n, 1));
-  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec_int,
-                                                          m, n, 0)));
+  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec_int, m, n, 0)));
 }
 
 TEST(ToMatrixArray, answers) {
@@ -73,25 +69,22 @@ TEST(ToMatrixMatrix, answers) {
 }
 
 // Matrix -> Matrix (with reshape)
-void test_to_matrix_matrix_reshape_answers(int m1, int n1,
-                                           int m2, int n2) {
+void test_to_matrix_matrix_reshape_answers(int m1, int n1, int m2, int n2) {
   Eigen::MatrixXd a(m1, n1);
   Eigen::MatrixXd b(m2, n2);
   for (int i = 0; i < m1 * n1; ++i) {
-    a(i) = static_cast<double>(i)/1.26;
-    b(i) = static_cast<double>(i)/1.26;
+    a(i) = static_cast<double>(i) / 1.26;
+    b(i) = static_cast<double>(i) / 1.26;
   }
   expect_matrix_eq(a, to_matrix(b, m1, n1));
   expect_matrix_eq(a, to_matrix(b, m1, n1, 1));
   expect_matrix_eq(a, to_matrix(b, m1, n1, -1));
   expect_matrix_eq(a, to_matrix(b, m1, n1, 2));
-  expect_matrix_eq(a,
-                   row_major_to_column_major(to_matrix(b, m1, n1, 0)));
+  expect_matrix_eq(a, row_major_to_column_major(to_matrix(b, m1, n1, 0)));
 
   expect_matrix_eq(b, to_matrix(a, m2, n2));
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
-  expect_matrix_eq(b,
-                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n1 != 0) {
     EXPECT_THROW(to_matrix(a, m1 + 1, n1), std::invalid_argument);
@@ -129,9 +122,9 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
   Eigen::MatrixXd b(m2, n2);
   Eigen::MatrixXd c(m, 1);
   for (int i = 0; i < m2 * n2; ++i) {
-    a(i) = static_cast<double>(i)/1.26;
-    b(i) = static_cast<double>(i)/1.26;
-    c(i) = static_cast<double>(i)/1.26;
+    a(i) = static_cast<double>(i) / 1.26;
+    b(i) = static_cast<double>(i) / 1.26;
+    c(i) = static_cast<double>(i) / 1.26;
   }
   // without reshape
   expect_matrix_eq(c, to_matrix(a));
@@ -141,15 +134,14 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
   expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
   expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
-  expect_matrix_eq(b,
-                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2 + 1, n2, 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2 + 1, n2, 0), std::invalid_argument);
   }
-  if (m2 !=0) {
+  if (m2 != 0) {
     EXPECT_THROW(to_matrix(a, m2, n2 + 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2, n2 + 1, 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2, n2 + 1, 0), std::invalid_argument);
@@ -170,9 +162,9 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
   Eigen::MatrixXd b(m2, n2);
   Eigen::MatrixXd c(1, n);
   for (int i = 0; i < m2 * n2; ++i) {
-    a(i) = static_cast<double>(i)/1.26;
-    b(i) = static_cast<double>(i)/1.26;
-    c(i) = static_cast<double>(i)/1.26;
+    a(i) = static_cast<double>(i) / 1.26;
+    b(i) = static_cast<double>(i) / 1.26;
+    c(i) = static_cast<double>(i) / 1.26;
   }
   // without reshape
   expect_matrix_eq(c, to_matrix(a));
@@ -182,15 +174,14 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
   expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
   expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
   expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
-  expect_matrix_eq(b,
-                   row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2 + 1, n2, 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2 + 1, n2, 0), std::invalid_argument);
   }
-  if (m2 !=0) {
+  if (m2 != 0) {
     EXPECT_THROW(to_matrix(a, m2, n2 + 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2, n2 + 1, 1), std::invalid_argument);
     EXPECT_THROW(to_matrix(a, m2, n2 + 1, 0), std::invalid_argument);
@@ -210,7 +201,8 @@ void test_to_matrix_2darray_answers(int m, int n) {
   std::vector<std::vector<double> > vec(m, std::vector<double>(n));
   std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
   // Any vec (0, C) will become (0, 0)
-  if (m == 0) n = 0;
+  if (m == 0)
+    n = 0;
   Eigen::MatrixXd a(m, n);
 
   for (int i = 0; i < m; ++i) {

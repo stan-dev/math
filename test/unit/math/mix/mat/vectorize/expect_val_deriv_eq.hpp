@@ -6,12 +6,12 @@
 #include <gtest/gtest.h>
 
 template <typename V>
-static inline void expect_val_deriv_eq(V exp_var, V base_exp_var,
-                                       V test_var, V base_test_var) {
-  expect_val_deriv_eq(exp_var.val(), base_exp_var.val(),
-                      test_var.val(), base_test_var.val());
-  expect_val_deriv_eq(exp_var.d_, base_exp_var.d_,
-                      test_var.d_, base_test_var.d_);
+static inline void expect_val_deriv_eq(V exp_var, V base_exp_var, V test_var,
+                                       V base_test_var) {
+  expect_val_deriv_eq(exp_var.val(), base_exp_var.val(), test_var.val(),
+                      base_test_var.val());
+  expect_val_deriv_eq(exp_var.d_, base_exp_var.d_, test_var.d_,
+                      base_test_var.d_);
 }
 
 #endif

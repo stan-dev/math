@@ -15,8 +15,9 @@ TEST(AgradFwdRisingFactorial, Fvar) {
   // finite diff
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::rising_factorial(4.0 + eps, 1)
-                  - stan::math::rising_factorial(4.0 - eps, 1))
-                  / (2 * eps), x.d_);
+                   - stan::math::rising_factorial(4.0 - eps, 1))
+                      / (2 * eps),
+                  x.d_);
 
   fvar<double> c(-3.0, 2.0);
 
@@ -40,10 +41,8 @@ TEST(AgradFwdRisingFactorial, FvarFvarDouble) {
 
 struct rising_factorial_fun {
   template <typename T>
-  inline
-  typename boost::math::tools::promote_args<T>::type
-  operator()(const T arg1,
-             int arg2) const {
+  inline typename boost::math::tools::promote_args<T>::type operator()(
+      const T arg1, int arg2) const {
     return rising_factorial(arg1, arg2);
   }
 };

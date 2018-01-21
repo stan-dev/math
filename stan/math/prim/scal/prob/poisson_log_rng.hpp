@@ -12,31 +12,28 @@
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <limits>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline int
-    poisson_log_rng(double alpha,
-                    RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::poisson_distribution;
+template <class RNG>
+inline int poisson_log_rng(double alpha, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
-      static const std::string function = "poisson_log_rng";
-      static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
+  static const char* function = "poisson_log_rng";
+  static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
 
-      using std::exp;
+  using std::exp;
 
-      check_not_nan(function, "Log rate parameter", alpha);
-      check_less(function, "Log rate parameter", alpha, POISSON_MAX_LOG_RATE);
+  check_not_nan(function, "Log rate parameter", alpha);
+  check_less(function, "Log rate parameter", alpha, POISSON_MAX_LOG_RATE);
 
-      variate_generator<RNG&, poisson_distribution<> >
-        poisson_rng(rng, poisson_distribution<>(exp(alpha)));
-      return poisson_rng();
-    }
-
-  }
+  variate_generator<RNG&, poisson_distribution<> > poisson_rng(
+      rng, poisson_distribution<>(exp(alpha)));
+  return poisson_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

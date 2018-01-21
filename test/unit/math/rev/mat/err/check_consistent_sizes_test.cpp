@@ -1,7 +1,6 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <string>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   using Eigen::Matrix;
@@ -10,12 +9,11 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   using stan::size_of;
   using stan::math::var;
 
-  const std::string function = "testConsSizes";
-  const std::string name1 = "name1";
-  const std::string name2 = "name2";
-  const std::string name3 = "name3";
-  const std::string name4 = "name4";
-
+  const char* function = "testConsSizes";
+  const char* name1 = "name1";
+  const char* name2 = "name2";
+  const char* name3 = "name3";
+  const char* name4 = "name4";
 
   Matrix<var, Dynamic, 1> v1(4);
   Matrix<var, Dynamic, 1> v2(4);
@@ -27,15 +25,14 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   ASSERT_EQ(4U, size_of(v4));
   EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2));
   EXPECT_NO_THROW(
-    check_consistent_sizes(function, name1, v1, name2, v2, name3, v3));
-  EXPECT_NO_THROW(
-    check_consistent_sizes(function, name1, v1, name2, v2, name3, v3,
-                           name4, v4));
+      check_consistent_sizes(function, name1, v1, name2, v2, name3, v3));
+  EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2, name3,
+                                         v3, name4, v4));
 
   Matrix<var, Dynamic, 1> v(3);
 
   ASSERT_EQ(3U, size_of(v));
-  const std::string name = "inconsistent";
+  const char* name = "inconsistent";
   EXPECT_THROW(check_consistent_sizes(function, name, v, name2, v2),
                std::invalid_argument);
   EXPECT_THROW(check_consistent_sizes(function, name1, v1, name, v),
@@ -47,17 +44,17 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
   EXPECT_THROW(check_consistent_sizes(function, name1, v1, name2, v2, name, v),
                std::invalid_argument);
 
+  EXPECT_THROW(check_consistent_sizes(function, name, v, name2, v2, name3, v3,
+                                      name4, v4),
+               std::invalid_argument);
+  EXPECT_THROW(check_consistent_sizes(function, name1, v1, name, v, name3, v3,
+                                      name4, v4),
+               std::invalid_argument);
+  EXPECT_THROW(check_consistent_sizes(function, name1, v1, name2, v2, name, v,
+                                      name4, v4),
+               std::invalid_argument);
   EXPECT_THROW(
-    check_consistent_sizes(function, name, v, name2, v2, name3, v3, name4, v4),
-    std::invalid_argument);
-  EXPECT_THROW(
-    check_consistent_sizes(function, name1, v1, name, v, name3, v3, name4, v4),
-    std::invalid_argument);
-  EXPECT_THROW(
-    check_consistent_sizes(function, name1, v1, name2, v2, name, v, name4, v4),
-    std::invalid_argument);
-  EXPECT_THROW(
-    check_consistent_sizes(function, name, v, name2, v2, name3, v3, name, v),
-    std::invalid_argument);
+      check_consistent_sizes(function, name, v, name2, v2, name3, v3, name, v),
+      std::invalid_argument);
   stan::math::recover_memory();
 }

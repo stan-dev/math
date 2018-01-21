@@ -14,6 +14,7 @@
 #include <stan/math/prim/mat/meta/is_vector_like.hpp>
 #include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/mat/meta/length_mvt.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/seq_view.hpp>
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/value_type.hpp>
@@ -61,6 +62,7 @@
 #include <stan/math/prim/mat/fun/block.hpp>
 #include <stan/math/prim/mat/fun/cbrt.hpp>
 #include <stan/math/prim/mat/fun/ceil.hpp>
+#include <stan/math/prim/mat/fun/chol2inv.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/cholesky_corr_free.hpp>
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
@@ -288,9 +290,12 @@
 #include <stan/math/prim/mat/prob/multinomial_log.hpp>
 #include <stan/math/prim/mat/prob/multinomial_lpmf.hpp>
 #include <stan/math/prim/mat/prob/multinomial_rng.hpp>
+#include <stan/math/prim/mat/prob/neg_binomial_2_log_glm_lpmf.hpp>
+#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
+#include <stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_rng.hpp>
@@ -301,6 +306,5 @@
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 
 #include <stan/math/prim/arr.hpp>
-
 
 #endif

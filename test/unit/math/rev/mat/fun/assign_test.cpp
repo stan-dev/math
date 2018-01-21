@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-
 TEST(MathMatrix, getAssignRowVar) {
   using stan::math::var;
   using Eigen::Matrix;
@@ -125,4 +124,3 @@ TEST(MathAssign, VarDouble) {
   assign(x, y);
   EXPECT_FLOAT_EQ(10.1, x.val());
 }
-

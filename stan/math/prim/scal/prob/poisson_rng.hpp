@@ -13,29 +13,26 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #include <limits>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline int
-    poisson_rng(double lambda,
-                RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::poisson_distribution;
+template <class RNG>
+inline int poisson_rng(double lambda, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
-      static const std::string function = "poisson_rng";
+  static const char* function = "poisson_rng";
 
-      check_not_nan(function, "Rate parameter", lambda);
-      check_nonnegative(function, "Rate parameter", lambda);
-      check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);
+  check_not_nan(function, "Rate parameter", lambda);
+  check_nonnegative(function, "Rate parameter", lambda);
+  check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);
 
-      variate_generator<RNG&, poisson_distribution<> >
-        poisson_rng(rng, poisson_distribution<>(lambda));
-      return poisson_rng();
-    }
-
-  }
+  variate_generator<RNG&, poisson_distribution<> > poisson_rng(
+      rng, poisson_distribution<>(lambda));
+  return poisson_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

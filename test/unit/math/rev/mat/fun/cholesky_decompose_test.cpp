@@ -4,7 +4,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <vector>
 
-template<typename T_x>
+template <typename T_x>
 std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
   std::vector<T_x> ret_vec;
   ret_vec.reserve(inp.rows());
@@ -13,14 +13,12 @@ std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
   return ret_vec;
 }
 
-template<typename T>
-Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp,
-                                    T alpha,
-                                    T len,
+template <typename T>
+Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp, T alpha, T len,
                                     T jitter) {
   std::vector<double> test_inp = fill_vec(inp);
   Eigen::Matrix<T, -1, -1> test_mat_dense
-                              = stan::math::cov_exp_quad(test_inp, alpha, len);
+      = stan::math::cov_exp_quad(test_inp, alpha, len);
   for (int i = 0; i < inp.rows(); ++i)
     test_mat_dense(i, i) = test_mat_dense(i, i) + jitter;
   return test_mat_dense;
@@ -28,8 +26,8 @@ Eigen::Matrix<T, -1, -1> create_mat(Eigen::VectorXd inp,
 
 struct gp_chol {
   Eigen::VectorXd inp, mean, y;
-  gp_chol(Eigen::VectorXd inp_, Eigen::VectorXd mean_,
-          Eigen::VectorXd y_) : inp(inp_), mean(mean_), y(y_) { }
+  gp_chol(Eigen::VectorXd inp_, Eigen::VectorXd mean_, Eigen::VectorXd y_)
+      : inp(inp_), mean(mean_), y(y_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     Eigen::Matrix<T, -1, -1> x_c = create_mat(inp, x[0], x[1], x[2]);
@@ -41,7 +39,7 @@ struct gp_chol {
 
 struct chol_functor {
   int i, j, K;
-  chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) { }
+  chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
@@ -57,7 +55,7 @@ struct chol_functor {
 struct chol_functor_mult_scal {
   int K;
   Eigen::VectorXd vec;
-  chol_functor_mult_scal(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) { }
+  chol_functor_mult_scal(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
@@ -72,10 +70,9 @@ struct chol_functor_mult_scal {
   }
 };
 
-
 struct chol_functor_2 {
   int K;
-  explicit chol_functor_2(int K_) : K(K_) { }
+  explicit chol_functor_2(int K_) : K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cov_matrix_constrain;
@@ -95,7 +92,7 @@ struct chol_functor_2 {
 
 struct chol_functor_simple {
   int i, j, K;
-  chol_functor_simple(int i_, int j_, int K_) : i(i_), j(j_), K(K_) { }
+  chol_functor_simple(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
@@ -114,7 +111,7 @@ struct chol_functor_simple {
 struct chol_functor_simple_vec {
   int K;
   Eigen::VectorXd vec;
-  chol_functor_simple_vec(int K_, Eigen::VectorXd vec_): K(K_), vec(vec_) { }
+  chol_functor_simple_vec(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
     using stan::math::cholesky_decompose;
@@ -153,13 +150,13 @@ void test_gradients(int size, double prec) {
   int numels = size + size * (size - 1) / 2;
   Eigen::Matrix<double, -1, 1> x(numels);
   for (int i = 0; i < numels; ++i)
-      x(i) = i % 10 / 100.0;
+    x(i) = i % 10 / 100.0;
 
   for (size_t i = 0; i < static_cast<size_t>(size); ++i) {
     for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
       stan::math::gradient(functors[i][j], x, evals_ad(i, j), grads_ad[i][j]);
-      stan::math::finite_diff_gradient(functors[i][j], x,
-                                       evals_fd(i, j), grads_fd[i][j]);
+      stan::math::finite_diff_gradient(functors[i][j], x, evals_fd(i, j),
+                                       grads_fd[i][j]);
 
       for (int k = 0; k < numels; ++k)
         EXPECT_NEAR(grads_fd[i][j](k), grads_ad[i][j](k), prec);
@@ -207,8 +204,8 @@ void test_gradients_simple(int size, double prec) {
   for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
     for (size_t i = j; i < static_cast<size_t>(size); ++i) {
       stan::math::gradient(functors[i][j], x, evals_ad(i, j), grads_ad[i][j]);
-      stan::math::finite_diff_gradient(functors[i][j], x,
-                                       evals_fd(i, j), grads_fd[i][j]);
+      stan::math::finite_diff_gradient(functors[i][j], x, evals_fd(i, j),
+                                       grads_fd[i][j]);
 
       for (int k = 0; k < size; ++k)
         EXPECT_NEAR(grads_fd[i][j](k), grads_ad[i][j](k), prec);
@@ -239,25 +236,20 @@ void test_gp_grad(int mat_size, double prec) {
     draw_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
   }
 
-  Eigen::MatrixXd cov_mat = create_mat(test_vec,
-                                       test_vals[0],
-                                       test_vals[1],
-                                       test_vals[2]);
+  Eigen::MatrixXd cov_mat
+      = create_mat(test_vec, test_vals[0], test_vals[1], test_vals[2]);
   Eigen::MatrixXd chol_cov = cov_mat.llt().matrixL();
   Eigen::VectorXd y_vec = chol_cov * draw_vec;
 
   gp_chol gp_fun(test_vec, mean_vec, y_vec);
   double val_ad;
   Eigen::VectorXd grad_ad;
-  stan::math::gradient(gp_fun, test_vals,
-                       val_ad, grad_ad);
+  stan::math::gradient(gp_fun, test_vals, val_ad, grad_ad);
 
   VectorXd grad_fd;
   double val_fd;
 
-  stan::math::finite_diff_gradient(gp_fun,
-                                   test_vals,
-                                   val_fd, grad_fd);
+  stan::math::finite_diff_gradient(gp_fun, test_vals, val_fd, grad_fd);
   EXPECT_NEAR(val_fd, val_ad, 1e-10);
   for (int i = 0; i < grad_ad.size(); ++i) {
     EXPECT_NEAR(grad_fd(i), grad_ad(i), prec);
@@ -276,24 +268,22 @@ void test_chol_mult(int mat_size, double prec) {
 
   boost::random::mt19937 rng(2);
 
-  for (int i = 0; i < test_vec.size(); ++i) {
-    test_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
-    if (i < vec_size)
-      test_vals(i) = i % 10 / 100.0;
+  for (int i = 0; i < test_vals.size(); ++i) {
+    if (i < test_vec.size()) {
+      test_vec(i) = stan::math::normal_rng(0.0, 0.1, rng);
+    }
+    test_vals(i) = i % 10 / 100.0;
   }
 
   chol_functor_mult_scal mult_fun(mat_size, test_vec);
   double val_ad;
   Eigen::VectorXd grad_ad;
-  stan::math::gradient(mult_fun, test_vals,
-                       val_ad, grad_ad);
+  stan::math::gradient(mult_fun, test_vals, val_ad, grad_ad);
 
   VectorXd grad_fd;
   double val_fd;
 
-  stan::math::finite_diff_gradient(mult_fun,
-                                   test_vals,
-                                   val_fd, grad_fd);
+  stan::math::finite_diff_gradient(mult_fun, test_vals, val_fd, grad_fd);
   EXPECT_NEAR(val_fd, val_ad, 1e-10);
   for (int i = 0; i < grad_ad.size(); ++i) {
     EXPECT_NEAR(grad_fd(i), grad_ad(i), prec);
@@ -332,8 +322,7 @@ void test_simple_vec_mult(int size, double prec) {
   stan::math::gradient(f, x, eval_ad, grad_ad);
   double eval_fd;
   Eigen::VectorXd grad_fd;
-  stan::math::finite_diff_gradient(f, x,
-                                   eval_fd, grad_fd);
+  stan::math::finite_diff_gradient(f, x, eval_fd, grad_fd);
 
   EXPECT_FLOAT_EQ(eval_fd, eval_ad);
   for (int k = 0; k < grad_fd.size(); ++k)
@@ -372,8 +361,7 @@ TEST(AgradRevMatrix, mat_cholesky) {
   AVAR b = -1.0;
   AVAR c = -1.0;
   AVAR d = 1.0;
-  X << a, b,
-    c, d;
+  X << a, b, c, d;
 
   matrix_v L = cholesky_decompose(X);
 
@@ -391,8 +379,7 @@ TEST(AgradRevMatrix, exception_mat_cholesky) {
 
   // not positive definite
   m.resize(2, 2);
-  m << 1.0, 2.0,
-    2.0, 3.0;
+  m << 1.0, 2.0, 2.0, 3.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 
   // zero size
@@ -405,8 +392,7 @@ TEST(AgradRevMatrix, exception_mat_cholesky) {
 
   // not symmetric
   m.resize(2, 2);
-  m << 1.0, 2.0,
-    3.0, 4.0;
+  m << 1.0, 2.0, 3.0, 4.0;
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 

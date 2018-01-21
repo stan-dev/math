@@ -16,7 +16,6 @@ TEST(AgradFwdBinomialCoefficientLog, Fvar) {
   EXPECT_FLOAT_EQ(0.69289774, a.d_);
 }
 
-
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
   using stan::math::fvar;
   using stan::math::binomial_coefficient_log;
@@ -38,13 +37,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0.0009975062, a.d_.d_);
 }
 
-
 struct binomial_coefficient_log_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return binomial_coefficient_log(arg1, arg2);
   }
 };

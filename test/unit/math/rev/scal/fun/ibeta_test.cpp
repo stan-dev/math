@@ -207,11 +207,8 @@ TEST(AgradRev, ibeta_ddv) {
 
 struct ibeta_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return ibeta(arg1, arg2, arg3);
   }
 };

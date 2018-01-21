@@ -1,33 +1,32 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::var;
 using stan::math::check_nonnegative;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   var x = 0;
 
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
-    << "check_nonnegative should be true with finite x: " << x;
+      << "check_nonnegative should be true with finite x: " << x;
 
   x = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
-    << "check_nonnegative should be true with x = Inf: " << x;
+      << "check_nonnegative should be true with x = Inf: " << x;
 
   x = -0.01;
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative should throw exception with x = " << x;
+      << "check_nonnegative should throw exception with x = " << x;
 
   x = -std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative should throw exception with x = -Inf: " << x;
+      << "check_nonnegative should throw exception with x = -Inf: " << x;
 
   x = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(check_nonnegative(function, "x", x), std::domain_error)
-    << "check_nonnegative should throw exception on NaN: " << x;
+      << "check_nonnegative should throw exception on NaN: " << x;
   stan::math::recover_memory();
 }
 
@@ -35,7 +34,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   using stan::math::var;
   using stan::math::check_nonnegative;
 
-  const std::string function = "check_nonnegative";
+  const char* function = "check_nonnegative";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

@@ -2,7 +2,7 @@
 # Library locations
 ##
 EIGEN ?= $(MATH)lib/eigen_3.3.3
-BOOST ?= $(MATH)lib/boost_1.64.0
+BOOST ?= $(MATH)lib/boost_1.65.1
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 CVODES ?= $(MATH)lib/cvodes_2.9.0

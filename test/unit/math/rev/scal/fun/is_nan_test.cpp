@@ -19,4 +19,3 @@ TEST(AgradRev, is_nan) {
   AVAR c(infinity);
   EXPECT_FALSE(is_nan(c));
 }
-

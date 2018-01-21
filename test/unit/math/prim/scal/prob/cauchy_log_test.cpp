@@ -13,12 +13,12 @@ TEST(ProbCauchy, log_matches_lpdf) {
   EXPECT_FLOAT_EQ((stan::math::cauchy_lpdf<false>(y, mu, sigma)),
                   (stan::math::cauchy_log<false>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::cauchy_lpdf<true, double, double, double>(y, mu, sigma)),
-    (stan::math::cauchy_log<true, double, double, double>(y, mu, sigma)));
+      (stan::math::cauchy_lpdf<true, double, double, double>(y, mu, sigma)),
+      (stan::math::cauchy_log<true, double, double, double>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::cauchy_lpdf<false, double, double, double>(y, mu, sigma)),
-    (stan::math::cauchy_log<false, double, double, double>(y, mu, sigma)));
+      (stan::math::cauchy_lpdf<false, double, double, double>(y, mu, sigma)),
+      (stan::math::cauchy_log<false, double, double, double>(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::cauchy_lpdf<double, double, double>(y, mu, sigma)),
-    (stan::math::cauchy_log<double, double, double>(y, mu, sigma)));
+      (stan::math::cauchy_lpdf<double, double, double>(y, mu, sigma)),
+      (stan::math::cauchy_log<double, double, double>(y, mu, sigma)));
 }
