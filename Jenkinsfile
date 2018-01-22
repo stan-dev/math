@@ -124,18 +124,20 @@ pipeline {
             post {
                 always { deleteDir() }
                 failure {
-                    if (isFork()) {
-                        emailext (
-                            subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                            body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
-                            has been autoformatted and the changes committed to
-                            ${remoteName()} ${branchName()}. Please pull these
-                            changes before continuing. 
+                    script {
+                        if (isFork()) {
+                            emailext (
+                                subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                                body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
+                                has been autoformatted and the changes committed to
+                                ${remoteName()} ${branchName()}. Please pull these
+                                changes before continuing. 
 
-                            (Check console output at ${env.BUILD_URL})""",
-                            recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                            to: "${env.CHANGE_AUTHOR_EMAIL}"
-                        )
+                                (Check console output at ${env.BUILD_URL})""",
+                                recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                                to: "${env.CHANGE_AUTHOR_EMAIL}"
+                            )
+                        }
                     }
                 }
             }
