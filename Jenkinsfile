@@ -161,10 +161,15 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob"
-
+                        sh "./runTests.py -j${env.PARALLEL} test/prob &> dist.log"
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post {
+                        always { retry(3) { deleteDir() } }
+                        failure {
+                            archiveArtifacts 'dist.log'
+                            echo "Distribution tests failed. Check out dist.log artifact for test logs."
+                        }
+                    }
                 }
             }
         }
