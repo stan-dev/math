@@ -166,7 +166,7 @@ pipeline {
                     post {
                         always { retry(3) { deleteDir() } }
                         failure {
-                            zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log'
+                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
                             echo "Distribution tests failed. Check out dist.log artifact for test logs."
                         }
                     }
