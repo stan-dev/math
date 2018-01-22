@@ -71,6 +71,7 @@ def mathUrl() { "https://github.com/stan-dev/math" }
 def isFork() { !env.CHANGE_URL.startsWith(mathUrl()) }
 def branchName() { (isFork() ? "autoformat/" : "") + env.CHANGE_BRANCH }
 def remoteName() { isFork() ? mathUrl() : "origin" }
+def force() { isFork() ? "-f" : "" }
 
 pipeline {
     agent none
@@ -113,7 +114,7 @@ pipeline {
                             git config --global user.name "Stan Jenkins"
                             git add stan test
                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${branchName()} 
+                            git push ${force()} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${branchName()} 
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
                             echo "Please 'git pull ${remoteName()} ${branchName()}' before continuing to develop."
@@ -128,10 +129,11 @@ pipeline {
                         if (isFork()) {
                             emailext (
                                 subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                                body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
+                                body: """
+                                Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
                                 has been autoformatted and the changes committed to
-                                ${remoteName()} ${branchName()}. Please pull these
-                                changes before continuing. 
+                                ${remoteName()} on branch '${branchName()}'
+                                Please pull these changes before continuing. 
 
                                 (Check console output at ${env.BUILD_URL})""",
                                 recipientProviders: [[$class: 'RequesterRecipientProvider']],
