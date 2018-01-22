@@ -6,10 +6,16 @@
 
 ifeq (g++,$(CC_TYPE))
   VERSION := $(CC_MAJOR).$(CC_MINOR)
+  ifdef STAN_OPENCL
+    LDFLAGS += -framework OpenCL
+  endif
 endif
 
 ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wno-unknown-warning-option
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
+  ifdef STAN_OPENCL
+    LDLIBS += -framework OpenCL
+  endif
 endif

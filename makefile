@@ -38,25 +38,12 @@ CXX = $(CC)
 ##
 -include make/detect_os
 
+ifdef STAN_OPENCL
+  CXXFLAGS += -isystem $(OPENCL) -DSTAN_GPU
+endif
+
 include make/tests    # tests
 include make/cpplint  # cpplint
-
-
-## FIXME(dl): move to appropriate place later
-## GPU settings
-
-ifdef STAN_GPU
-  CXXFLAGS += -isystem $(OPENCL) -DSTAN_GPU -DSTAN_DEVICE_CPU
-  ifeq ($(shell echo $(TRAVIS_OS_NAME)),linux)
-    LDLIBS+=-L/home/travis/AMDAPPSDK/lib/x86_64/
-  endif
-
-  ifeq ($(OS_TYPE),mac)
-    LDLIBS += -framework OpenCL
-  else
-    LDLIBS += -lOpenCL
-  endif
-endif
 
 ##
 # Dependencies

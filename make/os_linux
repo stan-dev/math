@@ -9,6 +9,9 @@
 ifeq (g++,$(CC_TYPE))
   LDFLAGS += -lpthread
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
@@ -17,8 +20,13 @@ ifeq (mingw32-g++,$(CC_TYPE))
   LDFLAGS += -lwinpthread
   EXE = .exe
   WINE = wine
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 ifeq (clang++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
+  ifdef STAN_OPENCL
+    LDLIBS += -lOpenCL
+  endif
 endif
-
