@@ -3,9 +3,9 @@
 #include <limits>
 #include <vector>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionWiener : public AgradDistributionTest {
  public:
