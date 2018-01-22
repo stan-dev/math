@@ -121,9 +121,9 @@ struct algebra_solver_vari : public vari {
  */
 template <typename F, typename T>
 Eigen::VectorXd algebra_solver(
-    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, 
+    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     const Eigen::VectorXd& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* msgs = 0, 
+    const std::vector<int>& dat_int, std::ostream* msgs = 0,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
@@ -156,7 +156,7 @@ Eigen::VectorXd algebra_solver(
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(value_of(x)), "the vector of unknowns, x,", 
+                       fx.get_value(value_of(x)), "the vector of unknowns, x,",
                        x);
 
   // Compute theta_dbl
@@ -233,7 +233,7 @@ Eigen::VectorXd algebra_solver(
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
-    const F& f, 
+    const F& f,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
