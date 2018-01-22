@@ -22,20 +22,6 @@ linux_gcc: &linux_gcc
       sources: [ 'ubuntu-toolchain-r-test' ]
       packages: [ 'g++-4.9' ]
 
-before_install:
-  - if [ $TRAVIS_OS_NAME = "linux" ]; then
-      bash .travis/amd_sdk.sh;
-      tar -xjf AMD-SDK.tar.bz2;
-      AMDAPPSDK=${HOME}/AMDAPPSDK;
-      export OPENCL_VENDOR_PATH=${AMDAPPSDK}/etc/OpenCL/vendors;
-      mkdir -p ${OPENCL_VENDOR_PATH};
-      sh AMD-APP-SDK*.sh --tar -xf -C ${AMDAPPSDK};
-      echo libamdocl64.so > ${OPENCL_VENDOR_PATH}/amdocl64.icd;
-      export LD_LIBRARY_PATH=${AMDAPPSDK}/lib/x86_64:${LD_LIBRARY_PATH};
-      chmod +x ${AMDAPPSDK}/bin/x86_64/clinfo;
-      ${AMDAPPSDK}/bin/x86_64/clinfo;
-    fi;
-
 matrix:
   fast_finish: true
   include:
@@ -73,51 +59,51 @@ matrix:
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/memory test/unit/math/prim/scal test/unit/math/prim/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER=test/unit/math/prim/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/rev/scal test/unit/math/rev/arr"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER=test/unit/math/rev/mat/fun
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER=test/unit/math/fwd/mat
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/fwd/arr test/unit/math/fwd/core test/unit/math/fwd/scal"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/mix/arr test/unit/math/mix/core"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/mix/mat/fun/[A-l]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/mix/mat/fun/[m-z]*"
     - <<: *linux_gcc
       env:
-        - MATRIX_EVAL="CXX=g++-4.9"
+        - MATRIX_EVAL="CXX=g++-4.9 &&"
           TESTFOLDER="test/unit/math/mix/scal test/unit/math/mix/mat/functor test/unit/math/mix/mat/meta test/unit/math/mix/mat/prob test/unit/math/mix/mat/util test/unit/math/mix/mat/vectorize"
 
  # - TESTFOLDER=test/unit/math/mix # times out on travis
