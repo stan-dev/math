@@ -19,7 +19,18 @@ test/%.d: test/%.cpp
 
 -include $(patsubst %$(EXE),%.d,$(filter test/%,$(MAKECMDGOALS)))
 
-# N_TESTS ?= 100 # override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
+
+############################################################
+# CVODES tests
+#   Add linking of LIBCVODES to the executable
+##
+
+CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
+$(CVODES_TESTS) : $(LIBCVODES)
+
+# override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
+N_TESTS ?= 100
+
 
 # ##
 # # Adding a test for multiple translation units. If this fails,
@@ -34,13 +45,6 @@ test/%.d: test/%.cpp
 
 # test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
-# ############################################################
-# #
-# # CVODES tests
-# ##
-
-# CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
-# $(CVODES_TESTS) : $(LIBCVODES)
 
 # ############################################################
 # #
@@ -67,31 +71,34 @@ test/%.d: test/%.cpp
 # .PHONY: test-headers
 # test-headers: $(HEADER_TESTS)
 
-# ############################################################
-# ##
-# # Test generator for distribution tests
-# ##
-# test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
-# 	@mkdir -p $(dir $@)
-# 	$(LINK.cpp) $< $(OUTPUT_OPTION)
+############################################################
+##
+# Test generator for distribution tests
+##
+test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
+	$(LINK.cpp) $< $(OUTPUT_OPTION)
+
+test/prob/%.hpp : test/prob/generate_tests$(EXE)
 
 
+## FIXME: think about how to do this generally using test_types
+# test_types := v fd fv ffd ffv
 
-# ## FIXME: think about how to do this generally using test_types
-# # test_types := v fd fv ffd ffv
+test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
-# test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
+.SECONDEXPANSION:
+test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
+	$(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
 
-# .SECONDEXPANSION:
-# test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
-# 	$(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
+LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g')
 
-# LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g')
+.PHONY: generate-tests
+generate-tests: $(LIST_OF_GENERATED_TESTS)
 
-# .PHONY: generate-tests
-# generate-tests: $(LIST_OF_GENERATED_TESTS)
+foo:
+	@echo $(LIST_OF_GENERATED_TESTS)
 
-# ##
-# # Include the test dependencies
-# ##
-# include make/test-math-dependencies
+##
+# Include the test dependencies
+##
+include make/test-math-dependencies
