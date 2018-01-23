@@ -27,7 +27,7 @@ typename return_type<T_y>::type std_normal_log(const T_y& y) {
 }
 
 /**
- * @deprecated use <code>normal_lpdf</code>
+ * @deprecated use <code>std_normal_lpdf</code>
  */
 template <typename T_y>
 inline typename return_type<T_y>::type std_normal_log(const T_y& y) {
