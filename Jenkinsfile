@@ -164,10 +164,12 @@ pipeline {
                         sh "./runTests.py -j${env.PARALLEL} test/prob &> dist.log"
                     }
                     post {
-                        always { retry(3) { deleteDir() } }
-                        failure {
+                        always {
                             script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            echo "Distribution tests failed. Check out dist.log artifact for test logs."
+                            retry(3) { deleteDir() }
+                        }
+                        failure {
+                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
                 }
