@@ -63,6 +63,20 @@ def alsoNotify() {
     } else ""
 }
 
+env.buildFailures = [];
+
+def failGracefully(String shellCommands) {
+    try { 
+        sh """ ${shellCommands} """
+    } catch (err) {
+        if (env.buildFailures.empty) {
+            println(err)
+            env.buildFailure.append(shellCommnds)
+            throw err
+        }
+    }
+}
+
 pipeline {
     agent none
     parameters {
@@ -91,14 +105,16 @@ pipeline {
             agent any
             steps {
                 script {
+                    sh "printenv"
                     retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
                     sh setupCC()
                     parallel(
-                        CppLint: { sh "make cpplint" },
-                        dependencies: { sh 'make test-math-dependencies' } ,
-                        documentation: { sh 'make doxygen' },
+                        CppLint: { failGracefully "make cpplint" },
+                        dependencies: { failGracefully 'make test-math-dependencies' } ,
+                        documentation: { failGracefully 'make doxygen' },
+                        exitNow: { failGracefully "exit 1" },
                         failFast: true
                     )
                 }
