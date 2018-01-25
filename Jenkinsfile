@@ -23,58 +23,17 @@ def mailBuildResults(String label, additionalEmails='') {
 }
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
+    sh "./runTests.py -j${env.PARALLEL} ${testPath}"
 }
 
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
-def updateUpstream(String upstreamRepo) {
-    if (isBranch('develop')) {
-        node('master') {
-            retry(3) {
-                checkout([$class: 'GitSCM',
-                        branches: [[name: '*/develop']],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'SubmoduleOption',
-                                    disableSubmodules: false,
-                                    parentCredentials: false,
-                                    recursiveSubmodules: true,
-                                    reference: '',
-                                    trackingSubmodules: false]],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[url: "git@github.com:stan-dev/${upstreamRepo}.git",
-                                           credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b'
-                ]]])
-            }
-            sh """
-                curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
-                sh create-${upstreamRepo}-pull-request.sh
-            """
-            retry(3) { deleteDir() }
-        }
-    }
-}
-
 def alsoNotify() {
     if (isBranch('master') || isBranch('develop')) {
         "stan-buildbot@googlegroups.com"
     } else ""
-}
-
-env.buildFailures = [];
-
-def failGracefully(String shellCommands) {
-    try { 
-        sh """ ${shellCommands} """
-    } catch (err) {
-        if (env.buildFailures.empty) {
-            println(err)
-            env.buildFailure.append(shellCommnds)
-            throw err
-        }
-    }
 }
 
 pipeline {
@@ -101,109 +60,99 @@ pipeline {
                 }
             }
         }
-        stage('Linting & Doc checks') {
+        stage('Lint, doc, header, unit tests') {
             agent any
-            steps {
-                script {
+            steps { script {
+                stage('Git checkout') {
                     sh "printenv"
                     retry(3) { checkout scm }
                     setup(false)
                     stash 'MathSetup'
                     sh setupCC()
-                    parallel(
-                        CppLint: { failGracefully "make cpplint" },
-                        dependencies: { failGracefully 'make test-math-dependencies' } ,
-                        documentation: { failGracefully 'make doxygen' },
-                        exitNow: { failGracefully "exit 1" },
-                        failFast: true
-                    )
                 }
-            }
+                stage('CppLint') {
+                    sh "find test/unit stan -name '*.hpp' -or -name '*.cpp' " +
+                        "| xargs -n20 -P${env.PARALLEL}" +
+                        " python lib/cpplint_4.45/cpplint.py --output=vs7 --counting=detailed --root=stan --extension=hpp,cpp --filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-runtime/reference"
+                }
+                stage('Dependencies') {
+                    sh "make test-math-dependencies"
+                }
+                stage('Documentation') {
+                    sh 'make doxygen'
+                }
+                stage('Headers tests') {
+                    sh "make -j${env.PARALLEL} test-headers"
+                }
+                stage('Unit tests') {
+                    runTests("test/unit")
+                }
+            } }
             post {
                 always {
-                    warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    script {
+                        if (env.CXX.contains("clang")) {
+                            warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
+                        } else {
+                            warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
+                        }
+                    }
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
-                    retry(3) { deleteDir() }
+                    warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
+                    junit 'test/**/*.xml'
+                    deleteDir()
                 }
             }
         }
-        stage('Tests') {
-            failFast true
-            parallel {
-                stage('Headers') {
-                    agent any
-                    steps { 
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "make -j${env.PARALLEL} test-headers"
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Unit') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        runTests("test/unit")
-                        retry(2) { junit 'test/**/*.xml' }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('CmdStan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "CmdStan/${params.cmdstan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
-                }
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "Stan/${params.stan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+        stage('CmdStan Upstream Tests') {
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "CmdStan/${params.cmdstan_pr}",
+                            parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+            }
+        }
+        stage('Stan Upstream Tests') {
+            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            steps {
+                build(job: "Stan/${params.stan_pr}",
+                            parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+            }
+        }
+        stage('Distribution tests') {
+            agent { label "distribution-tests" }
+            steps {
+                unstash 'MathSetup'
+                sh """
+                    ${setupCC(false)}
+                    echo 'O=0' >> make/local
+                    echo N_TESTS=${env.N_TESTS} >> make/local
+                    """
+                script {
+                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                     }
                 }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps { 
-                        unstash 'MathSetup'
-                        sh """
-                            ${setupCC(false)}
-                            echo 'O=0' >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                        }
-                    }
+                sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+            }
+            post {
+                always {
+                    script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                    retry(3) { deleteDir() }
+                }
+                failure {
+                    echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                 }
             }
         }
     }
     post {
-        always {
-            node('master') {
-                warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
-                warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
-            }
-        }
         success {
-            updateUpstream('stan')
+            script { utils.updateUpstream('stan') }
             mailBuildResults("SUCCESSFUL")
         }
         unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
-        failure { mailBuildResults("FAILURE", alsoNotify()) }
+        failure {
+            mailBuildResults("FAILURE", alsoNotify())
+        }
     }
 }
