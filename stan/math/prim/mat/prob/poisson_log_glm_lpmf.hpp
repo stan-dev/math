@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -48,9 +49,9 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
   typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha>::type
       T_partials_return;
 
-  using std::exp;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::exp;
 
   if (!(stan::length(n) && stan::length(x) && stan::length(beta)))
     return 0.0;
@@ -112,13 +113,14 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative = n_vec - exp_theta;
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
+      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                          x_dbl.transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = theta_derivative.trace();
+      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
     }
   }
   return ops_partials.build(logp);

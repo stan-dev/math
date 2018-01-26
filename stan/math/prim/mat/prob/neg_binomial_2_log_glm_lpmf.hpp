@@ -14,6 +14,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
@@ -58,10 +59,10 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
       typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha,
                                           T_precision>::type T_partials_return;
 
-  using std::exp;
+  using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using Eigen::Array;
+  using std::exp;
 
   if (!(stan::length(n) && stan::length(x) && stan::length(beta)
         && stan::length(phi)))
@@ -160,25 +161,27 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
                               + Array<double, Dynamic, 1>::Ones(N, 1))))
                            .matrix();
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
+      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                          x_dbl.transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = theta_derivative.trace();
+      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
     }
   }
   if (!is_constant_struct<T_precision>::value) {
-    ops_partials.edge4_.partials_
-        = (Array<double, Dynamic, 1>::Ones(N, 1)
-           - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
-           - logsumexp_eta_logphi
-           - phi_arr.unaryExpr(
-                 [](const T_partials_return& xx) { return digamma(xx); })
-           + n_plus_phi.unaryExpr(
-                 [](const T_partials_return& xx) { return digamma(xx); }))
-              .matrix();
+    assign_to_matrix_or_broadcast_array(
+        ops_partials.edge4_.partials_,
+        (Array<double, Dynamic, 1>::Ones(N, 1)
+         - n_plus_phi / (theta_dbl.exp() + phi_arr) + log_phi
+         - logsumexp_eta_logphi
+         - phi_arr.unaryExpr(
+               [](const T_partials_return& xx) { return digamma(xx); })
+         + n_plus_phi.unaryExpr(
+               [](const T_partials_return& xx) { return digamma(xx); }))
+            .matrix());
   }
   return ops_partials.build(logp);
 }

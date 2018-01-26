@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/prim/mat/meta/assign_to_matrix_or_broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -41,6 +43,7 @@ namespace math {
  * @throw std::domain_error if n is not binary.
  * @throw std::invalid_argument if container sizes mismatch.
  */
+
 template <bool propto, typename T_n, typename T_x, typename T_beta,
           typename T_alpha>
 typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
@@ -49,9 +52,9 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha>::type
       T_partials_return;
 
-  using std::exp;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::exp;
 
   if (size_zero(n, x, beta))
     return 0.0;
@@ -123,13 +126,14 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
             = signs[n] * exp_m_ntheta[n] / (exp_m_ntheta[n] + 1);
     }
     if (!is_constant_struct<T_beta>::value) {
-      ops_partials.edge2_.partials_ = x_dbl.transpose() * theta_derivative;
+      assign_to_matrix_or_broadcast_array(ops_partials.edge2_.partials_,
+                                          x_dbl.transpose() * theta_derivative);
     }
     if (!is_constant_struct<T_x>::value) {
       ops_partials.edge1_.partials_ = theta_derivative * beta_dbl.transpose();
     }
     if (!is_constant_struct<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0] = theta_derivative.trace();
+      ops_partials.edge3_.partials_[0] = theta_derivative.sum();
     }
   }
 
