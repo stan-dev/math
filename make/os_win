@@ -30,14 +30,14 @@ ifeq (g++,$(CC_TYPE))
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
   ifdef STAN_OPENCL
-    LDLIBS += -lOpenCL
+    LDFLAGS += -lOpenCL
   endif
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
   ifdef STAN_OPENCL
-    LDLIBS += -lOpenCL
+    LDFLAGS += -lOpenCL
   endif
 endif
 ifeq (clang++,$(CC_TYPE))
