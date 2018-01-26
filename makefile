@@ -38,10 +38,6 @@ CXX = $(CC)
 ##
 -include make/detect_os
 
-ifdef STAN_OPENCL
-  CXXFLAGS += -isystem $(OPENCL) -DSTAN_GPU
-endif
-
 include make/tests    # tests
 include make/cpplint  # cpplint
 
