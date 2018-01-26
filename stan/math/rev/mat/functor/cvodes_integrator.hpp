@@ -115,8 +115,9 @@ integrate(const F& f, const std::vector<T_initial>& y0, double t0,
     invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
                      absolute_tolerance, "", ", must be greater than 0");
   if (max_num_steps <= 0)
-    invalid_argument("integrate_ode_cvodes", "max_num_steps,", max_num_steps, "",
-                     ", must be greater than 0");
+    invalid_argument(
+                   "integrate_ode_cvodes", "max_num_steps,", max_num_steps, "",
+                   ", must be greater than 0");
 
   const size_t N = y0.size();
   const size_t M = theta.size();
@@ -204,7 +205,6 @@ integrate(const F& f, const std::vector<T_initial>& y0, double t0,
 
   return decouple_ode_states(y_coupled, y0, theta);
 }
-
   };  // cvodes integrator
 }  // namespace math
 }  // namespace stan

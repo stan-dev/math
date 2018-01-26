@@ -92,7 +92,8 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
   using stan::math::promote_scalar;
 
   EXPECT_THROW_MSG(
-      stan::math::integrate_ode_adams(harm_osc, promote_scalar<T_y0>(y0), t0, ts,
+      stan::math::integrate_ode_adams(
+                                    harm_osc, promote_scalar<T_y0>(y0), t0, ts,
                                     promote_scalar<T_theta>(theta), x, x_int),
       std::runtime_error, error_msg);
 }
