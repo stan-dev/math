@@ -6,6 +6,11 @@ def setupCC(Boolean failOnError = true) {
     "echo CC=${env.CXX} ${errorStr}> make/local"
 }
 
+def setupOpenCL(Boolean failOnError = true) {
+    errorStr = failOnError ? "-Werror " : ""
+    "echo STAN_OPENCL=true > make/local"
+}
+
 def setup(Boolean failOnError = true) {
     sh """
         git clean -xffd
@@ -93,6 +98,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
+                        sh setupOpenCL
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -103,6 +109,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
+                            ${setupOpenCL(false)}
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
