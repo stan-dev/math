@@ -5,6 +5,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 template <typename F, typename T_shared_param, typename T_job_param>
 class map_rect_combine {
@@ -66,6 +67,7 @@ class map_rect_combine {
   }
 };
 
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 

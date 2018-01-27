@@ -191,7 +191,7 @@ class mpi_parallel_call {
       for (std::size_t i = 0; i < num_local_jobs; ++i) {
         const matrix_d job_output
             = ReduceF()(local_shared_params_dbl_, local_job_params_dbl_.col(i),
-                        local_x_r[i], local_x_i[i]);
+                        local_x_r[i], local_x_i[i], 0);
         local_f_out[i] = job_output.cols();
 
         if (unlikely(num_outputs_per_job_ == 0)) {

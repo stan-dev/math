@@ -3,13 +3,15 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 template <typename F>
 struct map_rect_reduce<F, var, var> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
-                      const std::vector<int>& x_i) const {
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = 0) const {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
     const size_type num_params = num_shared_params + num_job_specific_params;
@@ -33,7 +35,7 @@ struct map_rect_reduce<F, var, var> {
         z_vars[num_shared_params + i] = job_specific_params_v(i);
 
       const F f;
-      vector_v fx_v = f(shared_params_v, job_specific_params_v, x_r, x_i, 0);
+      vector_v fx_v = f(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
 
       const size_t size_f = fx_v.rows();
 
@@ -60,7 +62,8 @@ struct map_rect_reduce<F, double, var> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
-                      const std::vector<int>& x_i) const {
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = 0) const {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_job_specific_params, 0);
 
@@ -72,7 +75,7 @@ struct map_rect_reduce<F, double, var> {
         job_specific_params_v(i) = job_specific_params(i);
 
       const F f;
-      vector_v fx_v = f(shared_params, job_specific_params_v, x_r, x_i, 0);
+      vector_v fx_v = f(shared_params, job_specific_params_v, x_r, x_i, msgs);
 
       const size_t size_f = fx_v.rows();
 
@@ -99,7 +102,8 @@ struct map_rect_reduce<F, var, double> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
-                      const std::vector<int>& x_i) const {
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = 0) const {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
 
@@ -133,6 +137,7 @@ struct map_rect_reduce<F, var, double> {
   }
 };
 
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 

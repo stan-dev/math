@@ -22,8 +22,9 @@ map_rect_mpi(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
-  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef mpi_map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+  typedef internal::map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
+  typedef internal::mpi_map_rect_combine<F, T_shared_param, T_job_param>
+      CombineF;
 
   // whenever the cluster is already busy with some command we fall
   // back to serial execution

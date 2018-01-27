@@ -23,8 +23,8 @@ map_rect_serial(
   check_matching_sizes("map_rect_serial", "job parameters", job_params,
                        "integer data", x_i);
 
-  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+  typedef internal::map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
+  typedef internal::map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
@@ -34,8 +34,8 @@ map_rect_serial(
 
   int offset = 0;
   for (std::size_t i = 0; i < num_jobs; ++i) {
-    const matrix_d job_output
-        = ReduceF()(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i]);
+    const matrix_d job_output = ReduceF()(
+        shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs);
     world_f_out[i] = job_output.cols();
 
     if (i == 0)

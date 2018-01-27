@@ -3,6 +3,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 template <typename F, typename T_shared_param, typename T_job_param>
 class map_rect_reduce {};
@@ -13,13 +14,16 @@ class map_rect_reduce<F, double, double> {
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
-                      const std::vector<int>& x_i) const {
+                      const std::vector<int>& x_i,
+                      std::ostream* msgs = 0) const {
     const F f;
-    const vector_d out = f(shared_params, job_specific_params, x_r, x_i, 0);
-    return out.transpose();
+    const matrix_d out
+        = f(shared_params, job_specific_params, x_r, x_i, msgs).transpose();
+    return out;
   }
 };
 
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 
