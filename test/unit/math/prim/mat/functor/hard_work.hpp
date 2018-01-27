@@ -3,6 +3,7 @@
 #include <vector>
 
 struct hard_work {
+  hard_work() {}
   template <typename T1, typename T2>
   Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>
   operator()(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta,
