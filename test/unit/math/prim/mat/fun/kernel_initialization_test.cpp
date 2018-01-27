@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <CL/cl.hpp>
@@ -42,3 +43,12 @@ TEST(MathMatrix, kernel_initialize) {
   EXPECT_NO_THROW(cl::Kernel kernel_check_symmetric
                   = stan::math::get_kernel("check_symmetric"));
 }
+
+#else
+
+#include <gtest/gtest.h>
+TEST(MathMatrix, kernel_initializeDummy) {
+   int a;
+   EXPECT_NO_THROW(a = 1);
+}
+#endif

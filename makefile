@@ -18,6 +18,11 @@ include make/libraries
 -include $(HOME)/.config/stan/make.local  # define local variables
 -include make/local                       # overwrite local variables
 
+# TODO(Steve): This was in defaults, but make/local is not called till later
+#  And we need STAN_OPENCL to be known
+ifdef STAN_OPENCL
+  CXXFLAGS += -isystem $(OPENCL) -DSTAN_OPENCL
+endif
 CXX = $(CC)
 
 ##

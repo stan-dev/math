@@ -244,7 +244,7 @@
 #include <stan/math/prim/mat/fun/variance.hpp>
 #include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
-#ifdef STAN_GPU
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat/fun/ocl_gpu.hpp>
 #endif
 
