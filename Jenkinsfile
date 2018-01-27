@@ -93,7 +93,6 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
-                        sh "echo STAN_OPENCL=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -113,7 +112,7 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+                        sh "./runTests.py -j${env.PARALLEL} test/prob STAN_OPENCL=true > dist.log 2>&1"
                     }
                     post {
                         always {
