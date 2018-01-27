@@ -98,7 +98,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
-                        sh setupOpenCL
+                        sh setupOpenCL()
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
