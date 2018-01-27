@@ -107,7 +107,6 @@ pipeline {
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             echo STAN_OPENCL=true >> make/local
-
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
