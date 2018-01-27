@@ -4,6 +4,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <cmath>
 #include <fstream>
@@ -74,20 +75,20 @@ inline void init_kernel_groups() {
 
   kernel_strings["timing"] = dummy_kernel;
   kernel_strings["check_gpu"] =
-#include <stan/math/prim/mat/kern_gpu/check_gpu.cl>  // NOLINT
-      ;                                              // NOLINT
+#include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
+      ;                                                  // NOLINT
   kernel_strings["cholesky_decomposition"] =
-#include <stan/math/prim/mat/kern_gpu/cholesky_decomposition.cl>  // NOLINT
-      ;                                                           // NOLINT
+#include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
+      ;                                                               // NOLINT
   kernel_strings["matrix_inverse"] =
-#include <stan/math/prim/mat/kern_gpu/matrix_inverse.cl>  // NOLINT
-      ;                                                   // NOLINT
+#include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
+      ;                                                       // NOLINT
   kernel_strings["matrix_multiply"] =
-#include <stan/math/prim/mat/kern_gpu/matrix_multiply.cl>  // NOLINT
-      ;                                                    // NOLINT
+#include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
+      ;                                                        // NOLINT
   kernel_strings["basic_matrix"] =
-#include <stan/math/prim/mat/kern_gpu/basic_matrix.cl>  // NOLINT
-      ;                                                 // NOLINT
+#include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
+      ;                                                     // NOLINT
 
   // Check if the kernels were already compiled
   compiled_kernels["basic_matrix"] = false;
@@ -123,15 +124,16 @@ class ocl {
       std::vector<cl::Platform> allPlatforms;
       cl::Platform::get(&allPlatforms);
       if (allPlatforms.size() == 0) {
-        std::cout << " No platforms found. " << std::endl;
-        exit(1);
+        domain_error("OpenCL Initialization", "[Platform]", "",
+                     "No OpenCL platforms found");
       }
       oclPlatform_ = allPlatforms[0];
       std::vector<cl::Device> allDevices;
       oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
+      // TODO(Steve): This should throw which platform
       if (allDevices.size() == 0) {
-        std::cout << " No devices found on the selected platform." << std::endl;
-        exit(1);
+        domain_error("OpenCL Initialization", "[Device]", "",
+                     "No OpenCL devices found on the selected platform.");
       }
       oclDevice_ = allDevices[0];
       description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>()
@@ -153,9 +155,10 @@ class ocl {
         kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
         compiled_kernels["timing"] = true;
       } catch (const cl::Error &e) {
-        std::cout << "Building failed, " << e.what() << "(" << e.err() << ")"
-                  << "\nRetrieving build log\n"
-                  << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]);
+        domain_error(
+            "OpenCL Initialization", e.what(), e.err(),
+            "\nRetrieving build log\n",
+            program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
       }
     } catch (const cl::Error &e) {
       check_ocl_error("build", e);
@@ -263,9 +266,9 @@ inline void compile_kernel_group(std::string group) {
       }
     }
   } catch (const cl::Error &e) {
-    std::cout << "Building failed, " << e.what() << "(" << e.err() << ")"
-              << "\nRetrieving build log\n"
-              << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
+    domain_error(
+        "OpenCL Initialization", e.what(), e.err(), "\nRetrieving build log\n",
+        program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
   }
 }
 
