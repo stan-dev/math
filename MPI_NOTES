@@ -35,3 +35,24 @@ and then starting them with the mpirun command as
 mpirun -np 4 test/unit/math/prim/mat/functor/map_rect_mpi_test
 mpirun -np 4 test/unit/math/rev/mat/functor/map_rect_mpi_test
 
+
+Firwalls and MPI
+
+In case you run things on a single machine on Mac your firewall will
+complain about attempts of your MPI program to listen on the
+network. To avoid this, you will need to disable network communication
+and use shared memory communcation only. For OpenMPI create the file
+
+~/.openmpi/mca-params.conf
+
+and put the line
+
+btl=self,vader
+
+into that file. This will stop programs started with mpirun to try to
+listen top incoming network connections.
+
+Of course, should you want to spawn over multiple machines, this is
+not a solution. In that case OpenMPI can be configure to restrict to
+certain ports which needs to be configured. See open-mpi.org for
+documentation on the matter.
