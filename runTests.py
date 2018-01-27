@@ -58,11 +58,8 @@ def stopErr(msg, returncode):
 
 
 def isWin():
-    if (platform.system().lower().startswith("windows")
-            or os.name.lower().startswith("windows")):
-        return True
-    return False
-
+    return (platform.system().lower().startswith("windows")
+            or os.name.lower().startswith("windows"))
 
 def mungeName(name):
     """Set up the makefile target name"""
