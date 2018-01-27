@@ -97,22 +97,6 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        ClangFormat: {
-                            sh """
-                            clang-format --version
-                            set +x
-                            output=""
-                            for f in `find stan test -name '*.hpp' -o -name '*.cpp'`; 
-                            do 
-                              if [[ \$(clang-format -output-replacements-xml \$f | grep -c "<replacement ") != 0 ]];
-                              then
-                                output+="\$f is not formatted correctly according to clang-format\\n"
-                              fi
-                            done
-                            if [[ \$output != "" ]]; then
-                              echo \$output
-                              exit 1
-                            fi""" },
                         dependencies: { sh 'make test-math-dependencies' } ,
                         documentation: { sh 'make doxygen' },
                         failFast: true
@@ -177,10 +161,17 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob"
-
+                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post {
+                        always {
+                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                            retry(3) { deleteDir() }
+                        }
+                        failure {
+                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+                        }
+                    }
                 }
             }
         }
