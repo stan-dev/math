@@ -9,7 +9,7 @@ TEST(ErrorHandlingOpenCL, checkThrows) {
   EXPECT_THROW(stan::math::throw_openCL(function, msg), std::domain_error);
 }
 #else
-TEST(ErrorHandlingOpenCL, checkThrows) {
+TEST(ErrorHandlingOpenCL, checkThrowsDummy) {
   int a;
   EXPECT_NO_THROW(a = 1);
 }

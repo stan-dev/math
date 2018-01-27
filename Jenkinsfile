@@ -93,6 +93,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
+                        sh "echo 'STAN_OPENCL=true' >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -103,10 +104,9 @@ pipeline {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
-                            echo STAN_OPENCL=true >> make/local
+                            echo 'STAN_OPENCL=true' >> make/local
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
-                            echo STAN_OPENCL=true >> make/local
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {

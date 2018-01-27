@@ -47,7 +47,7 @@ TEST(MathMatrix, kernel_initialize) {
 #else
 
 #include <gtest/gtest.h>
-TEST(MathMatrix, kernel_initialize) {
+TEST(MathMatrix, kernel_initializeDummy) {
    int a;
    EXPECT_NO_THROW(a = 1);
 }
