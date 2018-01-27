@@ -3,7 +3,14 @@
 
 #include <stan/math/prim/arr/functor/mpi_command.hpp>
 
-#include <boost/mpi.hpp>
+#include <boost/mpi/allocator.hpp>
+#include <boost/mpi/collectives.hpp>
+#include <boost/mpi/communicator.hpp>
+#include <boost/mpi/datatype.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/nonblocking.hpp>
+#include <boost/mpi/operations.hpp>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
