@@ -106,13 +106,15 @@ pipeline {
                             echo STAN_OPENCL=true >> make/local
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
+                            echo STAN_OPENCL=true >> make/local
+
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob STAN_OPENCL=true > dist.log 2>&1"
+                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
                     }
                     post {
                         always {
