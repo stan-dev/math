@@ -43,6 +43,8 @@ def processCLIArgs():
 
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
                         help="request additional script debugging output.")
+    parser.add_argument("-m", "--make-only", dest="make_only",
+                        action="store_true", help="Don't run tests, just try to make them.")
 
     # And parse the command line against those rules
     return parser.parse_args()
@@ -56,11 +58,8 @@ def stopErr(msg, returncode):
 
 
 def isWin():
-    if (platform.system().lower().startswith("windows")
-            or os.name.lower().startswith("windows")):
-        return True
-    return False
-
+    return (platform.system().lower().startswith("windows")
+            or os.name.lower().startswith("windows"))
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -72,7 +71,6 @@ def mungeName(name):
             name = name.replace("\\", "/")
 
     return name
-
 
 def doCommand(command):
     """Run command as a shell command and report/exit on errors."""
@@ -133,11 +131,12 @@ def main():
             print("Test batch: ", batch)
         makeTest(" ".join(batch), inputs.j)
 
-    # pass 2: run test targets
-    for t in tests:
-        if inputs.debug:
-            print("run single test: %s" % testname)
-        runTest(t)
+    if not inputs.make_only:
+        # pass 2: run test targets
+        for t in tests:
+            if inputs.debug:
+                print("run single test: %s" % testname)
+            runTest(t)
 
 
 if __name__ == "__main__":
