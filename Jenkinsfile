@@ -72,9 +72,9 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        dependencies: { sh 'make test-math-dependencies' } ,
-                        documentation: { sh 'make doxygen' },
-                        headers: { sh "make -j${env.PARALLEL} test-headers" }
+                        Dependencies: { sh 'make test-math-dependencies' } ,
+                        Documentation: { sh 'make doxygen' },
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -87,7 +87,6 @@ pipeline {
             }
         }
         stage('Tests') {
-            failFast true
             parallel {
                 stage('Unit') {
                     agent any
@@ -127,7 +126,6 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            failFast true
             parallel {
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
