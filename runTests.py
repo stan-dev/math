@@ -84,16 +84,12 @@ def doCommand(command):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    if j is None:
-        command = 'make generate-tests -s'
-    else:
-        command = 'make -j%d generate-tests -s' % j
-    doCommand(command)
+    doCommand('make -j%d generate-tests -s' % (j or 1))
 
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    doCommand('make -j%d %s' % (j or 1, mungeName(name)))
+    doCommand('make -j%d %s' % (j or 1, name))
 
 def runTest(name):
     executable = mungeName(name).replace("/", os.sep)
@@ -107,8 +103,9 @@ def findTests(args):
     tests = nonfolders + [os.path.join(root, n)
             for f in folders
             for root, _, names in os.walk(f)
-            for n in names]
-    return filter(lambda n: n.endswith(testsfx), tests)
+            for n in names
+            if n.endswith(testsfx)]
+    return map(mungeName, tests)
 
 def batched(tests):
     return [tests[i:i + batchSize] for i in range(0, len(tests), batchSize)]
