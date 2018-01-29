@@ -1398,7 +1398,6 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2_vec_length_scale) {
   x2[3] = -5;
 
   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
-  double l_bad = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> l_bad0(5);
   std::vector<double> l_bad1(5);
   std::vector<double> l_bad2(5);
