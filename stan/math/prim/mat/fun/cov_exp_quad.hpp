@@ -9,8 +9,6 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/mat/fun/cumulative_sum.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <vector>
 #include <cmath>
 
@@ -216,8 +214,7 @@ namespace stan {
 		       length_scale[n]);
       for (size_t n = 0; n < length_scale.size(); ++n)
 	check_not_nan("cov_exp_quad", "length-scale",
-		      length_scale[n]);
-      
+		      length_scale[n]); 
       
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
@@ -240,7 +237,6 @@ namespace stan {
       }
       return cov;
     }
-    
   }
 }
 #endif
