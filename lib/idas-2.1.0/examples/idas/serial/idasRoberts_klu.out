@@ -1,0 +1,38 @@
+
+idasRoberts_klu: Robertson kinetics DAE serial example problem for IDA.
+               Three equation chemical kinetics problem.
+
+Linear solver: KLU, with user-supplied Jacobian.
+Tolerance parameters:  rtol = 0.0001   atol = 1e-08 1e-06 1e-06 
+Initial conditions y0 = (1 0 0)
+Constraints and id not used.
+
+-----------------------------------------------------------------------
+  t             y1           y2           y3      | nst  k      h
+-----------------------------------------------------------------------
+2.6402e-01   9.8997e-01   3.4706e-05   1.0000e-02 |  27  2   4.4012e-02
+    rootsfound[] =   0   1
+4.0000e-01   9.8517e-01   3.3864e-05   1.4794e-02 |  29  3   8.8024e-02
+4.0000e+00   9.0553e-01   2.2406e-05   9.4452e-02 |  43  4   6.3377e-01
+4.0000e+01   7.1579e-01   9.1838e-06   2.8420e-01 |  68  4   3.1932e+00
+4.0000e+02   4.5044e-01   3.2218e-06   5.4956e-01 |  95  4   3.3201e+01
+4.0000e+03   1.8320e-01   8.9444e-07   8.1680e-01 | 126  3   3.1458e+02
+4.0000e+04   3.8992e-02   1.6221e-07   9.6101e-01 | 161  5   2.5058e+03
+4.0000e+05   4.9369e-03   1.9842e-08   9.9506e-01 | 202  3   2.6371e+04
+4.0000e+06   5.1693e-04   2.0688e-09   9.9948e-01 | 252  5   2.5583e+05
+2.0801e+07   1.0000e-04   4.0004e-10   9.9990e-01 | 291  4   1.1781e+06
+    rootsfound[] =  -1   0
+4.0000e+07   5.2043e-05   2.0818e-10   9.9995e-01 | 303  5   2.3562e+06
+4.0000e+08   5.2113e-06   2.0845e-11   9.9999e-01 | 336  4   3.7885e+07
+4.0000e+09   5.2515e-07   2.1006e-12   1.0000e+00 | 359  3   5.4083e+08
+4.0000e+10   5.1251e-08   2.0500e-13   1.0000e+00 | 375  3   8.6532e+09
+
+Final Run Statistics: 
+
+Number of steps                    = 375
+Number of residual evaluations     = 529
+Number of Jacobian evaluations     = 54
+Number of nonlinear iterations     = 529
+Number of error test failures      = 10
+Number of nonlinear conv. failures = 0
+Number of root fn. evaluations     = 417
