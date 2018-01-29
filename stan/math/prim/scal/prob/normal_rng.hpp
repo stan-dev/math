@@ -16,8 +16,8 @@ namespace math {
  * Return a pseudorandom Normal variate for the given location and scale
  * using the specified random number generator.
  *
- * mu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * mu and sigma can each be a scalar or a vector. Any non-scalar
+ * inputs must be the same length.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter

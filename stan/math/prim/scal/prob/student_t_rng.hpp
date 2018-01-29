@@ -16,9 +16,8 @@ namespace math {
  * Return a pseudorandom student-t variate for the given degrees of freedom,
  * location, and scale using the specified random number generator.
  *
- * nu, mu, and sigma can each be a scalar, a std::vector, an
- * Eigen::Vector, or an Eigen::RowVector. Any non-scalar inputs must be the
- * same length.
+ * nu, mu, and sigma can each be a scalar or a vector. Any non-scalar
+ * inputs must be the same length.
  *
  * @tparam T_deg Type of degrees of freedom parameter
  * @tparam T_loc Type of location parameter
