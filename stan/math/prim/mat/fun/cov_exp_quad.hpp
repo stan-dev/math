@@ -40,31 +40,31 @@ namespace stan {
       check_positive("cov_exp_quad", "marginal variance", sigma);
       check_positive("cov_exp_quad", "length-scale", length_scale);
       for (size_t n = 0; n < x.size(); ++n)
-	check_not_nan("cov_exp_quad", "x", x[n]);
+        check_not_nan("cov_exp_quad", "x", x[n]);
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
-		    Eigen::Dynamic, Eigen::Dynamic>
-	cov(x.size(), x.size());
+                    Eigen::Dynamic, Eigen::Dynamic>
+        cov(x.size(), x.size());
 
       int x_size = x.size();
       if (x_size == 0)
-	return cov;
+        return cov;
 
       T_sigma sigma_sq = square(sigma);
       T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
       for (int j = 0; j < (x_size - 1); ++j) {
-	cov(j, j) = sigma_sq;
-	for (int i = j + 1; i < x_size; ++i) {
-	  cov(i, j)
-	    = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
-	  cov(j, i) = cov(i, j);
-	}
+        cov(j, j) = sigma_sq;
+        for (int i = j + 1; i < x_size; ++i) {
+          cov(i, j)
+            = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+          cov(j, i) = cov(i, j);
+        }
       }
       cov(x_size - 1, x_size - 1) = sigma_sq;
       return cov;
     }
-    
+
     /**
      * Returns a squared exponential kernel.
      *
@@ -86,18 +86,18 @@ namespace stan {
                   Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x,
                  const T_sigma& sigma,
-		 const std::vector<T_l>& length_scale) {
+                 const std::vector<T_l>& length_scale) {
       using std::exp;
-      
+
       check_positive("cov_exp_quad", "marginal variance", sigma);
       for (size_t n = 0; n < x.size(); ++n) {
         check_not_nan("cov_exp_quad", "x", x[n]);
       }
-      for(size_t n = 0; n < length_scale.size(); ++n) {
-	check_positive("cov_exp_quad", "length-scale",
-		       length_scale[n]);
-	check_not_nan("cov_exp_quad", "length-scale",
-		      length_scale[n]);
+      for (size_t n = 0; n < length_scale.size(); ++n) {
+        check_positive("cov_exp_quad", "length-scale",
+                       length_scale[n]);
+        check_not_nan("cov_exp_quad", "length-scale",
+                      length_scale[n]);
       }
 
       Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
@@ -111,23 +111,22 @@ namespace stan {
 
       T_sigma sigma_sq = square(sigma);
       T_l temp_exp;
-      
+
       for (int j = 0; j < (x_size - 1); ++j) {
         cov(j, j) = sigma_sq;
         for (int i = j + 1; i < x_size; ++i) {
-	  temp_exp = 0;
-	  for(int k = 0; k < l_size; ++k) {
-	    temp_exp += squared_distance(x[i], x[j])
-	      / square(length_scale[k]);
-	  }
-	  cov(i, j) = sigma_sq * exp(-0.5 * temp_exp);
-	  cov(j, i) = cov(i, j);
-	}
+          temp_exp = 0;
+          for (int k = 0; k < l_size; ++k) {
+            temp_exp += squared_distance(x[i], x[j])
+              / square(length_scale[k]);
+          }
+          cov(i, j) = sigma_sq * exp(-0.5 * temp_exp);
+          cov(j, i) = cov(i, j);
+        }
       }
       cov(x_size - 1, x_size - 1) = sigma_sq;
       return cov;
     }
-
 
     /**
      * Returns a squared exponential kernel.
@@ -160,7 +159,7 @@ namespace stan {
         check_not_nan("cov_exp_quad", "x1", x1[n]);
       for (size_t n = 0; n < x2.size(); ++n)
         check_not_nan("cov_exp_quad", "x2", x2[n]);
-      
+
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
         cov(x1.size(), x2.size());
@@ -171,7 +170,7 @@ namespace stan {
       T_l neg_half_inv_l_sq = -0.5 / square(length_scale);
 
       for (size_t i = 0; i < x1.size(); ++i) {
-        for (size_t j = 0; j < x2.size(); ++j) {	 
+        for (size_t j = 0; j < x2.size(); ++j) {
           cov(i, j) = sigma_sq * exp(squared_distance(x1[i], x2[j])
                                      * neg_half_inv_l_sq);
         }
@@ -210,12 +209,12 @@ namespace stan {
       for (size_t n = 0; n < x2.size(); ++n)
         check_not_nan("cov_exp_quad", "x2", x2[n]);
       for (size_t n = 0; n < length_scale.size(); ++n)
-	check_positive("cov_exp_quad", "length-scale",
-		       length_scale[n]);
+        check_positive("cov_exp_quad", "length-scale",
+                       length_scale[n]);
       for (size_t n = 0; n < length_scale.size(); ++n)
-	check_not_nan("cov_exp_quad", "length-scale",
-		      length_scale[n]); 
-      
+        check_not_nan("cov_exp_quad", "length-scale",
+                      length_scale[n]);
+
       Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
                     Eigen::Dynamic, Eigen::Dynamic>
         cov(x1.size(), x2.size());
@@ -227,13 +226,13 @@ namespace stan {
 
       for (size_t i = 0; i < x1.size(); ++i) {
         for (size_t j = 0; j < x2.size(); ++j) {
-	  temp_exp = 0;
-	  for(size_t k = 0; k < length_scale.size(); ++k) {
-	    temp_exp += squared_distance(x1[i], x2[j])
-	      / square(length_scale[k]);
-	  }
-	  cov(i, j) = sigma_sq * exp(-0.5 * temp_exp);
-	}
+          temp_exp = 0;
+          for (size_t k = 0; k < length_scale.size(); ++k) {
+            temp_exp += squared_distance(x1[i], x2[j])
+              / square(length_scale[k]);
+          }
+          cov(i, j) = sigma_sq * exp(-0.5 * temp_exp);
+        }
       }
       return cov;
     }
