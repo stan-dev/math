@@ -17,9 +17,9 @@ TEST(ProbDistributionsCategorical, fvar_double) {
   EXPECT_FLOAT_EQ(std::log(0.3), stan::math::categorical_log(1, theta).val_);
   EXPECT_FLOAT_EQ(std::log(0.5), stan::math::categorical_log(2, theta).val_);
   EXPECT_FLOAT_EQ(std::log(0.2), stan::math::categorical_log(3, theta).val_);
-  EXPECT_FLOAT_EQ(1.0/0.3, stan::math::categorical_log(1, theta).d_);
-  EXPECT_FLOAT_EQ(1.0/0.5, stan::math::categorical_log(2, theta).d_);
-  EXPECT_FLOAT_EQ(1.0/0.2, stan::math::categorical_log(3, theta).d_);
+  EXPECT_FLOAT_EQ(1.0 / 0.3, stan::math::categorical_log(1, theta).d_);
+  EXPECT_FLOAT_EQ(1.0 / 0.5, stan::math::categorical_log(2, theta).d_);
+  EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_log(3, theta).d_);
 }
 TEST(ProbDistributionsCategorical, fvar_double_vector) {
   using stan::math::fvar;
@@ -52,9 +52,9 @@ TEST(ProbDistributionsCategorical, fvar_fvar_double) {
                   stan::math::categorical_log(2, theta).val_.val_);
   EXPECT_FLOAT_EQ(std::log(0.2),
                   stan::math::categorical_log(3, theta).val_.val_);
-  EXPECT_FLOAT_EQ(1.0/0.3, stan::math::categorical_log(1, theta).d_.val_);
-  EXPECT_FLOAT_EQ(1.0/0.5, stan::math::categorical_log(2, theta).d_.val_);
-  EXPECT_FLOAT_EQ(1.0/0.2, stan::math::categorical_log(3, theta).d_.val_);
+  EXPECT_FLOAT_EQ(1.0 / 0.3, stan::math::categorical_log(1, theta).d_.val_);
+  EXPECT_FLOAT_EQ(1.0 / 0.5, stan::math::categorical_log(2, theta).d_.val_);
+  EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_log(3, theta).d_.val_);
 }
 TEST(ProbDistributionsCategorical, fvar_fvar_double_vector) {
   using stan::math::fvar;
@@ -73,4 +73,3 @@ TEST(ProbDistributionsCategorical, fvar_fvar_double_vector) {
   EXPECT_FLOAT_EQ(1.0 / 0.3 + 1.0 / 0.2 + 1.0 / 0.3,
                   stan::math::categorical_log(xs, theta).d_.val_);
 }
-

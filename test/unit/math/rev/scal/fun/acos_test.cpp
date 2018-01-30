@@ -3,7 +3,6 @@
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
 
-
 TEST(AgradRev, acos_var) {
   AVAR a = 0.68;
   AVAR f = acos(a);
@@ -12,7 +11,7 @@ TEST(AgradRev, acos_var) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(-1.0/sqrt(1.0 - (0.68 * 0.68)), g[0]);
+  EXPECT_FLOAT_EQ(-1.0 / sqrt(1.0 - (0.68 * 0.68)), g[0]);
 }
 
 TEST(AgradRev, acos_1) {
@@ -23,7 +22,7 @@ TEST(AgradRev, acos_1) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(-1.0/sqrt(1.0 - (1 * 1)), g[0]);
+  EXPECT_FLOAT_EQ(-1.0 / sqrt(1.0 - (1 * 1)), g[0]);
 }
 
 TEST(AgradRev, acos_neg_1) {
@@ -34,7 +33,7 @@ TEST(AgradRev, acos_neg_1) {
   AVEC x = createAVEC(a);
   VEC g;
   f.grad(x, g);
-  EXPECT_FLOAT_EQ(-1.0/sqrt(1.0 - (1 * 1)), g[0]);
+  EXPECT_FLOAT_EQ(-1.0 / sqrt(1.0 - (1 * 1)), g[0]);
 }
 
 TEST(AgradRev, acos_out_of_bounds1) {
@@ -61,8 +60,7 @@ TEST(AgradRev, acos_out_of_bounds2) {
 
 struct acos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return acos(arg1);
   }
 };

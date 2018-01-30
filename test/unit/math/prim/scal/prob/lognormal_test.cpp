@@ -11,12 +11,12 @@ TEST(ProbDistributionsLogNormal, error_check) {
   EXPECT_NO_THROW(stan::math::lognormal_rng(2.0, 1.0, rng));
 
   EXPECT_THROW(stan::math::lognormal_rng(2.0, -1.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::lognormal_rng(2.0, stan::math::positive_infinity(),
-                                         rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::lognormal_rng(stan::math::positive_infinity(), 3,
-                                         rng),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::lognormal_rng(2.0, stan::math::positive_infinity(), rng),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::lognormal_rng(stan::math::positive_infinity(), 3, rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsLogNormal, chiSquareGoodnessFitTest) {
@@ -30,7 +30,7 @@ TEST(ProbDistributionsLogNormal, chiSquareGoodnessFitTest) {
   }
 
   // Generate quantiles from boost's lognormal distribution
-  boost::math::lognormal_distribution<>dist(2.0, 1.0);
+  boost::math::lognormal_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
     double frac = static_cast<double>(i) / K;
@@ -41,4 +41,3 @@ TEST(ProbDistributionsLogNormal, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
-

@@ -19,8 +19,7 @@ void expect_prim_std_vector_value() {
   vector<vector<double> > z;
   z.push_back(valid_inputs);
   z.push_back(valid_inputs);
-  vector<vector<double> > fz
-    = F::template apply<vector<vector<double> > >(z);
+  vector<vector<double> > fz = F::template apply<vector<vector<double> > >(z);
   EXPECT_EQ(z.size(), fz.size());
   for (size_t i = 0; i < fz.size(); ++i) {
     EXPECT_EQ(z[i].size(), fz[i].size());

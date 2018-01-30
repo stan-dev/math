@@ -23,36 +23,19 @@ def mailBuildResults(String label, additionalEmails='') {
 }
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
+    finally { junit 'test/**/*.xml' }
 }
 
 def utils = new org.stan.Utils()
 
-def updateUpstream(String upstreamRepo) {
-    if (env.BRANCH_NAME == 'develop') {
-        node('master') {
-            retry(3) {
-                checkout([$class: 'GitSCM',
-                        branches: [[name: '*/develop']],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'SubmoduleOption',
-                                    disableSubmodules: false,
-                                    parentCredentials: false,
-                                    recursiveSubmodules: true,
-                                    reference: '',
-                                    trackingSubmodules: false]],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[url: "git@github.com:stan-dev/${upstreamRepo}.git",
-                                           credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b'
-                ]]])
-            }
-            sh """
-                curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
-                sh create-${upstreamRepo}-pull-request.sh
-            """
-            retry(3) { deleteDir() }
-        }
-    }
+def isBranch(String b) { env.BRANCH_NAME == b }
+
+def alsoNotify() {
+    if (isBranch('master') || isBranch('develop')) {
+        "stan-buildbot@googlegroups.com"
+    } else ""
 }
 
 pipeline {
@@ -62,11 +45,17 @@ pipeline {
           description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: 'downstream tests', name: 'stan_pr',
           description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, description:
+        'Run additional distribution tests on RowVectors (takes 5x as long)',
+        name: 'withRowVector')
     }
     options { skipDefaultCheckout() }
     stages {
         stage('Kill previous builds') {
-            when { not { branch 'develop' } }
+            when {
+                not { branch 'develop' }
+                not { branch 'master' }
+            }
             steps { 
                 script {
                     utils.killOldBuilds()
@@ -83,9 +72,9 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        dependencies: { sh 'make test-math-dependencies' } ,
-                        documentation: { sh 'make doxygen' },
-                        failFast: true
+                        Dependencies: { sh 'make test-math-dependencies' } ,
+                        Documentation: { sh 'make doxygen' },
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -93,32 +82,51 @@ pipeline {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
-                    retry(3) { deleteDir() }
+                    deleteDir()
                 }
             }
         }
         stage('Tests') {
-            failFast true
             parallel {
-                stage('Headers') {
-                    agent any
-                    steps { 
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "make -j${env.PARALLEL} test-headers"
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Unit') {
                     agent any
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
                         runTests("test/unit")
-                        retry(2) { junit 'test/**/*.xml' }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Distribution tests') {
+                    agent { label "distribution-tests" }
+                    steps { 
+                        unstash 'MathSetup'
+                        sh """
+                            ${setupCC(false)}
+                            echo 'O=0' >> make/local
+                            echo N_TESTS=${env.N_TESTS} >> make/local
+                            """
+                        script {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                            }
+                        }
+                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+                    }
+                    post {
+                        always {
+                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                            retry(3) { deleteDir() }
+                        }
+                        failure {
+                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+                        }
+                    }
+                }
+            }
+        }
+        stage('Upstream tests') {
+            parallel {
                 stage('CmdStan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
@@ -133,37 +141,21 @@ pipeline {
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    // XXX Add conditional back in so we don't run this if we haven't
-                    // changed code or makefiles
-                    steps { 
-                        unstash 'MathSetup'
-                        sh """
-                            ${setupCC(false)}
-                            echo 'O=0' >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            ./runTests.py -j${env.PARALLEL} test/prob > dist_test.log || tail -n 10000 dist_test.log; false
-                           """
-
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
             }
         }
     }
     post {
         always {
-            node('master') {
+            node("osx || linux") {
                 warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
                 warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
             }
         }
         success {
-            updateUpstream('stan')
+            script { utils.updateUpstream(env, 'stan') }
             mailBuildResults("SUCCESSFUL")
         }
-        unstable { mailBuildResults("UNSTABLE", "stan-buildbot@googlegroups.com") }
-        failure { mailBuildResults("FAILURE", "stan-buildbot@googlegroups.com") }
+        unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
+        failure { mailBuildResults("FAILURE", alsoNotify()) }
     }
 }

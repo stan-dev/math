@@ -7,11 +7,11 @@ TEST(ProbDirichlet, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
   EXPECT_FLOAT_EQ(
-    (stan::math::dirichlet_lpmf<true, double, double>(theta, alpha)),
-    (stan::math::dirichlet_log<true, double, double>(theta, alpha)));
+      (stan::math::dirichlet_lpmf<true, double, double>(theta, alpha)),
+      (stan::math::dirichlet_log<true, double, double>(theta, alpha)));
   EXPECT_FLOAT_EQ(
-    (stan::math::dirichlet_lpmf<false, double, double>(theta, alpha)),
-    (stan::math::dirichlet_log<false, double, double>(theta, alpha)));
+      (stan::math::dirichlet_lpmf<false, double, double>(theta, alpha)),
+      (stan::math::dirichlet_log<false, double, double>(theta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::dirichlet_lpmf<double, double>(theta, alpha)),
                   (stan::math::dirichlet_log<double, double>(theta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::dirichlet_lpmf(theta, alpha)),

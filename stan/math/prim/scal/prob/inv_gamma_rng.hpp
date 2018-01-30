@@ -21,26 +21,23 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    inv_gamma_rng(double alpha,
-                  double beta,
-                  RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::gamma_distribution;
+template <class RNG>
+inline double inv_gamma_rng(double alpha, double beta, RNG& rng) {
+  using boost::variate_generator;
+  using boost::random::gamma_distribution;
 
-      static const char* function = "inv_gamma_rng";
+  static const char* function = "inv_gamma_rng";
 
-      check_positive_finite(function, "Shape parameter", alpha);
-      check_positive_finite(function, "Scale parameter", beta);
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Scale parameter", beta);
 
-      variate_generator<RNG&, gamma_distribution<> >
-        gamma_rng(rng, gamma_distribution<>(alpha, 1 / beta));
-      return 1 / gamma_rng();
-    }
-
-  }
+  variate_generator<RNG&, gamma_distribution<> > gamma_rng(
+      rng, gamma_distribution<>(alpha, 1 / beta));
+  return 1 / gamma_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

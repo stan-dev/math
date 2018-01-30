@@ -15,24 +15,17 @@ TEST(MathFunctions, fma) {
 TEST(MathFunctions, fma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(1.0, 2.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, 2.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(1.0, nan, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, nan, 3.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(1.0, nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, nan, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(nan, 2.0, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, 2.0, 3.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(nan, 2.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, 2.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(nan, nan, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, nan, 3.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               fma(nan, nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, nan, nan));
 }

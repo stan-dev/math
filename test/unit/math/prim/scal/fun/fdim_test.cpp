@@ -23,12 +23,9 @@ TEST(MathFunctions, fdim_int) {
 TEST(MathFunctions, fdim_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fdim(3.0, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fdim(3.0, nan));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fdim(nan, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fdim(nan, 3.0));
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::fdim(nan, nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::fdim(nan, nan));
 }

@@ -19,4 +19,3 @@ TEST(AgradRev, is_inf) {
   AVAR c(nan);
   EXPECT_FALSE(is_inf(c));
 }
-

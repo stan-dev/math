@@ -5,19 +5,17 @@
 #include <stan/math/prim/scal/fun/primitive_value.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return the primitive double value for the specified auto-diff
-     * variable.
-     *
-     * @param v input variable.
-     * @return value of input.
-     */
-    inline double primitive_value(const var& v) {
-      return v.val();
-    }
+/**
+ * Return the primitive double value for the specified auto-diff
+ * variable.
+ *
+ * @param v input variable.
+ * @return value of input.
+ */
+inline double primitive_value(const var& v) { return v.val(); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

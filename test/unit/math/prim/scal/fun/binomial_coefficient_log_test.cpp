@@ -10,7 +10,6 @@ void test_binom_coefficient(const T_N& N, const T_n& n) {
                   binomial_coefficient_log(N, n));
 }
 
-
 TEST(MathFunctions, binomial_coefficient_log) {
   using stan::math::binomial_coefficient_log;
   EXPECT_FLOAT_EQ(1.0, exp(binomial_coefficient_log(2.0, 2.0)));

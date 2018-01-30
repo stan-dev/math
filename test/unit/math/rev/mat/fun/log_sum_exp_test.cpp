@@ -25,7 +25,6 @@ void test_log_sum_exp_matrix(const Matrix<double, R, C>& m) {
   vector<double> g_expected(m.size());
   f_expected.grad(x_expected, g_expected);
 
-
   vector<var> x(m.size());
   for (int i = 0; i < m.size(); ++i)
     x[i] = m(i);

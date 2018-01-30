@@ -47,39 +47,38 @@ TEST(ProbDistributions, DirichletBounds) {
   good_theta << 1.0, 0.0;
   good_alpha << 2, 3;
   EXPECT_NO_THROW(stan::math::dirichlet_log(good_theta, good_alpha))
-    << "elements of theta can be 0";
-
+      << "elements of theta can be 0";
 
   bad_theta << 0.25, 0.25;
   EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
-    << "sum of theta is not 1";
+      << "sum of theta is not 1";
 
   bad_theta << -0.25, 1.25;
   EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
-    << "theta has element less than 0";
+      << "theta has element less than 0";
 
   bad_theta << -0.25, 1.25;
   EXPECT_THROW(stan::math::dirichlet_log(bad_theta, good_alpha),
                std::domain_error)
-    << "theta has element less than 0";
+      << "theta has element less than 0";
 
   bad_alpha << 0.0, 1.0;
   EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::domain_error)
-    << "alpha has element equal to 0";
+      << "alpha has element equal to 0";
 
   bad_alpha << -0.5, 1.0;
   EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::domain_error)
-    << "alpha has element less than 0";
+      << "alpha has element less than 0";
 
   bad_alpha = Matrix<double, Dynamic, 1>(4, 1);
   bad_alpha << 1, 2, 3, 4;
   EXPECT_THROW(stan::math::dirichlet_log(good_theta, bad_alpha),
                std::invalid_argument)
-    << "size mismatch: theta is a 2-vector, alpha is a 4-vector";
+      << "size mismatch: theta is a 2-vector, alpha is a 4-vector";
 }
 
 double chi_square(std::vector<int> bin, std::vector<double> expect) {
@@ -108,7 +107,8 @@ void test_dirichlet3_1(VectorXd alpha) {
   for (int count = 0; count < N; ++count) {
     Eigen::VectorXd theta = stan::math::dirichlet_rng(alpha, rng);
     int i;
-    for (i = 0; i < K-1 && theta(0) > loc[i]; ++i) ;
+    for (i = 0; i < K - 1 && theta(0) > loc[i]; ++i) {
+    }
     ++bin[i];
   }
   EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));
@@ -125,24 +125,21 @@ void test_dirichlet3_2(VectorXd alpha) {
   for (size_t i = 0; i < loc.size(); i++)
     loc[i] = quantile(dist, (i + 1.0) / K);
 
-
   std::vector<int> bin(K, 0);
   std::vector<double> expect(K);
-  for (int i = 0 ; i < K; i++)
+  for (int i = 0; i < K; i++)
     expect[i] = N / K;
 
   for (int count = 0; count < N; ++count) {
     VectorXd a = stan::math::dirichlet_rng(alpha, rng);
     int i = 0;
-    while (i < K-1 && a(1) > loc[i])
+    while (i < K - 1 && a(1) > loc[i])
       ++i;
     ++bin[i];
-   }
+  }
 
   EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));
 }
-
-
 
 TEST(ProbDistributionsDirichlet, rngTest) {
   VectorXd alpha(3);

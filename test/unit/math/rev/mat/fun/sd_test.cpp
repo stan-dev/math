@@ -46,9 +46,9 @@ TEST(AgradRevMatrix, sd_vector) {
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val());
 
   d1.resize(1);
   v1.resize(1);
@@ -74,16 +74,15 @@ TEST(AgradRevMatrix, sd_rowvector) {
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
-
   row_vector_d d1(6);
   row_vector_v v1(6);
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val());
 
   d1.resize(1);
   v1.resize(1);
@@ -116,8 +115,8 @@ TEST(AgradRevMatrix, sd_matrix) {
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val());
 
   d1.resize(1, 1);
   v1.resize(1, 1);
@@ -157,10 +156,9 @@ TEST(AgradRevMatrix, sdStdVector) {
 
   AVEC y2 = createAVEC(0.5, 2.0, 3.5);
   AVAR mean2 = (y2[0] + y2[1] + y2[2]) / 3.0;
-  AVAR sum_sq_diff_2
-    = (y2[0] - mean2) * (y2[0] - mean2)
-    + (y2[1] - mean2) * (y2[1] - mean2)
-    + (y2[2] - mean2) * (y2[2] - mean2);
+  AVAR sum_sq_diff_2 = (y2[0] - mean2) * (y2[0] - mean2)
+                       + (y2[1] - mean2) * (y2[1] - mean2)
+                       + (y2[2] - mean2) * (y2[2] - mean2);
   AVAR f2 = sqrt(sum_sq_diff_2 / (3 - 1));
 
   EXPECT_EQ(f2.val(), f1_val);
@@ -173,7 +171,6 @@ TEST(AgradRevMatrix, sdStdVector) {
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
 }
 // used to validate analytic gradient definition at limit sd(x) -> 0
-
 
 TEST(AgradRevSd, finiteDiffsMatchAnalytic) {
   using std::sqrt;

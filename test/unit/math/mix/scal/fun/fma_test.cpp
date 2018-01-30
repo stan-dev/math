@@ -4,8 +4,6 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 #include <cmath>
 
-
-
 TEST(AgradFwdFma, FvarVar_FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -255,7 +253,6 @@ TEST(AgradFwdFma, Double_FvarVar_Double_2ndDeriv) {
   a.d_.grad(w, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
-
 
 TEST(AgradFwdFma, FvarFvarVar_FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -807,11 +804,8 @@ TEST(AgradFwdFma, Double_FvarFvarVar_Double_3rdDeriv) {
 
 struct fma_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return fma(arg1, arg2, arg3);
   }
 };

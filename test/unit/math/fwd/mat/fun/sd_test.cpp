@@ -15,17 +15,17 @@ TEST(AgradFwdMatrixSD, fd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
-  EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_);
+  EXPECT_FLOAT_EQ(std::sqrt(1.0 / 14.0), sd(v1).d_);
 
   d1.resize(1);
   v1.resize(1);
@@ -52,23 +52,22 @@ TEST(AgradFwdMatrixSD, fd_rowvector) {
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
-
   row_vector_d d1(6);
   row_vector_fd v1(6);
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
-  EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_);
+  EXPECT_FLOAT_EQ(std::sqrt(1.0 / 14.0), sd(v1).d_);
 
   d1.resize(1);
   v1.resize(1);
@@ -101,16 +100,16 @@ TEST(AgradFwdMatrixSD, fd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_);
-  EXPECT_FLOAT_EQ(std::sqrt(1.0/14.0), sd(v1).d_);
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_);
+  EXPECT_FLOAT_EQ(std::sqrt(1.0 / 14.0), sd(v1).d_);
 
   d1.resize(1, 1);
   v1.resize(1, 1);
@@ -153,16 +152,16 @@ TEST(AgradFwdMatrixSD, ffd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());
 
   d1.resize(1);
@@ -190,22 +189,21 @@ TEST(AgradFwdMatrixSD, ffd_rowvector) {
   v << 1.0;
   EXPECT_FLOAT_EQ(0.0, sd(v));
 
-
   row_vector_d d1(6);
   row_vector_ffd v1(6);
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());
 
   d1.resize(1);
@@ -239,15 +237,15 @@ TEST(AgradFwdMatrixSD, ffd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(d1));
-  EXPECT_FLOAT_EQ(std::sqrt(17.5/5.0), sd(v1).val_.val());
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(d1));
+  EXPECT_FLOAT_EQ(std::sqrt(17.5 / 5.0), sd(v1).val_.val());
   EXPECT_FLOAT_EQ(0.26726124, sd(v1).d_.val());
 
   d1.resize(1, 1);

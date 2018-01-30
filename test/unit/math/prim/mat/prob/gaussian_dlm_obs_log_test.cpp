@@ -4,9 +4,9 @@
 TEST(ProbGaussianDlmObs, log_matches_lpmf) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y(1, 10);
   y << -0.286804393606091, 1.30654039013044, 0.184631538931975,
-        1.76116251447979, 1.64691178557684, 0.0599998209370169,
-        -0.498099220647035, 1.77794756092381, -0.435458550812876,
-        1.17332931763075;
+      1.76116251447979, 1.64691178557684, 0.0599998209370169,
+      -0.498099220647035, 1.77794756092381, -0.435458550812876,
+      1.17332931763075;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> F(1, 1);
   F << 0.585528817843856;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> G(1, 1);
@@ -21,31 +21,32 @@ TEST(ProbGaussianDlmObs, log_matches_lpmf) {
   C0 << 65.2373490156606;
 
   EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf<true, double, double, double, double,
-                                       double, double, double>(y, F, G, V, W,
-                                                               m0, C0)),
-    (stan::math::gaussian_dlm_obs_log<true, double, double, double, double,
-                                       double, double, double>(y, F, G, V, W,
-                                                               m0, C0)));
+      (stan::math::gaussian_dlm_obs_lpdf<true, double, double, double, double,
+                                         double, double, double>(y, F, G, V, W,
+                                                                 m0, C0)),
+      (stan::math::gaussian_dlm_obs_log<true, double, double, double, double,
+                                        double, double, double>(y, F, G, V, W,
+                                                                m0, C0)));
   EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf<false, double, double, double, double,
-                                       double, double, double>(y, F, G, V, W,
-                                                               m0, C0)),
-    (stan::math::gaussian_dlm_obs_log<false, double, double, double, double,
-                                      double, double, double>(y, F, G, V, W,
-                                                              m0, C0)));
+      (stan::math::gaussian_dlm_obs_lpdf<false, double, double, double, double,
+                                         double, double, double>(y, F, G, V, W,
+                                                                 m0, C0)),
+      (stan::math::gaussian_dlm_obs_log<false, double, double, double, double,
+                                        double, double, double>(y, F, G, V, W,
+                                                                m0, C0)));
   EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf<double, double, double, double, double,
-                                       double, double>(y, F, G, V, W, m0, C0)),
-    (stan::math::gaussian_dlm_obs_log<double, double, double, double, double,
-                                      double, double>(y, F, G, V, W, m0, C0)));
+      (stan::math::gaussian_dlm_obs_lpdf<double, double, double, double, double,
+                                         double, double>(y, F, G, V, W, m0,
+                                                         C0)),
+      (stan::math::gaussian_dlm_obs_log<double, double, double, double, double,
+                                        double, double>(y, F, G, V, W, m0,
+                                                        C0)));
+  EXPECT_FLOAT_EQ((stan::math::gaussian_dlm_obs_lpdf(y, F, G, V, W, m0, C0)),
+                  (stan::math::gaussian_dlm_obs_log(y, F, G, V, W, m0, C0)));
   EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf(y, F, G, V, W, m0, C0)),
-    (stan::math::gaussian_dlm_obs_log(y, F, G, V, W, m0, C0)));
+      (stan::math::gaussian_dlm_obs_lpdf<true>(y, F, G, V, W, m0, C0)),
+      (stan::math::gaussian_dlm_obs_log<true>(y, F, G, V, W, m0, C0)));
   EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf<true>(y, F, G, V, W, m0, C0)),
-    (stan::math::gaussian_dlm_obs_log<true>(y, F, G, V, W, m0, C0)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0)),
-    (stan::math::gaussian_dlm_obs_log<false>(y, F, G, V, W, m0, C0)));
+      (stan::math::gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0)),
+      (stan::math::gaussian_dlm_obs_log<false>(y, F, G, V, W, m0, C0)));
 }

@@ -121,8 +121,7 @@ TEST(AgradFwdTan, FvarFvarVar_3rdDeriv) {
 
 struct tan_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tan(arg1);
   }
 };

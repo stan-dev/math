@@ -10,9 +10,7 @@ using Eigen::Dynamic;
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 
-vector_d
-get_simplex(double lambda,
-           const vector_d& c) {
+vector_d get_simplex(double lambda, const vector_d& c) {
   using stan::math::inv_logit;
   int K = c.size() + 1;
   vector_d theta(K);
@@ -20,7 +18,7 @@ get_simplex(double lambda,
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = inv_logit(lambda - c(k - 1)) - inv_logit(lambda - c(k));
   // - 0.0
-  theta(K-1) = inv_logit(lambda - c(K-2));
+  theta(K - 1) = inv_logit(lambda - c(K - 2));
   return theta;
 }
 
@@ -35,9 +33,8 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   std::vector<int> zero{1, 2, 0, 4, 5};
   std::vector<int> six{1, 2, 6, 4, 5};
   int K = 5;
-  Matrix<double, Dynamic, 1> c(K-1);
+  Matrix<double, Dynamic, 1> c(K - 1);
   c << -1.7, -0.3, 1.2, 2.6;
-
 
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << 1.1, 1.1, 1.1, 1.1, 1.1;
@@ -52,9 +49,8 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   }
   EXPECT_FLOAT_EQ(1.0, sum);
 
-
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k+1, lambda[k], c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k + 1, lambda[k], c));
 
   EXPECT_FLOAT_EQ(log_sum, ordered_logistic_log(y, lambda, c));
 
@@ -77,7 +73,7 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   std::vector<int> six{1, 6, 3};
 
   int K = 3;
-  Matrix<double, Dynamic, 1> c(K-1);
+  Matrix<double, Dynamic, 1> c(K - 1);
   c << -0.2, 4;
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << -0.9, -0.9, -0.9;
@@ -93,9 +89,9 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   EXPECT_FLOAT_EQ(1.0, sum);
 
   for (int k = 0; k < K; ++k)
-    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k+1, lambda[0], c));
+    EXPECT_FLOAT_EQ(log(theta(k)), ordered_logistic_log(k + 1, lambda[0], c));
 
-    EXPECT_FLOAT_EQ(log_sum, ordered_logistic_log(y, lambda, c));
+  EXPECT_FLOAT_EQ(log_sum, ordered_logistic_log(y, lambda, c));
 
   EXPECT_THROW(ordered_logistic_log(0, lambda[0], c), std::domain_error);
   EXPECT_THROW(ordered_logistic_log(4, lambda[0], c), std::domain_error);
@@ -108,7 +104,7 @@ TEST(ProbDistributions, ordered_logistic) {
   using stan::math::ordered_logistic_log;
   std::vector<int> y{1, 1, 1, 1};
   int K = 4;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> c(K-1);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> c(K - 1);
   c << -0.3, 0.1, 1.2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda(K);
   lambda << 0.5, 0.5, 0.5, 0.5;
@@ -151,7 +147,7 @@ TEST(ProbDistributions, ordered_logistic) {
   EXPECT_THROW(ordered_logistic_log(y, lambda, cbad), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad1(1);
-  cbad1 <<  inf;
+  cbad1 << inf;
   EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad1), std::domain_error);
   EXPECT_THROW(ordered_logistic_log(y, lambda, cbad1), std::domain_error);
   cbad1[0] = nan;
@@ -159,7 +155,7 @@ TEST(ProbDistributions, ordered_logistic) {
   EXPECT_THROW(ordered_logistic_log(y, lambda, cbad1), std::domain_error);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> cbad3(3);
-  cbad3 <<  0.5, inf, 1.0;
+  cbad3 << 0.5, inf, 1.0;
   EXPECT_THROW(ordered_logistic_log(1, 1.0, cbad3), std::domain_error);
   EXPECT_THROW(ordered_logistic_log(y, lambda, cbad3), std::domain_error);
   cbad3[1] = nan;
@@ -171,28 +167,19 @@ TEST(ProbDistributions, ordered_logistic) {
   EXPECT_THROW(ordered_logistic_log(y, lambda_small, c), std::invalid_argument);
 }
 
-void expect_nan(double x) {
-  EXPECT_TRUE(std::isnan(x));
-}
-
+void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }
 
 TEST(ProbDistributionOrderedLogistic, error_check) {
   boost::random::mt19937 rng;
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd c(4);
-  c << -2,
-    2.0,
-    5,
-    10;
+  c << -2, 2.0, 5, 10;
   EXPECT_NO_THROW(stan::math::ordered_logistic_rng(4.0, c, rng));
 
-  EXPECT_THROW(stan::math::ordered_logistic_rng(stan::math::positive_infinity(),
-                                                c, rng),
-               std::domain_error);
-  c << -inf,
-    2.0,
-    -5,
-    inf;
+  EXPECT_THROW(
+      stan::math::ordered_logistic_rng(stan::math::positive_infinity(), c, rng),
+      std::domain_error);
+  c << -inf, 2.0, -5, inf;
   EXPECT_THROW(stan::math::ordered_logistic_rng(4.0, c, rng),
                std::domain_error);
 }
@@ -203,30 +190,28 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
   int N = 10000;
   double eta = 1.0;
   Eigen::VectorXd theta(3);
-  theta << -0.4,
-    4.0,
-    6.2;
+  theta << -0.4, 4.0, 6.2;
   Eigen::VectorXd prob(4);
   prob(0) = 1 - inv_logit(eta - theta(0));
   prob(1) = inv_logit(eta - theta(0)) - inv_logit(eta - theta(1));
   prob(2) = inv_logit(eta - theta(1)) - inv_logit(eta - theta(2));
   prob(3) = inv_logit(eta - theta(2));
   int K = prob.rows();
-  boost::math::chi_squared mydist(K-1);
+  boost::math::chi_squared mydist(K - 1);
 
   Eigen::VectorXd loc(prob.rows());
   for (int i = 0; i < prob.rows(); i++)
     loc(i) = 0;
 
   for (int i = 0; i < prob.rows(); i++) {
-      for (int j = i; j < prob.rows(); j++)
-  loc(j) += prob(i);
-    }
+    for (int j = i; j < prob.rows(); j++)
+      loc(j) += prob(i);
+  }
 
   int count = 0;
   int bin[K];
   double expect[K];
-  for (int i = 0 ; i < K; i++) {
+  for (int i = 0; i < K; i++) {
     bin[i] = 0;
     expect[i] = N * prob(i);
   }
@@ -235,7 +220,7 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
     int a = stan::math::ordered_logistic_rng(eta, theta, rng);
     bin[a - 1]++;
     count++;
-   }
+  }
 
   double chi = 0;
 

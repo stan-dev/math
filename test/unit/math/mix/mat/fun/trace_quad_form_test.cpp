@@ -13,14 +13,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
   matrix_fv ad(4, 4);
   matrix_fv bd(4, 2);
   fvar<var> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -51,7 +46,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
   res = trace_quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val_.val());
   EXPECT_FLOAT_EQ(16126, res.d_.val());
-
 
   std::vector<var> z;
   z.push_back(ad(0, 0).val_);
@@ -115,15 +109,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   matrix_fv bd(4, 2);
   fvar<var> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad, bd);
@@ -138,15 +126,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
   matrix_fv ad(4, 4);
   Eigen::Matrix<double, -1, -1> bd(4, 2);
   fvar<var> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad, bd);
@@ -161,15 +143,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   matrix_ffv bd(4, 2);
   fvar<fvar<var> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad, bd);
@@ -184,15 +160,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
   matrix_ffv ad(4, 4);
   Eigen::Matrix<double, -1, -1> bd(4, 2);
   fvar<fvar<var> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // fvar<var> - fvar<var>
   res = trace_quad_form(ad, bd);
@@ -206,14 +176,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
   matrix_fv ad(4, 4);
   matrix_fv bd(4, 2);
   fvar<var> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -244,7 +209,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
   res = trace_quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val_.val());
   EXPECT_FLOAT_EQ(16126, res.d_.val());
-
 
   std::vector<var> z;
   z.push_back(ad(0, 0).val_);
@@ -307,14 +271,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
   fvar<fvar<var> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -345,7 +304,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
   res = trace_quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val_.val_.val());
   EXPECT_FLOAT_EQ(16126, res.d_.val_.val());
-
 
   std::vector<var> z;
   z.push_back(ad(0, 0).val_.val_);
@@ -401,7 +359,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
   EXPECT_FLOAT_EQ(576, h[23]);
 }
 
-
 TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
   using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
@@ -409,14 +366,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
   fvar<fvar<var> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -447,7 +399,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
   res = trace_quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val_.val_.val());
   EXPECT_FLOAT_EQ(16126, res.d_.val_.val());
-
 
   std::vector<var> z;
   z.push_back(ad(0, 0).val_.val_);
@@ -510,14 +461,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_3rd_deriv) {
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
   fvar<fvar<var> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -572,7 +518,6 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_3rd_deriv) {
   res = trace_quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26758, res.val_.val_.val());
   EXPECT_FLOAT_EQ(16126, res.d_.val_.val());
-
 
   std::vector<var> z;
   z.push_back(ad(0, 0).val_.val_);

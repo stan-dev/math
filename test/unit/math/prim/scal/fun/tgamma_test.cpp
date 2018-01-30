@@ -18,6 +18,5 @@ TEST(MathFunctions, tgammaStanMath) {
 
 TEST(MathFunctions, tgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::tgamma(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::tgamma(nan));
 }

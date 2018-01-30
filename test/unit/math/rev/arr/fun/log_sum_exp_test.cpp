@@ -26,11 +26,9 @@ TEST(AgradRev, log_sum_exp_vector) {
   x.push_back(4.0);
   x.push_back(5.0);
   f = log_sum_exp(x);
-  double expected_log_sum_exp = std::log(std::exp(1) + std::exp(2)
-                                          + std::exp(3) + std::exp(4)
-                                          + std::exp(5));
-  EXPECT_FLOAT_EQ(expected_log_sum_exp,
-                   f.val());
+  double expected_log_sum_exp = std::log(std::exp(1) + std::exp(2) + std::exp(3)
+                                         + std::exp(4) + std::exp(5));
+  EXPECT_FLOAT_EQ(expected_log_sum_exp, f.val());
 
   grad_f.clear();
   f.grad(x, grad_f);
@@ -45,17 +43,15 @@ TEST(AgradRev, log_sum_exp_vector) {
   x.push_back(1000.0);
   x.push_back(10.0);
   f = log_sum_exp(x);
-  EXPECT_FLOAT_EQ(
-    std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0,
-    f.val());
+  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0, f.val());
 
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[0]);
   EXPECT_FLOAT_EQ(
-    std::exp(10.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[1]);
+      std::exp(10.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[1]);
 
   // longer underflow example
   x.clear();
@@ -65,11 +61,11 @@ TEST(AgradRev, log_sum_exp_vector) {
   x.push_back(0.0);
   x.push_back(-100.0);
   f = log_sum_exp(x);
-  expected_log_sum_exp = std::log(std::exp(0.0) + std::exp(-100)
-                                    + std::exp(-890.0) + std::exp(-900.0)
-                                    + std::exp(-1000.0)) + 900.0;
-  EXPECT_FLOAT_EQ(expected_log_sum_exp,
-                   f.val());
+  expected_log_sum_exp
+      = std::log(std::exp(0.0) + std::exp(-100) + std::exp(-890.0)
+                 + std::exp(-900.0) + std::exp(-1000.0))
+        + 900.0;
+  EXPECT_FLOAT_EQ(expected_log_sum_exp, f.val());
 
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(std::exp(800.0 - expected_log_sum_exp), grad_f[0]);
@@ -92,7 +88,6 @@ TEST(AgradRev, log_sum_exp_vec_1) {
   EXPECT_EQ(1U, g.size());
   EXPECT_FLOAT_EQ(1.0, g[0]);
 }
-
 
 TEST(AgradRev, log_sum_exp_vec_2) {
   using stan::math::log_sum_exp;

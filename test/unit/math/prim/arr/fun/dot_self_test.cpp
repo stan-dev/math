@@ -26,12 +26,10 @@ TEST(MathFunctions, dot_self_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   x[2] = nan;
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::dot_self(x));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot_self(x));
 
   x[0] = nan;
   x[1] = nan;
   x[2] = nan;
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::dot_self(x));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot_self(x));
 }
