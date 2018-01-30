@@ -4,7 +4,7 @@
 #include <CL/cl.hpp>
 
 TEST(MathMatrix, kernel_initialize) {
-  cl::Context& ctx = stan::math::get_context();
+  stan::math::get_context();
   EXPECT_NO_THROW(cl::Kernel kernel_transpose
                   = stan::math::get_kernel("transpose"));
   EXPECT_NO_THROW(cl::Kernel kernel_copy = stan::math::get_kernel("copy"));
@@ -48,7 +48,6 @@ TEST(MathMatrix, kernel_initialize) {
 
 #include <gtest/gtest.h>
 TEST(MathMatrix, kernel_initializeDummy) {
-   int a;
-   EXPECT_NO_THROW(a = 1);
+   EXPECT_NO_THROW();
 }
 #endif
