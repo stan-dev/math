@@ -51,6 +51,9 @@ namespace stan {
       typedef typename stan::partials_return_type<T_theta, T_lam>::type
         T_partials_return;
 
+      typedef typename Eigen::Matrix<T_partials_return, -1, 1>
+        T_partials_vec;
+
       const int N = length(theta);
 
       check_bounded(function, "theta", theta, 0, 1);
@@ -60,26 +63,24 @@ namespace stan {
       check_finite(function, "theta", theta);
       check_consistent_sizes(function, "theta", theta, "lambda", lambda);
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_dbl(N, 1);
       scalar_seq_view<T_theta> theta_vec(theta);
+      T_partials_vec theta_dbl(N);
       for (int n = 0; n < N; ++n)
         theta_dbl[n] = value_of(theta_vec[n]);
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_dbl(N, 1);
       scalar_seq_view<T_lam> lam_vec(lambda);
+      T_partials_vec lam_dbl(N);
       for (int n = 0; n < N; ++n)
         lam_dbl[n] = value_of(lam_vec[n]);
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> logp_tmp(N, 1);
-      logp_tmp = log(theta_dbl) + lam_dbl;
+      T_partials_vec logp_tmp = log(theta_dbl) + lam_dbl;
 
       T_partials_return logp = log_sum_exp(logp_tmp);
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> theta_deriv(N, 1);
+      T_partials_vec theta_deriv;
       theta_deriv.array() = (lam_dbl.array() - logp).exp();
 
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> lam_deriv(N, 1);
-      lam_deriv.array() = theta_deriv.array() * theta_dbl.array();
+      T_partials_vec lam_deriv = theta_deriv.cwiseProduct(theta_dbl);
 
       operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
       if (!is_constant_struct<T_theta>::value) {
