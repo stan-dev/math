@@ -1,3 +1,4 @@
+
 /*
  * -----------------------------------------------------------------
  * $Revision: 4895 $
@@ -15,7 +16,13 @@
  */
 
 /* Define SUNDIALS version number */
-#define SUNDIALS_PACKAGE_VERSION "3.1.0"
+#define SUNDIALS_VERSION_MAJOR 3
+#define SUNDIALS_VERSION_MINOR 1
+#define SUNDIALS_VERSION_PATCH 0
+
+#define SUNDIALS_VERSION "3.1.0"
+#define SUNDIALS_VERSION_LABEL ""
+
 
 /* FCMIX: Define Fortran name-mangling macro for C identifiers.
  * Depending on the inferred scheme, one of the following six
