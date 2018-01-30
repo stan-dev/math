@@ -34,7 +34,7 @@ static map_string kernel_groups;
 static map_string kernel_strings;
 static map_kernel kernels;
 static map_bool compiled_kernels;
-static std::string dummy_kernel = "__kernel void dummy() { };";
+static std::string dummy_kernel = "__kernel void dummy(__global const int* foo) { };";
 
 /**
  * Initalizes the global std::map variables that
