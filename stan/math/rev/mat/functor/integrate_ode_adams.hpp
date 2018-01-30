@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_BDF_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_BDF_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
 
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
@@ -25,14 +25,14 @@ namespace math {
 
 template <typename F, typename T_initial, typename T_param>
 std::vector<std::vector<typename stan::return_type<T_initial, T_param>::type> >
-integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, double t0,
+integrate_ode_adams(const F& f, const std::vector<T_initial>& y0, double t0,
                   const std::vector<double>& ts,
                   const std::vector<T_param>& theta,
                   const std::vector<double>& x, const std::vector<int>& x_int,
                   std::ostream* msgs = 0, double relative_tolerance = 1e-10,
                   double absolute_tolerance = 1e-10,
                   long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
-  stan::math::cvodes_integrator<CV_BDF> integrator;
+  stan::math::cvodes_integrator<CV_ADAMS> integrator;
   return integrator.integrate(f, y0, t0,
                               ts,
                               theta,
