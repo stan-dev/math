@@ -17,8 +17,8 @@ namespace math {
  * Return a Gumbel random variate with the given location and scale
  * using the specified random number generator.
  *
- * mu and beta can each be a scalar or a one-dimensional container. Any
- * non-scalar inputs must be the same size.
+ * mu and beta can each be a scalar or a vector. Any non-scalar inputs
+ * must be the same length.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter

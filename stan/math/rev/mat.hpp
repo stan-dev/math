@@ -58,6 +58,7 @@
 #include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 
 #endif

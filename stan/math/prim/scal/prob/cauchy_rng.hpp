@@ -17,8 +17,8 @@ namespace math {
  * Return a Cauchy random variate for the given location and scale
  * using the specified random number generator.
  *
- * mu and sigma can each be a scalar or one-dimensional container. Any
- * non-scalar inputs must be the same size.
+ * mu and sigma can each be a scalar or a vector. Any non-scalar
+ * inputs must be the same length.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
