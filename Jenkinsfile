@@ -74,7 +74,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
                     )
                 }
             }
