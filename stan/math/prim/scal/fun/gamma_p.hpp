@@ -48,7 +48,6 @@ namespace math {
    \f[
    \frac{\partial \, P(a, z)}{\partial z} = \frac{z^{a-1}e^{-z}}{\Gamma(a)}
    \f]
-   
    * @throws domain_error if x is at pole
 
  */
