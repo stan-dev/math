@@ -35,6 +35,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(
     const T_shape& alpha, const T_scale& sigma, RNG& rng) {
   using boost::random::weibull_distribution;
   using boost::variate_generator;
+
   static const char* function = "weibull_rng";
 
   check_positive_finite(function, "Shape parameter", alpha);

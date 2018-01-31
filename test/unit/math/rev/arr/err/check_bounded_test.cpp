@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckVectorized) {
+  using stan::math::check_bounded;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_bounded;
 
   int N = 5;
   const char* function = "check_bounded";

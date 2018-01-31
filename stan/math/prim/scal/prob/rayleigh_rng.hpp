@@ -29,6 +29,7 @@ inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
     const T_scale& sigma, RNG& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
+
   static const char* function = "rayleigh_rng";
 
   check_positive_finite(function, "Scale parameter", sigma);

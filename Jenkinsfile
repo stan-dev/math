@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 @Library('StanUtils')
 import org.stan.Utils
 
@@ -37,6 +38,21 @@ def alsoNotify() {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
+def mathUrl() { "https://github.com/stan-dev/math" }
+def isFork() { env.CHANGE_URL && !env.CHANGE_URL.startsWith(mathUrl()) }
+def branchName() {
+    if (env.CHANGE_BRANCH) {
+        br = env.CHANGE_BRANCH
+        if (isFork()) {
+            br = "autoformat/" + br
+        }
+    } else {
+        br = env.BRANCH_NAME
+    }
+    return br
+}
+def remoteName() { isFork() ? mathUrl() : "origin" }
+def force() { isFork() ? "-f" : "" }
 
 pipeline {
     agent none
@@ -59,6 +75,56 @@ pipeline {
             steps { 
                 script {
                     utils.killOldBuilds()
+                }
+            }
+        }
+        stage("Clang-format") {
+            agent any
+            steps {
+                sh "printenv"
+                retry(3) { checkout scm }
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                    usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        git checkout -b ${branchName()}
+                        clang-format --version
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
+                        if [[ `git diff` != "" ]]; then
+                            git config --global user.email "mc.stanislaw@gmail.com"
+                            git config --global user.name "Stan Jenkins"
+                            git add stan test
+                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git push ${force()} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${branchName()} 
+                            echo "Exiting build because clang-format found changes."
+                            echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
+                            echo "Please 'git pull ${remoteName()} ${branchName()}' before continuing to develop."
+                            exit 1
+                        fi"""
+                }
+            }
+            post {
+                always { deleteDir() }
+                failure {
+                    script {
+                        if (isFork()) {
+                            emailext (
+                                subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                                body: """
+                                Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
+                                has been autoformatted and the changes committed to
+                                ${remoteName()} on branch '${branchName()}'
+                                Please pull these changes before continuing. 
+
+                                See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms
+                                for local development environment setup.
+
+                                (Check console output at ${env.BUILD_URL})""",
+                                recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                                to: "${env.CHANGE_AUTHOR_EMAIL}"
+                            )
+                        }
+                    }
                 }
             }
         }

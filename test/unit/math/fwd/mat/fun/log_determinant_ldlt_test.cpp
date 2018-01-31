@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixLogDeterminantLDLT, fd) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
   using stan::math::log_determinant_ldlt;
+  using stan::math::matrix_fd;
 
   matrix_fd v(2, 2);
   v << 3, 0, 0, 4;
@@ -22,9 +22,9 @@ TEST(AgradFwdMatrixLogDeterminantLDLT, fd) {
   EXPECT_FLOAT_EQ(0.83333333, det.d_);
 }
 TEST(AgradFwdMatrixLogDeterminantLDLT, ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
   using stan::math::log_determinant_ldlt;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 3.0;

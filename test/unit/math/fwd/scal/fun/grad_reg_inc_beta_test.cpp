@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
-  using stan::math::fvar;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
 
   fvar<double> a = 1.0;
@@ -29,9 +29,9 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fd) {
 }
 
 TEST(ProbInternalMath, grad_reg_inc_beta_ffd) {
-  using stan::math::fvar;
   using stan::math::digamma;
   using stan::math::exp;
+  using stan::math::fvar;
   using stan::math::lbeta;
 
   fvar<fvar<double> > a = 1.0;

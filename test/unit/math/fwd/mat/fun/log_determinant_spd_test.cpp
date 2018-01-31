@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixLogDeterminantSPD, fd) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
   using stan::math::log_determinant_spd;
+  using stan::math::matrix_fd;
 
   matrix_fd v(2, 2);
   v << 3, 0, 0, 4;
@@ -20,15 +20,15 @@ TEST(AgradFwdMatrixLogDeterminantSPD, fd) {
 }
 
 TEST(AgradFwdMatrixLogDeterminantSPD, fd_exception) {
-  using stan::math::matrix_fd;
   using stan::math::log_determinant_spd;
+  using stan::math::matrix_fd;
 
   EXPECT_THROW(log_determinant_spd(matrix_fd(2, 3)), std::invalid_argument);
 }
 TEST(AgradFwdMatrixLogDeterminantSPD, ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
   using stan::math::log_determinant_spd;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 3.0;
@@ -50,8 +50,8 @@ TEST(AgradFwdMatrixLogDeterminantSPD, ffd) {
 }
 
 TEST(AgradFwdMatrixLogDeterminantSPD, ffd_exception) {
-  using stan::math::matrix_ffd;
   using stan::math::log_determinant_spd;
+  using stan::math::matrix_ffd;
 
   EXPECT_THROW(log_determinant_spd(matrix_ffd(2, 3)), std::invalid_argument);
 }

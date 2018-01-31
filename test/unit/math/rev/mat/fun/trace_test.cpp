@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, mv_trace) {
-  using stan::math::trace;
   using stan::math::matrix_v;
+  using stan::math::trace;
 
   matrix_v a(2, 2);
   a << -1.0, 2.0, 5.0, 10.0;

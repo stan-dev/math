@@ -30,6 +30,7 @@ inline typename VectorBuilder<true, double, T_deg>::type inv_chi_square_rng(
     const T_deg& nu, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
+
   static const char* function = "inv_chi_square_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);

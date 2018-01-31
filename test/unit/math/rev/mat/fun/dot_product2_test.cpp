@@ -186,9 +186,9 @@ TEST(AgradRevMatrix, columns_dot_self) {
 }
 
 TEST(AgradRevMatrix, softmax) {
-  using stan::math::softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::softmax;
   using stan::math::vector_v;
 
   EXPECT_THROW(softmax(vector_v()), std::invalid_argument);
@@ -289,8 +289,8 @@ TEST(AgradRevMatrix, initializeVariable) {
   using stan::math::initialize_variable;
   using std::vector;
 
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   AVAR a;
   initialize_variable(a, AVAR(1.0));
@@ -335,16 +335,16 @@ TEST(AgradRevMatrix, initializeVariable) {
 }
 
 TEST(AgradRevMatrix, UserCase1) {
-  using std::vector;
-  using stan::math::multiply;
-  using stan::math::transpose;
-  using stan::math::subtract;
-  using stan::math::get_base1;
   using stan::math::assign;
   using stan::math::dot_product;
+  using stan::math::get_base1;
   using stan::math::matrix_v;
+  using stan::math::multiply;
+  using stan::math::subtract;
+  using stan::math::transpose;
   using stan::math::vector_d;
   using stan::math::vector_v;
+  using std::vector;
 
   // also tried DpKm1 > H
   size_t H = 3;
@@ -446,8 +446,8 @@ void test_mult_LLT(const stan::math::matrix_v& L) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(1, 1);
   L << 3.0;
@@ -467,8 +467,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(2, 2);
   L << 1, 0, 2, 3;
@@ -517,8 +517,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L(3, 3);
   L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
@@ -624,8 +624,8 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
 }
 
 TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
-  using stan::math::multiply_lower_tri_self_transpose;
   using stan::math::matrix_v;
+  using stan::math::multiply_lower_tri_self_transpose;
 
   matrix_v L;
 
@@ -703,8 +703,8 @@ TEST(AgradRevMatrix, tcrossprod) {
   test_tcrossprod(Q);
 }
 TEST(AgradRevMatrix, tcrossprodGrad1) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(1, 1);
   L << 3.0;
@@ -724,8 +724,8 @@ TEST(AgradRevMatrix, tcrossprodGrad1) {
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad2) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(2, 2);
   L << 1, 0, 2, 3;
@@ -774,8 +774,8 @@ TEST(AgradRevMatrix, tcrossprodGrad2) {
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad3) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(3, 3);
   L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
@@ -880,8 +880,8 @@ TEST(AgradRevMatrix, tcrossprodGrad3) {
   EXPECT_FLOAT_EQ(12.0, J[8][5]);
 }
 void test_crossprod(const stan::math::matrix_v& L) {
-  using stan::math::matrix_v;
   using stan::math::crossprod;
+  using stan::math::matrix_v;
   matrix_v LLT_eigen = L.transpose() * L;
   matrix_v LLT_stan = crossprod(L);
   EXPECT_EQ(L.rows(), LLT_stan.rows());
@@ -956,8 +956,8 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(1.0, grad[2]);
 }
 TEST(AgradRevMatrix, cumulative_sum) {
-  using stan::math::var;
   using stan::math::cumulative_sum;
+  using stan::math::var;
 
   EXPECT_FLOAT_EQ(0, cumulative_sum(std::vector<var>(0)).size());
 
@@ -973,20 +973,20 @@ TEST(AgradRevMatrix, cumulative_sum) {
 }
 
 TEST(AgradRevMatrix, promoteElts) {
-  using stan::math::promote_elements;
   using stan::math::promote_common;
+  using stan::math::promote_elements;
 
   using stan::math::var;
 
   using std::vector;
 
   using stan::math::matrix_d;
-  using stan::math::vector_d;
   using stan::math::row_vector_d;
+  using stan::math::vector_d;
 
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::row_vector_v;
+  using stan::math::vector_v;
 
   double a = promote_common<double, double>(3.0);
   var b = promote_common<double, var>(4.0);

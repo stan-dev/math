@@ -19,8 +19,8 @@ namespace math {
 
 template <class RNG>
 inline int poisson_rng(double lambda, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::poisson_distribution;
+  using boost::variate_generator;
 
   static const char* function = "poisson_rng";
 

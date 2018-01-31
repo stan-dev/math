@@ -5,8 +5,8 @@
 
 TEST(AgradFwdLog1p, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = log1p(x);
@@ -21,8 +21,8 @@ TEST(AgradFwdLog1p, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1p, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = log1p(x);
@@ -37,8 +37,8 @@ TEST(AgradFwdLog1p, FvarVar_2ndDeriv) {
 }
 TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -73,8 +73,8 @@ TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1p, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

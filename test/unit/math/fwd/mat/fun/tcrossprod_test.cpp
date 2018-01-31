@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixTCrossProd, fd_3x3_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   matrix_fd Y(3, 3);
@@ -35,8 +35,8 @@ TEST(AgradFwdMatrixTCrossProd, fd_3x3_matrix) {
   EXPECT_FLOAT_EQ(60, output(2, 2).d_);
 }
 TEST(AgradFwdMatrixTCrossProd, fd_2x2_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
   matrix_fd Y(2, 2);
@@ -68,8 +68,8 @@ TEST(AgradFwdMatrixTCrossProd, fd_1x1_matrix) {
   EXPECT_FLOAT_EQ(12, output(0, 0).d_);
 }
 TEST(AgradFwdMatrixTCrossProd, fd_1x3_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd Y(1, 3);
   Y << 1, 2, 3;
@@ -82,8 +82,8 @@ TEST(AgradFwdMatrixTCrossProd, fd_1x3_matrix) {
   EXPECT_FLOAT_EQ(24, output(0, 0).d_);
 }
 TEST(AgradFwdMatrixTCrossProd, fd_2x3_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd Y(2, 3);
   Y << 1, 2, 3, -1, 4, -9;
@@ -105,8 +105,8 @@ TEST(AgradFwdMatrixTCrossProd, fd_2x3_matrix) {
   EXPECT_FLOAT_EQ(-24, output(1, 1).d_);
 }
 TEST(AgradFwdMatrixTCrossProd, fd_3x2_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd Y(3, 2);
   Y << 1, 2, 3, -1, 4, -9;
@@ -128,8 +128,8 @@ TEST(AgradFwdMatrixTCrossProd, fd_3x2_matrix) {
   EXPECT_FLOAT_EQ(8, output(1, 1).d_);
 }
 TEST(AgradFwdMatrixTCrossProd, ffd_3x3_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   matrix_d Z(3, 3);
   Z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   matrix_ffd Y(3, 3);
@@ -161,8 +161,8 @@ TEST(AgradFwdMatrixTCrossProd, ffd_3x3_matrix) {
   EXPECT_FLOAT_EQ(60, output(2, 2).d_.val());
 }
 TEST(AgradFwdMatrixTCrossProd, ffd_2x2_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   matrix_d Z(2, 2);
   Z << 3, 0, 4, -3;
   matrix_ffd Y(2, 2);
@@ -194,8 +194,8 @@ TEST(AgradFwdMatrixTCrossProd, ffd_1x1_matrix) {
   EXPECT_FLOAT_EQ(12, output(0, 0).d_.val());
 }
 TEST(AgradFwdMatrixTCrossProd, ffd_1x3_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
 
   matrix_ffd Y(1, 3);
   Y << 1, 2, 3;
@@ -208,8 +208,8 @@ TEST(AgradFwdMatrixTCrossProd, ffd_1x3_matrix) {
   EXPECT_FLOAT_EQ(24, output(0, 0).d_.val());
 }
 TEST(AgradFwdMatrixTCrossProd, ffd_2x3_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
 
   matrix_ffd Y(2, 3);
   Y << 1, 2, 3, -1, 4, -9;
@@ -231,8 +231,8 @@ TEST(AgradFwdMatrixTCrossProd, ffd_2x3_matrix) {
   EXPECT_FLOAT_EQ(-24, output(1, 1).d_.val());
 }
 TEST(AgradFwdMatrixTCrossProd, ffd_3x2_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
 
   matrix_ffd Y(3, 2);
   Y << 1, 2, 3, -1, 4, -9;

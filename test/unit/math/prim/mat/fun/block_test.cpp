@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrixBlock, Block1) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::block;
 
   Matrix<double, Dynamic, Dynamic> m(3, 4);

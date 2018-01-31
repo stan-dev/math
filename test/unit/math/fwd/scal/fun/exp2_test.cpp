@@ -7,8 +7,8 @@ class AgradFwdExp2 : public testing::Test {
 };
 
 TEST_F(AgradFwdExp2, Fvar) {
-  using stan::math::fvar;
   using stan::math::exp2;
+  using stan::math::fvar;
   using std::log;
 
   fvar<double> x(0.5, 1.0);
@@ -41,8 +41,8 @@ TEST_F(AgradFwdExp2, Fvar) {
 }
 
 TEST_F(AgradFwdExp2, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::exp2;
+  using stan::math::fvar;
   using std::log;
 
   fvar<fvar<double> > x;

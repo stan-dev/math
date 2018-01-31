@@ -79,9 +79,9 @@ TEST(AgradRev, log_diff_exp_dv) {
 }
 
 void test_log_diff_exp_2_vv(double a_val, double b_val) {
+  using stan::math::log_diff_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_diff_exp;
 
   AVAR a(a_val);
   AVAR b(b_val);
@@ -107,9 +107,9 @@ void test_log_diff_exp_2_vv(double a_val, double b_val) {
   EXPECT_FLOAT_EQ(g2[1], g[1]);
 }
 void test_log_diff_exp_2_vd(double a_val, double b) {
+  using stan::math::log_diff_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_diff_exp;
 
   AVAR a(a_val);
   AVEC x = createAVEC(a);
@@ -131,9 +131,9 @@ void test_log_diff_exp_2_vd(double a_val, double b) {
   EXPECT_FLOAT_EQ(g2[0], g[0]);
 }
 void test_log_diff_exp_2_dv(double a, double b_val) {
+  using stan::math::log_diff_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_diff_exp;
 
   AVAR b(b_val);
   AVEC x = createAVEC(b);

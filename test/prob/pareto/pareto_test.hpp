@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsPareto : public AgradDistributionTest {
  public:
@@ -75,8 +75,8 @@ class AgradDistributionsPareto : public AgradDistributionTest {
   typename stan::return_type<T_y, T_scale, T_shape>::type log_prob_function(
       const T_y& y, const T_scale& y_min, const T_shape& alpha, const T3&,
       const T4&, const T5&) {
-    using stan::math::multiply_log;
     using stan::math::LOG_ZERO;
+    using stan::math::multiply_log;
 
     if (y < y_min)
       return LOG_ZERO;

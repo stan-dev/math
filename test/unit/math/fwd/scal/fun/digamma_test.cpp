@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdDigamma, Fvar) {
-  using stan::math::fvar;
   using boost::math::digamma;
   using boost::math::zeta;
+  using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> a = digamma(x);
@@ -15,8 +15,8 @@ TEST(AgradFwdDigamma, Fvar) {
 }
 
 TEST(AgradFwdDigamma, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::digamma;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;

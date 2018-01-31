@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 void test_log1m_exp(double val) {
-  using stan::math::log1m_exp;
   using stan::math::exp;
+  using stan::math::log1m_exp;
   using std::exp;
 
   AVAR a(val);

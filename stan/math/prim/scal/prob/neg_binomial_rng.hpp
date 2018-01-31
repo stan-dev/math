@@ -25,10 +25,10 @@ namespace math {
 
 template <class RNG>
 inline int neg_binomial_rng(double alpha, double beta, RNG& rng) {
-  using boost::variate_generator;
+  using boost::gamma_distribution;
   using boost::random::negative_binomial_distribution;
   using boost::random::poisson_distribution;
-  using boost::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "neg_binomial_rng";
 

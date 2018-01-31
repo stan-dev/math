@@ -4,14 +4,14 @@
 #include <vector>
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
-  using stan::math::var;
-  using stan::math::row_vector_v;
-  using stan::math::matrix_v;
-  using stan::math::row_vector_d;
-  using stan::math::mdivide_right_spd;
-  using stan::math::mdivide_right_ldlt;
   using stan::math::LDLT_factor;
+  using stan::math::matrix_v;
+  using stan::math::mdivide_right_ldlt;
+  using stan::math::mdivide_right_spd;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_v;
   using stan::math::value_of;
+  using stan::math::var;
   using std::vector;
 
   row_vector_v b(5);
@@ -82,15 +82,15 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vv) {
 }
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_vd) {
-  using stan::math::var;
-  using stan::math::row_vector_v;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_d;
-  using stan::math::mdivide_right_ldlt;
   using stan::math::LDLT_factor;
+  using stan::math::matrix_d;
+  using stan::math::mdivide_right_ldlt;
   using stan::math::mdivide_right_spd;
-  using std::vector;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_v;
   using stan::math::value_of;
+  using stan::math::var;
+  using std::vector;
 
   row_vector_v b(5);
   matrix_d A(5, 5);
@@ -154,14 +154,14 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_vd) {
 }
 
 TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
-  using stan::math::var;
-  using stan::math::row_vector_v;
-  using stan::math::matrix_v;
-  using stan::math::row_vector_d;
-  using stan::math::mdivide_right_ldlt;
   using stan::math::LDLT_factor;
+  using stan::math::matrix_v;
+  using stan::math::mdivide_right_ldlt;
   using stan::math::mdivide_right_spd;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_v;
   using stan::math::value_of;
+  using stan::math::var;
   using std::vector;
 
   row_vector_d b(5);

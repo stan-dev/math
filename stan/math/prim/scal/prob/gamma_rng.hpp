@@ -36,6 +36,7 @@ inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
     const T_shape& alpha, const T_inv& beta, RNG& rng) {
   using boost::gamma_distribution;
   using boost::variate_generator;
+
   static const char* function = "gamma_rng";
 
   check_positive_finite(function, "Shape parameter", alpha);

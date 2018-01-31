@@ -7,8 +7,8 @@ using stan::math::fvar;
 using stan::math::var;
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_fv;
+  using stan::math::trace_quad_form;
 
   matrix_fv ad(4, 4);
   matrix_fv bd(4, 2);
@@ -102,9 +102,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_1st_deriv) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
-  using stan::math::trace_quad_form;
-  using stan::math::matrix_fv;
   using stan::math::check_not_nan;
+  using stan::math::matrix_fv;
+  using stan::math::trace_quad_form;
 
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   matrix_fv bd(4, 2);
@@ -119,9 +119,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dfv_instant) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
-  using stan::math::trace_quad_form;
-  using stan::math::matrix_fv;
   using stan::math::check_not_nan;
+  using stan::math::matrix_fv;
+  using stan::math::trace_quad_form;
 
   matrix_fv ad(4, 4);
   Eigen::Matrix<double, -1, -1> bd(4, 2);
@@ -136,9 +136,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fvd_instant) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
-  using stan::math::trace_quad_form;
-  using stan::math::matrix_ffv;
   using stan::math::check_not_nan;
+  using stan::math::matrix_ffv;
+  using stan::math::trace_quad_form;
 
   Eigen::Matrix<double, -1, -1> ad(4, 4);
   matrix_ffv bd(4, 2);
@@ -153,9 +153,9 @@ TEST(AgradMixMatrixTraceQuadForm, mat_dffv_instant) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
-  using stan::math::trace_quad_form;
-  using stan::math::matrix_ffv;
   using stan::math::check_not_nan;
+  using stan::math::matrix_ffv;
+  using stan::math::trace_quad_form;
 
   matrix_ffv ad(4, 4);
   Eigen::Matrix<double, -1, -1> bd(4, 2);
@@ -170,8 +170,8 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffvd_instant) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_fv;
+  using stan::math::trace_quad_form;
 
   matrix_fv ad(4, 4);
   matrix_fv bd(4, 2);
@@ -265,8 +265,8 @@ TEST(AgradMixMatrixTraceQuadForm, mat_fv_2nd_deriv) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
+  using stan::math::trace_quad_form;
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
@@ -360,8 +360,8 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_1st_deriv) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
+  using stan::math::trace_quad_form;
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);
@@ -455,8 +455,8 @@ TEST(AgradMixMatrixTraceQuadForm, mat_ffv_2nd_deriv) {
 }
 
 TEST(AgradMixMatrixTraceQuadForm, mat_ffv_3rd_deriv) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_ffv;
+  using stan::math::trace_quad_form;
 
   matrix_ffv ad(4, 4);
   matrix_ffv bd(4, 2);

@@ -37,6 +37,7 @@ inline typename VectorBuilder<true, double, T_deg, T_scale>::type
 scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
+
   static const char* function = "scaled_inv_chi_square_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);

@@ -26,8 +26,8 @@ namespace math {
  */
 template <class RNG>
 inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::uniform_01;
+  using boost::variate_generator;
 
   static const char* function = "categorical_logit_rng";
 

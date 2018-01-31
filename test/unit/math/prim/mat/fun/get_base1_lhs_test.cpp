@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(MathMatrix, failing_in_26) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, Dynamic, Dynamic> y(2, 3);
   EXPECT_THROW(get_base1_lhs(y, 3, 1, "y", 2), std::exception);
@@ -15,8 +15,8 @@ TEST(MathMatrix, failing_in_26) {
 }
 
 TEST(MathMatrix, failing_pre_20) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -68,8 +68,8 @@ TEST(MathMatrix, get_base1_lhs_vec2) {
                std::out_of_range);
 }
 TEST(MathMatrix, get_base1_lhs_matrix) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -97,8 +97,8 @@ TEST(MathMatrix, get_base1_lhs_matrix) {
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(MathMatrix, get_base1_lhs_vector) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -109,8 +109,8 @@ TEST(MathMatrix, get_base1_lhs_vector) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(MathMatrix, get_base1_lhs_row_vector) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, Dynamic, 1> x(3);
   x << 1, 2, 3;

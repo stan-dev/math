@@ -5,9 +5,9 @@
 #include <vector>
 
 TEST(AgradRevMatrix, varianceZeroBoundaryCase) {
+  using stan::math::var;
   using stan::math::variance;
   using std::vector;
-  using stan::math::var;
 
   vector<var> y(3, 1.7);
   var f = variance(y);
@@ -55,9 +55,9 @@ TEST(AgradRevMatrix, variance_vector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradRevMatrix, variance_rowvector) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::variance;
 
   row_vector_d d(1);
   d << 12.9;
@@ -79,9 +79,9 @@ TEST(AgradRevMatrix, variance_rowvector) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).val());
 }
 TEST(AgradRevMatrix, variance_rowvector_exception) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::variance;
 
   row_vector_d d1;
   row_vector_v v1;
@@ -89,9 +89,9 @@ TEST(AgradRevMatrix, variance_rowvector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradRevMatrix, variance_matrix) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::variance;
 
   matrix_d m(1, 1);
   m << 12.9;
@@ -113,9 +113,9 @@ TEST(AgradRevMatrix, variance_matrix) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).val());
 }
 TEST(AgradRevMatrix, variance_matrix_exception) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::variance;
 
   matrix_d d1;
   matrix_v v1;

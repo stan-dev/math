@@ -36,6 +36,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type lognormal_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::random::lognormal_distribution;
   using boost::variate_generator;
+
   static const char* function = "lognormal_rng";
 
   check_finite(function, "Location parameter", mu);

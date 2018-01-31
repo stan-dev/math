@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixRepVector, fd_vector) {
+  using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_fd;
-  using stan::math::fvar;
   fvar<double> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -22,9 +22,9 @@ TEST(AgradFwdMatrixRepVector, fd_vector) {
 }
 
 TEST(AgradFwdMatrixRepVector, fd_vector_exception) {
+  using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_fd;
-  using stan::math::fvar;
   fvar<double> a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -32,9 +32,9 @@ TEST(AgradFwdMatrixRepVector, fd_vector_exception) {
   EXPECT_THROW(rep_vector(a, -2), std::domain_error);
 }
 TEST(AgradFwdMatrixRepVector, ffd_vector) {
+  using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
   fvar<fvar<double> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;
@@ -52,9 +52,9 @@ TEST(AgradFwdMatrixRepVector, ffd_vector) {
 }
 
 TEST(AgradFwdMatrixRepVector, ffd_vector_exception) {
+  using stan::math::fvar;
   using stan::math::rep_vector;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
   fvar<fvar<double> > a;
   a.val_ = 3.0;
   a.d_ = 2.0;

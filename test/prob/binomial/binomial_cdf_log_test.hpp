@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfLogBinomial : public AgradCdfLogTest {
  public:
@@ -50,9 +50,9 @@ class AgradCdfLogBinomial : public AgradCdfLogTest {
   typename stan::return_type<T_prob>::type cdf_log_function(
       const T_n& n, const T_N& N, const T_prob& theta, const T3&, const T4&,
       const T5&) {
-    using std::log;
-    using std::exp;
     using boost::math::binomial_coefficient;
+    using std::exp;
+    using std::log;
 
     typename stan::return_type<T_prob>::type cdf(0);
 
