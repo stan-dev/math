@@ -2,13 +2,12 @@
 #include <gtest/gtest.h>
 #include <exception>
 #include <limits>
-#include <string>
 
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
-  const std::string function = "check_positive";
+  const char* function = "check_positive";
 
   var x = std::numeric_limits<var>::quiet_NaN();
   EXPECT_THROW(check_positive(function, "x", x), std::domain_error);
@@ -17,10 +16,10 @@ TEST(AgradRevErrorHandlingScalar, CheckPositive) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_positive;
+  using stan::math::var;
 
-  const std::string function = "check_positive";
+  const char* function = "check_positive";
   var a(5.0);
 
   size_t stack_size = stan::math::ChainableStack::var_stack_.size();

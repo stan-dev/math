@@ -5,8 +5,8 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(ProbDistributionsMultinomial, RNGSize) {
   boost::random::mt19937 rng;
@@ -120,10 +120,10 @@ TEST(ProbDistributionsMultinomial, chiSquareGoodnessFitTest) {
   int K = 3;
   Matrix<double, Dynamic, 1> theta(K);
   theta << 0.2, 0.35, 0.45;
-  boost::math::chi_squared mydist(K-1);
+  boost::math::chi_squared mydist(K - 1);
 
   double expect[K];
-  for (int i = 0 ; i < K; ++i)
+  for (int i = 0; i < K; ++i)
     expect[i] = N * theta(i);
 
   int bin[K];

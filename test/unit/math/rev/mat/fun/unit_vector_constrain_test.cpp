@@ -5,11 +5,10 @@
 #include <limits>
 #include <vector>
 
-std::vector<double>
-unit_vector_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl,
-                 int k) {
-  using Eigen::Matrix;
+std::vector<double> unit_vector_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl, int k) {
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
   Matrix<var, Dynamic, 1> y(y_dbl.size());
   for (int i = 0; i < y.size(); ++i)
@@ -25,10 +24,10 @@ unit_vector_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& y_dbl,
   return grad;
 }
 TEST(AgradRevUnitVectorConstrain, Grad) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::unit_vector_constrain;
   using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
   for (int k = 0; k < 3; ++k) {
     Matrix<AVAR, Dynamic, 1> y(3);
     y << 0.0, 3.0, -1.0;
@@ -63,8 +62,8 @@ TEST(AgradRevUnitVectorConstrain, exceptions) {
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::var;
   using stan::math::to_var;
+  using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);
   y << 0.0, 3.0, -1.0;
   var lp(0);

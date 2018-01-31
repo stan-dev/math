@@ -3,16 +3,15 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdPhi, Fvar) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
   fvar<double> x = 1.0;
   x.d_ = 1.0;
 
   fvar<double> Phi_x = Phi(x);
 
   EXPECT_FLOAT_EQ(Phi(1.0), Phi_x.val_);
-  EXPECT_FLOAT_EQ(exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)),
-                  Phi_x.d_);
+  EXPECT_FLOAT_EQ(exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)), Phi_x.d_);
 }
 TEST(AgradFwdPhi, FvarDerivUnderOverFlow) {
   using stan::math::fvar;
@@ -28,8 +27,8 @@ TEST(AgradFwdPhi, FvarDerivUnderOverFlow) {
 }
 
 TEST(AgradFwdPhi, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.0;
@@ -55,9 +54,7 @@ TEST(AgradFwdPhi, FvarFvarDouble) {
 
 double fun_value_of(double x) { return x; }
 // inefficient calls by value because neither const& nor & compile
-double fun_value_of(stan::math::fvar<double> x) {
-  return x.val();
-}
+double fun_value_of(stan::math::fvar<double> x) { return x.val(); }
 double fun_value_of(stan::math::fvar<stan::math::fvar<double> > x) {
   return x.val().val();
 }
@@ -174,8 +171,7 @@ TEST(AgradFwdPhi, PhiTails) {
 
 struct Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return Phi(arg1);
   }
 };

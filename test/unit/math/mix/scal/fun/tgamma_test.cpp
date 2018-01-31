@@ -5,10 +5,10 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
+  using boost::math::digamma;
+  using boost::math::tgamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::tgamma;
-  using boost::math::digamma;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = tgamma(x);
@@ -22,10 +22,10 @@ TEST(AgradFwdTgamma, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(tgamma(0.5) * digamma(0.5), g[0]);
 }
 TEST(AgradFwdTgamma, FvarVar_2ndDeriv) {
+  using boost::math::digamma;
+  using boost::math::tgamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::tgamma;
-  using boost::math::digamma;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = tgamma(x);
@@ -37,9 +37,9 @@ TEST(AgradFwdTgamma, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdTgamma, FvarFvarDouble) {
-  using stan::math::fvar;
-  using boost::math::tgamma;
   using boost::math::digamma;
+  using boost::math::tgamma;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -63,10 +63,10 @@ TEST(AgradFwdTgamma, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 TEST(AgradFwdTgamma, FvarFvarVar_1stDeriv) {
+  using boost::math::digamma;
+  using boost::math::tgamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::tgamma;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -100,10 +100,10 @@ TEST(AgradFwdTgamma, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(tgamma(0.5) * digamma(0.5), r[0]);
 }
 TEST(AgradFwdTgamma, FvarFvarVar_2ndDeriv) {
+  using boost::math::digamma;
+  using boost::math::tgamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::tgamma;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -128,10 +128,10 @@ TEST(AgradFwdTgamma, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(15.580177, r[0]);
 }
 TEST(AgradFwdTgamma, FvarFvarVar_3rdDeriv) {
+  using boost::math::digamma;
+  using boost::math::tgamma;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::tgamma;
-  using boost::math::digamma;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -148,8 +148,7 @@ TEST(AgradFwdTgamma, FvarFvarVar_3rdDeriv) {
 
 struct tgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tgamma(arg1);
   }
 };

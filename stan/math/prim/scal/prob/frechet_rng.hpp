@@ -16,31 +16,27 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    frechet_rng(double alpha,
-                double sigma,
-                RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::weibull_distribution;
+template <class RNG>
+inline double frechet_rng(double alpha, double sigma, RNG& rng) {
+  using boost::random::weibull_distribution;
+  using boost::variate_generator;
 
-      static const std::string function = "frechet_rng";
+  static const char* function = "frechet_rng";
 
-      check_finite(function, "Shape parameter", alpha);
-      check_positive(function, "Shape parameter", alpha);
-      check_not_nan(function, "Scale parameter", sigma);
-      check_positive(function, "Scale parameter", sigma);
+  check_finite(function, "Shape parameter", alpha);
+  check_positive(function, "Shape parameter", alpha);
+  check_not_nan(function, "Scale parameter", sigma);
+  check_positive(function, "Scale parameter", sigma);
 
-      variate_generator<RNG&, weibull_distribution<> >
-        weibull_rng(rng, weibull_distribution<>(alpha, 1.0/sigma));
-      return 1.0 / weibull_rng();
-    }
-
-  }
+  variate_generator<RNG&, weibull_distribution<> > weibull_rng(
+      rng, weibull_distribution<>(alpha, 1.0 / sigma));
+  return 1.0 / weibull_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

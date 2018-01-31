@@ -5,8 +5,8 @@
 #include <cmath>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 
@@ -24,7 +24,6 @@ void test_log_sum_exp_matrix(const Matrix<double, R, C>& m) {
   double val_expected = f_expected.val();
   vector<double> g_expected(m.size());
   f_expected.grad(x_expected, g_expected);
-
 
   vector<var> x(m.size());
   for (int i = 0; i < m.size(); ++i)

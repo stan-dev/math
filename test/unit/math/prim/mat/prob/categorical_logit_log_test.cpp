@@ -8,9 +8,8 @@ TEST(ProbCategoricalLogit, log_matches_lpmf) {
 
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<true, double>(1, theta)),
                   (stan::math::categorical_logit_log<true, double>(1, theta)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::categorical_logit_lpmf<false, double>(1, theta)),
-    (stan::math::categorical_logit_log<false, double>(1, theta)));
+  EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<false, double>(1, theta)),
+                  (stan::math::categorical_logit_log<false, double>(1, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<double>(1, theta)),
                   (stan::math::categorical_logit_log<double>(1, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf(1, theta)),
@@ -27,12 +26,11 @@ TEST(ProbCategoricalLogit, log_matches_lpmf) {
   ns[3] = 2;
   ns[4] = 3;
 
+  EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<true, double>(ns, theta)),
+                  (stan::math::categorical_logit_log<true, double>(ns, theta)));
   EXPECT_FLOAT_EQ(
-    (stan::math::categorical_logit_lpmf<true, double>(ns, theta)),
-    (stan::math::categorical_logit_log<true, double>(ns, theta)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::categorical_logit_lpmf<false, double>(ns, theta)),
-    (stan::math::categorical_logit_log<false, double>(ns, theta)));
+      (stan::math::categorical_logit_lpmf<false, double>(ns, theta)),
+      (stan::math::categorical_logit_log<false, double>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<double>(ns, theta)),
                   (stan::math::categorical_logit_log<double>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf(ns, theta)),

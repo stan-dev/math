@@ -14,14 +14,17 @@ void test_sort_indices_asc() {
   EXPECT_EQ(d.at(0), 1);
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
+  e[0] = 5.9;
+  e[1] = -1.2;
   std::vector<int> f = sort_indices_asc(e);
   EXPECT_EQ(e.size(), idx_t(f.size()));
   EXPECT_EQ(f.at(0), 2);
   EXPECT_EQ(f.at(1), 1);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
   std::vector<int> h = sort_indices_asc(g);
   EXPECT_EQ(g.size(), idx_t(h.size()));
   EXPECT_EQ(h.at(0), 2);
@@ -43,7 +46,6 @@ TEST(MathMatrix, sort_indices_asc) {
   test_sort_indices_asc<Eigen::Matrix<double, 1, Eigen::Dynamic> >();
 }
 
-
 template <typename T>
 void test_sort_indices_desc() {
   using stan::math::sort_indices_desc;
@@ -56,14 +58,17 @@ void test_sort_indices_desc() {
   EXPECT_EQ(d.at(0), 1);
 
   T e(2);
-  e[0] = 5.9;  e[1] = -1.2;
+  e[0] = 5.9;
+  e[1] = -1.2;
   std::vector<int> f = sort_indices_desc(e);
   EXPECT_EQ(e.size(), idx_t(f.size()));
   EXPECT_EQ(f.at(0), 1);
   EXPECT_EQ(f.at(1), 2);
 
   T g(3);
-  g[0] = 5.9;  g[1] = -1.2;   g[2] = 192.13456;
+  g[0] = 5.9;
+  g[1] = -1.2;
+  g[2] = 192.13456;
   std::vector<int> h = sort_indices_desc(g);
   EXPECT_EQ(g.size(), idx_t(h.size()));
   EXPECT_EQ(h.at(0), 3);

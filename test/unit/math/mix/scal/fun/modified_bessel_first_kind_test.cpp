@@ -5,8 +5,8 @@
 
 TEST(AgradFwdModifiedBesselFirstKind, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_first_kind(1, z);
@@ -21,8 +21,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselFirstKind, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_first_kind(1, z);
@@ -35,8 +35,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;
@@ -72,8 +72,8 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_first_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;
@@ -114,11 +114,9 @@ TEST(AgradFwdModifiedBesselFirstKind, FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(7.6263498831498753307, g[0]);
 }
 
-
 struct modified_bessel_first_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return modified_bessel_first_kind(1, arg1);
   }
 };

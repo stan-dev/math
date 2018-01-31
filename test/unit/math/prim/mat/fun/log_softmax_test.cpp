@@ -1,38 +1,33 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-
 void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
-  using std::log;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::log_softmax;
   using stan::math::softmax;
+  using std::log;
 
   int size = theta.size();
 
-  Matrix<double, Dynamic, 1> log_softmax_theta
-    = log_softmax(theta);
+  Matrix<double, Dynamic, 1> log_softmax_theta = log_softmax(theta);
 
-  Matrix<double, Dynamic, 1> softmax_theta
-    = softmax(theta);
+  Matrix<double, Dynamic, 1> softmax_theta = softmax(theta);
 
   Matrix<double, Dynamic, 1> log_softmax_theta_expected(size);
   for (int i = 0; i < size; ++i)
     log_softmax_theta_expected(i) = log(softmax_theta(i));
 
-  EXPECT_EQ(log_softmax_theta_expected.size(),
-            log_softmax_theta.size());
+  EXPECT_EQ(log_softmax_theta_expected.size(), log_softmax_theta.size());
   for (int i = 0; i < theta.size(); ++i)
-    EXPECT_FLOAT_EQ(log_softmax_theta_expected(i),
-                    log_softmax_theta(i));
+    EXPECT_FLOAT_EQ(log_softmax_theta_expected(i), log_softmax_theta(i));
 }
 
 TEST(MathMatrix, softmax) {
-  using stan::math::softmax;
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
+  using stan::math::softmax;
 
   // stan::math::vector_d x(1);
   // x << 0.0;

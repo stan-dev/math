@@ -2,19 +2,19 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixInverse, fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd a(2, 2);
   a << 2.0, 3.0, 5.0, 7.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
 
-   matrix_d b(2, 2);
-   b << 2.0, 3.0, 5.0, 7.0;
-   b = b.inverse();
+  matrix_d b(2, 2);
+  b << 2.0, 3.0, 5.0, 7.0;
+  b = b.inverse();
 
   matrix_fd a_inv = stan::math::inverse(a);
 
@@ -30,9 +30,9 @@ TEST(AgradFwdMatrixInverse, fd) {
   EXPECT_THROW(stan::math::inverse(matrix_fd(2, 3)), std::invalid_argument);
 }
 TEST(AgradFwdMatrixInverse, ffd) {
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > d, e, f, g;
   d.val_.val_ = 2.0;
@@ -47,9 +47,9 @@ TEST(AgradFwdMatrixInverse, ffd) {
   matrix_ffd a(2, 2);
   a << d, e, f, g;
 
-   matrix_d b(2, 2);
-   b << 2.0, 3.0, 5.0, 7.0;
-   b = b.inverse();
+  matrix_d b(2, 2);
+  b << 2.0, 3.0, 5.0, 7.0;
+  b = b.inverse();
 
   matrix_ffd a_inv = stan::math::inverse(a);
 

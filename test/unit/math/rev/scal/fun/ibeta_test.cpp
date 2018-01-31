@@ -6,9 +6,9 @@
 #include <limits>
 
 TEST(AgradRev, ibeta_vvv) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -37,9 +37,9 @@ TEST(AgradRev, ibeta_vvv) {
   EXPECT_FLOAT_EQ(ibeta_derivative(a.val(), b.val(), c.val()), grad_f[2]);
 }
 TEST(AgradRev, ibeta_vvd) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -66,9 +66,9 @@ TEST(AgradRev, ibeta_vvd) {
   EXPECT_FLOAT_EQ(0.02507405, grad_f[1]);
 }
 TEST(AgradRev, ibeta_vdv) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -95,9 +95,9 @@ TEST(AgradRev, ibeta_vdv) {
   EXPECT_FLOAT_EQ(ibeta_derivative(a.val(), b, c.val()), grad_f[1]);
 }
 TEST(AgradRev, ibeta_vdd) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -122,9 +122,9 @@ TEST(AgradRev, ibeta_vdd) {
   EXPECT_FLOAT_EQ(-0.03737671, grad_f[0]);
 }
 TEST(AgradRev, ibeta_dvv) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -151,9 +151,9 @@ TEST(AgradRev, ibeta_dvv) {
   EXPECT_FLOAT_EQ(ibeta_derivative(a, b.val(), c.val()), grad_f[1]);
 }
 TEST(AgradRev, ibeta_dvd) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -178,9 +178,9 @@ TEST(AgradRev, ibeta_dvd) {
   EXPECT_FLOAT_EQ(0.02507405, grad_f[0]);
 }
 TEST(AgradRev, ibeta_ddv) {
+  using stan::math::ibeta;
+  using stan::math::ibeta;
   using stan::math::var;
-  using stan::math::ibeta;
-  using stan::math::ibeta;
 
   using boost::math::ibeta_derivative;
 
@@ -207,11 +207,8 @@ TEST(AgradRev, ibeta_ddv) {
 
 struct ibeta_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return ibeta(arg1, arg2, arg3);
   }
 };

@@ -4,12 +4,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
@@ -24,9 +22,9 @@ TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
@@ -37,12 +35,10 @@ TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-2.0 * 1.3 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), g[0]);
 }
 
-
-
 TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -70,7 +66,6 @@ TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0 / (3.0 * cbrt(1.5) * cbrt(1.5)), b.d_.val_.val());
   EXPECT_FLOAT_EQ(0, b.d_.d_.val());
 
-
   AVEC q = createAVEC(y.val_.val_);
   VEC r;
   b.val_.val_.grad(q, r);
@@ -78,9 +73,9 @@ TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdCbrt, FvarFvarVar_2ndDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -105,9 +100,9 @@ TEST(AgradFwdCbrt, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 * -2.0 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), r[0]);
 }
 TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -124,8 +119,7 @@ TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
 
 struct cbrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cbrt(arg1);
   }
 };

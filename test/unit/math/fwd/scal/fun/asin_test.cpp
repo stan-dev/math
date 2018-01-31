@@ -3,11 +3,11 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAsin, Fvar) {
+  using stan::math::INFTY;
   using stan::math::fvar;
   using std::asin;
   using std::isnan;
   using std::sqrt;
-  using stan::math::INFTY;
 
   fvar<double> x(0.5, 1.0);
 
@@ -37,17 +37,16 @@ TEST(AgradFwdAsin, Fvar) {
   EXPECT_FLOAT_EQ(asin(1.0), f.val_);
   EXPECT_FLOAT_EQ(INFTY, f.d_);
 
-  fvar<double> z2(1.0+stan::math::EPSILON, 1.0);
+  fvar<double> z2(1.0 + stan::math::EPSILON, 1.0);
   fvar<double> f2 = asin(z2);
   EXPECT_TRUE(boost::math::isnan(f2.val_));
   EXPECT_TRUE(boost::math::isnan(f2.d_));
 
-  fvar<double> z3(-1.0-stan::math::EPSILON, 1.0);
+  fvar<double> z3(-1.0 - stan::math::EPSILON, 1.0);
   fvar<double> f3 = asin(z3);
   EXPECT_TRUE(boost::math::isnan(f3.val_));
   EXPECT_TRUE(boost::math::isnan(f3.d_));
 }
-
 
 TEST(AgradFwdAsin, FvarFvarDouble) {
   using stan::math::fvar;
@@ -77,8 +76,7 @@ TEST(AgradFwdAsin, FvarFvarDouble) {
 
 struct asin_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return asin(arg1);
   }
 };

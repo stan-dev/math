@@ -4,14 +4,14 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(prob_transform, corr_matrix_jacobian) {
-  using stan::math::var;
   using stan::math::determinant;
-  using std::log;
+  using stan::math::var;
   using std::fabs;
+  using std::log;
 
   int K = 4;
   int K_choose_2 = 6;
@@ -21,8 +21,8 @@ TEST(prob_transform, corr_matrix_jacobian) {
   for (int i = 0; i < X.size(); ++i)
     x.push_back(X(i));
   var lp = 0.0;
-  Matrix<var, Dynamic, Dynamic> Sigma = stan::math::corr_matrix_constrain(X, K,
-                                                                          lp);
+  Matrix<var, Dynamic, Dynamic> Sigma
+      = stan::math::corr_matrix_constrain(X, K, lp);
   std::vector<var> y;
   for (int m = 0; m < K; ++m)
     for (int n = 0; n < m; ++n)

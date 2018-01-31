@@ -4,13 +4,12 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 class AgradFwdAsinh : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
 
 TEST_F(AgradFwdAsinh, Fvar) {
-  using stan::math::fvar;
   using boost::math::asinh;
+  using stan::math::fvar;
   using std::sqrt;
 
   fvar<double> x(0.5, 1.0);
@@ -30,10 +29,9 @@ TEST_F(AgradFwdAsinh, Fvar) {
   EXPECT_FLOAT_EQ(-1 / sqrt(1 + (-0.5) * (-0.5)), c.d_);
 }
 
-
 TEST_F(AgradFwdAsinh, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::asinh;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -58,8 +56,7 @@ TEST_F(AgradFwdAsinh, FvarFvarDouble) {
 }
 struct asinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return asinh(arg1);
   }
 };

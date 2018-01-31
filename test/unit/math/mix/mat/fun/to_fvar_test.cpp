@@ -8,11 +8,11 @@ TEST(AgradMixMatrixToFvar, fv_vector) {
 
   vector_fv v(5);
   v << 1, 2, 3, 4, 5;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
 
   vector_fv out = stan::math::to_fvar(v);
   EXPECT_FLOAT_EQ(1, out(0).val_.val());
@@ -32,11 +32,11 @@ TEST(AgradMixMatrixToFvar, fv_rowvector) {
 
   row_vector_fv v(5);
   v << 1, 2, 3, 4, 5;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
 
   row_vector_fv output = stan::math::to_fvar(v);
   EXPECT_FLOAT_EQ(1, output(0).val_.val());
@@ -59,8 +59,8 @@ TEST(AgradMixMatrixToFvar, fv_matrix_matrix) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> val(3, 3);
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> d(3, 3);
 
-  val <<1, 2, 3, 4, 5, 6, 7, 8, 9;
-  d <<10, 11, 12, 13, 14, 15, 16, 17, 18;
+  val << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  d << 10, 11, 12, 13, 14, 15, 16, 17, 18;
 
   matrix_fv output = stan::math::to_fvar(val, d);
   EXPECT_FLOAT_EQ(1, output(0, 0).val_.val());
@@ -88,11 +88,11 @@ TEST(AgradMixMatrixToFvar, ffv_vector) {
 
   vector_ffv v(5);
   v << 1, 2, 3, 4, 5;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
 
   vector_ffv out = stan::math::to_fvar(v);
   EXPECT_FLOAT_EQ(1, out(0).val_.val().val());
@@ -112,11 +112,11 @@ TEST(AgradMixMatrixToFvar, ffv_rowvector) {
 
   row_vector_ffv v(5);
   v << 1, 2, 3, 4, 5;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
 
   row_vector_ffv output = stan::math::to_fvar(v);
   EXPECT_FLOAT_EQ(1, output(0).val_.val().val());
@@ -131,14 +131,14 @@ TEST(AgradMixMatrixToFvar, ffv_rowvector) {
   EXPECT_FLOAT_EQ(1, output(4).d_.val().val());
 }
 TEST(AgradMixMatrixToFvar, ffv_matrix_matrix) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_ffv;
+  using stan::math::matrix_fv;
 
   matrix_fv val(3, 3);
   matrix_fv d(3, 3);
 
-  val <<1, 2, 3, 4, 5, 6, 7, 8, 9;
-  d <<10, 11, 12, 13, 14, 15, 16, 17, 18;
+  val << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  d << 10, 11, 12, 13, 14, 15, 16, 17, 18;
 
   matrix_ffv output = stan::math::to_fvar(val, d);
   EXPECT_FLOAT_EQ(1, output(0, 0).val_.val().val());

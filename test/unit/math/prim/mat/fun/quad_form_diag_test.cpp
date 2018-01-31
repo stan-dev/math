@@ -2,8 +2,8 @@
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::quad_form_diag;
 
 TEST(MathMatrix, quadFormDiag) {
@@ -26,10 +26,7 @@ TEST(MathMatrix, quadFormDiag2) {
   v << 1, 2, 3;
 
   Matrix<double, Dynamic, Dynamic> v_m(3, 3);
-  v_m <<
-    1, 0, 0,
-    0, 2, 0,
-    0, 0, 3;
+  v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
 
@@ -40,9 +37,7 @@ TEST(MathMatrix, quadFormDiag2) {
 
 TEST(MathMatrix, quadFormDiagException) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
-  m <<
-    2, 3,
-    4, 5;
+  m << 2, 3, 4, 5;
   EXPECT_THROW(quad_form_diag(m, m), std::invalid_argument);
 
   Matrix<double, Dynamic, 1> v(3);
@@ -50,10 +45,7 @@ TEST(MathMatrix, quadFormDiagException) {
   EXPECT_THROW(quad_form_diag(m, v), std::invalid_argument);
 
   Matrix<double, Dynamic, Dynamic> m2(3, 2);
-  m2 <<
-    2, 3,
-    4, 5,
-    6, 7;
+  m2 << 2, 3, 4, 5, 6, 7;
 
   Matrix<double, Dynamic, 1> v2(2);
   v2 << 1, 2;
@@ -61,5 +53,3 @@ TEST(MathMatrix, quadFormDiagException) {
   EXPECT_THROW(quad_form_diag(m2, v), std::invalid_argument);
   EXPECT_THROW(quad_form_diag(m2, v2), std::invalid_argument);
 }
-
-

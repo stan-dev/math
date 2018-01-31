@@ -6,25 +6,23 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return specified matrix divided by specified scalar.
-     * @tparam R Row type for matrix.
-     * @tparam C Column type for matrix.
-     * @param m Matrix.
-     * @param c Scalar.
-     * @return Matrix divided by scalar.
-     */
-    template <int R, int C, typename T>
-    inline
-    typename boost::enable_if_c<boost::is_arithmetic<T>::value,
-                                Eigen::Matrix<double, R, C> >::type
-    divide(const Eigen::Matrix<double, R, C>& m,
-           T c) {
-      return m / c;
-    }
-
-  }
+/**
+ * Return specified matrix divided by specified scalar.
+ * @tparam R Row type for matrix.
+ * @tparam C Column type for matrix.
+ * @param m Matrix.
+ * @param c Scalar.
+ * @return Matrix divided by scalar.
+ */
+template <int R, int C, typename T>
+inline typename boost::enable_if_c<boost::is_arithmetic<T>::value,
+                                   Eigen::Matrix<double, R, C> >::type
+divide(const Eigen::Matrix<double, R, C>& m, T c) {
+  return m / c;
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,0 +1,6 @@
+# These files are text and should be normalized (convert crlf =&gt; lf)
+*.hpp text diff=cpp
+*.cpp text diff=cpp
+*.py text diff=python
+*.tex text diff=tex
+lib/** binary

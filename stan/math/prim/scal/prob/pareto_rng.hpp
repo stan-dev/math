@@ -11,29 +11,25 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    pareto_rng(double y_min,
-               double alpha,
-               RNG& rng) {
-      using boost::variate_generator;
-      using boost::exponential_distribution;
+template <class RNG>
+inline double pareto_rng(double y_min, double alpha, RNG& rng) {
+  using boost::exponential_distribution;
+  using boost::variate_generator;
 
-      static const std::string function = "pareto_rng";
+  static const char* function = "pareto_rng";
 
-      check_positive_finite(function, "Scale parameter", y_min);
-      check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Scale parameter", y_min);
+  check_positive_finite(function, "Shape parameter", alpha);
 
-      variate_generator<RNG&, exponential_distribution<> >
-        exp_rng(rng, exponential_distribution<>(alpha));
-      return y_min * std::exp(exp_rng());
-    }
-
-  }
+  variate_generator<RNG&, exponential_distribution<> > exp_rng(
+      rng, exponential_distribution<>(alpha));
+  return y_min * std::exp(exp_rng());
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

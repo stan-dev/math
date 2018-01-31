@@ -13,46 +13,45 @@
 #include <stan/math/prim/scal/fun/inv.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T, int R, int C>
-    inline Eigen::Matrix<fvar<T>, R, C>
-    unit_vector_constrain(const Eigen::Matrix<fvar<T>, R, C>& y) {
-      using std::sqrt;
-      using Eigen::Matrix;
+template <typename T, int R, int C>
+inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
+    const Eigen::Matrix<fvar<T>, R, C>& y) {
+  using Eigen::Matrix;
+  using std::sqrt;
 
-      Matrix<T, R, C> y_t(y.size());
-      for (int k = 0; k < y.size(); ++k)
-        y_t.coeffRef(k) = y.coeff(k).val_;
+  Matrix<T, R, C> y_t(y.size());
+  for (int k = 0; k < y.size(); ++k)
+    y_t.coeffRef(k) = y.coeff(k).val_;
 
-      Matrix<T, R, C> unit_vector_y_t
-        = unit_vector_constrain(y_t);
-      Matrix<fvar<T>, R, C> unit_vector_y(y.size());
-      for (int k = 0; k < y.size(); ++k)
-        unit_vector_y.coeffRef(k).val_ = unit_vector_y_t.coeff(k);
+  Matrix<T, R, C> unit_vector_y_t = unit_vector_constrain(y_t);
+  Matrix<fvar<T>, R, C> unit_vector_y(y.size());
+  for (int k = 0; k < y.size(); ++k)
+    unit_vector_y.coeffRef(k).val_ = unit_vector_y_t.coeff(k);
 
-      T squared_norm = dot_self(y_t);
-      T norm = sqrt(squared_norm);
-      T inv_norm = inv(norm);
-      Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
-        = divide(tcrossprod(y_t),  -norm * squared_norm);
+  T squared_norm = dot_self(y_t);
+  T norm = sqrt(squared_norm);
+  T inv_norm = inv(norm);
+  Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
+      = divide(tcrossprod(y_t), -norm * squared_norm);
 
-      for (int m = 0; m < y.size(); ++m) {
-        J.coeffRef(m, m) += inv_norm;
-        for (int k = 0; k < y.size(); ++k)
-          unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
-      }
-      return unit_vector_y;
-    }
-
-    template <typename T, int R, int C>
-    inline Eigen::Matrix<fvar<T>, R, C>
-    unit_vector_constrain(const Eigen::Matrix<fvar<T>, R, C>& y, fvar<T>& lp) {
-      fvar<T> squared_norm = dot_self(y);
-      lp -= 0.5 * squared_norm;
-      return unit_vector_constrain(y);
-    }
-
+  for (int m = 0; m < y.size(); ++m) {
+    J.coeffRef(m, m) += inv_norm;
+    for (int k = 0; k < y.size(); ++k)
+      unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
   }
+  return unit_vector_y;
 }
+
+template <typename T, int R, int C>
+inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
+    const Eigen::Matrix<fvar<T>, R, C>& y, fvar<T>& lp) {
+  fvar<T> squared_norm = dot_self(y);
+  lp -= 0.5 * squared_norm;
+  return unit_vector_constrain(y);
+}
+
+}  // namespace math
+}  // namespace stan
 #endif

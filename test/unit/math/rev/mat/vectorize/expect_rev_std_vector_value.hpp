@@ -8,8 +8,8 @@
 
 template <typename F>
 void expect_rev_std_vector_value() {
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
     vector<var> y = build_rev_vector<F>();
@@ -31,8 +31,7 @@ void expect_rev_std_vector_value() {
       vector<vector<var> > fb = F::template apply<vector<vector<var> > >(b);
       EXPECT_EQ(b.size(), fb.size());
       EXPECT_EQ(b[i].size(), fb[i].size());
-      expect_val_deriv_eq(F::apply_base(a[i][j]), a[i][j],
-                          fb[i][j], b[i][j]);
+      expect_val_deriv_eq(F::apply_base(a[i][j]), a[i][j], fb[i][j], b[i][j]);
     }
   }
 }

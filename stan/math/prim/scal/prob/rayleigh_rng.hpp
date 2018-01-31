@@ -14,27 +14,24 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    rayleigh_rng(double sigma,
-                 RNG& rng) {
-      using boost::variate_generator;
-      using boost::random::uniform_real_distribution;
+template <class RNG>
+inline double rayleigh_rng(double sigma, RNG& rng) {
+  using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
 
-      static const std::string function = "rayleigh_rng";
+  static const char* function = "rayleigh_rng";
 
-      check_positive(function, "Scale parameter", sigma);
+  check_positive(function, "Scale parameter", sigma);
 
-      variate_generator<RNG&, uniform_real_distribution<> >
-        uniform_rng(rng, uniform_real_distribution<>(0.0, 1.0));
-      return sigma * std::sqrt(-2.0 * std::log(uniform_rng()));
-    }
-
-  }
+  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
+      rng, uniform_real_distribution<>(0.0, 1.0));
+  return sigma * std::sqrt(-2.0 * std::log(uniform_rng()));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

@@ -1,15 +1,14 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
+  using stan::math::check_consistent_size;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_consistent_size;
 
   int N = 5;
-  const std::string function = "check_consistent_size";
+  const char* function = "check_consistent_size";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

@@ -4,9 +4,9 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, trace_quad_form_mat) {
-  using stan::math::trace_quad_form;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::trace_quad_form;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -16,23 +16,12 @@ TEST(AgradRevMatrix, trace_quad_form_mat) {
   AVEC vars;
   VEC grad;
 
-
-  bd << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  bv << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   res = trace_quad_form(ad, bd);
@@ -52,10 +41,10 @@ TEST(AgradRevMatrix, trace_quad_form_mat) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_mat_grad_vd) {
-  using stan::math::trace_quad_form;
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
+  using stan::math::trace_quad_form;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -65,21 +54,13 @@ TEST(AgradRevMatrix, trace_quad_form_mat_grad_vd) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*bd.transpose());
+  matrix_d dqda(bd * bd.transpose());
 
   // var-var
   res = trace_quad_form(av, bd);
@@ -96,10 +77,10 @@ TEST(AgradRevMatrix, trace_quad_form_mat_grad_vd) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_mat_grad_dv) {
-  using stan::math::trace_quad_form;
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
+  using stan::math::trace_quad_form;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -109,21 +90,12 @@ TEST(AgradRevMatrix, trace_quad_form_mat_grad_dv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  bv << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqdb(ad * bd + ad.transpose() * bd);
 
   // var-var
   res = trace_quad_form(ad, bv);
@@ -140,10 +112,10 @@ TEST(AgradRevMatrix, trace_quad_form_mat_grad_dv) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_mat_grad_vv) {
-  using stan::math::trace_quad_form;
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
+  using stan::math::trace_quad_form;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -154,26 +126,15 @@ TEST(AgradRevMatrix, trace_quad_form_mat_grad_vv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  bv << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*bd.transpose());
-  matrix_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqda(bd * bd.transpose());
+  matrix_d dqdb(ad * bd + ad.transpose() * bd);
 
   // var-var
   res = trace_quad_form(av, bv);
@@ -200,14 +161,9 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
 
   stan::math::matrix_d a(4, 4);
   stan::math::matrix_d b(4, 2);
-  b << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
-  a << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
+  b << 100, 10, 0, 1, -3, -3, 5, 2;
+  a << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   test::check_varis_on_stack(stan::math::trace_quad_form(to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::trace_quad_form(to_var(a), b));

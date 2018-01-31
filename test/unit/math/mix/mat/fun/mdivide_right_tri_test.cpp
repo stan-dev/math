@@ -13,14 +13,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_lower) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -66,14 +64,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_lower) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -105,15 +101,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_lower) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -148,15 +143,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_lower) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -186,22 +180,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_lower) {
   EXPECT_FLOAT_EQ(-0.034722222, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_lower) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_fv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
   EXPECT_FLOAT_EQ(0.41666667, I(0, 0).val_.val());
@@ -228,22 +220,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_lower) {
   EXPECT_FLOAT_EQ(0.0625, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_lower) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_fv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
@@ -263,16 +253,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_lower) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -301,16 +290,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_lower) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -338,18 +326,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_lower) {
   EXPECT_FLOAT_EQ(0.010416667, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_lower) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -380,18 +366,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_lower) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_lower) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -415,15 +399,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_d Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -447,15 +430,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_lower) {
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_d Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -475,12 +457,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_lower) {
 
 TEST(AgradMixMatrixMdivideRightTri, fv_exceptions_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
+  using stan::math::row_vector_fv;
 
   matrix_fv fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -549,14 +531,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_lower) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -602,14 +582,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_lower) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -647,8 +625,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_lower) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -657,8 +634,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_lower) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -700,8 +676,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_lower) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -710,8 +685,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_lower) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -747,15 +721,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -790,15 +763,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -829,15 +801,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -874,15 +845,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -918,22 +888,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_lower) {
   EXPECT_FLOAT_EQ(0.054398149, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-        5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
   EXPECT_FLOAT_EQ(0.41666667, I(0, 0).val_.val_.val());
@@ -960,22 +928,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_lower) {
   EXPECT_FLOAT_EQ(0.0625, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-        1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
@@ -994,16 +960,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_lower) {
   EXPECT_FLOAT_EQ(0.010416667, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1012,8 +977,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_lower) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
@@ -1032,16 +996,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_lower) {
   EXPECT_FLOAT_EQ(0.010416667, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1050,8 +1013,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_lower) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Lower>(Ad, Av);
 
@@ -1071,16 +1033,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1109,16 +1070,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1143,16 +1103,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1181,16 +1140,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_lower) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -1218,18 +1176,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_lower) {
   EXPECT_FLOAT_EQ(-0.046006944, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1260,18 +1216,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_lower) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1294,18 +1248,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_lower) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1332,18 +1284,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_lower) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_lower) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -1371,15 +1321,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1403,15 +1352,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_lower) {
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1430,15 +1378,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1459,15 +1406,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 0.0,
-    1.0, 4.0;
+  Av << 3.0, 0.0, 1.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -1488,12 +1434,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_lower) {
 }
 TEST(AgradMixMatrixMdivideRightTri, ffv_exceptions_lower) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -1562,14 +1508,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv1_upper) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -1615,14 +1559,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_upper) {
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -1654,15 +1596,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_fv2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_upper) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -1697,15 +1638,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv1_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_upper) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -1735,22 +1675,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_fv2_upper) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_upper) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_fv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
   EXPECT_FLOAT_EQ(0.66666667, I(0, 0).val_.val());
@@ -1777,22 +1715,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d1_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_upper) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_fv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
   Av(1, 1).d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
   EXPECT_FLOAT_EQ(0.66666667, I(0, 0).val_.val());
@@ -1820,16 +1756,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_matrix_d2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_upper) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -1858,16 +1793,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d1_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_upper) {
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   matrix_fv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_ = 1.0;
   Av(0, 1).d_ = 1.0;
   Av(1, 0).d_ = 1.0;
@@ -1895,18 +1829,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_fv_row_vector_d2_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_upper) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -1937,18 +1869,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv1_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_upper) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_fv Ad(2, 2);
   matrix_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_ = 1.0;
   Ad(0, 1).d_ = 1.0;
   Ad(1, 0).d_ = 1.0;
@@ -1972,15 +1902,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_fv2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_d Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -2004,15 +1933,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv1_upper) {
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_fv;
 
   matrix_d Av(2, 2);
   row_vector_fv Ad(2);
   row_vector_fv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_ = 1.0;
   Ad(1).d_ = 1.0;
@@ -2032,12 +1960,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_fv2_upper) {
 
 TEST(AgradMixMatrixMdivideRightTri, fv_exceptions_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_fv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
+  using stan::math::row_vector_fv;
 
   matrix_fv fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -2106,14 +2034,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv1_upper) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2159,14 +2085,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv2_upper) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2204,8 +2128,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_upper) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2214,8 +2137,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv3_upper) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2257,8 +2179,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_upper) {
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2267,8 +2188,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_upper) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2304,15 +2224,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_ffv4_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2347,15 +2266,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv1_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2386,15 +2304,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2431,15 +2348,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv3_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2475,22 +2391,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_ffv4_upper) {
   EXPECT_FLOAT_EQ(0, grads[5]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
   EXPECT_FLOAT_EQ(0.66666666, I(0, 0).val_.val_.val());
@@ -2517,22 +2431,20 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d1_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
   Av(1, 1).d_.val_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
@@ -2551,16 +2463,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d2_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2569,8 +2480,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_upper) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
@@ -2589,16 +2499,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d3_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_ffv Av(2, 2);
   matrix_d Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2607,8 +2516,7 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_upper) {
   Av(0, 1).val_.d_ = 1.0;
   Av(1, 0).val_.d_ = 1.0;
   Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Av);
 
@@ -2628,16 +2536,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_matrix_d4_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2666,16 +2573,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d1_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2704,16 +2610,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2742,16 +2647,15 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d3_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_upper) {
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv Av(2, 2);
   row_vector_d Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Av(0, 0).d_.val_ = 1.0;
   Av(0, 1).d_.val_ = 1.0;
   Av(1, 0).d_.val_ = 1.0;
@@ -2779,18 +2683,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_ffv_row_vector_d4_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2821,18 +2723,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv1_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2855,18 +2755,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv2_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2893,18 +2791,16 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv3_upper) {
   EXPECT_FLOAT_EQ(0, grads[3]);
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_upper) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::mdivide_right_tri;
 
   matrix_d Av(2, 2);
   matrix_ffv Ad(2, 2);
   matrix_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
-  Ad << 2.0, 3.0,
-    5.0, 7.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
+  Ad << 2.0, 3.0, 5.0, 7.0;
   Ad(0, 0).d_.val_ = 1.0;
   Ad(0, 1).d_.val_ = 1.0;
   Ad(1, 0).d_.val_ = 1.0;
@@ -2932,15 +2828,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_matrix_ffv4_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -2964,15 +2859,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv1_upper) {
 
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -2991,15 +2885,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv2_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -3020,15 +2913,14 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv3_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_ffv;
 
   matrix_d Av(2, 2);
   row_vector_ffv Ad(2);
   row_vector_ffv I;
 
-  Av << 3.0, 1.0,
-    0.0, 4.0;
+  Av << 3.0, 1.0, 0.0, 4.0;
   Ad << 2.0, 3.0;
   Ad(0).d_.val_ = 1.0;
   Ad(1).d_.val_ = 1.0;
@@ -3049,12 +2941,12 @@ TEST(AgradMixMatrixMdivideRightTri, matrix_d_row_vector_ffv4_upper) {
 }
 TEST(AgradMixMatrixMdivideRightTri, ffv_exceptions_upper) {
   using stan::math::matrix_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_ffv;
   using stan::math::mdivide_right_tri;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
+  using stan::math::row_vector_ffv;
 
   matrix_ffv fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -3112,4 +3004,3 @@ TEST(AgradMixMatrixMdivideRightTri, ffv_exceptions_upper) {
   EXPECT_THROW(mdivide_right_tri<Eigen::Upper>(vf1, fd2),
                std::invalid_argument);
 }
-

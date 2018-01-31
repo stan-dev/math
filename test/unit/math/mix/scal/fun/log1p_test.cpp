@@ -5,8 +5,8 @@
 
 TEST(AgradFwdLog1p, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = log1p(x);
@@ -21,8 +21,8 @@ TEST(AgradFwdLog1p, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1p, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = log1p(x);
@@ -37,8 +37,8 @@ TEST(AgradFwdLog1p, FvarVar_2ndDeriv) {
 }
 TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -73,8 +73,8 @@ TEST(AgradFwdLog1p, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1p, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -112,13 +112,12 @@ TEST(AgradFwdLog1p, FvarFvarVar_3rdDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.d_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ(2 / (1.5*1.5*1.5), g[0]);
+  EXPECT_FLOAT_EQ(2 / (1.5 * 1.5 * 1.5), g[0]);
 }
 
 struct log1p_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p(arg1);
   }
 };

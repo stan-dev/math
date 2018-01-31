@@ -4,15 +4,13 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T, int R, int C>
-    Eigen::Matrix<T, C, R>
-    inline
-    transpose(const Eigen::Matrix<T, R, C>& m) {
-      return m.transpose();
-    }
-
-  }
+template <typename T, int R, int C>
+Eigen::Matrix<T, C, R> inline transpose(const Eigen::Matrix<T, R, C>& m) {
+  return m.transpose();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

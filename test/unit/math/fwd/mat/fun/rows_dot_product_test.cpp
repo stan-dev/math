@@ -10,14 +10,14 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_vector_vector) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_fd output(3);
   output = rows_dot_product(vv_1, vd_2);
@@ -58,10 +58,10 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_vector_vector_exception) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, fd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   row_vector_d d1(3);
   row_vector_fd v1(3);
@@ -73,10 +73,10 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_rowvector_vector) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, fd_vector_rowvector) {
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   vector_d d1(3);
   vector_fd v1(3);
@@ -96,14 +96,14 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_rowvector_rowvector) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_fd output;
   output = rows_dot_product(v1, d2);
@@ -128,26 +128,26 @@ TEST(AgradFwdMatrixRowsDotProduct, fd_matrix_matrix) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_fd output;
   output = rows_dot_product(v1, d2);
@@ -230,14 +230,14 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_vector_vector) {
 
   vd_1 << 1, 3, -5;
   vv_1 << 1, 3, -5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
   vd_2 << 4, -2, -1;
   vv_2 << 4, -2, -1;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
 
   vector_ffd output(3);
   output = rows_dot_product(vv_1, vd_2);
@@ -278,10 +278,10 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_vector_vector_exception) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, ffd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
@@ -293,10 +293,10 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_rowvector_vector) {
   EXPECT_THROW(rows_dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixRowsDotProduct, ffd_vector_rowvector) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   vector_d d1(3);
   vector_ffd v1(3);
@@ -316,14 +316,14 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_rowvector_rowvector) {
 
   d1 << 1, 3, -5;
   v1 << 1, 3, -5;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 1.0;
-   v1(2).d_ = 1.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 1.0;
+  v1(2).d_ = 1.0;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-   v2(0).d_ = 1.0;
-   v2(1).d_ = 1.0;
-   v2(2).d_ = 1.0;
+  v2(0).d_ = 1.0;
+  v2(1).d_ = 1.0;
+  v2(2).d_ = 1.0;
 
   row_vector_ffd output;
   output = rows_dot_product(v1, d2);
@@ -348,26 +348,26 @@ TEST(AgradFwdMatrixRowsDotProduct, ffd_matrix_matrix) {
 
   d1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
   v1 << 1, 3, -5, 1, 3, -5, 1, 3, -5;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 1.0;
-   v1(0, 2).d_ = 1.0;
-   v1(1, 0).d_ = 1.0;
-   v1(1, 1).d_ = 1.0;
-   v1(1, 2).d_ = 1.0;
-   v1(2, 0).d_ = 1.0;
-   v1(2, 1).d_ = 1.0;
-   v1(2, 2).d_ = 1.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 1.0;
+  v1(0, 2).d_ = 1.0;
+  v1(1, 0).d_ = 1.0;
+  v1(1, 1).d_ = 1.0;
+  v1(1, 2).d_ = 1.0;
+  v1(2, 0).d_ = 1.0;
+  v1(2, 1).d_ = 1.0;
+  v1(2, 2).d_ = 1.0;
   d2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
   v2 << 4, -2, -1, 4, -2, -1, 4, -2, -1;
-   v2(0, 0).d_ = 1.0;
-   v2(0, 1).d_ = 1.0;
-   v2(0, 2).d_ = 1.0;
-   v2(1, 0).d_ = 1.0;
-   v2(1, 1).d_ = 1.0;
-   v2(1, 2).d_ = 1.0;
-   v2(2, 0).d_ = 1.0;
-   v2(2, 1).d_ = 1.0;
-   v2(2, 2).d_ = 1.0;
+  v2(0, 0).d_ = 1.0;
+  v2(0, 1).d_ = 1.0;
+  v2(0, 2).d_ = 1.0;
+  v2(1, 0).d_ = 1.0;
+  v2(1, 1).d_ = 1.0;
+  v2(1, 2).d_ = 1.0;
+  v2(2, 0).d_ = 1.0;
+  v2(2, 1).d_ = 1.0;
+  v2(2, 2).d_ = 1.0;
 
   vector_ffd output;
   output = rows_dot_product(v1, d2);

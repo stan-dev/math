@@ -4,15 +4,13 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-void
-test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
-                                                       Eigen::Dynamic, 1>& y,
-                                   int K) {
-  using std::vector;
-  using Eigen::Matrix;
+void test_cholesky_correlation_jacobian(
+    const Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>& y, int K) {
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
   using stan::math::cholesky_corr_constrain;
+  using stan::math::var;
+  using std::vector;
 
   int K_choose_2 = (K * (K - 1)) / 2;
 
@@ -21,8 +19,7 @@ test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
     indeps.push_back(y(i));
 
   var lp = 0;
-  Matrix<var, Dynamic, Dynamic> x
-    = cholesky_corr_constrain(y, K, lp);
+  Matrix<var, Dynamic, Dynamic> x = cholesky_corr_constrain(y, K, lp);
 
   vector<var> deps;
   for (int i = 1; i < K; ++i)
@@ -37,18 +34,16 @@ test_cholesky_correlation_jacobian(const Eigen::Matrix<stan::math::var,
     for (int n = 0; n < K_choose_2; ++n)
       J(m, n) = jacobian[m][n];
 
-
   double det_J = J.determinant();
   double log_det_J = log(fabs(det_J));
 
-  EXPECT_FLOAT_EQ(log_det_J, lp.val())
-    << "J = " << J << std::endl
-    << "det_J = " << det_J;
+  EXPECT_FLOAT_EQ(log_det_J, lp.val()) << "J = " << J << std::endl
+                                       << "det_J = " << det_J;
 }
 
 TEST(probTransform, choleskyCorrJacobian) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
 
   // K = 1; (K choose 2) = 0

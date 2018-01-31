@@ -4,11 +4,11 @@
 #include <vector>
 
 TEST(AgradMixMatrixProd, fv_vector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d vd;
   vector_fv vv;
@@ -19,7 +19,7 @@ TEST(AgradMixMatrixProd, fv_vector_1stDeriv) {
   vv = vector_fv(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -28,8 +28,8 @@ TEST(AgradMixMatrixProd, fv_vector_1stDeriv) {
   vd << 2.0, 3.0;
   vv = vector_fv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
   std::vector<fvar<var> > x(2);
   x[0] = vv[0];
   x[1] = vv[1];
@@ -46,16 +46,16 @@ TEST(AgradMixMatrixProd, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(2, h[1]);
 }
 TEST(AgradMixMatrixProd, fv_vector_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_fv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<var> f = prod(vv);
 
@@ -67,10 +67,10 @@ TEST(AgradMixMatrixProd, fv_vector_2ndDeriv) {
 }
 
 TEST(AgradMixMatrixProd, fv_rowvector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d vd;
@@ -82,7 +82,7 @@ TEST(AgradMixMatrixProd, fv_rowvector_1stDeriv) {
   vv = row_vector_fv(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -91,8 +91,8 @@ TEST(AgradMixMatrixProd, fv_rowvector_1stDeriv) {
   vd << 2.0, 3.0;
   vv = row_vector_fv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<var> f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
@@ -106,15 +106,15 @@ TEST(AgradMixMatrixProd, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(2, h[1]);
 }
 TEST(AgradMixMatrixProd, fv_rowvector_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_fv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<var> f = prod(vv);
 
@@ -125,10 +125,10 @@ TEST(AgradMixMatrixProd, fv_rowvector_2ndDeriv) {
   EXPECT_FLOAT_EQ(1, h[1]);
 }
 TEST(AgradMixMatrixProd, fv_matrix_1stDeriv) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_d vd;
@@ -140,7 +140,7 @@ TEST(AgradMixMatrixProd, fv_matrix_1stDeriv) {
   vv = matrix_fv(1, 1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val());
@@ -149,18 +149,18 @@ TEST(AgradMixMatrixProd, fv_matrix_1stDeriv) {
   vd << 2.0, 3.0, 2.0, 3.0;
   vv = matrix_fv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<var> f = prod(vv);
   EXPECT_FLOAT_EQ(36.0, prod(vd));
   EXPECT_FLOAT_EQ(36.0, f.val_.val());
   EXPECT_FLOAT_EQ(60.0, f.d_.val());
 
-  AVEC q = createAVEC(vv(0, 0).val(), vv(0, 1).val(),
-                      vv(1, 0).val(), vv(1, 1).val());
+  AVEC q = createAVEC(vv(0, 0).val(), vv(0, 1).val(), vv(1, 0).val(),
+                      vv(1, 1).val());
   VEC h;
   f.val_.grad(q, h);
   EXPECT_FLOAT_EQ(18, h[0]);
@@ -169,23 +169,23 @@ TEST(AgradMixMatrixProd, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(12, h[3]);
 }
 TEST(AgradMixMatrixProd, fv_matrix_2ndDeriv) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_fv vv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<var> f = prod(vv);
 
-  AVEC q = createAVEC(vv(0, 0).val(), vv(0, 1).val(),
-                      vv(1, 0).val(), vv(1, 1).val());
+  AVEC q = createAVEC(vv(0, 0).val(), vv(0, 1).val(), vv(1, 0).val(),
+                      vv(1, 1).val());
   VEC h;
   f.d_.grad(q, h);
   EXPECT_FLOAT_EQ(21, h[0]);
@@ -194,11 +194,11 @@ TEST(AgradMixMatrixProd, fv_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(16, h[3]);
 }
 TEST(AgradMixMatrixProd, ffv_vector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_d vd;
   vector_ffv vv;
@@ -209,7 +209,7 @@ TEST(AgradMixMatrixProd, ffv_vector_1stDeriv) {
   vv = vector_ffv(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val().val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val().val());
@@ -218,8 +218,8 @@ TEST(AgradMixMatrixProd, ffv_vector_1stDeriv) {
   vd << 2.0, 3.0;
   vv = vector_ffv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
   std::vector<fvar<fvar<var> > > x(2);
   x[0] = vv[0];
   x[1] = vv[1];
@@ -236,16 +236,16 @@ TEST(AgradMixMatrixProd, ffv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(2, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_vector_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -256,16 +256,16 @@ TEST(AgradMixMatrixProd, ffv_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_vector_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -276,18 +276,18 @@ TEST(AgradMixMatrixProd, ffv_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(1, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_vector_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
-  using stan::math::fvar;
-  using stan::math::var;
 
   vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
-   vv(0).val_.d_ = 1.0;
-   vv(1).val_.d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
+  vv(0).val_.d_ = 1.0;
+  vv(1).val_.d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -299,10 +299,10 @@ TEST(AgradMixMatrixProd, ffv_vector_3rdDeriv) {
 }
 
 TEST(AgradMixMatrixProd, ffv_rowvector_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d vd;
@@ -314,7 +314,7 @@ TEST(AgradMixMatrixProd, ffv_rowvector_1stDeriv) {
   vv = row_vector_ffv(1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val().val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val().val());
@@ -323,8 +323,8 @@ TEST(AgradMixMatrixProd, ffv_rowvector_1stDeriv) {
   vd << 2.0, 3.0;
   vv = row_vector_ffv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
   EXPECT_FLOAT_EQ(6.0, prod(vd));
@@ -338,15 +338,15 @@ TEST(AgradMixMatrixProd, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(2, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_rowvector_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -357,15 +357,15 @@ TEST(AgradMixMatrixProd, ffv_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_rowvector_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -376,17 +376,17 @@ TEST(AgradMixMatrixProd, ffv_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(1, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_rowvector_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::prod;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_ffv vv(2);
   vv << 2.0, 3.0;
-   vv(0).d_ = 1.0;
-   vv(1).d_ = 1.0;
-   vv(0).val_.d_ = 1.0;
-   vv(1).val_.d_ = 1.0;
+  vv(0).d_ = 1.0;
+  vv(1).d_ = 1.0;
+  vv(0).val_.d_ = 1.0;
+  vv(1).val_.d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -397,10 +397,10 @@ TEST(AgradMixMatrixProd, ffv_rowvector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[1]);
 }
 TEST(AgradMixMatrixProd, ffv_matrix_1stDeriv) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_d vd;
@@ -412,7 +412,7 @@ TEST(AgradMixMatrixProd, ffv_matrix_1stDeriv) {
   vv = matrix_ffv(1, 1);
   vd << 2.0;
   vv << 2.0;
-   vv(0).d_ = 1.0;
+  vv(0).d_ = 1.0;
   EXPECT_FLOAT_EQ(2.0, prod(vd));
   EXPECT_FLOAT_EQ(2.0, prod(vv).val_.val().val());
   EXPECT_FLOAT_EQ(1.0, prod(vv).d_.val().val());
@@ -421,10 +421,10 @@ TEST(AgradMixMatrixProd, ffv_matrix_1stDeriv) {
   vd << 2.0, 3.0, 2.0, 3.0;
   vv = matrix_ffv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
   EXPECT_FLOAT_EQ(36.0, prod(vd));
@@ -441,18 +441,18 @@ TEST(AgradMixMatrixProd, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(12, h[3]);
 }
 TEST(AgradMixMatrixProd, ffv_matrix_2ndDeriv_1) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_ffv vv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -467,18 +467,18 @@ TEST(AgradMixMatrixProd, ffv_matrix_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixProd, ffv_matrix_2ndDeriv_2) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_ffv vv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 
@@ -493,22 +493,22 @@ TEST(AgradMixMatrixProd, ffv_matrix_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixProd, ffv_matrix_3rdDeriv) {
-  using stan::math::prod;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::fvar;
+  using stan::math::prod;
   using stan::math::var;
 
   matrix_ffv vv(2, 2);
   vv << 2.0, 3.0, 2.0, 3.0;
-   vv(0, 0).d_ = 1.0;
-   vv(0, 1).d_ = 1.0;
-   vv(1, 0).d_ = 1.0;
-   vv(1, 1).d_ = 1.0;
-   vv(0, 0).val_.d_ = 1.0;
-   vv(0, 1).val_.d_ = 1.0;
-   vv(1, 0).val_.d_ = 1.0;
-   vv(1, 1).val_.d_ = 1.0;
+  vv(0, 0).d_ = 1.0;
+  vv(0, 1).d_ = 1.0;
+  vv(1, 0).d_ = 1.0;
+  vv(1, 1).d_ = 1.0;
+  vv(0, 0).val_.d_ = 1.0;
+  vv(0, 1).val_.d_ = 1.0;
+  vv(1, 0).val_.d_ = 1.0;
+  vv(1, 1).val_.d_ = 1.0;
 
   fvar<fvar<var> > f = prod(vv);
 

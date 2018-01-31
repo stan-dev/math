@@ -4,9 +4,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdPhi, FvarVar_1stDeriv) {
+  using stan::math::Phi;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::Phi;
 
   fvar<var> x(1.0, 1.3);
   fvar<var> a = Phi(x);
@@ -21,9 +21,9 @@ TEST(AgradFwdPhi, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)), g[0]);
 }
 TEST(AgradFwdPhi, FvarVar_2ndDeriv) {
+  using stan::math::Phi;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::Phi;
 
   fvar<var> x(1.0, 1.3);
   fvar<var> a = Phi(x);
@@ -36,8 +36,8 @@ TEST(AgradFwdPhi, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdPhi, FvarFvarVar_1stDeriv) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -75,8 +75,8 @@ TEST(AgradFwdPhi, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdPhi, FvarFvarVar_2ndDeriv) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -102,8 +102,8 @@ TEST(AgradFwdPhi, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-exp(stan::math::normal_log<false>(1.0, 0.0, 1.0)), r[0]);
 }
 TEST(AgradFwdPhi, FvarFvarVar_3rdDeriv) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
   using stan::math::var;
 
   fvar<fvar<var> > x;
@@ -121,8 +121,7 @@ TEST(AgradFwdPhi, FvarFvarVar_3rdDeriv) {
 
 struct Phi_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return Phi(arg1);
   }
 };

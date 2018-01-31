@@ -13,27 +13,24 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline double
-    exponential_rng(double beta,
-                    RNG& rng) {
-      using boost::variate_generator;
-      using boost::exponential_distribution;
+template <class RNG>
+inline double exponential_rng(double beta, RNG& rng) {
+  using boost::exponential_distribution;
+  using boost::variate_generator;
 
-      static const std::string function = "exponential_rng";
+  static const char* function = "exponential_rng";
 
-      check_positive_finite(function, "Inverse scale parameter", beta);
+  check_positive_finite(function, "Inverse scale parameter", beta);
 
-      variate_generator<RNG&, exponential_distribution<> >
-        exp_rng(rng, exponential_distribution<>(beta));
-      return exp_rng();
-    }
-
-  }
+  variate_generator<RNG&, exponential_distribution<> > exp_rng(
+      rng, exponential_distribution<>(beta));
+  return exp_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

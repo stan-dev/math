@@ -5,9 +5,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdTgamma, Fvar) {
-  using stan::math::fvar;
-  using boost::math::tgamma;
   using boost::math::digamma;
+  using boost::math::tgamma;
+  using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> a = tgamma(x);
@@ -17,8 +17,7 @@ TEST(AgradFwdTgamma, Fvar) {
 
 struct tgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tgamma(arg1);
   }
 };

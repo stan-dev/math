@@ -4,8 +4,8 @@
 
 TEST(AgradFwdSin, Fvar) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<double> x(0.5, 1.0);
 
@@ -38,8 +38,8 @@ TEST(AgradFwdSin, Fvar) {
 
 TEST(AgradFwdSin, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -65,8 +65,7 @@ TEST(AgradFwdSin, FvarFvarDouble) {
 
 struct sin_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sin(arg1);
   }
 };

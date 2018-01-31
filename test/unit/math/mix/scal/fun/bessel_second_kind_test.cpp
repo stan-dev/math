@@ -3,12 +3,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdBesselSecondKind, FvarVar_1stDeriv) {
+  using stan::math::bessel_second_kind;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::bessel_second_kind;
 
   fvar<var> z(3.0, 2.0);
   fvar<var> a = bessel_second_kind(1, z);
@@ -22,9 +20,9 @@ TEST(AgradFwdBesselSecondKind, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0.53725040349771411 / 2.0, g[0]);
 }
 TEST(AgradFwdBesselSecondKind, FvarVar_2ndDeriv) {
+  using stan::math::bessel_second_kind;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::bessel_second_kind;
 
   fvar<var> z(3.0, 2.0);
   fvar<var> a = bessel_second_kind(1, z);
@@ -36,9 +34,9 @@ TEST(AgradFwdBesselSecondKind, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdBesselSecondKind, FvarFvarVar_1stDeriv) {
+  using stan::math::bessel_second_kind;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::bessel_second_kind;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 3.0;
@@ -73,9 +71,9 @@ TEST(AgradFwdBesselSecondKind, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0.53725040349771411 / 2.0, r[0]);
 }
 TEST(AgradFwdBesselSecondKind, FvarFvarVar_2ndDeriv) {
+  using stan::math::bessel_second_kind;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::bessel_second_kind;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 3.0;
@@ -100,9 +98,9 @@ TEST(AgradFwdBesselSecondKind, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.75628245, r[0]);
 }
 TEST(AgradFwdBesselSecondKind, FvarFvarVar_3rdDeriv) {
+  using stan::math::bessel_second_kind;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::bessel_second_kind;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 3.0;
@@ -119,8 +117,7 @@ TEST(AgradFwdBesselSecondKind, FvarFvarVar_3rdDeriv) {
 
 struct bessel_second_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return bessel_second_kind(1, arg1);
   }
 };

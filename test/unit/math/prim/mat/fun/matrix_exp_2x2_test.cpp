@@ -12,7 +12,6 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
   expect_matrix_eq(m2, stan::math::matrix_exp_2x2(m1));
 }
 
-
 TEST(MathMatrix, matrix_exp_2x2_2) {
   // example from Moler & Van Loan, 2003
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(2, 2), m2(2, 2);

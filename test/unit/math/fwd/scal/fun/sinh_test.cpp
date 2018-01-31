@@ -3,16 +3,13 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 class AgradFwdSinh : public testing::Test {
-  void SetUp() {
-  }
+  void SetUp() {}
 };
-
-
 
 TEST_F(AgradFwdSinh, Fvar) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<double> x(0.5, 1.0);
 
@@ -31,11 +28,10 @@ TEST_F(AgradFwdSinh, Fvar) {
   EXPECT_FLOAT_EQ(-cosh(-0.5), c.d_);
 }
 
-
 TEST_F(AgradFwdSinh, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -61,8 +57,7 @@ TEST_F(AgradFwdSinh, FvarFvarDouble) {
 
 struct sinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sinh(arg1);
   }
 };

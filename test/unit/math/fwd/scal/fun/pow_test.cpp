@@ -4,9 +4,9 @@
 
 TEST(AgradFwdPow, Fvar) {
   using stan::math::fvar;
-  using std::pow;
-  using std::log;
   using std::isnan;
+  using std::log;
+  using std::pow;
 
   fvar<double> x(0.5, 1.0);
   double y = 5.0;
@@ -32,8 +32,8 @@ TEST(AgradFwdPow, Fvar) {
 
 TEST(AgradFwdPow, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -53,10 +53,8 @@ TEST(AgradFwdPow, FvarFvarDouble) {
 
 struct pow_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return pow(arg1, arg2);
   }
 };

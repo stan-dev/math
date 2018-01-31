@@ -16,16 +16,16 @@ TEST(AgradFwdMatrixVariance, fd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_);
 
   d1.resize(1);
@@ -45,9 +45,9 @@ TEST(AgradFwdMatrixVariance, fd_vector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, fd_rowvector) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::variance;
 
   row_vector_d d(1);
   d << 12.9;
@@ -58,16 +58,16 @@ TEST(AgradFwdMatrixVariance, fd_rowvector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 11.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 11.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_);
 
   d1.resize(1);
@@ -77,9 +77,9 @@ TEST(AgradFwdMatrixVariance, fd_rowvector) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).d_);
 }
 TEST(AgradFwdMatrixVariance, fd_rowvector_exception) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::variance;
 
   row_vector_d d1;
   row_vector_fd v1;
@@ -87,9 +87,9 @@ TEST(AgradFwdMatrixVariance, fd_rowvector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, fd_matrix) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
+  using stan::math::variance;
 
   matrix_d m(1, 1);
   m << 12.9;
@@ -100,16 +100,16 @@ TEST(AgradFwdMatrixVariance, fd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 2.0;
-   v1(0, 2).d_ = 2.0;
-   v1(1, 0).d_ = 2.0;
-   v1(1, 1).d_ = 2.0;
-   v1(1, 2).d_ = 2.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 2.0;
+  v1(0, 2).d_ = 2.0;
+  v1(1, 0).d_ = 2.0;
+  v1(1, 1).d_ = 2.0;
+  v1(1, 2).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_);
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_);
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_);
 
   d1.resize(1, 1);
@@ -119,9 +119,9 @@ TEST(AgradFwdMatrixVariance, fd_matrix) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).d_);
 }
 TEST(AgradFwdMatrixVariance, fd_matrix_exception) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
+  using stan::math::variance;
 
   matrix_d d1;
   matrix_fd v1;
@@ -139,8 +139,8 @@ TEST(AgradFwdMatrixVariance, fd_matrix_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, fd_StdVector) {
-  using stan::math::variance;
   using stan::math::fvar;
+  using stan::math::variance;
 
   fvar<double> x1 = 0.5;
   x1.d_ = 1.0;
@@ -171,16 +171,16 @@ TEST(AgradFwdMatrixVariance, ffd_vector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 1.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 1.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
   d1.resize(1);
@@ -200,9 +200,9 @@ TEST(AgradFwdMatrixVariance, ffd_vector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, ffd_rowvector) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::variance;
 
   row_vector_d d(1);
   d << 12.9;
@@ -213,16 +213,16 @@ TEST(AgradFwdMatrixVariance, ffd_rowvector) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0).d_ = 11.0;
-   v1(1).d_ = 2.0;
-   v1(2).d_ = 2.0;
-   v1(3).d_ = 2.0;
-   v1(4).d_ = 2.0;
-   v1(5).d_ = 2.0;
+  v1(0).d_ = 11.0;
+  v1(1).d_ = 2.0;
+  v1(2).d_ = 2.0;
+  v1(3).d_ = 2.0;
+  v1(4).d_ = 2.0;
+  v1(5).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(-9.0, variance(v1).d_.val());
 
   d1.resize(1);
@@ -232,9 +232,9 @@ TEST(AgradFwdMatrixVariance, ffd_rowvector) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).d_.val());
 }
 TEST(AgradFwdMatrixVariance, ffd_rowvector_exception) {
-  using stan::math::variance;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::variance;
 
   row_vector_d d1;
   row_vector_ffd v1;
@@ -242,9 +242,9 @@ TEST(AgradFwdMatrixVariance, ffd_rowvector_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, ffd_matrix) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
+  using stan::math::variance;
 
   matrix_d m(1, 1);
   m << 12.9;
@@ -255,16 +255,16 @@ TEST(AgradFwdMatrixVariance, ffd_matrix) {
 
   d1 << 1, 2, 3, 4, 5, 6;
   v1 << 1, 2, 3, 4, 5, 6;
-   v1(0, 0).d_ = 1.0;
-   v1(0, 1).d_ = 2.0;
-   v1(0, 2).d_ = 2.0;
-   v1(1, 0).d_ = 2.0;
-   v1(1, 1).d_ = 2.0;
-   v1(1, 2).d_ = 2.0;
+  v1(0, 0).d_ = 1.0;
+  v1(0, 1).d_ = 2.0;
+  v1(0, 2).d_ = 2.0;
+  v1(1, 0).d_ = 2.0;
+  v1(1, 1).d_ = 2.0;
+  v1(1, 2).d_ = 2.0;
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(d1));
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(d1));
 
-  EXPECT_FLOAT_EQ(17.5/5.0, variance(v1).val_.val());
+  EXPECT_FLOAT_EQ(17.5 / 5.0, variance(v1).val_.val());
   EXPECT_FLOAT_EQ(1.0, variance(v1).d_.val());
 
   d1.resize(1, 1);
@@ -274,9 +274,9 @@ TEST(AgradFwdMatrixVariance, ffd_matrix) {
   EXPECT_FLOAT_EQ(0.0, variance(v1).d_.val());
 }
 TEST(AgradFwdMatrixVariance, ffd_matrix_exception) {
-  using stan::math::variance;
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
+  using stan::math::variance;
 
   matrix_d d1;
   matrix_ffd v1;
@@ -294,8 +294,8 @@ TEST(AgradFwdMatrixVariance, ffd_matrix_exception) {
   EXPECT_THROW(variance(v1), std::invalid_argument);
 }
 TEST(AgradFwdMatrixVariance, ffd_StdVector) {
-  using stan::math::variance;
   using stan::math::fvar;
+  using stan::math::variance;
 
   fvar<fvar<double> > x1 = 0.5;
   x1.d_ = 1.0;

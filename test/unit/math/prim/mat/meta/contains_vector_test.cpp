@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, contains_vector) {
-  using stan::contains_vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::contains_vector;
 
   typedef Matrix<double, Dynamic, 1> temp_vec_d;
   EXPECT_TRUE(contains_vector<temp_vec_d>::value);
@@ -18,8 +18,8 @@ TEST(MetaTraits, contains_vector) {
   EXPECT_FALSE(contains_vector<temp_matrix_d>::value);
   EXPECT_FALSE(contains_vector<const temp_matrix_d>::value);
 
-  bool temp = contains_vector<temp_vec_d, temp_vec_d,
-                              double, temp_matrix_d>::value;
+  bool temp
+      = contains_vector<temp_vec_d, temp_vec_d, double, temp_matrix_d>::value;
   EXPECT_TRUE(temp);
 
   temp = contains_vector<double, temp_matrix_d, temp_matrix_d>::value;

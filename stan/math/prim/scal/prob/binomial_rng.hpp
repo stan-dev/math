@@ -19,44 +19,40 @@
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <string>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Return a pseudorandom Binomial random variable for the given population
-     * size and chance of success parameters using the specified random number
-     * generator.
-     *
-     * @tparam RNG class of rng
-     * @param N population size parameter
-     * @param theta chance of success parameter
-     * @param rng random number generator
-     * @return Binomial random variate
-     * @throw std::domain_error if N is negative
-     * @throw std::domain_error if theta is not a valid probability
-     */
-    template <class RNG>
-    inline int
-    binomial_rng(int N,
-                 double theta,
-                 RNG& rng) {
-      using boost::variate_generator;
-      using boost::binomial_distribution;
+/**
+ * Return a pseudorandom Binomial random variable for the given population
+ * size and chance of success parameters using the specified random number
+ * generator.
+ *
+ * @tparam RNG class of rng
+ * @param N population size parameter
+ * @param theta chance of success parameter
+ * @param rng random number generator
+ * @return Binomial random variate
+ * @throw std::domain_error if N is negative
+ * @throw std::domain_error if theta is not a valid probability
+ */
+template <class RNG>
+inline int binomial_rng(int N, double theta, RNG& rng) {
+  using boost::binomial_distribution;
+  using boost::variate_generator;
 
-      static const std::string function = "binomial_rng";
+  static const char* function = "binomial_rng";
 
-      check_nonnegative(function, "Population size parameter", N);
-      check_finite(function, "Probability parameter", theta);
-      check_less_or_equal(function, "Probability parameter", theta, 1.0);
-      check_greater_or_equal(function, "Probability parameter", theta, 0.0);
+  check_nonnegative(function, "Population size parameter", N);
+  check_finite(function, "Probability parameter", theta);
+  check_less_or_equal(function, "Probability parameter", theta, 1.0);
+  check_greater_or_equal(function, "Probability parameter", theta, 0.0);
 
-      variate_generator<RNG&, binomial_distribution<> >
-        binomial_rng(rng, binomial_distribution<>(N, theta));
-      return binomial_rng();
-    }
-
-  }
+  variate_generator<RNG&, binomial_distribution<> > binomial_rng(
+      rng, binomial_distribution<>(N, theta));
+  return binomial_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

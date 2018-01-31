@@ -4,8 +4,8 @@
 
 TEST(AgradFwdCos, Fvar) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<double> x(0.5, 1.0);
 
@@ -38,11 +38,10 @@ TEST(AgradFwdCos, Fvar) {
   EXPECT_FLOAT_EQ(-sin(0.0), f.d_);
 }
 
-
 TEST(AgradFwdCos, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -66,11 +65,9 @@ TEST(AgradFwdCos, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct cos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cos(arg1);
   }
 };

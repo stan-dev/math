@@ -4,16 +4,13 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, eigenval_sum) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::eigenvalues_sym;
+  using stan::math::matrix_v;
+  using stan::math::sum;
+  using stan::math::vector_v;
 
   matrix_v a(3, 3);
-  a <<
-    1.0, 2.0, 3.0,
-    2.0, 5.0, 7.9,
-    3.0, 7.9, 1.08;
+  a << 1.0, 2.0, 3.0, 2.0, 5.0, 7.9, 3.0, 7.9, 1.08;
   AVEC x = createAVEC(a(0, 0), a(1, 1), a(2, 2), a(1, 2));
   x.push_back(a(0, 1));
   x.push_back(a(2, 0));
@@ -34,13 +31,10 @@ TEST(AgradRevMatrix, eigenval_sum) {
   EXPECT_NEAR(0.0, g[5], 1.0E-10);
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::matrix_v;
   using stan::math::eigenvalues_sym;
+  using stan::math::matrix_v;
 
   matrix_v a(3, 3);
-  a <<
-    1.0, 2.0, 3.0,
-    2.0, 5.0, 7.9,
-    3.0, 7.9, 1.08;
+  a << 1.0, 2.0, 3.0, 2.0, 5.0, 7.9, 3.0, 7.9, 1.08;
   test::check_varis_on_stack(stan::math::eigenvalues_sym(a));
 }

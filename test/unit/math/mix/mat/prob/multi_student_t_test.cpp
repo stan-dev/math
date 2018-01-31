@@ -5,20 +5,18 @@
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-using std::vector;
 using stan::math::multi_student_t_log;
+using std::vector;
 
 TEST(ProbDistributionsMultiStudentT, fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<fvar<var>, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<var>, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {
@@ -34,16 +32,14 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
 }
 
 TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<fvar<fvar<var> >, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 9.0, -3.0, 0.0,
-    -3.0,  4.0, 0.0,
-    0.0, 0.0, 5.0;
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   double nu = 4.0;
 
   for (int i = 0; i < 3; i++) {

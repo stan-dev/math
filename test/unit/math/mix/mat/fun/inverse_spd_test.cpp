@@ -6,9 +6,7 @@
 using stan::math::var;
 
 class AgradMixMatrixInverseSPD : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
 
 TEST_F(AgradMixMatrixInverseSPD, exception_fv) {
@@ -26,9 +24,7 @@ TEST_F(AgradMixMatrixInverseSPD, exception_fv) {
 
   // not positive definite
   stan::math::matrix_fv m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
@@ -39,7 +35,6 @@ TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
   m1 << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
 
-
   // non-symmetric
   stan::math::matrix_ffv m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -47,18 +42,14 @@ TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
 
   // not positive definite
   stan::math::matrix_ffv m3(3, 3);
-  m3 << 1, 2, 3,
-        2, 4, 5,
-        3, 5, 6;
+  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
   EXPECT_THROW(inverse_spd(m3), std::domain_error);
 }
 TEST_F(AgradMixMatrixInverseSPD, matrix_fv_1st_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -108,9 +99,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_fv_2nd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -160,9 +149,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_1st_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -212,9 +199,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_2nd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;
@@ -264,9 +249,7 @@ TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_3rd_deriv) {
   using stan::math::inverse_spd;
 
   stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   m1(0, 0).d_ = 1.0;
   m1(0, 1).d_ = 1.0;
   m1(0, 2).d_ = 1.0;

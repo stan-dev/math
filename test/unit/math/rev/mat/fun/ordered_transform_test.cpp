@@ -5,11 +5,11 @@
 #include <vector>
 
 TEST(prob_transform, ordered_jacobian_ad) {
-  using stan::math::var;
-  using stan::math::ordered_constrain;
-  using stan::math::determinant;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::determinant;
+  using stan::math::ordered_constrain;
+  using stan::math::var;
 
   Matrix<double, Dynamic, 1> x(3);
   x << -12.0, 3.0, -1.9;
@@ -24,7 +24,6 @@ TEST(prob_transform, ordered_jacobian_ad) {
     xvec[i] = xv[i];
 
   Matrix<var, Dynamic, 1> yv = ordered_constrain(xv);
-
 
   EXPECT_EQ(y.size(), yv.size());
   for (int i = 0; i < y.size(); ++i)

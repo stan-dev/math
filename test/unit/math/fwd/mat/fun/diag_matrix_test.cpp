@@ -14,9 +14,9 @@ TEST(AgradFwdMatrixDiagMatrix, vector_fd) {
 
   vector_fd v(3);
   v << 1, 4, 9;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
   matrix_fd m = diag_matrix(v);
   EXPECT_EQ(1, m(0, 0).val_);
   EXPECT_EQ(4, m(1, 1).val_);
@@ -28,10 +28,10 @@ TEST(AgradFwdMatrixDiagMatrix, vector_fd) {
 
 TEST(AgradFwdMatrixDiagMatrix, vector_ffd) {
   using stan::math::diag_matrix;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_d;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   EXPECT_EQ(0, diag_matrix(vector_ffd()).size());
   EXPECT_EQ(4, diag_matrix(vector_ffd(2)).size());

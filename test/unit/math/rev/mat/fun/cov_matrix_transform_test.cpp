@@ -4,27 +4,26 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(prob_transform, cov_matrix_jacobian) {
-  using stan::math::var;
   using stan::math::determinant;
-  using std::log;
+  using stan::math::var;
   using std::fabs;
+  using std::log;
 
   int K = 4;
   // unsigned int K = 4;
   unsigned int K_choose_2 = 6;
   Matrix<var, Dynamic, 1> X(K_choose_2 + K);
-  X << 1.0, 2.0, -3.0, 1.7, 9.8,
-    -12.2, 0.4, 0.2, 1.2, 2.7;
+  X << 1.0, 2.0, -3.0, 1.7, 9.8, -12.2, 0.4, 0.2, 1.2, 2.7;
   std::vector<var> x;
   for (int i = 0; i < X.size(); ++i)
     x.push_back(X(i));
   var lp = 0.0;
-  Matrix<var, Dynamic, Dynamic> Sigma = stan::math::cov_matrix_constrain(X, K,
-                                                                         lp);
+  Matrix<var, Dynamic, Dynamic> Sigma
+      = stan::math::cov_matrix_constrain(X, K, lp);
   std::vector<var> y;
   for (int m = 0; m < K; ++m)
     for (int n = 0; n <= m; ++n)
@@ -47,8 +46,7 @@ TEST(prob_transform, check_varis_on_stack) {
   int K = 4;
   unsigned int K_choose_2 = 6;
   Eigen::Matrix<var, Eigen::Dynamic, 1> X(K_choose_2 + K);
-  X << 1.0, 2.0, -3.0, 1.7, 9.8,
-    -12.2, 0.4, 0.2, 1.2, 2.7;
+  X << 1.0, 2.0, -3.0, 1.7, 9.8, -12.2, 0.4, 0.2, 1.2, 2.7;
   var lp = 0.0;
 
   test::check_varis_on_stack(stan::math::cov_matrix_constrain(X, K, lp));

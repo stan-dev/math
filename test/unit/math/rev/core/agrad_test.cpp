@@ -28,4 +28,3 @@ TEST(AgradRev, multiple_grads) {
   EXPECT_FLOAT_EQ(3.0, grad_f[0]);
   EXPECT_FLOAT_EQ(2.0, grad_f[1]);
 }
-

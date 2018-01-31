@@ -4,8 +4,8 @@
 
 TEST(AgradFwdCosh, Fvar) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<double> x(0.5, 1.0);
 
@@ -24,11 +24,10 @@ TEST(AgradFwdCosh, Fvar) {
   EXPECT_FLOAT_EQ(-sinh(-0.5), c.d_);
 }
 
-
 TEST(AgradFwdCosh, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -54,8 +53,7 @@ TEST(AgradFwdCosh, FvarFvarDouble) {
 
 struct cosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cosh(arg1);
   }
 };

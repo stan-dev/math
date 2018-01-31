@@ -1,12 +1,11 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 using stan::math::check_2F1_converges;
 
 TEST(passesOnConvergentArgs, Check2F1Converges) {
-  const std::string function = "check_2F1_converges";
+  const char* function = "check_2F1_converges";
   double a1 = 1.0;
   double a2 = 1.0;
   double b1 = 5.0;
@@ -27,24 +26,21 @@ TEST(passesOnConvergentArgs, Check2F1Converges) {
   // now in radius of convergences, but b1 is too small.
   b1 = 1.0;
   z = 1.0;
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
 
   a1 = 10.0;
   a2 = 1.0;
   // now in radius of convergences, but b1 is too small.
   b1 = 10.0;
   z = 1.0;
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;
   b1 = 5.0;
   // outside of radius of convergence for current implementation.
   z = 1.3;
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;
@@ -65,20 +61,16 @@ TEST(passesOnConvergentArgs, Check2F1Converges) {
   b1 = 1.0;
   // limits of range?
   z = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;
   b1 = 1.0;
   // limits of range?
   z = -1.0 * std::numeric_limits<double>::infinity();
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
-  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z),
-               std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
+  EXPECT_THROW(check_2F1_converges(function, a1, a2, b1, z), std::domain_error);
 
   a1 = 1.0;
   a2 = 1.0;

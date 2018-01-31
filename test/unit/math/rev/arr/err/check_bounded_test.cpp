@@ -1,15 +1,14 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckVectorized) {
+  using stan::math::check_bounded;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_bounded;
 
   int N = 5;
-  const std::string function = "check_bounded";
+  const char* function = "check_bounded";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

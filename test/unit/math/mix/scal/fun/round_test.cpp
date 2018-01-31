@@ -6,9 +6,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdRound, FvarVar_1stDeriv) {
+  using boost::math::round;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::round;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = round(x);
@@ -22,9 +22,9 @@ TEST(AgradFwdRound, FvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, g[0]);
 }
 TEST(AgradFwdRound, FvarVar_2ndDeriv) {
+  using boost::math::round;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::round;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = round(x);
@@ -36,9 +36,9 @@ TEST(AgradFwdRound, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdRound, FvarFvarVar_1stDeriv) {
+  using boost::math::round;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::round;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -72,9 +72,9 @@ TEST(AgradFwdRound, FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdRound, FvarFvarVar_2ndDeriv) {
+  using boost::math::round;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::round;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -99,9 +99,9 @@ TEST(AgradFwdRound, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, r[0]);
 }
 TEST(AgradFwdRound, FvarFvarVar_3rdDeriv) {
+  using boost::math::round;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::round;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 1.5;
@@ -118,8 +118,7 @@ TEST(AgradFwdRound, FvarFvarVar_3rdDeriv) {
 
 struct round_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return round(arg1);
   }
 };

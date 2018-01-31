@@ -3,13 +3,11 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCosh, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cosh(x);
@@ -26,8 +24,8 @@ TEST(AgradFwdCosh, FvarVar_1stDeriv) {
 TEST(AgradFwdCosh, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cosh(x);
@@ -44,8 +42,8 @@ TEST(AgradFwdCosh, FvarVar_2ndDeriv) {
 TEST(AgradFwdCosh, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -82,8 +80,8 @@ TEST(AgradFwdCosh, FvarFvarVar_1stDeriv) {
 TEST(AgradFwdCosh, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -119,8 +117,8 @@ TEST(AgradFwdCosh, FvarFvarVar_2ndDeriv) {
 TEST(AgradFwdCosh, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -137,8 +135,7 @@ TEST(AgradFwdCosh, FvarFvarVar_3rdDeriv) {
 
 struct cosh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cosh(arg1);
   }
 };
