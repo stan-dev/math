@@ -4,14 +4,14 @@
 #include <vector>
 
 using stan::math::fvar;
-using stan::math::var;
 using stan::math::log_mix;
-using stan::math::vector_fv;
-using stan::math::vector_ffv;
-using stan::math::vector_d;
-using stan::math::row_vector_fv;
-using stan::math::row_vector_ffv;
 using stan::math::row_vector_d;
+using stan::math::row_vector_ffv;
+using stan::math::row_vector_fv;
+using stan::math::var;
+using stan::math::vector_d;
+using stan::math::vector_ffv;
+using stan::math::vector_fv;
 
 TEST(AgradMixMatrixLogMix, fv_fv) {
   auto mix_fv_fv = [](auto a, auto b) {
@@ -120,7 +120,6 @@ TEST(AgradMixMatrixLogMix, fv_d) {
   mix_fv_d(std_vecfv_prob, std_vecd_dens);
 }
 
-
 TEST(AgradMixMatrixLogMix, d_fv) {
   auto mix_d_fv = [](auto a, auto b) {
     a[0] = 0.15;
@@ -150,7 +149,6 @@ TEST(AgradMixMatrixLogMix, d_fv) {
       EXPECT_FLOAT_EQ(b[i].d_.adj(), dens_deriv[i]);
     }
   };
-
 
   vector_d vecd_prob(4);
   vector_fv vecfv_dens(4);
