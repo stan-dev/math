@@ -69,16 +69,16 @@ TEST_F(AgradRev, ctorOverloads) {
   // ptrdiff_t
   EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
   EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
-  
+
   // complex but with zero imaginary part
-  EXPECT_FLOAT_EQ(37, var(std::complex<double>(37,0)).val());
-  EXPECT_FLOAT_EQ(37, var(std::complex<float>(37,0)).val());
-  EXPECT_FLOAT_EQ(37, var(std::complex<long double>(37,0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<double>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<float>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<long double>(37, 0)).val());
 
   // complex but with non-zero imaginary part
-  EXPECT_THROW(var(std::complex<double>(37,10)), std::invalid_argument);
-  EXPECT_THROW(var(std::complex<float>(37,10)), std::invalid_argument);
-  EXPECT_THROW(var(std::complex<long double>(37,10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<double>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<float>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
 TEST_F(AgradRev, a_eq_x) {
