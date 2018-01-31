@@ -4,10 +4,10 @@
 #include <vector>
 
 TEST(AgradRevMatrix, fill) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fill;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   AVAR x;
   AVAR y = 10;
@@ -44,8 +44,8 @@ TEST(AgradRevMatrix, fill) {
       EXPECT_FLOAT_EQ(54, d[i][j].val());
 }
 TEST(AgradRevMatrix, fillDouble) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fill;
   Matrix<double, Dynamic, 1> y(3);
   fill(y, 3.0);

@@ -119,8 +119,8 @@ TEST_F(AgradRev, smart_ptrs) {
 }
 
 TEST_F(AgradRev, stackAllocation) {
-  using stan::math::vari;
   using stan::math::var;
+  using stan::math::vari;
 
   vari ai(1.0);
   vari bi(2.0);
@@ -197,11 +197,11 @@ struct gradable {
 };
 
 gradable setup_quad_form() {
-  using std::vector;
-  using stan::math::var;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::quad_form;
+  using stan::math::var;
+  using std::vector;
 
   Matrix<var, Dynamic, 1> u(3);
   u << 2, 3, 5;

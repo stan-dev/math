@@ -1,9 +1,9 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsPoisson : public AgradDistributionTest {
  public:
@@ -61,10 +61,10 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
   typename stan::return_type<T_n, T_rate>::type log_prob_function(
       const T_n& n, const T_rate& alpha, const T2&, const T3&, const T4&,
       const T5&) {
-    using std::exp;
     using boost::math::lgamma;
-    using stan::math::multiply_log;
     using stan::math::LOG_ZERO;
+    using stan::math::multiply_log;
+    using std::exp;
 
     if (alpha == -std::numeric_limits<double>::infinity())
       return n == 0 ? 0 : LOG_ZERO;

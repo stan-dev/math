@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_positive_finite;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Matrix) {
   const char* function = "check_positive_finite";

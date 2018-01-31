@@ -8,8 +8,8 @@
 
 template <typename F>
 void expect_rev_std_vector_value() {
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   for (size_t i = 0; i < F::valid_inputs().size(); ++i) {
     vector<var> y = build_rev_vector<F>();

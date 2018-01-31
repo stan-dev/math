@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCcdfLogFrechet : public AgradCcdfLogTest {
  public:
@@ -67,9 +67,9 @@ class AgradCcdfLogFrechet : public AgradCcdfLogTest {
   typename stan::return_type<T_y, T_shape, T_scale>::type ccdf_log_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
+    using std::exp;
     using std::log;
     using std::pow;
-    using std::exp;
     return log(1.0 - exp(-pow(sigma / y, alpha)));
   }
 };

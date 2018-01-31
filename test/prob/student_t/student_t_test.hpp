@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsStudentT : public AgradDistributionTest {
  public:
@@ -84,11 +84,11 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
   typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type
   log_prob_function(const T_y& y, const T_dof& nu, const T_loc& mu,
                     const T_scale& sigma, const T4&, const T5&) {
-    using std::log;
-    using stan::math::square;
-    using stan::math::log1p;
     using boost::math::lgamma;
     using stan::math::NEG_LOG_SQRT_PI;
+    using stan::math::log1p;
+    using stan::math::square;
+    using std::log;
 
     return lgamma((nu + 1.0) / 2.0) - lgamma(nu / 2.0) + NEG_LOG_SQRT_PI
            - 0.5 * log(nu) - log(sigma)

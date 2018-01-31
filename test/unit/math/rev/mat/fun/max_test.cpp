@@ -56,9 +56,9 @@ TEST(AgradRevMatrix, max_rowvector_exception) {
   EXPECT_EQ(-std::numeric_limits<double>::infinity(), max(v).val());
 }
 TEST(AgradRevMatrix, max_matrix) {
-  using stan::math::max;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::max;
 
   matrix_d d1(3, 1);
   matrix_v v1(1, 3);
@@ -74,8 +74,8 @@ TEST(AgradRevMatrix, max_matrix) {
   EXPECT_FLOAT_EQ(100, output.val());
 }
 TEST(AgradRevMatrix, max_matrix_exception) {
-  using stan::math::max;
   using stan::math::matrix_v;
+  using stan::math::max;
 
   matrix_v v;
   EXPECT_EQ(-std::numeric_limits<double>::infinity(), max(v).val());

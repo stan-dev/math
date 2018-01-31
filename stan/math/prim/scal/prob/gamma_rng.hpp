@@ -25,8 +25,8 @@ namespace math {
 
 template <class RNG>
 inline double gamma_rng(double alpha, double beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "gamma_rng";
   check_positive_finite(function, "Shape parameter", alpha);

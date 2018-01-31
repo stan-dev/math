@@ -5,8 +5,8 @@
 TEST(MathMatrix, num_elements) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::num_elements;
+  using std::vector;
 
   Matrix<double, Dynamic, Dynamic> a1(3, 2);
   EXPECT_EQ(num_elements(a1), 6);

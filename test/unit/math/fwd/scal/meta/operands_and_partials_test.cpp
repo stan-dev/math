@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AgradPartialsVari, OperandsAndPartialsFvar) {
-  using stan::math::operands_and_partials;
   using stan::math::fvar;
+  using stan::math::operands_and_partials;
 
   fvar<double> x1 = 2.0;
   fvar<double> x2 = 3.0;

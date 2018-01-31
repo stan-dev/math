@@ -3,12 +3,12 @@
 
 #include <stan/math/mix/mat.hpp>
 
-using std::vector;
-using stan::math::var;
-using stan::math::fvar;
-using stan::is_vector;
 using stan::is_constant_struct;
+using stan::is_vector;
+using stan::math::fvar;
+using stan::math::var;
 using stan::scalar_type;
+using std::vector;
 
 typedef stan::math::index_type<Eigen::Matrix<double, 1, 1> >::type size_type;
 
@@ -755,6 +755,5 @@ void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4, T5& p5) {
   if (!is_constant_struct<T5>::value)
     add_var(x, p5);
 }
-// ------------------------------------------------------------
 
 #endif

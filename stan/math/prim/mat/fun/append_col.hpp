@@ -119,8 +119,8 @@ append_col(const Eigen::Matrix<T1, 1, C1>& A,
 template <typename T, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
     const Eigen::Matrix<T, R1, C1>& A, const Eigen::Matrix<T, R2, C2>& B) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   check_size_match("append_col", "rows of A", A.rows(), "rows of B", B.rows());
 
@@ -148,8 +148,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
 template <typename T, int C1, int C2>
 inline Eigen::Matrix<T, 1, Eigen::Dynamic> append_col(
     const Eigen::Matrix<T, 1, C1>& A, const Eigen::Matrix<T, 1, C2>& B) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   Matrix<T, 1, Dynamic> result(A.size() + B.size());
   result << A, B;

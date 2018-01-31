@@ -3,9 +3,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdOwensT, Fvar) {
+  using boost::math::owens_t;
   using stan::math::fvar;
   using stan::math::owens_t;
-  using boost::math::owens_t;
 
   fvar<double> h(1.0, 1.0);
   fvar<double> a(2.0, 1.0);
@@ -23,9 +23,9 @@ TEST(AgradFwdOwensT, Fvar) {
 }
 
 TEST(AgradFwdOwensT, FvarFvarDouble) {
+  using boost::math::owens_t;
   using stan::math::fvar;
   using stan::math::owens_t;
-  using boost::math::owens_t;
 
   fvar<fvar<double> > h, a;
   h.val_.val_ = 1.0;

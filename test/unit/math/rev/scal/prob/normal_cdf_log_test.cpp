@@ -5,8 +5,8 @@
 #include <limits>
 
 TEST(normal_cdf_log, tails) {
-  using stan::math::var;
   using stan::math::normal_cdf_log;
+  using stan::math::var;
   using std::exp;
 
   EXPECT_FLOAT_EQ(
@@ -203,8 +203,8 @@ TEST(normal_cdf_log, tails) {
 void test_value_and_derivatives(double expected_val, double y_dbl,
                                 double mu_dbl, double sigma_dbl) {
   using stan::math::is_nan;
-  using stan::math::var;
   using stan::math::normal_cdf_log;
+  using stan::math::var;
   std::stringstream msg_ss;
   msg_ss << "parameters: (" << y_dbl << ", " << mu_dbl << ", " << sigma_dbl
          << ")";

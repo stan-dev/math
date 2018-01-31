@@ -91,8 +91,8 @@ TEST(MathMatrix, simple_Eq_nopara) {
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta;
 
-  theta = stan::math::algebra_solver(simple_eq_functor_nopara(),
-                                     x, y_dummy, dat, dummy_dat_int);
+  theta = stan::math::algebra_solver(simple_eq_functor_nopara(), x, y_dummy,
+                                     dat, dummy_dat_int);
 
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));
@@ -110,8 +110,8 @@ TEST(MathMatrix, simple_Eq_init_is_para) {
   std::vector<double> dat;
   std::vector<int> dat_int;
 
-  Eigen::VectorXd theta = stan::math::algebra_solver(simple_eq_functor(),
-                                                     x, y, dat, dat_int);
+  Eigen::VectorXd theta
+      = stan::math::algebra_solver(simple_eq_functor(), x, y, dat, dat_int);
 
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));

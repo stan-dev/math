@@ -134,8 +134,8 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, fd_matrix_fd_matrix_fd) {
   EXPECT_NEAR(0.2962963, output(2, 2).d_, 1.0E-08);
 }
 TEST(AgradFwdMatrixMdivideLeftTriLow, fd_matrix_fd_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   using stan::math::row_vector_fd;
 
   matrix_d Y(3, 3);
@@ -175,8 +175,8 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, fd_matrix_fd_matrix) {
   EXPECT_NEAR(-0.14814815, output(2, 2).d_, 1.0E-08);
 }
 TEST(AgradFwdMatrixMdivideLeftTriLow, fd_matrix_matrix_fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   using stan::math::row_vector_fd;
 
   matrix_fd Y(3, 3);
@@ -218,9 +218,9 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, fd_matrix_matrix_fd) {
 TEST(AgradFwdMatrixMdivideLeftTriLow, fd_vector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
-  using stan::math::vector_d;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   vector_fd fv1(4), fv2(3);
   fv1.setZero();
@@ -407,8 +407,8 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_matrix_ffd_matrix_ffd) {
   EXPECT_NEAR(0.2962963, output(2, 2).d_.val(), 1.0E-08);
 }
 TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_matrix_ffd_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
   fvar<fvar<double> > a, b, c, d, e, f, g, h, i, j;
@@ -462,8 +462,8 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_matrix_ffd_matrix) {
   EXPECT_NEAR(-0.14814815, output(2, 2).d_.val(), 1.0E-08);
 }
 TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_matrix_matrix_ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
 
   fvar<fvar<double> > a, b, c, d, e, f, g;
@@ -513,9 +513,9 @@ TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_matrix_matrix_ffd) {
 TEST(AgradFwdMatrixMdivideLeftTriLow, ffd_vector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
-  using stan::math::vector_d;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   vector_ffd fv1(4), fv2(3);
   fv1.setZero();

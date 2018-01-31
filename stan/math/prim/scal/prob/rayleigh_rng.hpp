@@ -20,8 +20,8 @@ namespace math {
 
 template <class RNG>
 inline double rayleigh_rng(double sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
 
   static const char* function = "rayleigh_rng";
 
