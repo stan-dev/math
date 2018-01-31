@@ -39,7 +39,7 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char *function = "beta_rng";
-  
+
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_consistent_sizes(function, "First shape parameter", alpha,
