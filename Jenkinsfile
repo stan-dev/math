@@ -39,7 +39,7 @@ def alsoNotify() {
     } else ""
 }
 def mathUrl() { "https://github.com/stan-dev/math" }
-def isFork() { !env.CHANGE_URL.startsWith(mathUrl()) }
+def isFork() { env.CHANGE_URL && !env.CHANGE_URL.startsWith(mathUrl()) }
 def branchName() { (isFork() ? "autoformat/" : "") + env.CHANGE_BRANCH }
 def remoteName() { isFork() ? mathUrl() : "origin" }
 def force() { isFork() ? "-f" : "" }
