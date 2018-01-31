@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/gpu/opencl_context.hpp>
+#endif
+
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
@@ -243,9 +247,6 @@
 #include <stan/math/prim/mat/fun/variance.hpp>
 #include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
-#ifdef STAN_OPENCL
-#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
-#endif
 
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
