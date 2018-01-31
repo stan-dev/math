@@ -119,7 +119,7 @@ class opencl_context {
   cl::Platform oclPlatform_;
   cl::Device oclDevice_;
 
-  size_t max_workgroup_size;
+  size_t max_workgroup_size_;
 
   inline void init() {
     try {
@@ -142,7 +142,7 @@ class opencl_context {
                      + " on the platform "
                      + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
       allDevices[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                                    &max_workgroup_size);
+                                    &max_workgroup_size_);
       oclContext_ = cl::Context(allDevices);
       oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
                                    CL_QUEUE_PROFILING_ENABLE, NULL);
@@ -190,10 +190,10 @@ class opencl_context {
     }
     return oclQueue_;
   }
-  inline int maxWorkgroupSize() { return max_workgroup_size; }
+  inline int maxWorkgroupSize() { return max_workgroup_size_; }
 };
 
-  static opencl_context opencl_context;
+static opencl_context opencl_context;
 
 /**
  * Returns the description of the OpenCL
