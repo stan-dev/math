@@ -106,6 +106,9 @@ pipeline {
                                 ${remoteName()} on branch '${branchName()}'
                                 Please pull these changes before continuing. 
 
+                                See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms
+                                for local development environment setup.
+
                                 (Check console output at ${env.BUILD_URL})""",
                                 recipientProviders: [[$class: 'RequesterRecipientProvider']],
                                 to: "${env.CHANGE_AUTHOR_EMAIL}"
