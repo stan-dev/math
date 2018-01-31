@@ -124,7 +124,8 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" },
+                        GpuHeaders: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
                     )
                 }
             }
@@ -143,7 +144,6 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
-                        sh "echo 'STAN_OPENCL=true' >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -154,7 +154,6 @@ pipeline {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
-                            echo 'STAN_OPENCL=true' >> make/local
                             echo 'O=0' >> make/local
                             echo N_TESTS=${env.N_TESTS} >> make/local
                             """
@@ -174,6 +173,16 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
+                }
+                stage('GPU tests') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        echo 'STAN_OPENCL=true' >> make/local
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
