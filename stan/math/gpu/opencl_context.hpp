@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_OCL_GPU_HPP
-#define STAN_MATH_PRIM_MAT_FUN_OCL_GPU_HPP
+#ifndef STAN_MATH_GPU_OPENCL_CONTEXT_HPP
+#define STAN_MATH_GPU_OPENCL_CONTEXT_HPP
 
 #define __CL_ENABLE_EXCEPTIONS
 
@@ -15,16 +15,17 @@
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 
-/*
- *    @file stan/math/prim/mat/fun/ocl.hpp
- *    @brief Initialization for OpenCL: find platforms, devices,
- *      create context, command queue etc.
+/**
+ *  @file stan/math/gpu/opencl_context.hpp
+ *  @brief Initialization for OpenCL:
+ *    1. find OpenCL platforms and devices available
+ *    2. create context
+ *    3. set up job queue
+ *    4. initialize kernel groups
  */
 
 namespace stan {
 namespace math {
-
-inline void compile_kernel_group(std::string group);
 
 static int initialized_ = 0;
 typedef std::map<std::string, std::string> map_string;
@@ -110,7 +111,7 @@ inline void init_kernel_groups() {
  * context/command queue.
  *
  */
-class ocl {
+class opencl_context {
  private:
   std::string description_;
   cl::Context oclContext_;
@@ -192,14 +193,14 @@ class ocl {
   inline int maxWorkgroupSize() { return max_workgroup_size; }
 };
 
-static ocl ocl_context_queue;
+  static opencl_context opencl_context;
 
 /**
  * Returns the description of the OpenCL
  * platform and device that is used.
  *
  */
-inline std::string get_description() { return ocl_context_queue.description(); }
+inline std::string get_description() { return opencl_context.description(); }
 
 /**
  * Returns the reference to the
@@ -207,7 +208,7 @@ inline std::string get_description() { return ocl_context_queue.description(); }
  * a new context is created.
  *
  */
-inline cl::Context &get_context() { return ocl_context_queue.context(); }
+inline cl::Context &get_context() { return opencl_context.context(); }
 /**
  * Returns the reference to the active
  * OpenCL command queue. If no context
@@ -216,7 +217,7 @@ inline cl::Context &get_context() { return ocl_context_queue.context(); }
  * the reference to the new queue is returned.
  *
  */
-inline cl::CommandQueue &get_queue() { return ocl_context_queue.queue(); }
+inline cl::CommandQueue &get_queue() { return opencl_context.queue(); }
 /**
  * Returns the reference to the active
  * OpenCL command queue. If no context
@@ -226,7 +227,7 @@ inline cl::CommandQueue &get_queue() { return ocl_context_queue.queue(); }
  *
  */
 inline int get_maximum_workgroup_size() {
-  return ocl_context_queue.maxWorkgroupSize();
+  return opencl_context.maxWorkgroupSize();
 }
 
 /**
