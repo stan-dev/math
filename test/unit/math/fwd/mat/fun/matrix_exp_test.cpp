@@ -6,8 +6,8 @@
 #include <algorithm>
 
 TEST(MathMatrix, matrix_exp_1x1) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   fvar<double> a;
   a.val_ = 0.0;
@@ -32,8 +32,8 @@ TEST(MathMatrix, matrix_exp_1x1) {
 }
 
 TEST(MathMatrix, matrix_exp_2x2) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   // example from Moler & Van Loan, 2003, section 3
   fvar<double> a, b;
@@ -63,8 +63,8 @@ TEST(MathMatrix, matrix_exp_2x2) {
 }
 
 TEST(MathMatrix, matrix_exp_2x2_2) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
@@ -90,8 +90,8 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
 }
 
 TEST(MathMatrix, matrix_exp_3x3) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   fvar<double> a, b, c;
   a.val_ = -1.0;
@@ -134,10 +134,10 @@ TEST(MathMatrix, matrix_exp_3x3) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using stan::math::matrix_fd;
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   int size = 100;
   std::random_device rd;

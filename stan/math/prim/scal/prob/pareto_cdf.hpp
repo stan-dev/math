@@ -33,8 +33,8 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_cdf(
 
   static const char* function = "pareto_cdf";
 
-  using std::log;
   using std::exp;
+  using std::log;
 
   T_partials_return P(1.0);
 

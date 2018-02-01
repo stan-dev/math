@@ -56,8 +56,8 @@ Eigen::Matrix<double, 3, 3> third_order_mixed_hess(
 
 Eigen::Matrix<double, 3, 3> norm_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   Matrix<double, 3, 3> hess;
   double inv_sigma_sq = 1 / (inp_vec(2) * inp_vec(2));
@@ -73,8 +73,8 @@ Eigen::Matrix<double, 3, 3> norm_hess(
 std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
 third_order_mixed_grad_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   std::vector<Matrix<double, Dynamic, Dynamic> > grad_hess_ret;
   for (int i = 0; i < inp_vec.size(); ++i)
     grad_hess_ret.push_back(Matrix<double, Dynamic, Dynamic>(3, 3));

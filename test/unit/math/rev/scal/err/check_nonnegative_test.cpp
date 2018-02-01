@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_nonnegative;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
   const char* function = "check_nonnegative";
@@ -31,8 +31,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_nonnegative;
+  using stan::math::var;
 
   const char* function = "check_nonnegative";
   var a(5.0);

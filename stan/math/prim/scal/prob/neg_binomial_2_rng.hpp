@@ -24,10 +24,10 @@ namespace math {
 
 template <class RNG>
 inline int neg_binomial_2_rng(double mu, double phi, RNG& rng) {
-  using boost::variate_generator;
+  using boost::gamma_distribution;
   using boost::random::negative_binomial_distribution;
   using boost::random::poisson_distribution;
-  using boost::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "neg_binomial_2_rng";
 

@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, row_v) {
-  using stan::math::row;
   using stan::math::matrix_v;
+  using stan::math::row;
   using stan::math::vector_v;
 
   matrix_v y(2, 3);
@@ -23,8 +23,8 @@ TEST(AgradRevMatrix, row_v) {
   EXPECT_EQ(6.0, w[2].val());
 }
 TEST(AgradRevMatrix, row_v_exc0) {
-  using stan::math::row;
   using stan::math::matrix_v;
+  using stan::math::row;
 
   matrix_v y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
@@ -32,8 +32,8 @@ TEST(AgradRevMatrix, row_v_exc0) {
   EXPECT_THROW(row(y, 7), std::out_of_range);
 }
 TEST(AgradRevMatrix, row_v_excHigh) {
-  using stan::math::row;
   using stan::math::matrix_v;
+  using stan::math::row;
 
   matrix_v y(2, 3);
   y << 1, 2, 3, 4, 5, 6;

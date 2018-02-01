@@ -68,8 +68,8 @@ class cholesky_block : public vari {
    */
   inline void symbolic_rev(Block_& L, Block_& Lbar) {
     using Eigen::Lower;
-    using Eigen::Upper;
     using Eigen::StrictlyUpper;
+    using Eigen::Upper;
     L.transposeInPlace();
     Lbar = (L * Lbar.triangularView<Lower>()).eval();
     Lbar.triangularView<StrictlyUpper>()
@@ -85,11 +85,11 @@ class cholesky_block : public vari {
    *
    */
   virtual void chain() {
-    using Eigen::MatrixXd;
-    using Eigen::Lower;
     using Eigen::Block;
-    using Eigen::Upper;
+    using Eigen::Lower;
+    using Eigen::MatrixXd;
     using Eigen::StrictlyUpper;
+    using Eigen::Upper;
     MatrixXd Lbar(M_, M_);
     MatrixXd L(M_, M_);
 

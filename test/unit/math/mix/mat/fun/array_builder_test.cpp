@@ -6,8 +6,8 @@ using stan::math::fvar;
 using stan::math::var;
 
 TEST(AgradMixMatrixArrayBuilder, fvar_var) {
-  using std::vector;
   using stan::math::array_builder;
+  using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<var> >().array().size());
 
@@ -57,8 +57,8 @@ TEST(AgradMixMatrixArrayBuilder, fvar_var) {
 }
 
 TEST(AgradMixMatrixArrayBuilder, fvar_fvar_var) {
-  using std::vector;
   using stan::math::array_builder;
+  using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<fvar<var> > >().array().size());
 

@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, trace_gen_quad_form_mat) {
-  using stan::math::trace_gen_quad_form;
   using stan::math::matrix_d;
+  using stan::math::trace_gen_quad_form;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);

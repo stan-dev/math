@@ -16,8 +16,8 @@ TEST(AgradRevErrorHandlingScalar, CheckPositive) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_positive;
+  using stan::math::var;
 
   const char* function = "check_positive";
   var a(5.0);

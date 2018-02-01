@@ -4,10 +4,10 @@
 #include <test/unit/math/rev/mat/util.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
-using stan::math::var;
+using Eigen::Matrix;
 using stan::math::quad_form_diag;
+using stan::math::var;
 
 TEST(MathMatrix, quadFormDiag2_vv) {
   Matrix<var, Dynamic, Dynamic> m(3, 3);

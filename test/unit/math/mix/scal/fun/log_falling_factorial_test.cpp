@@ -50,8 +50,8 @@ double third_deriv_abb
 
 TEST(AgradFwdLogFallingFactorial, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> b(3.0, 1.0);
@@ -68,8 +68,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_x) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> b(3.0, 0.0);
@@ -82,8 +82,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 0.0);
   fvar<var> b(3.0, 1.0);
@@ -96,8 +96,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -123,8 +123,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_1stDeriv) {
 
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -144,8 +144,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -165,8 +165,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;

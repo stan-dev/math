@@ -13,8 +13,8 @@ namespace math {
 
 template <typename T>
 inline fvar<T> pow(const fvar<T>& x1, const fvar<T>& x2) {
-  using std::pow;
   using std::log;
+  using std::pow;
   T pow_x1_x2(pow(x1.val_, x2.val_));
   return fvar<T>(pow_x1_x2, (x2.d_ * log(x1.val_) + x2.val_ * x1.d_ / x1.val_)
                                 * pow_x1_x2);
@@ -22,8 +22,8 @@ inline fvar<T> pow(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> pow(double x1, const fvar<T>& x2) {
-  using std::pow;
   using std::log;
+  using std::pow;
   T u = pow(x1, x2.val_);
   return fvar<T>(u, x2.d_ * log(x1) * u);
 }

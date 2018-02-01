@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfGamma : public AgradCdfTest {
  public:
@@ -80,8 +80,8 @@ class AgradCdfGamma : public AgradCdfTest {
   typename stan::return_type<T_y, T_shape, T_inv_scale>::type cdf_function(
       const T_y& y, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
-    using stan::math::gamma_p;
     using boost::math::gamma_p;
+    using stan::math::gamma_p;
 
     return gamma_p(alpha, beta * y);
   }

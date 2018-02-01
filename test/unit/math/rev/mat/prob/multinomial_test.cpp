@@ -14,9 +14,9 @@ void expect_propto(std::vector<int>& ns1, T_prob theta1, std::vector<int>& ns2,
                   stan::math::multinomial_log<true>(ns2, theta2), message);
 }
 
-using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::var;
 
 TEST(AgradDistributionsMultinomial, Propto) {
   std::vector<int> ns;

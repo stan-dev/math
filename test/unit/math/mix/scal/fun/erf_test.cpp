@@ -5,11 +5,11 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdErf, FvarVar_1stDeriv) {
+  using boost::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
   using std::sqrt;
-  using boost::math::erf;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = erf(x);
@@ -26,11 +26,11 @@ TEST(AgradFwdErf, FvarVar_1stDeriv) {
       2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()), g[0]);
 }
 TEST(AgradFwdErf, FvarVar_2ndDeriv) {
+  using boost::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
   using std::sqrt;
-  using boost::math::erf;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = erf(x);
@@ -44,11 +44,11 @@ TEST(AgradFwdErf, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
+  using boost::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
   using std::sqrt;
-  using boost::math::erf;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -89,11 +89,11 @@ TEST(AgradFwdErf, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
+  using boost::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
   using std::sqrt;
-  using boost::math::erf;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -133,11 +133,11 @@ TEST(AgradFwdErf, FvarFvarVar_2ndDeriv) {
       -2 * exp(-0.5 * 0.5) / sqrt(boost::math::constants::pi<double>()), r[0]);
 }
 TEST(AgradFwdErf, FvarFvarVar_3rdDeriv) {
+  using boost::math::erf;
   using stan::math::fvar;
   using stan::math::var;
   using std::exp;
   using std::sqrt;
-  using boost::math::erf;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

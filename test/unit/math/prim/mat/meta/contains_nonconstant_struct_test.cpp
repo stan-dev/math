@@ -15,9 +15,9 @@ typedef std::vector<const_v1> const_v2;
 typedef std::vector<const_v2> const_v3;
 
 TEST(MetaTraits, containsNonconstantStruct) {
-  using stan::contains_nonconstant_struct;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::contains_nonconstant_struct;
 
   EXPECT_FALSE(contains_nonconstant_struct<const_t1>::value);
   EXPECT_FALSE(contains_nonconstant_struct<const_t3>::value);

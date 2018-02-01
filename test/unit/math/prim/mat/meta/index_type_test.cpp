@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathMeta, index_type) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::index_type;
 
   expect_same_type<Matrix<double, Dynamic, Dynamic>::Index,

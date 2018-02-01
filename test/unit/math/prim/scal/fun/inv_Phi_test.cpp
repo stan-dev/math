@@ -4,8 +4,8 @@
 #include <limits>
 
 TEST(MathFunctions, inv_Phi) {
-  using stan::math::inv_Phi;
   using stan::math::Phi;
+  using stan::math::inv_Phi;
   EXPECT_FLOAT_EQ(0.0, inv_Phi(0.5));
   double p = 0.123456789;
   EXPECT_FLOAT_EQ(p, Phi(inv_Phi(p)));

@@ -220,10 +220,10 @@ TEST(AgradFwdMatrixOperatorMultiplication, fd_matrix_scalar) {
   EXPECT_FLOAT_EQ(2, output(1, 1).d_);
 }
 TEST(AgradFwdMatrixOperatorMultiplication, fd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   row_vector_d d1(3);
   row_vector_fd v1(3);
@@ -256,10 +256,10 @@ TEST(AgradFwdMatrixOperatorMultiplication, fd_rowvector_vector) {
 }
 TEST(AgradFwdMatrixOperatorMultiplication, fd_vector_rowvector) {
   using stan::math::matrix_fd;
-  using stan::math::vector_d;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   vector_d d1(3);
   vector_fd v1(3);
@@ -411,9 +411,9 @@ TEST(AgradFwdMatrixOperatorMultiplication, fd_matrix_vector_exception) {
 TEST(AgradFwdMatrixOperatorMultiplication, fd_rowvector_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fd;
+  using stan::math::vector_fd;
 
   row_vector_d d1(3);
   row_vector_fd v1(3);
@@ -773,10 +773,10 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_matrix_scalar) {
   EXPECT_FLOAT_EQ(2, output(1, 1).d_.val());
 }
 TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
@@ -817,10 +817,10 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_vector) {
 }
 TEST(AgradFwdMatrixOperatorMultiplication, ffd_vector_rowvector) {
   using stan::math::matrix_ffd;
-  using stan::math::vector_d;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   vector_d d1(3);
   vector_ffd v1(3);
@@ -986,9 +986,9 @@ TEST(AgradFwdMatrixOperatorMultiplication, ffd_matrix_vector_exception) {
 TEST(AgradFwdMatrixOperatorMultiplication, ffd_rowvector_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_ffd;
 
   row_vector_d d1(3);
   row_vector_ffd v1(3);
