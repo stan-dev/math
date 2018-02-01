@@ -39,20 +39,20 @@ def alsoNotify() {
     } else ""
 }
 def mathUrl() { "https://github.com/stan-dev/math" }
-def isFork() { env.CHANGE_URL && !env.CHANGE_URL.startsWith(mathUrl()) }
+def isFork() { env.CHANGE_FORK != null }
+def isPR() { env.CHANGE_URL != null }
 def branchName() {
-    if (env.CHANGE_BRANCH) {
+    br = env.BRANCH_NAME
+    if (isPR()) {
         br = env.CHANGE_BRANCH
         if (isFork()) {
-            br = "autoformat/" + br
+            br = "autoformat/" + env.CHANGE_FORK + br
         }
-    } else {
-        br = env.BRANCH_NAME
     }
     return br
 }
-def remoteName() { isFork() ? mathUrl() : "origin" }
-def force() { isFork() ? "-f" : "" }
+def remoteName() { isFork() ? "https://github.com/stan-dev/math" : "origin" }
+def force() { (isPR() && isFork()) ? "-f" : "" }
 
 pipeline {
     agent none
