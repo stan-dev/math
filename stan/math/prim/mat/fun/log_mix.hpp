@@ -6,6 +6,9 @@
 #include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -18,6 +21,7 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+
 
 namespace stan {
 namespace math {
@@ -94,6 +98,81 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   return ops_partials.build(logp);
 }
+
+  template <typename T_theta, typename T_lam>
+  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > >::type
+  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> >& lambda) {
+    //static const char* function = "log_mix";
+    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > >::type
+      T_partials_return;
+
+    typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+
+    typedef typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> T_partials_mat;
+
+    const int N = length(lambda);
+    const int M = theta.size();
+/*
+    check_bounded(function, "theta", theta, 0, 1);
+    check_not_nan(function, "lambda", lambda);
+    check_not_nan(function, "theta", theta);
+    check_finite(function, "lambda", lambda);
+    check_finite(function, "theta", theta);
+    check_consistent_sizes(function, "theta", theta, "lambda", lambda);
+*/
+
+  scalar_seq_view<T_theta> theta_vec(theta);
+  T_partials_vec theta_dbl(M);
+  for (int m = 0; m < M; ++m)
+    theta_dbl[m] = value_of(theta_vec[m]);
+
+    T_partials_mat lam_dbl(N, M);
+    vector_seq_view<std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > lam_vec(lambda);
+    for (int n = 0; n < N; ++n)
+        lam_dbl.row(n) = value_of(lam_vec[n]);
+
+    T_partials_mat logp_tmp(N, M);
+    for (int n = 0; n < N; ++n)
+      for (int m = 0; m < M; ++m)
+        logp_tmp(n, m) = log(theta_dbl[m]) + lam_dbl(n, m);
+
+    T_partials_vec logp(N, 1);
+    for (int n = 0; n < N; ++n) {
+      T_partials_vec tmp_vec = logp_tmp.row(n);
+      logp[n] = log_sum_exp(tmp_vec);
+    }
+
+    T_partials_mat theta_deriv_tmp(N, M);
+    for (int n = 0; n < N; ++n)
+      theta_deriv_tmp.row(n).array() = (lam_dbl.row(n).array() - logp[n]).exp();
+
+    T_partials_vec theta_deriv(M, 1);
+    for (int m = 0; m < M; ++m)
+      theta_deriv[m] += theta_deriv_tmp.col(m).sum();
+
+    T_partials_mat lam_deriv_tmp(N, M);
+    for (int n = 0; n < N; ++n)
+      for (int m = 0; m < M; ++m)
+        lam_deriv_tmp(n, m) = theta_deriv_tmp(n, m) * theta_dbl[m];
+
+    std::vector<T_partials_vec> lam_deriv(N);
+    for (int n = 0; n < N; ++n) {
+      T_partials_vec lam_deriv_tmp2 = lam_deriv_tmp.row(n);
+      lam_deriv[n] = lam_deriv_tmp2;
+    }
+
+    operands_and_partials<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > ops_partials(theta, lambda);
+    if (!is_constant_struct<T_theta>::value) {
+        ops_partials.edge1_.partials_ = theta_deriv;
+    }
+
+    if (!is_constant_struct<T_lam>::value) {
+      for (int n = 0; n < N; ++n)
+        ops_partials.edge2_.partials_vec_[n] = lam_deriv[n];
+    }
+
+    return ops_partials.build(logp.sum());
+  }
 }  // namespace math
 }  // namespace stan
 #endif
