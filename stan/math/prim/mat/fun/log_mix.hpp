@@ -132,11 +132,9 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
         lam_dbl.row(n) = value_of(lam_vec[n]);
 
     T_partials_mat logp_tmp(N, M);
-    for (int n = 0; n < N; ++n)
-      for (int m = 0; m < M; ++m)
-        logp_tmp(n, m) = log(theta_dbl[m]) + lam_dbl(n, m);
+    logp_tmp = log(theta_dbl.transpose()).replicate(N, 1) + lam_dbl;
 
-    T_partials_vec logp(N, 1);
+    T_partials_vec logp(N);
     for (int n = 0; n < N; ++n) {
       T_partials_vec tmp_vec = logp_tmp.row(n);
       logp[n] = log_sum_exp(tmp_vec);
@@ -146,7 +144,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     for (int n = 0; n < N; ++n)
       theta_deriv_tmp.row(n).array() = (lam_dbl.row(n).array() - logp[n]).exp();
 
-    T_partials_vec theta_deriv(M, 1);
+    T_partials_vec theta_deriv(M);
     for (int m = 0; m < M; ++m)
       theta_deriv[m] += theta_deriv_tmp.col(m).sum();
 
