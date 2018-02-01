@@ -40,9 +40,10 @@ def processCLIArgs():
     tests_help_msg += "         'test/unit/math/prim/scal/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
-    filter_help_msg = "Tests with file names matching this will be executed"
+    f_help_msg = "Only tests with file names matching these will be executed.\n"
+    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim mat'"
     parser.add_argument("-f", nargs="+", type=str, default = "",
-                        help=filter_help_msg)
+                        help=f_help_msg)
 
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
                         help="request additional script debugging output.")
