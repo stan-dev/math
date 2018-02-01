@@ -129,10 +129,9 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     T_partials_mat lam_dbl(N, M);
     vector_seq_view<std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > lam_vec(lambda);
     for (int n = 0; n < N; ++n)
-        lam_dbl.row(n) = value_of(lam_vec[n]);
+      lam_dbl.row(n) = value_of(lam_vec[n]);
 
-    T_partials_mat logp_tmp(N, M);
-    logp_tmp = log(theta_dbl.transpose()).replicate(N, 1) + lam_dbl;
+    T_partials_mat logp_tmp = log(theta_dbl.transpose()).replicate(N, 1) + lam_dbl;
 
     T_partials_vec logp(N);
     for (int n = 0; n < N; ++n) {
@@ -140,33 +139,17 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
       logp[n] = log_sum_exp(tmp_vec);
     }
 
-    T_partials_mat theta_deriv_tmp(N, M);
+    T_partials_mat deriv_tmp(N, M);
     for (int n = 0; n < N; ++n)
-      theta_deriv_tmp.row(n).array() = (lam_dbl.row(n).array() - logp[n]).exp();
-
-    T_partials_vec theta_deriv(M);
-    for (int m = 0; m < M; ++m)
-      theta_deriv[m] += theta_deriv_tmp.col(m).sum();
-
-    T_partials_mat lam_deriv_tmp(N, M);
-    for (int n = 0; n < N; ++n)
-      for (int m = 0; m < M; ++m)
-        lam_deriv_tmp(n, m) = theta_deriv_tmp(n, m) * theta_dbl[m];
-
-    std::vector<T_partials_vec> lam_deriv(N);
-    for (int n = 0; n < N; ++n) {
-      T_partials_vec lam_deriv_tmp2 = lam_deriv_tmp.row(n);
-      lam_deriv[n] = lam_deriv_tmp2;
-    }
+      deriv_tmp.row(n).array() = (lam_dbl.row(n).array() - logp[n]).exp();
 
     operands_and_partials<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > ops_partials(theta, lambda);
-    if (!is_constant_struct<T_theta>::value) {
-        ops_partials.edge1_.partials_ = theta_deriv;
-    }
+    if (!is_constant_struct<T_theta>::value)
+      ops_partials.edge1_.partials_ = deriv_tmp.colwise().sum();
 
     if (!is_constant_struct<T_lam>::value) {
       for (int n = 0; n < N; ++n)
-        ops_partials.edge2_.partials_vec_[n] = lam_deriv[n];
+        ops_partials.edge2_.partials_vec_[n] = deriv_tmp.row(n).cwiseProduct(theta_dbl.transpose());
     }
 
     return ops_partials.build(logp.sum());
