@@ -25,7 +25,7 @@ namespace stan {
      * @param x std::vector of elements that can be used in square distance.
      *    This function assumes each element of x is the same size.
      * @param sigma standard deviation
-     * @param l length scale
+     * @param length_scale length scale
      * @return squared distance
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
@@ -75,7 +75,7 @@ namespace stan {
      * @param x std::vector of elements that can be used in square distance.
      *    This function assumes each element of x is the same size.
      * @param sigma standard deviation
-     * @param l std::vector length scale
+     * @param length_scale std::vector length scale
      * @return squared distance
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
@@ -139,7 +139,7 @@ namespace stan {
      * @param x1 std::vector of elements that can be used in square distance
      * @param x2 std::vector of elements that can be used in square distance
      * @param sigma standard deviation
-     * @param l length scale
+     * @param length_scale length scale
      * @return squared distance
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
@@ -189,7 +189,7 @@ namespace stan {
      * @param x1 std::vector of elements that can be used in square distance
      * @param x2 std::vector of elements that can be used in square distance
      * @param sigma standard deviation
-     * @param l std::vector of length scale
+     * @param length_scale std::vector of length scale
      * @return squared distance
      * @throw std::domain_error if sigma <= 0, l <= 0, or
      *   x is nan or infinite
