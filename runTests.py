@@ -40,9 +40,15 @@ def processCLIArgs():
     tests_help_msg += "         'test/unit/math/prim/scal/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
+    f_help_msg = "Only tests with file names matching these will be executed.\n"
+    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim mat'"
+    parser.add_argument("-f", nargs="+", type=str, default = "",
+                        help=f_help_msg)
 
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
                         help="request additional script debugging output.")
+    parser.add_argument("-m", "--make-only", dest="make_only",
+                        action="store_true", help="Don't run tests, just try to make them.")
 
     # And parse the command line against those rules
     return parser.parse_args()
@@ -56,11 +62,8 @@ def stopErr(msg, returncode):
 
 
 def isWin():
-    if (platform.system().lower().startswith("windows")
-            or os.name.lower().startswith("windows")):
-        return True
-    return False
-
+    return (platform.system().lower().startswith("windows")
+            or os.name.lower().startswith("windows"))
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -72,7 +75,6 @@ def mungeName(name):
             name = name.replace("\\", "/")
 
     return name
-
 
 def doCommand(command):
     """Run command as a shell command and report/exit on errors."""
@@ -86,16 +88,12 @@ def doCommand(command):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    if j is None:
-        command = 'make generate-tests -s'
-    else:
-        command = 'make -j%d generate-tests -s' % j
-    doCommand(command)
+    doCommand('make -j%d generate-tests -s' % (j or 1))
 
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    doCommand('make -j%d %s' % (j or 1, mungeName(name)))
+    doCommand('make -j%d %s' % (j or 1, name))
 
 def runTest(name):
     executable = mungeName(name).replace("/", os.sep)
@@ -103,14 +101,20 @@ def runTest(name):
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
     doCommand(command)
 
-def findTests(args):
-    folders = filter(os.path.isdir, args)
-    nonfolders = list(set(args) - set(folders))
+def findTests(base_path, filter_names):
+    folders = filter(os.path.isdir, base_path)
+    nonfolders = list(set(base_path) - set(folders))
     tests = nonfolders + [os.path.join(root, n)
             for f in folders
             for root, _, names in os.walk(f)
-            for n in names]
-    return filter(lambda n: n.endswith(testsfx), tests)
+            for n in names
+            if n.endswith(testsfx)]
+    tests = map(mungeName, tests)
+    tests = [test
+            for test in tests
+            if all(filter_name in test
+                   for filter_name in filter_names)]
+    return tests
 
 def batched(tests):
     return [tests[i:i + batchSize] for i in range(0, len(tests), batchSize)]
@@ -123,7 +127,7 @@ def main():
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
 
-    tests = findTests(inputs.tests)
+    tests = findTests(inputs.tests, inputs.f)
     if not tests:
         stopErr("No matching tests found.", -1)
 
@@ -133,11 +137,12 @@ def main():
             print("Test batch: ", batch)
         makeTest(" ".join(batch), inputs.j)
 
-    # pass 2: run test targets
-    for t in tests:
-        if inputs.debug:
-            print("run single test: %s" % testname)
-        runTest(t)
+    if not inputs.make_only:
+        # pass 2: run test targets
+        for t in tests:
+            if inputs.debug:
+                print("run single test: %s" % testname)
+            runTest(t)
 
 
 if __name__ == "__main__":

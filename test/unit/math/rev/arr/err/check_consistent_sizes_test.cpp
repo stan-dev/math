@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
+  using stan::math::check_consistent_sizes;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_consistent_sizes;
 
   int N = 5;
   const char* function = "check_consistent_size";

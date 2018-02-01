@@ -5,9 +5,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
@@ -22,9 +22,9 @@ TEST(AgradFwdCbrt, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cbrt(x);
@@ -36,9 +36,9 @@ TEST(AgradFwdCbrt, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -73,9 +73,9 @@ TEST(AgradFwdCbrt, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdCbrt, FvarFvarVar_2ndDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -100,9 +100,9 @@ TEST(AgradFwdCbrt, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 * -2.0 / 3.0 / (3.0 * cbrt(1.5) * cbrt(1.5) * 1.5), r[0]);
 }
 TEST(AgradFwdCbrt, FvarFvarVar_3rdDeriv) {
+  using boost::math::cbrt;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::cbrt;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;

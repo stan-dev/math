@@ -1,17 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 
-#include <stan/math/prim/mat/fun/columns_dot_product.hpp>
-#include <stan/math/prim/mat/fun/columns_dot_self.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
+#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
+#include <stan/math/prim/scal/meta/partials_return_type.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/log_determinant.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
+#include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -47,8 +43,13 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
-  typedef typename return_type<T_y, T_loc, T_covar>::type lp_type;
-  lp_type lp(0.0);
+  typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
+      T_partials_return;
+  typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
+      matrix_partials_t;
+  typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
+
+  T_partials_return logp(0.0);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
@@ -101,37 +102,63 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     check_not_nan(function, "Random variable", y_vec[i]);
   }
 
+  operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
+
   if (size_y == 0)
-    return lp;
+    return ops_partials.build(0.0);
 
   if (include_summand<propto>::value)
-    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
+    logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  if (include_summand<propto, T_covar_elem>::value)
-    lp -= L.diagonal().array().log().sum() * size_vec;
+  matrix_partials_t L_dbl = value_of(L);
+  // do a single inversion
+  matrix_partials_t inv_trans_L_dbl
+      = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
+
+  // analytic expressions taken from
+  // http://qwone.com/~jason/writing/multivariateNormal.pdf
+  // written by Jason D. M. Rennie
+  // expressions adapted to avoid (most) inversions
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
-    lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<typename return_type<T_y, T_loc>::type, Eigen::Dynamic, 1>
-          y_minus_mu(size_y);
+      vector_partials_t y_minus_mu_dbl(size_y);
       for (int j = 0; j < size_y; j++)
-        y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      Eigen::Matrix<typename return_type<T_y, T_loc, T_covar>::type,
-                    Eigen::Dynamic, 1>
-          half(mdivide_left_tri_low(L, y_minus_mu));
-      // FIXME: this code does not compile. revert after fixing subtract()
-      // Eigen::Matrix<typename
-      //               boost::math::tools::promote_args<T_covar,
-      //                 typename value_type<T_loc>::type,
-      //                 typename value_type<T_y>::type>::type>::type,
-      //               Eigen::Dynamic, 1>
-      //   half(mdivide_left_tri_low(L, subtract(y, mu)));
-      sum_lp_vec += dot_self(half);
+        y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
+
+      vector_partials_t half
+          = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
+      // alternative which avoids inversions
+      // vector_partials_t scaled_diff
+      //    = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
+      vector_partials_t scaled_diff = inv_trans_L_dbl * half;
+
+      logp -= 0.5 * dot_self(half);
+
+      if (!is_constant_struct<T_y>::value) {
+        for (int j = 0; j < size_y; j++)
+          ops_partials.edge1_.partials_vec_[i](j) -= scaled_diff(j);
+      }
+      if (!is_constant_struct<T_loc>::value) {
+        for (int j = 0; j < size_y; j++)
+          ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
+      }
+      if (!is_constant_struct<T_covar>::value) {
+        ops_partials.edge3_.partials_ += scaled_diff * half.transpose();
+      }
     }
-    lp -= 0.5 * sum_lp_vec;
   }
-  return lp;
+
+  if (include_summand<propto, T_covar_elem>::value) {
+    logp -= L_dbl.diagonal().array().log().sum() * size_vec;
+    if (!is_constant_struct<T_covar>::value) {
+      // ops_partials.edge3_.partials_ -= size_vec *
+      // mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
+      ops_partials.edge3_.partials_ -= size_vec * inv_trans_L_dbl;
+    }
+  }
+
+  return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_covar>

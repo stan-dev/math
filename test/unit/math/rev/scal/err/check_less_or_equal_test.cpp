@@ -39,8 +39,8 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_less_or_equal;
+  using stan::math::var;
 
   const char* function = "check_less_or_equal";
   var a(5.0);

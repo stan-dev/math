@@ -4,8 +4,8 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(ProbDistributionsMultinomial, fvar_double) {
   using stan::math::fvar;

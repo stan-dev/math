@@ -90,8 +90,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_val) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
@@ -142,8 +142,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
@@ -230,8 +230,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_dv) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_dv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
@@ -312,8 +312,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vd) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vd) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);

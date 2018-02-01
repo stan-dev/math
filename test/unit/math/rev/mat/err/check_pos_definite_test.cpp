@@ -3,9 +3,9 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::var;
 
   Matrix<var, Dynamic, Dynamic> y;
   double nan = std::numeric_limits<double>::quiet_NaN();

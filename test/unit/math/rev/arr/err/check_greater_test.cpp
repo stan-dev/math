@@ -6,9 +6,9 @@ using stan::math::check_greater;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
+  using stan::math::check_greater;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_greater;
 
   int N = 5;
   const char* function = "check_greater";

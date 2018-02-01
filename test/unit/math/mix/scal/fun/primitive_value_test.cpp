@@ -5,9 +5,9 @@
 #include <limits>
 
 TEST(AgradFwd, primitiveValueRevNested) {
-  using stan::math::var;
   using stan::math::fvar;
   using stan::math::primitive_value;
+  using stan::math::var;
 
   fvar<var> a = 5.2;
   EXPECT_FLOAT_EQ(5.2, primitive_value(a));
@@ -19,8 +19,8 @@ TEST(AgradFwd, primitiveValueRevNested) {
 
 TEST(AgradFwd, primitiveValueNanRevNested) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::primitive_value;
+  using stan::math::var;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   fvar<var> a = nan;

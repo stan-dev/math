@@ -3,8 +3,8 @@
 #include <vector>
 #include <random>
 
-using stan::math::var;
 using stan::math::fvar;
+using stan::math::var;
 
 typedef fvar<double> fd;
 typedef fvar<var> fv;

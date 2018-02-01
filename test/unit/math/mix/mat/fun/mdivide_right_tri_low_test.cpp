@@ -306,8 +306,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
@@ -358,8 +358,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
@@ -391,8 +391,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
@@ -443,8 +443,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
@@ -478,9 +478,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_2ndDeriv) {
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri_low;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   row_vector_fv fv1(4), fv2(3);
   fv1.setZero();
@@ -1139,8 +1139,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_1stDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
@@ -1192,8 +1192,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
@@ -1226,8 +1226,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
@@ -1260,8 +1260,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_3rdDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
@@ -1303,8 +1303,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
@@ -1356,8 +1356,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
@@ -1390,8 +1390,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
@@ -1424,8 +1424,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
@@ -1469,9 +1469,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_3rdDeriv) {
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri_low;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   row_vector_ffv fv1(4), fv2(3);
   fv1.setZero();

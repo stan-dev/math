@@ -17,8 +17,8 @@ TEST(AgradFwdLog1p, Fvar) {
 }
 
 TEST(AgradFwdLog1p, exceps) {
-  using stan::math::log1p;
   using stan::math::fvar;
+  using stan::math::log1p;
   fvar<double> x = -2;
   EXPECT_THROW(log1p(x), std::domain_error);
 }

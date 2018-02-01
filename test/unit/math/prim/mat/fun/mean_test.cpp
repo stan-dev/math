@@ -48,8 +48,8 @@ TEST(MathMatrix, mean) {
 }
 
 TEST(MathMatrix, mean_exception) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> m;
   Matrix<double, Dynamic, 1> v;
   Matrix<double, 1, Dynamic> rv;
