@@ -78,8 +78,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
 
-  T_partials_vec theta_deriv;
-  theta_deriv.array() = (lam_dbl.array() - logp).exp();
+  T_partials_vec theta_deriv = (lam_dbl - logp).unaryExpr([](T_partials_return x) { return exp(x); });
 
   T_partials_vec lam_deriv = theta_deriv.cwiseProduct(theta_dbl);
 
@@ -108,6 +107,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
     typedef typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> T_partials_mat;
 
+    typedef typename std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > T_lamvec_type;
+
     const int N = length(lambda);
     const int M = theta.size();
 /*
@@ -124,31 +125,82 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   for (int m = 0; m < M; ++m)
     theta_dbl[m] = value_of(theta_vec[m]);
 
-    T_partials_mat lam_dbl(N, M);
-    vector_seq_view<std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > lam_vec(lambda);
+  T_partials_mat lam_dbl(M, N);
+  vector_seq_view<T_lamvec_type> lam_vec(lambda);
+  for (int n = 0; n < N; ++n)
+    lam_dbl.col(n) = value_of(lam_vec[n]);
+
+  T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
+
+  T_partials_vec logp(N);
+  for (int n = 0; n < N; ++n)
+    logp[n] = log_sum_exp(logp_tmp.col(n).eval());
+
+  T_partials_mat derivs = (lam_dbl - logp.transpose().replicate(M, 1)).unaryExpr([](T_partials_return x) { return exp(x); });
+
+  operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
+  if (!is_constant_struct<T_theta>::value)
+      ops_partials.edge1_.partials_ = derivs.rowwise().sum();
+
+  if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
-      lam_dbl.row(n) = value_of(lam_vec[n]);
+        ops_partials.edge2_.partials_vec_[n] = derivs.col(n).cwiseProduct(theta_dbl);
+  }
 
-    T_partials_mat logp_tmp = log(theta_dbl.transpose()).replicate(N, 1) + lam_dbl;
+    return ops_partials.build(logp.sum());
+  }
 
-    T_partials_vec logp(N);
-    for (int n = 0; n < N; ++n) {
-      T_partials_vec tmp_vec = logp_tmp.row(n);
-      logp[n] = log_sum_exp(tmp_vec);
-    }
 
-    T_partials_mat deriv_tmp(N, M);
+  template <typename T_theta, typename T_lam>
+  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > >::type
+  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> >& lambda) {
+    //static const char* function = "log_mix";
+    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > >::type
+      T_partials_return;
+
+    typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+
+    typedef typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> T_partials_mat;
+
+    typedef typename std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > T_lamvec_type;
+
+    const int N = length(lambda);
+    const int M = theta.size();
+/*
+    check_bounded(function, "theta", theta, 0, 1);
+    check_not_nan(function, "lambda", lambda);
+    check_not_nan(function, "theta", theta);
+    check_finite(function, "lambda", lambda);
+    check_finite(function, "theta", theta);
+    check_consistent_sizes(function, "theta", theta, "lambda", lambda);
+*/
+
+  scalar_seq_view<T_theta> theta_vec(theta);
+  T_partials_vec theta_dbl(M);
+  for (int m = 0; m < M; ++m)
+    theta_dbl[m] = value_of(theta_vec[m]);
+
+  T_partials_mat lam_dbl(M, N);
+  vector_seq_view<T_lamvec_type> lam_vec(lambda);
+  for (int n = 0; n < N; ++n)
+    lam_dbl.col(n) = value_of(lam_vec[n]);
+
+  T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
+
+  T_partials_vec logp(N);
+  for (int n = 0; n < N; ++n)
+    logp[n] = log_sum_exp(logp_tmp.col(n).eval());
+
+  T_partials_mat derivs = (lam_dbl - logp.transpose().replicate(M, 1)).unaryExpr([](T_partials_return x) { return exp(x); });
+
+  operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
+  if (!is_constant_struct<T_theta>::value)
+      ops_partials.edge1_.partials_ = derivs.rowwise().sum();
+
+  if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
-      deriv_tmp.row(n).array() = (lam_dbl.row(n).array() - logp[n]).exp();
-
-    operands_and_partials<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > > ops_partials(theta, lambda);
-    if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = deriv_tmp.colwise().sum();
-
-    if (!is_constant_struct<T_lam>::value) {
-      for (int n = 0; n < N; ++n)
-        ops_partials.edge2_.partials_vec_[n] = deriv_tmp.row(n).cwiseProduct(theta_dbl.transpose());
-    }
+        ops_partials.edge2_.partials_vec_[n] = derivs.col(n).cwiseProduct(theta_dbl);
+  }
 
     return ops_partials.build(logp.sum());
   }
