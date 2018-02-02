@@ -76,9 +76,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     lam_dbl[n] = value_of(lam_vec[n]);
 
-  T_partials_vec logp_tmp = log(theta_dbl) + lam_dbl;
-
-  T_partials_return logp = log_sum_exp(logp_tmp);
+  T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
 
   T_partials_vec theta_deriv;
   theta_deriv.array() = (lam_dbl.array() - logp).exp();
