@@ -26,6 +26,12 @@ namespace math {
  * a Cholesky factor L of the variance matrix.
  * Sigma = LL', a square, semi-positive definite matrix.
  *
+ * Analytic expressions taken from
+ * http://qwone.com/~jason/writing/multivariateNormal.pdf
+ * written by Jason D. M. Rennie.
+ *
+ * All expressions are adapted to avoid (most) inversions and maximal
+ * reuse of intermediates.
  *
  * @param y A scalar vector
  * @param mu The mean vector of the multivariate normal distribution.
@@ -43,23 +49,22 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
+  typedef typename return_type<T_y, T_loc, T_covar>::type T_return;
   typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
       T_partials_return;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       matrix_partials_t;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
 
-  T_partials_return logp(0.0);
-
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
-  size_t size_vec = max_size_mvt(y, mu);
+  const size_t size_vec = max_size_mvt(y, mu);
 
-  int size_y = y_vec[0].size();
-  int size_mu = mu_vec[0].size();
+  const int size_y = y_vec[0].size();
+  const int size_mu = mu_vec[0].size();
   if (size_vec > 1) {
+    // check size consistency of all random variables y
     int size_y_old = size_y;
-    int size_y_new;
     for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
       int size_y_new = y_vec[i].size();
       check_size_match(function,
@@ -71,8 +76,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
                        size_y_old);
       size_y_old = size_y_new;
     }
+    // check size consistency of all means mu
     int size_mu_old = size_mu;
-    int size_mu_new;
     for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
       check_size_match(function,
@@ -84,10 +89,6 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
                        size_mu_old);
       size_mu_old = size_mu_new;
     }
-    (void)size_y_old;
-    (void)size_y_new;
-    (void)size_mu_old;
-    (void)size_mu_new;
   }
 
   check_size_match(function, "Size of random variable", size_y,
@@ -102,23 +103,18 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     check_not_nan(function, "Random variable", y_vec[i]);
   }
 
-  operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
-
   if (size_y == 0)
-    return ops_partials.build(0.0);
+    return T_return(0.0);
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
 
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  matrix_partials_t L_dbl = value_of(L);
-  // do a single inversion
-  matrix_partials_t inv_trans_L_dbl
+  const matrix_partials_t L_dbl = value_of(L);
+  const matrix_partials_t inv_trans_L_dbl
       = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
-
-  // analytic expressions taken from
-  // http://qwone.com/~jason/writing/multivariateNormal.pdf
-  // written by Jason D. M. Rennie
-  // expressions adapted to avoid (most) inversions
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
@@ -126,12 +122,9 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       for (int j = 0; j < size_y; j++)
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
 
-      vector_partials_t half
+      const vector_partials_t half
           = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
-      // alternative which avoids inversions
-      // vector_partials_t scaled_diff
-      //    = mdivide_left_tri<Eigen::Upper>(trans_L_dbl, half);
-      vector_partials_t scaled_diff = inv_trans_L_dbl * half;
+      const vector_partials_t scaled_diff = inv_trans_L_dbl * half;
 
       logp -= 0.5 * dot_self(half);
 
@@ -152,8 +145,6 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   if (include_summand<propto, T_covar_elem>::value) {
     logp -= L_dbl.diagonal().array().log().sum() * size_vec;
     if (!is_constant_struct<T_covar>::value) {
-      // ops_partials.edge3_.partials_ -= size_vec *
-      // mdivide_left_tri<Eigen::Upper>(trans_L_dbl);
       ops_partials.edge3_.partials_ -= size_vec * inv_trans_L_dbl;
     }
   }
