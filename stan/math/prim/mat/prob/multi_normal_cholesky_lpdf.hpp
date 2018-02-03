@@ -62,7 +62,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
   const int size_y = y_vec[0].size();
   const int size_mu = mu_vec[0].size();
-  if (size_vec > 1) {
+  if (likely(size_vec > 1)) {
     // check size consistency of all random variables y
     int size_y_old = size_y;
     for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
@@ -103,7 +103,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     check_not_nan(function, "Random variable", y_vec[i]);
   }
 
-  if (size_y == 0)
+  if (unlikely(size_y == 0))
     return T_return(0.0);
 
   T_partials_return logp(0.0);
