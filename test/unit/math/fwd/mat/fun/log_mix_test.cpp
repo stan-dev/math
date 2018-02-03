@@ -63,7 +63,7 @@ void fvarfvar_test(T_a a, T_b b) {
 
 
 template <typename T_a, typename T_b>
-void fvar_vec_test(T_a a, T_b b) {
+void fvar_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.235;
   a[1].val_ = 0.152;
   a[2].val_ = 0.359;
@@ -73,25 +73,47 @@ void fvar_vec_test(T_a a, T_b b) {
   a[2].d_ = 1.0;
   a[3].d_ = 1.0;
 
-  b[0].val_ = -5.581;
-  b[1].val_ = -6.254;
-  b[2].val_ = -3.987;
-  b[3].val_ = -10.221;
-  b[0].d_ = 1.0;
-  b[1].d_ = 1.0;
-  b[2].d_ = 1.0;
-  b[3].d_ = 1.0;
+  b1[0].val_ = -5.581;
+  b1[1].val_ = -6.254;
+  b1[2].val_ = -3.987;
+  b1[3].val_ = -10.221;
+  b1[0].d_ = 1.0;
+  b1[1].d_ = 1.0;
+  b1[2].d_ = 1.0;
+  b1[3].d_ = 1.0;
 
-  std::vector<T_b> c{b, b, b, b};
+  T_b b2(4);
+
+  b2[0].val_ = -6.785;
+  b2[1].val_ = -4.351;
+  b2[2].val_ = -5.847;
+  b2[3].val_ = -7.362;
+  b2[0].d_ = 1.0;
+  b2[1].d_ = 1.0;
+  b2[2].d_ = 1.0;
+  b2[3].d_ = 1.0;
+
+  T_b b3(4);
+
+  b3[0].val_ = -7.251;
+  b3[1].val_ = -10.510;
+  b3[2].val_ = -12.302;
+  b3[3].val_ = -3.587;
+  b3[0].d_ = 1.0;
+  b3[1].d_ = 1.0;
+  b3[2].d_ = 1.0;
+  b3[3].d_ = 1.0;
+
+  std::vector<T_b> c{b1, b2, b3};
 
   fvar<double> out = log_mix(a, c);
 
-  EXPECT_FLOAT_EQ(out.val_, -4.8474302 * 4);
-  EXPECT_FLOAT_EQ(out.d_, 4.093988932 * 4);
+  EXPECT_FLOAT_EQ(out.val_, -15.457609);
+  EXPECT_FLOAT_EQ(out.d_, 15.164879);
 };
 
 template <typename T_a, typename T_b>
-void fvarfvar_vec_test(T_a a, T_b b) {
+void fvarfvar_vec_test(T_a a, T_b b1) {
   a[0].val_ = 0.235;
   a[1].val_ = 0.152;
   a[2].val_ = 0.359;
@@ -101,21 +123,44 @@ void fvarfvar_vec_test(T_a a, T_b b) {
   a[2].d_ = 1.0;
   a[3].d_ = 1.0;
 
-  b[0].val_ = -5.581;
-  b[1].val_ = -6.254;
-  b[2].val_ = -3.987;
-  b[3].val_ = -10.221;
-  b[0].d_ = 1.0;
-  b[1].d_ = 1.0;
-  b[2].d_ = 1.0;
-  b[3].d_ = 1.0;
+  b1[0].val_ = -5.581;
+  b1[1].val_ = -6.254;
+  b1[2].val_ = -3.987;
+  b1[3].val_ = -10.221;
+  b1[0].d_ = 1.0;
+  b1[1].d_ = 1.0;
+  b1[2].d_ = 1.0;
+  b1[3].d_ = 1.0;
 
-  std::vector<T_b> c{b, b, b, b};
+  T_b b2(4);
+
+  b2[0].val_ = -6.785;
+  b2[1].val_ = -4.351;
+  b2[2].val_ = -5.847;
+  b2[3].val_ = -7.362;
+  b2[0].d_ = 1.0;
+  b2[1].d_ = 1.0;
+  b2[2].d_ = 1.0;
+  b2[3].d_ = 1.0;
+
+  T_b b3(4);
+
+  b3[0].val_ = -7.251;
+  b3[1].val_ = -10.510;
+  b3[2].val_ = -12.302;
+  b3[3].val_ = -3.587;
+  b3[0].d_ = 1.0;
+  b3[1].d_ = 1.0;
+  b3[2].d_ = 1.0;
+  b3[3].d_ = 1.0;
+
+
+  std::vector<T_b> c{b1, b2, b3};
 
   fvar<fvar<double> > out = log_mix(a, c);
 
-  EXPECT_FLOAT_EQ(out.val_.val_, -4.8474302 * 4);
-  EXPECT_FLOAT_EQ(out.d_.val_, 4.093988932 * 4);
+  EXPECT_FLOAT_EQ(out.val_.val_, -15.457609);
+  EXPECT_FLOAT_EQ(out.d_.val_, 15.164879);
 };
 
 TEST(AgradFwdMatrixLogMix, fdValues) {

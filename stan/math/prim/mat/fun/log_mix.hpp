@@ -9,6 +9,7 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
+#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -142,7 +143,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum();
+      ops_partials.edge1_.partials_ = derivs.rowwise().sum().eval();
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
@@ -198,7 +199,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum();
+      ops_partials.edge1_.partials_ = derivs.rowwise().sum().eval();
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
