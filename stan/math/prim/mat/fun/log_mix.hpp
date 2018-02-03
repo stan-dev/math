@@ -78,7 +78,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
 
-  T_partials_vec theta_deriv = (lam_dbl - logp).unaryExpr([](T_partials_return x) { return exp(x); });
+  T_partials_vec theta_deriv(N);
+  theta_deriv.array() = (lam_dbl.array() - logp).exp();
 
   T_partials_vec lam_deriv = theta_deriv.cwiseProduct(theta_dbl);
 
@@ -97,28 +98,29 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 }
 
   template <typename T_theta, typename T_lam>
-  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > >::type
-  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> >& lambda) {
-    //static const char* function = "log_mix";
-    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > >::type
+  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
+  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, -1, 1> >& lambda) {
+    static const char* function = "log_mix";
+    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
       T_partials_return;
 
     typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-    typedef typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> T_partials_mat;
+    typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
 
-    typedef typename std::vector<Eigen::Matrix<T_lam, Eigen::Dynamic, 1> > T_lamvec_type;
+    typedef typename std::vector<Eigen::Matrix<T_lam, -1, 1> > T_lamvec_type;
 
     const int N = length(lambda);
     const int M = theta.size();
-/*
+
     check_bounded(function, "theta", theta, 0, 1);
-    check_not_nan(function, "lambda", lambda);
     check_not_nan(function, "theta", theta);
-    check_finite(function, "lambda", lambda);
     check_finite(function, "theta", theta);
-    check_consistent_sizes(function, "theta", theta, "lambda", lambda);
-*/
+    for (int n = 0; n < N; ++n) {
+      check_not_nan(function, "lambda", lambda[n]);
+      check_finite(function, "lambda", lambda[n]);
+      check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
+    }
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
@@ -152,28 +154,29 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
 
   template <typename T_theta, typename T_lam>
-  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > >::type
-  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> >& lambda) {
-    //static const char* function = "log_mix";
-    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > >::type
+  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
+  log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, 1, -1> >& lambda) {
+    static const char* function = "log_mix";
+    typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
       T_partials_return;
 
     typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-    typedef typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> T_partials_mat;
+    typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
 
-    typedef typename std::vector<Eigen::Matrix<T_lam, 1, Eigen::Dynamic> > T_lamvec_type;
+    typedef typename std::vector<Eigen::Matrix<T_lam, 1, -1> > T_lamvec_type;
 
     const int N = length(lambda);
     const int M = theta.size();
-/*
+
     check_bounded(function, "theta", theta, 0, 1);
-    check_not_nan(function, "lambda", lambda);
     check_not_nan(function, "theta", theta);
-    check_finite(function, "lambda", lambda);
     check_finite(function, "theta", theta);
-    check_consistent_sizes(function, "theta", theta, "lambda", lambda);
-*/
+    for (int n = 0; n < N; ++n) {
+      check_not_nan(function, "lambda", lambda[n]);
+      check_finite(function, "lambda", lambda[n]);
+      check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
+    }
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
