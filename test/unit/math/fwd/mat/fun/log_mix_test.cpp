@@ -190,6 +190,7 @@ TEST(AgradFwdMatrixLogMix, fdValues) {
 
   fvar_vec_test(vecd_prob, vecd_dens);
   fvar_vec_test(vecd_prob, row_vecd_dens);
+  fvar_vec_test(vecd_prob, std_dens);
   fvar_vec_test(row_vecd_prob, vecd_dens);
   fvar_vec_test(row_vecd_prob, row_vecd_dens);
 }
