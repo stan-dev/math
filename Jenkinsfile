@@ -24,7 +24,7 @@ def mailBuildResults(String label, additionalEmails='') {
 }
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${STAN_FILTERS}"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
@@ -144,6 +144,16 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('GPU Unit') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        sh "echo STAN_FILTERS=gpu > make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
