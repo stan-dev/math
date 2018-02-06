@@ -101,6 +101,7 @@ namespace {
     compiled_kernels["check_gpu"] = false;
   }
 }
+
 // TODO(Rok): select some other platform/device than 0
 // TODO(Rok): option to turn profiling OFF
 /**
@@ -286,6 +287,7 @@ class opencl_context {
 };
 
 static opencl_context opencl_context;
+
 
 }  // namespace math
 }  // namespace stan
