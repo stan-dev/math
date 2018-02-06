@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {

@@ -11,8 +11,8 @@ template <typename F>
 double finite_diff_hess_helper(
     const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x, int lambda,
     double epsilon = 1e-03) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   Matrix<double, Dynamic, 1> x_temp(x);
 
@@ -64,8 +64,8 @@ void finite_diff_hessian(const F& f, const Eigen::Matrix<double, -1, 1>& x,
                          double& fx, Eigen::Matrix<double, -1, 1>& grad_fx,
                          Eigen::Matrix<double, -1, -1>& hess_fx,
                          double epsilon = 1e-03) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   int d = x.size();
 

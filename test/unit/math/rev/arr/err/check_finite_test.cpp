@@ -4,9 +4,9 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
+  using stan::math::check_finite;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_finite;
 
   int N = 5;
   const char* function = "check_finite";

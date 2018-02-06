@@ -4,9 +4,9 @@
 // For speed comparisons
 // #include <chrono>
 
-using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::var;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.

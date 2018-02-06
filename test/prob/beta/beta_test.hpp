@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/utility/enable_if.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsBeta : public AgradDistributionTest {
  public:
@@ -81,8 +81,8 @@ class AgradDistributionsBeta : public AgradDistributionTest {
   typename stan::return_type<T_y, T_scale1, T_scale2, T3, T4, T5>::type
   log_prob_function(const T_y& y, const T_scale1& alpha, const T_scale2& beta,
                     const T3&, const T4&, const T5&) {
-    using std::log;
     using stan::math::log1m;
+    using std::log;
 
     return (alpha - 1.0) * log(y) + (beta - 1.0) * log1m(y)
            + lgamma(alpha + beta) - lgamma(alpha) - lgamma(beta);

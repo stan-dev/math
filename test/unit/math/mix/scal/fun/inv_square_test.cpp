@@ -5,8 +5,8 @@
 
 TEST(AgradFwdInvSquare, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_square;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv_square(x);
@@ -21,8 +21,8 @@ TEST(AgradFwdInvSquare, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvSquare, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_square;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv_square(x);
@@ -35,8 +35,8 @@ TEST(AgradFwdInvSquare, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdInvSquare, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_square;
+  using stan::math::var;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -57,8 +57,8 @@ TEST(AgradFwdInvSquare, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvSquare, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_square;
+  using stan::math::var;
   using std::log;
 
   fvar<fvar<var> > x;

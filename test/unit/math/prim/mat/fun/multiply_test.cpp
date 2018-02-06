@@ -108,8 +108,8 @@ TEST(MathMatrix, multiply) {
 }
 
 TEST(AgradRevMatrix, multiply_int) {
-  using stan::math::multiply;
   using stan::math::assign;
+  using stan::math::multiply;
 
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
 

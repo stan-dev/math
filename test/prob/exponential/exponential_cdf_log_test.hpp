@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfLogExponential : public AgradCdfLogTest {
  public:
@@ -63,8 +63,8 @@ class AgradCdfLogExponential : public AgradCdfLogTest {
   typename stan::return_type<T_y, T_inv_scale>::type cdf_log_function(
       const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
       const T5&) {
-    using std::log;
     using std::exp;
+    using std::log;
 
     return log(1.0 - exp(-beta * y));
   }

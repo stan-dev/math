@@ -29,9 +29,9 @@ struct simple_eq_functor_nopara {
   inline Eigen::Matrix<typename boost::math::tools::promote_args<T0, T1>::type,
                        Eigen::Dynamic, 1>
   operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-           const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-           const std::vector<double>& dat, const std::vector<int>& dat_int,
-           std::ostream* pstream__) const {
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat, const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
     typedef typename boost::math::tools::promote_args<T0, T1>::type scalar;
     Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - dat[0] * dat[1];

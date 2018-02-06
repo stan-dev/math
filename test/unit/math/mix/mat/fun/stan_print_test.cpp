@@ -6,12 +6,12 @@
 #include <vector>
 
 TEST(AgradMixMatrixStanPrint, fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::stan_print;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::stan_print;
   using stan::math::var;
+  using std::vector;
 
   std::stringstream output;
   fvar<var> a(1, 2);
@@ -50,12 +50,12 @@ TEST(AgradMixMatrixStanPrint, fvar_var) {
 }
 
 TEST(AgradMixMatrixStanPrint, fvar_fvar_var) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::stan_print;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::stan_print;
   using stan::math::var;
+  using std::vector;
 
   std::stringstream output;
   fvar<fvar<var> > a(1, 2);

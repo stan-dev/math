@@ -9,8 +9,8 @@ class AgradFwdLogit : public testing::Test {
 
 TEST_F(AgradFwdLogit, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::logit;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = logit(x);
@@ -25,8 +25,8 @@ TEST_F(AgradFwdLogit, FvarVar_1stDeriv) {
 }
 TEST_F(AgradFwdLogit, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::logit;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = logit(x);
@@ -39,8 +39,8 @@ TEST_F(AgradFwdLogit, FvarVar_2ndDeriv) {
 
 TEST_F(AgradFwdLogit, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::logit;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -76,8 +76,8 @@ TEST_F(AgradFwdLogit, FvarFvarVar_1stDeriv) {
 }
 TEST_F(AgradFwdLogit, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::logit;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

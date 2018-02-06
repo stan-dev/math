@@ -238,8 +238,8 @@ void expect_throw(const F& f, const Eigen::VectorXd& x) {
 
 template <typename F>
 void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   expect_throw<var>(f, x);
   expect_throw<fvar<double> >(f, x);
   expect_throw<fvar<fvar<double> > >(f, x);

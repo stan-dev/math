@@ -110,9 +110,9 @@ TEST(MathMatrix, matrix_exp_3x3) {
 }
 
 TEST(MathMatrix, matrix_exp_25x25) {
-  using stan::math::matrix_v;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::matrix_v;
   using stan::math::var;
 
   int size = 25;

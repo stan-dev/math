@@ -74,8 +74,8 @@ integrate_ode_rk45(const F& f, const std::vector<T1> y0, double t0,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
-  using boost::numeric::odeint::runge_kutta_dopri5;
   using boost::numeric::odeint::max_step_checker;
+  using boost::numeric::odeint::runge_kutta_dopri5;
 
   check_finite("integrate_ode_rk45", "initial state", y0);
   check_finite("integrate_ode_rk45", "initial time", t0);

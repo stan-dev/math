@@ -12,8 +12,8 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using std::vector;
 
-using stan::math::var;
 using stan::math::to_var;
+using stan::math::var;
 
 template <typename T_y, typename T_loc, typename T_scale>
 void expect_propto(T_y y1, T_loc mu1, T_scale sigma1, T_y y2, T_loc mu2,
@@ -84,8 +84,8 @@ struct multi_normal_prec_fun {
 
   template <typename T>
   T operator()(const std::vector<T>& x) const {
-    using Eigen::Matrix;
     using Eigen::Dynamic;
+    using Eigen::Matrix;
     using stan::math::var;
     Matrix<T, Dynamic, 1> y(K_);
     Matrix<T, Dynamic, 1> mu(K_);

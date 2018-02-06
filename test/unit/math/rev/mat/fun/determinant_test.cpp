@@ -5,8 +5,8 @@
 #include <vector>
 
 TEST(AgradRevMatrix, determinant) {
-  using stan::math::matrix_v;
   using stan::math::determinant;
+  using stan::math::matrix_v;
 
   // expected from auto-diff/Eigen
   AVEC x1 = createAVEC(0, 1, 2, 3);
@@ -29,14 +29,14 @@ TEST(AgradRevMatrix, determinant) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 TEST(AgradRevMatrix, deteriminant_exception) {
-  using stan::math::matrix_v;
   using stan::math::determinant;
+  using stan::math::matrix_v;
 
   EXPECT_THROW(determinant(matrix_v(2, 3)), std::invalid_argument);
 }
 TEST(AgradRevMatrix, determinant_grad) {
-  using stan::math::matrix_v;
   using stan::math::determinant;
+  using stan::math::matrix_v;
 
   matrix_v X(2, 2);
   AVAR a = 2.0;
@@ -61,8 +61,8 @@ TEST(AgradRevMatrix, determinant_grad) {
 }
 TEST(AgradRevMatrix, determinant3by3) {
   // just test it can handle it
-  using stan::math::matrix_v;
   using stan::math::determinant;
+  using stan::math::matrix_v;
 
   matrix_v Z(9, 9);
   for (int i = 0; i < 9; ++i)
