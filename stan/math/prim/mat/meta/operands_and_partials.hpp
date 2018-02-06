@@ -15,14 +15,14 @@ namespace internal {
 /* This class will be used for both multivariate (nested container)
    operands_and_partials edges as well as for the univariate case.
  */
-template <int R, int C>
-class ops_partials_edge<double, Eigen::Matrix<double, R, C>> {
+template <typename T, typename A, int R, int C>
+class ops_partials_edge<A, Eigen::Matrix<T, R, C>> {
  public:
-  typedef empty_broadcast_array<double, Eigen::Matrix<double, R, C>> partials_t;
+  typedef empty_broadcast_array<A, Eigen::Matrix<T, R, C>> partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, Eigen::Matrix<double, R, C>> partials_vec_;
+  empty_broadcast_array<partials_t, Eigen::Matrix<T, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Eigen::Matrix<double, R, C> ops) {}
+  explicit ops_partials_edge(const Eigen::Matrix<T, R, C> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -34,14 +34,14 @@ class ops_partials_edge<double, Eigen::Matrix<double, R, C>> {
   int size() const { return 0; }
 };
 
-template <int R, int C>
-class ops_partials_edge<double, std::vector<Eigen::Matrix<double, R, C>>> {
+template <typename T, typename A, int R, int C>
+class ops_partials_edge<A, std::vector<Eigen::Matrix<T, R, C>>> {
  public:
-  typedef empty_broadcast_array<double, Eigen::Matrix<double, R, C>> partials_t;
-  empty_broadcast_array<partials_t, Eigen::Matrix<double, R, C>> partials_vec_;
+  typedef empty_broadcast_array<A, Eigen::Matrix<T, R, C>> partials_t;
+  empty_broadcast_array<partials_t, Eigen::Matrix<T, R, C>> partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(
-      const std::vector<Eigen::Matrix<double, R, C>> ops) {}
+      const std::vector<Eigen::Matrix<T, R, C>> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>

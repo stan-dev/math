@@ -76,10 +76,16 @@ TEST(MatrixFunctions, Logvalues) {
   val_test(std_prob, std_dens);
 
   val_vec_test(vecd_prob, vecd_dens);
-  val_vec_test(vecd_prob, std_dens);
   val_vec_test(vecd_prob, row_vecd_dens);
+  val_vec_test(vecd_prob, std_dens);
+
   val_vec_test(row_vecd_prob, vecd_dens);
   val_vec_test(row_vecd_prob, row_vecd_dens);
+  val_vec_test(row_vecd_prob, std_dens);
+
+  val_vec_test(std_prob, vecd_dens);
+  val_vec_test(std_prob, row_vecd_dens);
+  val_vec_test(std_prob, std_dens);
 }
 
 TEST(MatrixFunctions, LogMix_Values) {

@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/arr/meta/length.hpp>
 #include <vector>
 
 namespace stan {
@@ -73,11 +74,11 @@ class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
 
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
 // (i.e. nested containers)
-template <int R, int C>
-class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
+template <typename A, int R, int C>
+class ops_partials_edge<A, std::vector<Eigen::Matrix<var, R, C> > > {
  public:
   typedef std::vector<Eigen::Matrix<var, R, C> > Op;
-  typedef Eigen::Matrix<double, -1, -1> partial_t;
+  typedef Eigen::Matrix<A, -1, -1> partial_t;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -104,6 +105,47 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
     for (size_t i = 0; i < this->operands_.size(); ++i) {
       for (int j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
         varis[p_i] = this->operands_[i](j).vi_;
+      }
+    }
+  }
+  int size() {
+    if (unlikely(this->operands_.size() == 0))
+      return 0;
+    return this->operands_.size() * this->operands_[0].size();
+  }
+};
+
+template <typename A>
+class ops_partials_edge<A, std::vector<std::vector<var> > > {
+ public:
+  typedef std::vector<std::vector<var> > Op;
+  typedef std::vector<A> partial_t;
+  std::vector<partial_t> partials_vec_;
+  explicit ops_partials_edge(const Op& ops)
+      : partials_vec_(length(ops)), operands_(ops) {
+    for (size_t i = 0; i < length(ops); ++i) {
+      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+    }
+  }
+
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
+  const Op& operands_;
+
+  void dump_partials(double* partials) {
+    int p_i = 0;
+    for (size_t i = 0; i < this->partials_vec_.size(); ++i) {
+      for (int j = 0; j < this->partials_vec_[i].size(); ++j, ++p_i) {
+        partials[p_i] = this->partials_vec_[i][j];
+      }
+    }
+  }
+  void dump_operands(vari** varis) {
+    int p_i = 0;
+    for (size_t i = 0; i < this->operands_.size(); ++i) {
+      for (int j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
+        varis[p_i] = this->operands_[i][j].vi_;
       }
     }
   }

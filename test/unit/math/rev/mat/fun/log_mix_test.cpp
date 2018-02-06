@@ -98,18 +98,24 @@ TEST(AgradRevMatrix, log_mix_vals) {
   val_rev_test(vecv_prob, vecv_dens);
   val_rev_test(vecv_prob, row_vecv_dens);
   val_rev_test(vecv_prob, stvec_dens);
+
   val_rev_vec_test(vecv_prob, vecv_dens);
   val_rev_vec_test(vecv_prob, row_vecv_dens);
+  val_rev_vec_test(vecv_prob, stvec_dens);
 
   val_rev_test(row_vecv_prob, vecv_dens);
   val_rev_test(row_vecv_prob, row_vecv_dens);
   val_rev_test(row_vecv_prob, stvec_dens);
+
   val_rev_vec_test(row_vecv_prob, vecv_dens);
   val_rev_vec_test(row_vecv_prob, row_vecv_dens);
+  val_rev_vec_test(row_vecv_prob, stvec_dens);
 
   val_rev_test(stvec_prob, vecv_dens);
   val_rev_test(stvec_prob, row_vecv_dens);
   val_rev_test(stvec_prob, stvec_dens);
+
   val_rev_vec_test(stvec_prob, vecv_dens);
   val_rev_vec_test(stvec_prob, row_vecv_dens);
+  val_rev_vec_test(stvec_prob, stvec_dens);
 }

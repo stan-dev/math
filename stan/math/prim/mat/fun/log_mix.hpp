@@ -144,7 +144,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum().eval();
+    for (int m = 0; m < M; ++m)
+      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
@@ -200,7 +201,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum().eval();
+    for (int m = 0; m < M; ++m)
+      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
@@ -262,7 +264,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value)
-      ops_partials.edge1_.partials_ = derivs.rowwise().sum().eval();
+    for (int m = 0; m < M; ++m)
+      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
