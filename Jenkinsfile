@@ -38,21 +38,9 @@ def alsoNotify() {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
-def mathUrl() { "https://github.com/stan-dev/math" }
-def isFork() { env.CHANGE_FORK != null }
 def isPR() { env.CHANGE_URL != null }
-def branchName() {
-    br = env.BRANCH_NAME
-    if (isPR()) {
-        br = env.CHANGE_BRANCH
-        if (isFork()) {
-            br = "autoformat/" + env.CHANGE_FORK + br
-        }
-    }
-    return br
-}
-def remoteName() { isFork() ? "https://github.com/stan-dev/math" : "origin" }
-def force() { (isPR() && isFork()) ? "-f" : "" }
+def fork() { env.CHANGE_FORK ?: "stan-dev" }
+def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
 
 pipeline {
     agent none
@@ -95,10 +83,10 @@ pipeline {
                             git config --global user.name "Stan Jenkins"
                             git add stan test
                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
-                            git push ${force()} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git ${branchName()} 
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
-                            echo "Please 'git pull ${remoteName()} ${branchName()}' before continuing to develop."
+                            echo "Please 'git pull' before continuing to develop."
                             exit 1
                         fi"""
                 }
@@ -107,23 +95,19 @@ pipeline {
                 always { deleteDir() }
                 failure {
                     script {
-                        if (isFork()) {
-                            emailext (
-                                subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                                body: """
-                                Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
-                                has been autoformatted and the changes committed to
-                                ${remoteName()} on branch '${branchName()}'
-                                Please pull these changes before continuing. 
-
-                                See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms
-                                for local development environment setup.
-
-                                (Check console output at ${env.BUILD_URL})""",
-                                recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                                to: "${env.CHANGE_AUTHOR_EMAIL}"
-                            )
-                        }
+                        emailext (
+                            subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                            body: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' " +
+                                "has been autoformatted and the changes committed " +
+                                "to your branch, if permissions allowed." +
+                                "Please pull these changes before continuing." +
+                                "\n\n" +
+                                "See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms" +
+                                " for setting up the autoformatter locally.\n"+
+                            "(Check console output at ${env.BUILD_URL})",
+                            recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                            to: "${env.CHANGE_AUTHOR_EMAIL}"
+                        )
                     }
                 }
             }
