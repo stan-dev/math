@@ -56,9 +56,11 @@ class ops_partials_edge<T_part, std::vector<Eigen::Matrix<T_op, R, C>>> {
 template <typename T_op, typename T_part>
 class ops_partials_edge<T_part, std::vector<std::vector<T_op> > > {
  public:
-  typedef empty_broadcast_array<T_part, std::vector<std::vector<T_op> > > partials_t;
+  typedef empty_broadcast_array<T_part, std::vector<std::vector<T_op> > >
+    partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, std::vector<std::vector<T_op> > > partials_vec_;
+  empty_broadcast_array<partials_t, std::vector<std::vector<T_op> > >
+    partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(const std::vector<std::vector<T_op> > ops) {}
 

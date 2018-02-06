@@ -60,7 +60,7 @@ void fvar_test(T_a a, T_b b) {
 
   EXPECT_FLOAT_EQ(std_out.val_, -15.457609);
   EXPECT_FLOAT_EQ(std_out.d_, 15.164879);
-};
+}
 
 template <typename T_a, typename T_b>
 void fvarfvar_test(T_a a, T_b b) {
@@ -113,7 +113,7 @@ void fvarfvar_test(T_a a, T_b b) {
 
   EXPECT_FLOAT_EQ(std_out.val_.val_, -15.457609);
   EXPECT_FLOAT_EQ(std_out.d_.val_, 15.164879);
-};
+}
 
 TEST(AgradFwdMatrixLogMix, fdValues) {
   /**

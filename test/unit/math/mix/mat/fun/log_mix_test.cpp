@@ -48,7 +48,7 @@ void fv_fv_test(T_a a, T_b b) {
     EXPECT_FLOAT_EQ(a[i].d_.adj(), prob_deriv[i]);
     EXPECT_FLOAT_EQ(b[i].d_.adj(), dens_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void fv_fv_vec_test(T_a a, T_b b1) {
@@ -115,7 +115,7 @@ void fv_fv_vec_test(T_a a, T_b b1) {
     EXPECT_FLOAT_EQ(c[1][i].d_.adj(), dens2_deriv[i]);
     EXPECT_FLOAT_EQ(c[2][i].d_.adj(), dens3_deriv[i]);
   }
-};
+}
 
 TEST(AgradMixMatrixLogMix, fv_fv) {
   vector_fv vecfv_prob(4);
@@ -178,7 +178,7 @@ void fv_d_test(T_a a, T_b b) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a[i].d_.adj(), prob_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void fv_d_vec_test(T_a a, T_b b1) {
@@ -224,7 +224,7 @@ void fv_d_vec_test(T_a a, T_b b1) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a[i].d_.adj(), prob_deriv[i]);
   }
-};
+}
 
 TEST(AgradMixMatrixLogMix, fv_d) {
   vector_fv vecfv_prob(4);
@@ -287,7 +287,7 @@ void d_fv_test(T_a a, T_b b) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(b[i].d_.adj(), dens_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void d_fv_vec_test(T_a a, T_b b1) {
@@ -347,7 +347,7 @@ void d_fv_vec_test(T_a a, T_b b1) {
     EXPECT_FLOAT_EQ(c[1][i].d_.adj(), dens2_deriv[i]);
     EXPECT_FLOAT_EQ(c[2][i].d_.adj(), dens3_deriv[i]);
   }
-};
+}
 
 TEST(AgradMixMatrixLogMix, d_fv) {
   vector_d vecd_prob(4);
@@ -425,7 +425,7 @@ void ffv_ffv_test(T_a a, T_b b) {
     EXPECT_FLOAT_EQ(a[i].d_.val_.adj(), prob_deriv[i]);
     EXPECT_FLOAT_EQ(b[i].d_.val_.adj(), dens_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void ffv_ffv_vec_test(T_a a, T_b b1) {
@@ -509,7 +509,7 @@ void ffv_ffv_vec_test(T_a a, T_b b1) {
     EXPECT_FLOAT_EQ(c[1][i].d_.val_.adj(), dens2_deriv[i]);
     EXPECT_FLOAT_EQ(c[2][i].d_.val_.adj(), dens3_deriv[i]);
   }
-};
+}
 
 
 TEST(AgradMixMatrixLogMix, ffv_ffv) {
@@ -569,7 +569,7 @@ void ffv_d_test(T_a a, T_b b) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a[i].d_.val_.adj(), prob_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void ffv_d_vec_test(T_a a, T_b b1) {
@@ -617,7 +617,7 @@ void ffv_d_vec_test(T_a a, T_b b1) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a[i].d_.val_.adj(), prob_deriv[i]);
   }
-};
+}
 
 
 TEST(AgradMixMatrixLogMix, ffv_d) {
@@ -686,7 +686,7 @@ void d_ffv_test(T_a a, T_b b) {
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(b[i].d_.val_.adj(), dens_deriv[i]);
   }
-};
+}
 
 template <typename T_a, typename T_b>
 void d_ffv_vec_test(T_a a, T_b b1) {
@@ -759,7 +759,7 @@ void d_ffv_vec_test(T_a a, T_b b1) {
     EXPECT_FLOAT_EQ(c[1][i].d_.val_.adj(), dens2_deriv[i]);
     EXPECT_FLOAT_EQ(c[2][i].d_.val_.adj(), dens3_deriv[i]);
   }
-};
+}
 
 TEST(AgradMixMatrixLogMix, d_ffv) {
   vector_d vecd_prob(4);
