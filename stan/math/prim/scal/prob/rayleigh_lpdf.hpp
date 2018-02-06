@@ -31,8 +31,8 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   typedef
       typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
 
-  using std::log;
   using stan::is_constant_struct;
+  using std::log;
   using std::log;
 
   if (size_zero(y, sigma))

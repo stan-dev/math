@@ -200,8 +200,8 @@ TEST(MathMatrix, sortDescEigenRowVecNan) {
   test_sort_desc_throws<Eigen::Matrix<stan::math::var, 1, -1> >();
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::var;
   using stan::math::to_var;
+  using stan::math::var;
 
   std::vector<stan::math::var> x(3);
   x[0] = 0;

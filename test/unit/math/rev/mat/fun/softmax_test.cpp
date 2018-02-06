@@ -7,12 +7,12 @@
 TEST(AgradRevMatrix, softmaxLeak) {
   // FIXME: very brittle test depending on unrelated constants of
   //        block sizes/growth in stan::math::stack_alloc
-  using stan::math::softmax;
-  using stan::math::softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_v;
+  using Eigen::Matrix;
+  using stan::math::softmax;
+  using stan::math::softmax;
   using stan::math::var;
+  using stan::math::vector_v;
 
   int SIZE = 20;
   int NUM = 112;  // alloc on stack: 458752; bug fix used: = 196608
@@ -28,10 +28,10 @@ TEST(AgradRevMatrix, softmaxLeak) {
 }
 
 TEST(AgradRevMatrix, softmax) {
-  using stan::math::softmax;
-  using stan::math::softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::softmax;
+  using stan::math::softmax;
   using stan::math::vector_v;
 
   EXPECT_THROW(softmax(vector_v()), std::invalid_argument);
@@ -63,8 +63,8 @@ TEST(AgradRevMatrix, softmax) {
 // to check custom derivatives
 std::vector<double> softmax_grad(
     Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl, int k) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
   Matrix<var, Dynamic, 1> alpha(alpha_dbl.size());
   for (int i = 0; i < alpha.size(); ++i)
@@ -80,10 +80,10 @@ std::vector<double> softmax_grad(
   return grad;
 }
 TEST(AgradRevSoftmax, Grad) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::softmax;
   using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
   for (int k = 0; k < 3; ++k) {
     Matrix<AVAR, Dynamic, 1> alpha(3);
     alpha << 0.0, 3.0, -1.0;

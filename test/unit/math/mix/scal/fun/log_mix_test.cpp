@@ -8,11 +8,11 @@
 void test_log_mix_3xfvar_var_D1(double theta, double lambda1, double lambda2,
                                 double theta_d, double lambda1_d,
                                 double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<var> theta_fv(theta, theta_d);
   fvar<var> lambda1_fv(lambda1, lambda1_d);
@@ -60,9 +60,9 @@ VEC log_mix_D3(double theta, double lambda1, double lambda2, double theta_d,
                double lambda1_d, double lambda2_d, double theta_d2,
                double lambda1_d2, double lambda2_d2) {
   using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::var;
 
   var theta_v(theta);
   var lambda1_v(lambda1);
@@ -229,11 +229,11 @@ VEC log_mix_D3(double theta, double lambda1, double lambda2, double theta_d,
 void test_log_mix_3xfvar_var_D2(double theta, double lambda1, double lambda2,
                                 double theta_d, double lambda1_d,
                                 double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<var> theta_fv(theta, theta_d);
   fvar<var> lambda1_fv(lambda1, lambda1_d);
@@ -286,11 +286,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_theta_D3(double theta, double lambda1,
                                                   double lambda2,
                                                   double theta_d,
                                                   double theta_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   theta_ffv.val_.val_ = theta;
@@ -324,11 +324,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_lam_1_D3(double theta, double lambda1,
                                                   double lambda2,
                                                   double lambda1_d,
                                                   double lambda1_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda1_ffv;
   lambda1_ffv.val_.val_ = lambda1;
@@ -357,11 +357,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_lam_2_D3(double theta, double lambda1,
                                                   double lambda2,
                                                   double lambda2_d,
                                                   double lambda2_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda2_ffv;
   lambda2_ffv.val_.val_ = lambda2;
@@ -391,11 +391,11 @@ void test_log_mix_2xfvar_fvar_var_ex_theta_D3(double theta, double lambda1,
                                               double lambda2_d,
                                               double lambda1_d2,
                                               double lambda2_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda1_ffv;
   fvar<fvar<var> > lambda2_ffv;
@@ -438,11 +438,11 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_1_D3(double theta, double lambda1,
                                               double lambda2_d,
                                               double lambda2_d2,
                                               double theta_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda2_ffv;
@@ -487,11 +487,11 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_2_D3(double theta, double lambda1,
                                               double lambda1_d,
                                               double lambda1_d2,
                                               double theta_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda1_ffv;
@@ -538,11 +538,11 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_2_D3(double theta, double lambda1,
 void test_log_mix_2xdouble_fvar_fvar_var_theta_D2(double theta, double lambda1,
                                                   double lambda2,
                                                   double theta_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   theta_ffv.val_.val_ = theta;
@@ -573,11 +573,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_theta_D2(double theta, double lambda1,
 void test_log_mix_2xdouble_fvar_fvar_var_lam_1_D2(double theta, double lambda1,
                                                   double lambda2,
                                                   double lambda1_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda1_ffv;
   lambda1_ffv.val_.val_ = lambda1;
@@ -603,11 +603,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_lam_1_D2(double theta, double lambda1,
 void test_log_mix_2xdouble_fvar_fvar_var_lam_2_D2(double theta, double lambda1,
                                                   double lambda2,
                                                   double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda2_ffv;
   lambda2_ffv.val_.val_ = lambda2;
@@ -633,11 +633,11 @@ void test_log_mix_2xdouble_fvar_fvar_var_lam_2_D2(double theta, double lambda1,
 void test_log_mix_2xfvar_fvar_var_ex_lam_1_D2(double theta, double lambda1,
                                               double lambda2, double theta_d,
                                               double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda2_ffv;
@@ -679,11 +679,11 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_1_D2(double theta, double lambda1,
 void test_log_mix_2xfvar_fvar_var_ex_lam_2_D2(double theta, double lambda1,
                                               double lambda2, double theta_d,
                                               double lambda1_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda1_ffv;
@@ -729,11 +729,11 @@ void test_log_mix_2xfvar_fvar_var_ex_lam_2_D2(double theta, double lambda1,
 void test_log_mix_2xfvar_fvar_var_ex_theta_D2(double theta, double lambda1,
                                               double lambda2, double lambda1_d,
                                               double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > lambda1_ffv;
   fvar<fvar<var> > lambda2_ffv;
@@ -776,11 +776,11 @@ void test_log_mix_3xfvar_fvar_var_D3(double theta, double lambda1,
                                      double lambda1_d, double lambda2_d,
                                      double lambda1_d2, double lambda2_d2,
                                      double theta_d2) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda1_ffv;
@@ -833,11 +833,11 @@ void test_log_mix_3xfvar_fvar_var_D3(double theta, double lambda1,
 void test_log_mix_3xfvar_fvar_var_D2(double theta, double lambda1,
                                      double lambda2, double theta_d,
                                      double lambda1_d, double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::log_mix;
+  using stan::math::var;
   using std::exp;
   using std::pow;
-  using stan::math::log_mix;
 
   fvar<fvar<var> > theta_ffv;
   fvar<fvar<var> > lambda1_ffv;
@@ -881,10 +881,10 @@ void test_log_mix_3xfvar_fvar_var_D2(double theta, double lambda1,
 void test_log_mix_2xfvar_var_lam_2_double(double theta, double lambda1,
                                           double lambda2, double theta_d,
                                           double lambda1_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> theta_fv(theta, theta_d);
   fvar<var> lambda1_fv(lambda1, lambda1_d);
@@ -918,10 +918,10 @@ void test_log_mix_2xfvar_var_lam_2_double(double theta, double lambda1,
 void test_log_mix_2xfvar_var_lam_1_double(double theta, double lambda1,
                                           double lambda2, double theta_d,
                                           double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> theta_fv(theta, theta_d);
   fvar<var> lambda2_fv(lambda2, lambda2_d);
@@ -955,10 +955,10 @@ void test_log_mix_2xfvar_var_lam_1_double(double theta, double lambda1,
 void test_log_mix_2xfvar_var_theta_double(double theta, double lambda1,
                                           double lambda2, double lambda1_d,
                                           double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> lambda1_fv(lambda1, lambda1_d);
   fvar<var> lambda2_fv(lambda2, lambda2_d);
@@ -987,10 +987,10 @@ void test_log_mix_2xfvar_var_theta_double(double theta, double lambda1,
 
 void test_log_mix_2xdouble_theta_fvar_var(double theta, double lambda1,
                                           double lambda2, double theta_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> theta_fv(theta, theta_d);
 
@@ -1016,10 +1016,10 @@ void test_log_mix_2xdouble_theta_fvar_var(double theta, double lambda1,
 
 void test_log_mix_2xdouble_lam_1_fvar_var(double theta, double lambda1,
                                           double lambda2, double lambda1_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> lambda1_fv(lambda1, lambda1_d);
 
@@ -1043,10 +1043,10 @@ void test_log_mix_2xdouble_lam_1_fvar_var(double theta, double lambda1,
 
 void test_log_mix_2xdouble_lam_2_fvar_var(double theta, double lambda1,
                                           double lambda2, double lambda2_d) {
-  using stan::math::var;
   using stan::math::fvar;
-  using std::exp;
   using stan::math::log_mix;
+  using stan::math::var;
+  using std::exp;
 
   fvar<var> lambda2_fv(lambda2, lambda2_d);
 

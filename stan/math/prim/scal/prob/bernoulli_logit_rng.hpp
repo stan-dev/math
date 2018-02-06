@@ -27,8 +27,8 @@ namespace math {
  */
 template <class RNG>
 inline int bernoulli_logit_rng(double t, RNG& rng) {
-  using boost::variate_generator;
   using boost::bernoulli_distribution;
+  using boost::variate_generator;
   using stan::math::inv_logit;
 
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",

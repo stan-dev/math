@@ -6,8 +6,8 @@
 
 template <typename F>
 static inline std::vector<stan::math::var> build_rev_vector() {
-  using std::vector;
   using stan::math::var;
+  using std::vector;
   vector<double> inputs = F::valid_inputs();
   return vector<var>(inputs.begin(), inputs.end());
 }

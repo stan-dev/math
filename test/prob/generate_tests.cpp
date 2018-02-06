@@ -10,11 +10,11 @@
 #include <cmath>
 #include <cstdlib>
 
-using std::vector;
-using std::string;
-using std::stringstream;
 using std::endl;
 using std::pair;
+using std::string;
+using std::stringstream;
+using std::vector;
 
 #ifdef STAN_TEST_ROW_VECTORS
 int ROW_VECTORS = 1;

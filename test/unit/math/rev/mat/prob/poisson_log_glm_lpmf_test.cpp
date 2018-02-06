@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
-using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::var;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.

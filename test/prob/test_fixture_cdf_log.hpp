@@ -5,15 +5,15 @@
 #include <test/prob/utility.hpp>
 #include <boost/type_traits/is_same.hpp>
 
-using std::vector;
-using Eigen::Matrix;
 using Eigen::Dynamic;
-using stan::math::var;
-using stan::scalar_type;
-using stan::is_vector;
+using Eigen::Matrix;
 using stan::is_constant;
 using stan::is_constant_struct;
+using stan::is_vector;
 using stan::math::value_of;
+using stan::math::var;
+using stan::scalar_type;
+using std::vector;
 
 class AgradCdfLogTest {
  public:

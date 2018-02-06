@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixTrace, fv) {
-  using stan::math::trace;
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
+  using stan::math::trace;
   using stan::math::var;
 
   matrix_fv a(2, 2);
@@ -20,9 +20,9 @@ TEST(AgradMixMatrixTrace, fv) {
   EXPECT_FLOAT_EQ(2.0, s.d_.val());
 }
 TEST(AgradMixMatrixTrace, ffv) {
-  using stan::math::trace;
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
+  using stan::math::trace;
   using stan::math::var;
 
   matrix_ffv a(2, 2);

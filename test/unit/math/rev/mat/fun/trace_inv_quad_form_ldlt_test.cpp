@@ -5,8 +5,8 @@
 #include <vector>
 
 TEST(AgradRevMatrix, trace_inv_quad_form_ldlt_mat) {
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::multiply;
 
   matrix_v av(4, 4);
@@ -49,9 +49,9 @@ TEST(AgradRevMatrix, trace_inv_quad_form_ldlt_mat) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_vd) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -90,9 +90,9 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_vd) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_dv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -129,9 +129,9 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_dv) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_vv) {
-  using stan::math::sum;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -181,15 +181,15 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_vv) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_vv_basic) {
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::LDLT_factor;
-  using stan::math::var;
-  using std::vector;
+  using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::multiply;
   using stan::math::trace;
   using stan::math::transpose;
-  using stan::math::inverse;
-  using stan::math::multiply;
+  using stan::math::var;
+  using std::vector;
 
   matrix_v A(4, 4);
   matrix_v B(4, 2);
@@ -238,14 +238,14 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_vv_basic) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_vd_basic) {
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::LDLT_factor;
-  using stan::math::var;
-  using std::vector;
+  using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::trace;
   using stan::math::transpose;
-  using stan::math::inverse;
+  using stan::math::var;
+  using std::vector;
 
   matrix_v A(4, 4);
   matrix_d B(4, 2);
@@ -291,14 +291,14 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_vd_basic) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_dv_basic) {
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
   using stan::math::LDLT_factor;
-  using stan::math::var;
-  using std::vector;
+  using stan::math::inverse;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::trace;
   using stan::math::transpose;
-  using stan::math::inverse;
+  using stan::math::var;
+  using std::vector;
 
   matrix_d A(4, 4);
   matrix_v B(4, 2);

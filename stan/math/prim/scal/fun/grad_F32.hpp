@@ -38,9 +38,9 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
               int max_steps = 1e5) {
   check_3F2_converges("grad_F32", a1, a2, a3, b1, b2, z);
 
-  using std::log;
-  using std::fabs;
   using std::exp;
+  using std::fabs;
+  using std::log;
 
   for (int i = 0; i < 6; ++i)
     g[i] = 0.0;

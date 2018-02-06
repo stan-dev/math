@@ -26,8 +26,8 @@ namespace math {
  * result will not fit in an int type
  */
 inline int choose(int n, int k) {
-  using stan::math::check_nonnegative;
   using stan::math::check_less_or_equal;
+  using stan::math::check_nonnegative;
   check_nonnegative("choose", "n", n);
   check_nonnegative("choose", "k", k);
   if (k > n)

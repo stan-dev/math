@@ -26,9 +26,9 @@ namespace math {
  */
 template <int R, int C>
 double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
-  using std::numeric_limits;
-  using std::log;
   using std::exp;
+  using std::log;
+  using std::numeric_limits;
   double max = -numeric_limits<double>::infinity();
   for (int i = 0; i < x.size(); i++)
     if (x(i) > max)

@@ -1,6 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <limits>
 
 TEST(MathFunctions, log1m) {
@@ -13,7 +14,8 @@ TEST(MathFunctions, log1mOverflow) {
 }
 
 TEST(MathFunctions, log1m_exception) {
-  EXPECT_THROW(stan::math::log1m(10.0), std::domain_error);
+  EXPECT_THROW_MSG(stan::math::log1m(10.0), std::domain_error,
+                   "log1m: x is 10, but must be less than or equal to 1");
 }
 
 TEST(MathFunctions, log1m_nan) {

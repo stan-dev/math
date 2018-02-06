@@ -23,9 +23,9 @@ namespace math {
  * @return The log of the sum of the exponentiated vector values.
  */
 inline double log_sum_exp(const std::vector<double>& x) {
-  using std::numeric_limits;
-  using std::log;
   using std::exp;
+  using std::log;
+  using std::numeric_limits;
   double max = -numeric_limits<double>::infinity();
   for (size_t ii = 0; ii < x.size(); ii++)
     if (x[ii] > max)

@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_greater_or_equal;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
   const char* function = "check_greater_or_equal";
@@ -39,8 +39,8 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_greater_or_equal;
+  using stan::math::var;
 
   const char* function = "check_greater_or_equal";
   var a(5.0);
