@@ -9,9 +9,9 @@
 #include <limits>
 #include <vector>
 
-using stan::math::vector_d;
-using stan::math::row_vector_d;
 using stan::math::log_mix;
+using stan::math::row_vector_d;
+using stan::math::vector_d;
 
 template <typename T_a, typename T_b>
 void val_test(T_a a, T_b b) {
@@ -93,8 +93,8 @@ TEST(MatrixFunctions, LogMix_Values) {
   dens_2 << -5.65, -7.62;
 
   double log_mix_stan_1 = log_mix(prob, dens);
-  double log_mix_sumexp =
-    stan::math::log_sum_exp((stan::math::log(prob) + dens).eval());
+  double log_mix_sumexp
+      = stan::math::log_sum_exp((stan::math::log(prob) + dens).eval());
 
   double log_mix_stan_2 = log_mix(prob_2, dens_2);
   double log_mix_stan_scal = log_mix(0.1, -5.65, -7.62);
@@ -143,8 +143,8 @@ TEST(MatrixFunctions, LogMix_Throws) {
 
   vector_d dens_neg_inf(5, 1);
   dens_neg_inf << -5.65, -7.62, stan::math::NEGATIVE_INFTY, -55.62, -2.35;
-  std::vector<vector_d> std_dens_neg_inf{dens_neg_inf,
-                                         dens_neg_inf, dens_neg_inf};
+  std::vector<vector_d> std_dens_neg_inf{dens_neg_inf, dens_neg_inf,
+                                         dens_neg_inf};
 
   vector_d dens_nan(5, 1);
   dens_nan << -5.65, -7.62, -12.63, stan::math::NOT_A_NUMBER, -2.35;

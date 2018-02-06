@@ -511,7 +511,6 @@ void ffv_ffv_vec_test(T_a a, T_b b1) {
   }
 }
 
-
 TEST(AgradMixMatrixLogMix, ffv_ffv) {
   vector_ffv vecffv_prob(4);
   vector_ffv vecffv_dens(4);
@@ -619,7 +618,6 @@ void ffv_d_vec_test(T_a a, T_b b1) {
   }
 }
 
-
 TEST(AgradMixMatrixLogMix, ffv_d) {
   vector_ffv vecffv_prob(4);
   vector_d vecd_dens(4);
@@ -678,7 +676,6 @@ void d_ffv_test(T_a a, T_b b) {
   EXPECT_FLOAT_EQ(out.val_.val_.val(), -4.218931574);
   EXPECT_FLOAT_EQ(out.d_.val_.val(), 1.0);
   out.d_.val_.grad();
-
 
   vector_d dens_deriv(4);
   dens_deriv << 0.97277697193, 0.00577712302, 0.00010253311, 0.02134337194;

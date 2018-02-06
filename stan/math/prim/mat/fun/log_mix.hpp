@@ -125,34 +125,32 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
  * @param lambda array containing vectors of log densities.
  * @return log mixture of densities in specified proportion
  */
-  template <typename T_theta, typename T_lam>
-  typename
-  return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
-  log_mix(const T_theta& theta,
-          const std::vector<Eigen::Matrix<T_lam, -1, 1> >& lambda) {
-    static const char* function = "log_mix";
-    typedef typename
-    stan::partials_return_type<T_theta,
-                               std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
+template <typename T_theta, typename T_lam>
+typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
+log_mix(const T_theta& theta,
+        const std::vector<Eigen::Matrix<T_lam, -1, 1> >& lambda) {
+  static const char* function = "log_mix";
+  typedef typename stan::partials_return_type<
+      T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
       T_partials_return;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
+  typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
 
-    typedef typename std::vector<Eigen::Matrix<T_lam, -1, 1> > T_lamvec_type;
+  typedef typename std::vector<Eigen::Matrix<T_lam, -1, 1> > T_lamvec_type;
 
-    const int N = length(lambda);
-    const int M = theta.size();
+  const int N = length(lambda);
+  const int M = theta.size();
 
-    check_bounded(function, "theta", theta, 0, 1);
-    check_not_nan(function, "theta", theta);
-    check_finite(function, "theta", theta);
-    for (int n = 0; n < N; ++n) {
-      check_not_nan(function, "lambda", lambda[n]);
-      check_finite(function, "lambda", lambda[n]);
-      check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
-    }
+  check_bounded(function, "theta", theta, 0, 1);
+  check_not_nan(function, "theta", theta);
+  check_finite(function, "theta", theta);
+  for (int n = 0; n < N; ++n) {
+    check_not_nan(function, "lambda", lambda[n]);
+    check_finite(function, "lambda", lambda[n]);
+    check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
+  }
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
@@ -171,10 +169,9 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs = (lam_dbl
-    - logp.transpose().replicate(M, 1)).unaryExpr([](T_partials_return x) {
-        return exp(x);
-      });
+  T_partials_mat derivs
+      = (lam_dbl - logp.transpose().replicate(M, 1))
+            .unaryExpr([](T_partials_return x) { return exp(x); });
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value) {
@@ -184,11 +181,11 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
-        ops_partials.edge2_.partials_vec_[n]
+      ops_partials.edge2_.partials_vec_[n]
           = derivs.col(n).cwiseProduct(theta_dbl);
   }
-    return ops_partials.build(logp.sum());
-  }
+  return ops_partials.build(logp.sum());
+}
 
 /**
  * Return the log mixture density given specified mixing proportions
@@ -217,34 +214,32 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
  * @param lambda array containing row vectors of log densities.
  * @return log mixture of densities in specified proportion
  */
-  template <typename T_theta, typename T_lam>
-  typename
-  return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
-  log_mix(const T_theta& theta,
-          const std::vector<Eigen::Matrix<T_lam, 1, -1> >& lambda) {
-    static const char* function = "log_mix";
-    typedef typename
-    stan::partials_return_type<T_theta,
-                               std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
+template <typename T_theta, typename T_lam>
+typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
+log_mix(const T_theta& theta,
+        const std::vector<Eigen::Matrix<T_lam, 1, -1> >& lambda) {
+  static const char* function = "log_mix";
+  typedef typename stan::partials_return_type<
+      T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
       T_partials_return;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
+  typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
 
-    typedef typename std::vector<Eigen::Matrix<T_lam, 1, -1> > T_lamvec_type;
+  typedef typename std::vector<Eigen::Matrix<T_lam, 1, -1> > T_lamvec_type;
 
-    const int N = length(lambda);
-    const int M = theta.size();
+  const int N = length(lambda);
+  const int M = theta.size();
 
-    check_bounded(function, "theta", theta, 0, 1);
-    check_not_nan(function, "theta", theta);
-    check_finite(function, "theta", theta);
-    for (int n = 0; n < N; ++n) {
-      check_not_nan(function, "lambda", lambda[n]);
-      check_finite(function, "lambda", lambda[n]);
-      check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
-    }
+  check_bounded(function, "theta", theta, 0, 1);
+  check_not_nan(function, "theta", theta);
+  check_finite(function, "theta", theta);
+  for (int n = 0; n < N; ++n) {
+    check_not_nan(function, "lambda", lambda[n]);
+    check_finite(function, "lambda", lambda[n]);
+    check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
+  }
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
@@ -263,10 +258,9 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs = (lam_dbl -
-    logp.transpose().replicate(M, 1)).unaryExpr([](T_partials_return x) {
-      return exp(x);
-    });
+  T_partials_mat derivs
+      = (lam_dbl - logp.transpose().replicate(M, 1))
+            .unaryExpr([](T_partials_return x) { return exp(x); });
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_struct<T_theta>::value) {
@@ -276,11 +270,11 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
-        ops_partials.edge2_.partials_vec_[n]
+      ops_partials.edge2_.partials_vec_[n]
           = derivs.col(n).cwiseProduct(theta_dbl);
   }
-    return ops_partials.build(logp.sum());
-  }
+  return ops_partials.build(logp.sum());
+}
 
 /**
  * Return the log mixture density given specified mixing proportions
@@ -309,32 +303,30 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
  * @param lambda array containing arrays of log densities.
  * @return log mixture of densities in specified proportion
  */
-  template <typename T_theta, typename T_lam>
-  typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type
-  log_mix(const T_theta& theta,
-          const std::vector<std::vector<T_lam> >& lambda) {
-    static const char* function = "log_mix";
-    typedef typename
-    stan::partials_return_type<T_theta, std::vector<std::vector<T_lam> > >::type
-      T_partials_return;
+template <typename T_theta, typename T_lam>
+typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type log_mix(
+    const T_theta& theta, const std::vector<std::vector<T_lam> >& lambda) {
+  static const char* function = "log_mix";
+  typedef typename stan::partials_return_type<
+      T_theta, std::vector<std::vector<T_lam> > >::type T_partials_return;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-    typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
+  typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
 
-    typedef typename std::vector<std::vector<T_lam> > T_lamvec_type;
+  typedef typename std::vector<std::vector<T_lam> > T_lamvec_type;
 
-    const int N = length(lambda);
-    const int M = theta.size();
+  const int N = length(lambda);
+  const int M = theta.size();
 
-    check_bounded(function, "theta", theta, 0, 1);
-    check_not_nan(function, "theta", theta);
-    check_finite(function, "theta", theta);
-    for (int n = 0; n < N; ++n) {
-      check_not_nan(function, "lambda", lambda[n]);
-      check_finite(function, "lambda", lambda[n]);
-      check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
-    }
+  check_bounded(function, "theta", theta, 0, 1);
+  check_not_nan(function, "theta", theta);
+  check_finite(function, "theta", theta);
+  for (int n = 0; n < N; ++n) {
+    check_not_nan(function, "lambda", lambda[n]);
+    check_finite(function, "lambda", lambda[n]);
+    check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
+  }
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
@@ -352,10 +344,9 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs = (lam_dbl -
-    logp.transpose().replicate(M, 1)).unaryExpr([](T_partials_return x) {
-        return exp(x);
-    });
+  T_partials_mat derivs
+      = (lam_dbl - logp.transpose().replicate(M, 1))
+            .unaryExpr([](T_partials_return x) { return exp(x); });
 
   T_partials_mat lam_deriv(M, N);
   for (int n = 0; n < N; ++n)
@@ -372,8 +363,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
       for (int m = 0; m < M; ++m)
         ops_partials.edge2_.partials_vec_[n][m] = lam_deriv(m, n);
   }
-    return ops_partials.build(logp.sum());
-  }
+  return ops_partials.build(logp.sum());
+}
 }  // namespace math
 }  // namespace stan
 #endif

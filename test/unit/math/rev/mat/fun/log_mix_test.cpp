@@ -5,10 +5,10 @@
 #include <vector>
 
 using stan::math::log_mix;
-using stan::math::vector_d;
-using stan::math::vector_v;
 using stan::math::row_vector_v;
 using stan::math::var;
+using stan::math::vector_d;
+using stan::math::vector_v;
 
 template <typename T_a, typename T_b>
 void val_rev_test(T_a a, T_b b) {
@@ -32,7 +32,6 @@ void val_rev_test(T_a a, T_b b) {
   prob_deriv << 0.55298789093, 0.00295451971, 0.23564727846, 2.3456928701;
   vector_d dens_deriv(4);
   dens_deriv << 0.06193464378, 0.00063226722, 0.07187241993, 0.86556066907;
-
 
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a[i].adj(), prob_deriv[i]);
@@ -71,20 +70,20 @@ void val_rev_test(T_a a, T_b b) {
   EXPECT_FLOAT_EQ(std_out.val(), -23.9255869110932);
 
   vector_d std_prob_deriv(4);
-  std_prob_deriv << 15.7666988503552, 1.03434231079226,
-                     0.478019548364374, 2.34955152303399;
+  std_prob_deriv << 15.7666988503552, 1.03434231079226, 0.478019548364374,
+      2.34955152303399;
 
   vector_d std_dens1_deriv(4);
-  std_dens1_deriv << 0.061934643784246, 0.000632267218743,
-                     0.071872419930696, 0.865560669066315;
+  std_dens1_deriv << 0.061934643784246, 0.000632267218743, 0.071872419930696,
+      0.865560669066315;
 
   vector_d std_dens2_deriv(4);
-  std_dens2_deriv << 0.791240264915128, 0.189251877628038,
-                     0.019094771903811, 0.000413085553023;
+  std_dens2_deriv << 0.791240264915128, 0.189251877628038, 0.019094771903811,
+      0.000413085553023;
 
   vector_d std_dens3_deriv(4);
-  std_dens3_deriv << 0.91269536254040, 0.031465109662762,
-                     0.054828770416628, 0.001010757380203;
+  std_dens3_deriv << 0.91269536254040, 0.031465109662762, 0.054828770416628,
+      0.001010757380203;
 
   for (int i = 0; i < 4; ++i) {
     EXPECT_FLOAT_EQ(a2[i].adj(), std_prob_deriv[i]);

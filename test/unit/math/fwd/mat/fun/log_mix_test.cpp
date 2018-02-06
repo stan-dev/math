@@ -3,11 +3,11 @@
 #include <vector>
 
 using stan::math::fvar;
-using stan::math::vector_fd;
-using stan::math::vector_ffd;
+using stan::math::log_mix;
 using stan::math::row_vector_fd;
 using stan::math::row_vector_ffd;
-using stan::math::log_mix;
+using stan::math::vector_fd;
+using stan::math::vector_ffd;
 
 template <typename T_a, typename T_b>
 void fvar_test(T_a a, T_b b) {
