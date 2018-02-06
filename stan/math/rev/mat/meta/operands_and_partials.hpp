@@ -74,11 +74,11 @@ class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
 
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
 // (i.e. nested containers)
-template <typename A, int R, int C>
-class ops_partials_edge<A, std::vector<Eigen::Matrix<var, R, C> > > {
+template <typename T_part, int R, int C>
+class ops_partials_edge<T_part, std::vector<Eigen::Matrix<var, R, C> > > {
  public:
   typedef std::vector<Eigen::Matrix<var, R, C> > Op;
-  typedef Eigen::Matrix<A, -1, -1> partial_t;
+  typedef Eigen::Matrix<T_part, -1, -1> partial_t;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -115,11 +115,11 @@ class ops_partials_edge<A, std::vector<Eigen::Matrix<var, R, C> > > {
   }
 };
 
-template <typename A>
-class ops_partials_edge<A, std::vector<std::vector<var> > > {
+template <typename T_part>
+class ops_partials_edge<T_part, std::vector<std::vector<var> > > {
  public:
   typedef std::vector<std::vector<var> > Op;
-  typedef std::vector<A> partial_t;
+  typedef std::vector<T_part> partial_t;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(length(ops)), operands_(ops) {

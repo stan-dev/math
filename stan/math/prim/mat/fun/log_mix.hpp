@@ -12,7 +12,6 @@
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/meta/get.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/arr/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -100,7 +99,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 }
 
   template <typename T_theta, typename T_lam>
-  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
+  typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
   log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, -1, 1> >& lambda) {
     static const char* function = "log_mix";
     typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
@@ -132,7 +131,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   T_partials_mat lam_dbl(M, N);
   vector_seq_view<T_lamvec_type> lam_vec(lambda);
   for (int n = 0; n < N; ++n)
-    lam_dbl.col(n) = value_of(lam_vec[n]);
+    for (int m = 0; m < M; ++m)
+      lam_dbl(m, n) = value_of(lam_vec[n][m]);
 
   T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
 
@@ -157,7 +157,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
 
 
   template <typename T_theta, typename T_lam>
-  inline typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
+  typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
   log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, 1, -1> >& lambda) {
     static const char* function = "log_mix";
     typedef typename stan::partials_return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
@@ -189,7 +189,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   T_partials_mat lam_dbl(M, N);
   vector_seq_view<T_lamvec_type> lam_vec(lambda);
   for (int n = 0; n < N; ++n)
-    lam_dbl.col(n) = value_of(lam_vec[n]);
+    for (int m = 0; m < M; ++m)
+      lam_dbl(m, n) = value_of(lam_vec[n][m]);
 
   T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
 
@@ -212,11 +213,8 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     return ops_partials.build(logp.sum());
   }
 
-
-
-
   template <typename T_theta, typename T_lam>
-  inline typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type
+  typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type
   log_mix(const T_theta& theta, const std::vector<std::vector<T_lam> >& lambda) {
     static const char* function = "log_mix";
     typedef typename stan::partials_return_type<T_theta, std::vector<std::vector<T_lam> > >::type

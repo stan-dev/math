@@ -9,48 +9,46 @@
 #include <limits>
 #include <vector>
 
-
 using stan::math::vector_d;
 using stan::math::row_vector_d;
 using stan::math::log_mix;
 
 template <typename T_a, typename T_b>
 void val_test(T_a a, T_b b) {
-  a[0] = 0.15;
-  a[1] = 0.70;
-  a[2] = 0.10;
-  a[3] = 0.05;
+  a[0] = 0.321;
+  a[1] = 0.115;
+  a[2] = 0.261;
+  a[3] = 0.303;
 
-  b[0] = -6.785;
-  b[1] = -4.351;
-  b[2] = -5.847;
-  b[3] = -7.362;
+  b[0] = -5.918;
+  b[1] = -7.215;
+  b[2] = -9.635;
+  b[3] = -8.264;
 
   double out = log_mix(a, b);
 
-  EXPECT_FLOAT_EQ(out, -4.654788);
+  EXPECT_FLOAT_EQ(out, -6.86528599744793);
+
+  T_b b2(4), b3(4);
+
+  b2[0] = -7.514;
+  b2[1] = -2.653;
+  b2[2] = -6.527;
+  b2[3] = -5.618;
+
+  b3[0] = -4.517;
+  b3[1] = -6.359;
+  b3[2] = -14.218;
+  b3[3] = -8.628;
+
+  std::vector<T_b> c{b, b2, b3};
+
+  double std_out = log_mix(a, c);
+
+  EXPECT_FLOAT_EQ(std_out, -17.0784535665594);
 };
 
-template <typename T_a, typename T_b>
-void val_vec_test(T_a a, T_b b) {
-  a[0] = 0.15;
-  a[1] = 0.70;
-  a[2] = 0.10;
-  a[3] = 0.05;
-
-  b[0] = -6.785;
-  b[1] = -4.351;
-  b[2] = -5.847;
-  b[3] = -7.362;
-
-  std::vector<T_b> c{b, b, b, b};
-
-  double out = log_mix(a, c);
-
-  EXPECT_FLOAT_EQ(out, -4.654788 * 4);
-};
-
-TEST(MatrixFunctions, Logvalues) {
+TEST(MatrixFunctions, LogMix_Combin) {
   /**
    * Test that all possible combinations of inputs return
    * the same result.
@@ -74,18 +72,6 @@ TEST(MatrixFunctions, Logvalues) {
   val_test(std_prob, vecd_dens);
   val_test(std_prob, row_vecd_dens);
   val_test(std_prob, std_dens);
-
-  val_vec_test(vecd_prob, vecd_dens);
-  val_vec_test(vecd_prob, row_vecd_dens);
-  val_vec_test(vecd_prob, std_dens);
-
-  val_vec_test(row_vecd_prob, vecd_dens);
-  val_vec_test(row_vecd_prob, row_vecd_dens);
-  val_vec_test(row_vecd_prob, std_dens);
-
-  val_vec_test(std_prob, vecd_dens);
-  val_vec_test(std_prob, row_vecd_dens);
-  val_vec_test(std_prob, std_dens);
 }
 
 TEST(MatrixFunctions, LogMix_Values) {

@@ -6,7 +6,6 @@
 #include <stan/math/prim/arr/meta/is_constant_struct.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
-#include <stan/math/prim/arr/meta/operands_and_partials.hpp>
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
 #include <stan/math/prim/arr/meta/VectorBuilderHelper.hpp>

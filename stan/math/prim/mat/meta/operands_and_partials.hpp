@@ -15,14 +15,14 @@ namespace internal {
 /* This class will be used for both multivariate (nested container)
    operands_and_partials edges as well as for the univariate case.
  */
-template <typename T, typename A, int R, int C>
-class ops_partials_edge<A, Eigen::Matrix<T, R, C>> {
+template <typename T_op, typename T_part, int R, int C>
+class ops_partials_edge<T_part, Eigen::Matrix<T_op, R, C>> {
  public:
-  typedef empty_broadcast_array<A, Eigen::Matrix<T, R, C>> partials_t;
+  typedef empty_broadcast_array<T_part, Eigen::Matrix<T_op, R, C>> partials_t;
   partials_t partials_;
-  empty_broadcast_array<partials_t, Eigen::Matrix<T, R, C>> partials_vec_;
+  empty_broadcast_array<partials_t, Eigen::Matrix<T_op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Eigen::Matrix<T, R, C> ops) {}
+  explicit ops_partials_edge(const Eigen::Matrix<T_op, R, C> ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -34,14 +34,33 @@ class ops_partials_edge<A, Eigen::Matrix<T, R, C>> {
   int size() const { return 0; }
 };
 
-template <typename T, typename A, int R, int C>
-class ops_partials_edge<A, std::vector<Eigen::Matrix<T, R, C>>> {
+template <typename T_op, typename T_part, int R, int C>
+class ops_partials_edge<T_part, std::vector<Eigen::Matrix<T_op, R, C>>> {
  public:
-  typedef empty_broadcast_array<A, Eigen::Matrix<T, R, C>> partials_t;
-  empty_broadcast_array<partials_t, Eigen::Matrix<T, R, C>> partials_vec_;
+  typedef empty_broadcast_array<T_part, Eigen::Matrix<T_op, R, C>> partials_t;
+  empty_broadcast_array<partials_t, Eigen::Matrix<T_op, R, C>> partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(
-      const std::vector<Eigen::Matrix<T, R, C>> ops) {}
+      const std::vector<Eigen::Matrix<T_op, R, C>> ops) {}
+
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
+
+  void dump_partials(double* /* partials */) const {}  // reverse mode
+  void dump_operands(void* /* operands */) const {}    // reverse mode
+  double dx() const { return 0; }                      // used for fvars
+  int size() const { return 0; }
+};
+
+template <typename T_op, typename T_part>
+class ops_partials_edge<T_part, std::vector<std::vector<T_op> > > {
+ public:
+  typedef empty_broadcast_array<T_part, std::vector<std::vector<T_op> > > partials_t;
+  partials_t partials_;
+  empty_broadcast_array<partials_t, std::vector<std::vector<T_op> > > partials_vec_;
+  ops_partials_edge() {}
+  explicit ops_partials_edge(const std::vector<std::vector<T_op> > ops) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
