@@ -55,6 +55,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       matrix_partials_t;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
+  typedef Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic> row_vector_partials_t;
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
@@ -112,9 +113,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   if (include_summand<propto>::value)
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
 
-  const matrix_partials_t L_dbl = value_of(L);
-  const matrix_partials_t inv_trans_L_dbl
-      = mdivide_left_tri<Eigen::Upper>(transpose(L_dbl));
+  const matrix_partials_t inv_L_dbl
+      = mdivide_left_tri<Eigen::Lower>(value_of(L));
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
@@ -122,9 +122,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       for (int j = 0; j < size_y; j++)
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
 
-      const vector_partials_t half
-          = mdivide_left_tri<Eigen::Lower>(L_dbl, y_minus_mu_dbl);
-      const vector_partials_t scaled_diff = inv_trans_L_dbl * half;
+      const row_vector_partials_t half = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl).transpose();
+      const vector_partials_t scaled_diff = (half * inv_L_dbl.template triangularView<Eigen::Lower>()).transpose();
 
       logp -= 0.5 * dot_self(half);
 
@@ -137,15 +136,15 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
       }
       if (!is_constant_struct<T_covar>::value) {
-        ops_partials.edge3_.partials_ += scaled_diff * half.transpose();
+        ops_partials.edge3_.partials_ += scaled_diff * half;
       }
     }
   }
 
   if (include_summand<propto, T_covar_elem>::value) {
-    logp -= L_dbl.diagonal().array().log().sum() * size_vec;
+    logp += inv_L_dbl.diagonal().array().log().sum() * size_vec;
     if (!is_constant_struct<T_covar>::value) {
-      ops_partials.edge3_.partials_ -= size_vec * inv_trans_L_dbl;
+      ops_partials.edge3_.partials_ -= size_vec * inv_L_dbl.transpose();
     }
   }
 
