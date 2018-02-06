@@ -9,9 +9,9 @@
 TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 
@@ -56,9 +56,9 @@ TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
 TEST(AgradRevMatrix, var_double_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 
@@ -103,9 +103,9 @@ TEST(AgradRevMatrix, var_double_mdivide_left_tri_low) {
 TEST(AgradRevMatrix, double_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 

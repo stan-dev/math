@@ -3,8 +3,8 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckFinite) {
-  using stan::math::var;
   using stan::math::check_finite;
+  using stan::math::var;
 
   const char* function = "check_bounded";
   const char* name = "x";
@@ -28,8 +28,8 @@ TEST(AgradRevErrorHandlingScalar, CheckFinite) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_finite;
+  using stan::math::var;
 
   const char* function = "check_finite";
   var a(5.0);

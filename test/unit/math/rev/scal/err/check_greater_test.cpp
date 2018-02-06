@@ -38,8 +38,8 @@ TEST(AgradRevErrorHandlingScalar, CheckGreater) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_greater;
+  using stan::math::var;
 
   const char* function = "check_greater";
   var a(5.0);

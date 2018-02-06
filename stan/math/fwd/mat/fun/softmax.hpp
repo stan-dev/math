@@ -11,8 +11,8 @@ namespace math {
 template <typename T>
 inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   Matrix<T, Dynamic, 1> alpha_t(alpha.size());
   for (int k = 0; k < alpha.size(); ++k)

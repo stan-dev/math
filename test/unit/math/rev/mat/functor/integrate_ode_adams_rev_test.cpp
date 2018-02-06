@@ -13,8 +13,8 @@ template <typename F, typename T_y0, typename T_theta>
 void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
   std::vector<std::vector<var> > ode_res_vd = stan::math::integrate_ode_adams(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
@@ -88,14 +88,13 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int,
                     std::string error_msg) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
-  EXPECT_THROW_MSG(
-      stan::math::integrate_ode_adams(
-                                    harm_osc, promote_scalar<T_y0>(y0), t0, ts,
-                                    promote_scalar<T_theta>(theta), x, x_int),
-      std::runtime_error, error_msg);
+  EXPECT_THROW_MSG(stan::math::integrate_ode_adams(
+                       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
+                       promote_scalar<T_theta>(theta), x, x_int),
+                   std::runtime_error, error_msg);
 }
 
 // TODO(carpenter): g++6 failure

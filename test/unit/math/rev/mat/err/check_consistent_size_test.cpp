@@ -3,11 +3,11 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::check_consistent_size;
-  using stan::size_of;
   using stan::math::var;
+  using stan::size_of;
 
   const char* function = "check_consistent_size";
   const char* name1 = "name1";
@@ -22,11 +22,11 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
 }
 
 TEST(AgradRevErrorHandlingScalar, checkConsistentSize_nan) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::check_consistent_size;
-  using stan::size_of;
   using stan::math::var;
+  using stan::size_of;
 
   const char* function = "check_consistent_size";
   const char* name1 = "name1";

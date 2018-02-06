@@ -50,8 +50,8 @@ struct algebra_solver_vari : public vari {
         theta_(ChainableStack::memalloc_.alloc_array<vari*>(x_size_)),
         Jx_y_(
             ChainableStack::memalloc_.alloc_array<double>(x_size_ * y_size_)) {
-    using Eigen::MatrixXd;
     using Eigen::Map;
+    using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i)
       y_[i] = y(i).vi_;
 
@@ -233,16 +233,15 @@ Eigen::VectorXd algebra_solver(
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
-    const F& f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = 0, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   Eigen::VectorXd theta_dbl
-      = algebra_solver(f, x, value_of(y), dat, dat_int, 0,
-                       relative_tolerance, function_tolerance, max_num_steps);
+      = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
+                       function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> FY;
 

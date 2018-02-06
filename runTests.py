@@ -40,6 +40,10 @@ def processCLIArgs():
     tests_help_msg += "         'test/unit/math/prim/scal/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
+    f_help_msg = "Only tests with file names matching these will be executed.\n"
+    f_help_msg += "Example: '-f chol', '-f gpu', '-f prim mat'"
+    parser.add_argument("-f", nargs="+", type=str, default = "",
+                        help=f_help_msg)
 
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
                         help="request additional script debugging output.")
@@ -97,15 +101,20 @@ def runTest(name):
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
     doCommand(command)
 
-def findTests(args):
-    folders = filter(os.path.isdir, args)
-    nonfolders = list(set(args) - set(folders))
+def findTests(base_path, filter_names):
+    folders = filter(os.path.isdir, base_path)
+    nonfolders = list(set(base_path) - set(folders))
     tests = nonfolders + [os.path.join(root, n)
             for f in folders
             for root, _, names in os.walk(f)
             for n in names
             if n.endswith(testsfx)]
-    return map(mungeName, tests)
+    tests = map(mungeName, tests)
+    tests = [test
+            for test in tests
+            if all(filter_name in test
+                   for filter_name in filter_names)]
+    return tests
 
 def batched(tests):
     return [tests[i:i + batchSize] for i in range(0, len(tests), batchSize)]
@@ -118,7 +127,7 @@ def main():
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
 
-    tests = findTests(inputs.tests)
+    tests = findTests(inputs.tests, inputs.f)
     if not tests:
         stopErr("No matching tests found.", -1)
 

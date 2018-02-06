@@ -129,33 +129,40 @@ class VectorRNGTestRig {
         good_p3_(good_p3),
         good_p3_int_(good_p3_int),
         bad_p3_(bad_p3),
-        bad_p3_int_(bad_p3_int) {}
+        bad_p3_int_(bad_p3_int) {
+    if (good_p1.size() > 0 && good_p1_int.size() == 0)
+      throw std::domain_error(
+          "good_p1 has non-zero length, but good_p1_int "
+          "still has length zero (good_p1_int must also "
+          "have non-zero length)");
+
+    if (good_p2.size() > 0 && good_p2_int.size() == 0)
+      throw std::domain_error(
+          "good_p2 has non-zero length, but good_p2_int "
+          "still has length zero (good_p2_int must also "
+          "have non-zero length)");
+
+    if (good_p3.size() > 0 && good_p3_int.size() == 0)
+      throw std::domain_error(
+          "good_p3 has non-zero length, but good_p3_int "
+          "still has length zero (good_p3_int must also "
+          "have non-zero length)");
+  }
 
   VectorRNGTestRig(int N, int M, std::vector<double> good_p1,
                    std::vector<int> good_p1_int, std::vector<double> bad_p1,
                    std::vector<int> bad_p1_int, std::vector<double> good_p2,
                    std::vector<int> good_p2_int, std::vector<double> bad_p2,
                    std::vector<int> bad_p2_int)
-      : N_(N),
-        M_(M),
-        good_p1_(good_p1),
-        good_p1_int_(good_p1_int),
-        bad_p1_(bad_p1),
-        bad_p1_int_(bad_p1_int),
-        good_p2_(good_p2),
-        good_p2_int_(good_p2_int),
-        bad_p2_(bad_p2),
-        bad_p2_int_(bad_p2_int) {}
+      : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int,
+                         good_p2, good_p2_int, bad_p2, bad_p2_int, {}, {}, {},
+                         {}) {}
 
   VectorRNGTestRig(int N, int M, std::vector<double> good_p1,
                    std::vector<int> good_p1_int, std::vector<double> bad_p1,
                    std::vector<int> bad_p1_int)
-      : N_(N),
-        M_(M),
-        good_p1_(good_p1),
-        good_p1_int_(good_p1_int),
-        bad_p1_(bad_p1),
-        bad_p1_int_(bad_p1_int) {}
+      : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int, {}, {},
+                         {}, {}, {}, {}, {}, {}) {}
 
   /*
    * If no good values for p2 or p3 are provided, it is assumed that those

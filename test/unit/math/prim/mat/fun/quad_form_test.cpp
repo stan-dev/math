@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, quad_form_mat) {
-  using stan::math::quad_form;
   using stan::math::matrix_d;
+  using stan::math::quad_form;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -21,8 +21,8 @@ TEST(MathMatrix, quad_form_mat) {
 }
 
 TEST(MathMatrix, quad_form_sym_mat) {
-  using stan::math::quad_form_sym;
   using stan::math::matrix_d;
+  using stan::math::quad_form_sym;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -40,8 +40,8 @@ TEST(MathMatrix, quad_form_sym_mat) {
 }
 
 TEST(MathMatrix, quad_form_vec) {
-  using stan::math::quad_form;
   using stan::math::matrix_d;
+  using stan::math::quad_form;
   using stan::math::vector_d;
 
   matrix_d ad(4, 4);
@@ -58,8 +58,8 @@ TEST(MathMatrix, quad_form_vec) {
 }
 
 TEST(MathMatrix, quad_form_sym_vec) {
-  using stan::math::quad_form_sym;
   using stan::math::matrix_d;
+  using stan::math::quad_form_sym;
   using stan::math::vector_d;
 
   matrix_d ad(4, 4);
@@ -76,8 +76,8 @@ TEST(MathMatrix, quad_form_sym_vec) {
 }
 
 TEST(MathMatrix, quad_form_sym_symmetry) {
-  using stan::math::quad_form_sym;
   using stan::math::matrix_d;
+  using stan::math::quad_form_sym;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -99,8 +99,8 @@ TEST(MathMatrix, quad_form_sym_symmetry) {
 }
 
 TEST(MathMatrix, quad_form_sym_asymmetric) {
-  using stan::math::quad_form_sym;
   using stan::math::matrix_d;
+  using stan::math::quad_form_sym;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);

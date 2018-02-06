@@ -32,8 +32,8 @@ typename return_type<T_y, T_inv_scale>::type exponential_lcdf(
   static const char* function = "exponential_lcdf";
 
   using boost::math::tools::promote_args;
-  using std::log;
   using std::exp;
+  using std::log;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, beta))

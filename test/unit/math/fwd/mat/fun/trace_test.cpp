@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixTrace, fd) {
-  using stan::math::trace;
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
+  using stan::math::trace;
 
   matrix_fd a(2, 2);
   a << -1.0, 2.0, 5.0, 10.0;
@@ -18,9 +18,9 @@ TEST(AgradFwdMatrixTrace, fd) {
   EXPECT_FLOAT_EQ(2.0, s.d_);
 }
 TEST(AgradFwdMatrixTrace, ffd) {
-  using stan::math::trace;
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
+  using stan::math::trace;
 
   matrix_ffd a(2, 2);
   a << -1.0, 2.0, 5.0, 10.0;

@@ -6,9 +6,9 @@ using stan::math::check_less;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
+  using stan::math::check_less;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_less;
 
   int N = 5;
   const char* function = "check_less";

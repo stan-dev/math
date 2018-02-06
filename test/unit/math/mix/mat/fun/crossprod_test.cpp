@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_1stderiv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -51,9 +51,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_1stderiv) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_2ndderiv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -84,9 +84,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_fv_2ndderiv) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -120,9 +120,9 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -146,8 +146,8 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(3.0, 2.0);
@@ -164,8 +164,8 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(6.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(3.0, 2.0);
@@ -180,9 +180,9 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(4.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -204,9 +204,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -225,9 +225,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -261,9 +261,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -288,9 +288,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -324,9 +324,9 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   fvar<var> a(1.0, 2.0);
@@ -352,9 +352,9 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_fv_2ndDeriv) {
 }
 
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_1stderiv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -401,9 +401,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_1stderiv) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -435,9 +435,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_1) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -469,9 +469,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_2ndderiv_2) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_3rdderiv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(3, 3);
@@ -510,9 +510,9 @@ TEST(AgradMixMatrixCrossProd, 3x3_matrix_ffv_3rdderiv) {
   EXPECT_FLOAT_EQ(0.0, h[6]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -547,9 +547,9 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -574,9 +574,9 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -601,9 +601,9 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d Z(2, 2);
@@ -632,8 +632,8 @@ TEST(AgradMixMatrixCrossProd, 2x2_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[3]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(3.0, 2.0);
@@ -650,8 +650,8 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(6.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(3.0, 2.0);
@@ -666,8 +666,8 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(3.0, 2.0);
@@ -682,8 +682,8 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(4.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(3.0, 1.0);
@@ -699,9 +699,9 @@ TEST(AgradMixMatrixCrossProd, 1x1_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[0]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -723,9 +723,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -744,9 +744,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -765,9 +765,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 1.0);
@@ -789,9 +789,9 @@ TEST(AgradMixMatrixCrossProd, 1x3_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -826,9 +826,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -854,9 +854,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -882,9 +882,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 1.0);
@@ -916,9 +916,9 @@ TEST(AgradMixMatrixCrossProd, 2x3_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -953,9 +953,9 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -981,9 +981,9 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 2.0);
@@ -1009,9 +1009,9 @@ TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixCrossProd, 3x2_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   fvar<fvar<var> > a(1.0, 1.0);
