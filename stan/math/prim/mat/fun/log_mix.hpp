@@ -22,13 +22,13 @@
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-
+#include <vector>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the log mixture density with specified mixing proportion
+ * Return the log mixture density with specified mixing proportions
  * and log densities.
  *
  * \f[
@@ -98,6 +98,33 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
   return ops_partials.build(logp);
 }
 
+/**
+ * Return the log mixture density given specified mixing proportions
+ * and array of log density vectors.
+ *
+ * \f[
+ * \frac{\partial }{\partial p_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)+
+ * \log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}+
+ * \frac{e^{f_x}}{e^{f_1}p_1+\cdot\cdot\cdot+e^{f_m}p_m}
+ * \f]
+ *
+ * \f[
+ * \frac{\partial }{\partial d_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)
+ * +\log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}p_x}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}
+ * \f]
+ *
+ * @param theta vector of mixing proportions in [0, 1].
+ * @param lambda array containing vectors of log densities.
+ * @return log mixture of densities in specified proportion
+ */
   template <typename T_theta, typename T_lam>
   typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, -1, 1> > >::type
   log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, -1, 1> >& lambda) {
@@ -151,11 +178,36 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     for (int n = 0; n < N; ++n)
         ops_partials.edge2_.partials_vec_[n] = derivs.col(n).cwiseProduct(theta_dbl);
   }
-
     return ops_partials.build(logp.sum());
   }
 
-
+/**
+ * Return the log mixture density given specified mixing proportions
+ * and array of log density row vectors.
+ *
+ * \f[
+ * \frac{\partial }{\partial p_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)+
+ * \log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}+
+ * \frac{e^{f_x}}{e^{f_1}p_1+\cdot\cdot\cdot+e^{f_m}p_m}
+ * \f]
+ *
+ * \f[
+ * \frac{\partial }{\partial d_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)
+ * +\log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}p_x}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}
+ * \f]
+ *
+ * @param theta vector of mixing proportions in [0, 1].
+ * @param lambda array containing row vectors of log densities.
+ * @return log mixture of densities in specified proportion
+ */
   template <typename T_theta, typename T_lam>
   typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, 1, -1> > >::type
   log_mix(const T_theta& theta, const std::vector<Eigen::Matrix<T_lam, 1, -1> >& lambda) {
@@ -209,10 +261,36 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     for (int n = 0; n < N; ++n)
         ops_partials.edge2_.partials_vec_[n] = derivs.col(n).cwiseProduct(theta_dbl);
   }
-
     return ops_partials.build(logp.sum());
   }
 
+/**
+ * Return the log mixture density given specified mixing proportions
+ * and array of log density arrays.
+ *
+ * \f[
+ * \frac{\partial }{\partial p_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)+
+ * \log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}+
+ * \frac{e^{f_x}}{e^{f_1}p_1+\cdot\cdot\cdot+e^{f_m}p_m}
+ * \f]
+ *
+ * \f[
+ * \frac{\partial }{\partial d_x}\left[
+ * \log\left(\exp^{\log\left(p_1\right)+d_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+d_n}\right)
+ * +\log\left(\exp^{\log\left(p_1\right)+f_1}+\cdot\cdot\cdot+
+ * \exp^{\log\left(p_n\right)+f_n}\right)\right]
+ * =\frac{e^{d_x}p_x}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}
+ * \f]
+ *
+ * @param theta vector of mixing proportions in [0, 1].
+ * @param lambda array containing arrays of log densities.
+ * @return log mixture of densities in specified proportion
+ */
   template <typename T_theta, typename T_lam>
   typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type
   log_mix(const T_theta& theta, const std::vector<std::vector<T_lam> >& lambda) {
@@ -261,16 +339,16 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
     lam_deriv.col(n) = derivs.col(n).cwiseProduct(theta_dbl);
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
-  if (!is_constant_struct<T_theta>::value)
+  if (!is_constant_struct<T_theta>::value) {
     for (int m = 0; m < M; ++m)
       ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+  }
 
   if (!is_constant_struct<T_lam>::value) {
     for (int n = 0; n < N; ++n)
       for (int m = 0; m < M; ++m)
         ops_partials.edge2_.partials_vec_[n][m] = lam_deriv(m, n);
   }
-
     return ops_partials.build(logp.sum());
   }
 }  // namespace math
