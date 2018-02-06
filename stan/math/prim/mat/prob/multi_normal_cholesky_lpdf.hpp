@@ -55,7 +55,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       matrix_partials_t;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
-  typedef Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic> row_vector_partials_t;
+  typedef Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>
+      row_vector_partials_t;
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
@@ -122,8 +123,12 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
       for (int j = 0; j < size_y; j++)
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
 
-      const row_vector_partials_t half = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl).transpose();
-      const vector_partials_t scaled_diff = (half * inv_L_dbl.template triangularView<Eigen::Lower>()).transpose();
+      const row_vector_partials_t half
+          = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl)
+                .transpose();
+      const vector_partials_t scaled_diff
+          = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
+                .transpose();
 
       logp -= 0.5 * dot_self(half);
 
