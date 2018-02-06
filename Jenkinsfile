@@ -7,6 +7,11 @@ def setupCC(Boolean failOnError = true) {
     "echo CC=${env.CXX} ${errorStr}> make/local"
 }
 
+def setupOpenCL(Boolean failOnError = true) {
+    errorStr = failOnError ? "-Werror " : ""
+    "echo STAN_OPENCL=true>> make/local"
+}
+
 def setup(Boolean failOnError = true) {
     sh """
         git clean -xffd
@@ -23,8 +28,8 @@ def mailBuildResults(String label, additionalEmails='') {
     )
 }
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${STAN_FILTERS}"
+def runTests(String testPath, String filters = "") {
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${filters}"
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
@@ -124,8 +129,10 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" },
-                        GpuHeaders: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
+                    )
+                    parallel(
+                      GPUHeaders: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
                     )
                 }
             }
@@ -144,17 +151,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('GPU Unit') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "echo STAN_FILTERS=gpu > make/local"
-                        runTests("test/unit")
+                        runTests("test/unit", "test")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -184,17 +181,17 @@ pipeline {
                         }
                     }
                 }
-                stage('GPU tests') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        echo 'STAN_OPENCL=true' >> make/local
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
             }
+        }
+        stage('GPU Unit') {
+                agent any
+                steps {
+                    unstash 'MathSetup'
+                    sh setupCC()
+                    sh setupOpenCL()
+                    runTests("test/unit", "gpu")
+                }
+                post { always { retry(3) { deleteDir() } } }
         }
         stage('Upstream tests') {
             parallel {

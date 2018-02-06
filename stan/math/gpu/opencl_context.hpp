@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_GPU_OPENCL_CONTEXT_HPP
 #define STAN_MATH_GPU_OPENCL_CONTEXT_HPP
-
+#ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
@@ -35,8 +35,8 @@ static map_string kernel_groups;
 static map_string kernel_strings;
 static map_kernel kernels;
 static map_bool compiled_kernels;
-static std::string dummy_kernel =
-  "__kernel void dummy(__global const int* foo) { };";
+static std::string dummy_kernel
+    = "__kernel void dummy(__global const int* foo) { };";
 
 /**
  * Initalizes the global std::map variables that
@@ -294,4 +294,5 @@ inline cl::Kernel get_kernel(std::string name) {
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
