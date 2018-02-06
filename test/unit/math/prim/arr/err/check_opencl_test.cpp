@@ -10,7 +10,5 @@ TEST(ErrorHandlingOpenCL, checkThrows) {
 }
 #else
 #include <gtest/gtest.h>
-TEST(ErrorHandlingOpenCL, checkThrowsDummy) {
-  EXPECT_NO_THROW();
-}
+TEST(ErrorHandlingOpenCL, checkThrowsDummy) { EXPECT_NO_THROW(); }
 #endif

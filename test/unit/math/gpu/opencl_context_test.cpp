@@ -9,7 +9,6 @@ TEST(MathGpu, setup) {
   EXPECT_EQ(0, stan::math::kernels.size());
   EXPECT_EQ(0, stan::math::compiled_kernels.size());
 
-
   cl::Context cl = stan::math::get_context();
   EXPECT_EQ(1, stan::math::initialized_) << "initializes after get_context()";
   EXPECT_NE("", stan::math::get_description());
