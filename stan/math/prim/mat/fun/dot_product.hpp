@@ -4,6 +4,7 @@
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
 namespace stan {
@@ -52,6 +53,7 @@ inline double dot_product(const std::vector<double> &v1,
  * Returns the dot product of the specificied vector of elements
  * @param x1 First vector
  * @param x2 Second vector
+ * @param length size of vectors
  * Assumes vectors are the same size
  */
 template <typename T_1, typename T_2>
