@@ -107,8 +107,6 @@ TEST(MathPrimMat, dot_prod_same_function_squared_distance) {
     x1[i].resize(3, 1);
     x1[i] << 1 * i, 2 * i, 3 * i;
   }
-  std::cout << x1.size() << "\n";
-  std::cout << x[0].size() << "\n";
 
   EXPECT_NO_THROW(stan::math::squared_distance(x1[0], x1[1]));
   EXPECT_NO_THROW(stan::math::dot_product(x1[0], x1[1]));
