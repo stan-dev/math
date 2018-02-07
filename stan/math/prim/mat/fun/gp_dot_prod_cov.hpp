@@ -13,54 +13,54 @@
 namespace stan {
 namespace math {
 /**
-     * Returns a dot product kernel.
-     *
-     * @tparam T_x type of std::vector of elements
-     * @tparam T_sigma type of sigma
-     *
-     * @param x std::vector of elements that can be used in transpose
-     *   and multiply
-     *    This function assume each element of x is the same size.
-     * @param sigma 
-     * @return dot product kernel
-     * @throw std::domain_error if sigma < 0 or 
-     *   x is nan or infinite
-     */
+ * Returns a dot product kernel.
+ *
+ * @tparam T_x type of std::vector of elements
+ * @tparam T_sigma type of sigma
+ *
+ * @param x std::vector of elements that can be used in transpose
+ *   and multiply
+ *    This function assume each element of x is the same size.
+ * @param sigma
+ * @return dot product kernel
+ * @throw std::domain_error if sigma < 0 or
+ *   x is nan or infinite
+ */
 template <typename T_x, typename T_sigma>
 inline typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
-gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
-    using stan::math::square;
-    using stan::math::dot_product;
+gp_dot_prod_cov(const std::vector<T_x>& x, const T_sigma& sigma) {
+  using stan::math::dot_product;
+  using stan::math::square;
 
-    check_not_nan("gp_dot_prod_cov", "sigma", sigma);
-    check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
-    check_finite("gp_dot_prod_cov", "sigma", sigma);
+  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
+  check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
+  check_finite("gp_dot_prod_cov", "sigma", sigma);
 
-    for (size_t n = 0; n < x.size(); ++n) {
-        check_not_nan("gp_dot_prod_cov", "x", x[n]);
-        check_finite("gp_dot_prod_cov", "x", x[n]);
-    }
+  for (size_t n = 0; n < x.size(); ++n) {
+    check_not_nan("gp_dot_prod_cov", "x", x[n]);
+    check_finite("gp_dot_prod_cov", "x", x[n]);
+  }
 
-    Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type,
-                  Eigen::Dynamic, Eigen::Dynamic>
-        cov(x.size(), x.size());
-    int x_size = x.size();
-    if (x_size == 0)
-        return cov;
-
-    T_sigma sigma_sq = square(sigma);
-
-    for (int i = 0; i < (x_size - 1); ++i) {
-        cov(i, i) = sigma_sq + dot_product(x[i], x[i]);
-        for (int j = i + 1; j < x_size; ++j) {
-            cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
-            cov(j, i) = cov(i, j);
-        }
-    }
-    cov(x_size - 1, x_size - 1) =
-        sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
+  Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
+                Eigen::Dynamic>
+      cov(x.size(), x.size());
+  int x_size = x.size();
+  if (x_size == 0)
     return cov;
+
+  T_sigma sigma_sq = square(sigma);
+
+  for (int i = 0; i < (x_size - 1); ++i) {
+    cov(i, i) = sigma_sq + dot_product(x[i], x[i]);
+    for (int j = i + 1; j < x_size; ++j) {
+      cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
+      cov(j, i) = cov(i, j);
+    }
+  }
+  cov(x_size - 1, x_size - 1)
+      = sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
+  return cov;
 }
 
 /**
@@ -76,13 +76,13 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   and multiply
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-inline typename Eigen::Matrix<typename stan::return_type<T_x1, T_x2,
-                                                         T_sigma>::type,
-                              Eigen::Dynamic, Eigen::Dynamic>
+inline typename Eigen::Matrix<
+    typename stan::return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+    Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
-             const T_sigma& sigma) {
-  using stan::math::square;
+                const T_sigma& sigma) {
   using stan::math::dot_product;
+  using stan::math::square;
 
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -98,20 +98,20 @@ gp_dot_prod_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
   }
   Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma>::type,
                 Eigen::Dynamic, Eigen::Dynamic>
-    cov(x1.size(), x2.size());
+      cov(x1.size(), x2.size());
 
-if (x1.size() == 0 || x2.size() == 0)
-  return cov;
+  if (x1.size() == 0 || x2.size() == 0)
+    return cov;
 
-T_sigma sigma_sq = square(sigma);
+  T_sigma sigma_sq = square(sigma);
 
-for (size_t i = 0; i < x1.size(); ++i) {
-  for (size_t j = 0; j < x2.size(); ++j) {
-    cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
+  for (size_t i = 0; i < x1.size(); ++i) {
+    for (size_t j = 0; j < x2.size(); ++j) {
+      cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
+    }
   }
+  return cov;
 }
-return cov;
-}
-}  // math
-}  // stan
+}  // namespace math
+}  // namespace stan
 #endif
