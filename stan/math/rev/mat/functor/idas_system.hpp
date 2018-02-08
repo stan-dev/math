@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
@@ -22,6 +25,12 @@
 
 #define CHECK_IDAS_CALL(call) idas_check(call, #call)
 
+/**
+ * check IDAS return flag & throw runtime error
+ *
+ * @param[in] flag routine return flag.
+ * @param[in] func routine name.
+ */
 inline void idas_check(int flag, const char* func) {
   if (flag < 0) {
     std::ostringstream ss;
@@ -30,296 +39,301 @@ inline void idas_check(int flag, const char* func) {
   }
 }
 
+/**
+ * convert NV_Vector* array to Eigen::MatrixXd
+ *
+ * @param[in] nv N_Vector* array.
+ * @param[in] nv_size length of nv.
+ * @return Eigen::MatrixXd.
+ */
+inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector* nv,
+                                             const size_t& nv_size) {
+  size_t m = nv_size;
+  size_t n = NV_LENGTH_S(nv[0]);
+  stan::math::matrix_d res(n, m);
+  for (size_t j = 0; j < m; ++j) {
+    for (size_t i = 0; i < n; ++i) {
+      auto nvp = N_VGetArrayPointer(nv[j]);
+      res(i, j) = nvp[i];
+    }
+  }
+  return res;
+}
+
+/**
+ * convert Eigen::MatrixXd to NV_Vector* array.
+ *
+ * @param[in] mat Eigen::MatrixXd to be converted.
+ * @param[out] nv N_Vector* array.
+ * @param[in] nv_size length of nv.
+ */
+inline void matrix_d_to_NVarray(const Eigen::MatrixXd& mat, N_Vector* nv,
+                                const size_t& nv_size) {
+  size_t m = nv_size;
+  size_t n = NV_LENGTH_S(nv[0]);
+  for (size_t j = 0; j < m; ++j) {
+    for (size_t i = 0; i < n; ++i) {
+      auto nvp = N_VGetArrayPointer(nv[j]);
+      nvp[i] = mat(i, j);
+    }
+  }
+}
+
 namespace stan {
 namespace math {
 
-template<typename F, typename TYY, typename TYP, typename TPAR>
+/**
+ * IDAS DAE system that contains informtion on residual
+ * equation functor, sensitivity residual equation functor,
+ * as well as initial conditions. This is a base type that
+ * is intended to contain common values used by forward
+ * sensitivity system and adjoint sensitivity system.
+ *
+ * @tparam F type of functor for DAE residual.
+ * @tparam Tyy type of initial unknown values.
+ * @tparam Typ type of initial unknown's derivative values.
+ * @tparam Tpar type of parameters.
+ */
+template <typename F, typename Tyy, typename Typ, typename Tpar>
 class idas_system {
  protected:
   const F& f_;
-  const std::vector<TYY>& yy_;
-  const std::vector<TYP>& yp_;
-  const std::vector<TPAR>& theta_;
+  const std::vector<Tyy>& yy_;
+  const std::vector<Typ>& yp_;
+  std::vector<double> yy_val_;  // workspace
+  std::vector<double> yp_val_;  // workspace
+  const std::vector<Tpar>& theta_;
   const std::vector<double>& x_r_;
   const std::vector<int>& x_i_;
   const size_t N_;
   const size_t M_;
-  const size_t n_sens_;
+  const size_t ns_;  // nb. of sensi params
   N_Vector nv_yy_;
   N_Vector nv_yp_;
+  std::vector<double> rr_val_;  // workspace
+  N_Vector nv_rr_;
+  N_Vector id_;
   void* mem_;
-  SUNMatrix A_;
-  SUNLinearSolver LS_;
   std::ostream* msgs_;
 
  public:
-  static constexpr bool is_var_yy0 = stan::is_var<TYY>::value;
-  static constexpr bool is_var_yp0 = stan::is_var<TYP>::value;
-  static constexpr bool is_var_par = stan::is_var<TPAR>::value;
-  static constexpr bool need_sens = is_var_yy0 && is_var_yp0 && is_var_par;
+  static constexpr bool is_var_yy0 = stan::is_var<Tyy>::value;
+  static constexpr bool is_var_yp0 = stan::is_var<Typ>::value;
+  static constexpr bool is_var_par = stan::is_var<Tpar>::value;
+  static constexpr bool need_sens = is_var_yy0 || is_var_yp0 || is_var_par;
 
-  using return_type =  std::vector<
-    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> >;
+  using scalar_type = typename stan::return_type<Tyy, Typ, Tpar>::type;
+  using return_type = std::vector<std::vector<scalar_type> >;
 
-  idas_system(const F& f,
-                        const std::vector<TYY>& yy0,
-                        const std::vector<TYP>& yp0,
-                        const std::vector<TPAR>& theta,
-                        const std::vector<double>& x_r,
-                        const std::vector<int>& x_i,
-                        std::ostream* msgs) :
-    f_(f), yy_(yy0), yp_(yp0), theta_(theta), x_r_(x_r), x_i_(x_i), 
-    N_(yy0.size()),
-    M_(theta.size()),
-    n_sens_((is_var_yy0? 0 : N_) + (is_var_yp0? 0 : N_) + (is_var_par? 0 : M_)),
-    mem_(IDACreate()),
-    msgs_(msgs)
-  {
-    nv_yy_ = N_VMake_Serial(N_, value_of(yy_).data());
-    nv_yp_ = N_VMake_Serial(N_, value_of(yp_).data());
-
-    A_ = SUNDenseMatrix(N_, N_);
-    LS_ = SUNDenseLinearSolver(nv_yy_, A_);
+  /**
+   * Construct IDAS DAE system from initial condition and parameters
+   *
+   * @param[in] f DAE residual functor
+   * @param[in] eq_id array for DAE's variable ID(1 for *
+   *                  derivative variables, 0 for algebraic variables).
+   * @param[in] yy0 initial condiiton
+   * @param[in] yp0 initial condiiton for derivatives
+   * @param[in] theta parameters of the base DAE.
+   * @param[in] x_r continuous data vector for the DAE.
+   * @param[in] x_i integer data vector for the DAE.
+   * @param[in] msgs stream to which messages are printed.
+   */
+  idas_system(const F& f, const std::vector<int>& eq_id,
+              const std::vector<Tyy>& yy0, const std::vector<Typ>& yp0,
+              const std::vector<Tpar>& theta, const std::vector<double>& x_r,
+              const std::vector<int>& x_i, std::ostream* msgs)
+      : f_(f),
+        yy_(yy0),
+        yp_(yp0),
+        yy_val_(value_of(yy0)),
+        yp_val_(value_of(yp0)),
+        theta_(theta),
+        x_r_(x_r),
+        x_i_(x_i),
+        N_(yy0.size()),
+        M_(theta.size()),
+        ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0)
+            + (is_var_par ? M_ : 0)),
+        nv_yy_(N_VMake_Serial(N_, yy_val_.data())),
+        nv_yp_(N_VMake_Serial(N_, yp_val_.data())),
+        rr_val_(N_, 0.0),
+        nv_rr_(N_VMake_Serial(N_, rr_val_.data())),
+        id_(N_VNew_Serial(N_)),
+        mem_(IDACreate()),
+        msgs_(msgs) {
+    if (nv_yy_ == NULL || nv_yp_ == NULL)
+      throw std::runtime_error("N_VMake_Serial failed to allocate memory");
 
     if (mem_ == NULL)
-      throw std::runtime_error("IDACreate failed to allocate memory");    
+      throw std::runtime_error("IDACreate failed to allocate memory");
+
+    static const char* caller = "idas_system";
+    check_finite(caller, "initial state", yy0);
+    check_finite(caller, "derivative initial state", yp0);
+    check_finite(caller, "parameter vector", theta);
+    check_finite(caller, "continuous data", x_r);
+    check_nonzero_size(caller, "initial state", yy0);
+    check_nonzero_size(caller, "derivative initial state", yp0);
+    check_consistent_sizes(caller, "initial state", yy0,
+                           "derivative initial state", yp0);
+    check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
+    check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
+
+    for (size_t i = 0; i < N_; ++i)
+      NV_Ith_S(id_, i) = eq_id[i];
   }
 
-  ~idas_system(){
-    SUNLinSolFree(LS_);
-    SUNMatDestroy(A_);
+  /**
+   * destructor to deallocate IDAS solution memory and workspace.
+   */
+  ~idas_system() {
     N_VDestroy_Serial(nv_yy_);
     N_VDestroy_Serial(nv_yp_);
+    N_VDestroy_Serial(nv_rr_);
     IDAFree(&mem_);
   }
 
-  N_Vector& nv_yy() {return nv_yy_;}
-  N_Vector& nv_yp() {return nv_yp_;}
-  SUNMatrix& jacobi() {return A_;}
-  SUNLinearSolver& linsol() {return LS_;}
+  /**
+   * return reference to current N_Vector of unknown variable
+   *
+   * @return reference to current N_Vector of unknown variable
+   */
+  N_Vector& nv_yy() { return nv_yy_; }
 
-  std::vector<double> yy() {return value_of(yy_);}
-  std::vector<double> yp() {return value_of(yp_);}
+  /**
+   * return reference to current N_Vector of derivative variable
+   *
+   * @return reference to current N_Vector of derivative variable
+   */
+  N_Vector& nv_yp() { return nv_yp_; }
 
-  const size_t& n() {return N_;}
+  /**
+   * return reference to current N_Vector of residual workspace
+   *
+   * @return reference to current N_Vector of residual workspace
+   */
+  N_Vector& nv_rr() { return nv_rr_; }
 
-  const size_t& n_sens() {return n_sens_;}
+  /**
+   * return reference to DAE variable IDs
+   *
+   * @return reference to DAE variable IDs.
+   */
+  N_Vector& id() { return id_; }
 
-  const size_t n_sys() {return N_ * (n_sens_ + 1);}
+  /**
+   * return reference to current solution vector value
+   *
+   * @return reference to current solution vector value
+   */
+  const std::vector<double>& yy_val() { return yy_val_; }
 
-  void* mem() {return mem_;}
+  /**
+   * return reference to current solution derivative vector value
+   *
+   * @return reference to current solution derivative vector value
+   */
+  const std::vector<double>& yp_val() { return yp_val_; }
 
-  void set_consistent_ic(double t1){
-    if(is_var_yp0 && !is_var_yy0) {
-      CHECK_IDAS_CALL(IDACalcIC(mem_, IDA_YA_YDP_INIT, t1));
-      CHECK_IDAS_CALL(IDAGetConsistentIC(mem_, nv_yy_, nv_yp_));
-    } else {
-      CHECK_IDAS_CALL(IDACalcIC(mem_, IDA_Y_INIT, t1));
-      CHECK_IDAS_CALL(IDAGetConsistentIC(mem_, nv_yy_, NULL));
+  /**
+   * return reference to initial condition
+   *
+   * @return reference to initial condition
+   */
+  const std::vector<Tyy>& yy0() const { return yy_; }
+
+  /**
+   * return reference to derivative initial condition
+   *
+   * @return reference to derivative initial condition
+   */
+  const std::vector<Typ>& yp0() const { return yp_; }
+
+  /**
+   * return reference to parameter
+   *
+   * @return reference to parameter
+   */
+  const std::vector<Tpar>& theta() const { return theta_; }
+
+  /**
+   * return a vector of vars for that contains the initial
+   * condition and parameters in case they are vars. The
+   * sensitivity with respect to this vector will be
+   * calculated by IDAS.
+   *
+   * @return vector of vars
+   */
+  std::vector<scalar_type> vars() const {
+    std::vector<scalar_type> res;
+    if (is_var_yy0) {
+      res.insert(res.end(), yy0().begin(), yy0().end());
     }
+    if (is_var_yp0) {
+      res.insert(res.end(), yp0().begin(), yp0().end());
+    }
+    if (is_var_par) {
+      res.insert(res.end(), theta().begin(), theta().end());
+    }
+
+    return res;
   }
 
-  IDAResFn residual() {         // return a non-capture lambda
-    return [](double t, N_Vector yy, N_Vector yp,
-              N_Vector rr, void *user_data) -> int {
-      using DAE = idas_system<F, TYY, TYP, TPAR>;
+  /**
+   * return number of unknown variables
+   */
+  const size_t n() { return N_; }
+
+  /**
+   * return number of sensitivity parameters
+   */
+  const size_t ns() { return ns_; }
+
+  /**
+   * return size of DAE system for primary and sensitivity unknowns
+   */
+  const size_t n_sys() { return N_ * (ns_ + 1); }
+
+  /**
+   * return theta size
+   */
+  const size_t n_par() { return theta_.size(); }
+
+  /**
+   * return IDAS memory handle
+   */
+  void* mem() { return mem_; }
+
+  /**
+   * return a closure for IDAS residual callback
+   */
+  IDAResFn residual() {  // a non-capture lambda
+    return [](double t, N_Vector yy, N_Vector yp, N_Vector rr,
+              void* user_data) -> int {
+      using DAE = idas_system<F, Tyy, Typ, Tpar>;
       DAE* dae = static_cast<DAE*>(user_data);
 
-      auto N = NV_LENGTH_S(yy);
+      size_t N = NV_LENGTH_S(yy);
       auto yy_val = N_VGetArrayPointer(yy);
       std::vector<double> yy_vec(yy_val, yy_val + N);
-      auto yp_val = N_VGetArrayPointer(yp); 
+      auto yp_val = N_VGetArrayPointer(yp);
       std::vector<double> yp_vec(yp_val, yp_val + N);
-      auto res = dae -> f_(t, yy_vec, yp_vec,
-                           dae -> theta_,
-                           dae -> x_r_,
-                           dae -> x_i_,
-                           dae -> msgs_);
-      NV_DATA_S(rr) = res.data();
-      return 0;
-    };    
-  }
-
-};
-
-template<typename F, typename TYY, typename TYP, typename TPAR>
-class idas_forward_system: public idas_system<F, TYY, TYP, TPAR> {
-  N_Vector* nv_yys_;
-  N_Vector* nv_yps_;
-
-public:
-  idas_forward_system(const F& f,
-                      const std::vector<TYY>& yy0,
-                      const std::vector<TYP>& yp0,
-                      const std::vector<TPAR>& theta,
-                      const std::vector<double>& x_r,
-                      const std::vector<int>& x_i,
-                      std::ostream* msgs) :
-    idas_system<F, TYY, TYP, TPAR>(f, yy0, yp0, theta, x_r, x_i, msgs) 
-  {
-    if (this -> need_sens) {
-      nv_yys_ = N_VCloneVectorArray(this->n_sens_, this->nv_yy_);
-      nv_yps_ = N_VCloneVectorArray(this->n_sens_, this->nv_yp_);
-      for (size_t is=0;is<this->n_sens_;is++) {
-        N_VConst(RCONST(0.0), nv_yys_[is]);
-        N_VConst(RCONST(0.0), nv_yps_[is]);
-      }
-    }
-  }
-
-  ~idas_forward_system() {
-    if (this -> need_sens) {
-      N_VDestroyVectorArray_Serial(this->nv_yys_, this->n_sens_);
-      N_VDestroyVectorArray_Serial(this->nv_yps_, this->n_sens_);
-    }
-  }
-
-  N_Vector* nv_yys() {return nv_yys_;}
-  N_Vector* nv_yps() {return nv_yps_;}
- 
-  void set_consistent_sens_ic() {
-    if(this->is_var_yp0 && !this->is_var_yy0) {
-      CHECK_IDAS_CALL(IDAGetSensConsistentIC(this->mem_, nv_yys_, nv_yps_));
-    } else {
-      CHECK_IDAS_CALL(IDAGetSensConsistentIC(this->mem_, nv_yys_, NULL));
-    }
-  }
-
-  void cast_to_user_data() {        // inject dae info
-    void* user_data = static_cast<void*>(this);
-    CHECK_IDAS_CALL(IDASetUserData(this->mem_, user_data));
-  }
-
-  IDASensResFn sensitivity_residual(){
-    return [](int n_sens, double t,
-              N_Vector yy, N_Vector yp, N_Vector res,
-              N_Vector* yys, N_Vector* yps,
-              N_Vector* ress, void *user_data,
-              N_Vector temp1, N_Vector temp2, N_Vector temp3) {
-      using Eigen::Matrix;
-      using Eigen::MatrixXd;
-      using Eigen::VectorXd;
-      using Eigen::Dynamic;
-
-      using DAE = idas_forward_system<F, TYY, TYP, TPAR>;
-
-      DAE* dae = static_cast<DAE*>(user_data);
-
-      const size_t& N = dae->N_;
-      const size_t& M = dae->M_;
-
-      Eigen::Map<VectorXd> vec_yy(N_VGetArrayPointer(yy), N);
-      Eigen::Map<VectorXd> vec_yp(N_VGetArrayPointer(yp), N);
-      Eigen::Map<VectorXd> vec_par(value_of(dae->theta_).data(), N);
-      std::vector<double> vyy(vec_yy.data(), vec_yy.data() + N);
-      std::vector<double> vyp(vec_yp.data(), vec_yp.data() + N);
-        
-      auto nv_to_mat = [](N_Vector* nv, size_t m, size_t n) {
-        matrix_d mat;
-        for(size_t j=0; j<m; ++j) {
-          for(size_t i=0; i<n; ++i) {
-            auto nvp = N_VGetArrayPointer(nv[i]);
-            mat(j, i) = nvp[j];
-          }
-        }
-        return mat;
-      };
-    
-      auto yys_mat = nv_to_mat(yys, N, n_sens);
-      auto yps_mat = nv_to_mat(yps, N, n_sens);
-
-      try {
-        stan::math::start_nested();
-
-        // vecvar yy_var(yy_val, yy_val+N);
-        // vecvar yp_var(yp_val, yp_val+N);
-
-        MatrixXd J, r;
-        VectorXd f_val;
-
-        auto fyy = [&t, &vyp, &N, &dae](const matrix_v& x) {
-          std::vector<var> yy(x.data(), x.data() + N);
-          auto eval = dae -> f_(t, yy, vyp,
-                           dae->theta_,
-                           dae->x_r_,
-                           dae->x_i_,
-                           dae->msgs_);
-          Eigen::Map<vector_v> res(eval.data(), N);
-          return res;
-        };
-        stan::math::jacobian(fyy, vec_yy, f_val, J);
-        r = J*yys_mat;
-
-        auto fyp = [&t, &vyy, &N, &dae](const matrix_v& x) {
-          std::vector<var> yp(x.data(), x.data() + N);
-          auto eval = dae -> f_(t, vyy, yp,
-                           dae->theta_,
-                           dae->x_r_,
-                           dae->x_i_,
-                           dae->msgs_);
-          Eigen::Map<vector_v> res(eval.data(), N);
-          return res;
-        };
-        stan::math::jacobian(fyp, vec_yp, f_val, J);
-        r += J*yps_mat;
-
-        if (dae -> is_var_par) {
-          auto fpar = [&t, &vyy, &vyp, &N, &M, &dae](const matrix_v& x) {
-            std::vector<var> par(x.data(), x.data() + M);
-            auto eval = dae -> f_(t, vyy, vyp,
-                                  par,
-                                  dae->x_r_,
-                                  dae->x_i_,
-                                  dae->msgs_);
-            Eigen::Map<vector_v> res(eval.data(), N);
-            return res;
-          };
-          stan::math::jacobian(fpar, vec_par, f_val, J);
-          r += J;
-        }
-
-        for(size_t j=0; j<N; ++j) {
-          for(size_t i=0; i<n_sens; ++i) {
-            auto nvp = N_VGetArrayPointer(ress[i]);
-            nvp[j] = r(j, i);
-          }
-        }
-      
-      } catch (const std::exception& e) {
-        stan::math::recover_memory_nested();
-        throw;
-      }
-      stan::math::recover_memory_nested();
+      auto res = dae->f_(t, yy_vec, yp_vec, dae->theta_, dae->x_r_, dae->x_i_,
+                         dae->msgs_);
+      for (size_t i = 0; i < N; ++i)
+        NV_Ith_S(rr, i) = value_of(res[i]);
 
       return 0;
     };
   }
-
-  // inline std::vector<
-  //   std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> >
-  // solution(const std::vector<std::vector<double> >& res_yy,
-  //          const std::vector<MatrixXd>& res_ys) {
-
-  //   constexpr bool has_par = stan::is_var<TPAR>::type;
-
-  //   std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> vars;
-  //   vars
-
-  //   precomputed_gradients(y[i][j], vars, temp_gradients);
-
-  // }
-
-  // clang++ -Wall -I . -isystem lib/eigen_3.3.3 -isystem lib/boost_1.65.1 -isystem lib/idas-2.1.0/include -std=c++1y -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -Wno-unused-function -Wno-uninitialized -stdlib=libc++ -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare -DNO_FPRINTF_OUTPUT -pipe lib/idas-2.1.0/lib/libsundials_idas.a lib/idas-2.1.0/lib/libsundials_nvecserial.a sandbox/idas_test.cpp   -o sandbox/idas_test
-
 };
 
-
-// TODO
-template<typename F, typename TYY, typename TYP, typename TPAR>
-class idas_adjoint_system: public idas_system<F, TYY, TYP, TPAR> {
+template <typename F, typename Tyy, typename Typ, typename Tpar>
+class idas_adjoint_system : public idas_system<F, Tyy, Typ, Tpar> {
+  // TODO(yizhang): adjoint system construction
 };
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
