@@ -144,6 +144,16 @@ pipeline {
                 }
             }
         }
+        stage('GPU Unit') {
+                agent any
+                steps {
+                    unstash 'MathSetup'
+                    sh setupCC()
+                    sh setupOpenCL()
+                    runTests("test/unit", "gpu")
+                }
+                post { always { retry(3) { deleteDir() } } }
+        }
         stage('Tests') {
             parallel {
                 stage('Unit') {
@@ -182,16 +192,6 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('GPU Unit') {
-                agent any
-                steps {
-                    unstash 'MathSetup'
-                    sh setupCC()
-                    sh setupOpenCL()
-                    runTests("test/unit", "gpu")
-                }
-                post { always { retry(3) { deleteDir() } } }
         }
         stage('Upstream tests') {
             parallel {
