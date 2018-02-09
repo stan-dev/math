@@ -50,10 +50,11 @@ namespace math {
  * @param msgs stream.
  * @return numeric integral of function f.
  */
-template <typename F, typename G, typename T_param>
-inline typename scalar_type<T_param>::type integrate_1d_tscg(
-    const F& f, const G& g, const double a, const double b,
-    const T_param& param, std::ostream& msgs, const double tre = 1e-6,
+template <typename F, typename G, typename T_param, typename T_x_r,
+          typename T_x_i> inline typename scalar_type<T_param>::type
+    integrate_1d_tscg(const F& f, const G& g, const double a,
+    const double b, const T_param& param, const T_x_r& x_r,
+    const T_x_i& x_i, std::ostream& msgs, const double tre = 1e-6,
     const double tae = 1e-6) {
   check_finite("integrate_1d_tsc", "lower limit", a);
   check_finite("integrate_1d_tsc", "upper limit", b);
@@ -69,14 +70,13 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
 
     for (size_t n = 0; n < N; n++)
       grad[n] = de_integrator(
-          std::bind<double>(g, _1, value_of_param, static_cast<int>
-                            (n + 1),
-                            std::ref(msgs)),
+          std::bind<double>(g, _1, value_of_param, x_i, x_r,
+                            static_cast<int> (n + 1), std::ref(msgs)),
           a, b, tre, tae);
 
     double val_ = de_integrator(
-        std::bind<double>(f, _1, value_of_param, std::ref(msgs)), a, b,
-                          tre, tae);
+        std::bind<double>(f, _1, value_of_param, x_i, x_r,
+                          std::ref(msgs)), a, b, tre, tae);
 
     operands_and_partials<T_param> ops_partials(param);
     for (size_t n = 0; n < N; n++)
@@ -87,20 +87,21 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
     // not a normalizing factor, so g doesn't matter at all
   }
   return de_integrator(
-      std::bind<double>(f, _1, value_of(param), std::ref(msgs)), a, b,
-      tre, tae);
+      std::bind<double>(f, _1, value_of(param), x_i, x_r,
+                        std::ref(msgs)), a, b, tre, tae);
 }
 
 /**
  * Calculate gradient of f(x, param, std::ostream&)
  * with respect to param_n (which must be an element of param)
  */
-template <typename F, typename T_param>
+template <typename F, typename T_param, typename T_x_r, typename T_x_i>
 inline double gradient_of_f(const F& f, const double x,
-                            const T_param& param, const var& param_n,
+                            const T_param& param, const T_x_r& x_r,
+                            const T_x_i& x_i, const var& param_n,
                             std::ostream& msgs) {
   set_zero_all_adjoints_nested();
-  f(x, param, msgs).grad();
+  f(x, param, x_r, x_i, msgs).grad();
   return param_n.adj();
 }
 
@@ -140,11 +141,11 @@ inline double gradient_of_f(const F& f, const double x,
  * @param msgs stream.
  * @return numeric integral of function f.
  */
-template <typename F, typename T_param>
+template <typename F, typename T_param, typename T_x_r, typename T_x_i>
 inline typename scalar_type<T_param>::type integrate_1d_tsc(
     const F& f, const double a, const double b, const T_param& param,
-    std::ostream& msgs, const double tre = 1e-6,
-    const double tae = 1e-6) {
+    const T_x_r& x_r, const T_x_i& x_i, std::ostream& msgs,
+    const double tre = 1e-6, const double tae = 1e-6) {
   using std::placeholders::_1;
 
   stan::math::check_finite("integrate_1d_tsc", "lower limit", a);
@@ -152,7 +153,7 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
 
   double val_
       = de_integrator(std::bind<double>(f, _1, value_of(param),
-                      std::ref(msgs)), a, b, tre, tae);
+                      x_i, x_r, std::ref(msgs)), a, b, tre, tae);
 
   if (!is_constant_struct<T_param>::value) {
     size_t N = stan::length(param);
@@ -168,9 +169,10 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
 
       for (size_t n = 0; n < N; n++)
         results[n] = de_integrator(
-            std::bind<double>(gradient_of_f<F, clean_T_param>, f, _1,
-                              clean_param, clean_param_vec[n],
-                              std::ref(msgs)),
+            std::bind<double>(gradient_of_f<F, clean_T_param,
+                                            T_x_r, T_x_i>,
+                              f, _1, clean_param, x_i, x_r,
+                              clean_param_vec[n], std::ref(msgs)),
             a, b, tre, tae);
     } catch (const std::exception& e) {
       recover_memory_nested();
