@@ -252,8 +252,8 @@ inline void compile_kernel_group(std::string group) {
     // parameters that have special limits are for now handled here
     // kernels with paramters will be compiled separately
     // for now we have static parameters, so this will be OK
-    snprintf(temp, sizeof(temp), "-D TS=%zu -D TS1=%zu -D TS2=%zu ", local, local,
-             local);
+    snprintf(temp, sizeof(temp), "-D TS=%zu -D TS1=%zu -D TS2=%zu ", local,
+             local, local);
     program_.build(devices, temp);
 
     cl_int err = CL_SUCCESS;
