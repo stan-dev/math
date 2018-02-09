@@ -190,7 +190,7 @@ class opencl_context {
     }
     return oclQueue_;
   }
-  inline int maxWorkgroupSize() { return max_workgroup_size_; }
+  inline size_t maxWorkgroupSize() { return max_workgroup_size_; }
 };
 
 static opencl_context opencl_context;
