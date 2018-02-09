@@ -112,16 +112,6 @@ pipeline {
                 }
             }
         }
-        stage('GPU Unit') {
-                agent any
-                steps {
-                    unstash 'MathSetup'
-                    sh setupCC()
-                    sh "echo STAN_OPENCL=true>> make/local"
-                    runTests("test/unit", "gpu")
-                }
-                post { always { retry(3) { deleteDir() } } }
-        }
         stage('Linting & Doc checks') {
             agent any
             steps {
@@ -145,6 +135,16 @@ pipeline {
                     deleteDir()
                 }
             }
+        }
+        stage('GPU Unit') {
+                agent any
+                steps {
+                    unstash 'MathSetup'
+                    sh setupCC()
+                    sh "echo STAN_OPENCL=true>> make/local"
+                    runTests("test/unit", "gpu")
+                }
+                post { always { retry(3) { deleteDir() } } }
         }
         stage('Tests') {
             parallel {
