@@ -245,14 +245,14 @@ inline void compile_kernel_group(std::string group) {
   cl::Program program_ = cl::Program(ctx, source);
   try {
     char temp[100];
-    int local = 32;
-    int gpu_local_max = sqrt(get_maximum_workgroup_size());
+    size_t local = 32;
+    size_t gpu_local_max = sqrt(get_maximum_workgroup_size());
     if (gpu_local_max < local)
       local = gpu_local_max;
     // parameters that have special limits are for now handled here
     // kernels with paramters will be compiled separately
     // for now we have static parameters, so this will be OK
-    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
+    snprintf(temp, sizeof(temp), "-D TS=%zu -D TS1=%zu -D TS2=%zu ", local, local,
              local);
     program_.build(devices, temp);
 
