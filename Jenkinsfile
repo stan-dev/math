@@ -144,7 +144,7 @@ pipeline {
                         unstash 'MathSetup'
                         sh setupCC()
                         sh "echo STAN_OPENCL=true>> make/local"
-                        runTests("test/unit", "test")
+                        runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
