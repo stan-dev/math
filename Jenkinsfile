@@ -30,7 +30,7 @@ def mailBuildResults(String label, additionalEmails='') {
 
 def runTests(String testPath, String filters = "") {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${filters}"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" -f ${filters}}
     finally { junit 'test/**/*.xml' }
 }
 
