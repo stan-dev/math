@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_OPENCL_HPP
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_OPENCL_HPP
-
+#ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 #include <iostream>
@@ -225,4 +225,5 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
 }
 }  // namespace math
 }  // namespace stan
+#endif
 #endif

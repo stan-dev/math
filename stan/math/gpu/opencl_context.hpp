@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_GPU_OPENCL_CONTEXT_HPP
 #define STAN_MATH_GPU_OPENCL_CONTEXT_HPP
-
+#ifdef STAN_OPENCL
 #define __CL_ENABLE_EXCEPTIONS
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
@@ -292,4 +292,5 @@ static opencl_context opencl_context;
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
