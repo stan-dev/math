@@ -69,13 +69,14 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
 
     for (size_t n = 0; n < N; n++)
       grad[n] = de_integrator(
-          std::bind<double>(g, _1, value_of_param, static_cast<int>(n + 1),
+          std::bind<double>(g, _1, value_of_param, static_cast<int>
+                            (n + 1),
                             std::ref(msgs)),
           a, b, tre, tae);
 
     double val_ = de_integrator(
-        std::bind<double>(f, _1, value_of_param, std::ref(msgs)), a, b, tre,
-        tae);
+        std::bind<double>(f, _1, value_of_param, std::ref(msgs)), a, b,
+                          tre, tae);
 
     operands_and_partials<T_param> ops_partials(param);
     for (size_t n = 0; n < N; n++)
@@ -86,8 +87,8 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
     // not a normalizing factor, so g doesn't matter at all
   }
   return de_integrator(
-      std::bind<double>(f, _1, value_of(param), std::ref(msgs)), a, b, tre,
-      tae);
+      std::bind<double>(f, _1, value_of(param), std::ref(msgs)), a, b,
+      tre, tae);
 }
 
 /**
@@ -95,8 +96,9 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
  * with respect to param_n (which must be an element of param)
  */
 template <typename F, typename T_param>
-inline double gradient_of_f(const F& f, const double x, const T_param& param,
-                            const var& param_n, std::ostream& msgs) {
+inline double gradient_of_f(const F& f, const double x,
+                            const T_param& param, const var& param_n,
+                            std::ostream& msgs) {
   set_zero_all_adjoints_nested();
   f(x, param, msgs).grad();
   return param_n.adj();
@@ -141,15 +143,16 @@ inline double gradient_of_f(const F& f, const double x, const T_param& param,
 template <typename F, typename T_param>
 inline typename scalar_type<T_param>::type integrate_1d_tsc(
     const F& f, const double a, const double b, const T_param& param,
-    std::ostream& msgs, const double tre = 1e-6, const double tae = 1e-6) {
+    std::ostream& msgs, const double tre = 1e-6,
+    const double tae = 1e-6) {
   using std::placeholders::_1;
 
   stan::math::check_finite("integrate_1d_tsc", "lower limit", a);
   stan::math::check_finite("integrate_1d_tsc", "upper limit", b);
 
   double val_
-      = de_integrator(std::bind<double>(f, _1, value_of(param), std::ref(msgs)),
-                      a, b, tre, tae);
+      = de_integrator(std::bind<double>(f, _1, value_of(param),
+                      std::ref(msgs)), a, b, tre, tae);
 
   if (!is_constant_struct<T_param>::value) {
     size_t N = stan::length(param);
@@ -166,7 +169,8 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
       for (size_t n = 0; n < N; n++)
         results[n] = de_integrator(
             std::bind<double>(gradient_of_f<F, clean_T_param>, f, _1,
-                              clean_param, clean_param_vec[n], std::ref(msgs)),
+                              clean_param, clean_param_vec[n],
+                              std::ref(msgs)),
             a, b, tre, tae);
     } catch (const std::exception& e) {
       recover_memory_nested();
