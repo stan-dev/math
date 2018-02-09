@@ -246,7 +246,7 @@ inline void compile_kernel_group(std::string group) {
   try {
     char temp[100];
     size_t local = 32;
-    size_t gpu_local_max = sqrt(get_maximum_workgroup_size());
+    size_t gpu_local_max = std::sqrt(get_maximum_workgroup_size());
     if (gpu_local_max < local)
       local = gpu_local_max;
     // parameters that have special limits are for now handled here
