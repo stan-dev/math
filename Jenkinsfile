@@ -7,11 +7,6 @@ def setupCC(Boolean failOnError = true) {
     "echo CC=${env.CXX} ${errorStr}> make/local"
 }
 
-def setupOpenCL(Boolean failOnError = true) {
-    errorStr = failOnError ? "-Werror " : ""
-    "echo STAN_OPENCL=true>> make/local"
-}
-
 def setup(Boolean failOnError = true) {
     sh """
         git clean -xffd
@@ -117,6 +112,16 @@ pipeline {
                 }
             }
         }
+        stage('GPU Unit') {
+                agent any
+                steps {
+                    unstash 'MathSetup'
+                    sh setupCC()
+                    sh "echo STAN_OPENCL=true>> make/local"
+                    runTests("test/unit", "gpu")
+                }
+                post { always { retry(3) { deleteDir() } } }
+        }
         stage('Linting & Doc checks') {
             agent any
             steps {
@@ -129,10 +134,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
-                    )
-                    parallel(
-                      GPUHeaders: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
                     )
                 }
             }
@@ -143,16 +145,6 @@ pipeline {
                     deleteDir()
                 }
             }
-        }
-        stage('GPU Unit') {
-                agent any
-                steps {
-                    unstash 'MathSetup'
-                    sh setupCC()
-                    sh setupOpenCL()
-                    runTests("test/unit", "gpu")
-                }
-                post { always { retry(3) { deleteDir() } } }
         }
         stage('Tests') {
             parallel {
