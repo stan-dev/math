@@ -8,41 +8,36 @@
 
 struct f1 {
   template <typename T1, typename T2, typename T3>
-  inline
-  typename stan::return_type<T1, T2, T3, int>::type
-  operator()(const T1& x, const T2& y, const T3& x_r, int x_i,
-             std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2, T3, int>::type operator()(
+      const T1& x, const T2& y, const T3& x_r, int x_i,
+      std::ostream& msgs) const {
     return exp(x) + y;
   }
 };
 
 struct f2 {
   template <typename T1, typename T2, typename T3>
-  inline
-  typename stan::return_type<T1, T2, T3, int>::type
-  operator()(const T1& x, const T2& y, const T3& x_r, int x_i,
-             std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2, T3, int>::type operator()(
+      const T1& x, const T2& y, const T3& x_r, int x_i,
+      std::ostream& msgs) const {
     return exp(y * cos(2 * 3.141593 * x)) + y;
   }
 };
 
 struct f3 {
   template <typename T1, typename T2, typename T3>
-  inline
-  typename stan::return_type<T1, T2, T3, int>::type
-  operator()(const T1& x, const std::vector<T2>& y, const T3& x_r,
-             int x_i, std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2, T3, int>::type operator()(
+      const T1& x, const std::vector<T2>& y, const T3& x_r, int x_i,
+      std::ostream& msgs) const {
     return exp(x) + pow(y[0], 2.5) + 2 * pow(y[1], 3) + 2 * y[2];
   }
 };
 
 struct g3 {
   template <typename T1, typename T2, typename T3>
-  inline
-  typename stan::return_type<T1, T2, T3, int>::type
-  operator()(const T1& x, const std::vector<T2>& y,
-             const T3& x_r, int x_i,
-             const int ii, std::ostream& msgs) const {
+  inline typename stan::return_type<T1, T2, T3, int>::type operator()(
+      const T1& x, const std::vector<T2>& y, const T3& x_r, int x_i,
+      const int ii, std::ostream& msgs) const {
     if (ii == 1)
       return 2.5 * pow(y[0], 1.5);
     else if (ii == 2)
@@ -52,19 +47,15 @@ struct g3 {
   }
 };
 
-
 struct f4 {
   template <typename T1, typename T2, typename T3>
-  inline
-  typename stan::return_type<T1, T2, T3, int>::type
-  operator()(const T1& x, const std::vector<T2>& y,
-             const std::vector<T3>& x_r, const std::vector<int>& x_i,
-             std::ostream& msgs) const {
-    return exp(x) + pow(y[0], 2.5) + 2 * pow(y[1], 3) + 2 * y[2]
-           + x_r[0] + 2*x_r[1] + 3*x_i[0] + 4*x_i[1];
+  inline typename stan::return_type<T1, T2, T3, int>::type operator()(
+      const T1& x, const std::vector<T2>& y, const std::vector<T3>& x_r,
+      const std::vector<int>& x_i, std::ostream& msgs) const {
+    return exp(x) + pow(y[0], 2.5) + 2 * pow(y[1], 3) + 2 * y[2] + x_r[0]
+           + 2 * x_r[1] + 3 * x_i[0] + 4 * x_i[1];
   }
 };
-
 
 std::ostringstream msgs;
 
@@ -107,16 +98,18 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
 
     AVAR a = 0.68;
     AVAR f = integrate_1d_tsc(if2, 0., 1.1, a, x_r, x_i, msgs);
-    EXPECT_FLOAT_EQ(integrate_1d_tsc(if2, 0., 1.1, .68, x_r, x_i, msgs), f.val());
+    EXPECT_FLOAT_EQ(integrate_1d_tsc(if2, 0., 1.1, .68, x_r, x_i, msgs),
+                    f.val());
 
     AVEC x = createAVEC(a);
     VEC g;
     f.grad(x, g);
 
-    EXPECT_FLOAT_EQ((integrate_1d_tsc(if2, 0., 1.1, .68 + 1e-6, x_r, x_i, msgs)
-                     - integrate_1d_tsc(if2, 0., 1.1, .68 - 1e-6, x_r, x_i, msgs))
-                        / 2e-6,
-                    g[0]);
+    EXPECT_FLOAT_EQ(
+        (integrate_1d_tsc(if2, 0., 1.1, .68 + 1e-6, x_r, x_i, msgs)
+         - integrate_1d_tsc(if2, 0., 1.1, .68 - 1e-6, x_r, x_i, msgs))
+            / 2e-6,
+        g[0]);
   }
   {
     f3 if3;
@@ -133,7 +126,8 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
     f.grad(vec, g);
 
     std::vector<double> vecd = value_of(vec);
-    EXPECT_FLOAT_EQ(integrate_1d_tsc(if3, 0., 1.1, vecd, x_r, x_i, msgs), f.val());
+    EXPECT_FLOAT_EQ(integrate_1d_tsc(if3, 0., 1.1, vecd, x_r, x_i, msgs),
+                    f.val());
 
     vecd[0] += 1e-6;
     p1 = integrate_1d_tsc(if3, 0., 1.1, vecd, x_r, x_i, msgs);
@@ -165,6 +159,7 @@ TEST(StanMath_integrate_1d_tsc, finite_diff) {
     std::vector<double> vecd = value_of(vec);
 
     AVAR f = integrate_1d_tsc(if4, 0., 1.1, vec, x_r, x_i, msgs);
-    EXPECT_FLOAT_EQ(integrate_1d_tsc(if4, 0., 1.1, vecd, x_r, x_i, msgs), f.val());
+    EXPECT_FLOAT_EQ(integrate_1d_tsc(if4, 0., 1.1, vecd, x_r, x_i, msgs),
+                    f.val());
   }
 }

@@ -56,11 +56,11 @@ namespace math {
  * @return numeric integral of function f.
  */
 template <typename F, typename G, typename T_param, typename T_x_r,
-          typename T_x_i> inline typename scalar_type<T_param>::type
-    integrate_1d_tscg(const F& f, const G& g, const double a,
-    const double b, const T_param& param, const T_x_r& x_r,
-    const T_x_i& x_i, std::ostream& msgs, const double tre = 1e-6,
-    const double tae = 1e-6) {
+          typename T_x_i>
+inline typename scalar_type<T_param>::type integrate_1d_tscg(
+    const F& f, const G& g, const double a, const double b,
+    const T_param& param, const T_x_r& x_r, const T_x_i& x_i,
+    std::ostream& msgs, const double tre = 1e-6, const double tae = 1e-6) {
   check_finite("integrate_1d_tsc", "lower limit", a);
   check_finite("integrate_1d_tsc", "upper limit", b);
 
@@ -76,25 +76,24 @@ template <typename F, typename G, typename T_param, typename T_x_r,
     for (size_t n = 0; n < N; n++)
       grad[n] = de_integrator(
           std::bind<double>(g, _1, value_of_param, x_r, x_i,
-                            static_cast<int> (n + 1), std::ref(msgs)),
+                            static_cast<int>(n + 1), std::ref(msgs)),
           a, b, tre, tae);
 
     double val_ = de_integrator(
-        std::bind<double>(f, _1, value_of_param, x_r, x_i,
-                          std::ref(msgs)), a, b, tre, tae);
+        std::bind<double>(f, _1, value_of_param, x_r, x_i, std::ref(msgs)), a,
+        b, tre, tae);
 
     operands_and_partials<T_param> ops_partials(param);
     for (size_t n = 0; n < N; n++)
       ops_partials.edge1_.partials_[n] += grad[n];
 
     return ops_partials.build(val_);
-
   }
   // easy case, here we are calculating a normalizing constant,
   // not a normalizing factor, so g doesn't matter at all
   return de_integrator(
-      std::bind<double>(f, _1, value_of(param), x_r, x_i,
-                        std::ref(msgs)), a, b, tre, tae);
+      std::bind<double>(f, _1, value_of(param), x_r, x_i, std::ref(msgs)), a, b,
+      tre, tae);
 }
 
 /**
@@ -102,10 +101,9 @@ template <typename F, typename G, typename T_param, typename T_x_r,
  * with respect to param_n (which must be an element of param)
  */
 template <typename F, typename T_param, typename T_x_r, typename T_x_i>
-inline double gradient_of_f(const F& f, const double x,
-                            const T_param& param, const T_x_r& x_r,
-                            const T_x_i& x_i, const var& param_n,
-                            std::ostream& msgs) {
+inline double gradient_of_f(const F& f, const double x, const T_param& param,
+                            const T_x_r& x_r, const T_x_i& x_i,
+                            const var& param_n, std::ostream& msgs) {
   set_zero_all_adjoints_nested();
   f(x, param, x_r, x_i, msgs).grad();
   return param_n.adj();
@@ -161,9 +159,9 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
   stan::math::check_finite("integrate_1d_tsc", "lower limit", a);
   stan::math::check_finite("integrate_1d_tsc", "upper limit", b);
 
-  double val_
-      = de_integrator(std::bind<double>(f, _1, value_of(param),
-                      x_r, x_i, std::ref(msgs)), a, b, tre, tae);
+  double val_ = de_integrator(
+      std::bind<double>(f, _1, value_of(param), x_r, x_i, std::ref(msgs)), a, b,
+      tre, tae);
 
   if (!is_constant_struct<T_param>::value) {
     size_t N = stan::length(param);
@@ -179,10 +177,9 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
 
       for (size_t n = 0; n < N; n++)
         results[n] = de_integrator(
-            std::bind<double>(gradient_of_f<F, clean_T_param,
-                                            T_x_r, T_x_i>,
-                              f, _1, clean_param, x_r, x_i,
-                              clean_param_vec[n], std::ref(msgs)),
+            std::bind<double>(gradient_of_f<F, clean_T_param, T_x_r, T_x_i>, f,
+                              _1, clean_param, x_r, x_i, clean_param_vec[n],
+                              std::ref(msgs)),
             a, b, tre, tae);
     } catch (const std::exception& e) {
       recover_memory_nested();
