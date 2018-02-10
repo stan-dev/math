@@ -31,22 +31,27 @@ namespace math {
  * @tparam T Type of f.
  * @tparam G Type of g.
  * @param f a functor with signature
- * double (double, std::vector<T_param>) or with signature
- * double (double, T_param) where the first argument is one being
+ * double (double, std::vector<T_param>, std::vector<T_x_r>,
+ * std::vector<T_x_i>, std::ostream&) or with signature
+ * double (double, T_param, T_x_r, T_x_i, std::ostream&)
+ * or a "mixture" of these, where the first argument is one being
  * integrated and the second one is either an extra scalar or vector
  * being passed to f.
  * @param g a functor with signature
- * double (double, std::vector<T_param>, int, std::ostream&) or with
- * signature double (double, T_param, int, std::ostream&) where the
- * first argument is being integrated and the second one is
+ * double (double, std::vector<T_param>, std::vector<T_x_r>,
+ * std::vector<T_x_i>, int, std::ostream&) or with signature double
+ * (double, T_param, T_x_r, T_x_i, int, std::ostream&)
+ * where the first argument is being integrated and the second one is
  * either an extra scalar or vector being passed to f and the
- * third one selects which component of the gradient vector
+ * fifth one selects which component of the gradient vector
  * is to be returned.
  * @param a lower limit of integration, must be a finite double.
  * @param b upper limit of integration, must be a finite double.
  * @param tre target relative error.
  * @param tae target absolute error.
  * @param param additional parameters to be passed to f.
+ * @param T_x_r additional data to be passed to f.
+ * @param T_x_i additional integer data to be passed to f.
  * @param msgs stream.
  * @return numeric integral of function f.
  */
@@ -70,12 +75,12 @@ template <typename F, typename G, typename T_param, typename T_x_r,
 
     for (size_t n = 0; n < N; n++)
       grad[n] = de_integrator(
-          std::bind<double>(g, _1, value_of_param, x_i, x_r,
+          std::bind<double>(g, _1, value_of_param, x_r, x_i,
                             static_cast<int> (n + 1), std::ref(msgs)),
           a, b, tre, tae);
 
     double val_ = de_integrator(
-        std::bind<double>(f, _1, value_of_param, x_i, x_r,
+        std::bind<double>(f, _1, value_of_param, x_r, x_i,
                           std::ref(msgs)), a, b, tre, tae);
 
     operands_and_partials<T_param> ops_partials(param);
@@ -83,11 +88,12 @@ template <typename F, typename G, typename T_param, typename T_x_r,
       ops_partials.edge1_.partials_[n] += grad[n];
 
     return ops_partials.build(val_);
-    // easy case, here we are calculating a normalizing constant,
-    // not a normalizing factor, so g doesn't matter at all
+
   }
+  // easy case, here we are calculating a normalizing constant,
+  // not a normalizing factor, so g doesn't matter at all
   return de_integrator(
-      std::bind<double>(f, _1, value_of(param), x_i, x_r,
+      std::bind<double>(f, _1, value_of(param), x_r, x_i,
                         std::ref(msgs)), a, b, tre, tae);
 }
 
@@ -129,15 +135,19 @@ inline double gradient_of_f(const F& f, const double x,
  *
  * @tparam T Type of f.
  * @param f a functor with signature
- * double (double, std::vector<T_param>, std::ostream&) or with
- * signature double (double, T_param, std::ostream&) where the first
- * argument is one being integrated and the second one is either
- * an extra scalar or vector being passed to f.
+ * double (double, std::vector<T_param>, std::vector<T_x_r>,
+ * std::vector<T_x_i>, std::ostream&) or with signature
+ * double (double, T_param, T_x_r, T_x_i, std::ostream&)
+ * or a "mixture" of these, where the first argument is one being
+ * integrated and the second one is either an extra scalar or vector
+ * being passed to f.
  * @param a lower limit of integration, must be double type.
  * @param b upper limit of integration, must be double type.
  * @param tre target relative error.
  * @param tae target absolute error.
  * @param param additional parameters to be passed to f.
+ * @param T_x_r additional data to be passed to f.
+ * @param T_x_i additional integer data to be passed to f.
  * @param msgs stream.
  * @return numeric integral of function f.
  */
@@ -153,7 +163,7 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
 
   double val_
       = de_integrator(std::bind<double>(f, _1, value_of(param),
-                      x_i, x_r, std::ref(msgs)), a, b, tre, tae);
+                      x_r, x_i, std::ref(msgs)), a, b, tre, tae);
 
   if (!is_constant_struct<T_param>::value) {
     size_t N = stan::length(param);
@@ -171,7 +181,7 @@ inline typename scalar_type<T_param>::type integrate_1d_tsc(
         results[n] = de_integrator(
             std::bind<double>(gradient_of_f<F, clean_T_param,
                                             T_x_r, T_x_i>,
-                              f, _1, clean_param, x_i, x_r,
+                              f, _1, clean_param, x_r, x_i,
                               clean_param_vec[n], std::ref(msgs)),
             a, b, tre, tae);
     } catch (const std::exception& e) {
