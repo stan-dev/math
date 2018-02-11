@@ -4,6 +4,6 @@
 
 CXX=mpic++
 CC=mpic++
-LDFLAGS+=-L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi
+LDFLAGS+=-L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
 CXXFLAGS+=-DSTAN_HAS_MPI
 GTEST_CXXFLAGS+=-DSTAN_HAS_MPI
