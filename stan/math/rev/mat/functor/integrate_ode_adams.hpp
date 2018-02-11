@@ -1,22 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
 
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
-#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
-#include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
-#include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
-#include <nvector/nvector_serial.h>
-#include <algorithm>
 #include <ostream>
 #include <vector>
 

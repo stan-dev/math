@@ -128,9 +128,6 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   std::vector<int> x_int(2, 0);
 
   // aligned error handling with non-stiff case
-  //std::string error_msg
-  //    = "ode_system: size of state vector y (2) and derivative vector dy_dt (3)"
-  //      " in the ODE functor do not match in size.";
   std::string error_msg
       = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
 
