@@ -187,18 +187,19 @@ class cvodes_integrator {
           cvodes_check_flag(
               CVode(cvodes_mem, t_final, cvodes_data.nv_state_, &t_init, CV_NORMAL),
               "CVode");
-        std::copy(cvodes_data.state_.begin(), cvodes_data.state_.end(), y_coupled[n].begin());
+        //std::copy(cvodes_data.state_.begin(), cvodes_data.state_.end(), y_coupled[n].begin());
         if (S > 0) {
           cvodes_check_flag(
               CVodeGetSens(cvodes_mem, &t_init, cvodes_data.nv_state_sens_),
               "CVodeGetSens");
-          std::copy(cvodes_data.coupled_state_.begin() + N, cvodes_data.coupled_state_.end(), y_coupled[n].begin() + N);
+          //std::copy(cvodes_data.coupled_state_.begin() + N, cvodes_data.coupled_state_.end(), y_coupled[n].begin() + N);
           /*for (size_t s = 0; s < S; s++)
             std::copy(NV_DATA_S(cvodes_data.nv_state_sens_[s]),
                       NV_DATA_S(cvodes_data.nv_state_sens_[s]) + N,
                       y_coupled[n].begin() + N + s * N);
           */
         }
+        std::copy(cvodes_data.coupled_state_.begin(), cvodes_data.coupled_state_.end(), y_coupled[n].begin());
         t_init = t_final;
       }
     } catch (const std::exception& e) {

@@ -42,7 +42,6 @@ class cvodes_ode_data {
   typedef stan::is_var<T_param> param_var;
 
  public:
-  std::vector<double> state_;
   std::vector<double> coupled_state_;
   const size_t S_;
   N_Vector nv_state_;
@@ -78,10 +77,9 @@ class cvodes_ode_data {
         msgs_(msgs),
         coupled_ode_(f, y0, theta, x, x_int, msgs),
         ode_system_(f, value_of(theta), x, x_int, msgs),
-        state_(value_of(y0)),
         coupled_state_(coupled_ode_.initial_state()),
         S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
-        nv_state_(N_VMake_Serial(N_, &state_[0])),
+        nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
         nv_state_sens_(NULL)
   {
     if (S_ != 0) {
@@ -136,6 +134,8 @@ class cvodes_ode_data {
     std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
   }
 
+  // the Jacobian of the ODE system is the coupled ode system for
+  // varying states evaluated at the state y.
   inline int dense_jacobian(const double* y, DlsMat J, double t) const {
     const std::vector<double> y_vec(y, y + N_);
     std::vector<var> y_vec_var(y_vec.begin(), y_vec.end());
