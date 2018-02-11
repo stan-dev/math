@@ -104,7 +104,6 @@ class cvodes_integrator {
     const size_t N = y0.size();
     const size_t M = theta.size();
     const size_t S = (initial_var::value ? N : 0) + (param_var::value ? M : 0);
-    const bool calc_sens = initial_var::value | param_var::value;
 
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
@@ -140,7 +139,7 @@ class cvodes_integrator {
           "CVDlsSetDenseJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
-      if (calc_sens) {
+      if (S > 0) {
         cvodes_check_flag(
             CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
                           &ode_data::ode_rhs_sens, cvodes_data.nv_state_sens_),
@@ -157,7 +156,7 @@ class cvodes_integrator {
           cvodes_check_flag(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
                                   &t_init, CV_NORMAL),
                             "CVode");
-        if (calc_sens) {
+        if (S > 0) {
           cvodes_check_flag(
               CVodeGetSens(cvodes_mem, &t_init, cvodes_data.nv_state_sens_),
               "CVodeGetSens");
