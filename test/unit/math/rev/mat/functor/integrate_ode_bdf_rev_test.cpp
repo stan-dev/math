@@ -136,7 +136,6 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   sho_error_test<var, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
 }
 
-
 // TODO(carpenter): g++6 failure
 TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
   lorenz_ode_fun lorenz;
