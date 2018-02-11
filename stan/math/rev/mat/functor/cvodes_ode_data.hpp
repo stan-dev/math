@@ -24,17 +24,30 @@ namespace math {
 
 template <typename F, typename T_initial, typename T_param>
 class cvodes_ode_data {
+  const F& f_;
   const std::vector<T_initial>& y0_;
   const std::vector<T_param>& theta_;
+  const std::vector<double> theta_dbl_;
   const size_t N_;
   const size_t M_;
   const size_t param_var_ind_;
+  const std::vector<double>& x_;
+  const std::vector<int>& x_int_;
+  std::ostream* msgs_;
+  const coupled_ode_system<F, T_initial, T_param> coupled_ode_;
   const ode_system<F> ode_system_;
 
   typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
   typedef stan::is_var<T_initial> initial_var;
+  typedef stan::is_var<T_param> param_var;
 
  public:
+  std::vector<double> state_;
+  std::vector<double> coupled_state_;
+  const size_t S_;
+  N_Vector nv_state_;
+  N_Vector* nv_state_sens_;
+  
   /**
    * Construct CVODES ode data object to enable callbacks from
    * CVODES during ODE integration. Static callbacks are defined
@@ -53,12 +66,40 @@ class cvodes_ode_data {
                   const std::vector<T_param>& theta,
                   const std::vector<double>& x, const std::vector<int>& x_int,
                   std::ostream* msgs)
-      : y0_(y0),
+      : f_(f),
+        y0_(y0),
         theta_(theta),
+        theta_dbl_(value_of(theta)),
         N_(y0.size()),
         M_(theta.size()),
         param_var_ind_(initial_var::value ? N_ : 0),
-        ode_system_(f, value_of(theta), x, x_int, msgs) {}
+        x_(x),
+        x_int_(x_int),
+        msgs_(msgs),
+        coupled_ode_(f, y0, theta, x, x_int, msgs),
+        ode_system_(f, value_of(theta), x, x_int, msgs),
+        state_(value_of(y0)),
+        coupled_state_(coupled_ode_.initial_state()),
+        S_((initial_var::value ? N_ : 0) + (param_var::value ? M_ : 0)),
+        nv_state_(N_VMake_Serial(N_, &state_[0])),
+        nv_state_sens_(NULL)
+  {
+    if (S_ != 0) {
+      nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
+      for(std::size_t i=0; i < S_; i++) {
+        //nv_state_sens_[i] = N_VMake_Serial(N_, &coupled_state_[N_] + i * N_);
+        NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
+      }
+    }
+  }
+
+  /**/
+  ~cvodes_ode_data() {
+   N_VDestroy_Serial(nv_state_);
+   if (nv_state_sens_ != NULL)
+     N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
+  }
+  /**/
 
   static int ode_rhs(double t, N_Vector y, N_Vector ydot, void* user_data) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
@@ -70,10 +111,11 @@ class cvodes_ode_data {
                           N_Vector* yS, N_Vector* ySdot, void* user_data,
                           N_Vector tmp1, N_Vector tmp2) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
-    const std::vector<double> y_vec(NV_DATA_S(y),
-                                    NV_DATA_S(y) + explicit_ode->N_);
-    explicit_ode->rhs_sens(explicit_ode->y0_, explicit_ode->theta_, t, y_vec,
-                           yS, ySdot);
+    //const std::vector<double> y_vec(NV_DATA_S(y),
+    //                                NV_DATA_S(y) + explicit_ode->N_);
+    //explicit_ode->rhs_sens(explicit_ode->y0_, explicit_ode->theta_, t, y_vec,
+    //                       yS, ySdot);
+    explicit_ode->rhs_sens2(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
 
@@ -88,15 +130,21 @@ class cvodes_ode_data {
  private:
   inline void rhs(const double y[], double dy_dt[], double t) const {
     const std::vector<double> y_vec(y, y + N_);
-    Eigen::Map<Eigen::VectorXd> dy_dt_eig(dy_dt, N_);
-    ode_system_(t, y_vec, dy_dt_eig);
+    const std::vector<double> dy_dt_vec = f_(t, y_vec, theta_dbl_, x_, x_int_, msgs_);
+    check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(),
+                     "states", N_);
+    std::copy(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
   }
 
   inline int dense_jacobian(const double* y, DlsMat J, double t) const {
     const std::vector<double> y_vec(y, y + N_);
-    Eigen::VectorXd fy(N_);
-    Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
-    ode_system_.jacobian(t, y_vec, fy, Jy_map);
+    std::vector<var> y_vec_var(y_vec.begin(), y_vec.end());
+    coupled_ode_system<F,var,double> ode_jacobian(f_, y_vec_var, theta_dbl_, x_, x_int_, msgs_);
+    std::vector<double> ode_jacobian_y(ode_jacobian.size(), 0);
+    ode_jacobian(ode_jacobian.initial_state(), ode_jacobian_y, t);
+    std::copy(ode_jacobian_y.begin() + N_, ode_jacobian_y.end(), J->data);
+    //Eigen::Map<Eigen::MatrixXd> Jy_map(J->data, N_, N_);
+    //Jy_map = Eigen::Map<Eigen::MatrixXd>(&ode_jacobian_y[0] + N_, N_, N_);
     return 0;
   }
 
@@ -119,6 +167,18 @@ class cvodes_ode_data {
       Map<VectorXd> ySdot_eig(NV_DATA_S(ySdot[param_var_ind_ + m]), N_);
       ySdot_eig = Jy * yS_eig + Jtheta.col(m);
     }
+  }
+
+  void rhs_sens2(double t, double y[], N_Vector* yS,
+                 N_Vector* ySdot) const {
+    std::vector<double> z(coupled_state_.size());
+    std::vector<double> dz_dt(coupled_state_.size());
+    std::copy(y, y + N_, z.begin());
+    for(std::size_t s=0; s < S_; s++)
+      std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_, z.begin() + (s+1) * N_);
+    coupled_ode_(z, dz_dt, t);
+    for(std::size_t s=0; s < S_; s++)
+      std::copy(dz_dt.begin() + (s+1) * N_,  dz_dt.begin() + (s+2) * N_, NV_DATA_S(ySdot[s]));
   }
 
   /**

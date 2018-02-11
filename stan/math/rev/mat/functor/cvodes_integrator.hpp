@@ -123,9 +123,9 @@ class cvodes_integrator {
     // total number of sensitivities for initial values and params
     const size_t S = (initial_var::value ? N : 0) + (param_var::value ? M : 0);
     const size_t size = N * (S + 1);  // size of the coupled system
-    std::vector<double> state(value_of(y0));
-    N_Vector cvodes_state(N_VMake_Serial(N, &state[0]));
-    N_Vector* cvodes_state_sens = NULL;
+    //std::vector<double> state(value_of(y0));
+    //N_Vector cvodes_state(N_VMake_Serial(N, &state[0]));
+    //N_Vector* cvodes_state_sens = NULL;
 
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
@@ -139,7 +139,7 @@ class cvodes_integrator {
 
     try {
       cvodes_check_flag(
-          CVodeInit(cvodes_mem, &ode_data::ode_rhs, t0, cvodes_state),
+          CVodeInit(cvodes_mem, &ode_data::ode_rhs, t0, cvodes_data.nv_state_),
           "CVodeInit");
 
       // Assign pointer to this as user data
@@ -159,6 +159,7 @@ class cvodes_integrator {
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
+        /*
         cvodes_state_sens = N_VCloneVectorArray_Serial(S, cvodes_state);
         for (size_t s = 0; s < S; s++)
           N_VConst(RCONST(0.0), cvodes_state_sens[s]);
@@ -169,9 +170,10 @@ class cvodes_integrator {
           for (size_t n = 0; n < N; n++)
             NV_Ith_S(cvodes_state_sens[n], n) = 1.0;
         }
+        */
         cvodes_check_flag(
             CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
-                          &ode_data::ode_rhs_sens, cvodes_state_sens),
+                          &ode_data::ode_rhs_sens, cvodes_data.nv_state_sens_),
             "CVodeSensInit");
 
         cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
@@ -183,26 +185,31 @@ class cvodes_integrator {
         double t_final = ts[n];
         if (t_final != t_init)
           cvodes_check_flag(
-              CVode(cvodes_mem, t_final, cvodes_state, &t_init, CV_NORMAL),
+              CVode(cvodes_mem, t_final, cvodes_data.nv_state_, &t_init, CV_NORMAL),
               "CVode");
-        std::copy(state.begin(), state.end(), y_coupled[n].begin());
+        std::copy(cvodes_data.state_.begin(), cvodes_data.state_.end(), y_coupled[n].begin());
         if (S > 0) {
           cvodes_check_flag(
-              CVodeGetSens(cvodes_mem, &t_init, cvodes_state_sens),
+              CVodeGetSens(cvodes_mem, &t_init, cvodes_data.nv_state_sens_),
               "CVodeGetSens");
-          for (size_t s = 0; s < S; s++)
-            std::copy(NV_DATA_S(cvodes_state_sens[s]),
-                      NV_DATA_S(cvodes_state_sens[s]) + N,
+          std::copy(cvodes_data.coupled_state_.begin() + N, cvodes_data.coupled_state_.end(), y_coupled[n].begin() + N);
+          /*for (size_t s = 0; s < S; s++)
+            std::copy(NV_DATA_S(cvodes_data.nv_state_sens_[s]),
+                      NV_DATA_S(cvodes_data.nv_state_sens_[s]) + N,
                       y_coupled[n].begin() + N + s * N);
+          */
         }
         t_init = t_final;
       }
     } catch (const std::exception& e) {
-      free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+      //free_cvodes_memory(cvodes_data.nv_state_, cvodes_data.nv_state_sens_, cvodes_mem, S);
+      CVodeFree(&cvodes_mem);
       throw;
     }
 
-    free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+    //free_cvodes_memory(cvodes_data.nv_state_, cvodes_data.nv_state_sens_, cvodes_mem, S);
+    //free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+    CVodeFree(&cvodes_mem);
 
     return decouple_ode_states(y_coupled, y0, theta);
   }
