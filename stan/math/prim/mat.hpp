@@ -44,6 +44,9 @@
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/err/check_gpu.hpp>
+#endif
 
 #include <stan/math/prim/mat/fun/accumulator.hpp>
 #include <stan/math/prim/mat/fun/acos.hpp>
@@ -244,6 +247,10 @@
 #include <stan/math/prim/mat/fun/variance.hpp>
 #include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
+#ifdef STAN_GPU
+#include <stan/math/prim/mat/fun/ocl_gpu.hpp>
+#include <stan/math/prim/mat/fun/basic_matrix_gpu.hpp>
+#endif
 
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
