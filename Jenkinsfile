@@ -25,7 +25,7 @@ def mailBuildResults(String label, additionalEmails='') {
 
 def runTests(String testPath) {
     sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}"}
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
@@ -60,7 +60,7 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps {
+            steps { 
                 script {
                     utils.killOldBuilds()
                 }
@@ -150,7 +150,7 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps {
+                    steps { 
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
