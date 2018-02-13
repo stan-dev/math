@@ -139,7 +139,7 @@ pipeline {
         stage('Tests') {
             parallel {
                 stage('Unit') {
-                    agent any
+                    agent { label "gelman-group-mac" }
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
