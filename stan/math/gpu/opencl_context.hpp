@@ -64,6 +64,8 @@ class opencl_context {
    void init_devices();
    void init_context_queue();
    void init_program();
+   void compile_kernel_group(std::string group);
+   cl::Kernel get_kernel(std::string name);
    opencl_context() {
      dummy_kernel =
        "__kernel void dummy(__global const int* foo) { };";
@@ -121,67 +123,6 @@ class opencl_context {
      *
      */
     inline int maxWorkgroupSize() { return max_workgroup_size_; }
-
-    /**
-     * Compiles all the kernel in the specified group
-     *
-     * @param group The kernel group name
-     *
-     */
-    inline void compile_kernel_group(std::string group) {
-      cl::Context &ctx = context();
-      std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
-      std::string kernel_source = kernel_strings[group];
-      cl::Program::Sources source(
-          1, std::make_pair(kernel_source.c_str(), kernel_source.size()));
-      cl::Program program_ = cl::Program(ctx, source);
-      try {
-        char temp[100];
-        int local = 32;
-        int gpu_local_max = sqrt(maxWorkgroupSize());
-        if (gpu_local_max < local)
-          local = gpu_local_max;
-        // parameters that have special limits are for now handled here
-        // kernels with paramters will be compiled separately
-        // for now we have static parameters, so this will be OK
-        snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
-         local, local, local);
-        program_.build(devices, temp);
-
-        cl_int err = CL_SUCCESS;
-        // Iterate over the kernel list
-        // and get all the kernels from this group
-        for (std::map<std::string, std::string>::iterator it
-             = kernel_groups.begin();
-             it != kernel_groups.end(); ++it) {
-          if (group.compare((it->second).c_str()) == 0) {
-            kernels[(it->first).c_str()]
-                = cl::Kernel(program_, (it->first).c_str(), &err);
-          }
-        }
-      } catch (const cl::Error &e) {
-        domain_error(
-            "OpenCL Initialization", e.what(), e.err(),
-            "\nRetrieving build log\n",
-            program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
-      }
-    }
-    /**
-     * Returns the reference to the compiled kernel.
-     * If the kernel has not yet been compiled,
-     * the kernel group is compiled first.
-     *
-     * @param name The kernel name
-     *
-     */
-    inline cl::Kernel get_kernel(std::string name) {
-      // Compile the kernel group and return the kernel
-      if (!compiled_kernels[kernel_groups[name]]) {
-        compile_kernel_group(kernel_groups[name]);
-        compiled_kernels[kernel_groups[name]] = true;
-      }
-      return kernels[name];
-    }
 };
 
 inline void opencl_context::init_platforms() {
@@ -272,19 +213,19 @@ inline void opencl_context::init_kernel_groups() {
 
   kernel_strings["timing"] = dummy_kernel;
   kernel_strings["check_gpu"] =
-#include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
+  #include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
       ;                                                  // NOLINT
   kernel_strings["cholesky_decomposition"] =
-#include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
+  #include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
       ;                                                               // NOLINT
   kernel_strings["matrix_inverse"] =
-#include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
+  #include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
       ;                                                       // NOLINT
   kernel_strings["matrix_multiply"] =
-#include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
+  #include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
       ;                                                        // NOLINT
   kernel_strings["basic_matrix"] =
-#include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
+  #include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
       ;                                                     // NOLINT
 
   // Check if the kernels were already compiled
@@ -294,6 +235,67 @@ inline void opencl_context::init_kernel_groups() {
   compiled_kernels["matrix_inverse"] = false;
   compiled_kernels["cholesky_decomposition"] = false;
   compiled_kernels["check_gpu"] = false;
+}
+
+/**
+ * Compiles all the kernel in the specified group
+ *
+ * @param group The kernel group name
+ *
+ */
+inline void opencl_context::compile_kernel_group(std::string group) {
+  cl::Context &ctx = context();
+  std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
+  std::string kernel_source = kernel_strings[group];
+  cl::Program::Sources source(
+      1, std::make_pair(kernel_source.c_str(), kernel_source.size()));
+  cl::Program program_ = cl::Program(ctx, source);
+  try {
+    char temp[100];
+    int local = 32;
+    int gpu_local_max = sqrt(maxWorkgroupSize());
+    if (gpu_local_max < local)
+      local = gpu_local_max;
+    // parameters that have special limits are for now handled here
+    // kernels with paramters will be compiled separately
+    // for now we have static parameters, so this will be OK
+    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
+     local, local, local);
+    program_.build(devices, temp);
+
+    cl_int err = CL_SUCCESS;
+    // Iterate over the kernel list
+    // and get all the kernels from this group
+    for (std::map<std::string, std::string>::iterator it
+         = kernel_groups.begin();
+         it != kernel_groups.end(); ++it) {
+      if (group.compare((it->second).c_str()) == 0) {
+        kernels[(it->first).c_str()]
+            = cl::Kernel(program_, (it->first).c_str(), &err);
+      }
+    }
+  } catch (const cl::Error &e) {
+    domain_error(
+        "OpenCL Initialization", e.what(), e.err(),
+        "\nRetrieving build log\n",
+        program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
+  }
+}
+/**
+ * Returns the reference to the compiled kernel.
+ * If the kernel has not yet been compiled,
+ * the kernel group is compiled first.
+ *
+ * @param name The kernel name
+ *
+ */
+inline cl::Kernel opencl_context::get_kernel(std::string name) {
+  // Compile the kernel group and return the kernel
+  if (!compiled_kernels[kernel_groups[name]]) {
+    compile_kernel_group(kernel_groups[name]);
+    compiled_kernels[kernel_groups[name]] = true;
+  }
+  return kernels[name];
 }
 
 static opencl_context opencl_context;
