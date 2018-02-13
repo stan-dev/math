@@ -52,7 +52,6 @@ class opencl_context {
   typedef std::map<std::string, bool> map_bool;
 
  public:
-
    map_string kernel_groups;
    map_string kernel_strings;
    map_kernel kernels;
@@ -61,14 +60,18 @@ class opencl_context {
 
 
    void init_kernel_groups();
-   void init_devices_platforms();
+   void init_platforms();
+   void init_devices();
+   void init_context_queue();
    void init_program();
-   explicit opencl_context() {
+   opencl_context() {
      dummy_kernel =
        "__kernel void dummy(__global const int* foo) { };";
      try {
-        init_devices_platforms();
         init_kernel_groups();
+        init_platforms();
+        init_devices();
+        init_context_queue();
         init_program();
       } catch (const cl::Error &e) {
         check_ocl_error("build", e);
@@ -79,26 +82,15 @@ class opencl_context {
     opencl_context(opencl_context&&) = delete;
     opencl_context& operator = (opencl_context const&) = delete;
     opencl_context& operator = (opencl_context &&) = delete;
-    inline std::string description() const {
-        return description_;
-    }
-
-    inline cl::Context &context() {
-      return oclContext_;
-    }
-
-    inline cl::CommandQueue &queue() {
-      return oclQueue_;
-    }
-    inline int maxWorkgroupSize() { return max_workgroup_size_; }
-
 
     /**
      * Returns the description of the OpenCL
      * platform and device that is used.
      *
      */
-    inline std::string get_description() { return description(); }
+    inline std::string description() const {
+        return description_;
+    }
 
     /**
      * Returns the reference to the
@@ -106,27 +98,29 @@ class opencl_context {
      * a new context is created.
      *
      */
-    inline cl::Context &get_context() { return context(); }
-    /**
-     * Returns the reference to the active
-     * OpenCL command queue. If no context
-     * and queue were created,
-     * a new context and queue are created and
-     * the reference to the new queue is returned.
-     *
-     */
-    inline cl::CommandQueue &get_queue() { return queue(); }
-    /**
-     * Returns the reference to the active
-     * OpenCL command queue. If no context
-     * and queue were created,
-     * a new context and queue are created and
-     * the reference to the new queue is returned.
-     *
-     */
-    inline int get_maximum_workgroup_size() {
-      return maxWorkgroupSize();
+    inline cl::Context &context() {
+      return oclContext_;
     }
+    /**
+     * Returns the reference to the active
+     * OpenCL command queue. If no context
+     * and queue were created,
+     * a new context and queue are created and
+     * the reference to the new queue is returned.
+     *
+     */
+    inline cl::CommandQueue &queue() {
+      return oclQueue_;
+    }
+    /**
+     * Returns the reference to the active
+     * OpenCL command queue. If no context
+     * and queue were created,
+     * a new context and queue are created and
+     * the reference to the new queue is returned.
+     *
+     */
+    inline int maxWorkgroupSize() { return max_workgroup_size_; }
 
     /**
      * Compiles all the kernel in the specified group
@@ -135,7 +129,7 @@ class opencl_context {
      *
      */
     inline void compile_kernel_group(std::string group) {
-      cl::Context &ctx = get_context();
+      cl::Context &ctx = context();
       std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
       std::string kernel_source = kernel_strings[group];
       cl::Program::Sources source(
@@ -144,14 +138,14 @@ class opencl_context {
       try {
         char temp[100];
         int local = 32;
-        int gpu_local_max = sqrt(get_maximum_workgroup_size());
+        int gpu_local_max = sqrt(maxWorkgroupSize());
         if (gpu_local_max < local)
           local = gpu_local_max;
         // parameters that have special limits are for now handled here
         // kernels with paramters will be compiled separately
         // for now we have static parameters, so this will be OK
-        snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
-                 local);
+        snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
+         local, local, local);
         program_.build(devices, temp);
 
         cl_int err = CL_SUCCESS;
@@ -167,11 +161,11 @@ class opencl_context {
         }
       } catch (const cl::Error &e) {
         domain_error(
-            "OpenCL Initialization", e.what(), e.err(), "\nRetrieving build log\n",
+            "OpenCL Initialization", e.what(), e.err(),
+            "\nRetrieving build log\n",
             program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
       }
     }
-
     /**
      * Returns the reference to the compiled kernel.
      * If the kernel has not yet been compiled,
@@ -188,17 +182,18 @@ class opencl_context {
       }
       return kernels[name];
     }
-
 };
 
-inline void opencl_context::init_devices_platforms() {
+inline void opencl_context::init_platforms() {
   cl::Platform::get(&allPlatforms);
   if (allPlatforms.size() == 0) {
     domain_error("OpenCL Initialization", "[Platform]", "",
                  "No OpenCL platforms found");
   }
   oclPlatform_ = allPlatforms[0];
+}
 
+inline void opencl_context::init_devices() {
   oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
   // TODO(Steve): This should throw which platform
   if (allDevices.size() == 0) {
@@ -206,6 +201,10 @@ inline void opencl_context::init_devices_platforms() {
                  "No OpenCL devices found on the selected platform.");
   }
   oclDevice_ = allDevices[0];
+}
+
+// This also grabs the description and max workgroup size
+inline void opencl_context::init_context_queue() {
   description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>()
                  + " on the platform "
                  + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
@@ -214,7 +213,6 @@ inline void opencl_context::init_devices_platforms() {
   oclContext_ = cl::Context(allDevices);
   oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
                                CL_QUEUE_PROFILING_ENABLE, NULL);
-
 }
 
 inline void opencl_context::init_program() {
@@ -234,6 +232,7 @@ inline void opencl_context::init_program() {
         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
   }
 }
+
 /**
  * Initalizes the global std::map variables that
  * hold the OpenCL kernel sources, the groups to
