@@ -5,10 +5,9 @@
 
 TEST(MathMatrix, kernel_initialize) {
   stan::math::get_context();
-  cl::Kernel kernel_transpose
-                  = stan::math::get_kernel("transpose");
-  EXPECT_NO_THROW(cl::Kernel kernel_transpose
-                  = stan::math::get_kernel("transpose"));
+  cl::Kernel kernel_transpose = stan::math::get_kernel("transpose");
+      EXPECT_NO_THROW(cl::Kernel kernel_transpose
+                      = stan::math::get_kernel("transpose"));
   EXPECT_NO_THROW(cl::Kernel kernel_copy = stan::math::get_kernel("copy"));
   EXPECT_NO_THROW(cl::Kernel kernel_zeros = stan::math::get_kernel("zeros"));
   EXPECT_NO_THROW(cl::Kernel kernel_identity
