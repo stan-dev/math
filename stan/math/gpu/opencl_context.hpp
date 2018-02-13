@@ -27,81 +27,6 @@
 namespace stan {
 namespace math {
 
-namespace {
-  typedef std::map<std::string, std::string> map_string;
-  typedef std::map<std::string, cl::Kernel> map_kernel;
-  typedef std::map<std::string, bool> map_bool;
-  static map_string kernel_groups;
-  static map_string kernel_strings;
-  static map_kernel kernels;
-  static map_bool compiled_kernels;
-  static std::string dummy_kernel =
-    "__kernel void dummy(__global const int* foo) { };";
-
-  /**
-   * Initalizes the global std::map variables that
-   * hold the OpenCL kernel sources, the groups to
-   * which each kernel is assigned to and the
-   * information about which kernel was already compiled.
-   *
-   */
-  inline void init_kernel_groups() {
-    // To identify the kernel group
-    kernel_groups["transpose"] = "basic_matrix";
-    kernel_groups["copy"] = "basic_matrix";
-    kernel_groups["zeros"] = "basic_matrix";
-    kernel_groups["identity"] = "basic_matrix";
-    kernel_groups["copy_triangular"] = "basic_matrix";
-    kernel_groups["copy_triangular_transposed"] = "basic_matrix";
-    kernel_groups["add"] = "basic_matrix";
-    kernel_groups["subtract"] = "basic_matrix";
-    kernel_groups["copy_submatrix"] = "basic_matrix";
-    kernel_groups["scalar_mul_diagonal"] = "matrix_multiply";
-    kernel_groups["scalar_mul"] = "matrix_multiply";
-    kernel_groups["basic_multiply"] = "matrix_multiply";
-    kernel_groups["multiply_self_transposed"] = "matrix_multiply";
-    kernel_groups["lower_tri_inv_step1"] = "matrix_inverse";
-    kernel_groups["lower_tri_inv_step2"] = "matrix_inverse";
-    kernel_groups["lower_tri_inv_step3"] = "matrix_inverse";
-    kernel_groups["cholesky_block"] = "cholesky_decomposition";
-    kernel_groups["check_nan"] = "check_gpu";
-    kernel_groups["check_symmetric"] = "check_gpu";
-    kernel_groups["check_diagonal_zeros"] = "check_gpu";
-
-    kernel_groups["dummy"] = "timing";
-
-    // Kernel group strings
-    // the dummy kernel is the only one not included in files
-    // so it is treated before the loop that iterates
-    // through  kernels to load all
-
-    kernel_strings["timing"] = dummy_kernel;
-    kernel_strings["check_gpu"] =
-  #include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
-        ;                                                  // NOLINT
-    kernel_strings["cholesky_decomposition"] =
-  #include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
-        ;                                                               // NOLINT
-    kernel_strings["matrix_inverse"] =
-  #include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
-        ;                                                       // NOLINT
-    kernel_strings["matrix_multiply"] =
-  #include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
-        ;                                                        // NOLINT
-    kernel_strings["basic_matrix"] =
-  #include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
-        ;                                                     // NOLINT
-
-    // Check if the kernels were already compiled
-    compiled_kernels["basic_matrix"] = false;
-    compiled_kernels["matrix_multiply"] = false;
-    compiled_kernels["timing"] = false;
-    compiled_kernels["matrix_inverse"] = false;
-    compiled_kernels["cholesky_decomposition"] = false;
-    compiled_kernels["check_gpu"] = false;
-  }
-}
-
 // TODO(Rok): select some other platform/device than 0
 // TODO(Rok): option to turn profiling OFF
 /**
@@ -122,49 +47,29 @@ class opencl_context {
   std::vector<cl::Platform> allPlatforms;
   std::vector<cl::Device> allDevices;
   size_t max_workgroup_size_;
-
+  typedef std::map<std::string, std::string> map_string;
+  typedef std::map<std::string, cl::Kernel> map_kernel;
+  typedef std::map<std::string, bool> map_bool;
 
  public:
+
+   map_string kernel_groups;
+   map_string kernel_strings;
+   map_kernel kernels;
+   map_bool compiled_kernels;
+   std::string dummy_kernel;
+
+
+   void init_kernel_groups();
+   void init_devices_platforms();
+   void init_program();
    explicit opencl_context() {
+     dummy_kernel =
+       "__kernel void dummy(__global const int* foo) { };";
      try {
-        cl::Platform::get(&allPlatforms);
-        if (allPlatforms.size() == 0) {
-          domain_error("OpenCL Initialization", "[Platform]", "",
-                       "No OpenCL platforms found");
-        }
-        oclPlatform_ = allPlatforms[0];
-
-        oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
-        // TODO(Steve): This should throw which platform
-        if (allDevices.size() == 0) {
-          domain_error("OpenCL Initialization", "[Device]", "",
-                       "No OpenCL devices found on the selected platform.");
-        }
-        oclDevice_ = allDevices[0];
-        description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>()
-                       + " on the platform "
-                       + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
-        allDevices[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                                      &max_workgroup_size_);
-        oclContext_ = cl::Context(allDevices);
-        oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
-                                     CL_QUEUE_PROFILING_ENABLE, NULL);
+        init_devices_platforms();
         init_kernel_groups();
-        // Compile the dummy kernel used for timing purposes
-        cl::Program::Sources source(
-            1, std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
-        cl::Program program_ = cl::Program(oclContext_, source);
-
-        try {
-          program_.build(allDevices);
-          kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
-          compiled_kernels["timing"] = true;
-        } catch (const cl::Error &e) {
-          domain_error(
-              "OpenCL Initialization", e.what(), e.err(),
-              "\nRetrieving build log\n",
-              program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
-        }
+        init_program();
       } catch (const cl::Error &e) {
         check_ocl_error("build", e);
       }
@@ -285,6 +190,112 @@ class opencl_context {
     }
 
 };
+
+inline void opencl_context::init_devices_platforms() {
+  cl::Platform::get(&allPlatforms);
+  if (allPlatforms.size() == 0) {
+    domain_error("OpenCL Initialization", "[Platform]", "",
+                 "No OpenCL platforms found");
+  }
+  oclPlatform_ = allPlatforms[0];
+
+  oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
+  // TODO(Steve): This should throw which platform
+  if (allDevices.size() == 0) {
+    domain_error("OpenCL Initialization", "[Device]", "",
+                 "No OpenCL devices found on the selected platform.");
+  }
+  oclDevice_ = allDevices[0];
+  description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>()
+                 + " on the platform "
+                 + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+  allDevices[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
+                                &max_workgroup_size_);
+  oclContext_ = cl::Context(allDevices);
+  oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
+                               CL_QUEUE_PROFILING_ENABLE, NULL);
+
+}
+
+inline void opencl_context::init_program() {
+  // Compile the dummy kernel used for timing purposes
+  cl::Program::Sources source(
+      1, std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
+  cl::Program program_ = cl::Program(oclContext_, source);
+
+  try {
+    program_.build(allDevices);
+    kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
+    compiled_kernels["timing"] = true;
+  } catch (const cl::Error &e) {
+    domain_error(
+        "OpenCL Initialization", e.what(), e.err(),
+        "\nRetrieving build log\n",
+        program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
+  }
+}
+/**
+ * Initalizes the global std::map variables that
+ * hold the OpenCL kernel sources, the groups to
+ * which each kernel is assigned to and the
+ * information about which kernel was already compiled.
+ *
+ */
+inline void opencl_context::init_kernel_groups() {
+  // To identify the kernel group
+  kernel_groups["transpose"] = "basic_matrix";
+  kernel_groups["copy"] = "basic_matrix";
+  kernel_groups["zeros"] = "basic_matrix";
+  kernel_groups["identity"] = "basic_matrix";
+  kernel_groups["copy_triangular"] = "basic_matrix";
+  kernel_groups["copy_triangular_transposed"] = "basic_matrix";
+  kernel_groups["add"] = "basic_matrix";
+  kernel_groups["subtract"] = "basic_matrix";
+  kernel_groups["copy_submatrix"] = "basic_matrix";
+  kernel_groups["scalar_mul_diagonal"] = "matrix_multiply";
+  kernel_groups["scalar_mul"] = "matrix_multiply";
+  kernel_groups["basic_multiply"] = "matrix_multiply";
+  kernel_groups["multiply_self_transposed"] = "matrix_multiply";
+  kernel_groups["lower_tri_inv_step1"] = "matrix_inverse";
+  kernel_groups["lower_tri_inv_step2"] = "matrix_inverse";
+  kernel_groups["lower_tri_inv_step3"] = "matrix_inverse";
+  kernel_groups["cholesky_block"] = "cholesky_decomposition";
+  kernel_groups["check_nan"] = "check_gpu";
+  kernel_groups["check_symmetric"] = "check_gpu";
+  kernel_groups["check_diagonal_zeros"] = "check_gpu";
+
+  kernel_groups["dummy"] = "timing";
+
+  // Kernel group strings
+  // the dummy kernel is the only one not included in files
+  // so it is treated before the loop that iterates
+  // through  kernels to load all
+
+  kernel_strings["timing"] = dummy_kernel;
+  kernel_strings["check_gpu"] =
+#include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
+      ;                                                  // NOLINT
+  kernel_strings["cholesky_decomposition"] =
+#include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
+      ;                                                               // NOLINT
+  kernel_strings["matrix_inverse"] =
+#include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
+      ;                                                       // NOLINT
+  kernel_strings["matrix_multiply"] =
+#include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
+      ;                                                        // NOLINT
+  kernel_strings["basic_matrix"] =
+#include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
+      ;                                                     // NOLINT
+
+  // Check if the kernels were already compiled
+  compiled_kernels["basic_matrix"] = false;
+  compiled_kernels["matrix_multiply"] = false;
+  compiled_kernels["timing"] = false;
+  compiled_kernels["matrix_inverse"] = false;
+  compiled_kernels["cholesky_decomposition"] = false;
+  compiled_kernels["check_gpu"] = false;
+}
 
 static opencl_context opencl_context;
 
