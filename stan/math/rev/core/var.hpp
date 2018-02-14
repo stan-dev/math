@@ -7,6 +7,9 @@
 #include <boost/math/tools/config.hpp>
 #include <ostream>
 #include <vector>
+#include <complex>
+#include <string>
+#include <exception>
 
 namespace stan {
 namespace math {
@@ -178,6 +181,69 @@ class var {
    */
   // NOLINTNEXTLINE
   var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint. Only works
+   * if the imaginary part is zero.
+   *
+   * @param x Value of the variable.
+   */
+  explicit var(const std::complex<double>& x) {
+    if (imag(x) == 0) {
+      vi_ = new vari(real(x));
+    } else {
+      std::stringstream ss;
+      ss << "Imaginary part of std::complex used to construct var"
+         << " must be zero. Found real part = " << real(x) << " and "
+         << " found imaginary part = " << imag(x) << std::endl;
+      std::string msg = ss.str();
+      throw std::invalid_argument(msg);
+    }
+  }
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint. Only works
+   * if the imaginary part is zero.
+   *
+   * @param x Value of the variable.
+   */
+  explicit var(const std::complex<float>& x) {
+    if (imag(x) == 0) {
+      vi_ = new vari(static_cast<double>(real(x)));
+    } else {
+      std::stringstream ss;
+      ss << "Imaginary part of std::complex used to construct var"
+         << " must be zero. Found real part = " << real(x) << " and "
+         << " found imaginary part = " << imag(x) << std::endl;
+      std::string msg = ss.str();
+      throw std::invalid_argument(msg);
+    }
+  }
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint. Only works
+   * if the imaginary part is zero.
+   *
+   * @param x Value of the variable.
+   */
+  explicit var(const std::complex<long double>& x) {
+    if (imag(x) == 0) {
+      vi_ = new vari(static_cast<double>(real(x)));
+    } else {
+      std::stringstream ss;
+      ss << "Imaginary part of std::complex used to construct var"
+         << " must be zero. Found real part = " << real(x) << " and "
+         << " found imaginary part = " << imag(x) << std::endl;
+      std::string msg = ss.str();
+      throw std::invalid_argument(msg);
+    }
+  }
 
 #ifdef _WIN64
 

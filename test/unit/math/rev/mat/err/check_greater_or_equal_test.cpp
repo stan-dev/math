@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::var;
 using stan::math::check_greater_or_equal;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
   const char* function = "check_greater_or_equal";

@@ -4,8 +4,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLbeta, Fvar) {
-  using stan::math::fvar;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
 
   fvar<double> x(0.5, 1.0);
@@ -29,8 +29,8 @@ TEST(AgradFwdLbeta, Fvar) {
 }
 
 TEST(AgradFwdLbeta, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::digamma;
+  using stan::math::fvar;
   using stan::math::lbeta;
 
   fvar<fvar<double> > x;

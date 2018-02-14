@@ -3,12 +3,12 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   EXPECT_THROW(softmax(vector_fv()), std::invalid_argument);
 
@@ -56,12 +56,12 @@ TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.99985993, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, fv_2ndDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   Matrix<fvar<var>, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
@@ -79,12 +79,12 @@ TEST(AgradMixMatrixLogSoftmax, fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.6697022e-05, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   EXPECT_THROW(softmax(vector_ffv()), std::invalid_argument);
 
@@ -132,12 +132,12 @@ TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.99985993, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_1) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
@@ -156,12 +156,12 @@ TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_2) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
@@ -180,12 +180,12 @@ TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixLogSoftmax, ffv_3rdDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;

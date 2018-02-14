@@ -3,9 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(probTransform, factorCovMatrix) {
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
   using Eigen::Array;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::factor_cov_matrix;
 
   Matrix<double, Dynamic, Dynamic> L(3, 3);

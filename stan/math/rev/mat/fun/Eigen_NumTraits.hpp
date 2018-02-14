@@ -362,6 +362,6 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
   }
 };
 #endif
-}
+}  // namespace internal
 }  // namespace Eigen
 #endif

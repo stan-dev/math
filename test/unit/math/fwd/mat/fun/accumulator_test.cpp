@@ -26,9 +26,9 @@ TEST(AgradFwdMatrixAccumulate, fvar_double) {
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_fd;
   using stan::math::matrix_fd;
+  using stan::math::vector_fd;
+  using std::vector;
 
   accumulator<fvar<double> > a;
 
@@ -100,9 +100,9 @@ TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_ffd;
   using stan::math::matrix_ffd;
+  using stan::math::vector_ffd;
+  using std::vector;
 
   accumulator<fvar<fvar<double> > > a;
 

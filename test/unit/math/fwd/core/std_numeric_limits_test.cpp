@@ -4,9 +4,9 @@
 #include <limits>
 
 TEST(AgradFwdNumericLimits, All_Fvar) {
+  using stan::math::INFTY;
   using stan::math::fvar;
   using std::isnan;
-  using stan::math::INFTY;
 
   EXPECT_TRUE(std::numeric_limits<fvar<double> >::is_specialized);
   EXPECT_TRUE(std::numeric_limits<fvar<fvar<double> > >::is_specialized);

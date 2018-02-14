@@ -3,8 +3,8 @@
 
 TEST(MetaTraits, VectorBuilderHelper_false_true) {
   using stan::VectorBuilderHelper;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
 
   var a_var(1);
 
@@ -15,8 +15,8 @@ TEST(MetaTraits, VectorBuilderHelper_false_true) {
 
 TEST(MetaTraits, VectorBuilderHelper_true_true) {
   using stan::VectorBuilderHelper;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
 
   var a_var(1);
 

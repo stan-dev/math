@@ -5,10 +5,10 @@
 #include <vector>
 
 TEST(AgradRevMatrix, log_determinant_spd_diff) {
-  using stan::math::matrix_v;
   using stan::math::determinant;
   using stan::math::fabs;
   using stan::math::log;
+  using stan::math::matrix_v;
 
   // expected from auto-diff/Eigen
   AVEC x1 = createAVEC(2, 1, 1, 3);
@@ -32,8 +32,8 @@ TEST(AgradRevMatrix, log_determinant_spd_diff) {
 }
 
 TEST(AgradRevMatrix, log_determinant_spd) {
-  using stan::math::matrix_v;
   using stan::math::log_determinant_spd;
+  using stan::math::matrix_v;
 
   matrix_v v(2, 2);
   v << 1, 0, 0, 3;

@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(MathMeta, value_type) {
-  using std::vector;
   using stan::math::value_type;
+  using std::vector;
 
   expect_same_type<vector<double>::value_type,
                    value_type<vector<double> >::type>();

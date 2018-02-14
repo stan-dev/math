@@ -294,10 +294,10 @@ TEST(AgradRevMatrix, multiply_matrix_scalar) {
   EXPECT_FLOAT_EQ(-8, output(1, 1).val());
 }
 TEST(AgradRevMatrix, multiply_rowvector_vector) {
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   row_vector_d d1(3);
   row_vector_v v1(3);
@@ -321,10 +321,10 @@ TEST(AgradRevMatrix, multiply_rowvector_vector) {
 }
 TEST(AgradRevMatrix, multiply_vector_rowvector) {
   using stan::math::matrix_v;
-  using stan::math::vector_d;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   vector_d d1(3);
   vector_v v1(3);
@@ -426,9 +426,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_exception) {
 TEST(AgradRevMatrix, multiply_rowvector_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::vector_v;
 
   row_vector_d d1(3);
   row_vector_v v1(3);
@@ -627,8 +627,8 @@ TEST(AgradRevMatrix, multiply_scalar_row_vector_vc) {
 }
 
 TEST(AgradRevMatrix, multiply_scalar_matrix_cv) {
-  using stan::math::multiply;
   using stan::math::matrix_v;
+  using stan::math::multiply;
 
   matrix_v x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -646,9 +646,9 @@ TEST(AgradRevMatrix, multiply_scalar_matrix_cv) {
 }
 
 TEST(AgradRevMatrix, multiply_scalar_matrix_vc) {
-  using stan::math::multiply;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::multiply;
 
   matrix_d x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -682,8 +682,8 @@ TEST(AgradRevMatrix, multiply_vector_int) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -712,9 +712,9 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -750,8 +750,8 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -780,9 +780,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -818,9 +818,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -849,10 +849,10 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -888,9 +888,9 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -919,10 +919,10 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -958,9 +958,9 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;
@@ -989,10 +989,10 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;
@@ -1028,8 +1028,8 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_dv) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1058,9 +1058,9 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_dv) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1091,8 +1091,8 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_dv) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1121,9 +1121,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_dv) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1154,9 +1154,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_dv) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1185,10 +1185,10 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_dv) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1219,9 +1219,9 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_dv) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1250,10 +1250,10 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_dv) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1284,9 +1284,9 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_dv) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;
@@ -1315,10 +1315,10 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_dv) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;
@@ -1349,8 +1349,8 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_dv) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_vd) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1379,9 +1379,9 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_fd_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_vd) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1412,8 +1412,8 @@ TEST(AgradRevMatrix, multiply_matrix_matrix_grad_ex_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_vd) {
-  using Eigen::VectorXd;
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1442,9 +1442,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_fd_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_vd) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 4;
@@ -1475,9 +1475,9 @@ TEST(AgradRevMatrix, multiply_matrix_vector_grad_ex_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_vd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1506,10 +1506,10 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_fd_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_vd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1540,9 +1540,9 @@ TEST(AgradRevMatrix, multiply_row_vector_matrix_grad_ex_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_vd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1571,10 +1571,10 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_fd_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_vd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 1;
   int M = 4;
@@ -1605,9 +1605,9 @@ TEST(AgradRevMatrix, multiply_row_vector_vector_grad_ex_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_vd) {
-  using Eigen::VectorXd;
-  using Eigen::RowVectorXd;
   using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;
@@ -1636,10 +1636,10 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_fd_vd) {
 }
 
 TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_vd) {
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using Eigen::Infinity;
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   int N = 3;
   int M = 1;

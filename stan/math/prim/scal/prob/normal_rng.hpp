@@ -12,12 +12,13 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Return a pseudorandom Normal variate for the given location and scale
+ * Return a Normal random variate for the given location and scale
  * using the specified random number generator.
  *
- * mu and sigma can each be a scalar, a std::vector, an Eigen::Vector, or
- * an Eigen::RowVector. Any non-scalar inputs must be the same length.
+ * mu and sigma can each be a scalar or a vector. Any non-scalar
+ * inputs must be the same length.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
@@ -25,10 +26,10 @@ namespace math {
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) positive scale parameter(s)
  * @param rng random number generator
- * @return Normal random variate
+ * @return (Sequence of) normal random variate(s)
  * @throw std::domain_error if mu is infinite or sigma is nonpositive
- * @throw std::invalid_argument if non-scalars arguments are of different
- * lengths
+ * @throw std::invalid_argument if non-scalar arguments are of different
+ * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
@@ -55,6 +56,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
 
   return output.data();
 }
+
 }  // namespace math
 }  // namespace stan
 #endif
