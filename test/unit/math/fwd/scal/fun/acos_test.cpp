@@ -3,11 +3,11 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAcos, Fvar) {
+  using stan::math::NEGATIVE_INFTY;
   using stan::math::fvar;
   using std::acos;
-  using std::sqrt;
   using std::isnan;
-  using stan::math::NEGATIVE_INFTY;
+  using std::sqrt;
 
   fvar<double> x(0.5, 1.0);
 

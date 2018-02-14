@@ -60,9 +60,9 @@ TEST(AgradRevMatrix, min_rowvector_exception) {
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val());
 }
 TEST(AgradRevMatrix, min_matrix) {
-  using stan::math::min;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::min;
 
   matrix_d d1(3, 1);
   matrix_v v1(1, 3);
@@ -78,8 +78,8 @@ TEST(AgradRevMatrix, min_matrix) {
   EXPECT_FLOAT_EQ(-3, output.val());
 }
 TEST(AgradRevMatrix, min_matrix_exception) {
-  using stan::math::min;
   using stan::math::matrix_v;
+  using stan::math::min;
 
   matrix_v v;
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val());

@@ -34,6 +34,6 @@ inline typename return_type<T_y>::type std_normal_log(const T_y& y) {
   return std_normal_lpdf<T_y>(y);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

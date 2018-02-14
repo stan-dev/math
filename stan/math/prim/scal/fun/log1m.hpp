@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 
 namespace stan {
 namespace math {
@@ -33,10 +35,14 @@ namespace math {
  *
  * @param[in] x Argument.
  * @return Natural log of one minus the argument.
- * @throw std::domain_error If the argument is greater than 1.
- * @throw std::overflow_error If the computation overflows.
+ * @throw <code>std::domain_error</code> If the argument is greater than 1.
+ * @throw <code>std::overflow_error</code> If the computation overflows.
  */
-inline double log1m(double x) { return stan::math::log1p(-x); }
+inline double log1m(double x) {
+  if (!is_nan(x))
+    check_less_or_equal("log1m", "x", x, 1);
+  return stan::math::log1p(-x);
+}
 
 }  // namespace math
 }  // namespace stan

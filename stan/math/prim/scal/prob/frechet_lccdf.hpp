@@ -46,8 +46,8 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 
-  using std::log;
   using std::exp;
+  using std::log;
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);

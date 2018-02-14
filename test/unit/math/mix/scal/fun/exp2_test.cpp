@@ -8,9 +8,9 @@ class AgradFwdExp2 : public testing::Test {
 };
 
 TEST_F(AgradFwdExp2, FvarVar_1stDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<var> x(0.5, 1.3);
@@ -26,9 +26,9 @@ TEST_F(AgradFwdExp2, FvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdExp2, FvarVar_2ndDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<var> x(0.5, 1.3);
@@ -41,9 +41,9 @@ TEST_F(AgradFwdExp2, FvarVar_2ndDeriv) {
 }
 
 TEST_F(AgradFwdExp2, FvarFvarVar_1stDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -80,9 +80,9 @@ TEST_F(AgradFwdExp2, FvarFvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdExp2, FvarFvarVar_2ndDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<fvar<var> > x;

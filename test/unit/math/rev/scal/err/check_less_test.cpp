@@ -38,8 +38,8 @@ TEST(AgradRevErrorHandlingScalar, CheckLess) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_less;
+  using stan::math::var;
 
   const char* function = "check_less";
   var a(5.0);

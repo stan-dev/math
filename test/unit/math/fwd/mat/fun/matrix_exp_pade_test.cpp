@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <random>
 
-using stan::math::matrix_fd;
 using stan::math::fvar;
 using stan::math::matrix_exp_pade;
+using stan::math::matrix_fd;
 
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   using stan::math::fvar;
@@ -62,8 +62,8 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
 }
 
 TEST(MathMatrix, matrix_exp_pade_3x3) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   stan::math::fvar<double> a, b, c;
   a.val_ = -1.0;
@@ -107,10 +107,10 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using stan::math::matrix_fd;
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   int size = 100;
   std::random_device rd;

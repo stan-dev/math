@@ -13,12 +13,13 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Return a pseudorandom double exponential variate with the given location
+ * Return a double exponential random variate with the given location
  * and scale using the specified random number generator.
  *
- * mu and sigma can each be a scalar or a vector. Any non-scalar
- * inputs must be the same length.
+ * mu and sigma can each be a scalar or a one-dimensional container. Any
+ * non-scalar inputs must be the same size.
  *
  * @tparam T_loc Type of location parameter
  * @tparam T_scale Type of scale parameter
@@ -26,16 +27,16 @@ namespace math {
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) scale parameter(s)
  * @param rng random number generator
- * @return double exponential random variate
+ * @return (Sequence of) double exponential random variate(s)
  * @throw std::domain_error if mu is infinite or sigma is nonpositive
- * @throw std::invalid_argument if non-scalars arguments are of different
- * lengths
+ * @throw std::invalid_argument if non-scalar arguments are of different
+ * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type
 double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
   static const char* function = "double_exponential_rng";
 
   check_finite(function, "Location parameter", mu);
@@ -58,6 +59,7 @@ double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
 
   return output.data();
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -82,8 +82,8 @@ class ode_system {
   inline void jacobian(double t, const std::vector<double>& y,
                        Eigen::MatrixBase<Derived1>& dy_dt,
                        Eigen::MatrixBase<Derived2>& Jy) const {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
     using Eigen::RowVectorXd;
     using std::vector;
     vector<double> grad(y.size());

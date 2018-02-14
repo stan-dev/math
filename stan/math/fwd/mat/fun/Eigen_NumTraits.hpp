@@ -69,7 +69,7 @@ struct significant_decimals_default_impl<stan::math::fvar<T>, false> {
   }
 };
 #endif
-}
+}  // namespace internal
 
 }  // namespace Eigen
 #endif

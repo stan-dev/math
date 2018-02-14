@@ -2,9 +2,9 @@
 #include <stan/math/prim/scal.hpp>
 #include <stdexcept>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsBernoulli : public AgradDistributionTest {
  public:
@@ -72,8 +72,8 @@ class AgradDistributionsBernoulli : public AgradDistributionTest {
   typename stan::return_type<T_n, T_prob>::type log_prob_function(
       const T_n& n, const T_prob& theta, const T2&, const T3&, const T4&,
       const T5&) {
-    using std::log;
     using stan::math::log1m;
+    using std::log;
     if (n == 1)
       return log(theta);
     else if (n == 0)

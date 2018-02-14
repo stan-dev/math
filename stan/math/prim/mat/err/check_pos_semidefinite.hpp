@@ -39,9 +39,9 @@ inline void check_pos_semidefinite(
   if (y.rows() == 1 && !(y(0, 0) >= 0.0))
     domain_error(function, name, "is not positive semi-definite.", "");
 
+  using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
-  using Eigen::Dynamic;
   LDLT<Matrix<double, Dynamic, Dynamic> > cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any())

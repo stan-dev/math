@@ -8,8 +8,8 @@ namespace math {
 template <typename T_L, typename T_eta>
 typename return_type<T_eta, T_L>::type lkj_corr_cholesky_uc(
     Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta, int K) {
-  using math::lkj_corr_cholesky_log;
   using math::cholesky_corr_constrain;
+  using math::lkj_corr_cholesky_log;
   using math::positive_constrain;
 
   typedef typename return_type<T_eta, T_L>::type rettype;
@@ -34,8 +34,8 @@ struct lkj_corr_cholesky_cd {
   }
   template <typename T>
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> vec) const {
-    using math::positive_constrain;
     using math::lkj_corr_cholesky_log;
+    using math::positive_constrain;
     T lp(0.0);
     T eta_c = positive_constrain(vec(0), lp);
     lp += lkj_corr_cholesky_log(L_def, eta_c);
@@ -52,8 +52,8 @@ struct lkj_corr_cholesky_dc {
   }
   template <typename T>
   T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1> vec) const {
-    using math::lkj_corr_cholesky_log;
     using math::cholesky_corr_constrain;
+    using math::lkj_corr_cholesky_log;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> L_c = cholesky_corr_constrain(vec, K, lp);
     lp += lkj_corr_cholesky_log(L_c, eta_c);

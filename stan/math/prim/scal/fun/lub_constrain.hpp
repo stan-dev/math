@@ -109,8 +109,8 @@ inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
 template <typename T, typename L, typename U>
 inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
     const T& x, const L& lb, const U& ub, T& lp) {
-  using std::log;
   using std::exp;
+  using std::log;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == -std::numeric_limits<double>::infinity())
     return ub_constrain(x, ub, lp);

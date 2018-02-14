@@ -28,8 +28,8 @@ namespace math {
  */
 template <class RNG>
 inline int bernoulli_rng(double theta, RNG& rng) {
-  using boost::variate_generator;
   using boost::bernoulli_distribution;
+  using boost::variate_generator;
 
   static const char* function = "bernoulli_rng";
 

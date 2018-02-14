@@ -20,8 +20,8 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::exp;
 
   typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
@@ -51,8 +51,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
 

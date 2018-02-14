@@ -1,9 +1,9 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCdfPoisson : public AgradCdfTest {
  public:
@@ -54,13 +54,13 @@ class AgradCdfPoisson : public AgradCdfTest {
                                                         const T_rate& lambda,
                                                         const T2&, const T3&,
                                                         const T4&, const T5&) {
-    using std::pow;
-    using stan::math::pow;
-    using stan::math::lgamma;
     using boost::math::lgamma;
-    using std::exp;
     using stan::math::exp;
+    using stan::math::lgamma;
+    using stan::math::pow;
+    using std::exp;
     using std::log;
+    using std::pow;
 
     typename stan::return_type<T_rate>::type cdf(0);
     for (int i = 0; i <= n; i++) {

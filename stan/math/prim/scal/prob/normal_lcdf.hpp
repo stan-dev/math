@@ -29,8 +29,8 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lcdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using std::log;
   using std::exp;
+  using std::log;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma))

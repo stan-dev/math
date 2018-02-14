@@ -275,8 +275,8 @@ struct check_dist_throws {
  */
 template <typename T_rig>
 void check_dist_throws_all_types(const T_rig& rig) {
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   apply_template_permutations<
       std::tuple<int, std::vector<int>, double, std::vector<double>, VectorXd,
@@ -380,8 +380,8 @@ struct check_quantiles {
  */
 template <typename T_rig>
 void check_quantiles_all_types(const T_rig& rig) {
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
 
   apply_template_permutations<
       std::tuple<int, double, std::vector<int>, std::vector<double>, VectorXd,

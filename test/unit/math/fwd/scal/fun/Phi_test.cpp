@@ -3,8 +3,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdPhi, Fvar) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
   fvar<double> x = 1.0;
   x.d_ = 1.0;
 
@@ -27,8 +27,8 @@ TEST(AgradFwdPhi, FvarDerivUnderOverFlow) {
 }
 
 TEST(AgradFwdPhi, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::Phi;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.0;
