@@ -4,13 +4,11 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/logic_error.hpp>
 #include <CL/cl.hpp>
 #include <cmath>
 #include <fstream>
-#include <iostream>
 #include <map>
-#include <string>
 #include <vector>
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
@@ -39,7 +37,7 @@ namespace math {
  */
 class opencl_context {
  private:
-  std::string description_;
+  const char* description_;
   cl::Context oclContext_;
   cl::CommandQueue oclQueue_;
   cl::Platform oclPlatform_;
@@ -47,16 +45,16 @@ class opencl_context {
   std::vector<cl::Platform> allPlatforms;
   std::vector<cl::Device> allDevices;
   size_t max_workgroup_size_;
-  typedef std::map<std::string, std::string> map_string;
-  typedef std::map<std::string, cl::Kernel> map_kernel;
-  typedef std::map<std::string, bool> map_bool;
+  typedef std::map<const char*, const char*> map_string;
+  typedef std::map<const char*, cl::Kernel> map_kernel;
+  typedef std::map<const char*, bool> map_bool;
 
  public:
    map_string kernel_groups;
    map_string kernel_strings;
    map_kernel kernels;
    map_bool compiled_kernels;
-   std::string dummy_kernel;
+   const char* dummy_kernel;
 
 
    void init_kernel_groups();
@@ -64,8 +62,8 @@ class opencl_context {
    void init_devices();
    void init_context_queue();
    void init_program();
-   void compile_kernel_group(std::string group);
-   cl::Kernel get_kernel(std::string name);
+   void compile_kernel_group(const char* group);
+   cl::Kernel get_kernel(const char* name);
    opencl_context() {
      dummy_kernel =
        "__kernel void dummy(__global const int* foo) { };";
@@ -90,7 +88,7 @@ class opencl_context {
      * platform and device that is used.
      *
      */
-    inline std::string description() const {
+    inline const char* description() const {
         return description_;
     }
 
@@ -128,7 +126,7 @@ class opencl_context {
 inline void opencl_context::init_platforms() {
   cl::Platform::get(&allPlatforms);
   if (allPlatforms.size() == 0) {
-    domain_error("OpenCL Initialization", "[Platform]", "",
+    logic_error("OpenCL Initialization", "[Platform]", "",
                  "No OpenCL platforms found");
   }
   oclPlatform_ = allPlatforms[0];
@@ -138,7 +136,7 @@ inline void opencl_context::init_devices() {
   oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
   // TODO(Steve): This should throw which platform
   if (allDevices.size() == 0) {
-    domain_error("OpenCL Initialization", "[Device]", "",
+    logic_error("OpenCL Initialization", "[Device]", "",
                  "No OpenCL devices found on the selected platform.");
   }
   oclDevice_ = allDevices[0];
@@ -146,9 +144,11 @@ inline void opencl_context::init_devices() {
 
 // This also grabs the description and max workgroup size
 inline void opencl_context::init_context_queue() {
-  description_ = "Device " + oclDevice_.getInfo<CL_DEVICE_NAME>()
-                 + " on the platform "
-                 + oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+  std::ostringstream message;
+  // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
+  message << "Device " << oclDevice_.getInfo<CL_DEVICE_NAME>() <<
+   " on the platform " << oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+  std::string description_ = message.str();
   allDevices[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                                 &max_workgroup_size_);
   oclContext_ = cl::Context(allDevices);
@@ -159,7 +159,7 @@ inline void opencl_context::init_context_queue() {
 inline void opencl_context::init_program() {
   // Compile the dummy kernel used for timing purposes
   cl::Program::Sources source(
-      1, std::make_pair(dummy_kernel.c_str(), dummy_kernel.size()));
+      1, std::make_pair(dummy_kernel, strlen(dummy_kernel)));
   cl::Program program_ = cl::Program(oclContext_, source);
 
   try {
@@ -167,7 +167,7 @@ inline void opencl_context::init_program() {
     kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
     compiled_kernels["timing"] = true;
   } catch (const cl::Error &e) {
-    domain_error(
+    logic_error(
         "OpenCL Initialization", e.what(), e.err(),
         "\nRetrieving build log\n",
         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
@@ -243,12 +243,12 @@ inline void opencl_context::init_kernel_groups() {
  * @param group The kernel group name
  *
  */
-inline void opencl_context::compile_kernel_group(std::string group) {
+inline void opencl_context::compile_kernel_group(const char* group) {
   cl::Context &ctx = context();
   std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
-  std::string kernel_source = kernel_strings[group];
+  const char* kernel_source = kernel_strings[group];
   cl::Program::Sources source(
-      1, std::make_pair(kernel_source.c_str(), kernel_source.size()));
+      1, std::make_pair(kernel_source, strlen(kernel_source)));
   cl::Program program_ = cl::Program(ctx, source);
   try {
     char temp[100];
@@ -266,17 +266,15 @@ inline void opencl_context::compile_kernel_group(std::string group) {
     cl_int err = CL_SUCCESS;
     // Iterate over the kernel list
     // and get all the kernels from this group
-    for (std::map<std::string, std::string>::iterator it
-         = kernel_groups.begin();
-         it != kernel_groups.end(); ++it) {
-      if (group.compare((it->second).c_str()) == 0) {
-        kernels[(it->first).c_str()]
-            = cl::Kernel(program_, (it->first).c_str(), &err);
+    for (auto it : kernel_groups) {
+      if (strcmp(group, it.second) == 0) {
+        kernels[(it.first)]
+            = cl::Kernel(program_, it.first, &err);
       }
     }
   } catch (const cl::Error &e) {
-    domain_error(
-        "OpenCL Initialization", e.what(), e.err(),
+    logic_error(
+        "\n OpenCL Initialization", e.what(), e.err(),
         "\nRetrieving build log\n",
         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
   }
@@ -289,7 +287,7 @@ inline void opencl_context::compile_kernel_group(std::string group) {
  * @param name The kernel name
  *
  */
-inline cl::Kernel opencl_context::get_kernel(std::string name) {
+inline cl::Kernel opencl_context::get_kernel(const char* name) {
   // Compile the kernel group and return the kernel
   if (!compiled_kernels[kernel_groups[name]]) {
     compile_kernel_group(kernel_groups[name]);
