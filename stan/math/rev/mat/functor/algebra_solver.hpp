@@ -151,7 +151,7 @@ Eigen::VectorXd algebra_solver(
   // Create functor for algebraic system
   typedef system_functor<F, double, double, true> Fs;
   typedef hybrj_functor_solver<Fs, F, double, double> Fx;
-  Fx fx(Fs(), f, x, y, dat, dat_int, msgs);
+  Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
   Eigen::HybridNonLinearSolver<Fx> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
@@ -250,12 +250,12 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
   // and use it here (if possible).
   typedef system_functor<F, double, double, true> Fs;
   typedef hybrj_functor_solver<Fs, F, double, double> Fx;
-  Fx fx(Fs(), f, x, value_of(y), dat, dat_int, msgs);
+  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
   algebra_solver_vari<Fy, F, T2, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, x, y, dat, dat_int,
-                                               theta_dbl, fx, msgs);
+      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
+                                               dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)
