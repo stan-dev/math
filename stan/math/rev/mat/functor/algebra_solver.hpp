@@ -243,7 +243,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
       = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
                        function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> FY;
+  typedef system_functor<F, double, double, false> Fy;
 
   // TODO(charlesm93): a similar object gets constructed inside
   // the call to algebra_solver. Cache the previous result
@@ -253,9 +253,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
   Fx fx(Fs(), f, x, value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<FY, F, T, Fx>* vi0
-      = new algebra_solver_vari<FY, F, T, Fx>(FY(), f, x, y, dat, dat_int,
-                                              theta_dbl, fx, msgs);
+  algebra_solver_vari<Fy, F, T2, Fx>* vi0
+      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, x, y, dat, dat_int,
+                                               theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)
