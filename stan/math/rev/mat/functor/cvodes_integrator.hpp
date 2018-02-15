@@ -15,11 +15,11 @@
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix                */
-#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver          */
-#include <sunmatrix/sunmatrix_band.h> /* access to band SUNMatrix                 */
-#include <sunlinsol/sunlinsol_band.h> /* access to band SUNLinearSolver           */
-#include <cvodes/cvodes_direct.h>     /* access to CVDls interface            */
+#include <sunmatrix/sunmatrix_dense.h>    /* access to dense SUNMatrix                */
+#include <sunlinsol/sunlinsol_dense.h>    /* access to dense SUNLinearSolver          */
+#include <sunmatrix/sunmatrix_band.h>     /* access to band SUNMatrix                 */
+#include <sunlinsol/sunlinsol_band.h>     /* access to band SUNLinearSolver           */
+#include <cvodes/cvodes_direct.h>      /* access to CVDls interface            */
 
 #include <algorithm>
 #include <ostream>
@@ -165,7 +165,7 @@ integrate(const F& f, const std::vector<T_initial>& y0, double t0,
     // initialize forward sensitivity system of CVODES as needed
     if (S > 0) {
       cvodes_state_sens = N_VCloneVectorArray_Serial(S, cvodes_state);
-      for (size_t s = 0; s < S; s++)
+      for (size_t s = 0; s < S; ++s)
         N_VConst(RCONST(0.0), cvodes_state_sens[s]);
 
       // for varying initials, first N sensitivity systems
@@ -174,84 +174,47 @@ integrate(const F& f, const std::vector<T_initial>& y0, double t0,
         for (size_t n = 0; n < N; ++n)
           NV_Ith_S(cvodes_state_sens[n], n) = 1.0;
       }
-
       cvodes_check_flag(
-          CVodeInit(cvodes_mem, &ode_data::ode_rhs, t0, cvodes_state),
-          "CVodeInit");
+          CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
+                        &ode_data::ode_rhs_sens, cvodes_state_sens),
+          "CVodeSensInit");
 
-      // Assign pointer to this as user data
-      cvodes_check_flag(
-          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(&cvodes_data)),
-          "CVodeSetUserData");
-
-      cvodes_set_options(cvodes_mem, relative_tolerance, absolute_tolerance,
-                         max_num_steps);
-
-      // for the stiff solvers we need to reserve additional
-      // memory and provide a Jacobian function call
-      // cvodes_check_flag(CVDense(cvodes_mem, N), "CVDense");
-
-      // new API since 3.0.0: create matrix object and linear solver object
-      SUNMatrix A;
-      A = SUNDenseMatrix(N, N);
-      SUNLinearSolver LS = SUNDenseLinearSolver(cvodes_state, A);
-      cvodes_check_flag(CVDlsSetLinearSolver(cvodes_mem, LS, A),
-                        "CVDlsSetLinearSolver");
-
-      // initialize forward sensitivity system of CVODES as needed
-      if (S > 0) {
-        cvodes_state_sens = N_VCloneVectorArray_Serial(S, cvodes_state);
-        for (size_t s = 0; s < S; s++)
-          N_VConst(RCONST(0.0), cvodes_state_sens[s]);
-
-        // for varying initials, first N sensitivity systems
-        // are for initials which have as initial the identity matrix
-        if (initial_var::value) {
-          for (size_t n = 0; n < N; n++)
-            NV_Ith_S(cvodes_state_sens[n], n) = 1.0;
-        }
-        cvodes_check_flag(
-            CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
-                          &ode_data::ode_rhs_sens, cvodes_state_sens),
-            "CVodeSensInit");
-
-        cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
-                          "CVodeSensEEtolerances");
-      }
-
-      double t_init = t0;
-      for (size_t n = 0; n < ts.size(); ++n) {
-        double t_final = ts[n];
-        if (t_final != t_init)
-          cvodes_check_flag(
-              CVode(cvodes_mem, t_final, cvodes_state, &t_init, CV_NORMAL),
-              "CVode");
-        std::copy(state.begin(), state.end(), y_coupled[n].begin());
-        if (S > 0) {
-          cvodes_check_flag(
-              CVodeGetSens(cvodes_mem, &t_init, cvodes_state_sens),
-              "CVodeGetSens");
-          for (size_t s = 0; s < S; s++)
-            std::copy(NV_DATA_S(cvodes_state_sens[s]),
-                      NV_DATA_S(cvodes_state_sens[s]) + N,
-                      y_coupled[n].begin() + N + s * N);
-        }
-        t_init = t_final;
-      }
-
-      SUNLinSolFree(LS);
-      SUNMatDestroy(A);
-
-    } catch (const std::exception& e) {
-      free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
-      throw;
+      cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
+                        "CVodeSensEEtolerances");
     }
 
-    free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+    double t_init = t0;
+    for (size_t n = 0; n < ts.size(); ++n) {
+      double t_final = ts[n];
+      if (t_final != t_init)
+        cvodes_check_flag(
+            CVode(cvodes_mem, t_final, cvodes_state, &t_init, CV_NORMAL),
+            "CVode");
+      std::copy(state.begin(), state.end(), y_coupled[n].begin());
+      if (S > 0) {
+        cvodes_check_flag(CVodeGetSens(cvodes_mem, &t_init, cvodes_state_sens),
+                          "CVodeGetSens");
+        for (size_t s = 0; s < S; ++s)
+          std::copy(NV_DATA_S(cvodes_state_sens[s]),
+                    NV_DATA_S(cvodes_state_sens[s]) + N,
+                    y_coupled[n].begin() + N + s * N);
+      }
+      t_init = t_final;
+    }
 
-    return decouple_ode_states(y_coupled, y0, theta);
+    SUNLinSolFree(LS);
+    SUNMatDestroy(A);
+
+  } catch (const std::exception& e) {
+    free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+    throw;
   }
-};  // cvodes integrator
+
+  free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
+
+  return decouple_ode_states(y_coupled, y0, theta);
+  }
+  };  // cvodes integrator
 }  // namespace math
 }  // namespace stan
 #endif
