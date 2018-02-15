@@ -137,17 +137,20 @@ TEST(StanMathOde_integrate_ode_adams, error_conditions) {
                                        x_int_bad, 0, 1e-8, 1e-10, 1e6),
                    std::out_of_range, "vector");
 
-  EXPECT_THROW(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0,
-                                       -1, 1e-6, 10),
-               std::domain_error) << "relative_tolerance";
+  EXPECT_THROW(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0, -1,
+                                   1e-6, 10),
+               std::domain_error)
+      << "relative_tolerance";
 
   EXPECT_THROW(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0,
-                                       1e-6, -1, 10),
-               std::domain_error) << "absolute_tolerance";
+                                   1e-6, -1, 10),
+               std::domain_error)
+      << "absolute_tolerance";
 
   EXPECT_THROW(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0,
-                                       1e-6, 1e-6, -1),
-               std::domain_error) << "max_num_steps";
+                                   1e-6, 1e-6, -1),
+               std::domain_error)
+      << "max_num_steps";
 }
 
 TEST(StanMathOde_integrate_ode_adams, error_conditions_nan) {

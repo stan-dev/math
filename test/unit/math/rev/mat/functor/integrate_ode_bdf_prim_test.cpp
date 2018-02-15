@@ -138,16 +138,18 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
 
   EXPECT_THROW(
       integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, -1, 1e-6, 10),
-      std::domain_error) << "relative_tolerance";
+      std::domain_error)
+      << "relative_tolerance";
 
   EXPECT_THROW(
       integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, 1e-6, -1, 10),
-      std::domain_error) << "absolute_tolerance";
+      std::domain_error)
+      << "absolute_tolerance";
 
-  EXPECT_THROW(
-               integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0,
-                                 1e-6, 1e-6, -1),
-               std::domain_error) << "max_num_steps";
+  EXPECT_THROW(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, 1e-6,
+                                 1e-6, -1),
+               std::domain_error)
+      << "max_num_steps";
 }
 
 TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
