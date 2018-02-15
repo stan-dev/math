@@ -7,6 +7,7 @@ GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 CVODES ?= $(MATH)lib/cvodes_2.9.0
 OPENCL ?= $(MATH)lib/opencl_1.2.8
+IDAS ?= $(MATH)lib/idas-2.1.0
 
 ##
 # Build rules for cvodes
@@ -37,7 +38,34 @@ LIBCVODES = $(CVODES)/lib/libsundials_nvecserial.a $(CVODES)/lib/libsundials_cvo
 STAN_CVODES_HEADERS := $(shell find stan -name *cvodes*.hpp)
 $(STAN_CVODES_HEADERS) : $(LIBCVODES)
 
+##
+# Build rules for IDAS
+##
+
+SUNDIALS_IDAS := $(patsubst %.c,%.o,\
+  $(addprefix $(IDAS)/src/idas/, idaa.c idaa_io.c idas.c idas_bbdpre.c idas_direct.c idas_ic.c idas_io.c idas_spils.c) \
+  $(wildcard $(IDAS)/src/sundials/*.c))
+
+SUNDIALS_IDAS_NVECSERIAL := $(patsubst %.c,%.o,\
+  $(addprefix $(IDAS)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))
+
+$(sort $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL)) : %.o : %.c
+	@mkdir -p $(dir $@)
+	$(COMPILE.c) -x c -O$(O) -isystem $(IDAS)/include $< -o $@
+
+$(IDAS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
+$(IDAS)/lib/libsundials_nvecserial.a: $(SUNDIALS_IDAS_NVECSERIAL)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
+LIBIDAS = $(IDAS)/lib/libsundials_nvecserial.a $(IDAS)/lib/libsundials_idas.a
+
+STAN_IDAS_HEADERS := $(shell find stan -name *idas*.hpp)
+$(STAN_IDAS_HEADERS) : $(LIBIDAS)
 
 .PHONY: clean-libraries
 clean-libraries:
-	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES))
+	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))

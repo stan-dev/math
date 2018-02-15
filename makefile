@@ -72,6 +72,7 @@ endif
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
 	@echo '  - CVODES                      ' $(CVODES)
+	@echo '  - IDAS                        ' $(IDAS)
 	@echo '  - GTEST                       ' $(GTEST)
 	@echo '  - OPENCL                      ' $(OPENCL)
 	@echo ''
