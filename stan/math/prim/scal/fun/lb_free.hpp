@@ -18,16 +18,16 @@ namespace math {
  * the function reduces to <code>identity_free(y)</code>.
  *
  * @tparam T type of scalar
- * @tparam TL type of lower bound
+ * @tparam L type of lower bound
  * @param[in] y input scalar
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when
  * constrained
  * @throw std::domain_error if y is lower than the lower bound
  */
-template <typename T, typename TL>
-inline typename boost::math::tools::promote_args<T, TL>::type lb_free(
-    const T& y, const TL& lb) {
+template <typename T, typename L>
+inline typename boost::math::tools::promote_args<T, L>::type lb_free(
+    const T& y, const L& lb) {
   using std::log;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_free(y);
