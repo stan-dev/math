@@ -53,6 +53,15 @@ $(CVODES_TESTS) : $(LIBCVODES)
 
 ############################################################
 #
+# IDAS tests
+##
+
+IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
+$(IDAS_TESTS) : $(LIBIDAS)
+
+
+############################################################
+#
 # Target to verify header files within Stan has
 # enough include calls
 ##
