@@ -1,5 +1,8 @@
 language: cpp
 
+git:
+  depth: 2
+
 before_script:
   - eval "${MATRIX_EVAL}"
   - echo ${CXX}
@@ -32,7 +35,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER=test/unit/math/prim/mat/prob
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -48,7 +55,11 @@ matrix:
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
-          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
+    - <<: *linux_clang
+      env:
+        - MATRIX_EVAL="CXX=clang++-3.8"
+          TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
     - <<: *linux_clang
       env:
         - MATRIX_EVAL="CXX=clang++-3.8"
@@ -64,7 +75,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/prob test/unit/math/prim/mat/vectorize"
+          TESTFOLDER="test/unit/math/prim/mat/err test/unit/math/prim/mat/meta test/unit/math/prim/mat/vectorize"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER=test/unit/math/prim/mat/prob
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
@@ -80,7 +95,11 @@ matrix:
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
-          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob test/unit/math/rev/mat/vectorize"
+          TESTFOLDER="test/unit/math/rev/mat/err test/unit/math/rev/mat/functor test/unit/math/rev/mat/vectorize"
+    - <<: *linux_gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-4.9"
+          TESTFOLDER="test/unit/math/rev/mat/meta test/unit/math/rev/mat/prob"
     - <<: *linux_gcc
       env:
         - MATRIX_EVAL="CXX=g++-4.9"
