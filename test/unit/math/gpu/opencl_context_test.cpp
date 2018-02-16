@@ -45,5 +45,14 @@ TEST(opencl_context, devices) {
   EXPECT_EQ(1, all_devices.size())
       << "expecting to find one device" << std::endl
       << msg.str();
+
+  msg.str("");
+  msg << "max_workgroup_sizes: " << std::endl;
+  for (auto device : all_devices) {
+    size_t work_group_size;
+    device.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE, &work_group_size);
+    msg << "- work_group_size: " << work_group_size << std::endl;
+  }
+  //std::cout << msg.str() << std::endl;
 }
 #endif

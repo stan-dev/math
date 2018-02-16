@@ -67,9 +67,9 @@ class opencl_context {
   std::string platform_name_;
   cl::Device device_;
   std::string device_name_;
+  cl::Context context_;
+  cl::CommandQueue command_queue_;
  //  const char* description_;
- //  cl::Context oclContext_;
- //  cl::CommandQueue oclQueue_;
  //  size_t max_workgroup_size_;
  //  typedef std::map<const char*, const char*> map_string;
  //  typedef std::map<const char*, cl::Kernel> map_kernel;
@@ -110,6 +110,8 @@ class opencl_context {
       cl::Platform platform = cl::Platform::get();
       platform_name_ = platform.getInfo<CL_PLATFORM_NAME>();
 
+      // FIXME(dl): this logic is wrong! I have two devices on my machine. How do we choose
+      //  which device to use?
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
@@ -118,6 +120,15 @@ class opencl_context {
       }
       device_ = all_devices[0];
       device_name_ = device_.getInfo<CL_DEVICE_NAME>();
+
+      context_ = cl::Context(device_);
+      command_queue_ = cl::CommandQueue(context_, CL_QUEUE_PROFILING_ENABLE, nullptr);
+//   std::ostringstream message;
+//   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
+//   message << "Device " << oclDevice_.getInfo<CL_DEVICE_NAME>() <<
+//    " on the platform " << oclPlatform_.getInfo<CL_PLATFORM_NAME>();
+//   std::string description_ = message.str();
+
     } catch (const cl::Error &e) {
       check_ocl_error("build", e);
     }
