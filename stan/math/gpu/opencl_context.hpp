@@ -64,6 +64,13 @@ class opencl_context {
    void init_program();
    void compile_kernel_group(const char* group);
    cl::Kernel get_kernel(const char* name);
+   /**
+    *  The constructor for the opencl_context class.
+    *  It initializes the kernel groups, devices, context,
+    *  queue and compiles the dummy kernel.
+    *
+    * @throw std::domain_error if an OpenCL error occurs
+    */
    opencl_context() {
      dummy_kernel =
        "__kernel void dummy(__global const int* foo) { };";
@@ -77,7 +84,11 @@ class opencl_context {
         check_ocl_error("build", e);
       }
     }
-    // delete copy and move constructors and assign operators
+
+    /*!
+      The copy and move constructors and assign operators are
+      disabled
+    */
     opencl_context(opencl_context const&) = delete;
     opencl_context(opencl_context&&) = delete;
     opencl_context& operator = (opencl_context const&) = delete;
@@ -113,16 +124,17 @@ class opencl_context {
       return oclQueue_;
     }
     /**
-     * Returns the reference to the active
-     * OpenCL command queue. If no context
-     * and queue were created,
-     * a new context and queue are created and
-     * the reference to the new queue is returned.
-     *
+     * Returns the maximum workgroup size for the
+     * device in the context.
      */
     inline int maxWorkgroupSize() { return max_workgroup_size_; }
 };
-
+/**
+ * Retrieves the OpenCL platforms on the system and
+ * assigns the first platform as the target platform
+ *
+ * @throw std::logic_error if no OpenCL platforms are found
+ */
 inline void opencl_context::init_platforms() {
   cl::Platform::get(&allPlatforms);
   if (allPlatforms.size() == 0) {
@@ -132,6 +144,14 @@ inline void opencl_context::init_platforms() {
   oclPlatform_ = allPlatforms[0];
 }
 
+/**
+ * Retrieves the devices from the platform.
+ * and assigns the first found device
+ * as the target device.
+ *
+ * @throw std::logic_error if no OpenCL supported devices
+ * are found on the target platform
+ */
 inline void opencl_context::init_devices() {
   oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
   // TODO(Steve): This should throw which platform
@@ -141,8 +161,13 @@ inline void opencl_context::init_devices() {
   }
   oclDevice_ = allDevices[0];
 }
-
-// This also grabs the description and max workgroup size
+/**
+ * Initializes the OpenCL context and queue.
+ * This function also retrieves the information
+ * on the description and the maximum workgroup size
+ * of the device.
+ *
+ */
 inline void opencl_context::init_context_queue() {
   std::ostringstream message;
   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
@@ -156,6 +181,13 @@ inline void opencl_context::init_context_queue() {
                                CL_QUEUE_PROFILING_ENABLE, NULL);
 }
 
+/**
+ * Compiles the dummy kernel that is used for  
+ * profiling purposes.
+ *
+ * @throw std::logic_error if the dummy kernel has errors
+ *
+ */
 inline void opencl_context::init_program() {
   // Compile the dummy kernel used for timing purposes
   cl::Program::Sources source(
@@ -238,9 +270,12 @@ inline void opencl_context::init_kernel_groups() {
 }
 
 /**
- * Compiles all the kernel in the specified group
+ * Compiles all the kernela in the specified group
  *
  * @param group The kernel group name
+ *
+ * @throw std::logic_error if there are compilation errors
+ * when compiling the specified kernel group sources
  *
  */
 inline void opencl_context::compile_kernel_group(const char* group) {
@@ -285,7 +320,8 @@ inline void opencl_context::compile_kernel_group(const char* group) {
  * the kernel group is compiled first.
  *
  * @param name The kernel name
- *
+ * 
+ * @return a copy of the cl::Kernel object
  */
 inline cl::Kernel opencl_context::get_kernel(const char* name) {
   // Compile the kernel group and return the kernel
