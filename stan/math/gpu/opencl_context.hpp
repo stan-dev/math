@@ -28,12 +28,11 @@ namespace math {
 // TODO(Rok): select some other platform/device than 0
 // TODO(Rok): option to turn profiling OFF
 /**
- * The class that represents the OpenCL runtime
+ * The <code>opencl_context</code> class represents the OpenCL context.
  *
- * The class is used to find the OpenCL supported
- * platforms/devices and initialize the OpenCL
- * context/command queue.
- *
+ * See the OpenCL specification glossary for a list of terms.  The
+ * context includes the set of devices available on the host, command
+ * queues, manages kernels.
  */
 class opencl_context {
  private:
@@ -50,6 +49,7 @@ class opencl_context {
   typedef std::map<const char*, bool> map_bool;
 
  public:
+  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
    map_string kernel_groups;
    map_string kernel_strings;
    map_kernel kernels;
@@ -182,7 +182,7 @@ inline void opencl_context::init_context_queue() {
 }
 
 /**
- * Compiles the dummy kernel that is used for  
+ * Compiles the dummy kernel that is used for
  * profiling purposes.
  *
  * @throw std::logic_error if the dummy kernel has errors
@@ -320,7 +320,7 @@ inline void opencl_context::compile_kernel_group(const char* group) {
  * the kernel group is compiled first.
  *
  * @param name The kernel name
- * 
+ *
  * @return a copy of the cl::Kernel object
  */
 inline cl::Kernel opencl_context::get_kernel(const char* name) {
