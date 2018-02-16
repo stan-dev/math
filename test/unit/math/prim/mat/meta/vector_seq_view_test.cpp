@@ -4,8 +4,8 @@
 
 TEST(MetaTraits, VectorSeqView) {
   using Eigen::VectorXd;
-  using std::vector;
   using stan::vector_seq_view;
+  using std::vector;
 
   VectorXd m1(4);
   m1 << 1.1, 2.2, 3.3, 4.4;

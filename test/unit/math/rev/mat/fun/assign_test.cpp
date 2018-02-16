@@ -2,13 +2,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-
 TEST(MathMatrix, getAssignRowVar) {
-  using stan::math::var;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::get_base1_lhs;
+  using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::get_base1_lhs;
+  using stan::math::var;
 
   Matrix<var, Dynamic, Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -23,10 +22,10 @@ TEST(MathMatrix, getAssignRowVar) {
 }
 
 TEST(AgradRevMatrix, assign) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::assign;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   AVAR x;
   assign(x, 2.0);
@@ -89,10 +88,10 @@ TEST(AgradRevMatrix, assign) {
   EXPECT_FLOAT_EQ(300, m_var(1, 2).val());
 }
 TEST(AgradRevMatrix, assign_error) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::assign;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   VEC y_dbl(2);
   y_dbl[0] = 2.0;
@@ -118,11 +117,10 @@ TEST(AgradRevMatrix, assign_error) {
 }
 
 TEST(MathAssign, VarDouble) {
-  using stan::math::var;
   using stan::math::assign;
+  using stan::math::var;
   var x;
   double y = 10.1;
   assign(x, y);
   EXPECT_FLOAT_EQ(10.1, x.val());
 }
-

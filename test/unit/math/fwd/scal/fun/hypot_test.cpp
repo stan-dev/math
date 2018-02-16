@@ -4,8 +4,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdHypot, Fvar) {
-  using stan::math::fvar;
   using boost::math::hypot;
+  using stan::math::fvar;
   using std::isnan;
 
   fvar<double> x(0.5, 1.0);
@@ -32,8 +32,8 @@ TEST(AgradFwdHypot, Fvar) {
 }
 
 TEST(AgradFwdHypot, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::hypot;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 3.0;
@@ -53,10 +53,8 @@ TEST(AgradFwdHypot, FvarFvarDouble) {
 
 struct hypot_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return hypot(arg1, arg2);
   }
 };

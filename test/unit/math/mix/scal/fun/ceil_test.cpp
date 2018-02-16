@@ -3,8 +3,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCeil, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -35,8 +33,6 @@ TEST(AgradFwdCeil, FvarVar_2ndDeriv) {
   a.d_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
-
-
 
 TEST(AgradFwdCeil, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
@@ -131,8 +127,7 @@ TEST(AgradFwdCeil, FvarFvarVar_3rdDeriv) {
 
 struct ceil_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return ceil(arg1);
   }
 };

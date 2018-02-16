@@ -20,28 +20,26 @@
 #include <cstdlib>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <class RNG>
-    inline Eigen::VectorXd
-    multi_student_t_rng(double nu,
-          const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-          const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s,
-          RNG& rng) {
-      static const char* function = "multi_student_t_rng";
+template <class RNG>
+inline Eigen::VectorXd multi_student_t_rng(
+    double nu, const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& s, RNG& rng) {
+  static const char* function = "multi_student_t_rng";
 
-      check_finite(function, "Location parameter", mu);
-      check_symmetric(function, "Scale parameter", s);
-      check_not_nan(function, "Degrees of freedom parameter", nu);
-      check_positive(function, "Degrees of freedom parameter", nu);
+  check_finite(function, "Location parameter", mu);
+  check_symmetric(function, "Scale parameter", s);
+  check_not_nan(function, "Degrees of freedom parameter", nu);
+  check_positive(function, "Degrees of freedom parameter", nu);
 
-      Eigen::VectorXd z(s.cols());
-      z.setZero();
+  Eigen::VectorXd z(s.cols());
+  z.setZero();
 
-      double w = inv_gamma_rng(nu / 2, nu / 2, rng);
-      return mu + std::sqrt(w) * multi_normal_rng(z, s, rng);
-    }
-
-  }
+  double w = inv_gamma_rng(nu / 2, nu / 2, rng);
+  return mu + std::sqrt(w) * multi_normal_rng(z, s, rng);
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

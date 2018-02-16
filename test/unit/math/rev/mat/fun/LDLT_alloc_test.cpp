@@ -53,7 +53,6 @@ TEST(AgradRevMatrix, LDLT_alloc_constructor) {
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
 }
 
-
 TEST(AgradRevMatrix, LDLT_alloc_compute) {
   using stan::math::LDLT_alloc;
   using stan::math::var;

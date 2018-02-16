@@ -5,7 +5,6 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdGammaP, FvarVar_FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
@@ -105,12 +104,10 @@ TEST(AgradFwdGammaP, FvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.21349931, g[0]);
 }
 
-
-
 TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -134,9 +131,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5, 1.0), g[1]);
 }
 TEST(AgradFwdGammaP, Double_FvarFvarVar_1stDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   double x(0.5);
 
@@ -157,9 +154,9 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_1stDeriv) {
   EXPECT_FLOAT_EQ(boost::math::gamma_p_derivative(0.5, 1.0), g[0]);
 }
 TEST(AgradFwdGammaP, FvarFvarVar_Double_1stDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -181,9 +178,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_1stDeriv) {
 }
 
 TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -207,9 +204,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   EXPECT_FLOAT_EQ(0.40753537, g[1]);
 }
 TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -233,9 +230,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   EXPECT_FLOAT_EQ(-0.31133062, g[1]);
 }
 TEST(AgradFwdGammaP, Double_FvarFvarVar_2ndDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   double x(0.5);
 
@@ -256,9 +253,9 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.31133062, g[0]);
 }
 TEST(AgradFwdGammaP, FvarFvarVar_Double_2ndDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -280,9 +277,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_2ndDeriv) {
 }
 
 TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_3rdDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -306,9 +303,9 @@ TEST(AgradFwdGammaP, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(-0.40374705, g[1]);
 }
 TEST(AgradFwdGammaP, Double_FvarFvarVar_3rdDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   double x(0.5);
 
@@ -325,9 +322,9 @@ TEST(AgradFwdGammaP, Double_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.57077283, g[0]);
 }
 TEST(AgradFwdGammaP, FvarFvarVar_Double_3rdDeriv) {
+  using boost::math::gamma_p;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::gamma_p;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -346,10 +343,8 @@ TEST(AgradFwdGammaP, FvarFvarVar_Double_3rdDeriv) {
 
 struct gamma_p_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return gamma_p(arg1, arg2);
   }
 };

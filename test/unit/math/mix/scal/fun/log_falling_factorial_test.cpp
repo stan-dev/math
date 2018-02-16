@@ -5,56 +5,53 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 double eps = 1e-6;
-double first_deriv_a =
-  (stan::math::log_falling_factorial(5.0 + eps, 3.0)
-  - stan::math::log_falling_factorial(5.0 - eps, 3.0))
-  / (2 * eps);
-double first_deriv_b =
-  (stan::math::log_falling_factorial(5.0, 3.0 + eps)
-  - stan::math::log_falling_factorial(5.0, 3.0 - eps))
-  / (2 * eps);
-
+double first_deriv_a = (stan::math::log_falling_factorial(5.0 + eps, 3.0)
+                        - stan::math::log_falling_factorial(5.0 - eps, 3.0))
+                       / (2 * eps);
+double first_deriv_b = (stan::math::log_falling_factorial(5.0, 3.0 + eps)
+                        - stan::math::log_falling_factorial(5.0, 3.0 - eps))
+                       / (2 * eps);
 
 double eps2 = 1e-4;
-double second_deriv_aa =
-  (stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0)
-  - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0)
-  + stan::math::log_falling_factorial(5.0, 3.0))
-  / std::pow(eps2, 2);
-double second_deriv_bb =
-  (stan::math::log_falling_factorial(5.0, 3.0 + 2 * eps2)
-  - 2 * stan::math::log_falling_factorial(5.0, 3.0 + eps2)
-  + stan::math::log_falling_factorial(5.0, 3.0))
-  / std::pow(eps2, 2);
-double second_deriv_ab =
-  (stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
-  - stan::math::log_falling_factorial(5.0 - eps2, 3.0 + eps2)
-  - stan::math::log_falling_factorial(5.0 + eps2, 3.0 - eps2)
-  + stan::math::log_falling_factorial(5.0 - eps2, 3.0 - eps2))
-  / 4 / std::pow(eps2, 2);
+double second_deriv_aa
+    = (stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0)
+       - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0)
+       + stan::math::log_falling_factorial(5.0, 3.0))
+      / std::pow(eps2, 2);
+double second_deriv_bb
+    = (stan::math::log_falling_factorial(5.0, 3.0 + 2 * eps2)
+       - 2 * stan::math::log_falling_factorial(5.0, 3.0 + eps2)
+       + stan::math::log_falling_factorial(5.0, 3.0))
+      / std::pow(eps2, 2);
+double second_deriv_ab
+    = (stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
+       - stan::math::log_falling_factorial(5.0 - eps2, 3.0 + eps2)
+       - stan::math::log_falling_factorial(5.0 + eps2, 3.0 - eps2)
+       + stan::math::log_falling_factorial(5.0 - eps2, 3.0 - eps2))
+      / 4 / std::pow(eps2, 2);
 
-double third_deriv_aab =
-  (stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0 + eps2)
-  - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
-  + stan::math::log_falling_factorial(5.0, 3.0 + eps2)
-  - stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0 - eps2)
-  + 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 - eps2)
-  - stan::math::log_falling_factorial(5.0, 3.0 - eps2))
-  / 2 / std::pow(eps2, 3);
+double third_deriv_aab
+    = (stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0 + eps2)
+       - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
+       + stan::math::log_falling_factorial(5.0, 3.0 + eps2)
+       - stan::math::log_falling_factorial(5.0 + 2 * eps2, 3.0 - eps2)
+       + 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 - eps2)
+       - stan::math::log_falling_factorial(5.0, 3.0 - eps2))
+      / 2 / std::pow(eps2, 3);
 
-double third_deriv_abb =
-  (stan::math::log_falling_factorial(5.0 + eps2, 3.0 + 2 * eps2)
-  - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
-  + stan::math::log_falling_factorial(5.0 + eps2, 3.0)
-  - stan::math::log_falling_factorial(5.0 - eps2, 3.0 + 2 * eps2)
-  + 2 * stan::math::log_falling_factorial(5.0 - eps2, 3.0 + eps2)
-  - stan::math::log_falling_factorial(5.0 - eps2, 3.0))
-  / 2 / std::pow(eps2, 3);
+double third_deriv_abb
+    = (stan::math::log_falling_factorial(5.0 + eps2, 3.0 + 2 * eps2)
+       - 2 * stan::math::log_falling_factorial(5.0 + eps2, 3.0 + eps2)
+       + stan::math::log_falling_factorial(5.0 + eps2, 3.0)
+       - stan::math::log_falling_factorial(5.0 - eps2, 3.0 + 2 * eps2)
+       + 2 * stan::math::log_falling_factorial(5.0 - eps2, 3.0 + eps2)
+       - stan::math::log_falling_factorial(5.0 - eps2, 3.0))
+      / 2 / std::pow(eps2, 3);
 
 TEST(AgradFwdLogFallingFactorial, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> b(3.0, 1.0);
@@ -71,8 +68,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_x) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 1.0);
   fvar<var> b(3.0, 0.0);
@@ -85,8 +82,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<var> a(5.0, 0.0);
   fvar<var> b(3.0, 1.0);
@@ -99,8 +96,8 @@ TEST(AgradFwdLogFallingFactorial, FvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -126,8 +123,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_1stDeriv) {
 
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -147,8 +144,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -168,8 +165,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdLogFallingFactorial, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log_falling_factorial;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 5.0;
@@ -190,10 +187,8 @@ TEST(AgradFwdLogFallingFactorial, FvarFvarVar_3rdDeriv) {
 
 struct log_falling_factorial_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_falling_factorial(arg1, arg2);
   }
 };

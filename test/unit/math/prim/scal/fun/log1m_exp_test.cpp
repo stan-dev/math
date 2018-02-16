@@ -24,6 +24,5 @@ TEST(MathFunctions, log1m_exp) {
 TEST(MathFunctions, log1m_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log1m_exp(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log1m_exp(nan));
 }

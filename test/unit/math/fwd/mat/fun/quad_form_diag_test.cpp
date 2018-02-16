@@ -4,15 +4,15 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_fd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_fd;
 
   matrix_fd ad(2, 2);
   vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -33,15 +33,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_fd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_fd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_fd;
 
   matrix_fd ad(2, 2);
   row_vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -62,10 +62,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_fd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_fd_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_fd;
+  using stan::math::vector_fd;
 
   matrix_fd m1(2, 2);
   matrix_fd m2(3, 2);
@@ -92,16 +92,16 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_fd_exception) {
   EXPECT_THROW(quad_form_diag(m1, m3), std::invalid_argument);
 }
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_fd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_fd;
 
   matrix_d ad(2, 2);
   vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -118,16 +118,16 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_fd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_fd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_fd;
 
   matrix_d ad(2, 2);
   row_vector_fd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -144,10 +144,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_fd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_fd_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
-  using stan::math::vector_fd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_fd;
+  using stan::math::vector_fd;
 
   matrix_d m1(2, 2);
   matrix_d m2(3, 2);
@@ -175,15 +175,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_fd_exception) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_d) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_d;
 
   matrix_fd ad(2, 2);
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -202,15 +202,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_d) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_d) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_d;
 
   matrix_fd ad(2, 2);
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -229,10 +229,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_row_vector_d) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_d_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_fd;
-  using stan::math::vector_d;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_d;
+  using stan::math::vector_d;
 
   matrix_fd m1(2, 2);
   matrix_fd m2(3, 2);
@@ -260,15 +260,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_fd_vector_d_exception) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_ffd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_ffd;
 
   matrix_ffd ad(2, 2);
   vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -289,15 +289,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_ffd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_ffd;
 
   matrix_ffd ad(2, 2);
   row_vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -318,10 +318,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_ffd_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_ffd;
 
   matrix_ffd m1(2, 2);
   matrix_ffd m2(3, 2);
@@ -348,16 +348,16 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_ffd_exception) {
   EXPECT_THROW(quad_form_diag(m1, m3), std::invalid_argument);
 }
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_ffd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_ffd;
 
   matrix_d ad(2, 2);
   vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -374,16 +374,16 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_ffd) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_ffd;
 
   matrix_d ad(2, 2);
   row_vector_ffd bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   bd(0).d_ = 1.0;
   bd(1).d_ = 1.0;
@@ -400,10 +400,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_row_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_ffd_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_d;
-  using stan::math::vector_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_ffd;
+  using stan::math::vector_ffd;
 
   matrix_d m1(2, 2);
   matrix_d m2(3, 2);
@@ -431,15 +431,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_d_vector_ffd_exception) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_d) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::vector_d;
 
   matrix_ffd ad(2, 2);
   vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -458,15 +458,15 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_d) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_d) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_d;
 
   matrix_ffd ad(2, 2);
   row_vector_d bd(2);
 
   bd << 100, 10;
-  ad << 2.0,  3.0, 4.0,   5.0;
+  ad << 2.0, 3.0, 4.0, 5.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -485,10 +485,10 @@ TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_row_vector_d) {
 }
 
 TEST(AgradFwdMatrixQuadFormDiag, mat_ffd_vector_d_exception) {
-  using stan::math::quad_form_diag;
   using stan::math::matrix_ffd;
-  using stan::math::vector_d;
+  using stan::math::quad_form_diag;
   using stan::math::row_vector_d;
+  using stan::math::vector_d;
 
   matrix_ffd m1(2, 2);
   matrix_ffd m2(3, 2);

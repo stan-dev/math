@@ -7,8 +7,7 @@
 #include <test/unit/math/mix/mat/vectorize/expect_mix_errors.hpp>
 
 template <typename T>
-class mix_scalar_unary_test : public ::testing::Test {
-};
+class mix_scalar_unary_test : public ::testing::Test {};
 
 TYPED_TEST_CASE_P(mix_scalar_unary_test);
 
@@ -28,8 +27,6 @@ TYPED_TEST_P(mix_scalar_unary_test, expect_errors) {
   expect_mix_errors<TypeParam>();
 }
 
-REGISTER_TYPED_TEST_CASE_P(mix_scalar_unary_test,
-                           expect_scalar_types,
-                           expect_values,
-                           expect_errors);
+REGISTER_TYPED_TEST_CASE_P(mix_scalar_unary_test, expect_scalar_types,
+                           expect_values, expect_errors);
 #endif

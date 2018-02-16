@@ -3,18 +3,18 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   EXPECT_THROW(softmax(vector_fv()), std::invalid_argument);
 
   Matrix<fvar<var>, Dynamic, 1> x(1);
   x << 0.0;
-   x(0).d_ = 1.0;
+  x(0).d_ = 1.0;
 
   Matrix<fvar<var>, Dynamic, 1> theta = log_softmax(x);
   EXPECT_EQ(1, theta.size());
@@ -23,8 +23,8 @@ TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
 
   Matrix<fvar<var>, Dynamic, 1> x2(2);
   x2 << -1.0, 1.0;
-   x2(0).d_ = 2.0;
-   x2(1).d_ = 1.0;
+  x2(0).d_ = 2.0;
+  x2(1).d_ = 1.0;
 
   Matrix<fvar<var>, Dynamic, 1> theta2 = log_softmax(x2);
   EXPECT_EQ(2, theta2.size());
@@ -35,9 +35,9 @@ TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
 
   Matrix<fvar<var>, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
 
   Matrix<fvar<var>, Dynamic, 1> theta3 = log_softmax(x3);
   EXPECT_EQ(3, theta3.size());
@@ -56,18 +56,18 @@ TEST(AgradMixMatrixLogSoftmax, fv_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.99985993, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, fv_2ndDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   Matrix<fvar<var>, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
 
   Matrix<fvar<var>, Dynamic, 1> theta3 = log_softmax(x3);
 
@@ -79,18 +79,18 @@ TEST(AgradMixMatrixLogSoftmax, fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.6697022e-05, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   EXPECT_THROW(softmax(vector_ffv()), std::invalid_argument);
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x(1);
   x << 0.0;
-   x(0).d_ = 1.0;
+  x(0).d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta = log_softmax(x);
   EXPECT_EQ(1, theta.size());
@@ -99,8 +99,8 @@ TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x2(2);
   x2 << -1.0, 1.0;
-   x2(0).d_ = 2.0;
-   x2(1).d_ = 1.0;
+  x2(0).d_ = 2.0;
+  x2(1).d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta2 = log_softmax(x2);
   EXPECT_EQ(2, theta2.size());
@@ -111,9 +111,9 @@ TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = log_softmax(x3);
   EXPECT_EQ(3, theta3.size());
@@ -132,18 +132,18 @@ TEST(AgradMixMatrixLogSoftmax, ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.99985993, h[2]);
 }
 TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_1) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = log_softmax(x3);
 
@@ -156,18 +156,18 @@ TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_2) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = log_softmax(x3);
 
@@ -180,21 +180,21 @@ TEST(AgradMixMatrixLogSoftmax, ffv_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixLogSoftmax, ffv_3rdDeriv) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffv;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
-   x3(0).d_ = 2.0;
-   x3(1).d_ = 1.0;
-   x3(2).d_ = 1.0;
-   x3(0).val_.d_ = 2.0;
-   x3(1).val_.d_ = 1.0;
-   x3(2).val_.d_ = 1.0;
+  x3(0).d_ = 2.0;
+  x3(1).d_ = 1.0;
+  x3(2).d_ = 1.0;
+  x3(0).val_.d_ = 2.0;
+  x3(1).val_.d_ = 1.0;
+  x3(2).val_.d_ = 1.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta3 = log_softmax(x3);
 

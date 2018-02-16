@@ -13,7 +13,6 @@ struct AgradRev : public testing::Test {
   }
 };
 
-
 TEST_F(AgradRev, ctorOverloads) {
   using stan::math::var;
   using stan::math::vari;
@@ -70,6 +69,16 @@ TEST_F(AgradRev, ctorOverloads) {
   // ptrdiff_t
   EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
   EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
+
+  // complex but with zero imaginary part
+  EXPECT_FLOAT_EQ(37, var(std::complex<double>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<float>(37, 0)).val());
+  EXPECT_FLOAT_EQ(37, var(std::complex<long double>(37, 0)).val());
+
+  // complex but with non-zero imaginary part
+  EXPECT_THROW(var(std::complex<double>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<float>(37, 10)), std::invalid_argument);
+  EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
 TEST_F(AgradRev, a_eq_x) {
@@ -120,8 +129,8 @@ TEST_F(AgradRev, smart_ptrs) {
 }
 
 TEST_F(AgradRev, stackAllocation) {
-  using stan::math::vari;
   using stan::math::var;
+  using stan::math::vari;
 
   vari ai(1.0);
   vari bi(2.0);
@@ -151,7 +160,6 @@ TEST_F(AgradRev, print) {
   str = output.str();
   EXPECT_STREQ("0", output.str().c_str());
 
-
   output.clear();
   output.str("");
   var uninitialized_var;
@@ -159,7 +167,6 @@ TEST_F(AgradRev, print) {
   str = output.str();
   EXPECT_STREQ("uninitialized", output.str().c_str());
 }
-
 
 // should really be doing this test with a mock object using ctor
 // vari_(double, bool);  as in:
@@ -183,15 +190,13 @@ TEST_F(AgradRev, print) {
 //   return y *
 // }
 
-
 struct gradable {
   AVEC x_;
   AVAR f_;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected_;
   gradable(const AVEC& x, const AVAR& f,
            const Eigen::Matrix<double, Eigen::Dynamic, 1>& g_expected)
-    : x_(x), f_(f), g_expected_(g_expected) {
-  }
+      : x_(x), f_(f), g_expected_(g_expected) {}
   void test() {
     std::vector<double> g;
     f_.grad(x_, g);
@@ -202,19 +207,17 @@ struct gradable {
 };
 
 gradable setup_quad_form() {
-  using std::vector;
-  using stan::math::var;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::quad_form;
+  using stan::math::var;
+  using std::vector;
 
   Matrix<var, Dynamic, 1> u(3);
   u << 2, 3, 5;
 
   Matrix<var, Dynamic, Dynamic> S(3, 3);
-  S << 7, 11, 13,
-    17, 19, 23,
-    29, 31, 37;
+  S << 7, 11, 13, 17, 19, 23, 29, 31, 37;
 
   vector<var> x;
   for (int i = 0; i < u.size(); ++i)
@@ -225,11 +228,7 @@ gradable setup_quad_form() {
   var f = quad_form(S, u);
 
   Matrix<double, 1, Dynamic> g_expected(12);
-  g_expected
-    << 322, 440, 616,
-    4, 6, 10,
-    6, 9, 15,
-    10, 15, 25;
+  g_expected << 322, 440, 616, 4, 6, 10, 6, 9, 15, 10, 15, 25;
 
   return gradable(x, f, g_expected);
 }
@@ -245,7 +244,6 @@ gradable setup_simple() {
   g_expected << 14, 6;
   return gradable(x, f, g_expected);
 }
-
 
 TEST_F(AgradRev, basicGradient1) {
   using stan::math::recover_memory;
@@ -266,7 +264,6 @@ TEST_F(AgradRev, basicGradient2) {
     recover_memory();
   }
 }
-
 
 TEST_F(AgradRev, nestedGradient1) {
   using stan::math::recover_memory;
@@ -310,7 +307,6 @@ TEST_F(AgradRev, nestedGradient2) {
   recover_memory();
 }
 
-
 TEST_F(AgradRev, nestedGradient3) {
   using stan::math::recover_memory;
   using stan::math::recover_memory_nested;
@@ -340,8 +336,7 @@ TEST_F(AgradRev, grad) {
   AVAR b = 10.0;
   AVAR f = a * b + a;
 
-  EXPECT_NO_THROW(f.grad())
-    << "testing the grad function with no args";
+  EXPECT_NO_THROW(f.grad()) << "testing the grad function with no args";
 
   EXPECT_FLOAT_EQ(5.0, a.val());
   EXPECT_FLOAT_EQ(10.0, b.val());

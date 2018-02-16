@@ -2,17 +2,17 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixCols, vector_fd) {
-  using stan::math::vector_fd;
-  using stan::math::row_vector_fd;
   using stan::math::cols;
+  using stan::math::row_vector_fd;
+  using stan::math::vector_fd;
 
   vector_fd v(5);
   v << 0, 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
-   v(4).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
+  v(4).d_ = 1.0;
   EXPECT_EQ(1U, cols(v));
 
   v.resize(0);
@@ -20,16 +20,16 @@ TEST(AgradFwdMatrixCols, vector_fd) {
 }
 
 TEST(AgradFwdMatrixCols, row_vector_fd) {
-  using stan::math::row_vector_fd;
   using stan::math::cols;
+  using stan::math::row_vector_fd;
 
   row_vector_fd rv(5);
   rv << 0, 1, 2, 3, 4;
-   rv(0).d_ = 1.0;
-   rv(1).d_ = 1.0;
-   rv(2).d_ = 1.0;
-   rv(3).d_ = 1.0;
-   rv(4).d_ = 1.0;
+  rv(0).d_ = 1.0;
+  rv(1).d_ = 1.0;
+  rv(2).d_ = 1.0;
+  rv(3).d_ = 1.0;
+  rv(4).d_ = 1.0;
   EXPECT_EQ(5U, cols(rv));
 
   rv.resize(0);
@@ -37,8 +37,8 @@ TEST(AgradFwdMatrixCols, row_vector_fd) {
 }
 
 TEST(AgradFwdMatrixCols, matrix_fd) {
-  using stan::math::matrix_fd;
   using stan::math::cols;
+  using stan::math::matrix_fd;
 
   matrix_fd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -50,10 +50,10 @@ TEST(AgradFwdMatrixCols, matrix_fd) {
 }
 
 TEST(AgradFwdFvarFvarMatrix, vector_ffd) {
-  using stan::math::vector_ffd;
-  using stan::math::row_vector_ffd;
   using stan::math::cols;
   using stan::math::fvar;
+  using stan::math::row_vector_ffd;
+  using stan::math::vector_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -80,9 +80,9 @@ TEST(AgradFwdFvarFvarMatrix, vector_ffd) {
 }
 
 TEST(AgradFwdMatrixCols, rowvector_ffd) {
-  using stan::math::row_vector_ffd;
   using stan::math::cols;
   using stan::math::fvar;
+  using stan::math::row_vector_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -109,9 +109,9 @@ TEST(AgradFwdMatrixCols, rowvector_ffd) {
 }
 
 TEST(AgradFwdMatrixCols, matrix_ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::cols;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;

@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <random>
 
-using stan::math::matrix_fd;
 using stan::math::fvar;
 using stan::math::matrix_exp_pade;
+using stan::math::matrix_fd;
 
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   using stan::math::fvar;
@@ -42,8 +42,7 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
   b.d_ = 1.0;
 
   stan::math::matrix_fd input(2, 2);
-  input << -2*a + 3*b, 1.5*a - 1.5*b,
-      -4*a + 4*b, 3*a - 2*b;
+  input << -2 * a + 3 * b, 1.5 * a - 1.5 * b, -4 * a + 4 * b, 3 * a - 2 * b;
 
   stan::math::matrix_fd output;
   output = stan::math::matrix_exp_pade(input);
@@ -63,8 +62,8 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
 }
 
 TEST(MathMatrix, matrix_exp_pade_3x3) {
-  using stan::math::matrix_fd;
   using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   stan::math::fvar<double> a, b, c;
   a.val_ = -1.0;
@@ -75,9 +74,9 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
   c.d_ = 1.0;
 
   stan::math::matrix_fd input(3, 3);
-  input << -24*a +40*b - 15*c, 18*a - 30*b + 12*c, 5*a - 8*b + 3*c,
-       20*b - 20*c, -15*b + 16*c, -4*b +4*c,
-       -120*a + 120*b, 90*a - 90*b, 25*a - 24*b;
+  input << -24 * a + 40 * b - 15 * c, 18 * a - 30 * b + 12 * c,
+      5 * a - 8 * b + 3 * c, 20 * b - 20 * c, -15 * b + 16 * c, -4 * b + 4 * c,
+      -120 * a + 120 * b, 90 * a - 90 * b, 25 * a - 24 * b;
 
   stan::math::matrix_fd output;
   output = matrix_exp_pade(input);
@@ -108,44 +107,48 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using stan::math::matrix_fd;
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::matrix_fd;
 
   int size = 100;
   std::random_device rd;
   std::mt19937 mt(rd());
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),
-    I = Eigen::MatrixXd::Identity(size, size);
+                                   I = Eigen::MatrixXd::Identity(size, size);
   int col1, col2;
   for (int i = 0; i < 5 * size; i++) {
     col1 = rd() % size;
     col2 = rd() % size;
-    while (col1 == col2) col2 = rd() % size;
+    while (col1 == col2)
+      col2 = rd() % size;
     S.col(col1) += S.col(col2) * std::pow(-1, rd());
   }
   Matrix<double, Dynamic, Dynamic> S_inv = stan::math::mdivide_right(I, S);
   Matrix<double, 1, Dynamic> diag_elements_d(size);
   diag_elements_d.setRandom();
   matrix_fd diag_elements = diag_elements_d.cast<fvar<double> >();
-  for (int i = 0; i < size; i++) diag_elements(i).d_ = 1.0;
+  for (int i = 0; i < size; i++)
+    diag_elements(i).d_ = 1.0;
 
-  Matrix<double, Dynamic, Dynamic> exp_diag_elements_d =
-    stan::math::exp(diag_elements_d),
-    exp_A = S * exp_diag_elements_d.asDiagonal() * S_inv;
+  Matrix<double, Dynamic, Dynamic> exp_diag_elements_d
+      = stan::math::exp(diag_elements_d),
+      exp_A = S * exp_diag_elements_d.asDiagonal() * S_inv;
 
   matrix_fd A = S.cast<fvar<double> >() * diag_elements.asDiagonal()
-    * S_inv.cast<fvar<double> >(),
-    expm_A = stan::math::matrix_exp_pade(A);
+                * S_inv.cast<fvar<double> >(),
+            expm_A = stan::math::matrix_exp_pade(A);
 
   // Note: because of the way of matrix was constructed,
   // derivative should be the same as value (same case
   // as in the previous test).
-  double rel_err = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
-    expm_A.cwiseAbs().maxCoeff().val_),
-    rel_err_d = 1e-10 * std::max(exp_A.cwiseAbs().maxCoeff(),
-    expm_A.cwiseAbs().maxCoeff().d_);
+  double rel_err = 1e-10
+                   * std::max(exp_A.cwiseAbs().maxCoeff(),
+                              expm_A.cwiseAbs().maxCoeff().val_),
+         rel_err_d = 1e-10
+                     * std::max(exp_A.cwiseAbs().maxCoeff(),
+                                expm_A.cwiseAbs().maxCoeff().d_);
 
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) {

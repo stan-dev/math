@@ -20,14 +20,11 @@ TEST(AgradRevMatrix, tcrossprod) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   test_tcrossprod(L);
 
   matrix_v I(2, 2);
-  I << 3, 0,
-    4, -3;
+  I << 3, 0, 4, -3;
   test_tcrossprod(I);
 
   matrix_v J(1, 1);
@@ -38,9 +35,7 @@ TEST(AgradRevMatrix, tcrossprod) {
   test_tcrossprod(K);
 
   matrix_v M(3, 3);
-  M << 1, 2, 3,
-    1, 4, 9,
-    1, 8, 27;
+  M << 1, 2, 3, 1, 4, 9, 1, 8, 27;
   test_tcrossprod(M);
 
   matrix_v N(1, 3);
@@ -48,18 +43,16 @@ TEST(AgradRevMatrix, tcrossprod) {
   test_tcrossprod(N);
 
   matrix_v P(2, 3);
-  P << 1, 2, 3,
-    -1, 4, -9;
+  P << 1, 2, 3, -1, 4, -9;
   test_tcrossprod(P);
 
   matrix_v Q(3, 2);
-  Q << 1, 2, 3,
-    -1, 4, -9;
+  Q << 1, 2, 3, -1, 4, -9;
   test_tcrossprod(Q);
 }
 TEST(AgradRevMatrix, tcrossprodGrad1) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(1, 1);
   L << 3.0;
@@ -72,20 +65,18 @@ TEST(AgradRevMatrix, tcrossprodGrad1) {
 
   EXPECT_FLOAT_EQ(9.0, LLt(0, 0).val());
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   EXPECT_FLOAT_EQ(6.0, J[0][0]);
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad2) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(2, 2);
-  L <<
-    1, 0,
-    2, 3;
+  L << 1, 0, 2, 3;
   AVEC x(3);
   x[0] = L(0, 0);
   x[1] = L(1, 0);
@@ -103,7 +94,7 @@ TEST(AgradRevMatrix, tcrossprodGrad2) {
   EXPECT_FLOAT_EQ(2.0, LLt(1, 0).val());
   EXPECT_FLOAT_EQ(13.0, LLt(1, 1).val());
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   // L = 1 0
@@ -131,14 +122,11 @@ TEST(AgradRevMatrix, tcrossprodGrad2) {
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad3) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(3, 3);
-  L <<
-    1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
   AVEC x(6);
   x[0] = L(0, 0);
   x[1] = L(1, 0);
@@ -159,7 +147,7 @@ TEST(AgradRevMatrix, tcrossprodGrad3) {
   y[7] = LLt(2, 1);
   y[8] = LLt(2, 2);
 
-  std::vector<VEC > J;
+  std::vector<VEC> J;
   stan::math::jacobian(y, x, J);
 
   // L = 1 0 0
@@ -191,7 +179,8 @@ TEST(AgradRevMatrix, tcrossprodGrad3) {
   EXPECT_FLOAT_EQ(0.0, J[1][5]);
 
   EXPECT_FLOAT_EQ(4.0, J[2][0]);
-  EXPECT_FLOAT_EQ(0.0, J[2][1]);  EXPECT_FLOAT_EQ(0.0, J[2][2]);
+  EXPECT_FLOAT_EQ(0.0, J[2][1]);
+  EXPECT_FLOAT_EQ(0.0, J[2][2]);
   EXPECT_FLOAT_EQ(1.0, J[2][3]);
   EXPECT_FLOAT_EQ(0.0, J[2][4]);
   EXPECT_FLOAT_EQ(0.0, J[2][5]);
@@ -241,9 +230,7 @@ TEST(AgradRevMatrix, tcrossprodGrad3) {
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_v L(3, 3);
-  L << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   test::check_varis_on_stack(stan::math::tcrossprod(L));
 }

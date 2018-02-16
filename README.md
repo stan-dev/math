@@ -8,11 +8,12 @@ The Stan Math Library is licensed under the [new BSD license](https://raw.github
 
 Required Libraries
 ------------------
-Stan Math depends on three libraries:
+Stan Math depends on four libraries:
 
-- Boost (version 1.62.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- Cvodes (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- CVODES (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- IDAS (version 2.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
 These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
 
@@ -27,8 +28,8 @@ A simple hello world program using Stan Math is as follows:
 #include <iostream>
 
 int main() {
-  std::cout << "log normal(1 | 2, 3)=" 
-            << stan::math::normal_log(1, 2, 3) 
+  std::cout << "log normal(1 | 2, 3)="
+            << stan::math::normal_log(1, 2, 3)
             << std::endl;
 }
 ```
@@ -37,7 +38,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-> clang++ -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost foo.cpp  -I /path/to/cvodes
+> clang++ -std=c++11 -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/cvodes foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
@@ -47,15 +48,15 @@ The `-I` includes provide paths pointing to the four necessary includes:
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
 * Boost C++ Library:  path to source directory that contains `boost` as a subdirectory
-* Cvodes: path to source directory that contains `cvodes` as a subdirectory
+* CVODES: path to source directory that contains `cvodes` as a subdirectory
 
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.62.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
+clang++ -std=c++11 -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/cvodes_2.9.0/include foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.62.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.66.0/boost` and `~stan-dev/math/lib/cvodes_2.9.0/include`.
 
 Other Compilers
 ---------------

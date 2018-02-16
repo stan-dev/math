@@ -6,15 +6,14 @@
 #include <cmath>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    inline fvar<T> acosh(const fvar<T>& x) {
-      using std::sqrt;
-      return fvar<T>(acosh(x.val_),
-                     x.d_ / sqrt(square(x.val_) - 1));
-    }
-
-  }
+template <typename T>
+inline fvar<T> acosh(const fvar<T>& x) {
+  using std::sqrt;
+  return fvar<T>(acosh(x.val_), x.d_ / sqrt(square(x.val_) - 1));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

@@ -17,10 +17,10 @@ typedef std::vector<var_v1> var_v2;
 typedef std::vector<var_v2> var_v3;
 
 TEST(MetaTraits, containsNonconstantStruct) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::contains_nonconstant_struct;
   using std::vector;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   EXPECT_TRUE(contains_nonconstant_struct<var_t1>::value);
   EXPECT_TRUE(contains_nonconstant_struct<var_t2>::value);
@@ -33,7 +33,6 @@ TEST(MetaTraits, containsNonconstantStruct) {
   EXPECT_TRUE(contains_nonconstant_struct<var_v3>::value);
 
   bool temp
-        = contains_nonconstant_struct<var_v3, var_v2,
-                                      var_v1, double, int>::value;
+      = contains_nonconstant_struct<var_v3, var_v2, var_v1, double, int>::value;
   EXPECT_TRUE(temp);
 }

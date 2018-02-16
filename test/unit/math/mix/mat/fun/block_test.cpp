@@ -4,10 +4,10 @@
 
 TEST(AgradMixMatrixBlock, matrix_fv) {
   using stan::math::block;
-  using stan::math::matrix_fv;
-  using stan::math::vector_fv;
   using stan::math::fvar;
+  using stan::math::matrix_fv;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   fvar<var> a(1.0, 1.0);
   fvar<var> b(4.0, 2.0);
@@ -55,10 +55,10 @@ TEST(AgradMixMatrixBlock, matrix_fv_exception) {
 }
 TEST(AgradMixMatrixBlock, matrix_ffv) {
   using stan::math::block;
-  using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a;
   fvar<fvar<var> > b;
@@ -112,4 +112,3 @@ TEST(AgradMixMatrixBlock, matrix_ffv_exception) {
   EXPECT_THROW(block(v, 0, 0, 1, 1), std::out_of_range);
   EXPECT_THROW(block(v, 1, 1, 4, 4), std::out_of_range);
 }
-

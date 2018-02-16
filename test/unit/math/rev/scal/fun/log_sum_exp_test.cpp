@@ -21,17 +21,16 @@ TEST(AgradRev, log_sum_exp_vv) {
   a = 1000;
   b = 10;
   f = log_sum_exp(a, b);
-  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0,
-                  f.val());
+  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0, f.val());
 
   x = createAVEC(a, b);
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[0]);
   EXPECT_FLOAT_EQ(
-    std::exp(10.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[1]);
+      std::exp(10.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[1]);
 }
 TEST(AgradRev, log_sum_exp_vd) {
   AVAR a = 5.0;
@@ -42,21 +41,19 @@ TEST(AgradRev, log_sum_exp_vd) {
   AVEC x = createAVEC(a);
   VEC grad_f;
   f.grad(x, grad_f);
-  EXPECT_FLOAT_EQ(std::exp(5.0) / (std::exp(5.0) + std::exp(2.0)),
-                  grad_f[0]);
+  EXPECT_FLOAT_EQ(std::exp(5.0) / (std::exp(5.0) + std::exp(2.0)), grad_f[0]);
 
   // underflow example
   a = 1000;
   b = 10;
   f = log_sum_exp(a, b);
-  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0,
-                  f.val());
+  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0, f.val());
 
   x = createAVEC(a);
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[0]);
 }
 TEST(AgradRev, log_sum_exp_dv) {
   double a = 5.0;
@@ -73,21 +70,19 @@ TEST(AgradRev, log_sum_exp_dv) {
   a = 10;
   b = 1000;
   f = log_sum_exp(a, b);
-  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0,
-                  f.val());
+  EXPECT_FLOAT_EQ(std::log(std::exp(0.0) + std::exp(-990.0)) + 1000.0, f.val());
 
   x = createAVEC(b);
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(
-    std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
-    grad_f[0]);
+      std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
+      grad_f[0]);
 }
 
-void test_log_sum_exp_2_vv(double a_val,
-                           double b_val) {
+void test_log_sum_exp_2_vv(double a_val, double b_val) {
+  using stan::math::log_sum_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_sum_exp;
 
   AVAR a(a_val);
   AVAR b(b_val);
@@ -112,11 +107,10 @@ void test_log_sum_exp_2_vv(double a_val,
   EXPECT_FLOAT_EQ(g2[0], g[0]);
   EXPECT_FLOAT_EQ(g2[1], g[1]);
 }
-void test_log_sum_exp_2_vd(double a_val,
-                           double b) {
+void test_log_sum_exp_2_vd(double a_val, double b) {
+  using stan::math::log_sum_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_sum_exp;
 
   AVAR a(a_val);
   AVEC x = createAVEC(a);
@@ -137,11 +131,10 @@ void test_log_sum_exp_2_vd(double a_val,
   EXPECT_EQ(1U, g2.size());
   EXPECT_FLOAT_EQ(g2[0], g[0]);
 }
-void test_log_sum_exp_2_dv(double a,
-                           double b_val) {
+void test_log_sum_exp_2_dv(double a, double b_val) {
+  using stan::math::log_sum_exp;
   using std::exp;
   using std::log;
-  using stan::math::log_sum_exp;
 
   AVAR b(b_val);
   AVEC x = createAVEC(b);
@@ -179,10 +172,8 @@ TEST(AgradRev, log_sum_exp_2) {
 
 struct log_sum_exp_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return log_sum_exp(arg1, arg2);
   }
 };

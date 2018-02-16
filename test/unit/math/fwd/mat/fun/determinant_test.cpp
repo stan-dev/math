@@ -2,16 +2,16 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixDeterminant, matrix_fd) {
-  using stan::math::matrix_fd;
-  using stan::math::matrix_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fd;
 
   matrix_fd a(2, 2);
   a << 2.0, 3.0, 5.0, 7.0;
-   a(0, 0).d_ = 1.0;
-   a(0, 1).d_ = 1.0;
-   a(1, 0).d_ = 1.0;
-   a(1, 1).d_ = 1.0;
+  a(0, 0).d_ = 1.0;
+  a(0, 1).d_ = 1.0;
+  a(1, 0).d_ = 1.0;
+  a(1, 1).d_ = 1.0;
 
   fvar<double> a_det = stan::math::determinant(a);
 
@@ -22,8 +22,8 @@ TEST(AgradFwdMatrixDeterminant, matrix_fd) {
 }
 
 TEST(AgradFwdMatrixDeterminant, matrix_ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 2.0;

@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, subtract_scalar) {
-  using stan::math::subtract;
   using stan::math::matrix_v;
+  using stan::math::subtract;
 
   matrix_v v(2, 2);
   v << 1, 2, 3, 4;
@@ -85,13 +85,13 @@ TEST(AgradRevMatrix, subtract_vector_vector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, subtract_rowvector_rowvector) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
-  row_vector_d  output_d;
-  row_vector_v  output;
+  row_vector_d output_d;
+  row_vector_v output;
   row_vector_d rvd_1(5), rvd_2(5);
   row_vector_v rvv_1(5), rvv_2(5);
 
@@ -131,9 +131,9 @@ TEST(AgradRevMatrix, subtract_rowvector_rowvector) {
   EXPECT_FLOAT_EQ(expected_output(4), output(4).val());
 }
 TEST(AgradRevMatrix, subtract_rowvector_rowvector_exception) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::subtract;
 
   row_vector_d d1(5), d2(2);
   row_vector_v v1(5), v2(2);
@@ -145,9 +145,9 @@ TEST(AgradRevMatrix, subtract_rowvector_rowvector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradRevMatrix, subtract_matrix_matrix) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_v output;
@@ -188,9 +188,9 @@ TEST(AgradRevMatrix, subtract_matrix_matrix) {
   EXPECT_FLOAT_EQ(expected_output(1, 1), output(1, 1).val());
 }
 TEST(AgradRevMatrix, subtract_matrix_matrix_exception) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::subtract;
 
   matrix_d d1(2, 2), d2(1, 2);
   matrix_v v1(2, 2), v2(1, 2);

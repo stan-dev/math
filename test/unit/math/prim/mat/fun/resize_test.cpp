@@ -3,12 +3,12 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 using stan::math::matrix_d;
-using stan::math::vector_d;
 using stan::math::row_vector_d;
+using stan::math::vector_d;
 
 TEST(MathMatrix, resize_double) {
   double x = 5;
@@ -131,4 +131,3 @@ TEST(MathMatrix, resize_svec_svec_matrix_double) {
   EXPECT_EQ(6, mm[1][2].rows());
   EXPECT_EQ(3, mm[3][4].cols());
 }
-

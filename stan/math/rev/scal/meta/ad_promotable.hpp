@@ -5,18 +5,18 @@
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    template <typename T>
-    struct ad_promotable<T, var> {
-      enum { value = ad_promotable<T, double>::value };
-    };
+template <typename T>
+struct ad_promotable<T, var> {
+  enum { value = ad_promotable<T, double>::value };
+};
 
-    template <>
-    struct ad_promotable<var, var> {
-      enum { value = true };
-    };
+template <>
+struct ad_promotable<var, var> {
+  enum { value = true };
+};
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

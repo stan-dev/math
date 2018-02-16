@@ -116,7 +116,6 @@ TEST(AgradRevMatrix, elt_multiply_row_vec_dv) {
   EXPECT_FLOAT_EQ(0.0, g[1]);
 }
 
-
 TEST(AgradRevMatrix, elt_multiply_matrix_vv) {
   using stan::math::elt_multiply;
   using stan::math::matrix_v;
@@ -178,8 +177,8 @@ TEST(AgradRevMatrix, elt_multiply_matrix_dv) {
   EXPECT_FLOAT_EQ(0.0, g[1]);
 }
 TEST(AgradRevMatrix, check_varis_on_stack) {
-  using stan::math::value_of;
   using stan::math::elt_multiply;
+  using stan::math::value_of;
   using stan::math::vector_v;
   vector_v x(2);
   x << 2, 5;

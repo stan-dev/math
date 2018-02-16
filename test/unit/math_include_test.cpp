@@ -7,7 +7,7 @@
 
 // This test fixture swallows output to std::cout
 class Math : public ::testing::Test {
-public:
+ public:
   void SetUp() {
     output_.str("");
     cout_backup_ = std::cout.rdbuf();
@@ -20,7 +20,7 @@ public:
   }
 
   std::stringstream output_;
-  std::streambuf *cout_backup_;
+  std::streambuf* cout_backup_;
 };
 
 TEST_F(Math, paper_example_1) {
@@ -49,23 +49,24 @@ TEST_F(Math, paper_example_2) {
   lp -= 0.5 * pow((y - mu) / sigma, 2);
 
   std::vector<stan::math::var> theta;
-  theta.push_back(mu);   theta.push_back(sigma);
+  theta.push_back(mu);
+  theta.push_back(sigma);
   std::vector<double> g;
   lp.grad(theta, g);
-  std::cout << " d.f / d.mu = " << g[0]
-            << " d.f / d.sigma = " << g[1] << std::endl;
+  std::cout << " d.f / d.mu = " << g[0] << " d.f / d.sigma = " << g[1]
+            << std::endl;
 }
 
 namespace paper {  // paper_example_3
 template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type
-normal_log(const T1& y, const T2& mu, const T3& sigma) {
-  using std::pow;  using std::log;
-  return -0.5 * pow((y - mu) / sigma, 2.0)
-    - log(sigma)
-    - 0.5 * log(2 * stan::math::pi());
+inline typename boost::math::tools::promote_args<T1, T2, T3>::type normal_log(
+    const T1& y, const T2& mu, const T3& sigma) {
+  using std::log;
+  using std::pow;
+  return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma)
+         - 0.5 * log(2 * stan::math::pi());
 }
-}
+}  // namespace paper
 
 TEST_F(Math, paper_example_3) {
   double y = 1.3;
@@ -77,13 +78,13 @@ TEST_F(Math, paper_example_3) {
 
 // paper_example_4: remove 'paper::' when including in the paper
 namespace paper {
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 struct normal_ll {
   const Matrix<double, Dynamic, 1> y_;
 
-  explicit normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
+  explicit normal_ll(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
 
   template <typename T>
   T operator()(const Matrix<T, Dynamic, 1>& theta) const {
@@ -95,11 +96,11 @@ struct normal_ll {
     return lp;
   }
 };
-}
+}  // namespace paper
 
 TEST_F(Math, paper_example_4) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using paper::normal_ll;
 
   Matrix<double, Dynamic, 1> y(3);
@@ -115,30 +116,30 @@ TEST_F(Math, paper_example_4) {
 }
 
 namespace paper_example_5 {
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
+using Eigen::Dynamic;
+using Eigen::Matrix;
 
-  struct functor {
-    const Matrix<double, Dynamic, 1> y_;
+struct functor {
+  const Matrix<double, Dynamic, 1> y_;
 
-    explicit functor(const Matrix<double, Dynamic, 1>& y) : y_(y) { }
+  explicit functor(const Matrix<double, Dynamic, 1>& y) : y_(y) {}
 
-    template <typename T>
-    Matrix<T, Dynamic, 1> operator()(const Matrix<T, Dynamic, 1>& theta) const {
-      Matrix<T, Dynamic, 1> lp(y_.size());
-      T mu = theta[0];
-      T sigma = theta[1];
-      for (int n = 0; n < y_.size(); ++n)
-        lp[n] = paper::normal_log(y_[n], mu, sigma);
-      return lp;
-    }
-  };
+  template <typename T>
+  Matrix<T, Dynamic, 1> operator()(const Matrix<T, Dynamic, 1>& theta) const {
+    Matrix<T, Dynamic, 1> lp(y_.size());
+    T mu = theta[0];
+    T sigma = theta[1];
+    for (int n = 0; n < y_.size(); ++n)
+      lp[n] = paper::normal_log(y_[n], mu, sigma);
+    return lp;
+  }
+};
 
-}
+}  // namespace paper_example_5
 
 TEST_F(Math, paper_example_5) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
 
   Matrix<double, Dynamic, 1> y(3);
@@ -148,21 +149,23 @@ TEST_F(Math, paper_example_5) {
   Matrix<double, Dynamic, 1> x(2);
   x << 1.3, 2.9;
 
-
   // paper_example_5 starts with the next line
   // Matrix<double, Dynamic, 1> x = ...;   // inputs
 
   Matrix<var, Dynamic, 1> x_var(x.size());
-  for (int i = 0; i < x.size(); ++i) x_var(i) = x(i);
+  for (int i = 0; i < x.size(); ++i)
+    x_var(i) = x(i);
 
   Matrix<var, Dynamic, 1> f_x_var = f(x_var);
 
   Matrix<double, Dynamic, 1> f_x(f_x_var.size());
-  for (int i = 0; i < f_x.size(); ++i) f_x(i) = f_x_var(i).val();
+  for (int i = 0; i < f_x.size(); ++i)
+    f_x(i) = f_x_var(i).val();
 
   Matrix<double, Dynamic, Dynamic> J(f_x_var.size(), x_var.size());
   for (int i = 0; i < f_x_var.size(); ++i) {
-    if (i > 0) stan::math::set_zero_all_adjoints();
+    if (i > 0)
+      stan::math::set_zero_all_adjoints();
     f_x_var(i).grad();
     for (int j = 0; j < x_var.size(); ++j)
       J(i, j) = x_var(j).adj();
@@ -170,8 +173,8 @@ TEST_F(Math, paper_example_5) {
 }
 
 TEST_F(Math, paper_example_6) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
 
   Matrix<double, Dynamic, 1> y(3);

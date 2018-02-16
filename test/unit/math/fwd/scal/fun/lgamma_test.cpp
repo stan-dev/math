@@ -5,9 +5,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLgamma, Fvar) {
-  using stan::math::fvar;
-  using boost::math::lgamma;
   using boost::math::digamma;
+  using boost::math::lgamma;
+  using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
 
@@ -17,9 +17,9 @@ TEST(AgradFwdLgamma, Fvar) {
 }
 
 TEST(AgradFwdLgamma, FvarFvarDouble) {
-  using stan::math::fvar;
-  using boost::math::lgamma;
   using boost::math::digamma;
+  using boost::math::lgamma;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -45,8 +45,7 @@ TEST(AgradFwdLgamma, FvarFvarDouble) {
 
 struct lgamma_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return lgamma(arg1);
   }
 };

@@ -5,9 +5,9 @@
 
 struct foo : public stan::math::chainable_alloc {
   std::vector<double> x_;
-  foo() : x_(3) { }
-  ~foo() { }
-  void chain() { }
+  foo() : x_(3) {}
+  ~foo() {}
+  void chain() {}
 };
 
 TEST(AgradRev, varStackRecoverNestedSegFaultFix) {

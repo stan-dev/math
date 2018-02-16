@@ -85,8 +85,8 @@ void test_cumulative_sum3() {
 }
 
 TEST(AgradFwdMatrixCumulativeSum, fd) {
-  using stan::math::fvar;
   using stan::math::cumulative_sum;
+  using stan::math::fvar;
 
   EXPECT_FLOAT_EQ(0, cumulative_sum(std::vector<fvar<double> >(0)).size());
 
@@ -102,8 +102,8 @@ TEST(AgradFwdMatrixCumulativeSum, fd) {
 }
 
 TEST(AgradFwdMatrixCumulativeSum, ffd) {
-  using stan::math::fvar;
   using stan::math::cumulative_sum;
+  using stan::math::fvar;
 
   EXPECT_FLOAT_EQ(0,
                   cumulative_sum(std::vector<fvar<fvar<double> > >(0)).size());
@@ -115,9 +115,8 @@ TEST(AgradFwdMatrixCumulativeSum, ffd) {
   EXPECT_FLOAT_EQ(0, cumulative_sum(b).size());
 
   test_cumulative_sum3<std::vector<fvar<fvar<double> > > >();
-  test_cumulative_sum3<Eigen::Matrix<fvar<fvar<double> >,
-                                     Eigen::Dynamic, 1> >();
-  test_cumulative_sum3<Eigen::Matrix<fvar<fvar<double> >,
-                                     1, Eigen::Dynamic> >();
+  test_cumulative_sum3<
+      Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, 1> >();
+  test_cumulative_sum3<
+      Eigen::Matrix<fvar<fvar<double> >, 1, Eigen::Dynamic> >();
 }
-

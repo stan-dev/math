@@ -7,12 +7,12 @@
 TEST(AgradRevMatrix, logSoftmaxLeak) {
   // FIXME: very brittle test depending on unrelated constants of
   //        block sizes/growth in stan::math::stack_alloc
-  using stan::math::log_softmax;
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_v;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
+  using stan::math::log_softmax;
   using stan::math::var;
+  using stan::math::vector_v;
 
   int NUM = 500;
   int SIZE = 500;
@@ -27,9 +27,9 @@ TEST(AgradRevMatrix, logSoftmaxLeak) {
 }
 
 TEST(AgradRevMatrix, log_softmax) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   using stan::math::vector_v;
 
   EXPECT_THROW(log_softmax(vector_v()), std::invalid_argument);
@@ -45,28 +45,27 @@ TEST(AgradRevMatrix, log_softmax) {
   x2 << -1.0, 1.0;
   Matrix<AVAR, Dynamic, 1> theta2 = log_softmax(x2);
   EXPECT_EQ(2, theta2.size());
-  EXPECT_FLOAT_EQ(log(exp(-1)/(exp(-1) + exp(1))), theta2[0].val());
-  EXPECT_FLOAT_EQ(log(exp(1)/(exp(-1) + exp(1))), theta2[1].val());
+  EXPECT_FLOAT_EQ(log(exp(-1) / (exp(-1) + exp(1))), theta2[0].val());
+  EXPECT_FLOAT_EQ(log(exp(1) / (exp(-1) + exp(1))), theta2[1].val());
 
   Matrix<AVAR, Dynamic, 1> x3(3);
   x3 << -1.0, 1.0, 10.0;
   Matrix<AVAR, Dynamic, 1> theta3 = log_softmax(x3);
   EXPECT_EQ(3, theta3.size());
-  EXPECT_FLOAT_EQ(log(exp(-1)/(exp(-1) + exp(1) + exp(10.0))),
-                      theta3[0].val());
-  EXPECT_FLOAT_EQ(log(exp(1)/(exp(-1) + exp(1) + exp(10.0))),
-                      theta3[1].val());
-  EXPECT_FLOAT_EQ(log(exp(10)/(exp(-1) + exp(1) + exp(10.0))),
+  EXPECT_FLOAT_EQ(log(exp(-1) / (exp(-1) + exp(1) + exp(10.0))),
+                  theta3[0].val());
+  EXPECT_FLOAT_EQ(log(exp(1) / (exp(-1) + exp(1) + exp(10.0))),
+                  theta3[1].val());
+  EXPECT_FLOAT_EQ(log(exp(10) / (exp(-1) + exp(1) + exp(10.0))),
                   theta3[2].val());
 }
 
 // compute grad using templated definition in math
 // to check custom derivatives
-std::vector<double>
-log_softmax_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl,
-                 int k) {
-  using Eigen::Matrix;
+std::vector<double> log_softmax_grad(
+    Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl, int k) {
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
   Matrix<var, Dynamic, 1> alpha(alpha_dbl.size());
   for (int i = 0; i < alpha.size(); ++i)
@@ -83,10 +82,10 @@ log_softmax_grad(Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha_dbl,
   return grad;
 }
 TEST(AgradRevLogSoftmax, Grad) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::log_softmax;
   using stan::math::var;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
   for (int k = 0; k < 3; ++k) {
     Matrix<AVAR, Dynamic, 1> alpha(3);
     alpha << 0.0, 3.0, -1.0;

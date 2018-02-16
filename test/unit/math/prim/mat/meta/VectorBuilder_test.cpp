@@ -2,10 +2,10 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, VectorBuilder_false_false) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::VectorBuilder;
   using stan::length;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -20,10 +20,10 @@ TEST(MetaTraits, VectorBuilder_false_false) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_false) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::VectorBuilder;
   using stan::length;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -44,4 +44,3 @@ TEST(MetaTraits, VectorBuilder_true_false) {
   EXPECT_NO_THROW(data4 = dvv4.data());
   EXPECT_FLOAT_EQ(0.0, data4);
 }
-

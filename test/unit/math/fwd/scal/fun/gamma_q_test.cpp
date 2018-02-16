@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdGammaQ, Fvar) {
+  using boost::math::gamma_q;
   using stan::math::fvar;
   using stan::math::gamma_q;
-  using boost::math::gamma_q;
 
   fvar<double> x(0.5);
   x.d_ = 1.0;
@@ -33,8 +33,8 @@ TEST(AgradFwdGammaQ, Fvar) {
 }
 
 TEST(AgradFwdGammaQ, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::gamma_q;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -54,10 +54,8 @@ TEST(AgradFwdGammaQ, FvarFvarDouble) {
 
 struct gamma_q_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return gamma_q(arg1, arg2);
   }
 };

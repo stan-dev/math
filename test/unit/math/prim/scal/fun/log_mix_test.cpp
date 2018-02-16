@@ -15,9 +15,9 @@ TEST(MathFunctions, log_mix_exceptions) {
                std::domain_error);
 }
 void test_log_mix(double theta, double lambda1, double lambda2) {
+  using stan::math::log_mix;
   using std::exp;
   using std::log;
-  using stan::math::log_mix;
   EXPECT_FLOAT_EQ(log(theta * exp(lambda1) + (1 - theta) * exp(lambda2)),
                   log_mix(theta, lambda1, lambda2));
 }
@@ -27,4 +27,3 @@ TEST(MathFunctions, log_mix_values) {
   test_log_mix(0.0001, 197, -3000);
   test_log_mix(0.999999, 197, -3000);
 }
-

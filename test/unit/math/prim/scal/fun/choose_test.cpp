@@ -13,7 +13,6 @@ int finite_choose_test(int N, int n) {
   return round_to_int(exp(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1)));
 }
 
-
 void test_choose_finite(int N, int n) {
   using stan::math::choose;
   if (n > N)
@@ -43,4 +42,3 @@ TEST(MathFunctions, choose_nan) {
   EXPECT_THROW(choose(nan, 2), std::domain_error);
   EXPECT_THROW(choose(nan, nan), std::domain_error);
 }
-

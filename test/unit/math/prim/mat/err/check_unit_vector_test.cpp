@@ -7,8 +7,7 @@ TEST(ErrorHandlingMatrix, checkUnitVector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y(2);
   y << sqrt(0.5), sqrt(0.5);
 
-  EXPECT_NO_THROW(stan::math::check_unit_vector("checkUnitVector",
-                                                "y", y));
+  EXPECT_NO_THROW(stan::math::check_unit_vector("checkUnitVector", "y", y));
 
   y[1] = 0;
   EXPECT_THROW(stan::math::check_unit_vector("checkUnitVector", "y", y),

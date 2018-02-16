@@ -4,20 +4,15 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixTraceQuadForm, mat_fd) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_fd;
+  using stan::math::trace_quad_form;
 
   matrix_fd ad(4, 4);
   matrix_fd bd(4, 2);
   fvar<double> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -51,20 +46,15 @@ TEST(AgradFwdMatrixTraceQuadForm, mat_fd) {
 }
 
 TEST(AgradFwdMatrixTraceQuadForm, mat_d_mat_fd) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_fd;
+  using stan::math::trace_quad_form;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ad(4, 4);
   matrix_fd bd(4, 2);
   fvar<double> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   bd(0, 0).d_ = 1.0;
   bd(0, 1).d_ = 1.0;
@@ -82,20 +72,15 @@ TEST(AgradFwdMatrixTraceQuadForm, mat_d_mat_fd) {
 }
 
 TEST(AgradFwdMatrixTraceQuadForm, mat_fd_mat_d) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_fd;
+  using stan::math::trace_quad_form;
 
   matrix_fd ad(4, 4);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> bd(4, 2);
   fvar<double> res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;
@@ -121,20 +106,15 @@ TEST(AgradFwdMatrixTraceQuadForm, mat_fd_mat_d) {
 }
 
 TEST(AgradFwdMatrixTraceQuadForm, mat_ffd) {
-  using stan::math::trace_quad_form;
   using stan::math::matrix_ffd;
+  using stan::math::trace_quad_form;
 
   matrix_ffd ad(4, 4);
   matrix_ffd bd(4, 2);
   fvar<fvar<double> > res;
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   ad(0, 0).d_ = 1.0;
   ad(0, 1).d_ = 1.0;

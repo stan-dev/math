@@ -2,12 +2,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 typedef std::vector<double> VEC;
 using stan::math::fvar;
-using stan::math::var;
 using stan::math::sort_indices_asc;
 using stan::math::sort_indices_desc;
+using stan::math::var;
 
 void test_sort_indices_asc2(std::vector<double> val) {
   std::vector<fvar<var> > x;

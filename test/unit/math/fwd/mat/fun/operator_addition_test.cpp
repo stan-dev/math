@@ -3,15 +3,15 @@
 
 using stan::math::fvar;
 TEST(AgradFwdMatrixOperatorAddition, fd_scalar_matrix) {
-  using stan::math::matrix_fd;
   using stan::math::add;
+  using stan::math::matrix_fd;
 
   matrix_fd v(2, 2);
   v << 1, 2, 3, 4;
-   v(0, 0).d_ = 1.0;
-   v(0, 1).d_ = 1.0;
-   v(1, 0).d_ = 1.0;
-   v(1, 1).d_ = 1.0;
+  v(0, 0).d_ = 1.0;
+  v(0, 1).d_ = 1.0;
+  v(1, 0).d_ = 1.0;
+  v(1, 1).d_ = 1.0;
   matrix_fd result;
 
   result = add(2.0, v);
@@ -35,15 +35,15 @@ TEST(AgradFwdMatrixOperatorAddition, fd_scalar_matrix) {
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_);
 }
 TEST(AgradFwdMatrixOperatorAddition, fd_scalar_vector) {
-  using stan::math::vector_fd;
   using stan::math::add;
+  using stan::math::vector_fd;
 
   vector_fd v(4);
   v << 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
   vector_fd result;
 
   result = add(2.0, v);
@@ -67,15 +67,15 @@ TEST(AgradFwdMatrixOperatorAddition, fd_scalar_vector) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_);
 }
 TEST(AgradFwdMatrixOperatorAddition, fd_scalar_rowvector) {
-  using stan::math::row_vector_fd;
   using stan::math::add;
+  using stan::math::row_vector_fd;
 
   row_vector_fd v(4);
   v << 1, 2, 3, 4;
-   v(0).d_ = 1.0;
-   v(1).d_ = 1.0;
-   v(2).d_ = 1.0;
-   v(3).d_ = 1.0;
+  v(0).d_ = 1.0;
+  v(1).d_ = 1.0;
+  v(2).d_ = 1.0;
+  v(3).d_ = 1.0;
   row_vector_fd result;
 
   result = add(2.0, v);
@@ -110,18 +110,18 @@ TEST(AgradFwdMatrixOperatorAddition, fd_vector_vector) {
 
   vd_1 << 1, 2, 3, 4, 5;
   vv_1 << 1, 2, 3, 4, 5;
-   vv_1(0).d_ = 1.0;
-   vv_1(1).d_ = 1.0;
-   vv_1(2).d_ = 1.0;
-   vv_1(3).d_ = 1.0;
-   vv_1(4).d_ = 1.0;
+  vv_1(0).d_ = 1.0;
+  vv_1(1).d_ = 1.0;
+  vv_1(2).d_ = 1.0;
+  vv_1(3).d_ = 1.0;
+  vv_1(4).d_ = 1.0;
   vd_2 << 2, 3, 4, 5, 6;
   vv_2 << 2, 3, 4, 5, 6;
-   vv_2(0).d_ = 1.0;
-   vv_2(1).d_ = 1.0;
-   vv_2(2).d_ = 1.0;
-   vv_2(3).d_ = 1.0;
-   vv_2(4).d_ = 1.0;
+  vv_2(0).d_ = 1.0;
+  vv_2(1).d_ = 1.0;
+  vv_2(2).d_ = 1.0;
+  vv_2(3).d_ = 1.0;
+  vv_2(4).d_ = 1.0;
 
   vector_d expected_output(5);
   expected_output << 3, 5, 7, 9, 11;
@@ -193,18 +193,18 @@ TEST(AgradFwdMatrixOperatorAddition, fd_rowvector_rowvector) {
 
   rvd_1 << 1, 2, 3, 4, 5;
   rvv_1 << 1, 2, 3, 4, 5;
-   rvv_1(0).d_ = 1.0;
-   rvv_1(1).d_ = 1.0;
-   rvv_1(2).d_ = 1.0;
-   rvv_1(3).d_ = 1.0;
-   rvv_1(4).d_ = 1.0;
+  rvv_1(0).d_ = 1.0;
+  rvv_1(1).d_ = 1.0;
+  rvv_1(2).d_ = 1.0;
+  rvv_1(3).d_ = 1.0;
+  rvv_1(4).d_ = 1.0;
   rvd_2 << 2, 3, 4, 5, 6;
   rvv_2 << 2, 3, 4, 5, 6;
-   rvv_2(0).d_ = 1.0;
-   rvv_2(1).d_ = 1.0;
-   rvv_2(2).d_ = 1.0;
-   rvv_2(3).d_ = 1.0;
-   rvv_2(4).d_ = 1.0;
+  rvv_2(0).d_ = 1.0;
+  rvv_2(1).d_ = 1.0;
+  rvv_2(2).d_ = 1.0;
+  rvv_2(3).d_ = 1.0;
+  rvv_2(4).d_ = 1.0;
 
   row_vector_d expected_output(5);
   expected_output << 3, 5, 7, 9, 11;
@@ -276,16 +276,16 @@ TEST(AgradFwdMatrixOperatorAddition, fd_matrix_matrix) {
 
   md_1 << -10, 1, 10, 0;
   mv_1 << -10, 1, 10, 0;
-   mv_1(0, 0).d_ = 1.0;
-   mv_1(0, 1).d_ = 1.0;
-   mv_1(1, 0).d_ = 1.0;
-   mv_1(1, 1).d_ = 1.0;
+  mv_1(0, 0).d_ = 1.0;
+  mv_1(0, 1).d_ = 1.0;
+  mv_1(1, 0).d_ = 1.0;
+  mv_1(1, 1).d_ = 1.0;
   md_2 << 10, -10, 1, 2;
   mv_2 << 10, -10, 1, 2;
-   mv_2(0, 0).d_ = 1.0;
-   mv_2(0, 1).d_ = 1.0;
-   mv_2(1, 0).d_ = 1.0;
-   mv_2(1, 1).d_ = 1.0;
+  mv_2(0, 0).d_ = 1.0;
+  mv_2(0, 1).d_ = 1.0;
+  mv_2(1, 0).d_ = 1.0;
+  mv_2(1, 1).d_ = 1.0;
 
   matrix_d expected_output(2, 2);
   expected_output << 0, -9, 11, 2;
@@ -340,8 +340,8 @@ TEST(AgradFwdMatrixOperatorAddition, fd_matrix_matrix_exception) {
   EXPECT_THROW(add(v1, v2), std::invalid_argument);
 }
 TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_matrix) {
-  using stan::math::matrix_ffd;
   using stan::math::add;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 1.0;
@@ -378,8 +378,8 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_matrix) {
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val());
 }
 TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_vector) {
-  using stan::math::vector_ffd;
   using stan::math::add;
+  using stan::math::vector_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 1.0;
@@ -416,8 +416,8 @@ TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_vector) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
 }
 TEST(AgradFwdMatrixOperatorAddition, ffd_scalar_rowvector) {
-  using stan::math::row_vector_ffd;
   using stan::math::add;
+  using stan::math::row_vector_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 1.0;

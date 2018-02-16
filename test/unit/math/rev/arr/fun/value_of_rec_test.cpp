@@ -4,8 +4,8 @@
 
 TEST(MathMatrix, value_of_rec) {
   using stan::math::value_of_rec;
-  using std::vector;
   using stan::math::var;
+  using std::vector;
 
   vector<double> a_vals;
   for (size_t i = 0; i < 10; ++i)

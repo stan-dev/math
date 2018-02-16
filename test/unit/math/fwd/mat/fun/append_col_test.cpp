@@ -2,22 +2,19 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixAppendCol, fd) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_fd;
-  using Eigen::MatrixXd;
 
   matrix_fd a(2, 2);
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-        9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -37,9 +34,9 @@ TEST(AgradFwdMatrixAppendCol, fd) {
 }
 
 TEST(AgradFwdRowVectorAppendCol, fd) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_fd;
-  using Eigen::RowVectorXd;
 
   row_vector_fd a(4);
   RowVectorXd ad(4);
@@ -60,29 +57,26 @@ TEST(AgradFwdRowVectorAppendCol, fd) {
   RowVectorXd adb_append_col = append_col(ad, b);
 
   for (int i = 0; i < 4; i++)
-      EXPECT_EQ(a(i).d_, ab_append_col(i).d_);
+    EXPECT_EQ(a(i).d_, ab_append_col(i).d_);
 
   for (int i = 0; i < 7; i++)
-      EXPECT_EQ(ab_append_col(i).val_, adb_append_col(i));
+    EXPECT_EQ(ab_append_col(i).val_, adb_append_col(i));
 }
 
 TEST(AgradFwdMatrixAppendCol, ffd) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffd;
-  using Eigen::MatrixXd;
 
   matrix_ffd a(2, 2);
   MatrixXd ad(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  ad << 2.0, 3.0,
-        9.0, -1.0;
+  ad << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   a(0, 0).d_ = 2.0;
   a(0, 1).d_ = 3.0;
@@ -102,9 +96,9 @@ TEST(AgradFwdMatrixAppendCol, ffd) {
 }
 
 TEST(AgradFwdRowVectorAppendCol, ffd) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffd;
-  using Eigen::RowVectorXd;
 
   row_vector_ffd a(4);
   RowVectorXd ad(4);

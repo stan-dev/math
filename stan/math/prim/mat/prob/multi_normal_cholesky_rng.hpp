@@ -22,28 +22,26 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-  namespace math {
-    template <class RNG>
-    inline Eigen::VectorXd
-    multi_normal_cholesky_rng(
-        const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
-        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
-        RNG& rng) {
-      using boost::variate_generator;
-      using boost::normal_distribution;
+namespace math {
+template <class RNG>
+inline Eigen::VectorXd multi_normal_cholesky_rng(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+  using boost::normal_distribution;
+  using boost::variate_generator;
 
-      static const char* function = "multi_normal_cholesky_rng";
-      check_finite(function, "Location parameter", mu);
+  static const char* function = "multi_normal_cholesky_rng";
+  check_finite(function, "Location parameter", mu);
 
-      variate_generator<RNG&, normal_distribution<> >
-        std_normal_rng(rng, normal_distribution<>(0, 1));
+  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
+      rng, normal_distribution<>(0, 1));
 
-      Eigen::VectorXd z(S.cols());
-      for (int i = 0; i < S.cols(); i++)
-        z(i) = std_normal_rng();
+  Eigen::VectorXd z(S.cols());
+  for (int i = 0; i < S.cols(); i++)
+    z(i) = std_normal_rng();
 
-      return mu + S * z;
-    }
-  }
+  return mu + S * z;
 }
+}  // namespace math
+}  // namespace stan
 #endif

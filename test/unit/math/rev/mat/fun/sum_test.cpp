@@ -37,9 +37,9 @@ TEST(AgradRevMatrix, sum_vector) {
   EXPECT_FLOAT_EQ(0.0, sum(v).val());
 }
 TEST(AgradRevMatrix, sum_rowvector) {
-  using stan::math::sum;
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
+  using stan::math::sum;
 
   row_vector_d d(6);
   row_vector_v v(6);
@@ -60,9 +60,9 @@ TEST(AgradRevMatrix, sum_rowvector) {
   EXPECT_FLOAT_EQ(0.0, sum(v).val());
 }
 TEST(AgradRevMatrix, sum_matrix) {
-  using stan::math::sum;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_d d(2, 3);
   matrix_v v(2, 3);

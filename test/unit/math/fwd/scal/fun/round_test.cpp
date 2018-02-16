@@ -4,8 +4,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdRound, Fvar) {
-  using stan::math::fvar;
   using boost::math::round;
+  using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> y(2.4, 2.0);
@@ -26,12 +26,12 @@ TEST(AgradFwdRound, Fvar) {
 
   fvar<double> d = round(2 * z);
   EXPECT_FLOAT_EQ(round(2 * 1.25), d.val_);
-   EXPECT_FLOAT_EQ(0.0, d.d_);
+  EXPECT_FLOAT_EQ(0.0, d.d_);
 }
 
 TEST(AgradFwdRound, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::round;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -57,8 +57,7 @@ TEST(AgradFwdRound, FvarFvarDouble) {
 
 struct round_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return round(arg1);
   }
 };

@@ -4,18 +4,13 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 class AgradFwdExp2 : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
 
-
-
-
 TEST_F(AgradFwdExp2, FvarVar_1stDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<var> x(0.5, 1.3);
@@ -31,9 +26,9 @@ TEST_F(AgradFwdExp2, FvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdExp2, FvarVar_2ndDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<var> x(0.5, 1.3);
@@ -45,11 +40,10 @@ TEST_F(AgradFwdExp2, FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.3 * exp2(0.5) * log(2) * log(2), g[0]);
 }
 
-
 TEST_F(AgradFwdExp2, FvarFvarVar_1stDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -86,9 +80,9 @@ TEST_F(AgradFwdExp2, FvarFvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdExp2, FvarFvarVar_2ndDeriv) {
+  using stan::math::exp2;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::exp2;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -108,7 +102,6 @@ TEST_F(AgradFwdExp2, FvarFvarVar_2ndDeriv) {
   stan::math::recover_memory();
 
   EXPECT_FLOAT_EQ(exp2(0.5) * log(2) * log(2), g[0]);
-
 
   fvar<fvar<var> > y;
   y.val_.val_ = 0.5;
@@ -140,13 +133,12 @@ TEST_F(AgradFwdExp2, FvarFvarVar_3rdDeriv) {
   AVEC p = createAVEC(x.val_.val_);
   VEC g;
   a.d_.d_.grad(p, g);
-  EXPECT_FLOAT_EQ(log(2)*log(2)*log(2)*exp2(0.5), g[0]);
+  EXPECT_FLOAT_EQ(log(2) * log(2) * log(2) * exp2(0.5), g[0]);
 }
 
 struct exp2_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return exp2(arg1);
   }
 };

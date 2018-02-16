@@ -1,28 +1,26 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradCcdfLogParetoType2 : public AgradCcdfLogTest {
-public:
+ public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& ccdf_log) {
     vector<double> param(4);
 
-    param[0] = 0.1;           // y
-    param[1] = 0;           // mu
-    param[2] = 0.5;           // lambda
-    param[3] = 3.0;           // alpha
+    param[0] = 0.1;  // y
+    param[1] = 0;    // mu
+    param[2] = 0.5;  // lambda
+    param[3] = 3.0;  // alpha
     parameters.push_back(param);
-    ccdf_log.push_back(std::log(0.5787037037037038311738));  // expected CCDF_log
-
+    ccdf_log.push_back(
+        std::log(0.5787037037037038311738));  // expected CCDF_log
   }
 
-  void invalid_values(vector<size_t>& index,
-          vector<double>& value) {
-
+  void invalid_values(vector<size_t>& index, vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1.0);
@@ -46,26 +44,19 @@ public:
 
     index.push_back(3U);
     value.push_back(numeric_limits<double>::infinity());
-
   }
 
-  bool has_lower_bound() {
-    return true;
-  }
+  bool has_lower_bound() { return true; }
 
-  double lower_bound() {
-    return 0.0;
-  }
+  double lower_bound() { return 0.0; }
 
-  bool has_upper_bound() {
-    return false;
-  }
+  bool has_upper_bound() { return false; }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  ccdf_log(const T_y& y, const T_loc& mu, const T_scale& lambda,
-           const T_shape& alpha, const T4&, const T5&) {
+  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type ccdf_log(
+      const T_y& y, const T_loc& mu, const T_scale& lambda,
+      const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_ccdf_log(y, mu, lambda, alpha);
   }
 
@@ -74,9 +65,8 @@ public:
   typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
   ccdf_log_function(const T_y& y, const T_loc& mu, const T_scale& lambda,
                     const T_shape& alpha, const T4&, const T5&) {
-      using std::log;
-      using std::pow;
-      return log(pow(1.0 + (y-mu)/lambda, -alpha));
+    using std::log;
+    using std::pow;
+    return log(pow(1.0 + (y - mu) / lambda, -alpha));
   }
-
 };

@@ -4,11 +4,11 @@
 
 TEST(AgradMixMatrixDiagonal, matrix_fv_1stDeriv) {
   using stan::math::diagonal;
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   EXPECT_EQ(0, diagonal(matrix_fv()).size());
   EXPECT_EQ(2, diagonal(matrix_fv(2, 2)).size());
@@ -38,11 +38,11 @@ TEST(AgradMixMatrixDiagonal, matrix_fv_1stDeriv) {
 }
 TEST(AgradMixMatrixDiagonal, matrix_fv_2ndDeriv) {
   using stan::math::diagonal;
-  using stan::math::matrix_fv;
-  using stan::math::matrix_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
+  using stan::math::vector_fv;
 
   fvar<var> a(1.0, 1.0);
   fvar<var> b(4.0, 2.0);
@@ -61,20 +61,20 @@ TEST(AgradMixMatrixDiagonal, matrix_fv_2ndDeriv) {
 }
 TEST(AgradMixMatrixDiagonal, matrix_ffv_1stDeriv) {
   using stan::math::diagonal;
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
   EXPECT_EQ(0, diagonal(matrix_ffv()).size());
   EXPECT_EQ(2, diagonal(matrix_ffv(2, 2)).size());
   EXPECT_EQ(0, diagonal(matrix_d()).size());
   EXPECT_EQ(2, diagonal(matrix_d(2, 2)).size());
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(4.0, 2.0);
-  fvar<fvar<var> >  c(9.0, 3.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 2.0);
+  fvar<fvar<var> > c(9.0, 3.0);
   matrix_ffv v(3, 3);
   v << a, b, c, a, b, c, a, b, c;
 
@@ -95,15 +95,15 @@ TEST(AgradMixMatrixDiagonal, matrix_ffv_1stDeriv) {
 }
 TEST(AgradMixMatrixDiagonal, matrix_ffv_2ndDeriv_1) {
   using stan::math::diagonal;
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(4.0, 2.0);
-  fvar<fvar<var> >  c(9.0, 3.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 2.0);
+  fvar<fvar<var> > c(9.0, 3.0);
   matrix_ffv v(3, 3);
   v << a, b, c, a, b, c, a, b, c;
 
@@ -118,15 +118,15 @@ TEST(AgradMixMatrixDiagonal, matrix_ffv_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixDiagonal, matrix_ffv_2ndDeriv_2) {
   using stan::math::diagonal;
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(4.0, 2.0);
-  fvar<fvar<var> >  c(9.0, 3.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 2.0);
+  fvar<fvar<var> > c(9.0, 3.0);
   matrix_ffv v(3, 3);
   v << a, b, c, a, b, c, a, b, c;
 
@@ -142,15 +142,15 @@ TEST(AgradMixMatrixDiagonal, matrix_ffv_2ndDeriv_2) {
 
 TEST(AgradMixMatrixDiagonal, matrix_ffv_3rdDeriv) {
   using stan::math::diagonal;
-  using stan::math::matrix_ffv;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
+  using stan::math::vector_ffv;
 
-  fvar<fvar<var> >  a(1.0, 1.0);
-  fvar<fvar<var> >  b(4.0, 1.0);
-  fvar<fvar<var> >  c(9.0, 1.0);
+  fvar<fvar<var> > a(1.0, 1.0);
+  fvar<fvar<var> > b(4.0, 1.0);
+  fvar<fvar<var> > c(9.0, 1.0);
   a.val_.d_ = 1.0;
   b.val_.d_ = 1.0;
   c.val_.d_ = 1.0;

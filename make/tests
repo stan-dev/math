@@ -48,8 +48,17 @@ test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 # CVODES tests
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
 $(CVODES_TESTS) : $(LIBCVODES)
+
+############################################################
+#
+# IDAS tests
+##
+
+IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
+$(IDAS_TESTS) : $(LIBIDAS)
+
 
 ############################################################
 #

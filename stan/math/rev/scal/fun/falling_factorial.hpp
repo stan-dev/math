@@ -6,26 +6,25 @@
 #include <stan/math/prim/scal/fun/falling_factorial.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    namespace internal {
+namespace internal {
 
-      class falling_factorial_vd_vari : public op_vd_vari {
-      public:
-        falling_factorial_vd_vari(vari* avi, int b) :
-          op_vd_vari(falling_factorial(avi->val_, b), avi, b) {
-        }
-        void chain() {
-          avi_->adj_ += adj_* val_* (digamma(avi_->val_ + 1)
-                           - digamma(avi_->val_ - bd_ + 1));
-        }
-      };
-    }
-
-    inline var falling_factorial(const var& a, int b) {
-      return var(new internal::falling_factorial_vd_vari(a.vi_, b));
-    }
-
+class falling_factorial_vd_vari : public op_vd_vari {
+ public:
+  falling_factorial_vd_vari(vari* avi, int b)
+      : op_vd_vari(falling_factorial(avi->val_, b), avi, b) {}
+  void chain() {
+    avi_->adj_ += adj_ * val_
+                  * (digamma(avi_->val_ + 1) - digamma(avi_->val_ - bd_ + 1));
   }
+};
+}  // namespace internal
+
+inline var falling_factorial(const var& a, int b) {
+  return var(new internal::falling_factorial_vd_vari(a.vi_, b));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

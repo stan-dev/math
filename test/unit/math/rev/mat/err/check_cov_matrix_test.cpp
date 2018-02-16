@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::var;
 
   using stan::math::check_cov_matrix;
 
@@ -14,5 +14,5 @@ TEST(AgradRevErrorHandlingMatrix, CheckCovMatrix) {
   Sigma << 1;
 
   EXPECT_NO_THROW(check_cov_matrix(function, "Sigma", Sigma))
-    << "check_cov_matrix should not throw exception with Sigma";
+      << "check_cov_matrix should not throw exception with Sigma";
 }

@@ -3,11 +3,11 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAcos, Fvar) {
+  using stan::math::NEGATIVE_INFTY;
   using stan::math::fvar;
   using std::acos;
-  using std::sqrt;
   using std::isnan;
-  using stan::math::NEGATIVE_INFTY;
+  using std::sqrt;
 
   fvar<double> x(0.5, 1.0);
 
@@ -39,12 +39,12 @@ TEST(AgradFwdAcos, Fvar) {
   EXPECT_FLOAT_EQ(acos(1.0), f.val_);
   EXPECT_FLOAT_EQ(NEGATIVE_INFTY, f.d_);
 
-  fvar<double> z2(1.0+stan::math::EPSILON, 1.0);
+  fvar<double> z2(1.0 + stan::math::EPSILON, 1.0);
   fvar<double> f2 = acos(z2);
   EXPECT_TRUE(boost::math::isnan(f2.val_));
   EXPECT_TRUE(boost::math::isnan(f2.d_));
 
-  fvar<double> z3(-1.0-stan::math::EPSILON, 1.0);
+  fvar<double> z3(-1.0 - stan::math::EPSILON, 1.0);
   fvar<double> f3 = acos(z3);
   EXPECT_TRUE(boost::math::isnan(f3.val_));
   EXPECT_TRUE(boost::math::isnan(f3.d_));
@@ -76,11 +76,9 @@ TEST(AgradFwdAcos, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct acos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return acos(arg1);
   }
 };

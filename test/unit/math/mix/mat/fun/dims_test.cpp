@@ -6,24 +6,27 @@ using stan::math::fvar;
 using stan::math::var;
 
 TEST(AgradMixMatrixDims, matrix_fv) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_fv;
+  using std::vector;
 
   fvar<var> x1;
   vector<int> dims1 = dims(x1);
   EXPECT_EQ(0U, dims1.size());
 
   vector<fvar<var> > x3;
-  x3.push_back(-32.1); x3.push_back(17.9);
+  x3.push_back(-32.1);
+  x3.push_back(17.9);
   vector<int> dims3 = dims(x3);
   EXPECT_EQ(1U, dims3.size());
   EXPECT_EQ(2, dims3[0]);
 
   vector<vector<fvar<var> > > x4;
-  x4.push_back(x3);  x4.push_back(x3);   x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
   vector<int> dims4 = dims(x4);
   EXPECT_EQ(2U, dims4.size());
   EXPECT_EQ(3, dims4[0]);
@@ -48,7 +51,8 @@ TEST(AgradMixMatrixDims, matrix_fv) {
   EXPECT_EQ(17, dims7[1]);
 
   vector<Matrix<fvar<var>, Dynamic, Dynamic> > x8;
-  x8.push_back(x5);  x8.push_back(x5);
+  x8.push_back(x5);
+  x8.push_back(x5);
   vector<int> dims8 = dims(x8);
   EXPECT_EQ(3U, dims8.size());
   EXPECT_EQ(2, dims8[0]);
@@ -57,24 +61,27 @@ TEST(AgradMixMatrixDims, matrix_fv) {
 }
 
 TEST(AgradMixMatrixDims, matrix_ffv) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
   using stan::math::matrix_ffv;
+  using std::vector;
 
   fvar<fvar<var> > x1;
   vector<int> dims1 = dims(x1);
   EXPECT_EQ(0U, dims1.size());
 
   vector<fvar<fvar<var> > > x3;
-  x3.push_back(-32.1); x3.push_back(17.9);
+  x3.push_back(-32.1);
+  x3.push_back(17.9);
   vector<int> dims3 = dims(x3);
   EXPECT_EQ(1U, dims3.size());
   EXPECT_EQ(2, dims3[0]);
 
   vector<vector<fvar<fvar<var> > > > x4;
-  x4.push_back(x3);  x4.push_back(x3);   x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
+  x4.push_back(x3);
   vector<int> dims4 = dims(x4);
   EXPECT_EQ(2U, dims4.size());
   EXPECT_EQ(3, dims4[0]);
@@ -99,7 +106,8 @@ TEST(AgradMixMatrixDims, matrix_ffv) {
   EXPECT_EQ(17, dims7[1]);
 
   vector<Matrix<fvar<fvar<var> >, Dynamic, Dynamic> > x8;
-  x8.push_back(x5);  x8.push_back(x5);
+  x8.push_back(x5);
+  x8.push_back(x5);
   vector<int> dims8 = dims(x8);
   EXPECT_EQ(3U, dims8.size());
   EXPECT_EQ(2, dims8[0]);

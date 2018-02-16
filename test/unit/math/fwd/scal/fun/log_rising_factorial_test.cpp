@@ -4,9 +4,9 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdLogRisingFactorial, Fvar) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::log_rising_factorial;
-  using boost::math::digamma;
 
   fvar<double> a(4.0, 1.0);
   fvar<double> x = log_rising_factorial(a, 1.0);
@@ -16,8 +16,9 @@ TEST(AgradFwdLogRisingFactorial, Fvar) {
   // finite diff
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(4.0 + eps, 1.0)
-                  - stan::math::log_rising_factorial(4.0 - eps, 1.0))
-                  / (2 * eps), x.d_);
+                   - stan::math::log_rising_factorial(4.0 - eps, 1.0))
+                      / (2 * eps),
+                  x.d_);
 
   fvar<double> c(-3.0, 2.0);
 
@@ -35,14 +36,15 @@ TEST(AgradFwdLogRisingFactorial, Fvar) {
 
   // finite diff
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(5.0, 4.0 + eps)
-                  - stan::math::log_rising_factorial(5.0, 4.0 - eps))
-                  / (2 * eps), x.d_);
+                   - stan::math::log_rising_factorial(5.0, 4.0 - eps))
+                      / (2 * eps),
+                  x.d_);
 }
 
 TEST(AgradFwdLogRisingFactorial, FvarFvarDouble) {
+  using boost::math::digamma;
   using stan::math::fvar;
   using stan::math::log_rising_factorial;
-  using boost::math::digamma;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 4.0;
@@ -62,10 +64,8 @@ TEST(AgradFwdLogRisingFactorial, FvarFvarDouble) {
 
 struct log_rising_factorial_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return log_rising_factorial(arg1, arg2);
   }
 };

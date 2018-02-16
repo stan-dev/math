@@ -2,36 +2,32 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixDiagPreMultiply, vector_fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
-  using stan::math::vector_fd;
+  using stan::math::matrix_fd;
   using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
   matrix_fd Y(3, 3);
-  Y << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   vector_d A(3);
   A << 1, 2, 3;
   vector_fd B(3);
   B << 1, 2, 3;
-   B(0).d_ = 2.0;
-   B(1).d_ = 2.0;
-   B(2).d_ = 2.0;
+  B(0).d_ = 2.0;
+  B(1).d_ = 2.0;
+  B(2).d_ = 2.0;
 
   matrix_d W = stan::math::diag_pre_multiply(A, Z);
   matrix_fd output = stan::math::diag_pre_multiply(B, Y);
@@ -66,36 +62,32 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_fd_exception) {
   EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
 }
 TEST(AgradFwdMatrixDiagPreMultiply, rowvector_fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
-  using stan::math::row_vector_fd;
+  using stan::math::matrix_fd;
   using stan::math::row_vector_d;
+  using stan::math::row_vector_fd;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
   matrix_fd Y(3, 3);
-  Y << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   row_vector_d A(3);
   A << 1, 2, 3;
   row_vector_fd B(3);
   B << 1, 2, 3;
-   B(0).d_ = 2.0;
-   B(1).d_ = 2.0;
-   B(2).d_ = 2.0;
+  B(0).d_ = 2.0;
+  B(1).d_ = 2.0;
+  B(2).d_ = 2.0;
 
   matrix_d W = stan::math::diag_pre_multiply(A, Z);
   matrix_fd output = stan::math::diag_pre_multiply(B, Y);
@@ -130,16 +122,14 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_fd_exception) {
   EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
 }
 TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_d;
-  using stan::math::vector_ffd;
-  using stan::math::vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -161,9 +151,7 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c,
-       b, c, d,
-       d, e, f;
+  Y << a, b, c, b, c, d, d, e, f;
 
   vector_d A(3);
   A << 1, 2, 3;
@@ -189,9 +177,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd) {
   EXPECT_FLOAT_EQ(18, output(2, 2).d_.val());
 }
 TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd_exception) {
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   matrix_ffd Y(3, 3);
   matrix_ffd Z(2, 3);
@@ -204,16 +192,14 @@ TEST(AgradFwdMatrixDiagPreMultiply, vector_ffd_exception) {
   EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
 }
 TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_d;
-  using stan::math::row_vector_ffd;
-  using stan::math::row_vector_d;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffd;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-       2, 3, 4,
-       4, 5, 6;
+  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;
@@ -235,9 +221,7 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
   f.d_.val_ = 2.0;
 
   matrix_ffd Y(3, 3);
-  Y << a, b, c,
-       b, c, d,
-       d, e, f;
+  Y << a, b, c, b, c, d, d, e, f;
 
   row_vector_d A(3);
   A << 1, 2, 3;
@@ -263,9 +247,9 @@ TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd) {
   EXPECT_FLOAT_EQ(18, output(2, 2).d_.val());
 }
 TEST(AgradFwdMatrixDiagPreMultiply, rowvector_ffd_exception) {
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::row_vector_ffd;
-  using stan::math::fvar;
 
   matrix_ffd Y(3, 3);
   matrix_ffd Z(2, 3);

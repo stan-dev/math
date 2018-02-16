@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
+  using stan::math::check_consistent_sizes;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_consistent_sizes;
 
   int N = 5;
   const char* function = "check_consistent_size";
@@ -13,7 +13,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   vector<var> b;
 
   for (int i = 0; i < N; ++i) {
-    b.push_back(var(i+1));
+    b.push_back(var(i + 1));
     a.push_back(var(i));
   }
 
