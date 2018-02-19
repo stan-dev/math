@@ -30,6 +30,9 @@ namespace math {
  *
  * @tparam T Type of f.
  * @tparam G Type of g.
+ * @tparam T_param Type of param.
+ * @tparam T_x_r Type of x_r.
+ * @tparam T_x_i Type of x_i.
  * @param f a functor with signature
  * double (double, std::vector<T_param>, std::vector<T_x_r>,
  * std::vector<T_x_i>, std::ostream&) or with signature
@@ -50,8 +53,8 @@ namespace math {
  * @param tre target relative error.
  * @param tae target absolute error.
  * @param param additional parameters to be passed to f.
- * @param T_x_r additional data to be passed to f.
- * @param T_x_i additional integer data to be passed to f.
+ * @param x_r additional data to be passed to f.
+ * @param x_i additional integer data to be passed to f.
  * @param msgs stream.
  * @return numeric integral of function f.
  */
@@ -132,6 +135,9 @@ inline double gradient_of_f(const F& f, const double x, const T_param& param,
  * floating point).
  *
  * @tparam T Type of f.
+ * @tparam T_param Type of param.
+ * @tparam T_x_r Type of x_r.
+ * @tparam T_x_i Type of x_i.
  * @param f a functor with signature
  * double (double, std::vector<T_param>, std::vector<T_x_r>,
  * std::vector<T_x_i>, std::ostream&) or with signature
@@ -144,8 +150,8 @@ inline double gradient_of_f(const F& f, const double x, const T_param& param,
  * @param tre target relative error.
  * @param tae target absolute error.
  * @param param additional parameters to be passed to f.
- * @param T_x_r additional data to be passed to f.
- * @param T_x_i additional integer data to be passed to f.
+ * @param x_r additional data to be passed to f.
+ * @param x_i additional integer data to be passed to f.
  * @param msgs stream.
  * @return numeric integral of function f.
  */
