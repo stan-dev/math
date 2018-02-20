@@ -424,11 +424,10 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
         EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
             << "Comparison of expected gradient to calculated gradient failed";
       } else {
-        EXPECT_TRUE(!(expected_gradients[i] == expected_gradients[i]) 
-          && !(gradients[i] == gradients[i]))
+        EXPECT_TRUE(!(expected_gradients[i] == expected_gradients[i])
+                    && !(gradients[i] == gradients[i]))
             << "Expected gradient is NaN but gradient is non NaN.";
       }
-          
     }
   }
 
