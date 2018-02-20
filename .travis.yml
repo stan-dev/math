@@ -1,8 +1,5 @@
 language: cpp
 
-git:
-  depth: 2
-
 before_script:
   - eval "${MATRIX_EVAL}"
   - echo ${CXX}
