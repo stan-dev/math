@@ -10,15 +10,22 @@
 
 TEST(MathMatrix, matrix_exp_1x1) {
   stan::math::matrix_v m1(1, 1), m2(1, 1), m1_exp;
+  Eigen::Matrix<stan::math::var, 1, 1> m3, m3_exp;
   m1 << 0;
   m2 << 1;
   m1_exp = matrix_exp(m1);
+  m3 = m1;
+  m3_exp = matrix_exp(m3);
   expect_matrix_eq(m2, m1_exp);
 
   AVEC x = createAVEC(m1(0, 0));
+  AVEC y = createAVEC(m3(0, 0));
   VEC g;
   m1_exp(0, 0).grad(x, g);
   EXPECT_FLOAT_EQ(m1_exp(0, 0).val(), g[0]);
+  stan::math::set_zero_all_adjoints();
+  m3_exp(0, 0).grad(y, g);
+  EXPECT_FLOAT_EQ(m3_exp(0, 0).val(), g[0]);
 }
 
 TEST(MathMatrix, matrix_exp_2x2) {
