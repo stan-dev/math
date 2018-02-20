@@ -420,8 +420,15 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
-          << "Comparison of expected gradient to calculated gradient failed";
+      if (!stan::math::is_nan(expected_gradients[i])) {
+        EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
+            << "Comparison of expected gradient to calculated gradient failed";
+      } else {
+        EXPECT_TRUE(!(expected_gradients[i] == expected_gradients[i]) 
+          && !(gradients[i] == gradients[i]))
+            << "Expected gradient is NaN but gradient is non NaN.";
+      }
+          
     }
   }
 
