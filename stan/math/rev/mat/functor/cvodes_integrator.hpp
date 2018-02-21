@@ -120,9 +120,8 @@ class cvodes_integrator {
       invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
                        absolute_tolerance, "", ", must be greater than 0");
     if (max_num_steps <= 0)
-      invalid_argument(
-                   "integrate_ode_cvodes", "max_num_steps,", max_num_steps, "",
-                   ", must be greater than 0");
+      invalid_argument("integrate_ode_cvodes", "max_num_steps,", max_num_steps,
+                       "", ", must be greater than 0");
 
     const size_t N = y0.size();
     const size_t M = theta.size();

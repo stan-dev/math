@@ -136,20 +136,17 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
                                      0, 1e-8, 1e-10, 1e6),
                    std::out_of_range, "vector");
 
-  EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
-                                     0, -1, 1e-6, 10),
-                   std::invalid_argument,
-                   "relative_tolerance");
+  EXPECT_THROW_MSG(
+      integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, -1, 1e-6, 10),
+      std::invalid_argument, "relative_tolerance");
 
-  EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
-                                     0, 1e-6, -1, 10),
-                   std::invalid_argument,
-                   "absolute_tolerance");
+  EXPECT_THROW_MSG(
+      integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, 1e-6, -1, 10),
+      std::invalid_argument, "absolute_tolerance");
 
-  EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int,
-                                     0, 1e-6, 1e-6, -1),
-                   std::invalid_argument,
-                   "max_num_steps");
+  EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0,
+                                     1e-6, 1e-6, -1),
+                   std::invalid_argument, "max_num_steps");
 }
 
 TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
