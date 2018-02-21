@@ -34,7 +34,7 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 class gp_exp_quad_cov_vari : public vari {
-public:
+ public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -66,11 +66,15 @@ public:
    */
   gp_exp_quad_cov_vari(const std::vector<T_x> &x, const T_sigma &sigma,
                        const T_l &length_scale)
-      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(length_scale)), sigma_d_(value_of(sigma)),
+      : vari(0.0),
+        size_(x.size()),
+        size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(length_scale)),
+        sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
-        l_vari_(length_scale.vi_), sigma_vari_(sigma.vi_),
+        l_vari_(length_scale.vi_),
+        sigma_vari_(sigma.vi_),
         cov_lower_(ChainableStack::memalloc_.alloc_array<vari *>(size_ltri_)),
         cov_diag_(ChainableStack::memalloc_.alloc_array<vari *>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
@@ -79,8 +83,8 @@ public:
       for (size_t i = j + 1; i < size_; ++i) {
         double dist_sq = squared_distance(x[i], x[j]);
         dist_[pos] = dist_sq;
-        cov_lower_[pos] =
-            new vari(sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
+        cov_lower_[pos] = new vari(
+            sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
         ++pos;
       }
     }
@@ -121,7 +125,7 @@ public:
  */
 template <typename T_x, typename T_l>
 class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
-public:
+ public:
   const size_t size_;
   const size_t size_ltri_;
   const double l_d_;
@@ -152,8 +156,11 @@ public:
    */
   gp_exp_quad_cov_vari(const std::vector<T_x> &x, double sigma,
                        const T_l &length_scale)
-      : vari(0.0), size_(x.size()), size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(length_scale)), sigma_d_(value_of(sigma)),
+      : vari(0.0),
+        size_(x.size()),
+        size_ltri_(size_ * (size_ - 1) / 2),
+        l_d_(value_of(length_scale)),
+        sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::memalloc_.alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
@@ -165,8 +172,8 @@ public:
       for (size_t i = j + 1; i < size_; ++i) {
         double dist_sq = squared_distance(x[i], x[j]);
         dist_[pos] = dist_sq;
-        cov_lower_[pos] =
-            new vari(sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
+        cov_lower_[pos] = new vari(
+            sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
         ++pos;
       }
     }
@@ -212,8 +219,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const var &sigma,
   if (x_size == 0)
     return cov;
 
-  gp_exp_quad_cov_vari<T_x, var, var> *baseVari =
-      new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
+  gp_exp_quad_cov_vari<T_x, var, var> *baseVari
+      = new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
@@ -254,8 +261,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, double sigma, const var &l) {
   if (x_size == 0)
     return cov;
 
-  gp_exp_quad_cov_vari<T_x, double, var> *baseVari =
-      new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);
+  gp_exp_quad_cov_vari<T_x, double, var> *baseVari
+      = new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
@@ -270,6 +277,6 @@ gp_exp_quad_cov(const std::vector<T_x> &x, double sigma, const var &l) {
   return cov;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 #endif
