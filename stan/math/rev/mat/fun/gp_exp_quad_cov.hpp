@@ -65,7 +65,7 @@ class gp_exp_quad_cov_vari : public vari {
    * @param l length scale
    */
   gp_exp_quad_cov_vari(const std::vector<T_x>& x, const T_sigma& sigma,
-                    const T_l& l)
+                       const T_l& l)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -111,8 +111,6 @@ class gp_exp_quad_cov_vari : public vari {
   }
 };
 
-
-  
 /**
  * This is a subclass of the vari class for precomputed
  * gradients of gp_exp_quad_cov.
@@ -192,7 +190,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
     l_vari_->adj_ += adjl / (l_d_ * l_d_ * l_d_);
   }
 };
-  
+
 /**
  * This is a subclass of the vari class for precomputed
  * gradients of gp_exp_quad_cov.
@@ -239,7 +237,7 @@ class gp_exp_quad_cov_vari : public vari {
    * @param l length scale
    */
   gp_exp_quad_cov_vari(const std::vector<T_x>& x, const T_sigma& sigma,
-                    const std::vector<T_l>& length_scale)
+                       const std::vector<T_l>& length_scale)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -283,7 +281,7 @@ class gp_exp_quad_cov_vari : public vari {
     sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
   }
 };
-  
+
 /**
  * Returns a squared exponential kernel.
  *

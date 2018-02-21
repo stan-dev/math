@@ -35,7 +35,7 @@ inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_exp_quad_cov(const std::vector<T_x>& x, const T_sigma& sigma,
-                 const T_l& length_scale) {
+                    const T_l& length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   check_positive("gp_exp_quad_cov", "length-scale", length_scale);
@@ -85,7 +85,7 @@ inline
     typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_exp_quad_cov(const std::vector<T_x>& x, const T_sigma& sigma,
-                 const std::vector<T_l>& length_scale) {
+                    const std::vector<T_l>& length_scale) {
   using std::exp;
 
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
@@ -145,7 +145,7 @@ inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
-             const T_sigma& sigma, const T_l& length_scale) {
+                const T_sigma& sigma, const T_l& length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   check_positive("gp_exp_quad_cov", "length-scale", length_scale);
@@ -193,7 +193,7 @@ inline typename Eigen::Matrix<
     typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
-             const T_sigma& sigma, const std::vector<T_l>& length_scale) {
+                const T_sigma& sigma, const std::vector<T_l>& length_scale) {
   using std::exp;
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   for (size_t n = 0; n < x1.size(); ++n)

@@ -253,8 +253,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
           << "index: (" << i << ", " << j << ")";
 
   Eigen::MatrixXd cov7;
-  EXPECT_NO_THROW(cov7 = stan::math::gp_exp_quad_cov(x2_vec, x1_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov7
+                  = stan::math::gp_exp_quad_cov(x2_vec, x1_rvec, sigma, l));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 4; i++)
@@ -268,8 +268,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
     }
 
   Eigen::MatrixXd cov2;
-  EXPECT_NO_THROW(cov2 = stan::math::gp_exp_quad_cov(x1_vec, x2_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov2
+                  = stan::math::gp_exp_quad_cov(x1_vec, x2_rvec, sigma, l));
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++)
@@ -281,8 +281,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
           << "index: (" << i << ", " << j << ")";
 
   Eigen::MatrixXd cov8;
-  EXPECT_NO_THROW(cov8 = stan::math::gp_exp_quad_cov(x2_rvec, x1_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov8
+                  = stan::math::gp_exp_quad_cov(x2_rvec, x1_vec, sigma, l));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 4; i++)
@@ -296,8 +296,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
     }
 
   Eigen::MatrixXd cov3;
-  EXPECT_NO_THROW(cov3 = stan::math::gp_exp_quad_cov(x2_vec, x2_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov3
+                  = stan::math::gp_exp_quad_cov(x2_vec, x2_rvec, sigma, l));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 4; i++)
@@ -309,8 +309,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
           << "index: (" << i << ", " << j << ")";
 
   Eigen::MatrixXd cov4;
-  EXPECT_NO_THROW(cov4 = stan::math::gp_exp_quad_cov(x2_rvec, x2_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov4
+                  = stan::math::gp_exp_quad_cov(x2_rvec, x2_vec, sigma, l));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 4; i++)
@@ -324,8 +324,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
     }
 
   Eigen::MatrixXd cov5;
-  EXPECT_NO_THROW(cov5 = stan::math::gp_exp_quad_cov(x1_rvec, x1_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov5
+                  = stan::math::gp_exp_quad_cov(x1_rvec, x1_vec, sigma, l));
   EXPECT_EQ(3, cov5.rows());
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++)
@@ -337,8 +337,8 @@ TEST(MathPrimMat, vec_eigen_mixed_gp_exp_quad_cov2) {
           << "index: (" << i << ", " << j << ")";
 
   Eigen::MatrixXd cov6;
-  EXPECT_NO_THROW(cov6 = stan::math::gp_exp_quad_cov(x1_vec, x1_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov6
+                  = stan::math::gp_exp_quad_cov(x1_vec, x1_rvec, sigma, l));
   EXPECT_EQ(3, cov6.rows());
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++)
@@ -556,9 +556,9 @@ TEST(MathPrimMat, domain_error_gp_exp_quad_cov2) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma, l_bad),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad,
-                                           l_bad),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
+      std::domain_error);
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad, l),
                std::domain_error);
@@ -643,9 +643,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma, l_bad),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad,
-                                           l_bad),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad, l_bad),
+      std::domain_error);
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad, l),
                std::domain_error);
@@ -694,9 +694,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2_bad, sigma, l),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_rvec_2_bad, sigma,
-                                           l),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_rvec_2_bad, sigma, l),
+      std::domain_error);
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2, sigma, l),
                std::domain_error);
@@ -1111,8 +1111,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov7;
-  EXPECT_NO_THROW(cov7 = stan::math::gp_exp_quad_cov(x2_vec, x1_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov7
+                  = stan::math::gp_exp_quad_cov(x2_vec, x1_rvec, sigma, l));
   EXPECT_EQ(4, cov7.rows());
   EXPECT_EQ(3, cov7.cols());
   for (int i = 0; i < 4; i++) {
@@ -1129,8 +1129,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov2;
-  EXPECT_NO_THROW(cov2 = stan::math::gp_exp_quad_cov(x1_vec, x2_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov2
+                  = stan::math::gp_exp_quad_cov(x1_vec, x2_rvec, sigma, l));
   EXPECT_EQ(3, cov2.rows());
   EXPECT_EQ(4, cov2.cols());
   for (int i = 0; i < 3; i++) {
@@ -1146,8 +1146,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov8;
-  EXPECT_NO_THROW(cov8 = stan::math::gp_exp_quad_cov(x2_rvec, x1_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov8
+                  = stan::math::gp_exp_quad_cov(x2_rvec, x1_vec, sigma, l));
   EXPECT_EQ(4, cov8.rows());
   EXPECT_EQ(3, cov8.cols());
   for (int i = 0; i < 4; i++) {
@@ -1164,8 +1164,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov3;
-  EXPECT_NO_THROW(cov3 = stan::math::gp_exp_quad_cov(x2_vec, x2_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov3
+                  = stan::math::gp_exp_quad_cov(x2_vec, x2_rvec, sigma, l));
   EXPECT_EQ(4, cov3.rows());
   EXPECT_EQ(4, cov3.cols());
   for (int i = 0; i < 4; i++) {
@@ -1181,8 +1181,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov4;
-  EXPECT_NO_THROW(cov4 = stan::math::gp_exp_quad_cov(x2_rvec, x2_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov4
+                  = stan::math::gp_exp_quad_cov(x2_rvec, x2_vec, sigma, l));
   EXPECT_EQ(4, cov4.rows());
   EXPECT_EQ(4, cov4.cols());
   for (int i = 0; i < 4; i++) {
@@ -1199,8 +1199,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov5;
-  EXPECT_NO_THROW(cov5 = stan::math::gp_exp_quad_cov(x1_rvec, x1_vec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov5
+                  = stan::math::gp_exp_quad_cov(x1_rvec, x1_vec, sigma, l));
   EXPECT_EQ(3, cov5.rows());
   EXPECT_EQ(3, cov5.cols());
   for (int i = 0; i < 3; i++) {
@@ -1216,8 +1216,8 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_mixed_gp_exp_quad_cov2) {
   }
 
   Eigen::MatrixXd cov6;
-  EXPECT_NO_THROW(cov6 = stan::math::gp_exp_quad_cov(x1_vec, x1_rvec, sigma,
-                                                     l));
+  EXPECT_NO_THROW(cov6
+                  = stan::math::gp_exp_quad_cov(x1_vec, x1_rvec, sigma, l));
   EXPECT_EQ(3, cov6.rows());
   EXPECT_EQ(3, cov6.cols());
   for (int i = 0; i < 3; i++) {
@@ -1583,9 +1583,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma, l_bad0),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad,
-                                           l_bad0),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma_bad, l_bad0),
+      std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma, l_bad1),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2, sigma, l_bad2),
@@ -1599,9 +1599,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma, l_bad0),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad,
-                                           l_bad0),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma_bad, l_bad0),
+      std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma, l_bad1),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_rvec_2, sigma, l_bad2),
@@ -1615,9 +1615,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma, l_bad0),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad,
-                                           l_bad0),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma_bad, l_bad0),
+      std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma, l_bad1),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2, sigma, l_bad2),
@@ -1660,9 +1660,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_rvec_2_bad, sigma, l),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_rvec_2_bad, sigma,
-                                           l),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_rvec_2_bad, sigma, l),
+      std::domain_error);
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2, sigma, l),
                std::domain_error);
@@ -1672,8 +1672,7 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1, x_vec_2_bad, sigma, l),
                std::domain_error);
-  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2_bad, sigma,
-                                           l),
+  EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1_bad, x_rvec_2_bad, sigma, l),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_rvec_1_bad, x_vec_2_bad, sigma, l),
                std::domain_error);
