@@ -92,6 +92,25 @@ class opencl_context {
                     "No OpenCL devices found on the selected platform: ");
       }
       device_ = all_devices[0];
+      context_ = cl::Context(all_devices);
+      command_queue_ = cl::CommandQueue(context_, CL_QUEUE_PROFILING_ENABLE, nullptr);
+
+      const char* dummy_kernel_src
+       = "__kernel void dummy(__global const int* foo) { };";
+      cl::Program::Sources source(
+          1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
+      cl::Program program_ = cl::Program(context_, source);
+
+      try {
+        program_.build(all_devices);
+        cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy", NULL);
+      } catch (const cl::Error &e) {
+        logic_error(
+            "OpenCL Initialization", e.what(), e.err(),
+            "\nRetrieving build log\n",
+            program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device_).c_str());
+      }
+      // device info
       std::ostringstream description_message;
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_workgroup_size_);
@@ -99,29 +118,11 @@ class opencl_context {
       description_message << "Device " << device_name_ <<
       " on the platform " << platform_name_;
       description_ = description_message.str().c_str();
-      context_ = cl::Context(device_);
-      command_queue_ = cl::CommandQueue(context_, CL_QUEUE_PROFILING_ENABLE, nullptr);
 
     } catch (const cl::Error &e) {
       check_ocl_error("build", e);
     }
   }
- //  const char* description_;
- //  size_t max_workgroup_size_;
- //  typedef std::map<const char*, const char*> map_string;
- //  typedef std::map<const char*, cl::Kernel> map_kernel;
- //  typedef std::map<const char*, bool> map_bool;
-
- // public:
- //  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
- //   map_string kernel_groups;
- //   map_string kernel_strings;
- //   map_kernel kernels;
- //   map_bool compiled_kernels;
- //   const char* dummy_kernel;
-
- //   void compile_kernel_group(const char* group);
- //   cl::Kernel get_kernel(const char* name);
 
  public:
   void debug(std::ostream& s) {
@@ -251,132 +252,6 @@ class opencl_context {
 //         "\nRetrieving build log\n",
 //         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
 //   }
-// }
-
-// /**
-//  * Initalizes the global std::map variables that
-//  * hold the OpenCL kernel sources, the groups to
-//  * which each kernel is assigned to and the
-//  * information about which kernel was already compiled.
-//  *
-//  */
-// inline void opencl_context::init_kernel_groups() {
-//   // To identify the kernel group
-//   kernel_groups["transpose"] = "basic_matrix";
-//   kernel_groups["copy"] = "basic_matrix";
-//   kernel_groups["zeros"] = "basic_matrix";
-//   kernel_groups["identity"] = "basic_matrix";
-//   kernel_groups["copy_triangular"] = "basic_matrix";
-//   kernel_groups["copy_triangular_transposed"] = "basic_matrix";
-//   kernel_groups["add"] = "basic_matrix";
-//   kernel_groups["subtract"] = "basic_matrix";
-//   kernel_groups["copy_submatrix"] = "basic_matrix";
-//   kernel_groups["scalar_mul_diagonal"] = "matrix_multiply";
-//   kernel_groups["scalar_mul"] = "matrix_multiply";
-//   kernel_groups["basic_multiply"] = "matrix_multiply";
-//   kernel_groups["multiply_self_transposed"] = "matrix_multiply";
-//   kernel_groups["lower_tri_inv_step1"] = "matrix_inverse";
-//   kernel_groups["lower_tri_inv_step2"] = "matrix_inverse";
-//   kernel_groups["lower_tri_inv_step3"] = "matrix_inverse";
-//   kernel_groups["cholesky_block"] = "cholesky_decomposition";
-//   kernel_groups["check_nan"] = "check_gpu";
-//   kernel_groups["check_symmetric"] = "check_gpu";
-//   kernel_groups["check_diagonal_zeros"] = "check_gpu";
-
-//   kernel_groups["dummy"] = "timing";
-
-//   // Kernel group strings
-//   // the dummy kernel is the only one not included in files
-//   // so it is treated before the loop that iterates
-//   // through  kernels to load all
-
-//   kernel_strings["timing"] = dummy_kernel;
-//   kernel_strings["check_gpu"] =
-//   #include <stan/math/prim/mat/fun/kern_gpu/check_gpu.cl>  // NOLINT
-//       ;                                                  // NOLINT
-//   kernel_strings["cholesky_decomposition"] =
-//   #include <stan/math/prim/mat/fun/kern_gpu/cholesky_decomposition.cl>  // NOLINT
-//       ;                                                               // NOLINT
-//   kernel_strings["matrix_inverse"] =
-//   #include <stan/math/prim/mat/fun/kern_gpu/matrix_inverse.cl>  // NOLINT
-//       ;                                                       // NOLINT
-//   kernel_strings["matrix_multiply"] =
-//   #include <stan/math/prim/mat/fun/kern_gpu/matrix_multiply.cl>  // NOLINT
-//       ;                                                        // NOLINT
-//   kernel_strings["basic_matrix"] =
-//   #include <stan/math/prim/mat/fun/kern_gpu/basic_matrix.cl>  // NOLINT
-//       ;                                                     // NOLINT
-
-//   // Check if the kernels were already compiled
-//   compiled_kernels["basic_matrix"] = false;
-//   compiled_kernels["matrix_multiply"] = false;
-//   compiled_kernels["timing"] = false;
-//   compiled_kernels["matrix_inverse"] = false;
-//   compiled_kernels["cholesky_decomposition"] = false;
-//   compiled_kernels["check_gpu"] = false;
-// }
-
-// /**
-//  * Compiles all the kernela in the specified group
-//  *
-//  * @param group The kernel group name
-//  *
-//  * @throw std::logic_error if there are compilation errors
-//  * when compiling the specified kernel group sources
-//  *
-//  */
-// inline void opencl_context::compile_kernel_group(const char* group) {
-//   cl::Context &ctx = context();
-//   std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
-//   const char* kernel_source = kernel_strings[group];
-//   cl::Program::Sources source(
-//       1, std::make_pair(kernel_source, strlen(kernel_source)));
-//   cl::Program program_ = cl::Program(ctx, source);
-//   try {
-//     char temp[100];
-//     int local = 32;
-//     int gpu_local_max = sqrt(maxWorkgroupSize());
-//     if (gpu_local_max < local)
-//       local = gpu_local_max;
-//     // parameters that have special limits are for now handled here
-//     // kernels with paramters will be compiled separately
-//     // for now we have static parameters, so this will be OK
-//     snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
-//      local, local, local);
-//     program_.build(devices, temp);
-
-//     cl_int err = CL_SUCCESS;
-//     // Iterate over the kernel list
-//     // and get all the kernels from this group
-//     for (auto it : kernel_groups) {
-//       if (strcmp(group, it.second) == 0) {
-//         kernels[(it.first)]
-//             = cl::Kernel(program_, it.first, &err);
-//       }
-//     }
-//   } catch (const cl::Error &e) {
-//     logic_error(
-//         "\n OpenCL Initialization", e.what(), e.err(),
-//         "\nRetrieving build log\n",
-//         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str());
-//   }
-// }
-// /**
-//  * Returns the reference to the compiled kernel.
-//  * If the kernel has not yet been compiled,
-//  * the kernel group is compiled first.
-//  *
-//  * @param name The kernel name
-//  *
-//  * @return a copy of the cl::Kernel object
-//  */
-// inline cl::Kernel opencl_context::get_kernel(const char* name) {
-//   // Compile the kernel group and return the kernel
-//   if (!compiled_kernels[kernel_groups[name]]) {
-//     compile_kernel_group(kernel_groups[name]);
-//     compiled_kernels[kernel_groups[name]] = true;
-//   }
-//   return kernels[name];
 // }
 
 
