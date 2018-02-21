@@ -64,40 +64,13 @@ class opencl_context {
   // - command_queue(): returns the command_queue; it should be one per device
   // - get_kernel(const char* name): returns the appropriate kernel
  private:
+  const char* description_;
+  size_t max_workgroup_size_;
   std::string platform_name_;
   cl::Device device_;
   std::string device_name_;
   cl::Context context_;
   cl::CommandQueue command_queue_;
- //  const char* description_;
- //  size_t max_workgroup_size_;
- //  typedef std::map<const char*, const char*> map_string;
- //  typedef std::map<const char*, cl::Kernel> map_kernel;
- //  typedef std::map<const char*, bool> map_bool;
-
- // public:
- //  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
- //   map_string kernel_groups;
- //   map_string kernel_strings;
- //   map_kernel kernels;
- //   map_bool compiled_kernels;
- //   const char* dummy_kernel;
-
-
- //   void init_kernel_groups();
- //   void init_platforms();
- //   void init_devices();
- //   void init_context_queue();
- //   void init_program();
- //   void compile_kernel_group(const char* group);
- //   cl::Kernel get_kernel(const char* name);
-
- public:
-  void debug(std::ostream& s) {
-    s << "inside opencl_context" << std::endl;
-    s << " - platform_name_: " << platform_name_ << std::endl;
-  }
-
   /**
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
@@ -119,77 +92,89 @@ class opencl_context {
                     "No OpenCL devices found on the selected platform: ");
       }
       device_ = all_devices[0];
+      std::ostringstream description_message;
+      device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
+                              &max_workgroup_size_);
       device_name_ = device_.getInfo<CL_DEVICE_NAME>();
-
+      description_message << "Device " << device_name_ <<
+      " on the platform " << platform_name_;
+      description_ = description_message.str().c_str();
       context_ = cl::Context(device_);
       command_queue_ = cl::CommandQueue(context_, CL_QUEUE_PROFILING_ENABLE, nullptr);
-//   std::ostringstream message;
-//   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
-//   message << "Device " << oclDevice_.getInfo<CL_DEVICE_NAME>() <<
-//    " on the platform " << oclPlatform_.getInfo<CL_PLATFORM_NAME>();
-//   std::string description_ = message.str();
 
     } catch (const cl::Error &e) {
       check_ocl_error("build", e);
     }
   }
- //   opencl_context() {
- //     dummy_kernel =
- //       "__kernel void dummy(__global const int* foo) { };";
- //     try {
- //        init_kernel_groups();
- //        init_platforms();
- //        init_devices();
- //        init_context_queue();
- //        init_program();
- //      } catch (const cl::Error &e) {
- //        check_ocl_error("build", e);
- //      }
- //    }
+ //  const char* description_;
+ //  size_t max_workgroup_size_;
+ //  typedef std::map<const char*, const char*> map_string;
+ //  typedef std::map<const char*, cl::Kernel> map_kernel;
+ //  typedef std::map<const char*, bool> map_bool;
 
- //    /*!
- //      The copy and move constructors and assign operators are
- //      disabled
- //    */
- //    opencl_context(opencl_context const&) = delete;
- //    opencl_context(opencl_context&&) = delete;
- //    opencl_context& operator = (opencl_context const&) = delete;
- //    opencl_context& operator = (opencl_context &&) = delete;
+ // public:
+ //  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
+ //   map_string kernel_groups;
+ //   map_string kernel_strings;
+ //   map_kernel kernels;
+ //   map_bool compiled_kernels;
+ //   const char* dummy_kernel;
 
- //    /**
- //     * Returns the description of the OpenCL
- //     * platform and device that is used.
- //     *
- //     */
- //    inline const char* description() const {
- //        return description_;
- //    }
+ //   void compile_kernel_group(const char* group);
+ //   cl::Kernel get_kernel(const char* name);
 
- //    /**
- //     * Returns the reference to the
- //     * OpenCL context. If no context was created,
- //     * a new context is created.
- //     *
- //     */
- //    inline cl::Context &context() {
- //      return oclContext_;
- //    }
- //    /**
- //     * Returns the reference to the active
- //     * OpenCL command queue. If no context
- //     * and queue were created,
- //     * a new context and queue are created and
- //     * the reference to the new queue is returned.
- //     *
- //     */
- //    inline cl::CommandQueue &queue() {
- //      return oclQueue_;
- //    }
- //    /**
- //     * Returns the maximum workgroup size for the
- //     * device in the context.
- //     */
- //    inline int maxWorkgroupSize() { return max_workgroup_size_; }
+ public:
+  void debug(std::ostream& s) {
+    s << "inside opencl_context" << std::endl;
+    s << " - platform_name_: " << platform_name_ << std::endl;
+  }
+  static opencl_context& getInstance() {
+      static opencl_context instance;
+      return instance;
+  }
+  /*!
+    The copy and move constructors and assign operators are
+    disabled
+  */
+  //opencl_context(opencl_context const&) = delete;
+  //opencl_context(opencl_context&&) = delete;
+  //opencl_context& operator = (opencl_context const&) = delete;
+  //opencl_context& operator = (opencl_context &&) = delete;
+
+  /**
+  * Returns the description of the OpenCL
+  * platform and device that is used.
+  *
+  */
+  inline const char* description() const {
+     return description_;
+  }
+
+  /**
+  * Returns the reference to the
+  * OpenCL context. If no context was created,
+  * a new context is created.
+  *
+  */
+  inline cl::Context &context() {
+   return context_;
+  }
+  /**
+  * Returns the reference to the active
+  * OpenCL command queue. If no context
+  * and queue were created,
+  * a new context and queue are created and
+  * the reference to the new queue is returned.
+  *
+  */
+  inline cl::CommandQueue &queue() {
+   return command_queue_;
+  }
+  /**
+  * Returns the maximum workgroup size for the
+  * device in the context.
+  */
+  inline int maxWorkgroupSize() { return max_workgroup_size_; }
 };
 // /**
 //  * Retrieves the OpenCL platforms on the system and
@@ -394,9 +379,8 @@ class opencl_context {
 //   return kernels[name];
 // }
 
-static opencl_context opencl_context;
 
-
+static opencl_context opencl_context = stan::math::opencl_context::getInstance();
 
 }  // namespace math
 }  // namespace stan
