@@ -86,8 +86,6 @@ class opencl_context {
       cl::Platform platform = cl::Platform::get();
       platform_name_ = platform.getInfo<CL_PLATFORM_NAME>();
 
-      // FIXME(dl): this logic is wrong! I have two devices on my machine. How do we choose
-      //  which device to use?
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
