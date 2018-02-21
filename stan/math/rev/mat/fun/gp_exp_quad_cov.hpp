@@ -250,7 +250,8 @@ template <typename T_x>
 inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1>>::type
-gp_exp_quad_cov(const std::vector<T_x> &x, double sigma, const var &l) {
+gp_exp_quad_cov(const std::vector<T_x> &x, double sigma,
+                const var &length_scale) {
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   check_positive("gp_exp_quad_cov", "length-scale", length_scale);
   size_t x_size = x.size();
