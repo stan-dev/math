@@ -11,16 +11,13 @@
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
-
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
-
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix                */
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver          */
 #include <sunmatrix/sunmatrix_band.h> /* access to band SUNMatrix                 */
 #include <sunlinsol/sunlinsol_band.h> /* access to band SUNLinearSolver           */
 #include <cvodes/cvodes_direct.h>     /* access to CVDls interface            */
-
 #include <algorithm>
 #include <ostream>
 #include <vector>
@@ -116,9 +113,16 @@ class cvodes_integrator {
     check_nonzero_size(fun, "initial state", y0);
     check_ordered(fun, "times", ts);
     check_less(fun, "initial time", t0, ts[0]);
-    check_positive(fun, "relative tolerance", relative_tolerance);
-    check_positive(fun, "absolute tolerance", absolute_tolerance);
-    check_positive(fun, "maximum number of steps", max_num_steps);
+    if (relative_tolerance <= 0)
+      invalid_argument("integrate_ode_cvodes", "relative_tolerance,",
+                       relative_tolerance, "", ", must be greater than 0");
+    if (absolute_tolerance <= 0)
+      invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
+                       absolute_tolerance, "", ", must be greater than 0");
+    if (max_num_steps <= 0)
+      invalid_argument(
+                   "integrate_ode_cvodes", "max_num_steps,", max_num_steps, "",
+                   ", must be greater than 0");
 
     const size_t N = y0.size();
     const size_t M = theta.size();
@@ -154,8 +158,6 @@ class cvodes_integrator {
 
       // for the stiff solvers we need to reserve additional
       // memory and provide a Jacobian function call
-      // cvodes_check_flag(CVDense(cvodes_mem, N), "CVDense");
-
       // new API since 3.0.0: create matrix object and linear solver object
       SUNMatrix A{SUNDenseMatrix(N, N)};
       SUNLinearSolver LS{SUNDenseLinearSolver(cvodes_state, A)};
@@ -202,10 +204,8 @@ class cvodes_integrator {
         }
         t_init = t_final;
       }
-
       SUNLinSolFree(LS);
       SUNMatDestroy(A);
-
     } catch (const std::exception& e) {
       free_cvodes_memory(cvodes_state, cvodes_state_sens, cvodes_mem, S);
       throw;
