@@ -49,27 +49,6 @@ inline double dot_product(const std::vector<double> &v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return dot_product(&v1[0], &v2[0], v1.size());
 }
-/**
- * Returns the dot product of the specificied vector of elements
- * @param x1 First vector
- * @param x2 Second vector
- * @param length size of vectors
- * Assumes vectors are the same size
- */
-template <typename T_1, typename T_2>
-inline typename stan::return_type<T_1, T_2>::type dot_product(
-    const std::vector<T_1> &x1, const std::vector<T_2> &x2, size_t length) {
-  T_1 result = 0;
-  for (size_t i = 0; i < length; ++i) {
-    result += x1[i] * x2[i];
-  }
-  return result;
-}
-template <typename T_1, typename T_2>
-inline typename stan::return_type<T_1, T_2>::type dot_product(const T_1 &x1,
-                                                              const T_2 &x2) {
-  return x1 * x2;
-}
 }  // namespace math
 }  // namespace stan
 #endif
