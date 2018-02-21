@@ -12,6 +12,9 @@
 #include <vector>
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
+#ifndef OPENCL_DEVICE
+#define OPENCL_DEVICE 0
+#endif
 
 /**
  *  @file stan/math/gpu/opencl_context.hpp
@@ -91,16 +94,17 @@ class opencl_context {
         logic_error("OpenCL Initialization", "[Device]", platform_name_,
                     "No OpenCL devices found on the selected platform: ");
       }
-      device_ = all_devices[0];
+      device_ = all_devices[OPENCL_DEVICE];
       context_ = cl::Context(all_devices);
-      command_queue_ = cl::CommandQueue(context_, CL_QUEUE_PROFILING_ENABLE, nullptr);
+      command_queue_ = cl::CommandQueue(context_, device_,
+         CL_QUEUE_PROFILING_ENABLE, nullptr);
 
       const char* dummy_kernel_src
        = "__kernel void dummy(__global const int* foo) { };";
       cl::Program::Sources source(
           1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
       cl::Program program_ = cl::Program(context_, source);
-
+      // build dummy kernel
       try {
         program_.build(all_devices);
         cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy", NULL);
@@ -177,82 +181,6 @@ class opencl_context {
   */
   inline int maxWorkgroupSize() { return max_workgroup_size_; }
 };
-// /**
-//  * Retrieves the OpenCL platforms on the system and
-//  * assigns the first platform as the target platform
-//  *
-//  * @throw std::logic_error if no OpenCL platforms are found
-//  */
-// inline void opencl_context::init_platforms() {
-//   cl::Platform::get(&allPlatforms);
-//   if (allPlatforms.size() == 0) {
-//     logic_error("OpenCL Initialization", "[Platform]", "",
-//                  "No OpenCL platforms found");
-//   }
-//   oclPlatform_ = allPlatforms[0];
-// }
-
-// /**
-//  * Retrieves the devices from the platform.
-//  * and assigns the first found device
-//  * as the target device.
-//  *
-//  * @throw std::logic_error if no OpenCL supported devices
-//  * are found on the target platform
-//  */
-// inline void opencl_context::init_devices() {
-//   oclPlatform_.getDevices(DEVICE_FILTER, &allDevices);
-//   // TODO(Steve): This should throw which platform
-//   if (allDevices.size() == 0) {
-//     logic_error("OpenCL Initialization", "[Device]", "",
-//                  "No OpenCL devices found on the selected platform.");
-//   }
-//   oclDevice_ = allDevices[0];
-// }
-// /**
-//  * Initializes the OpenCL context and queue.
-//  * This function also retrieves the information
-//  * on the description and the maximum workgroup size
-//  * of the device.
-//  *
-//  */
-// inline void opencl_context::init_context_queue() {
-//   std::ostringstream message;
-//   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
-//   message << "Device " << oclDevice_.getInfo<CL_DEVICE_NAME>() <<
-//    " on the platform " << oclPlatform_.getInfo<CL_PLATFORM_NAME>();
-//   std::string description_ = message.str();
-//   allDevices[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-//                                 &max_workgroup_size_);
-//   oclContext_ = cl::Context(allDevices);
-//   oclQueue_ = cl::CommandQueue(oclContext_, oclDevice_,
-//                                CL_QUEUE_PROFILING_ENABLE, NULL);
-// }
-
-// /**
-//  * Compiles the dummy kernel that is used for
-//  * profiling purposes.
-//  *
-//  * @throw std::logic_error if the dummy kernel has errors
-//  *
-//  */
-// inline void opencl_context::init_program() {
-//   // Compile the dummy kernel used for timing purposes
-//   cl::Program::Sources source(
-//       1, std::make_pair(dummy_kernel, strlen(dummy_kernel)));
-//   cl::Program program_ = cl::Program(oclContext_, source);
-
-//   try {
-//     program_.build(allDevices);
-//     kernels["dummy"] = cl::Kernel(program_, "dummy", NULL);
-//     compiled_kernels["timing"] = true;
-//   } catch (const cl::Error &e) {
-//     logic_error(
-//         "OpenCL Initialization", e.what(), e.err(),
-//         "\nRetrieving build log\n",
-//         program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(allDevices[0]).c_str());
-//   }
-// }
 
 
 static opencl_context opencl_context = stan::math::opencl_context::getInstance();
