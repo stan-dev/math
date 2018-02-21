@@ -54,6 +54,7 @@
 #include <stan/math/rev/mat/fun/variance.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
+#include <stan/math/rev/mat/functor/integrate_1d_tsc.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/ode_system.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
