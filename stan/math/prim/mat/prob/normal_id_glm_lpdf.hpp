@@ -98,10 +98,9 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
       beta_dbl[m] = value_of(beta_vec[m]);
     }
   }
-  Matrix<T_partials_return, Dynamic, Dynamic> x_dbl = value_of(x);
 
   Array<T_partials_return, Dynamic, 1> mu_dbl
-      = (x_dbl * beta_dbl
+      = (value_of(x) * beta_dbl
          + Matrix<double, Dynamic, 1>::Ones(N, 1) * value_of(alpha))
             .array();
   Array<T_partials_return, Dynamic, 1> n_minus_mu_over_sigma
@@ -133,7 +132,7 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
     }
     if (!is_constant_struct<T_beta>::value) {
       assign_to_matrix_or_broadcast_array(ops_partials.edge3_.partials_,
-                                          x_dbl.transpose() * mu_derivative);
+                                          value_of(x).transpose() * mu_derivative);
     }
     if (!is_constant_struct<T_alpha>::value) {
       ops_partials.edge4_.partials_[0] = mu_derivative.sum();
