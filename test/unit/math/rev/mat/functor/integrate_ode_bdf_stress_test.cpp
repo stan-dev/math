@@ -27,7 +27,7 @@ TEST(StanOde_tooMuchWork_test, cvodes_coupled_mm) {
 
   std::vector<int> data_int;
 
-  for(std::size_t i = 0; i < 1000; i++) {
+  for (std::size_t i = 0; i < 1000; i++) {
     stan::math::start_nested();
 
     std::vector<stan::math::var> theta_v(4);
@@ -41,11 +41,12 @@ TEST(StanOde_tooMuchWork_test, cvodes_coupled_mm) {
     y0_v[0] = stan::math::lognormal_rng(5, 2, rng);
     y0_v[1] = stan::math::lognormal_rng(-1, 2, rng);
 
-    std::vector<std::vector<stan::math::var> > res = stan::math::integrate_ode_bdf(f_, y0_v, t0, ts_long, theta_v, data,
-                                     data_int, 0, 1E-10, 1E-10, 10000);
+    std::vector<std::vector<stan::math::var> > res
+        = stan::math::integrate_ode_bdf(f_, y0_v, t0, ts_long, theta_v, data,
+                                        data_int, 0, 1E-10, 1E-10, 10000);
 
     stan::math::grad(res[0][0].vi_);
-    
+
     stan::math::recover_memory_nested();
- }
+  }
 }
