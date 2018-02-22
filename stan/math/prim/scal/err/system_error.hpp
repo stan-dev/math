@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <sstream>
 #include <stdexcept>
-
+#include <system_error>
 namespace stan {
 namespace math {
 
@@ -17,22 +17,19 @@ namespace math {
  *
  * The message is: "<function>: <name> <msg1><y><msg2>"
  *
- * @tparam T Type of variable.
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.
- * @param[in] y Variable.
+ * @param[in] y Error code.
  * @param[in] msg1 Message to print before the variable.
  * @param[in] msg2 Message to print after the variable.
  * @throw std::system_error Always.
  */
-template <typename T>
-inline void system_error(const char* function, const char* name, const T& y,
+inline void system_error(const char* function, const char* name, const int& y,
                          const char* msg1, const char* msg2) {
   std::ostringstream message;
   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
-  const T* y_ptr = &y;
-  message << function << ": " << name << " " << msg1 << (*y_ptr) << msg2;
-  throw std::system_error(message.str());
+  message << function << ": " << name << " " << msg1 << msg2;
+  throw std::system_error(y, std::generic_category(), message.str());
 }
 
 /**
@@ -44,15 +41,13 @@ inline void system_error(const char* function, const char* name, const T& y,
  *
  * The message is: * "<function>: <name> <msg1><y>"
  *
- * @tparam T Type of variable.
  * @param[in] function Name of the function.
  * @param[in] name Name of the variable.
- * @param[in] y Variable.
+ * @param[in] y Error code.
  * @param[in] msg1 Message to print before the variable.
  * @throw std::system_error Always.
  */
-template <typename T>
-inline void system_error(const char* function, const char* name, const T& y,
+inline void system_error(const char* function, const char* name, const int& y,
                          const char* msg1) {
   system_error(function, name, y, msg1, "");
 }

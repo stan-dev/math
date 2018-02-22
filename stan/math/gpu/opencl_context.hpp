@@ -5,11 +5,13 @@
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/logic_error.hpp>
+#include <stan/math/prim/scal/err/system_error.hpp>
 #include <CL/cl.hpp>
 #include <cmath>
 #include <fstream>
 #include <map>
 #include <vector>
+#include <system_error>
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE
@@ -83,9 +85,10 @@ class opencl_context {
    */
   opencl_context() {
     try {
+      // platform
       cl::Platform platform = cl::Platform::get();
       platform_name_ = platform.getInfo<CL_PLATFORM_NAME>();
-
+      // device setup
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
@@ -93,21 +96,21 @@ class opencl_context {
                     "No OpenCL devices found on the selected platform: ");
       }
       device_ = all_devices[OPENCL_DEVICE];
+      // context and queue
       context_ = cl::Context(all_devices);
       command_queue_ = cl::CommandQueue(context_, device_,
          CL_QUEUE_PROFILING_ENABLE, nullptr);
-
+     // build dummy kernel
       const char* dummy_kernel_src
        = "__kernel void dummy(__global const int* foo) { };";
       cl::Program::Sources source(
           1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
       cl::Program program_ = cl::Program(context_, source);
-      // build dummy kernel
       try {
         program_.build(all_devices);
         cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy", NULL);
       } catch (const cl::Error &e) {
-        logic_error(
+        system_error(
             "OpenCL Initialization", e.what(), e.err(),
             "\nRetrieving build log\n",
             program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device_).c_str());
