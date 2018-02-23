@@ -112,11 +112,11 @@ class cvodes_integrator {
     if (cvodes_mem == NULL)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
-    const size_t size
-        = cvodes_data.coupled_ode_.size();  // size of the coupled system
+    const size_t coupled_size
+        = cvodes_data.coupled_ode_.size();
 
     std::vector<std::vector<double> > y_coupled(ts.size(),
-                                                std::vector<double>(size, 0));
+                                                std::vector<double>(coupled_size, 0));
 
     try {
       cvodes_check_flag(

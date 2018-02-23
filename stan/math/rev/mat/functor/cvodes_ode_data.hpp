@@ -31,7 +31,6 @@ class cvodes_ode_data {
   const std::vector<double> theta_dbl_;
   const size_t N_;
   const size_t M_;
-  const size_t param_var_ind_;
   const std::vector<double>& x_;
   const std::vector<int>& x_int_;
   std::ostream* msgs_;
@@ -71,7 +70,6 @@ class cvodes_ode_data {
         theta_dbl_(value_of(theta)),
         N_(y0.size()),
         M_(theta.size()),
-        param_var_ind_(initial_var::value ? N_ : 0),
         x_(x),
         x_int_(x_int),
         msgs_(msgs),
@@ -130,12 +128,14 @@ class cvodes_ode_data {
   // varying states evaluated at the state y.
   inline int dense_jacobian(const double* y, DlsMat J, double t) const {
     const std::vector<double> y_vec(y, y + N_);
+    start_nested();
     std::vector<var> y_vec_var(y_vec.begin(), y_vec.end());
     coupled_ode_system<F, var, double> ode_jacobian(f_, y_vec_var, theta_dbl_,
                                                     x_, x_int_, msgs_);
     std::vector<double> ode_jacobian_y(ode_jacobian.size(), 0);
     ode_jacobian(ode_jacobian.initial_state(), ode_jacobian_y, t);
     std::copy(ode_jacobian_y.begin() + N_, ode_jacobian_y.end(), J->data);
+    recover_memory_nested();
     return 0;
   }
 
