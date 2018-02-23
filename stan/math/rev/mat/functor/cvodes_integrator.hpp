@@ -13,11 +13,11 @@
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix                */
-#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver          */
-#include <sunmatrix/sunmatrix_band.h> /* access to band SUNMatrix                 */
-#include <sunlinsol/sunlinsol_band.h> /* access to band SUNLinearSolver           */
-#include <cvodes/cvodes_direct.h>     /* access to CVDls interface            */
+#include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
+#include <sunmatrix/sunmatrix_band.h>
+#include <sunlinsol/sunlinsol_band.h>
+#include <cvodes/cvodes_direct.h>
 #include <algorithm>
 #include <ostream>
 #include <vector>
