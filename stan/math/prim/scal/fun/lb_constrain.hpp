@@ -23,13 +23,13 @@ namespace math {
  * reduces to <code>identity_constrain(x)</code>.
  *
  * @tparam T type of scalar
- * @tparam TL type of lower bound
+ * @tparam L type of lower bound
  * @param[in] x Unconstrained scalar input
  * @param[in] lb lower bound on constrained ouptut
  * @return lower bound constrained value correspdonding to inputs
  */
-template <typename T, typename TL>
-inline T lb_constrain(const T& x, const TL& lb) {
+template <typename T, typename L>
+inline T lb_constrain(const T& x, const L& lb) {
   using std::exp;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_constrain(x);
@@ -46,15 +46,15 @@ inline T lb_constrain(const T& x, const TL& lb) {
  * reduces to <code>identity_constraint(x, lp)</code>.
  *
  * @tparam T type of scalar.
- * @tparam TL type of lower bound.
+ * @tparam L type of lower bound.
  * @param[in] x unconstrained scalar input
  * @param[in] lb lower bound on output
  * @param[in,out] lp Reference to log probability to increment.
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename TL>
-inline typename boost::math::tools::promote_args<T, TL>::type lb_constrain(
-    const T& x, const TL& lb, T& lp) {
+template <typename T, typename L>
+inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
+    const T& x, const L& lb, T& lp) {
   using std::exp;
   if (lb == -std::numeric_limits<double>::infinity())
     return identity_constrain(x, lp);

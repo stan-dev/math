@@ -1,7 +1,6 @@
 #include <stan/math/fwd/mat.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::fvar;
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_fd_lower) {
   using stan::math::matrix_fd;
   using stan::math::mdivide_right_tri;
@@ -81,6 +80,7 @@ TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_matrix_d_lower) {
   EXPECT_FLOAT_EQ(-0.7986111, I(1, 0).d_);
   EXPECT_FLOAT_EQ(-0.4375, I(1, 1).d_);
 }
+
 TEST(AgradFwdMatrixMdivideRightTri, matrix_fd_row_vector_d_lower) {
   using stan::math::matrix_fd;
   using stan::math::mdivide_right_tri;
