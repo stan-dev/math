@@ -2,19 +2,22 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_DOT_PROD_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
+
 #include <stan/math/rev/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
+//#include <stan/math/prim/mat/fun/multiply.hpp>
+
+#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <vector>
 
 namespace stan {
@@ -58,73 +61,16 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
     return cov;
 
   T_sigma sigma_sq = square(sigma);
-
-  std::cout << "before if statement\n";
-  if (is_constant<T_x>::value) {
-    std::cout << "is constant\n";
-  } else {
-    std::cout << "not constant\n";
-  }
-
-  //  VectorBuilder<true> x_vec(length(x));
   
-  
-  std::cout << "this is x:\n";
-  std::cout << x[0] << "\n";
-  std::cout << "end x\n";
-  std::cout << "x size\n";
-  std::cout << x_size << "\n";
-  std::cout << "end x size\n";
-  
-  //  VectorBuilder<true> x_vec1(length(x[0]));
-  //  VectorBuilder<true> x_vec2(length(x[0]));
-  
-  if (!is_constant<T_x>::value) {
-
-  }
-    for (int i = 0; i < (x_size - 1); ++i) {
-      cov(i, i) = sigma_sq + dot_product(x[i], x[i]);
-      for (int j = i + 1; j < x_size; ++j) {
-        cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
-        cov(j, i) = cov(i, j);
-      }
+  for (int i = 0; i < (x_size - 1); ++i) {
+    cov(i, i) = sigma_sq + dot_product(x[i], x[i]);
+    for (int j = i + 1; j < x_size; ++j) {
+      cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
+      cov(j, i) = cov(i, j);
     }
-    cov(x_size - 1, x_size - 1) =
-      sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);
-
-    Eigen::MatrixXd A;
-    // double temp;
-    //    sigma_sq + multiply(x[0], x[0]);
-    //    multiply(x[0], x[0]);
-
-    // std::cout << A.rows() << "\n";
-    // std::cout << A.cols() << "\n";
-    
-    
-    // using multiply
-    // for (int i = 0; i < (x_size - 1); ++i) {
-    //   cov(i, i) = sigma_sq + value_of(multiply(x[i], x[i]));
-    //   for (int j = i + 1; j < x_size; ++j) {
-    //     cov(i, j) = sigma_sq + value_of(multiply(x[i], x[j]));
-    //     cov(j, i) = cov(i, j);
-    //   }
-    // }
-    // cov(x_size - 1, x_size - 1) =
-    //   sigma_sq + value_of(multiply(x[x_size - 1], x[x_size - 1]));
-
-    
-  // } 
-  // if (is_constant<T_x>::value) {
-  //   for (int i = 0; i< (x_size - 1); ++i) {
-  //     cov(i, i) = sigma_sq + x[i] * x[i];
-  //     for (int j = i + 1; j < x_size; ++j) {
-  //       cov(i, j) = sigma_sq + x[i] * x[j];
-  //       cov(j, i) = cov(i, j);
-  //     }
-  //   }
-  //   cov(x_size - 1, x_size - 1) =
-  //     sigma_sq + x[x_size - 1] * x[x_size - 1];
-  // }
+  }
+  cov(x_size - 1, x_size - 1) =
+      sigma_sq + dot_product(x[x_size - 1], x[x_size - 1]);  
   return cov;
 }
 
@@ -137,7 +83,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
- * @param sigma 
+ * @param sigma
  * @return dot product kernel
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
