@@ -70,9 +70,9 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
   check_finite("integrate_1d_tsc", "upper limit", b);
   // no normalizing case required
   if (is_constant_struct<T_param>::value)
-    return de_integrator(std::bind<double>(f, _1, value_of(param),
-                                           x_r, x_i, std::ref(msgs)),
-                         a, b, tre, tae);
+    return de_integrator(
+        std::bind<double>(f, _1, value_of(param), x_r, x_i, std::ref(msgs)), a,
+        b, tre, tae);
   // requires normalization
   size_t N = length(param);
   std::vector<double> grad(N);
@@ -83,8 +83,8 @@ inline typename scalar_type<T_param>::type integrate_1d_tscg(
                           static_cast<int>(n + 1), std::ref(msgs)),
         a, b, tre, tae);
   double val_ = de_integrator(
-      std::bind<double>(f, _1, value_of_param, x_r, x_i, std::ref(msgs)), a,
-      b, tre, tae);
+      std::bind<double>(f, _1, value_of_param, x_r, x_i, std::ref(msgs)), a, b,
+      tre, tae);
   operands_and_partials<T_param> ops_partials(param);
   for (size_t n = 0; n < N; n++)
     ops_partials.edge1_.partials_[n] += grad[n];
