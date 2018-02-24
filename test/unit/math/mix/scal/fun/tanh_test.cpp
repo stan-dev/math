@@ -26,8 +26,8 @@ TEST_F(AgradFwdTanh, FvarVar_1stDeriv) {
 TEST_F(AgradFwdTanh, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::tanh;
   using std::cosh;
+  using std::tanh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = tanh(x);
@@ -78,8 +78,8 @@ TEST_F(AgradFwdTanh, FvarFvarVar_1stDeriv) {
 TEST_F(AgradFwdTanh, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::tanh;
   using std::cosh;
+  using std::tanh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -107,8 +107,8 @@ TEST_F(AgradFwdTanh, FvarFvarVar_2ndDeriv) {
 TEST_F(AgradFwdTanh, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::tanh;
   using std::cosh;
+  using std::tanh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;

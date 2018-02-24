@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixAppendCol, fd) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_fd;
-  using Eigen::MatrixXd;
 
   matrix_fd a(2, 2);
   MatrixXd ad(2, 2);
@@ -34,9 +34,9 @@ TEST(AgradFwdMatrixAppendCol, fd) {
 }
 
 TEST(AgradFwdRowVectorAppendCol, fd) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_fd;
-  using Eigen::RowVectorXd;
 
   row_vector_fd a(4);
   RowVectorXd ad(4);
@@ -64,9 +64,9 @@ TEST(AgradFwdRowVectorAppendCol, fd) {
 }
 
 TEST(AgradFwdMatrixAppendCol, ffd) {
+  using Eigen::MatrixXd;
   using stan::math::append_col;
   using stan::math::matrix_ffd;
-  using Eigen::MatrixXd;
 
   matrix_ffd a(2, 2);
   MatrixXd ad(2, 2);
@@ -96,9 +96,9 @@ TEST(AgradFwdMatrixAppendCol, ffd) {
 }
 
 TEST(AgradFwdRowVectorAppendCol, ffd) {
+  using Eigen::RowVectorXd;
   using stan::math::append_col;
   using stan::math::row_vector_ffd;
-  using Eigen::RowVectorXd;
 
   row_vector_ffd a(4);
   RowVectorXd ad(4);

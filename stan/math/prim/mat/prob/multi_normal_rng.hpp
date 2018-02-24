@@ -33,8 +33,8 @@ namespace math {
 template <class RNG>
 inline Eigen::VectorXd multi_normal_rng(const Eigen::VectorXd& mu,
                                         const Eigen::MatrixXd& S, RNG& rng) {
-  using boost::variate_generator;
   using boost::normal_distribution;
+  using boost::variate_generator;
 
   static const char* function = "multi_normal_rng";
 

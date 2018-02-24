@@ -12,8 +12,9 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Return a pseudorandom Cauchy variate for the given location and scale
+ * Return a Cauchy random variate for the given location and scale
  * using the specified random number generator.
  *
  * mu and sigma can each be a scalar or a vector. Any non-scalar
@@ -25,16 +26,16 @@ namespace math {
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) scale parameter(s)
  * @param rng random number generator
- * @return Cauchy random variate
+ * @return (Sequence of) Cauchy random variate(s)
  * @throw std::domain_error if mu is infinite or sigma is nonpositive
- * @throw std::invalid_argument if non-scalars arguments are of different
- * lengths
+ * @throw std::invalid_argument if non-scalar arguments are of different
+ * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::cauchy_distribution;
+  using boost::variate_generator;
   static const char* function = "cauchy_rng";
 
   check_finite(function, "Location parameter", mu);
@@ -55,6 +56,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
 
   return output.data();
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

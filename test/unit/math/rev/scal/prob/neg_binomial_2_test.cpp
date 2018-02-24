@@ -4,8 +4,8 @@
 
 TEST(ProbDistributionsNegBinomial, derivatives) {
   using stan::math::is_nan;
-  using stan::math::var;
   using stan::math::neg_binomial_2_log;
+  using stan::math::var;
 
   int N = 100;
   double mu_dbl = 8;

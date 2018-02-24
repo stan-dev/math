@@ -21,8 +21,8 @@ struct sum_functor {
 };
 
 TEST(AgradFiniteDiff, gradient) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   third_order_mixed f;
   norm_functor norm;
@@ -57,8 +57,8 @@ TEST(AgradFiniteDiff, gradient) {
 }
 
 TEST(AgradFiniteDiff, hessian) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   third_order_mixed f;
   norm_functor norm;
   Matrix<double, Dynamic, 1> f_vec(3);
@@ -110,8 +110,8 @@ TEST(AgradFiniteDiff, hessian) {
 }
 
 TEST(AgradFiniteDiff, grad_hessian) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   norm_functor norm;
   third_order_mixed f;
   Matrix<double, Dynamic, 1> norm_vec(3);
@@ -172,8 +172,8 @@ TEST(AgradFiniteDiff, grad_hessian) {
 }
 
 TEST(AgradFiniteDiff, gradientZeroOneArg) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::sum;
 
   sum_functor sum_f;
@@ -207,8 +207,8 @@ TEST(AgradFiniteDiff, gradientZeroOneArg) {
 }
 
 TEST(AgradFiniteDiff, hessianZeroOneArg) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::sum;
 
   sum_functor sum_f;

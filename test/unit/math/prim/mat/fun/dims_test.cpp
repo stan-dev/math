@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(MathMatrix, dims) {
-  using std::vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dims;
+  using std::vector;
 
   double x1;
   vector<int> dims1 = dims(x1);

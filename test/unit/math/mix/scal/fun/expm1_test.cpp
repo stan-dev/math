@@ -5,9 +5,9 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdExpm1, FvarVar_1stDeriv) {
+  using boost::math::expm1;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::expm1;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -23,9 +23,9 @@ TEST(AgradFwdExpm1, FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdExpm1, FvarVar_2ndDeriv) {
+  using boost::math::expm1;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::expm1;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -38,9 +38,9 @@ TEST(AgradFwdExpm1, FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdExpm1, FvarFvarVar_1stDeriv) {
+  using boost::math::expm1;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::expm1;
   using std::exp;
 
   fvar<fvar<var> > x;
@@ -76,9 +76,9 @@ TEST(AgradFwdExpm1, FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdExpm1, FvarFvarVar_2ndDeriv) {
+  using boost::math::expm1;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::expm1;
   using std::exp;
 
   fvar<fvar<var> > x;

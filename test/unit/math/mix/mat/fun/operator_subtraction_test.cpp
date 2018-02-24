@@ -4,8 +4,8 @@
 
 using stan::math::fvar;
 TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_fv;
+  using stan::math::subtract;
 
   matrix_fv v(2, 2);
   v << 1, 2, 3, 4;
@@ -45,8 +45,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_2ndDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_fv;
+  using stan::math::subtract;
 
   matrix_fv v(2, 2);
   v << 1, 2, 3, 4;
@@ -128,8 +128,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_rowvector_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_fv;
+  using stan::math::subtract;
 
   row_vector_fv v(4);
   v << 1, 2, 3, 4;
@@ -168,8 +168,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_rowvector_2ndDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_fv;
+  using stan::math::subtract;
 
   row_vector_fv v(4);
   v << 1, 2, 3, 4;
@@ -319,9 +319,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_vector_vector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -399,9 +399,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_2ndDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -435,9 +435,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_exception) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::subtract;
 
   row_vector_d d1(5), d2(2);
   row_vector_fv v1(5), v2(2);
@@ -449,9 +449,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_fv output;
@@ -521,9 +521,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_2ndDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_fv output;
@@ -557,9 +557,9 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_exception) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::subtract;
 
   matrix_d d1(2, 2), d2(1, 2);
   matrix_fv v1(2, 2), v2(1, 2);
@@ -570,8 +570,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_ffv v(2, 2);
   v << 1, 2, 3, 4;
@@ -611,8 +611,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_1) {
-  using stan::math::subtract;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_ffv v(2, 2);
   v << 1, 2, 3, 4;
@@ -633,8 +633,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_2) {
-  using stan::math::subtract;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_ffv v(2, 2);
   v << 1, 2, 3, 4;
@@ -655,8 +655,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_3rdDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_ffv v(2, 2);
   v << 1, 2, 3, 4;
@@ -792,8 +792,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_ffv v(4);
   v << 1, 2, 3, 4;
@@ -833,8 +833,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_1) {
-  using stan::math::subtract;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_ffv v(4);
   v << 1, 2, 3, 4;
@@ -855,8 +855,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_2) {
-  using stan::math::subtract;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_ffv v(4);
   v << 1, 2, 3, 4;
@@ -877,8 +877,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_3rdDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_ffv v(4);
   v << 1, 2, 3, 4;
@@ -1115,9 +1115,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_vector_vector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -1195,9 +1195,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_1) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -1231,9 +1231,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_2) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -1267,9 +1267,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_3rdDeriv) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_d expected_output(5);
   row_vector_d output_d;
@@ -1313,9 +1313,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_exception) {
-  using stan::math::subtract;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::subtract;
 
   row_vector_d d1(5), d2(2);
   row_vector_ffv v1(5), v2(2);
@@ -1327,9 +1327,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_exception) {
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_1stDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_ffv output;
@@ -1399,9 +1399,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_1) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_ffv output;
@@ -1435,9 +1435,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_2) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_ffv output;
@@ -1471,9 +1471,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_3rdDeriv) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_d expected_output(2, 2);
   matrix_ffv output;
@@ -1515,9 +1515,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_exception) {
-  using stan::math::subtract;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::subtract;
 
   matrix_d d1(2, 2), d2(1, 2);
   matrix_ffv v1(2, 2), v2(1, 2);

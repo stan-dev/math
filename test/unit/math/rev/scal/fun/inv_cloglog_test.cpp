@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev, inv_cloglog) {
-  using std::exp;
   using stan::math::exp;
+  using std::exp;
   AVAR a = 2.7;
   AVAR f = inv_cloglog(a);
   EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(2.7)), f.val());

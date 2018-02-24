@@ -3,8 +3,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::var;
 using stan::math::check_nonnegative;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
@@ -35,9 +35,9 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
+  using stan::math::check_nonnegative;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_nonnegative;
 
   int N = 5;
   const char* function = "check_nonnegative";

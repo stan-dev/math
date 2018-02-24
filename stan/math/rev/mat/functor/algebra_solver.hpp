@@ -24,7 +24,7 @@ namespace math {
  * function theorem. The call to Jacobian() occurs outside the call to
  * chain() -- this prevents malloc issues.
  */
-template <typename FS, typename F, typename T, typename FX>
+template <typename Fs, typename F, typename T, typename Fx>
 struct algebra_solver_vari : public vari {
   /** vector of parameters */
   vari** y_;
@@ -37,11 +37,11 @@ struct algebra_solver_vari : public vari {
   /** Jacobian of the solution w.r.t parameters */
   double* Jx_y_;
 
-  algebra_solver_vari(const FS& fs, const F& f, const Eigen::VectorXd& x,
+  algebra_solver_vari(const Fs& fs, const F& f, const Eigen::VectorXd& x,
                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                       const std::vector<double>& dat,
                       const std::vector<int>& dat_int,
-                      const Eigen::VectorXd& theta_dbl, FX& fx,
+                      const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
       : vari(theta_dbl(0)),
         y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
@@ -50,8 +50,8 @@ struct algebra_solver_vari : public vari {
         theta_(ChainableStack::memalloc_.alloc_array<vari*>(x_size_)),
         Jx_y_(
             ChainableStack::memalloc_.alloc_array<double>(x_size_ * y_size_)) {
-    using Eigen::MatrixXd;
     using Eigen::Map;
+    using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i)
       y_[i] = y(i).vi_;
 
@@ -61,7 +61,7 @@ struct algebra_solver_vari : public vari {
 
     // Compute the Jacobian and store in array, using the
     // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    typedef hybrj_functor_solver<FS, F, double, double> f_y;
+    typedef hybrj_functor_solver<Fs, F, double, double> f_y;
     Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
         = -mdivide_left(fx.get_jacobian(theta_dbl),
                         f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
@@ -149,10 +149,10 @@ Eigen::VectorXd algebra_solver(
                      ", must be greater than 0");
 
   // Create functor for algebraic system
-  typedef system_functor<F, double, double, true> FS;
-  typedef hybrj_functor_solver<FS, F, double, double> FX;
-  FX fx(FS(), f, value_of(x), y, dat, dat_int, msgs);
-  Eigen::HybridNonLinearSolver<FX> solver(fx);
+  typedef system_functor<F, double, double, true> Fs;
+  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
+  Eigen::HybridNonLinearSolver<Fx> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
@@ -233,29 +233,28 @@ Eigen::VectorXd algebra_solver(
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
-    const F& f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = 0, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   Eigen::VectorXd theta_dbl
-      = algebra_solver(f, x, value_of(y), dat, dat_int, 0,
-                       relative_tolerance, function_tolerance, max_num_steps);
+      = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
+                       function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> FY;
+  typedef system_functor<F, double, double, false> Fy;
 
   // TODO(charlesm93): a similar object gets constructed inside
   // the call to algebra_solver. Cache the previous result
   // and use it here (if possible).
-  typedef system_functor<F, double, double, true> FS;
-  typedef hybrj_functor_solver<FS, F, double, double> FX;
-  FX fx(FS(), f, value_of(x), value_of(y), dat, dat_int, msgs);
+  typedef system_functor<F, double, double, true> Fs;
+  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<FY, F, T2, FX>* vi0
-      = new algebra_solver_vari<FY, F, T2, FX>(FY(), f, value_of(x), y, dat,
+  algebra_solver_vari<Fy, F, T2, Fx>* vi0
+      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
                                                dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);

@@ -4,8 +4,8 @@
 
 TEST(AgradFwdCos, Fvar) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<double> x(0.5, 1.0);
 
@@ -40,8 +40,8 @@ TEST(AgradFwdCos, Fvar) {
 
 TEST(AgradFwdCos, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;

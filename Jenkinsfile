@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 @Library('StanUtils')
 import org.stan.Utils
 
@@ -23,45 +24,23 @@ def mailBuildResults(String label, additionalEmails='') {
 }
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} || echo ${testPath} failed"
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
+    finally { junit 'test/**/*.xml' }
 }
 
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
-def updateUpstream(String upstreamRepo) {
-    if (isBranch('develop')) {
-        node('master') {
-            retry(3) {
-                checkout([$class: 'GitSCM',
-                        branches: [[name: '*/develop']],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'SubmoduleOption',
-                                    disableSubmodules: false,
-                                    parentCredentials: false,
-                                    recursiveSubmodules: true,
-                                    reference: '',
-                                    trackingSubmodules: false]],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[url: "git@github.com:stan-dev/${upstreamRepo}.git",
-                                           credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b'
-                ]]])
-            }
-            sh """
-                curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
-                sh create-${upstreamRepo}-pull-request.sh
-            """
-            retry(3) { deleteDir() }
-        }
-    }
-}
-
 def alsoNotify() {
     if (isBranch('master') || isBranch('develop')) {
         "stan-buildbot@googlegroups.com"
     } else ""
 }
+def isPR() { env.CHANGE_URL != null }
+def fork() { env.CHANGE_FORK ?: "stan-dev" }
+def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
 
 pipeline {
     agent none
@@ -87,6 +66,52 @@ pipeline {
                 }
             }
         }
+        stage("Clang-format") {
+            agent any
+            steps {
+                sh "printenv"
+                retry(3) { checkout scm }
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                    usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        git checkout -b ${branchName()}
+                        clang-format --version
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
+                        if [[ `git diff` != "" ]]; then
+                            git config --global user.email "mc.stanislaw@gmail.com"
+                            git config --global user.name "Stan Jenkins"
+                            git add stan test
+                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
+                            echo "Exiting build because clang-format found changes."
+                            echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
+                            echo "Please 'git pull' before continuing to develop."
+                            exit 1
+                        fi"""
+                }
+            }
+            post {
+                always { deleteDir() }
+                failure {
+                    script {
+                        emailext (
+                            subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                            body: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' " +
+                                "has been autoformatted and the changes committed " +
+                                "to your branch, if permissions allowed." +
+                                "Please pull these changes before continuing." +
+                                "\n\n" +
+                                "See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms" +
+                                " for setting up the autoformatter locally.\n"+
+                            "(Check console output at ${env.BUILD_URL})",
+                            recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                            to: "${env.CHANGE_AUTHOR_EMAIL}"
+                        )
+                    }
+                }
+            }
+        }
         stage('Linting & Doc checks') {
             agent any
             steps {
@@ -97,9 +122,9 @@ pipeline {
                     sh setupCC()
                     parallel(
                         CppLint: { sh "make cpplint" },
-                        dependencies: { sh 'make test-math-dependencies' } ,
-                        documentation: { sh 'make doxygen' },
-                        failFast: true
+                        Dependencies: { sh 'make test-math-dependencies' } ,
+                        Documentation: { sh 'make doxygen' },
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -107,45 +132,20 @@ pipeline {
                 always {
                     warnings consoleParsers: [[parserName: 'CppLint']], canRunOnFailed: true
                     warnings consoleParsers: [[parserName: 'math-dependencies']], canRunOnFailed: true
-                    retry(3) { deleteDir() }
+                    deleteDir()
                 }
             }
         }
         stage('Tests') {
-            failFast true
             parallel {
-                stage('Headers') {
-                    agent any
-                    steps { 
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        sh "make -j${env.PARALLEL} test-headers"
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Unit') {
                     agent any
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
                         runTests("test/unit")
-                        retry(2) { junit 'test/**/*.xml' }
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-                stage('CmdStan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "CmdStan/${params.cmdstan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
-                }
-                stage('Stan Upstream Tests') {
-                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-                    steps {
-                        build(job: "Stan/${params.stan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
-                    }
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -175,16 +175,34 @@ pipeline {
                 }
             }
         }
+        stage('Upstream tests') {
+            parallel {
+                stage('CmdStan Upstream Tests') {
+                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+                    steps {
+                        build(job: "CmdStan/${params.cmdstan_pr}",
+                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                    }
+                }
+                stage('Stan Upstream Tests') {
+                    when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+                    steps {
+                        build(job: "Stan/${params.stan_pr}",
+                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                    }
+                }
+            }
+        }
     }
     post {
         always {
-            node('master') {
+            node("osx || linux") {
                 warnings consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']], canRunOnFailed: true
                 warnings consoleParsers: [[parserName: 'Clang (LLVM based)']], canRunOnFailed: true
             }
         }
         success {
-            updateUpstream('stan')
+            script { utils.updateUpstream(env, 'stan') }
             mailBuildResults("SUCCESSFUL")
         }
         unstable { mailBuildResults("UNSTABLE", alsoNotify()) }
