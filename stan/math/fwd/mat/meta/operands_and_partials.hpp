@@ -113,7 +113,7 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx> > > > {
   Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
-      for (int j = 0; j < this->operands_[i].size(); ++j) {
+      for (size_t j = 0; j < this->operands_[i].size(); ++j) {
         derivative += this->partials_vec_[i][j] * this->operands_[i][j].d_;
       }
     }

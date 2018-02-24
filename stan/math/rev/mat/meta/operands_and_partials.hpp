@@ -136,7 +136,7 @@ class ops_partials_edge<T_part, std::vector<std::vector<var> > > {
   void dump_partials(double* partials) {
     int p_i = 0;
     for (size_t i = 0; i < this->partials_vec_.size(); ++i) {
-      for (int j = 0; j < this->partials_vec_[i].size(); ++j, ++p_i) {
+      for (size_t j = 0; j < this->partials_vec_[i].size(); ++j, ++p_i) {
         partials[p_i] = this->partials_vec_[i][j];
       }
     }
@@ -144,7 +144,7 @@ class ops_partials_edge<T_part, std::vector<std::vector<var> > > {
   void dump_operands(vari** varis) {
     int p_i = 0;
     for (size_t i = 0; i < this->operands_.size(); ++i) {
-      for (int j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
+      for (size_t j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
         varis[p_i] = this->operands_[i][j].vi_;
       }
     }
