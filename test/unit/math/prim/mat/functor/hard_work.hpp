@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEST_UNIT_MATH_PRIM_MAT_FUNCTOR_HARD_WORK_HPP
+#define TEST_UNIT_MATH_PRIM_MAT_FUNCTOR_HARD_WORK_HPP
 
 #include <vector>
 
@@ -18,3 +19,5 @@ struct hard_work {
     return (res);
   }
 };
+
+#endif

@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
@@ -21,14 +22,9 @@ map_rect_serial(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
-  check_nonzero_size("map_rect_serial", "job parameters", job_params);
-  check_matching_sizes("map_rect_serial", "job parameters", job_params,
-                       "continuous data", x_r);
-  check_matching_sizes("map_rect_serial", "job parameters", job_params,
-                       "integer data", x_i);
 
-  typedef internal::map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef internal::map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
+  typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
@@ -59,6 +55,7 @@ map_rect_serial(
   return combine(world_output, world_f_out);
 }
 
+}
 }  // namespace math
 }  // namespace stan
 
