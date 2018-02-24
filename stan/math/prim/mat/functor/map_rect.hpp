@@ -145,7 +145,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      size_x_i);
   }
 
-  if (unlikely(job_params.size() == 0))
+  if (unlikely(job_params_dims[0] == 0))
     return return_type();
 
 #ifdef STAN_HAS_MPI

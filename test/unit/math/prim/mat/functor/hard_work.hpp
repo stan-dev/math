@@ -13,7 +13,8 @@ struct hard_work {
              std::ostream* msgs = 0) const {
     typedef typename stan::return_type<T1, T2>::type result_type;
     Eigen::Matrix<result_type, Eigen::Dynamic, 1> res;
-    res.resize(2);
+    res.resize(2 + x_i[0]);
+    res.setZero();
     res(0) = theta(0) * theta(0) + eta(0);
     res(1) = x_r[0] * theta(1) * theta(0) + 2 * eta(0) + eta(1);
     return (res);

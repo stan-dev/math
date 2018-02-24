@@ -7,6 +7,11 @@
 #include <iostream>
 #include <vector>
 
+STAN_REGISTER_MAP_RECT(0, hard_work)
+STAN_REGISTER_MAP_RECT(1, faulty_functor)
+STAN_REGISTER_MAP_RECT(2, faulty_functor)
+
+
 struct MapRectJob : public ::testing::Test {
   stan::math::vector_v shared_params_v;
   std::vector<stan::math::vector_v> job_params_v;
@@ -39,8 +44,8 @@ struct MapRectJob : public ::testing::Test {
 
 TEST_F(MapRectJob, hard_work_vv) {
   stan::math::vector_v result_serial
-      = stan::math::map_rect_serial<0, hard_work>(shared_params_v, job_params_v,
-                                                  x_r, x_i, 0);
+      = stan::math::map_rect<0, hard_work>(shared_params_v, job_params_v,
+                                           x_r, x_i, 0);
 }
 
 TEST_F(MapRectJob, always_faulty_functor_vv) {
@@ -55,10 +60,11 @@ TEST_F(MapRectJob, always_faulty_functor_vv) {
   job_params_v[0](0) = -1;
 
   // upon the second evaluation throwing is handled internally different
-  EXPECT_ANY_THROW((result = stan::math::map_rect<1, faulty_functor>(
-                        shared_params_v, job_params_v, x_r, x_i)));
+  EXPECT_THROW((result = stan::math::map_rect<1, faulty_functor>(
+      shared_params_v, job_params_v, x_r, x_i)), std::domain_error);
 
   // throwing on the very first evaluation
-  EXPECT_ANY_THROW((result = stan::math::map_rect<2, faulty_functor>(
-                        shared_params_v, job_params_v, x_r, x_i)));
+  EXPECT_THROW((result = stan::math::map_rect<2, faulty_functor>(
+                        shared_params_v, job_params_v, x_r, x_i)),
+               std::domain_error);
 }
