@@ -74,7 +74,8 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
     case -13:
       system_error(function, "", e.err(), "CL_MISALIGNED_SUB_BUFFER_OFFSET");
     case -14:
-      system_error(function, "", e.err(), "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST");
+      system_error(function, "", e.err(),
+                   "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST");
     case -15:
       system_error(function, "", e.err(), "CL_COMPILE_PROGRAM_FAILURE");
     case -16:
@@ -168,7 +169,8 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
     case -70:
       system_error(function, "", e.err(), "CL_INVALID_DEVICE_QUEUE");
     case -1000:
-      system_error(function, "", e.err(), "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR");
+      system_error(function, "", e.err(),
+                   "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR");
     case -1001:
       system_error(function, "", e.err(), "CL_PLATFORM_NOT_FOUND_KHR");
     case -1002:
@@ -176,7 +178,8 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
     case -1003:
       system_error(function, "", e.err(), "CL_INVALID_D3D10_RESOURCE_KHR");
     case -1004:
-      system_error(function, "", e.err(), "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR");
+      system_error(function, "", e.err(),
+                   "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR");
     case -1005:
       system_error(function, "", e.err(), "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR");
     case -1006:
@@ -184,7 +187,8 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
     case -1007:
       system_error(function, "", e.err(), "CL_INVALID_D3D11_RESOURCE_KHR");
     case -1008:
-      system_error(function, "", e.err(), "CL_D3D11_RESOURCE_ALREADY_ACQUIRED_KHR");
+      system_error(function, "", e.err(),
+                   "CL_D3D11_RESOURCE_ALREADY_ACQUIRED_KHR");
     case -1009:
       system_error(function, "", e.err(), "CL_D3D11_RESOURCE_NOT_ACQUIRED_KHR");
     case -101:
@@ -208,17 +212,23 @@ inline void check_ocl_error(const char *function, const cl::Error &e) {
     case -1095:
       system_error(function, "", e.err(), "CL_INVALID_ACCELERATOR_TYPE_INTEL");
     case -1096:
-      system_error(function, "", e.err(), "CL_INVALID_ACCELERATOR_DESCRIPTOR_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_INVALID_ACCELERATOR_DESCRIPTOR_INTEL");
     case -1097:
-      system_error(function, "", e.err(), "CL_ACCELERATOR_TYPE_NOT_SUPPORTED_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_ACCELERATOR_TYPE_NOT_SUPPORTED_INTEL");
     case -1098:
-      system_error(function, "", e.err(), "CL_INVALID_VA_API_MEDIA_ADAPTER_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_INVALID_VA_API_MEDIA_ADAPTER_INTEL");
     case -1099:
-      system_error(function, "", e.err(), "CL_INVALID_VA_API_MEDIA_SURFACE_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_INVALID_VA_API_MEDIA_SURFACE_INTEL");
     case -1100:
-      system_error(function, "", e.err(), "CL_VA_API_MEDIA_SURFACE_ALREADY_ACQUIRED_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_VA_API_MEDIA_SURFACE_ALREADY_ACQUIRED_INTEL");
     case -1101:
-      system_error(function, "", e.err(), "CL_VA_API_MEDIA_SURFACE_NOT_ACQUIRED_INTEL");
+      system_error(function, "", e.err(),
+                   "CL_VA_API_MEDIA_SURFACE_NOT_ACQUIRED_INTEL");
     case -9999:
       system_error(function, "", e.err(), "ILLEGAL_READ_OR_WRITE_NVIDIA");
     default:
