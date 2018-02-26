@@ -292,7 +292,7 @@ TEST(MathPrimMat, rvec_vec_x1_x2_gp_dot_prod_cov0) {
     x2[i].resize(1, 3);
     x2[i] << 2 * i, 3 * i, 4 * i;
   }
-}
+
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x1, x2, sigma));
