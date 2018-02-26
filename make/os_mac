@@ -19,5 +19,4 @@ ifdef STAN_MPI
   CXXFLAGS += -DSTAN_MPI
   GTEST_CXXFLAGS += -DSTAN_MPI
   LIBMPI=$(BOOST)/stage/lib/mpi.so
-  #LIBMPI=$(BOOST)/stage/lib/libboost_mpi$(DLL)
 endif
