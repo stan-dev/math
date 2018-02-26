@@ -4,7 +4,6 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 #include <stan/math/prim/arr/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/logic_error.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 #include <CL/cl.hpp>
 #include <cmath>
@@ -12,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <system_error>
+#include <cerrno>
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_GPU
 #ifndef OPENCL_DEVICE
@@ -92,8 +92,8 @@ class opencl_context {
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
-        logic_error("OpenCL Initialization", "[Device]", platform_name_,
-                    "No OpenCL devices found on the selected platform: ");
+        system_error("OpenCL Initialization", "[Device]", -1,
+                    "CL_DEVICE_NOT_FOUND");
       }
       device_ = all_devices[OPENCL_DEVICE];
       // context and queue
