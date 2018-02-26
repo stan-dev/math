@@ -88,4 +88,3 @@ $(BOOST)/stage/lib/mpi.so:
 clean-libraries:
 	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
 
-print-%  : ; @echo $* = $($*)
