@@ -34,9 +34,8 @@ map_rect_serial(
 
   int offset = 0;
   for (int i = 0; i < num_jobs; ++i) {
-    const vector_d job_specifc_params_dbl = value_of(job_params[i]);
     const matrix_d job_output = ReduceF()(
-        shared_params_dbl, job_specifc_params_dbl, x_r[i], x_i[i], msgs);
+        shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs);
     world_f_out[i] = job_output.cols();
 
     if (i == 0)
