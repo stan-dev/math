@@ -65,6 +65,27 @@ LIBIDAS = $(IDAS)/lib/libsundials_nvecserial.a $(IDAS)/lib/libsundials_idas.a
 STAN_IDAS_HEADERS := $(shell find stan -name *idas*.hpp)
 $(STAN_IDAS_HEADERS) : $(LIBIDAS)
 
+##
+# Build rules for MPI
+##
+
+$(BOOST)/stage/lib/mpi.so:
+	@mkdir -p $(dir $@)
+	cd $(BOOST); ./bootstrap.sh
+	cd $(BOOST); echo "using mpi ;" >> user-config.jam
+	cd $(BOOST); ./b2 --user-config=user-config.jam --with-mpi --with-serialization
+	@if [ "$(OS_TYPE)" = "mac" ]; then\
+		echo "Hardcoding dynamic library paths on Mac..."; \
+		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_serialization.dylib; \
+		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi.dylib; \
+		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
+		install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_serialization.dylib; \
+		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
+	fi
+
+
 .PHONY: clean-libraries
 clean-libraries:
 	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
+
+print-%  : ; @echo $* = $($*)

@@ -22,3 +22,9 @@ ifeq (clang++,$(CC_TYPE))
   GTEST_CXXFLAGS += -DGTEST_HAS_PTHREAD=0
 endif
 
+ifdef STAN_MPI
+  LDFLAGS += -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
+  CXXFLAGS += -DSTAN_MPI
+  GTEST_CXXFLAGS += -DSTAN_MPI
+  LIBMPI=$(BOOST)/stage/lib/mpi.so
+endif

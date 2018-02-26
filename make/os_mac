@@ -13,3 +13,11 @@ ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wno-tautological-compare
   CXXFLAGS += -Wsign-compare
 endif
+
+ifdef STAN_MPI
+  LDFLAGS += -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
+  CXXFLAGS += -DSTAN_MPI
+  GTEST_CXXFLAGS += -DSTAN_MPI
+  LIBMPI=$(BOOST)/stage/lib/mpi.so
+  #LIBMPI=$(BOOST)/stage/lib/libboost_mpi$(DLL)
+endif
