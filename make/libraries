@@ -5,16 +5,20 @@ EIGEN ?= $(MATH)lib/eigen_3.3.3
 BOOST ?= $(MATH)lib/boost_1.66.0
 GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
-CVODES ?= $(MATH)lib/cvodes_2.9.0
 IDAS ?= $(MATH)lib/idas-2.1.0
+CVODES ?= $(MATH)lib/cvodes-3.1.0
 
 ##
 # Build rules for cvodes
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
-  $(addprefix $(CVODES)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_band.c cvodes_dense.c cvodes_diag.c cvodes_spils.c cvodes_spbcgs.c cvodes_spgmr.c cvodes_sptfqmr.c cvodes_sparse.c cvodes_bandpre.c cvodes_bbdpre.c) \
-  $(wildcard $(CVODES)/src/sundials/*.c))
+  $(addprefix $(CVODES)/src/cvodes/, cvodes.c cvodes_io.c cvodea.c cvodea_io.c cvodes_direct.c cvodes_diag.c cvodes_spils.c cvodes_bandpre.c cvodes_bbdpre.c) \
+  $(wildcard $(CVODES)/src/sundials/*.c) \
+  $(wildcard $(CVODES)/src/sunmat_band/*.c) \
+  $(wildcard $(CVODES)/src/sunmat_dense/*.c) \
+  $(wildcard $(CVODES)/src/sunlinsol_band/*.c) \
+  $(wildcard $(CVODES)/src/sunlinsol_dense/*.c))
 
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(CVODES)/src/, nvec_ser/nvector_serial.c sundials/sundials_math.c))

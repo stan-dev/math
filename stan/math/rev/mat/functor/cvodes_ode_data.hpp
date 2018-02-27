@@ -5,8 +5,8 @@
 #include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
+#include <cvodes/cvodes_direct.h>
+#include <sundials/sundials_dense.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <vector>
@@ -78,7 +78,7 @@ class cvodes_ode_data {
         coupled_state_(coupled_ode_.initial_state()),
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
         nv_state_sens_(NULL) {
-    if (S_ != 0) {
+    if (S_ > 0) {
       nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
       for (std::size_t i = 0; i < S_; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
@@ -88,7 +88,7 @@ class cvodes_ode_data {
 
   ~cvodes_ode_data() {
     N_VDestroy_Serial(nv_state_);
-    if (nv_state_sens_ != NULL)
+    if (S_ > 0)
       N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
   }
 

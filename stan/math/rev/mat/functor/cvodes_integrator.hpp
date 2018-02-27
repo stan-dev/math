@@ -13,9 +13,10 @@
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
-#include <nvector/nvector_serial.h>
+#include <cvodes/cvodes_direct.h>
+#include <sundials/sundials_dense.h>
+#include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
 #include <vector>
@@ -26,9 +27,9 @@ namespace math {
 /**
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
  * methods).
- * @tparam LMM ID of ODE solver (1: ADAMS, 2: BDF)
+ * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int LMM>
+template <int Lmm>
 class cvodes_integrator {
  public:
   cvodes_integrator() {}
@@ -82,15 +83,17 @@ class cvodes_integrator {
     typedef stan::is_var<T_initial> initial_var;
     typedef stan::is_var<T_param> param_var;
 
-    check_finite("integrate_ode_cvodes", "initial state", y0);
-    check_finite("integrate_ode_cvodes", "initial time", t0);
-    check_finite("integrate_ode_cvodes", "times", ts);
-    check_finite("integrate_ode_cvodes", "parameter vector", theta);
-    check_finite("integrate_ode_cvodes", "continuous data", x);
-    check_nonzero_size("integrate_ode_cvodes", "times", ts);
-    check_nonzero_size("integrate_ode_cvodes", "initial state", y0);
-    check_ordered("integrate_ode_cvodes", "times", ts);
-    check_less("integrate_ode_cvodes", "initial time", t0, ts[0]);
+    const char* fun = "integrate_ode_cvodes";
+
+    check_finite(fun, "initial state", y0);
+    check_finite(fun, "initial time", t0);
+    check_finite(fun, "times", ts);
+    check_finite(fun, "parameter vector", theta);
+    check_finite(fun, "continuous data", x);
+    check_nonzero_size(fun, "times", ts);
+    check_nonzero_size(fun, "initial state", y0);
+    check_ordered(fun, "times", ts);
+    check_less(fun, "initial time", t0, ts[0]);
     if (relative_tolerance <= 0)
       invalid_argument("integrate_ode_cvodes", "relative_tolerance,",
                        relative_tolerance, "", ", must be greater than 0");
@@ -108,7 +111,7 @@ class cvodes_integrator {
     typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
-    void* cvodes_mem = CVodeCreate(LMM, CV_NEWTON);
+    void* cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
     if (cvodes_mem == NULL)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
@@ -132,10 +135,11 @@ class cvodes_integrator {
 
       // for the stiff solvers we need to reserve additional
       // memory and provide a Jacobian function call
-      cvodes_check_flag(CVDense(cvodes_mem, N), "CVDense");
-      cvodes_check_flag(
-          CVDlsSetDenseJacFn(cvodes_mem, &ode_data::dense_jacobian),
-          "CVDlsSetDenseJacFn");
+      // new API since 3.0.0: create matrix object and linear solver object
+      SUNMatrix A{SUNDenseMatrix(N, N)};
+      SUNLinearSolver LS{SUNDenseLinearSolver(cvodes_data.nv_state_, A)};
+      cvodes_check_flag(CVDlsSetLinearSolver(cvodes_mem, LS, A),
+                        "CVDlsSetLinearSolver");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
@@ -164,6 +168,8 @@ class cvodes_integrator {
                   cvodes_data.coupled_state_.end(), y_coupled[n].begin());
         t_init = t_final;
       }
+      SUNLinSolFree(LS);
+      SUNMatDestroy(A);
     } catch (const std::exception& e) {
       CVodeFree(&cvodes_mem);
       throw;
