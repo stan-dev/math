@@ -7,6 +7,7 @@
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_direct.h>
 #include <sundials/sundials_dense.h>
+#include <sunmatrix/sunmatrix_dense.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <vector>
@@ -106,8 +107,7 @@ class cvodes_ode_data {
     return 0;
   }
 
-  static int dense_jacobian(long int N,  // NOLINT(runtime/int)
-                            realtype t, N_Vector y, N_Vector fy, DlsMat J,
+  static int dense_jacobian(realtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                             void* user_data, N_Vector tmp1, N_Vector tmp2,
                             N_Vector tmp3) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
@@ -126,7 +126,7 @@ class cvodes_ode_data {
 
   // the Jacobian of the ODE system is the coupled ode system for
   // varying states evaluated at the state y.
-  inline int dense_jacobian(const double* y, DlsMat J, double t) const {
+  inline int dense_jacobian(const double* y, SUNMatrix J, double t) const {
     const std::vector<double> y_vec(y, y + N_);
     start_nested();
     std::vector<var> y_vec_var(y_vec.begin(), y_vec.end());
@@ -134,7 +134,7 @@ class cvodes_ode_data {
                                                     x_, x_int_, msgs_);
     std::vector<double> ode_jacobian_y(ode_jacobian.size(), 0);
     ode_jacobian(ode_jacobian.initial_state(), ode_jacobian_y, t);
-    std::copy(ode_jacobian_y.begin() + N_, ode_jacobian_y.end(), J->data);
+    std::copy(ode_jacobian_y.begin() + N_, ode_jacobian_y.end(), SM_DATA_D(J));
     recover_memory_nested();
     return 0;
   }

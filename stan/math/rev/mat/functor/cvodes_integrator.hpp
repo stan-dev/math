@@ -140,7 +140,9 @@ class cvodes_integrator {
       SUNLinearSolver LS{SUNDenseLinearSolver(cvodes_data.nv_state_, A)};
       cvodes_check_flag(CVDlsSetLinearSolver(cvodes_mem, LS, A),
                         "CVDlsSetLinearSolver");
-
+      cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::dense_jacobian),
+          "CVDlsSetJacFn");
+      
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
         cvodes_check_flag(
