@@ -91,8 +91,9 @@ class gamma_p_dv_vari : public op_dv_vari {
     if (std::fabs(bvi_->val_ / ad_) > 10)
       return;
 
-    bvi_->adj_ += adj_ * exp(- bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_) - lgamma(ad_));
-
+    bvi_->adj_ += adj_
+                  * exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_)
+                        - lgamma(ad_));
   }
 };
 }  // namespace
