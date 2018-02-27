@@ -141,7 +141,7 @@ class cvodes_integrator {
       cvodes_check_flag(CVDlsSetLinearSolver(cvodes_mem, LS, A),
                         "CVDlsSetLinearSolver");
       cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::dense_jacobian),
-          "CVDlsSetJacFn");
+                        "CVDlsSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
