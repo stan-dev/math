@@ -97,7 +97,7 @@ class gamma_p_dv_vari : public op_dv_vari {
                              - lgamma(ad_));
   }
 };
-}
+}  // namespace
 
 inline var gamma_p(const var& a, const var& b) {
   return var(new gamma_p_vv_vari(a.vi_, b.vi_));
