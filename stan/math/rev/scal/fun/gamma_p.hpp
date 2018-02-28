@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
@@ -78,11 +77,11 @@ class gamma_p_dv_vari : public op_dv_vari {
   gamma_p_dv_vari(double a, vari* bvi)
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (is_inf(ad_) || is_nan(ad_)) {
+    if (is_inf(ad_)) {
       bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
       return;
     }
-    if (is_inf(bvi_->val_) || is_nan(bvi_->val_)) {
+    if (is_inf(bvi_->val_)) {
       bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
       return;
     }
@@ -96,7 +95,7 @@ class gamma_p_dv_vari : public op_dv_vari {
         - lgamma(ad_));
   }
 };
-}  // namespace
+}
 
 inline var gamma_p(const var& a, const var& b) {
   return var(new gamma_p_vv_vari(a.vi_, b.vi_));
