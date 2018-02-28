@@ -49,6 +49,8 @@ def processCLIArgs():
                         help="request additional script debugging output.")
     parser.add_argument("-m", "--make-only", dest="make_only",
                         action="store_true", help="Don't run tests, just try to make them.")
+    parser.add_argument("--run-all", dest="run_all", action="store_true",
+                        help="Don't stop at the first test failure, run all of them.")
 
     # And parse the command line against those rules
     return parser.parse_args()
@@ -76,13 +78,13 @@ def mungeName(name):
 
     return name
 
-def doCommand(command):
+def doCommand(command, exit_on_failure=True):
     """Run command as a shell command and report/exit on errors."""
     print("------------------------------------------------------------")
     print("%s" % command)
     p1 = subprocess.Popen(command, shell=True)
     p1.wait()
-    if (not(p1.returncode is None) and not(p1.returncode == 0)):
+    if exit_on_failure and (not(p1.returncode is None) and not(p1.returncode == 0)):
         stopErr('%s failed' % command, p1.returncode)
 
 
@@ -95,11 +97,11 @@ def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
 
-def runTest(name):
+def runTest(name, run_all=False):
     executable = mungeName(name).replace("/", os.sep)
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
-    doCommand(command)
+    doCommand(command, not run_all)
 
 def findTests(base_path, filter_names):
     folders = filter(os.path.isdir, base_path)
@@ -142,7 +144,7 @@ def main():
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
-            runTest(t)
+            runTest(t, inputs.run_all)
 
 
 if __name__ == "__main__":

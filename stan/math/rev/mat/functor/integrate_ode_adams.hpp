@@ -13,8 +13,8 @@
 #include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
 #include <stan/math/rev/arr/fun/decouple_ode_states.hpp>
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
+#include <cvodes/cvodes_direct.h>
+#include <sundials/sundials_dense.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <ostream>
