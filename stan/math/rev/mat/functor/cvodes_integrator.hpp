@@ -136,10 +136,9 @@ class cvodes_integrator {
       // for the stiff solvers we need to reserve additional
       // memory and provide a Jacobian function call
       // new API since 3.0.0: create matrix object and linear solver object
-      SUNMatrix A{SUNDenseMatrix(N, N)};
-      SUNLinearSolver LS{SUNDenseLinearSolver(cvodes_data.nv_state_, A)};
-      cvodes_check_flag(CVDlsSetLinearSolver(cvodes_mem, LS, A),
-                        "CVDlsSetLinearSolver");
+      cvodes_check_flag(
+          CVDlsSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
+          "CVDlsSetLinearSolver");
       cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::dense_jacobian),
                         "CVDlsSetJacFn");
 
@@ -170,8 +169,6 @@ class cvodes_integrator {
                   cvodes_data.coupled_state_.end(), y_coupled[n].begin());
         t_init = t_final;
       }
-      SUNLinSolFree(LS);
-      SUNMatDestroy(A);
     } catch (const std::exception& e) {
       CVodeFree(&cvodes_mem);
       throw;

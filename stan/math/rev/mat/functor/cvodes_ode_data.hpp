@@ -46,6 +46,8 @@ class cvodes_ode_data {
   std::vector<double> coupled_state_;
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
+  SUNMatrix A_;
+  SUNLinearSolver LS_;
 
   /**
    * Construct CVODES ode data object to enable callbacks from
@@ -78,7 +80,9 @@ class cvodes_ode_data {
         coupled_ode_(f, y0, theta, x, x_int, msgs),
         coupled_state_(coupled_ode_.initial_state()),
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
-        nv_state_sens_(NULL) {
+        nv_state_sens_(NULL),
+        A_{SUNDenseMatrix(N_, N_)},
+        LS_{SUNDenseLinearSolver(nv_state_, A_)} {
     if (S_ > 0) {
       nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
       for (std::size_t i = 0; i < S_; i++) {
@@ -88,6 +92,8 @@ class cvodes_ode_data {
   }
 
   ~cvodes_ode_data() {
+    SUNLinSolFree(LS_);
+    SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
     if (S_ > 0)
       N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
