@@ -17,11 +17,10 @@ TEST(MathMatrix, initialize) {
   EXPECT_FLOAT_EQ(z, y);
 }
 
-
 TEST(MathMatrix, initMatrix) {
-  using stan::math::initialize;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::initialize;
   Matrix<double, Dynamic, Dynamic> m(3, 2);
   // template 3, 2
   initialize(m, 13.2);
@@ -42,10 +41,10 @@ TEST(MathMatrix, initMatrix) {
 }
 
 TEST(MathMatrix, initStdVector) {
-  using std::vector;
-  using stan::math::initialize;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::initialize;
+  using std::vector;
 
   vector<double> x(3);
   initialize(x, 2.2);
@@ -53,8 +52,8 @@ TEST(MathMatrix, initStdVector) {
     // template 4, 2
     EXPECT_FLOAT_EQ(2.2, x[i]);
 
-  vector<Matrix<double, Dynamic, Dynamic> >
-    z(4, Matrix<double, Dynamic, Dynamic>(3, 2));
+  vector<Matrix<double, Dynamic, Dynamic> > z(
+      4, Matrix<double, Dynamic, Dynamic>(3, 2));
   initialize(z, 3.7);
   for (size_t i = 0; i < 4; ++i)
     for (int m = 0; m < 3; ++m)

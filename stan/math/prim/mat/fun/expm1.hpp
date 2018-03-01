@@ -5,35 +5,34 @@
 #include <boost/math/special_functions/expm1.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * Structure to wrap expm1() so that it can be vectorized.
-     * @param x Variable.
-     * @tparam T Variable type.
-     * @return Natural exponential of x minus one. 
-     */
-    struct expm1_fun {
-      template <typename T>
-      static inline T fun(const T& x) {
-        using boost::math::expm1;
-        return expm1(x);
-      }
-    };
-
-    /**
-     * Vectorized version of expm1().
-     * @param x Container.
-     * @tparam T Container type.
-     * @return Natural exponential of each value in x minus one. 
-     */
-    template <typename T>
-    inline typename apply_scalar_unary<expm1_fun, T>::return_t
-    expm1(const T& x) {
-      return apply_scalar_unary<expm1_fun, T>::apply(x);
-    }
-
+/**
+ * Structure to wrap expm1() so that it can be vectorized.
+ * @param x Variable.
+ * @tparam T Variable type.
+ * @return Natural exponential of x minus one.
+ */
+struct expm1_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    using boost::math::expm1;
+    return expm1(x);
   }
+};
+
+/**
+ * Vectorized version of expm1().
+ * @param x Container.
+ * @tparam T Container type.
+ * @return Natural exponential of each value in x minus one.
+ */
+template <typename T>
+inline typename apply_scalar_unary<expm1_fun, T>::return_t expm1(const T& x) {
+  return apply_scalar_unary<expm1_fun, T>::apply(x);
 }
+
+}  // namespace math
+}  // namespace stan
 
 #endif

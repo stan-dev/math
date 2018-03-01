@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrix, sumVector) {
-  using stan::math::sum;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::sum;
 
   stan::math::vector_d v;
   EXPECT_FLOAT_EQ(0.0, sum(v));
@@ -20,11 +20,10 @@ TEST(MathMatrix, sumVector) {
   EXPECT_FLOAT_EQ(115.0, sum(v));
 }
 
-
 TEST(MathMatrix, sumRowVector) {
-  using stan::math::sum;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::sum;
 
   stan::math::row_vector_d rv;
   EXPECT_FLOAT_EQ(0.0, sum(rv));
@@ -41,9 +40,9 @@ TEST(MathMatrix, sumRowVector) {
 }
 
 TEST(MathMatrix, sumMatrix) {
-  using stan::math::sum;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::sum;
   stan::math::matrix_d m;
   EXPECT_FLOAT_EQ(0.0, sum(m));
 

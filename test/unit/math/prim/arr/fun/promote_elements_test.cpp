@@ -5,9 +5,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <vector>
 
-using std::vector;
 using stan::math::promote_elements;
 using stan::math::var;
+using std::vector;
 
 TEST(MathFunctionsArrPromote_Elements, intVec2doubleVec) {
   vector<int> from;
@@ -41,4 +41,3 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
   bool same = boost::is_same<vector<var>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

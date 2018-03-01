@@ -13,12 +13,11 @@ TEST(ProbFrechet, log_matches_lpdf) {
   EXPECT_FLOAT_EQ((stan::math::frechet_lpdf<false>(y, alpha, sigma)),
                   (stan::math::frechet_log<false>(y, alpha, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::frechet_lpdf<true, double, double>(y, alpha, sigma)),
-    (stan::math::frechet_log<true, double, double>(y, alpha, sigma)));
+      (stan::math::frechet_lpdf<true, double, double>(y, alpha, sigma)),
+      (stan::math::frechet_log<true, double, double>(y, alpha, sigma)));
   EXPECT_FLOAT_EQ(
-    (stan::math::frechet_lpdf<false, double, double>(y, alpha, sigma)),
-    (stan::math::frechet_log<false, double, double>(y, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-    (stan::math::frechet_lpdf<double, double>(y, alpha, sigma)),
-    (stan::math::frechet_log<double, double>(y, alpha, sigma)));
+      (stan::math::frechet_lpdf<false, double, double>(y, alpha, sigma)),
+      (stan::math::frechet_log<false, double, double>(y, alpha, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::frechet_lpdf<double, double>(y, alpha, sigma)),
+                  (stan::math::frechet_log<double, double>(y, alpha, sigma)));
 }

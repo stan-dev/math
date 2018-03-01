@@ -13,4 +13,3 @@ TEST(AgradFwd, value_of_rec) {
   EXPECT_FLOAT_EQ(5.0, value_of_rec(ff_a));
   EXPECT_FLOAT_EQ(5.0, value_of_rec(ffff_a));
 }
-

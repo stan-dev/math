@@ -8,15 +8,15 @@ TEST(AgradFwdMatrixBlock, matrix_fd) {
 
   matrix_fd v(3, 3);
   v << 1, 4, 9, 1, 4, 9, 1, 4, 9;
-   v(0, 0).d_ = 1.0;
-   v(0, 1).d_ = 2.0;
-   v(0, 2).d_ = 3.0;
-   v(1, 0).d_ = 1.0;
-   v(1, 1).d_ = 2.0;
-   v(1, 2).d_ = 3.0;
-   v(2, 0).d_ = 1.0;
-   v(2, 1).d_ = 2.0;
-   v(2, 2).d_ = 3.0;
+  v(0, 0).d_ = 1.0;
+  v(0, 1).d_ = 2.0;
+  v(0, 2).d_ = 3.0;
+  v(1, 0).d_ = 1.0;
+  v(1, 1).d_ = 2.0;
+  v(1, 2).d_ = 3.0;
+  v(2, 0).d_ = 1.0;
+  v(2, 1).d_ = 2.0;
+  v(2, 2).d_ = 3.0;
   matrix_fd m = block(v, 1, 1, 3, 3);
   EXPECT_EQ(1, m(0, 0).val_);
   EXPECT_EQ(4, m(0, 1).val_);
@@ -59,9 +59,9 @@ TEST(AgradFwdMatrixBlock, matrix_fd_exception) {
 
 TEST(AgradFwdMatrixBlock, matrix_ffd) {
   using stan::math::block;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
-  using stan::math::fvar;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;

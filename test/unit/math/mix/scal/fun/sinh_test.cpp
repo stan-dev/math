@@ -4,16 +4,14 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 class AgradFwdSinh : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
 
 TEST_F(AgradFwdSinh, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sinh(x);
@@ -30,8 +28,8 @@ TEST_F(AgradFwdSinh, FvarVar_1stDeriv) {
 TEST_F(AgradFwdSinh, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sinh(x);
@@ -45,8 +43,8 @@ TEST_F(AgradFwdSinh, FvarVar_2ndDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -84,8 +82,8 @@ TEST_F(AgradFwdSinh, FvarFvarVar_1stDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -114,8 +112,8 @@ TEST_F(AgradFwdSinh, FvarFvarVar_2ndDeriv) {
 TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -132,8 +130,7 @@ TEST_F(AgradFwdSinh, FvarFvarVar_3rdDeriv) {
 
 struct sinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sinh(arg1);
   }
 };

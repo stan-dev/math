@@ -34,8 +34,7 @@ TEST(AgradFwdPow, FvarVar_Double_1stDeriv) {
   fvar<var> a = pow(x, z);
 
   EXPECT_FLOAT_EQ(pow(0.5, 1.2), a.val_.val());
-  EXPECT_FLOAT_EQ((1.2 * 1.0 / 0.5) * pow(0.5, 1.2),
-                  a.d_.val());
+  EXPECT_FLOAT_EQ((1.2 * 1.0 / 0.5) * pow(0.5, 1.2), a.d_.val());
 
   AVEC y = createAVEC(x.val_);
   VEC g;
@@ -53,8 +52,7 @@ TEST(AgradFwdPow, Double_FvarVar_1stDeriv) {
   fvar<var> a = pow(x, z);
 
   EXPECT_FLOAT_EQ(pow(0.5, 1.2), a.val_.val());
-  EXPECT_FLOAT_EQ((2.0 * log(0.5)) * pow(0.5, 1.2),
-                  a.d_.val());
+  EXPECT_FLOAT_EQ((2.0 * log(0.5)) * pow(0.5, 1.2), a.d_.val());
 
   AVEC y = createAVEC(z.val_);
   VEC g;
@@ -111,8 +109,8 @@ TEST(AgradFwdPow, Double_FvarVar_2ndDeriv) {
 TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -137,8 +135,8 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_1stDeriv) {
 TEST(AgradFwdPow, FvarFvarVar_Double_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -160,8 +158,8 @@ TEST(AgradFwdPow, FvarFvarVar_Double_1stDeriv) {
 TEST(AgradFwdPow, Double_FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   double x(0.5);
   fvar<fvar<var> > y;
@@ -183,8 +181,8 @@ TEST(AgradFwdPow, Double_FvarFvarVar_1stDeriv) {
 TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -204,8 +202,8 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
 TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -225,8 +223,8 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
 TEST(AgradFwdPow, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -243,8 +241,8 @@ TEST(AgradFwdPow, FvarFvarVar_Double_2ndDeriv) {
 TEST(AgradFwdPow, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   double x(0.5);
   fvar<fvar<var> > y;
@@ -261,8 +259,8 @@ TEST(AgradFwdPow, Double_FvarFvarVar_2ndDeriv) {
 TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -282,8 +280,8 @@ TEST(AgradFwdPow, FvarFvarVar_FvarFvarVar_3rdDeriv) {
 TEST(AgradFwdPow, FvarFvarVar_Double_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -301,8 +299,8 @@ TEST(AgradFwdPow, FvarFvarVar_Double_3rdDeriv) {
 TEST(AgradFwdPow, Double_FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   double x(0.5);
   fvar<fvar<var> > y;
@@ -320,10 +318,8 @@ TEST(AgradFwdPow, Double_FvarFvarVar_3rdDeriv) {
 
 struct pow_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return pow(arg1, arg2);
   }
 };

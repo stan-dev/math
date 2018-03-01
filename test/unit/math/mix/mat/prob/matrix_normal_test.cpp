@@ -5,28 +5,22 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 TEST(ProbDistributionsMatrixNormal, fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
 
   Matrix<fvar<var>, Dynamic, Dynamic> mu(3, 5);
   mu.setZero();
 
   Matrix<fvar<var>, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<var>, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<var>, Dynamic, Dynamic> D(3, 3);
-  D << 1.0, 0.5, 0.1,
-       0.5, 1.0, 0.2,
-       0.1, 0.2, 1.0;
+  D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
   for (int i = 0; i < 5; i++)
     for (int j = 0; j < 5; j++) {
@@ -44,28 +38,22 @@ TEST(ProbDistributionsMatrixNormal, fvar_var) {
   EXPECT_FLOAT_EQ(-2075.1274, lp_ref.d_.val());
 }
 TEST(ProbDistributionsMatrixNormal, fvar_fvar_var) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> mu(3, 5);
   mu.setZero();
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> y(3, 5);
-  y << 2.0, -2.0, 11.0, 4.0, -2.0,
-       11.0, 2.0, -5.0, 11.0, 0.0,
-       -2.0, 11.0, 2.0, -2.0, -11.0;
+  y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
+      -2.0, -11.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0,  0.0, 0.0,
-          -3.0,  4.0, 0.0,  0.0, 0.0,
-           0.0,  0.0, 5.0,  1.0, 0.0,
-           0.0,  0.0, 1.0, 10.0, 0.0,
-           0.0,  0.0, 0.0,  0.0, 2.0;
+  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> D(3, 3);
-  D << 1.0, 0.5, 0.1,
-       0.5, 1.0, 0.2,
-       0.1, 0.2, 1.0;
+  D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
   for (int i = 0; i < 5; i++)
     for (int j = 0; j < 5; j++) {

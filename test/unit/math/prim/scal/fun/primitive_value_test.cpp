@@ -22,9 +22,9 @@ TEST(MathFunctions, primitiveValue) {
 
 TEST(MathFunctions, primiviteValueNaN) {
   using boost::math::isnan;
-  using std::numeric_limits;
   using stan::math::primitive_value;
+  using std::numeric_limits;
 
   EXPECT_TRUE(
-    isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
+      isnan<double>(primitive_value(numeric_limits<double>::quiet_NaN())));
 }

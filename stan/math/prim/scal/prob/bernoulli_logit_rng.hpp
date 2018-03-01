@@ -14,32 +14,31 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    /**
-     * A Bernoulli random number generator which takes as its argument the
-     * often more convenient logit-parametrization.
-     * 
-     * @tparam RNG Random number generator type.
-     * @param t logit-transformed probability parameter.
-     * @param rng pseudorandom number generator.
-     * @return Bernoulli(logit^{-1}(t)) generated random number, either 0 or 1.
-     */
-    template <class RNG>
-    inline int
-    bernoulli_logit_rng(double t, RNG& rng) {
-      using boost::variate_generator;
-      using boost::bernoulli_distribution;
-      using stan::math::inv_logit;
+/**
+ * A Bernoulli random number generator which takes as its argument the
+ * often more convenient logit-parametrization.
+ *
+ * @tparam RNG Random number generator type.
+ * @param t logit-transformed probability parameter.
+ * @param rng pseudorandom number generator.
+ * @return Bernoulli(logit^{-1}(t)) generated random number, either 0 or 1.
+ */
+template <class RNG>
+inline int bernoulli_logit_rng(double t, RNG& rng) {
+  using boost::bernoulli_distribution;
+  using boost::variate_generator;
+  using stan::math::inv_logit;
 
-      check_finite("bernoulli_logit_rng",
-                   "Logit transformed probability parameter", t);
+  check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
+               t);
 
-      variate_generator<RNG&, bernoulli_distribution<> >
-        bernoulli_rng(rng, bernoulli_distribution<>(inv_logit(t)));
-      return bernoulli_rng();
-    }
-
-  }
+  variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
+      rng, bernoulli_distribution<>(inv_logit(t)));
+  return bernoulli_rng();
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

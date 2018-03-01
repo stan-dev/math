@@ -5,8 +5,8 @@
 
 TEST(AgradFwdSquare, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::square;
+  using stan::math::var;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = square(x);
@@ -21,8 +21,8 @@ TEST(AgradFwdSquare, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdSquare, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::square;
+  using stan::math::var;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = square(x);
@@ -35,8 +35,8 @@ TEST(AgradFwdSquare, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdSquare, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::square;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -71,8 +71,8 @@ TEST(AgradFwdSquare, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdSquare, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::square;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -98,8 +98,8 @@ TEST(AgradFwdSquare, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdSquare, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::square;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -116,8 +116,7 @@ TEST(AgradFwdSquare, FvarFvarVar_3rdDeriv) {
 
 struct square_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return square(arg1);
   }
 };

@@ -5,8 +5,8 @@
 
 TEST(AgradFwdModifiedBesselSecondKind, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_second_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_second_kind(1, z);
@@ -21,8 +21,8 @@ TEST(AgradFwdModifiedBesselSecondKind, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselSecondKind, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_second_kind;
+  using stan::math::var;
 
   fvar<var> z(4.0, 2.0);
   fvar<var> a = modified_bessel_second_kind(1, z);
@@ -35,8 +35,8 @@ TEST(AgradFwdModifiedBesselSecondKind, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdModifiedBesselSecondKind, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_second_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;
@@ -72,8 +72,8 @@ TEST(AgradFwdModifiedBesselSecondKind, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdModifiedBesselSecondKind, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::modified_bessel_second_kind;
+  using stan::math::var;
 
   fvar<fvar<var> > y;
   y.val_.val_ = 4.0;
@@ -116,8 +116,7 @@ TEST(AgradFwdModifiedBesselSecondKind, FvarFvarVar_3rdDeriv) {
 
 struct modified_bessel_second_kind_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return modified_bessel_second_kind(1, arg1);
   }
 };

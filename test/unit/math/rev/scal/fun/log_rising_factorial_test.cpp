@@ -18,8 +18,9 @@ TEST(AgradRev, log_rising_factorial_var_double) {
 
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(4.0 + eps, 1.0)
-                  - stan::math::log_rising_factorial(4.0 - eps, 1.0))
-                  / (2 * eps), g[1]);
+                   - stan::math::log_rising_factorial(4.0 - eps, 1.0))
+                      / (2 * eps),
+                  g[1]);
 }
 
 TEST(AgradRev, log_rising_factorial_exceptions) {
@@ -33,7 +34,7 @@ TEST(AgradRev, log_rising_factorial_double_var) {
   double a(5.0);
   AVAR b(4.0);
   AVAR f = stan::math::log_rising_factorial(a, b);
-  EXPECT_FLOAT_EQ(std::log(5*6*7*8), f.val());
+  EXPECT_FLOAT_EQ(std::log(5 * 6 * 7 * 8), f.val());
   AVEC x = createAVEC(a, b);
   VEC g;
   f.grad(x, g);
@@ -42,15 +43,16 @@ TEST(AgradRev, log_rising_factorial_double_var) {
 
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(5.0, 4.0 + eps)
-                  - stan::math::log_rising_factorial(5.0, 4.0 - eps))
-                  / (2 * eps), g[1]);
+                   - stan::math::log_rising_factorial(5.0, 4.0 - eps))
+                      / (2 * eps),
+                  g[1]);
 }
 
 TEST(AgradRev, log_rising_factorial_var_var) {
   AVAR c(5.0);
   AVAR b(4.0);
   AVAR f = stan::math::log_rising_factorial(b, c);
-  EXPECT_FLOAT_EQ(std::log(4*5*6*7*8), f.val());
+  EXPECT_FLOAT_EQ(std::log(4 * 5 * 6 * 7 * 8), f.val());
   AVEC x = createAVEC(b, c);
   VEC g;
   f.grad(x, g);
@@ -59,19 +61,19 @@ TEST(AgradRev, log_rising_factorial_var_var) {
 
   double eps = 1e-6;
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(4.0 + eps, 5.0)
-                  - stan::math::log_rising_factorial(4.0 - eps, 5.0))
-                  / (2 * eps), g[0]);
+                   - stan::math::log_rising_factorial(4.0 - eps, 5.0))
+                      / (2 * eps),
+                  g[0]);
   EXPECT_FLOAT_EQ((stan::math::log_rising_factorial(4.0, 5.0 + eps)
-                  - stan::math::log_rising_factorial(4.0, 5.0 - eps))
-                  / (2 * eps), g[1]);
+                   - stan::math::log_rising_factorial(4.0, 5.0 - eps))
+                      / (2 * eps),
+                  g[1]);
 }
 
 struct log_rising_factorial_fun {
   template <typename T0, typename T1>
-  inline
-  typename stan::return_type<T0, T1>::type
-  operator()(const T0& arg1,
-             const T1& arg2) const {
+  inline typename stan::return_type<T0, T1>::type operator()(
+      const T0& arg1, const T1& arg2) const {
     return log_rising_factorial(arg1, arg2);
   }
 };

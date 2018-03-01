@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
-  using stan::math::operands_and_partials;
   using stan::math::fvar;
+  using stan::math::operands_and_partials;
 
   std::vector<fvar<double> > x1;
   x1.push_back(fvar<double>(2.0, 2.0));
@@ -27,6 +27,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   o.edge3_.partials_[0] += 23.0;
   fvar<double> y = o.build(-1.0);
 
-  EXPECT_FLOAT_EQ(2*17 + 3*13 - 2*19 + 2*4*23, y.d_);
+  EXPECT_FLOAT_EQ(2 * 17 + 3 * 13 - 2 * 19 + 2 * 4 * 23, y.d_);
   EXPECT_FLOAT_EQ(-1, y.val_);
 }

@@ -3,13 +3,11 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdCos, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cos(x);
@@ -26,8 +24,8 @@ TEST(AgradFwdCos, FvarVar_1stDeriv) {
 TEST(AgradFwdCos, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = cos(x);
@@ -38,12 +36,11 @@ TEST(AgradFwdCos, FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-1.3 * cos(1.5), g[0]);
 }
 
-
 TEST(AgradFwdCos, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -79,8 +76,8 @@ TEST(AgradFwdCos, FvarFvarVar_1stDeriv) {
 TEST(AgradFwdCos, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -107,8 +104,8 @@ TEST(AgradFwdCos, FvarFvarVar_2ndDeriv) {
 TEST(AgradFwdCos, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -125,8 +122,7 @@ TEST(AgradFwdCos, FvarFvarVar_3rdDeriv) {
 
 struct cos_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return cos(arg1);
   }
 };

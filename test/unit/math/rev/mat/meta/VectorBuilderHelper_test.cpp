@@ -3,11 +3,11 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilderHelper_false_true) {
-  using stan::VectorBuilderHelper;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
+  using stan::VectorBuilderHelper;
   using stan::length;
+  using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
@@ -22,11 +22,11 @@ TEST(MetaTraits, VectorBuilderHelper_false_true) {
 }
 
 TEST(MetaTraits, VectorBuilderHelper_true_true) {
-  using stan::VectorBuilderHelper;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::var;
+  using Eigen::Matrix;
+  using stan::VectorBuilderHelper;
   using stan::length;
+  using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
@@ -41,7 +41,6 @@ TEST(MetaTraits, VectorBuilderHelper_true_true) {
   std::vector<double> data3;
   EXPECT_NO_THROW(data3 = dvv3.data());
   EXPECT_EQ(length(a_vector), data3.size());
-
 
   VectorBuilderHelper<double, true, true> dvv4(length(a_row_vector));
   dvv4[0] = 0.0;

@@ -5,10 +5,10 @@
 #include <vector>
 
 std::vector<double> finite_differences(const size_t row, const size_t col,
-                                         const stan::math::matrix_d A,
-                                         const bool calc_A_partials,
-                                         const stan::math::matrix_d B,
-                                         const bool calc_B_partials) {
+                                       const stan::math::matrix_d A,
+                                       const bool calc_A_partials,
+                                       const stan::math::matrix_d B,
+                                       const bool calc_B_partials) {
   const double e = 1e-8;
   std::vector<double> finite_diff;
   stan::math::matrix_d C_plus, C_minus;
@@ -28,7 +28,7 @@ std::vector<double> finite_differences(const size_t row, const size_t col,
 
         C_plus = stan::math::mdivide_left_ldlt(ldlt_A_plus, B);
         C_minus = stan::math::mdivide_left_ldlt(ldlt_A_minus, B);
-        finite_diff.push_back((C_plus(row, col) - C_minus(row, col)) / (2*e));
+        finite_diff.push_back((C_plus(row, col) - C_minus(row, col)) / (2 * e));
       }
     }
   }
@@ -44,13 +44,12 @@ std::vector<double> finite_differences(const size_t row, const size_t col,
 
         C_plus = stan::math::mdivide_left_ldlt(ldlt_A, B_plus);
         C_minus = stan::math::mdivide_left_ldlt(ldlt_A, B_minus);
-        finite_diff.push_back((C_plus(row, col) - C_minus(row, col)) / (2*e));
+        finite_diff.push_back((C_plus(row, col) - C_minus(row, col)) / (2 * e));
       }
     }
   }
   return finite_diff;
 }
-
 
 TEST(AgradRevMatrix, mdivide_left_ldlt_val) {
   using stan::math::matrix_d;
@@ -61,10 +60,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_val) {
   matrix_d Ad(2, 2);
   matrix_v I;
 
-  Av << 2.0, 3.0,
-    3.0, 7.0;
-  Ad << 2.0, 3.0,
-    3.0, 7.0;
+  Av << 2.0, 3.0, 3.0, 7.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
 
   ldlt_Av.compute(Av);
   ASSERT_TRUE(ldlt_Av.success());
@@ -93,17 +90,15 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_val) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -122,9 +117,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
       ASSERT_TRUE(ldlt_A.success());
 
       C = mdivide_left_ldlt(ldlt_A, B);
-      AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1),
-                          B(0, 0), B(1, 0), B(0, 1), B(1, 1));
-
+      AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1), B(0, 0), B(1, 0),
+                          B(0, 1), B(1, 1));
 
       VEC g;
       C(i, j).grad(x, g);
@@ -139,7 +133,7 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
         Bd_tmp.setZero();
         Bd_tmp(k) = 1.0;
         Cd = mdivide_left_spd(Ad, Bd_tmp);
-        EXPECT_NEAR(Cd(i, j), g[4+k], 1.0E-12);
+        EXPECT_NEAR(Cd(i, j), g[4 + k], 1.0E-12);
       }
     }
   }
@@ -148,17 +142,15 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vv) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   ldlt_Ad.compute(Ad);
@@ -178,8 +170,8 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vv) {
       ASSERT_TRUE(ldlt_A.success());
 
       C = mdivide_left_ldlt(ldlt_A, B);
-      AVEC x = createAVEC(A(0, 0), A(0, 1), A(0, 1), A(1, 1),
-                          B(0, 0), B(1, 0), B(0, 1), B(1, 1));
+      AVEC x = createAVEC(A(0, 0), A(0, 1), A(0, 1), A(1, 1), B(0, 0), B(1, 0),
+                          B(0, 1), B(1, 1));
       VEC gradient;
       C(i, j).grad(x, gradient);
 
@@ -199,15 +191,12 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_dv) {
   using stan::math::mdivide_left_spd;
   using stan::math::multiply;
 
-
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -225,7 +214,6 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_dv) {
       C = mdivide_left_ldlt(ldlt_Ad, B);
       AVEC x = createAVEC(B(0, 0), B(1, 0), B(0, 1), B(1, 1));
 
-
       VEC g;
       C(i, j).grad(x, g);
 
@@ -242,17 +230,15 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_dv) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_dv) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   ldlt_Ad.compute(Ad);
@@ -281,22 +267,18 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_dv) {
   }
 }
 
-
 TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vd) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::mdivide_left_spd;
   using stan::math::multiply;
 
-
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   size_type i, j, k;
   for (i = 0; i < Bd.rows(); i++) {
@@ -314,7 +296,6 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vd) {
       C = mdivide_left_ldlt(ldlt_A, Bd);
       AVEC x = createAVEC(A(0, 0), A(1, 0), A(0, 1), A(1, 1));
 
-
       VEC g;
       C(i, j).grad(x, g);
 
@@ -331,17 +312,15 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_grad_vd) {
 TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vd) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::multiply;
   using stan::math::mdivide_left_spd;
+  using stan::math::multiply;
 
   matrix_d Ad(2, 2), Ad_tmp(2, 2);
   matrix_d Bd(2, 2), Bd_tmp(2, 2);
   matrix_d Cd(2, 2);
 
-  Ad << 2.0, 3.0,
-  3.0, 7.0;
-  Bd << 12.0, 13.0,
-  15.0, 17.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
+  Bd << 12.0, 13.0, 15.0, 17.0;
 
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   ldlt_Ad.compute(Ad);
@@ -379,14 +358,12 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::LDLT_factor<stan::math::var, -1, -1> ldlt_Av;
   stan::math::matrix_v Av(2, 2);
-  Av << 2.0, 3.0,
-    3.0, 7.0;
+  Av << 2.0, 3.0, 3.0, 7.0;
   ldlt_Av.compute(Av);
 
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   stan::math::matrix_d Ad(2, 2);
-  Ad << 2.0, 3.0,
-    3.0, 7.0;
+  Ad << 2.0, 3.0, 3.0, 7.0;
   ldlt_Ad.compute(Ad);
 
   test::check_varis_on_stack(stan::math::mdivide_left_ldlt(ldlt_Av, Av));

@@ -2,39 +2,38 @@
 #include <stan/math/prim/scal.hpp>
 #include <stdexcept>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsBernoulli : public AgradDistributionTest {
-public:
+ public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
     vector<double> param(2);
 
-    param[0] = 1;           // n
-    param[1] = 0.25;        // theta
+    param[0] = 1;     // n
+    param[1] = 0.25;  // theta
     parameters.push_back(param);
-    log_prob.push_back(log(0.25)); // expected log_prob
+    log_prob.push_back(log(0.25));  // expected log_prob
 
-    param[0] = 0;           // n
-    param[1] = 0.25;        // theta
+    param[0] = 0;     // n
+    param[1] = 0.25;  // theta
     parameters.push_back(param);
-    log_prob.push_back(log(0.75)); // expected log_prob
+    log_prob.push_back(log(0.75));  // expected log_prob
 
-    param[0] = 1;           // n
-    param[1] = 0.01;        // theta
+    param[0] = 1;     // n
+    param[1] = 0.01;  // theta
     parameters.push_back(param);
-    log_prob.push_back(log(0.01)); // expected log_prob
+    log_prob.push_back(log(0.01));  // expected log_prob
 
-    param[0] = 0;           // n
-    param[1] = 0.01;        // theta
+    param[0] = 0;     // n
+    param[1] = 0.01;  // theta
     parameters.push_back(param);
-    log_prob.push_back(log(0.99)); // expected log_prob
+    log_prob.push_back(log(0.99));  // expected log_prob
   }
 
-  void invalid_values(vector<size_t>& index,
-                      vector<double>& value) {
+  void invalid_values(vector<size_t>& index, vector<double>& value) {
     // y
     index.push_back(0U);
     value.push_back(-1);
@@ -50,31 +49,31 @@ public:
     value.push_back(1.001);
   }
 
-  template <class T_n, class T_prob, typename T2,
-            typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type
-  log_prob(const T_n& n, const T_prob& theta, const T2&,
-           const T3&, const T4&, const T5&) {
+  template <class T_n, class T_prob, typename T2, typename T3, typename T4,
+            typename T5>
+  typename stan::return_type<T_n, T_prob>::type log_prob(const T_n& n,
+                                                         const T_prob& theta,
+                                                         const T2&, const T3&,
+                                                         const T4&, const T5&) {
     return stan::math::bernoulli_log(n, theta);
   }
 
-  template <bool propto,
-            class T_n, class T_prob, typename T2,
-            typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type
-  log_prob(const T_n& n, const T_prob& theta, const T2&,
-           const T3&, const T4&, const T5&) {
+  template <bool propto, class T_n, class T_prob, typename T2, typename T3,
+            typename T4, typename T5>
+  typename stan::return_type<T_n, T_prob>::type log_prob(const T_n& n,
+                                                         const T_prob& theta,
+                                                         const T2&, const T3&,
+                                                         const T4&, const T5&) {
     return stan::math::bernoulli_log<propto>(n, theta);
   }
 
-
-  template <class T_n, class T_prob, typename T2,
-            typename T3, typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type
-  log_prob_function(const T_n& n, const T_prob& theta, const T2&,
-                    const T3&, const T4&, const T5&) {
-    using std::log;
+  template <class T_n, class T_prob, typename T2, typename T3, typename T4,
+            typename T5>
+  typename stan::return_type<T_n, T_prob>::type log_prob_function(
+      const T_n& n, const T_prob& theta, const T2&, const T3&, const T4&,
+      const T5&) {
     using stan::math::log1m;
+    using std::log;
     if (n == 1)
       return log(theta);
     else if (n == 0)
@@ -84,6 +83,6 @@ public:
 };
 
 TEST(ProbDistributionsBernoulliCDF, Values) {
-    EXPECT_FLOAT_EQ(1, stan::math::bernoulli_cdf(1, 0.57));
-    EXPECT_FLOAT_EQ(1 - 0.57, stan::math::bernoulli_cdf(0, 0.57));
+  EXPECT_FLOAT_EQ(1, stan::math::bernoulli_cdf(1, 0.57));
+  EXPECT_FLOAT_EQ(1 - 0.57, stan::math::bernoulli_cdf(0, 0.57));
 }

@@ -9,17 +9,16 @@
 TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 
   matrix_v A(2, 2);
   matrix_v B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);
@@ -57,17 +56,16 @@ TEST(AgradRevMatrix, var_var_mdivide_left_tri_low) {
 TEST(AgradRevMatrix, var_double_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 
   matrix_v A(2, 2);
   matrix_d B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);
@@ -105,17 +103,16 @@ TEST(AgradRevMatrix, var_double_mdivide_left_tri_low) {
 TEST(AgradRevMatrix, double_var_mdivide_left_tri_low) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::mdivide_left_tri;
   using stan::math::mdivide_left_tri_low;
+  using stan::math::vector_v;
 
   // it only uses a triangular view A
 
   matrix_d A(2, 2);
   matrix_v B(2, 2);
 
-  A << 1, 0.0 / 0.0,
-    -3, 5;
+  A << 1, 0.0 / 0.0, -3, 5;
   B << 2, 5, 12, 109;
 
   vector_v c(2);

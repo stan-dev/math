@@ -4,7 +4,6 @@
 #include <limits>
 #include <stdexcept>
 
-
 TEST(MathFunctions, log1p) {
   double x;
   x = 0;
@@ -30,18 +29,14 @@ TEST(MathFunctions, log1p) {
   EXPECT_FLOAT_EQ(-6.907755, stan::math::log1p(x));
 }
 TEST(MathFunctions, log1pNegInfReturn) {
-  EXPECT_EQ(-std::numeric_limits<double>::infinity(),
-            stan::math::log1p(-1.0));
+  EXPECT_EQ(-std::numeric_limits<double>::infinity(), stan::math::log1p(-1.0));
 }
 
 TEST(MathFunctions, log1p_exception) {
   EXPECT_THROW(stan::math::log1p(-10.0), std::domain_error);
 }
 
-
-
 TEST(MathFunctions, log1p_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log1p(nan));
+  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log1p(nan));
 }

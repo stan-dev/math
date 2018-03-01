@@ -3,9 +3,9 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::var;
 
   Matrix<var, Dynamic, Dynamic> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -17,9 +17,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
                std::domain_error);
 
   y.resize(3, 3);
-  y << 2, -1, 0,
-    -1, 2, -1,
-    0, -1, 2;
+  y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
   EXPECT_NO_THROW(check_pos_definite("checkPosDefiniteMatrix", "y", y));
 
   for (int i = 0; i < y.rows(); i++)
@@ -35,4 +33,3 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   EXPECT_THROW(check_pos_definite("checkPosDefiniteMatrix", "y", y),
                std::domain_error);
 }
-

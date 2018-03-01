@@ -1,18 +1,17 @@
 #include <stan/math/rev/arr.hpp>
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
 using stan::math::check_less_or_equal;
 using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
+  using stan::math::check_less_or_equal;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_less_or_equal;
 
   int N = 5;
-  const std::string function = "check_less_or_equal";
+  const char* function = "check_less_or_equal";
   vector<var> a;
 
   for (int i = 0; i < N; ++i)

@@ -35,12 +35,10 @@ void expect_mix_row_vector_value() {
           c.push_back(build_mix_matrix<F>(template_rv));
           d.push_back(build_mix_matrix<F>(template_rv));
         }
-      vector<row_vector_t> fd =
-          F::template apply<vector<row_vector_t> >(d);
+      vector<row_vector_t> fd = F::template apply<vector<row_vector_t> >(d);
       EXPECT_EQ(d.size(), fd.size());
       EXPECT_EQ(d[i].size(), fd[i].size());
-      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j),
-                          fd[i](j), d[i](j));
+      expect_val_deriv_eq(F::apply_base(c[i](j)), c[i](j), fd[i](j), d[i](j));
     }
   }
 }

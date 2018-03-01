@@ -3,11 +3,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdLog1pExp, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p_exp;
+  using stan::math::var;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -23,8 +22,8 @@ TEST(AgradFwdLog1pExp, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1pExp, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p_exp;
+  using stan::math::var;
   using std::exp;
 
   fvar<var> x(0.5, 1.3);
@@ -37,8 +36,8 @@ TEST(AgradFwdLog1pExp, FvarVar_2ndDeriv) {
 }
 TEST(AgradFwdLog1pExp, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p_exp;
+  using stan::math::var;
   using std::exp;
 
   fvar<fvar<var> > x;
@@ -74,8 +73,8 @@ TEST(AgradFwdLog1pExp, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdLog1pExp, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::log1p_exp;
+  using stan::math::var;
   using std::exp;
 
   fvar<fvar<var> > x;
@@ -119,8 +118,7 @@ TEST(AgradFwdLog1pExp, FvarFvarVar_3rdDeriv) {
 
 struct log1p_exp_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return log1p_exp(arg1);
   }
 };

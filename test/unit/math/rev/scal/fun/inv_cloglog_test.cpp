@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/scal/util.hpp>
 
 TEST(AgradRev, inv_cloglog) {
-  using std::exp;
   using stan::math::exp;
+  using std::exp;
   AVAR a = 2.7;
   AVAR f = inv_cloglog(a);
   EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(2.7)), f.val());
@@ -26,8 +26,7 @@ TEST(AgradRev, inv_cloglog) {
 
 struct inv_cloglog_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_cloglog(arg1);
   }
 };

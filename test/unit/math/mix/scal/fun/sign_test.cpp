@@ -15,11 +15,10 @@ TEST(AgradFwdSign, Fvar) {
   EXPECT_EQ(-1, stan::math::sign(v));
 }
 
-
 TEST(AgradFwdSign, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::sign;
+  using stan::math::var;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sign(x);
@@ -32,12 +31,11 @@ TEST(AgradFwdSign, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdSign, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::sign;
+  using stan::math::var;
 
   fvar<fvar<var> > x(1.5, 1.3);
   fvar<fvar<var> > a = sign(x);
-
 
   EXPECT_FLOAT_EQ(sign(1.5), a.val_.val_.val());
   EXPECT_FLOAT_EQ(0, a.val_.d_.val());
@@ -66,8 +64,8 @@ TEST(AgradFwdSign, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdSign, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::sign;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -93,8 +91,8 @@ TEST(AgradFwdSign, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdSign, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::sign;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -108,5 +106,3 @@ TEST(AgradFwdSign, FvarFvarVar_3rdDeriv) {
   a.d_.d_.grad(p, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
-
-

@@ -18,18 +18,17 @@ double deriv_2(const int y, const double y_hat) {
 
 double deriv_3(const int y, const double y_hat) {
   if (y == 0)
-    return - 2.0 / pow(y_hat - 1.0, 3);
+    return -2.0 / pow(y_hat - 1.0, 3);
   else
-    return - 2.0 / pow(y_hat, 3);
+    return -2.0 / pow(y_hat, 3);
 }
-
 
 double finite_diff(const int y, const double y_hat) {
   using stan::math::binary_log_loss;
   static const double h = 1e-10;
 
-  double p = binary_log_loss(y, y_hat+h);
-  double m = binary_log_loss(y, y_hat-h);
+  double p = binary_log_loss(y, y_hat + h);
+  double m = binary_log_loss(y, y_hat - h);
 
   return (p - m) / (2 * h);
 }
@@ -38,18 +37,16 @@ double finite_diff_2(const int y, const double y_hat) {
   using stan::math::binary_log_loss;
   static const double h = 1e-5;
 
-  double p = binary_log_loss(y, y_hat+h);
+  double p = binary_log_loss(y, y_hat + h);
   double f = binary_log_loss(y, y_hat);
-  double m = binary_log_loss(y, y_hat-h);
+  double m = binary_log_loss(y, y_hat - h);
 
   return exp(log(p - 2.0 * f + m) - 2.0 * log(h));
 }
 
-
 TEST(AgradFwdBinaryLogLoss, Fvar) {
-  using stan::math::fvar;
   using stan::math::binary_log_loss;
-
+  using stan::math::fvar;
 
   int y;
   fvar<double> y_hat;
@@ -96,11 +93,9 @@ TEST(AgradFwdBinaryLogLoss, Fvar) {
   EXPECT_NEAR(finite_diff(1, 0.75), f.d_, 1e-5);
 }
 
-
 TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
-  using stan::math::fvar;
   using stan::math::binary_log_loss;
-
+  using stan::math::fvar;
 
   fvar<fvar<double> > y;
   y.val_.val_ = 0.4;
@@ -125,11 +120,9 @@ TEST(AgradFwdBinaryLogLoss, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, b.d_.d_);
 }
 
-
 struct binary_log_loss_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return binary_log_loss(0, arg1);
   }
 };

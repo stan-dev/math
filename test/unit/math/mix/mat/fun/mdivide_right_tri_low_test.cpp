@@ -8,24 +8,22 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_1stDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_fv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 2.0;
-    Z(1).d_ = 2.0;
-    Z(2).d_ = 2.0;
+  row_vector_fv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -40,11 +38,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_1stDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_2ndDeriv) {
@@ -52,24 +50,22 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_2ndDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_fv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 2.0;
-    Z(1).d_ = 2.0;
-    Z(2).d_ = 2.0;
+  row_vector_fv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -81,7 +77,7 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
   EXPECT_FLOAT_EQ(-0.5, h[3]);
-  EXPECT_FLOAT_EQ(8.0/27.0, h[4]);
+  EXPECT_FLOAT_EQ(8.0 / 27.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_1stDeriv) {
@@ -89,21 +85,19 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_1stDeriv) {
   using stan::math::row_vector_d;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -118,11 +112,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_1stDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_2ndDeriv) {
@@ -130,21 +124,19 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_2ndDeriv) {
   using stan::math::row_vector_d;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -152,11 +144,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_fv_2ndDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
-  EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
+  EXPECT_FLOAT_EQ(-23.0 / 9.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(-7.0/18.0, h[3]);
-  EXPECT_FLOAT_EQ(2.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(-7.0 / 18.0, h[3]);
+  EXPECT_FLOAT_EQ(2.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_1stDeriv) {
@@ -165,15 +157,13 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_1stDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_fv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 2.0;
-   Z(1).d_ = 2.0;
-   Z(2).d_ = 2.0;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -188,8 +178,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_1stDeriv) {
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
-  EXPECT_FLOAT_EQ(-2.0/3.0, h[1]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[2]);
+  EXPECT_FLOAT_EQ(-2.0 / 3.0, h[1]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[2]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_2ndDeriv) {
   using stan::math::matrix_d;
@@ -197,15 +187,13 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_fv_matrix_2ndDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_fv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 2.0;
-   Z(1).d_ = 2.0;
-   Z(2).d_ = 2.0;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -221,32 +209,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_1stDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_fv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -273,11 +257,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_1stDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_2ndDeriv) {
@@ -285,32 +269,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_2ndDeriv) {
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_fv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -322,32 +302,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
   EXPECT_FLOAT_EQ(-0.5, h[3]);
-  EXPECT_FLOAT_EQ(8.0/27.0, h[4]);
+  EXPECT_FLOAT_EQ(8.0 / 27.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_fv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -375,35 +351,31 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_1stDeriv) {
   VEC h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
-  EXPECT_FLOAT_EQ(-2.0/3.0, h[1]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[2]);
+  EXPECT_FLOAT_EQ(-2.0 / 3.0, h[1]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[2]);
   EXPECT_FLOAT_EQ(0.0, h[3]);
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_fv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -419,28 +391,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_fv_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_1stDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -467,36 +435,32 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_1stDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_2ndDeriv) {
-  using stan::math::matrix_fv;
   using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::row_vector_fv;
 
   matrix_fv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_fv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -504,19 +468,19 @@ TEST(AgradMixMatrixMdivideRightTriLow, fv__matrix_matrix_fv_2ndDeriv) {
                       Y(1, 0).val(), Y(1, 1).val(), Y(1, 2).val());
   VEC h;
   output(0, 0).d_.grad(q, h);
-  EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
+  EXPECT_FLOAT_EQ(-23.0 / 9.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(-7.0/18.0, h[3]);
-  EXPECT_FLOAT_EQ(2.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(-7.0 / 18.0, h[3]);
+  EXPECT_FLOAT_EQ(2.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, fv__rowvector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri_low;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fv;
 
   row_vector_fv fv1(4), fv2(3);
   fv1.setZero();
@@ -559,24 +523,22 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_1stDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_ffv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 2.0;
-    Z(1).d_ = 2.0;
-    Z(2).d_ = 2.0;
+  row_vector_ffv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -592,11 +554,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_1stDeriv) {
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow,
@@ -605,24 +567,22 @@ TEST(AgradMixMatrixMdivideRightTriLow,
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_ffv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 2.0;
-    Z(1).d_ = 2.0;
-    Z(2).d_ = 2.0;
+  row_vector_ffv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -644,24 +604,22 @@ TEST(AgradMixMatrixMdivideRightTriLow,
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_ffv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 2.0;
-    Z(1).d_ = 2.0;
-    Z(2).d_ = 2.0;
+  row_vector_ffv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -674,7 +632,7 @@ TEST(AgradMixMatrixMdivideRightTriLow,
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
   EXPECT_FLOAT_EQ(-0.5, h[3]);
-  EXPECT_FLOAT_EQ(8.0/27.0, h[4]);
+  EXPECT_FLOAT_EQ(8.0 / 27.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_3rdDeriv) {
@@ -682,36 +640,34 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_ffv_3rdDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 1.0;
-   Y(0, 1).d_ = 1.0;
-   Y(0, 2).d_ = 1.0;
-   Y(1, 0).d_ = 1.0;
-   Y(1, 1).d_ = 1.0;
-   Y(1, 2).d_ = 1.0;
-   Y(2, 0).d_ = 1.0;
-   Y(2, 1).d_ = 1.0;
-   Y(2, 2).d_ = 1.0;
-   Y(0, 0).val_.d_ = 1.0;
-   Y(0, 1).val_.d_ = 1.0;
-   Y(0, 2).val_.d_ = 1.0;
-   Y(1, 0).val_.d_ = 1.0;
-   Y(1, 1).val_.d_ = 1.0;
-   Y(1, 2).val_.d_ = 1.0;
-   Y(2, 0).val_.d_ = 1.0;
-   Y(2, 1).val_.d_ = 1.0;
-   Y(2, 2).val_.d_ = 1.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 1.0;
+  Y(0, 1).d_ = 1.0;
+  Y(0, 2).d_ = 1.0;
+  Y(1, 0).d_ = 1.0;
+  Y(1, 1).d_ = 1.0;
+  Y(1, 2).d_ = 1.0;
+  Y(2, 0).d_ = 1.0;
+  Y(2, 1).d_ = 1.0;
+  Y(2, 2).d_ = 1.0;
+  Y(0, 0).val_.d_ = 1.0;
+  Y(0, 1).val_.d_ = 1.0;
+  Y(0, 2).val_.d_ = 1.0;
+  Y(1, 0).val_.d_ = 1.0;
+  Y(1, 1).val_.d_ = 1.0;
+  Y(1, 2).val_.d_ = 1.0;
+  Y(2, 0).val_.d_ = 1.0;
+  Y(2, 1).val_.d_ = 1.0;
+  Y(2, 2).val_.d_ = 1.0;
 
-   row_vector_ffv Z(3);
-   Z << 1, 2, 3;
-    Z(0).d_ = 1.0;
-    Z(1).d_ = 1.0;
-    Z(2).d_ = 1.0;
-    Z(0).val_.d_ = 1.0;
-    Z(1).val_.d_ = 1.0;
-    Z(2).val_.d_ = 1.0;
+  row_vector_ffv Z(3);
+  Z << 1, 2, 3;
+  Z(0).d_ = 1.0;
+  Z(1).d_ = 1.0;
+  Z(2).d_ = 1.0;
+  Z(0).val_.d_ = 1.0;
+  Z(1).val_.d_ = 1.0;
+  Z(2).val_.d_ = 1.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -732,21 +688,19 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_1stDeriv) {
   using stan::math::row_vector_d;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -762,11 +716,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_1stDeriv) {
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_1) {
@@ -774,21 +728,19 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_1) {
   using stan::math::row_vector_d;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -804,27 +756,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
-TEST(AgradMixMatrixMdivideRightTriLow,
-      ffv__rowvector_matrix_ffv_2ndDeriv_2) {
+TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_2ndDeriv_2) {
   using stan::math::matrix_ffv;
   using stan::math::row_vector_d;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -833,11 +782,11 @@ TEST(AgradMixMatrixMdivideRightTriLow,
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
+  EXPECT_FLOAT_EQ(-23.0 / 9.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(-7.0/18.0, h[3]);
-  EXPECT_FLOAT_EQ(2.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(-7.0 / 18.0, h[3]);
+  EXPECT_FLOAT_EQ(2.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_3rdDeriv) {
@@ -845,30 +794,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_ffv_3rdDeriv) {
   using stan::math::row_vector_d;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 1.0;
-   Y(0, 1).d_ = 1.0;
-   Y(0, 2).d_ = 1.0;
-   Y(1, 0).d_ = 1.0;
-   Y(1, 1).d_ = 1.0;
-   Y(1, 2).d_ = 1.0;
-   Y(2, 0).d_ = 1.0;
-   Y(2, 1).d_ = 1.0;
-   Y(2, 2).d_ = 1.0;
-   Y(0, 0).val_.d_ = 1.0;
-   Y(0, 1).val_.d_ = 1.0;
-   Y(0, 2).val_.d_ = 1.0;
-   Y(1, 0).val_.d_ = 1.0;
-   Y(1, 1).val_.d_ = 1.0;
-   Y(1, 2).val_.d_ = 1.0;
-   Y(2, 0).val_.d_ = 1.0;
-   Y(2, 1).val_.d_ = 1.0;
-   Y(2, 2).val_.d_ = 1.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 1.0;
+  Y(0, 1).d_ = 1.0;
+  Y(0, 2).d_ = 1.0;
+  Y(1, 0).d_ = 1.0;
+  Y(1, 1).d_ = 1.0;
+  Y(1, 2).d_ = 1.0;
+  Y(2, 0).d_ = 1.0;
+  Y(2, 1).d_ = 1.0;
+  Y(2, 2).d_ = 1.0;
+  Y(0, 0).val_.d_ = 1.0;
+  Y(0, 1).val_.d_ = 1.0;
+  Y(0, 2).val_.d_ = 1.0;
+  Y(1, 0).val_.d_ = 1.0;
+  Y(1, 1).val_.d_ = 1.0;
+  Y(1, 2).val_.d_ = 1.0;
+  Y(2, 0).val_.d_ = 1.0;
+  Y(2, 1).val_.d_ = 1.0;
+  Y(2, 2).val_.d_ = 1.0;
 
-   row_vector_d Z(3);
-   Z << 1, 2, 3;
+  row_vector_d Z(3);
+  Z << 1, 2, 3;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -890,15 +837,13 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_1stDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_ffv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 2.0;
-   Z(1).d_ = 2.0;
-   Z(2).d_ = 2.0;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -913,8 +858,8 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_1stDeriv) {
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
-  EXPECT_FLOAT_EQ(-2.0/3.0, h[1]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[2]);
+  EXPECT_FLOAT_EQ(-2.0 / 3.0, h[1]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[2]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_2ndDeriv_1) {
   using stan::math::matrix_d;
@@ -922,15 +867,13 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_ffv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 2.0;
-   Z(1).d_ = 2.0;
-   Z(2).d_ = 2.0;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -947,15 +890,13 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_ffv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 2.0;
-   Z(1).d_ = 2.0;
-   Z(2).d_ = 2.0;
+  Z(0).d_ = 2.0;
+  Z(1).d_ = 2.0;
+  Z(2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -972,18 +913,16 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_ffv_matrix_3rdDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   row_vector_ffv Z(3);
   Z << 1, 2, 3;
-   Z(0).d_ = 1.0;
-   Z(1).d_ = 1.0;
-   Z(2).d_ = 1.0;
-   Z(0).val_.d_ = 1.0;
-   Z(1).val_.d_ = 1.0;
-   Z(2).val_.d_ = 1.0;
+  Z(0).d_ = 1.0;
+  Z(1).d_ = 1.0;
+  Z(2).d_ = 1.0;
+  Z(0).val_.d_ = 1.0;
+  Z(1).val_.d_ = 1.0;
+  Z(2).val_.d_ = 1.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -999,32 +938,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_1stDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1052,11 +987,11 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_1stDeriv) {
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_1) {
@@ -1064,32 +999,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_1) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1110,32 +1041,28 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_2) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1148,7 +1075,7 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
   EXPECT_FLOAT_EQ(-0.5, h[3]);
-  EXPECT_FLOAT_EQ(8.0/27.0, h[4]);
+  EXPECT_FLOAT_EQ(8.0 / 27.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_3rdDeriv) {
@@ -1156,50 +1083,46 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_3rdDeriv) {
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 1.0;
-   Y(0, 1).d_ = 1.0;
-   Y(0, 2).d_ = 1.0;
-   Y(1, 0).d_ = 1.0;
-   Y(1, 1).d_ = 1.0;
-   Y(1, 2).d_ = 1.0;
-   Y(2, 0).d_ = 1.0;
-   Y(2, 1).d_ = 1.0;
-   Y(2, 2).d_ = 1.0;
-   Y(0, 0).val_.d_ = 1.0;
-   Y(0, 1).val_.d_ = 1.0;
-   Y(0, 2).val_.d_ = 1.0;
-   Y(1, 0).val_.d_ = 1.0;
-   Y(1, 1).val_.d_ = 1.0;
-   Y(1, 2).val_.d_ = 1.0;
-   Y(2, 0).val_.d_ = 1.0;
-   Y(2, 1).val_.d_ = 1.0;
-   Y(2, 2).val_.d_ = 1.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 1.0;
+  Y(0, 1).d_ = 1.0;
+  Y(0, 2).d_ = 1.0;
+  Y(1, 0).d_ = 1.0;
+  Y(1, 1).d_ = 1.0;
+  Y(1, 2).d_ = 1.0;
+  Y(2, 0).d_ = 1.0;
+  Y(2, 1).d_ = 1.0;
+  Y(2, 2).d_ = 1.0;
+  Y(0, 0).val_.d_ = 1.0;
+  Y(0, 1).val_.d_ = 1.0;
+  Y(0, 2).val_.d_ = 1.0;
+  Y(1, 0).val_.d_ = 1.0;
+  Y(1, 1).val_.d_ = 1.0;
+  Y(1, 2).val_.d_ = 1.0;
+  Y(2, 0).val_.d_ = 1.0;
+  Y(2, 1).val_.d_ = 1.0;
+  Y(2, 2).val_.d_ = 1.0;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 1.0;
-   Z(0, 1).d_ = 1.0;
-   Z(0, 2).d_ = 1.0;
-   Z(1, 0).d_ = 1.0;
-   Z(1, 1).d_ = 1.0;
-   Z(1, 2).d_ = 1.0;
-   Z(2, 0).d_ = 1.0;
-   Z(2, 1).d_ = 1.0;
-   Z(2, 2).d_ = 1.0;
-   Z(0, 0).val_.d_ = 1.0;
-   Z(0, 1).val_.d_ = 1.0;
-   Z(0, 2).val_.d_ = 1.0;
-   Z(1, 0).val_.d_ = 1.0;
-   Z(1, 1).val_.d_ = 1.0;
-   Z(1, 2).val_.d_ = 1.0;
-   Z(2, 0).val_.d_ = 1.0;
-   Z(2, 1).val_.d_ = 1.0;
-   Z(2, 2).val_.d_ = 1.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 1.0;
+  Z(0, 1).d_ = 1.0;
+  Z(0, 2).d_ = 1.0;
+  Z(1, 0).d_ = 1.0;
+  Z(1, 1).d_ = 1.0;
+  Z(1, 2).d_ = 1.0;
+  Z(2, 0).d_ = 1.0;
+  Z(2, 1).d_ = 1.0;
+  Z(2, 2).d_ = 1.0;
+  Z(0, 0).val_.d_ = 1.0;
+  Z(0, 1).val_.d_ = 1.0;
+  Z(0, 2).val_.d_ = 1.0;
+  Z(1, 0).val_.d_ = 1.0;
+  Z(1, 1).val_.d_ = 1.0;
+  Z(1, 2).val_.d_ = 1.0;
+  Z(2, 0).val_.d_ = 1.0;
+  Z(2, 1).val_.d_ = 1.0;
+  Z(2, 2).val_.d_ = 1.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1216,28 +1139,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_1stDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1266,35 +1185,31 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_1stDeriv) {
   VEC h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1.0, h[0]);
-  EXPECT_FLOAT_EQ(-2.0/3.0, h[1]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[2]);
+  EXPECT_FLOAT_EQ(-2.0 / 3.0, h[1]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[2]);
   EXPECT_FLOAT_EQ(0.0, h[3]);
   EXPECT_FLOAT_EQ(0.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1311,28 +1226,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 2.0;
-   Z(0, 1).d_ = 2.0;
-   Z(0, 2).d_ = 2.0;
-   Z(1, 0).d_ = 2.0;
-   Z(1, 1).d_ = 2.0;
-   Z(1, 2).d_ = 2.0;
-   Z(2, 0).d_ = 2.0;
-   Z(2, 1).d_ = 2.0;
-   Z(2, 2).d_ = 2.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 2.0;
+  Z(0, 1).d_ = 2.0;
+  Z(0, 2).d_ = 2.0;
+  Z(1, 0).d_ = 2.0;
+  Z(1, 1).d_ = 2.0;
+  Z(1, 2).d_ = 2.0;
+  Z(2, 0).d_ = 2.0;
+  Z(2, 1).d_ = 2.0;
+  Z(2, 2).d_ = 2.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1349,37 +1260,33 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_3rdDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_d Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
   matrix_ffv Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
-   Z(0, 0).d_ = 1.0;
-   Z(0, 1).d_ = 1.0;
-   Z(0, 2).d_ = 1.0;
-   Z(1, 0).d_ = 1.0;
-   Z(1, 1).d_ = 1.0;
-   Z(1, 2).d_ = 1.0;
-   Z(2, 0).d_ = 1.0;
-   Z(2, 1).d_ = 1.0;
-   Z(2, 2).d_ = 1.0;
-   Z(0, 0).val_.d_ = 1.0;
-   Z(0, 1).val_.d_ = 1.0;
-   Z(0, 2).val_.d_ = 1.0;
-   Z(1, 0).val_.d_ = 1.0;
-   Z(1, 1).val_.d_ = 1.0;
-   Z(1, 2).val_.d_ = 1.0;
-   Z(2, 0).val_.d_ = 1.0;
-   Z(2, 1).val_.d_ = 1.0;
-   Z(2, 2).val_.d_ = 1.0;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
+  Z(0, 0).d_ = 1.0;
+  Z(0, 1).d_ = 1.0;
+  Z(0, 2).d_ = 1.0;
+  Z(1, 0).d_ = 1.0;
+  Z(1, 1).d_ = 1.0;
+  Z(1, 2).d_ = 1.0;
+  Z(2, 0).d_ = 1.0;
+  Z(2, 1).d_ = 1.0;
+  Z(2, 2).d_ = 1.0;
+  Z(0, 0).val_.d_ = 1.0;
+  Z(0, 1).val_.d_ = 1.0;
+  Z(0, 2).val_.d_ = 1.0;
+  Z(1, 0).val_.d_ = 1.0;
+  Z(1, 1).val_.d_ = 1.0;
+  Z(1, 2).val_.d_ = 1.0;
+  Z(2, 0).val_.d_ = 1.0;
+  Z(2, 1).val_.d_ = 1.0;
+  Z(2, 2).val_.d_ = 1.0;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1396,28 +1303,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_ffv_matrix_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_1stDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1445,36 +1348,32 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_1stDeriv) {
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(2.0/3.0, h[0]);
+  EXPECT_FLOAT_EQ(2.0 / 3.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(1.0/6.0, h[3]);
-  EXPECT_FLOAT_EQ(-1.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(1.0 / 6.0, h[3]);
+  EXPECT_FLOAT_EQ(-1.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_1) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1491,28 +1390,24 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_2) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 2.0;
-   Y(0, 1).d_ = 2.0;
-   Y(0, 2).d_ = 2.0;
-   Y(1, 0).d_ = 2.0;
-   Y(1, 1).d_ = 2.0;
-   Y(1, 2).d_ = 2.0;
-   Y(2, 0).d_ = 2.0;
-   Y(2, 1).d_ = 2.0;
-   Y(2, 2).d_ = 2.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 2.0;
+  Y(0, 1).d_ = 2.0;
+  Y(0, 2).d_ = 2.0;
+  Y(1, 0).d_ = 2.0;
+  Y(1, 1).d_ = 2.0;
+  Y(1, 2).d_ = 2.0;
+  Y(2, 0).d_ = 2.0;
+  Y(2, 1).d_ = 2.0;
+  Y(2, 2).d_ = 2.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1521,45 +1416,41 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_2ndDeriv_2) {
                       Y(1, 1).val().val(), Y(1, 2).val().val());
   VEC h;
   output(0, 0).d_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(-23.0/9.0, h[0]);
+  EXPECT_FLOAT_EQ(-23.0 / 9.0, h[0]);
   EXPECT_FLOAT_EQ(0.0, h[1]);
   EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(-7.0/18.0, h[3]);
-  EXPECT_FLOAT_EQ(2.0/9.0, h[4]);
+  EXPECT_FLOAT_EQ(-7.0 / 18.0, h[3]);
+  EXPECT_FLOAT_EQ(2.0 / 9.0, h[4]);
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_3rdDeriv) {
-  using stan::math::matrix_ffv;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv Y(3, 3);
-  Y << 1, 0, 0,
-    2, 3, 0,
-    4, 5, 6;
-   Y(0, 0).d_ = 1.0;
-   Y(0, 1).d_ = 1.0;
-   Y(0, 2).d_ = 1.0;
-   Y(1, 0).d_ = 1.0;
-   Y(1, 1).d_ = 1.0;
-   Y(1, 2).d_ = 1.0;
-   Y(2, 0).d_ = 1.0;
-   Y(2, 1).d_ = 1.0;
-   Y(2, 2).d_ = 1.0;
-   Y(0, 0).val_.d_ = 1.0;
-   Y(0, 1).val_.d_ = 1.0;
-   Y(0, 2).val_.d_ = 1.0;
-   Y(1, 0).val_.d_ = 1.0;
-   Y(1, 1).val_.d_ = 1.0;
-   Y(1, 2).val_.d_ = 1.0;
-   Y(2, 0).val_.d_ = 1.0;
-   Y(2, 1).val_.d_ = 1.0;
-   Y(2, 2).val_.d_ = 1.0;
+  Y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+  Y(0, 0).d_ = 1.0;
+  Y(0, 1).d_ = 1.0;
+  Y(0, 2).d_ = 1.0;
+  Y(1, 0).d_ = 1.0;
+  Y(1, 1).d_ = 1.0;
+  Y(1, 2).d_ = 1.0;
+  Y(2, 0).d_ = 1.0;
+  Y(2, 1).d_ = 1.0;
+  Y(2, 2).d_ = 1.0;
+  Y(0, 0).val_.d_ = 1.0;
+  Y(0, 1).val_.d_ = 1.0;
+  Y(0, 2).val_.d_ = 1.0;
+  Y(1, 0).val_.d_ = 1.0;
+  Y(1, 1).val_.d_ = 1.0;
+  Y(1, 2).val_.d_ = 1.0;
+  Y(2, 0).val_.d_ = 1.0;
+  Y(2, 1).val_.d_ = 1.0;
+  Y(2, 2).val_.d_ = 1.0;
 
   matrix_d Z(3, 3);
-  Z << 1, 2, 3,
-    6, 5, 4,
-    7, 8, 9;
+  Z << 1, 2, 3, 6, 5, 4, 7, 8, 9;
 
   matrix_ffv output = stan::math::mdivide_right_tri_low(Z, Y);
 
@@ -1578,9 +1469,9 @@ TEST(AgradMixMatrixMdivideRightTriLow, ffv__matrix_matrix_ffv_3rdDeriv) {
 TEST(AgradMixMatrixMdivideRightTriLow, ffv__rowvector_matrix_exceptions) {
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-  using stan::math::row_vector_d;
   using stan::math::mdivide_right_tri_low;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffv;
 
   row_vector_ffv fv1(4), fv2(3);
   fv1.setZero();

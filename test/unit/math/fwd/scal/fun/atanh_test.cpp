@@ -4,8 +4,8 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 
 TEST(AgradFwdAtanh, Fvar) {
-  using stan::math::fvar;
   using boost::math::atanh;
+  using stan::math::fvar;
 
   fvar<double> x(0.5, 1.0);
 
@@ -20,10 +20,9 @@ TEST(AgradFwdAtanh, Fvar) {
   EXPECT_FLOAT_EQ(1 / (1 - 0.9 * 0.9), b.d_);
 }
 
-
 TEST(AgradFwdAtanh, FvarFvarDouble) {
-  using stan::math::fvar;
   using boost::math::atanh;
+  using stan::math::fvar;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;
@@ -47,11 +46,9 @@ TEST(AgradFwdAtanh, FvarFvarDouble) {
   EXPECT_FLOAT_EQ(0, a.d_.d_);
 }
 
-
 struct atanh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return atanh(arg1);
   }
 };

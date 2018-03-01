@@ -4,12 +4,11 @@
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
 TEST(AgradFwdSin, FvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = sin(x);
@@ -23,8 +22,8 @@ TEST(AgradFwdSin, FvarVar_2ndDeriv) {
 TEST(AgradFwdSin, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -60,8 +59,8 @@ TEST(AgradFwdSin, FvarFvarVar_1stDeriv) {
 TEST(AgradFwdSin, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -88,8 +87,8 @@ TEST(AgradFwdSin, FvarFvarVar_2ndDeriv) {
 TEST(AgradFwdSin, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::var;
-  using std::sin;
   using std::cos;
+  using std::sin;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -106,8 +105,7 @@ TEST(AgradFwdSin, FvarFvarVar_3rdDeriv) {
 
 struct sin_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return sin(arg1);
   }
 };

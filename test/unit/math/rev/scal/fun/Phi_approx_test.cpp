@@ -5,9 +5,9 @@
 #include <vector>
 
 TEST(AgradRev, Phi_approx) {
+  using stan::math::Phi_approx;
   using stan::math::var;
   using std::abs;
-  using stan::math::Phi_approx;
 
   std::vector<double> y_values;
   y_values.push_back(0.0);
@@ -44,8 +44,7 @@ TEST(AgradRev, Phi_approx) {
 
 struct Phi_approx_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return Phi_approx(arg1);
   }
 };

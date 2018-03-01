@@ -3,25 +3,23 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
-using stan::math::sum;
-using stan::math::append_row;
-using stan::math::matrix_v;
-using stan::math::vector_v;
-using stan::math::set_zero_all_adjoints;
-using stan::math::square;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using stan::math::append_row;
+using stan::math::matrix_v;
+using stan::math::set_zero_all_adjoints;
+using stan::math::square;
+using stan::math::sum;
+using stan::math::vector_v;
 
 TEST(AgradRevMatrix, append_row_matrix) {
   matrix_v a(2, 2);
   matrix_v a_square(2, 2);
   MatrixXd b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   AVEC x;
   for (int i = 0; i < 2; ++i) {
@@ -38,7 +36,7 @@ TEST(AgradRevMatrix, append_row_matrix) {
   size_t idx = 0;
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
-      EXPECT_FLOAT_EQ(a(i, j).val()*2.0, g[idx++]);
+      EXPECT_FLOAT_EQ(a(i, j).val() * 2.0, g[idx++]);
   stan::math::recover_memory();
 }
 
@@ -62,7 +60,7 @@ TEST(AgradRevMatrix, append_row_row_vector) {
 
   size_t idx = 0;
   for (int i = 0; i < 3; i++)
-    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+    EXPECT_FLOAT_EQ(a(i).val() * 2.0, g[idx++]);
 
   set_zero_all_adjoints();
   append_row_ab = sum(append_row(a_square, 2.1));
@@ -70,7 +68,7 @@ TEST(AgradRevMatrix, append_row_row_vector) {
 
   idx = 0;
   for (int i = 0; i < 3; i++)
-    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+    EXPECT_FLOAT_EQ(a(i).val() * 2.0, g[idx++]);
 
   set_zero_all_adjoints();
   append_row_ab = sum(append_row(2.1, a_square));
@@ -78,17 +76,17 @@ TEST(AgradRevMatrix, append_row_row_vector) {
 
   idx = 0;
   for (int i = 0; i < 3; i++)
-    EXPECT_FLOAT_EQ(a(i).val()*2.0, g[idx++]);
+    EXPECT_FLOAT_EQ(a(i).val() * 2.0, g[idx++]);
 
   set_zero_all_adjoints();
-  append_row_ab = sum(append_row(a_square(2)*3.0, b));
+  append_row_ab = sum(append_row(a_square(2) * 3.0, b));
   append_row_ab.grad();
-  EXPECT_FLOAT_EQ(a(2).val()*6.0, x[2].adj());
+  EXPECT_FLOAT_EQ(a(2).val() * 6.0, x[2].adj());
 
   set_zero_all_adjoints();
-  append_row_ab = sum(append_row(b, a_square(1)*3.0));
+  append_row_ab = sum(append_row(b, a_square(1) * 3.0));
   append_row_ab.grad();
-  EXPECT_FLOAT_EQ(a(1).val()*6.0, x[1].adj());
+  EXPECT_FLOAT_EQ(a(1).val() * 6.0, x[1].adj());
   stan::math::recover_memory();
 }
 
@@ -108,40 +106,31 @@ TEST(MathMatrix, append_row_different_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::matrix_v;
   using stan::math::row_vector_v;
   using stan::math::vector_v;
   using std::vector;
 
   MatrixXd m33(3, 3);
-  m33 << 1, 2, 3,
-         4, 5, 6,
-         7, 8, 9;
+  m33 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   MatrixXd m32(3, 2);
-  m32 << 11, 12,
-         13, 14,
-         15, 16;
+  m32 << 11, 12, 13, 14, 15, 16;
 
   MatrixXd m32b(2, 3);
   // ensure some different values
-  m32b = m32*1.101;
+  m32b = m32 * 1.101;
 
   MatrixXd m23(2, 3);
-  m23 << 21, 22, 23,
-         24, 25, 26;
+  m23 << 21, 22, 23, 24, 25, 26;
 
   VectorXd v3(3);
-  v3 << 31,
-        32,
-        33;
+  v3 << 31, 32, 33;
 
   VectorXd v3b(3);
-  v3b << 34,
-         35,
-         36;
+  v3b << 34, 35, 36;
 
   RowVectorXd rv3(3);
   rv3 << 41, 42, 43;
@@ -150,32 +139,23 @@ TEST(MathMatrix, append_row_different_types) {
   rv3b << 44, 45, 46;
 
   MatrixXd vm33(3, 3);
-  vm33 << 1, 2, 3,
-         4, 5, 6,
-         7, 8, 9;
+  vm33 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   MatrixXd vm32(3, 2);
-  vm32 << 11, 12,
-         13, 14,
-         15, 16;
+  vm32 << 11, 12, 13, 14, 15, 16;
 
   MatrixXd vm32b(2, 3);
   // ensure some different values
-  vm32b = vm32*1.101;
+  vm32b = vm32 * 1.101;
 
   MatrixXd vm23(2, 3);
-  vm23 << 21, 22, 23,
-         24, 25, 26;
+  vm23 << 21, 22, 23, 24, 25, 26;
 
   VectorXd vv3(3);
-  vv3 << 31,
-        32,
-        33;
+  vv3 << 31, 32, 33;
 
   VectorXd vv3b(3);
-  vv3b << 34,
-         35,
-         36;
+  vv3b << 34, 35, 36;
 
   RowVectorXd vrv3(3);
   vrv3 << 41, 42, 43;
@@ -227,11 +207,9 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   stan::math::matrix_d a(2, 2);
   stan::math::matrix_d b(2, 2);
 
-  a << 2.0, 3.0,
-       9.0, -1.0;
+  a << 2.0, 3.0, 9.0, -1.0;
 
-  b << 4.0, 3.0,
-       0.0, 1.0;
+  b << 4.0, 3.0, 0.0, 1.0;
 
   test::check_varis_on_stack(stan::math::append_row(to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::append_row(to_var(a), b));

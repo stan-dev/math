@@ -3,12 +3,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdInv, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv(x);
@@ -23,8 +21,8 @@ TEST(AgradFwdInv, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdInv, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv(x);
@@ -37,8 +35,8 @@ TEST(AgradFwdInv, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdInv, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv;
+  using stan::math::var;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -59,8 +57,8 @@ TEST(AgradFwdInv, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdInv, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv;
+  using stan::math::var;
   using std::log;
 
   fvar<fvar<var> > x;
@@ -98,8 +96,7 @@ TEST(AgradFwdInv, FvarFvarVar_3rdDeriv) {
 
 struct inv_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv(arg1);
   }
 };

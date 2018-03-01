@@ -67,18 +67,15 @@ TEST(MathMatrix, min) {
 }
 
 TEST(MathMatrix, min_exception) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::numeric_limits;
   Matrix<double, Dynamic, Dynamic> m;
   Matrix<double, Dynamic, 1> v;
   Matrix<double, 1, Dynamic> rv;
-  EXPECT_EQ(numeric_limits<double>::infinity(),
-            stan::math::min(m));
-  EXPECT_EQ(numeric_limits<double>::infinity(),
-            stan::math::min(v));
-  EXPECT_EQ(numeric_limits<double>::infinity(),
-            stan::math::min(rv));
+  EXPECT_EQ(numeric_limits<double>::infinity(), stan::math::min(m));
+  EXPECT_EQ(numeric_limits<double>::infinity(), stan::math::min(v));
+  EXPECT_EQ(numeric_limits<double>::infinity(), stan::math::min(rv));
 
   Matrix<double, Dynamic, Dynamic> m_nz(2, 3);
   Matrix<double, Dynamic, 1> v_nz(2);
@@ -87,4 +84,3 @@ TEST(MathMatrix, min_exception) {
   EXPECT_NO_THROW(stan::math::min(v_nz));
   EXPECT_NO_THROW(stan::math::min(rv_nz));
 }
-

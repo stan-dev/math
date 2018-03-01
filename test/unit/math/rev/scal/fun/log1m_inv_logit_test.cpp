@@ -5,11 +5,10 @@
 #include <vector>
 
 void test_log1m_inv_logit(const double x) {
-  using stan::math::var;
-  using stan::math::log1m_inv_logit;
-  using std::log;
   using stan::math::inv_logit;
-
+  using stan::math::log1m_inv_logit;
+  using stan::math::var;
+  using std::log;
 
   // test gradient
   AVEC x1 = createAVEC(x);
@@ -27,8 +26,7 @@ void test_log1m_inv_logit(const double x) {
   EXPECT_FLOAT_EQ(grad_f2[0], grad_f1[0]);
 
   // test value
-  EXPECT_FLOAT_EQ(log(1.0 - inv_logit(x)),
-                  log1m_inv_logit(var(x)).val());
+  EXPECT_FLOAT_EQ(log(1.0 - inv_logit(x)), log1m_inv_logit(var(x)).val());
 }
 
 TEST(AgradRev, log1m_inv_logit) {
@@ -39,8 +37,7 @@ TEST(AgradRev, log1m_inv_logit) {
 
 struct log1m_inv_logit_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return stan::math::log1m_inv_logit(arg1);
   }
 };

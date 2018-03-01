@@ -10,7 +10,7 @@ TEST(ProbDistributionsLkjCorr, fvar_double) {
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K*K; i++)
+  for (int i = 0; i < K * K; i++)
     Sigma(i).d_ = 1.0;
   fvar<double> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<double> f = stan::math::do_lkj_constant(eta, K);
@@ -29,7 +29,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_double) {
   Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K*K; i++)
+  for (int i = 0; i < K * K; i++)
     Sigma(i).d_ = 1.0;
   fvar<double> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<double> f = stan::math::do_lkj_constant(eta, K);
@@ -45,11 +45,11 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_double) {
   using stan::math::fvar;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<fvar<fvar<double> >,
-                Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K,
+                                                                           K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K*K; i++)
+  for (int i = 0; i < K * K; i++)
     Sigma(i).d_.val_ = 1.0;
   fvar<fvar<double> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<double> > f = stan::math::do_lkj_constant(eta, K);
@@ -65,11 +65,11 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_double) {
   using stan::math::fvar;
   boost::random::mt19937 rng;
   int K = 4;
-  Eigen::Matrix<fvar<fvar<double> >,
-                Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
+  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K,
+                                                                           K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K*K; i++)
+  for (int i = 0; i < K * K; i++)
     Sigma(i).d_.val_ = 1.0;
   fvar<fvar<double> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<double> > f = stan::math::do_lkj_constant(eta, K);
@@ -83,4 +83,3 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_double) {
                   stan::math::lkj_corr_cholesky_log(Sigma, eta).val_.val_);
   EXPECT_FLOAT_EQ(3, stan::math::lkj_corr_cholesky_log(Sigma, eta).d_.val_);
 }
-

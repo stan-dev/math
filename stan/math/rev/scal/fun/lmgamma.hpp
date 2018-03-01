@@ -8,27 +8,26 @@
 #include <valarray>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    namespace {
-      class lmgamma_dv_vari : public op_dv_vari {
-      public:
-        lmgamma_dv_vari(int a, vari* bvi) :
-          op_dv_vari(lmgamma(a, bvi->val_), a, bvi) {
-        }
-        void chain() {
-          double deriv = 0;
-          for (int i = 1; i < ad_ + 1; i++)
-            deriv += digamma(bvi_->val_ + (1.0 - i) / 2.0);
-          bvi_->adj_ += adj_ * deriv;
-        }
-      };
-    }
-
-    inline var lmgamma(int a, const var& b) {
-      return var(new lmgamma_dv_vari(a, b.vi_));
-    }
-
+namespace {
+class lmgamma_dv_vari : public op_dv_vari {
+ public:
+  lmgamma_dv_vari(int a, vari* bvi)
+      : op_dv_vari(lmgamma(a, bvi->val_), a, bvi) {}
+  void chain() {
+    double deriv = 0;
+    for (int i = 1; i < ad_ + 1; i++)
+      deriv += digamma(bvi_->val_ + (1.0 - i) / 2.0);
+    bvi_->adj_ += adj_ * deriv;
   }
+};
+}  // namespace
+
+inline var lmgamma(int a, const var& b) {
+  return var(new lmgamma_dv_vari(a, b.vi_));
 }
+
+}  // namespace math
+}  // namespace stan
 #endif

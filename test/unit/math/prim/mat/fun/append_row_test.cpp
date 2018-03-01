@@ -4,7 +4,6 @@
 
 using stan::math::append_row;
 
-
 template <int R, int C>
 void correct_type_vector(const Eigen::Matrix<double, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, R);
@@ -21,33 +20,24 @@ TEST(MathMatrix, append_row) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using std::vector;
 
   MatrixXd m33(3, 3);
-  m33 << 1, 2, 3,
-         4, 5, 6,
-         7, 8, 9;
+  m33 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   MatrixXd m32(3, 2);
-  m32 << 11, 12,
-         13, 14,
-         15, 16;
+  m32 << 11, 12, 13, 14, 15, 16;
 
   MatrixXd m23(2, 3);
-  m23 << 21, 22, 23,
-         24, 25, 26;
+  m23 << 21, 22, 23, 24, 25, 26;
 
   VectorXd v3(3);
-  v3 << 31,
-        32,
-        33;
+  v3 << 31, 32, 33;
 
   VectorXd v3b(3);
-  v3b << 34,
-         35,
-         36;
+  v3b << 34, 35, 36;
 
   RowVectorXd rv3(3);
   rv3 << 41, 42, 43;
@@ -64,33 +54,32 @@ TEST(MathMatrix, append_row) {
     for (int j = 0; j < 3; j++)
       EXPECT_EQ(mat(j, i), m33(j, i));
     for (int j = 3; j < 5; j++)
-      EXPECT_EQ(mat(j, i), m23(j-3, i));
+      EXPECT_EQ(mat(j, i), m23(j - 3, i));
   }
   mat = append_row(m23, m33);
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 2; j++)
       EXPECT_EQ(mat(j, i), m23(j, i));
     for (int j = 2; j < 5; j++)
-      EXPECT_EQ(mat(j, i), m33(j-2, i));
+      EXPECT_EQ(mat(j, i), m33(j - 2, i));
   }
-
 
   MatrixXd m32b(2, 3);
   // ensure some different values
-  m32b = m32*1.101;
+  m32b = m32 * 1.101;
   mat = append_row(m32, m32b);
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 3; j++)
       EXPECT_EQ(mat(j, i), m32(j, i));
     for (int j = 3; j < 6; j++)
-      EXPECT_EQ(mat(j, i), m32b(j-3, i));
+      EXPECT_EQ(mat(j, i), m32b(j - 3, i));
   }
   mat = append_row(m32b, m32);
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 3; j++)
       EXPECT_EQ(mat(j, i), m32b(j, i));
     for (int j = 3; j < 6; j++)
-      EXPECT_EQ(mat(j, i), m32(j-3, i));
+      EXPECT_EQ(mat(j, i), m32(j - 3, i));
   }
 
   // matrix append_row(matrix, row_vector)
@@ -105,7 +94,7 @@ TEST(MathMatrix, append_row) {
   for (int i = 0; i < 3; i++) {
     EXPECT_EQ(mat(0, i), rv3(i));
     for (int j = 1; j < 4; j++)
-      EXPECT_EQ(mat(j, i), m33(j-1, i));
+      EXPECT_EQ(mat(j, i), m33(j - 1, i));
   }
   mat = append_row(m23, rv3);
   for (int i = 0; i < 3; i++) {
@@ -117,7 +106,7 @@ TEST(MathMatrix, append_row) {
   for (int i = 0; i < 3; i++) {
     EXPECT_EQ(mat(0, i), rv3(i));
     for (int j = 1; j < 3; j++)
-      EXPECT_EQ(mat(j, i), m23(j-1, i));
+      EXPECT_EQ(mat(j, i), m23(j - 1, i));
   }
 
   // matrix append_row(row_vector, row_vector)
@@ -137,13 +126,12 @@ TEST(MathMatrix, append_row) {
   for (int i = 0; i < 3; i++)
     EXPECT_EQ(cvec(i), v3(i));
   for (int i = 3; i < 6; i++)
-    EXPECT_EQ(cvec(i), v3b(i-3));
+    EXPECT_EQ(cvec(i), v3b(i - 3));
   cvec = append_row(v3b, v3);
   for (int i = 0; i < 3; i++)
     EXPECT_EQ(cvec(i), v3b(i));
   for (int i = 3; i < 6; i++)
-    EXPECT_EQ(cvec(i), v3(i-3));
-
+    EXPECT_EQ(cvec(i), v3(i - 3));
 
   // matrix append_row(vector, scalar)
   cvec = append_row(v3, 3.11);
@@ -155,7 +143,7 @@ TEST(MathMatrix, append_row) {
   cvec = append_row(-6.512, v3);
   EXPECT_EQ(cvec(0), -6.512);
   for (int i = 1; i < 4; i++)
-    EXPECT_EQ(cvec(i), v3(i-1));
+    EXPECT_EQ(cvec(i), v3(i - 1));
 
   EXPECT_THROW(append_row(m32, m33), std::invalid_argument);
   EXPECT_THROW(append_row(m32, m23), std::invalid_argument);

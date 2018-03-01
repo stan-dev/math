@@ -4,13 +4,11 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdBinomialCoefficientLog, FvarVar_Double_1stDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   fvar<var> x(2004.0, 1.0);
   double z(1002);
@@ -25,10 +23,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(0.69289774, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarVar_1stDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   double x(2004.0);
   fvar<var> z(1002.0, 2.0);
@@ -43,10 +41,10 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarVar_1stDeriv) {
   EXPECT_NEAR(0, g[0], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarVar_Double_2ndDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   fvar<var> x(2004.0, 1.0);
   double z(1002);
@@ -61,10 +59,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.00049862865, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarVar_2ndDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   double x(2004.0);
   fvar<var> z(1002.0, 2.0);
@@ -79,12 +77,11 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.00399002460681026, g[0]);
 }
 
-
 TEST(AgradFwdBinomialCoefficientLog, FvarVar_FvarVar_1stDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   fvar<var> x(2004.0, 1.0);
   fvar<var> z(1002.0, 2.0);
@@ -100,10 +97,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarVar_FvarVar_1stDeriv) {
   EXPECT_NEAR(0, g[1], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarVar_FvarVar_2ndDeriv) {
+  using boost::math::digamma;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using boost::math::digamma;
 
   fvar<var> x(2004.0, 1.0);
   fvar<var> z(1002.0, 2.0);
@@ -119,13 +116,11 @@ TEST(AgradFwdBinomialCoefficientLog, FvarVar_FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.0029925184551076781, g[1]);
 }
 
-
-
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -149,10 +144,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
   EXPECT_NEAR(0, g[1], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_1stDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -173,10 +168,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(0.69289774, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_1stDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   double x(2004.0);
 
@@ -198,10 +193,10 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -225,10 +220,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
   EXPECT_FLOAT_EQ(0.00099750615170258105, g[1]);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -252,10 +247,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   EXPECT_FLOAT_EQ(-0.0019950123034051291, g[1]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_2ndDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   double x(2004.0);
 
@@ -276,10 +271,10 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_2ndDeriv) {
   EXPECT_NEAR(-0.00199501230340513, g[0], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_2ndDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -300,10 +295,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.00049862863648177515, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -327,10 +322,10 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(9.9501847e-07, g[1]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_3rdDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   double x(2004.0);
 
@@ -352,10 +347,10 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_3rdDeriv) {
   EXPECT_NEAR(0, g[0], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_3rdDeriv) {
+  using stan::math::binomial_coefficient_log;
+  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 2004.0;
@@ -379,10 +374,8 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_3rdDeriv) {
 
 struct binomial_coefficient_log_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return binomial_coefficient_log(arg1, arg2);
   }
 };

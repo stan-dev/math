@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_true) {
-  using std::vector;
   using stan::VectorBuilder;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
+  using std::vector;
 
   var a_var(1);
   std::vector<var> a_std_vector(3);
@@ -21,10 +21,10 @@ TEST(MetaTraits, VectorBuilder_false_true) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_true) {
-  using std::vector;
   using stan::VectorBuilder;
-  using stan::math::var;
   using stan::length;
+  using stan::math::var;
+  using std::vector;
 
   var a_var(1);
   std::vector<var> a_std_vector(3);
@@ -47,4 +47,3 @@ TEST(MetaTraits, VectorBuilder_true_true) {
   EXPECT_NO_THROW(data2 = dvv2.data());
   EXPECT_EQ(length(a_std_vector), data2.size());
 }
-

@@ -4,9 +4,9 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, quad_form_mat) {
-  using stan::math::quad_form;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -16,23 +16,12 @@ TEST(AgradRevMatrix, quad_form_mat) {
   AVEC vars;
   VEC grad;
 
-
-  bd << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  bv << 100, 10,
-          0,  1,
-         -3, -3,
-          5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   matrix_d resd = quad_form(ad, bd);
@@ -64,10 +53,10 @@ TEST(AgradRevMatrix, quad_form_mat) {
 }
 
 TEST(AgradRevMatrix, quad_form_mat_grad_vd) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -77,21 +66,13 @@ TEST(AgradRevMatrix, quad_form_mat_grad_vd) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*matrix_d::Ones(2, 2)*bd.transpose());
+  matrix_d dqda(bd * matrix_d::Ones(2, 2) * bd.transpose());
 
   // var-double
   res = sum(quad_form(av, bd));
@@ -108,10 +89,10 @@ TEST(AgradRevMatrix, quad_form_mat_grad_vd) {
 }
 
 TEST(AgradRevMatrix, quad_form_mat_grad_dv) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -121,21 +102,12 @@ TEST(AgradRevMatrix, quad_form_mat_grad_dv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqdb((ad*bd + ad.transpose()*bd)*matrix_d::Ones(2, 2));
+  matrix_d dqdb((ad * bd + ad.transpose() * bd) * matrix_d::Ones(2, 2));
 
   // double-var
   res = sum(quad_form(ad, bv));
@@ -152,10 +124,10 @@ TEST(AgradRevMatrix, quad_form_mat_grad_dv) {
 }
 
 TEST(AgradRevMatrix, quad_form_mat_grad_vv) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -166,26 +138,15 @@ TEST(AgradRevMatrix, quad_form_mat_grad_vv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*matrix_d::Ones(2, 2)*bd.transpose());
-  matrix_d dqdb((ad*bd + ad.transpose()*bd)*matrix_d::Ones(2, 2));
+  matrix_d dqda(bd * matrix_d::Ones(2, 2) * bd.transpose());
+  matrix_d dqdb((ad * bd + ad.transpose() * bd) * matrix_d::Ones(2, 2));
 
   // var-var
   res = sum(quad_form(av, bv));
@@ -208,9 +169,9 @@ TEST(AgradRevMatrix, quad_form_mat_grad_vv) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_mat) {
-  using stan::math::quad_form_sym;
-  using stan::math::matrix_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form_sym;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -220,23 +181,12 @@ TEST(AgradRevMatrix, quad_form_sym_mat) {
   AVEC vars;
   VEC grad;
 
-
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   matrix_d resd = quad_form_sym(ad, bd);
@@ -272,10 +222,10 @@ TEST(AgradRevMatrix, quad_form_sym_mat) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_mat_grad_vd) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form_sym;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -285,21 +235,13 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_vd) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*matrix_d::Ones(2, 2)*bd.transpose());
+  matrix_d dqda(bd * matrix_d::Ones(2, 2) * bd.transpose());
 
   // var-double
   res = sum(quad_form_sym(av, bd));
@@ -316,10 +258,10 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_vd) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_mat_grad_dv) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form_sym;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -329,21 +271,12 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_dv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqdb((ad*bd + ad.transpose()*bd)*matrix_d::Ones(2, 2));
+  matrix_d dqdb((ad * bd + ad.transpose() * bd) * matrix_d::Ones(2, 2));
 
   // double-var
   res = sum(quad_form_sym(ad, bv));
@@ -360,10 +293,10 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_dv) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_mat_grad_vv) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::quad_form_sym;
   using stan::math::sum;
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -374,26 +307,15 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_vv) {
   VEC grad;
   size_t i, j, pos;
 
+  bd << 100, 10, 0, 1, -3, -3, 5, 2;
+  bv << 100, 10, 0, 1, -3, -3, 5, 2;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  bd << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  bv << 100, 10,
-  0,  1,
-  -3, -3,
-  5,  2;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-
-  matrix_d dqda(bd*matrix_d::Ones(2, 2)*bd.transpose());
-  matrix_d dqdb((ad*bd + ad.transpose()*bd)*matrix_d::Ones(2, 2));
+  matrix_d dqda(bd * matrix_d::Ones(2, 2) * bd.transpose());
+  matrix_d dqdb((ad * bd + ad.transpose() * bd) * matrix_d::Ones(2, 2));
 
   // var-var
   res = sum(quad_form_sym(av, bv));
@@ -416,11 +338,11 @@ TEST(AgradRevMatrix, quad_form_sym_mat_grad_vv) {
 }
 
 TEST(AgradRevMatrix, quad_form_vec) {
-  using stan::math::quad_form;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -430,17 +352,12 @@ TEST(AgradRevMatrix, quad_form_vec) {
   AVEC vars;
   VEC grad;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   res = quad_form(ad, bd);
@@ -460,11 +377,11 @@ TEST(AgradRevMatrix, quad_form_vec) {
 }
 
 TEST(AgradRevMatrix, quad_form_vec_grad_vd) {
-  using stan::math::quad_form;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -475,19 +392,14 @@ TEST(AgradRevMatrix, quad_form_vec_grad_vd) {
   VEC grad;
   size_t pos, i, j;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  matrix_d dqda(bd*bd.transpose());
+  matrix_d dqda(bd * bd.transpose());
 
   // var-double
   res = quad_form(av, bd);
@@ -503,11 +415,11 @@ TEST(AgradRevMatrix, quad_form_vec_grad_vd) {
 }
 
 TEST(AgradRevMatrix, quad_form_vec_grad_dv) {
-  using stan::math::quad_form;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -518,19 +430,14 @@ TEST(AgradRevMatrix, quad_form_vec_grad_dv) {
   VEC grad;
   size_t pos, i;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  vector_d dqdb(ad*bd + ad.transpose()*bd);
+  vector_d dqdb(ad * bd + ad.transpose() * bd);
 
   // double-var
   res = quad_form(ad, bv);
@@ -544,11 +451,11 @@ TEST(AgradRevMatrix, quad_form_vec_grad_dv) {
 }
 
 TEST(AgradRevMatrix, quad_form_vec_grad_vv) {
-  using stan::math::quad_form;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -559,20 +466,15 @@ TEST(AgradRevMatrix, quad_form_vec_grad_vv) {
   VEC grad;
   size_t pos, i, j;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  6.0, 10.0, 2.0,   2.0,
-  7.0,  2.0, 7.0,   1.0,
-  8.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
 
-  matrix_d dqda(bd*bd.transpose());
-  vector_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqda(bd * bd.transpose());
+  vector_d dqdb(ad * bd + ad.transpose() * bd);
 
   // var-var
   res = quad_form(av, bv);
@@ -592,11 +494,11 @@ TEST(AgradRevMatrix, quad_form_vec_grad_vv) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_vec) {
-  using stan::math::quad_form_sym;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form_sym;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -606,17 +508,12 @@ TEST(AgradRevMatrix, quad_form_sym_vec) {
   AVEC vars;
   VEC grad;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
   // double-double
   res = quad_form_sym(ad, bd);
@@ -636,11 +533,11 @@ TEST(AgradRevMatrix, quad_form_sym_vec) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_vec_grad_vd) {
-  using stan::math::quad_form_sym;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form_sym;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -651,20 +548,15 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_vd) {
   VEC grad;
   size_t pos, i, j;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  matrix_d dqda(bd*bd.transpose());
-  vector_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqda(bd * bd.transpose());
+  vector_d dqdb(ad * bd + ad.transpose() * bd);
 
   // var-double
   res = quad_form_sym(av, bd);
@@ -680,11 +572,11 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_vd) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_vec_grad_dv) {
-  using stan::math::quad_form_sym;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form_sym;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -695,20 +587,15 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_dv) {
   VEC grad;
   size_t pos, i;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  matrix_d dqda(bd*bd.transpose());
-  vector_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqda(bd * bd.transpose());
+  vector_d dqdb(ad * bd + ad.transpose() * bd);
 
   // double-var
   res = quad_form_sym(ad, bv);
@@ -722,11 +609,11 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_dv) {
 }
 
 TEST(AgradRevMatrix, quad_form_sym_vec_grad_vv) {
-  using stan::math::quad_form_sym;
-  using stan::math::matrix_v;
-  using stan::math::vector_v;
   using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::quad_form_sym;
   using stan::math::vector_d;
+  using stan::math::vector_v;
 
   matrix_v av(4, 4);
   matrix_d ad(4, 4);
@@ -737,20 +624,15 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_vv) {
   VEC grad;
   size_t pos, i, j;
 
-
   bd << 100, 0, -3, 5;
   bv << 100, 0, -3, 5;
-  ad << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
-  av << 2.0,  3.0, 4.0,   5.0,
-  3.0, 10.0, 2.0,   2.0,
-  4.0,  2.0, 7.0,   1.0,
-  5.0,  2.0, 1.0, 112.0;
+  ad << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
+  av << 2.0, 3.0, 4.0, 5.0, 3.0, 10.0, 2.0, 2.0, 4.0, 2.0, 7.0, 1.0, 5.0, 2.0,
+      1.0, 112.0;
 
-  matrix_d dqda(bd*bd.transpose());
-  vector_d dqdb(ad*bd + ad.transpose()*bd);
+  matrix_d dqda(bd * bd.transpose());
+  vector_d dqdb(ad * bd + ad.transpose() * bd);
 
   // var-var
   res = quad_form_sym(av, bv);
@@ -773,14 +655,9 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d a(4, 4);
   stan::math::matrix_d b(4, 2);
-  a << 2.0,  3.0, 4.0,   5.0,
-    6.0, 10.0, 2.0,   2.0,
-    7.0,  2.0, 7.0,   1.0,
-    8.0,  2.0, 1.0, 112.0;
-  b << 100, 10,
-    0,  1,
-    -3, -3,
-    5,  2;
+  a << 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 2.0, 2.0, 7.0, 2.0, 7.0, 1.0, 8.0, 2.0,
+      1.0, 112.0;
+  b << 100, 10, 0, 1, -3, -3, 5, 2;
   test::check_varis_on_stack(stan::math::quad_form(to_var(a), to_var(b)));
   test::check_varis_on_stack(stan::math::quad_form(to_var(a), b));
   test::check_varis_on_stack(stan::math::quad_form(a, to_var(b)));

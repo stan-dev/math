@@ -2,16 +2,14 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 // fun1(x, y) = (x^2 * y) + (3 * y^2)
 struct fun1 {
   template <typename T>
-  inline
-  T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return x(0) * x(0) * x(1)
-      + 3.0 * x(1) * x(1);
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
 
@@ -28,8 +26,7 @@ TEST(AgradAutoDiff, gradient) {
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
 }
 
-stan::math::var
-sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
+stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
   stan::math::var y = 0;
   for (int i = 0; i < x.size(); ++i)
     y += x(i);

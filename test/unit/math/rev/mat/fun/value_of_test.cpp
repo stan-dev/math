@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(AgradMatrix, value_of) {
-  using stan::math::var;
   using stan::math::value_of;
+  using stan::math::var;
   using std::vector;
 
   vector<double> a_vals;

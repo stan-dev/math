@@ -8,8 +8,7 @@ TEST(AgradRevMatrix, inverse_val) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << 2.0, 3.0,
-    5.0, 7.0;
+  a << 2.0, 3.0, 5.0, 7.0;
 
   matrix_v a_inv = inverse(a);
 
@@ -29,8 +28,7 @@ TEST(AgradRevMatrix, inverse_grad) {
   for (size_t k = 0; k < 2; ++k) {
     for (size_t l = 0; l < 2; ++l) {
       matrix_v ad(2, 2);
-      ad << 2.0, 3.0,
-        5.0, 7.0;
+      ad << 2.0, 3.0, 5.0, 7.0;
 
       AVEC x = createAVEC(ad(0, 0), ad(0, 1), ad(1, 0), ad(1, 1));
 
@@ -52,15 +50,13 @@ TEST(AgradRevMatrix, inverse_grad) {
   }
 }
 TEST(AgradRevMatrix, inverse_inverse_sum) {
-  using stan::math::sum;
   using stan::math::inverse;
   using stan::math::matrix_v;
+  using stan::math::sum;
 
   matrix_v a(4, 4);
-  a << 2.0, 3.0, 4.0, 5.0,
-    9.0, -1.0, 2.0, 2.0,
-    4.0, 3.0, 7.0, -1.0,
-    0.0, 1.0, 19.0, 112.0;
+  a << 2.0, 3.0, 4.0, 5.0, 9.0, -1.0, 2.0, 2.0, 4.0, 3.0, 7.0, -1.0, 0.0, 1.0,
+      19.0, 112.0;
 
   AVEC x;
   for (int i = 0; i < 4; ++i)
@@ -80,8 +76,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
-  a << 2.0, 3.0,
-    5.0, 7.0;
+  a << 2.0, 3.0, 5.0, 7.0;
 
   test::check_varis_on_stack(stan::math::inverse(a));
 }

@@ -4,8 +4,8 @@
 
 TEST(AgradFwdTan, Fvar) {
   using stan::math::fvar;
-  using std::tan;
   using std::cos;
+  using std::tan;
 
   fvar<double> x(0.5, 1.0);
   fvar<double> a = tan(x);
@@ -37,8 +37,8 @@ TEST(AgradFwdTan, Fvar) {
 
 TEST(AgradFwdTan, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::tan;
   using std::cos;
+  using std::tan;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;
@@ -64,8 +64,7 @@ TEST(AgradFwdTan, FvarFvarDouble) {
 
 struct tan_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return tan(arg1);
   }
 };

@@ -6,8 +6,7 @@ using stan::math::fvar;
 
 // test sum of first n numbers for sum of a
 template <typename T>
-void test_sum(stan::math::accumulator<T>& a,
-              int n) {
+void test_sum(stan::math::accumulator<T>& a, int n) {
   EXPECT_TRUE((n * (n + 1)) / 2 == a.sum());
 }
 
@@ -27,9 +26,9 @@ TEST(AgradFwdMatrixAccumulate, fvar_double) {
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_fd;
   using stan::math::matrix_fd;
+  using stan::math::vector_fd;
+  using std::vector;
 
   accumulator<fvar<double> > a;
 
@@ -40,14 +39,14 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   a.add(pos++);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   double x = pos++;
   a.add(x);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector<vector<fvar<double> > > ww(10);
   for (size_t i = 0; i < 10; ++i) {
@@ -58,20 +57,20 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   }
 
   a.add(ww);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   matrix_fd m(5, 6);
   for (int i = 0; i < 5; ++i)
     for (int j = 0; j < 6; ++j)
       m(i, j) = pos++;
   a.add(m);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector_fd mv(7);
   for (int i = 0; i < 7; ++i)
     mv(i) = pos++;
   a.add(mv);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector<vector_fd> vvx(8);
   for (size_t i = 0; i < 8; ++i) {
@@ -82,7 +81,7 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   }
 
   a.add(vvx);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 }
 
 TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
@@ -101,9 +100,9 @@ TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   using stan::math::accumulator;
-  using std::vector;
-  using stan::math::vector_ffd;
   using stan::math::matrix_ffd;
+  using stan::math::vector_ffd;
+  using std::vector;
 
   accumulator<fvar<fvar<double> > > a;
 
@@ -114,14 +113,14 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   a.add(pos++);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   double x = pos++;
   a.add(x);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector<vector<fvar<fvar<double> > > > ww(10);
   for (size_t i = 0; i < 10; ++i) {
@@ -132,20 +131,20 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
   }
 
   a.add(ww);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   matrix_ffd m(5, 6);
   for (int i = 0; i < 5; ++i)
     for (int j = 0; j < 6; ++j)
       m(i, j) = pos++;
   a.add(m);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector_ffd mv(7);
   for (int i = 0; i < 7; ++i)
     mv(i) = pos++;
   a.add(mv);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 
   vector<vector_ffd> vvx(8);
   for (size_t i = 0; i < 8; ++i) {
@@ -155,5 +154,5 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
     vvx[i] = vx;
   }
   a.add(vvx);
-  test_sum(a, pos-1);
+  test_sum(a, pos - 1);
 }

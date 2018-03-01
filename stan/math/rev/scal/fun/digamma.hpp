@@ -6,24 +6,18 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 
 namespace stan {
-  namespace math {
+namespace math {
 
-    namespace {
-      class digamma_vari : public op_v_vari {
-      public:
-        explicit digamma_vari(vari* avi) :
-          op_v_vari(digamma(avi->val_), avi) {
-        }
-        void chain() {
-          avi_->adj_ += adj_ * trigamma(avi_->val_);
-        }
-      };
-    }
+namespace {
+class digamma_vari : public op_v_vari {
+ public:
+  explicit digamma_vari(vari* avi) : op_v_vari(digamma(avi->val_), avi) {}
+  void chain() { avi_->adj_ += adj_ * trigamma(avi_->val_); }
+};
+}  // namespace
 
-    inline var digamma(const var& a) {
-      return var(new digamma_vari(a.vi_));
-    }
+inline var digamma(const var& a) { return var(new digamma_vari(a.vi_)); }
 
-  }
-}
+}  // namespace math
+}  // namespace stan
 #endif

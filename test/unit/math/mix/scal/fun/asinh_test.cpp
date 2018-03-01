@@ -5,17 +5,13 @@
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
 class AgradFwdAsinh : public testing::Test {
-  void SetUp() {
-    stan::math::recover_memory();
-  }
+  void SetUp() { stan::math::recover_memory(); }
 };
 
-
-
 TEST_F(AgradFwdAsinh, FvarVar_1stDeriv) {
+  using boost::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::asinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = asinh(x);
@@ -30,9 +26,9 @@ TEST_F(AgradFwdAsinh, FvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdAsinh, FvarVar_2ndDeriv) {
+  using boost::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::asinh;
 
   fvar<var> x(1.5, 1.3);
   fvar<var> a = asinh(x);
@@ -46,12 +42,10 @@ TEST_F(AgradFwdAsinh, FvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(1.3 * -0.25601548, g[0]);
 }
 
-
-
 TEST_F(AgradFwdAsinh, FvarFvarVar_1stDeriv) {
+  using boost::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::asinh;
 
   stan::math::recover_memory();
 
@@ -90,9 +84,9 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_1stDeriv) {
 }
 
 TEST_F(AgradFwdAsinh, FvarFvarVar_2ndDeriv) {
+  using boost::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::asinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -117,9 +111,9 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_2ndDeriv) {
   EXPECT_FLOAT_EQ(2.0 * -0.25601548, r[0]);
 }
 TEST_F(AgradFwdAsinh, FvarFvarVar_3rdDeriv) {
+  using boost::math::asinh;
   using stan::math::fvar;
   using stan::math::var;
-  using boost::math::asinh;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 1.5;
@@ -135,8 +129,7 @@ TEST_F(AgradFwdAsinh, FvarFvarVar_3rdDeriv) {
 }
 struct asinh_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return asinh(arg1);
   }
 };

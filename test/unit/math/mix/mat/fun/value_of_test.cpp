@@ -4,9 +4,9 @@
 #include <vector>
 
 TEST(AgradMixMatrix, value_of) {
-  using stan::math::var;
   using stan::math::fvar;
   using stan::math::value_of;
+  using stan::math::var;
   using std::vector;
 
   vector<double> a_vals;

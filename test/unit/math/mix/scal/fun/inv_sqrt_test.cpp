@@ -3,12 +3,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdInvSqrt, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_sqrt;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv_sqrt(x);
@@ -23,8 +21,8 @@ TEST(AgradFwdInvSqrt, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvSqrt, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_sqrt;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.0);
   fvar<var> a = inv_sqrt(x);
@@ -39,8 +37,8 @@ TEST(AgradFwdInvSqrt, FvarVar_2ndDeriv) {
 
 TEST(AgradFwdInvSqrt, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_sqrt;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -60,8 +58,8 @@ TEST(AgradFwdInvSqrt, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdInvSqrt, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_sqrt;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -81,8 +79,8 @@ TEST(AgradFwdInvSqrt, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdInvSqrt, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inv_sqrt;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -99,8 +97,7 @@ TEST(AgradFwdInvSqrt, FvarFvarVar_3rdDeriv) {
 
 struct inv_sqrt_fun {
   template <typename T0>
-  inline T0
-  operator()(const T0& arg1) const {
+  inline T0 operator()(const T0& arg1) const {
     return inv_sqrt(arg1);
   }
 };

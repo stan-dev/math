@@ -49,7 +49,6 @@ void test_log_mix_vvv(double theta, double lambda1, double lambda2) {
   stan::math::recover_memory();
 }
 
-
 void test_log_mix_vv_ex_lam_2(double theta, double lambda1, double lambda2) {
   using stan::math::var;
 
@@ -306,11 +305,8 @@ TEST(AgradRev, log_mix) {
 
 struct log_mix_fun {
   template <typename T0, typename T1, typename T2>
-  inline
-  typename stan::return_type<T0, T1, T2>::type
-  operator()(const T0& arg1,
-             const T1& arg2,
-             const T2& arg3) const {
+  inline typename stan::return_type<T0, T1, T2>::type operator()(
+      const T0& arg1, const T1& arg2, const T2& arg3) const {
     return log_mix(arg1, arg2, arg3);
   }
 };

@@ -5,8 +5,8 @@
 #include <boost/type_traits/is_same.hpp>
 
 using Eigen::Matrix;
-using stan::math::var;
 using stan::math::promote_elements;
+using stan::math::var;
 
 TEST(MathFunctionsMatPromote_Elements, doubleMat2doubleMat) {
   stan::math::matrix_d m1(2, 3);
@@ -25,4 +25,3 @@ TEST(MathFunctionsMatPromote_Elements, doubleMat2varMat) {
   bool same = boost::is_same<Matrix<var, 2, 3>, result_t>::value;
   EXPECT_TRUE(same);
 }
-

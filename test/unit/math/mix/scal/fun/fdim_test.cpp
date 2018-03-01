@@ -3,12 +3,10 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/mix/scal/fun/nan_util.hpp>
 
-
-
 TEST(AgradFwdFdim, FvarVar_FvarVar_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -27,9 +25,9 @@ TEST(AgradFwdFdim, FvarVar_FvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdFdim, FvarVar_double_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -47,9 +45,9 @@ TEST(AgradFwdFdim, FvarVar_double_1stDeriv) {
 }
 
 TEST(AgradFwdFdim, Double_FvarVar_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -66,9 +64,9 @@ TEST(AgradFwdFdim, Double_FvarVar_1stDeriv) {
   isnan(g[0]);
 }
 TEST(AgradFwdFdim, FvarVar_FvarVar_2ndDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -84,9 +82,9 @@ TEST(AgradFwdFdim, FvarVar_FvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdFdim, FvarVar_double_2ndDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -101,9 +99,9 @@ TEST(AgradFwdFdim, FvarVar_double_2ndDeriv) {
 }
 
 TEST(AgradFwdFdim, Double_FvarVar_2nd_Deriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
   using std::isnan;
 
@@ -117,11 +115,10 @@ TEST(AgradFwdFdim, Double_FvarVar_2nd_Deriv) {
   isnan(g[0]);
 }
 
-
 TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -147,9 +144,9 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdFdim, FvarFvarVar_double_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -172,9 +169,9 @@ TEST(AgradFwdFdim, FvarFvarVar_double_1stDeriv) {
 }
 
 TEST(AgradFwdFdim, Double_FvarFvarVar_1stDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   double x(2.5);
@@ -197,9 +194,9 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -224,9 +221,9 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
 }
 
 TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -250,9 +247,9 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   EXPECT_FLOAT_EQ(0.0, g[0]);
 }
 TEST(AgradFwdFdim, FvarFvarVar_double_2ndDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -275,9 +272,9 @@ TEST(AgradFwdFdim, FvarFvarVar_double_2ndDeriv) {
 }
 
 TEST(AgradFwdFdim, Double_FvarFvarVar_2ndDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   double x(2.5);
@@ -300,9 +297,9 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_2ndDeriv) {
 }
 
 TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_3rdDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -321,9 +318,9 @@ TEST(AgradFwdFdim, FvarFvarVar_FvarFvarVar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, g[0]);
 }
 TEST(AgradFwdFdim, FvarFvarVar_double_3rdDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   fvar<fvar<var> > x;
@@ -342,9 +339,9 @@ TEST(AgradFwdFdim, FvarFvarVar_double_3rdDeriv) {
 }
 
 TEST(AgradFwdFdim, Double_FvarFvarVar_3rdDeriv) {
+  using stan::math::fdim;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::fdim;
   using std::floor;
 
   double x(2.5);
@@ -364,10 +361,8 @@ TEST(AgradFwdFdim, Double_FvarFvarVar_3rdDeriv) {
 
 struct fdim_fun {
   template <typename T0, typename T1>
-  inline
-  typename boost::math::tools::promote_args<T0, T1>::type
-  operator()(const T0 arg1,
-             const T1 arg2) const {
+  inline typename boost::math::tools::promote_args<T0, T1>::type operator()(
+      const T0 arg1, const T1 arg2) const {
     return fdim(arg1, arg2);
   }
 };
