@@ -14,9 +14,6 @@
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_direct.h>
-#include <sundials/sundials_dense.h>
-#include <sunmatrix/sunmatrix_dense.h>
-#include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
 #include <vector>
