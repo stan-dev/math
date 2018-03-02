@@ -13,9 +13,7 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(GTEST_CXXFLAGS)
 
 test/%$(EXE) : CXXFLAGS += $(GTEST_CXXFLAGS)
 test/%$(EXE) : test/%.o $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) -o $@ $^ $(LDLIBS_OPENCL)
-
-
+	$(LINK.cpp) -o $@ $^
 
 
 ##
@@ -59,6 +57,13 @@ $(CVODES_TESTS) : $(LIBCVODES)
 IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
 $(IDAS_TESTS) : $(LIBIDAS)
 
+############################################################
+#
+# OpenCL tests
+##
+
+OPENCL_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *opencl*_test.cpp))
+$(OPENCL_TESTS) : LDFLAGS += $(LDLIBS_OPENCL)
 
 ############################################################
 #
