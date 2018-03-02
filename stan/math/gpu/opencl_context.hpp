@@ -80,6 +80,9 @@ class opencl_context {
   std::string device_name_;
   cl::Context context_;
   cl::CommandQueue command_queue_;
+  void init_kernel_groups();
+  void compile_kernel_group(const char* group);
+
   /**
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
@@ -144,8 +147,6 @@ class opencl_context {
   map_string kernel_strings;
   map_kernel kernels;
   map_bool compiled_kernels;
-  void init_kernel_groups();
-  void compile_kernel_group(const char* group);
   cl::Kernel get_kernel(const char* name);
   void debug(std::ostream& s) {
     s << "inside opencl_context" << std::endl;
@@ -167,29 +168,19 @@ class opencl_context {
   /**
    * Returns the description of the OpenCL
    * platform and device that is used.
-   *
    */
   inline const char* description() const { return description_; }
 
   /**
-   * Returns the reference to the
-   * OpenCL context. If no context was created,
-   * a new context is created.
-   *
+   * Returns the reference to the OpenCL context.
    */
   inline cl::Context& context() { return context_; }
   /**
-   * Returns the reference to the active
-   * OpenCL command queue. If no context
-   * and queue were created,
-   * a new context and queue are created and
-   * the reference to the new queue is returned.
-   *
+   * Returns the reference to the active OpenCL command queue.
    */
   inline cl::CommandQueue& queue() { return command_queue_; }
   /**
-   * Returns the maximum workgroup size for the
-   * device in the context.
+   * Returns the maximum workgroup size for the device in the context.
    */
   inline int max_workgroup_size() { return max_workgroup_size_; }
 };
@@ -198,9 +189,8 @@ class opencl_context {
 /**
  * Initalizes the global std::map variables that
  * hold the OpenCL kernel sources, the groups to
- * which each kernel is assigned to and the
+ * which kernel is assigned to and the
  * information about which kernel was already compiled.
- *
  */
 inline void opencl_context::init_kernel_groups() {
 
