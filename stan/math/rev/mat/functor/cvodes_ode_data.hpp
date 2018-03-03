@@ -8,6 +8,7 @@
 #include <cvodes/cvodes_direct.h>
 #include <sundials/sundials_dense.h>
 #include <sunmatrix/sunmatrix_dense.h>
+#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <vector>
@@ -81,8 +82,8 @@ class cvodes_ode_data {
         coupled_state_(coupled_ode_.initial_state()),
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
         nv_state_sens_(NULL),
-        A_{SUNDenseMatrix(N_, N_)},
-        LS_{SUNDenseLinearSolver(nv_state_, A_)} {
+        A_(SUNDenseMatrix(N_, N_)),
+        LS_(SUNDenseLinearSolver(nv_state_, A_)) {
     if (S_ > 0) {
       nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(S_, nv_state_);
       for (std::size_t i = 0; i < S_; i++) {
