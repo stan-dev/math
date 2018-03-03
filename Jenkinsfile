@@ -60,7 +60,7 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps { 
+            steps {
                 script {
                     utils.killOldBuilds()
                 }
@@ -150,7 +150,7 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps { 
+                    steps {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
@@ -173,16 +173,6 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
-                }
-                stage('GPU tests') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        sh setupCC()
-                        echo 'STAN_OPENCL=true' >> make/local
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
