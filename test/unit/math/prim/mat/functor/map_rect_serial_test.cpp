@@ -1,7 +1,8 @@
-// specific tests of the map_rect_serial implementation
+// the tests here check that map_rect_serial works correct as such we
+// enforce that STAN_MPI is NOT defined
 
-#ifdef STAN_HAS_MPI
-#undef STAN_HAS_MPI
+#ifdef STAN_MPI
+#undef STAN_MPI
 #endif
 
 #include <stan/math/prim/mat.hpp>
@@ -12,8 +13,6 @@
 #include <iostream>
 #include <vector>
 
-// the tests here check that map_rect refuses mal-formatted input as
-// such it does not matter if STAN_HAS_MPI is defined or not
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
@@ -41,7 +40,7 @@ struct map_rect : public ::testing::Test {
 };
 
 
-TEST_F(map_rect, ragged_return_size_dd) {
+TEST_F(map_rect, serial_ragged_return_size_dd) {
   Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(shared_params_d,
                                                             job_params_d, x_r, x_i);
 
@@ -53,4 +52,14 @@ TEST_F(map_rect, ragged_return_size_dd) {
                                                             job_params_d, x_r, x_i);
 
   EXPECT_EQ(res2.size(), 2*N+1);
+}
+
+TEST_F(map_rect, serial_eval_ok_dd) {
+  Eigen::VectorXd res1 = stan::math::map_rect<0, hard_work>(shared_params_d,
+                                                            job_params_d, x_r, x_i);
+  for (int i=0, j=0; i < N; i++) {
+    j = 2*i;
+    EXPECT_FLOAT_EQ(res1(j), job_params_d[i](0) * job_params_d[i](0) + shared_params_d(0));
+    EXPECT_FLOAT_EQ(res1(j+1), x_r[i][0] * job_params_d[i](1) * job_params_d[i](0) + 2 * shared_params_d(0) + shared_params_d(1));
+  }
 }

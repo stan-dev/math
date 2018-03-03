@@ -7,7 +7,7 @@
 #include <vector>
 
 // the tests here check that map_rect refuses mal-formatted input as
-// such it does not matter if STAN_HAS_MPI is defined or not
+// such it does not matter if STAN_MPI is defined or not
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)

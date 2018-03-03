@@ -7,7 +7,7 @@
 
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
-#ifdef STAN_HAS_MPI
+#ifdef STAN_MPI
 #error "MPI not yet supported"
 #else
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
@@ -37,7 +37,7 @@ namespace math {
  *
  * The function is implemented with serial execution and with
  * parallelism (TODO) using MPI. The MPI version is only available if
- * STAN_HAS_MPI is defined. For the MPI version to work this function
+ * STAN_MPI is defined. For the MPI version to work this function
  * has these special non-standard conventions:
  *
  * - The call_id template parameter is considered as a label for the
@@ -148,7 +148,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
   if (unlikely(job_params_dims[0] == 0))
     return return_type();
 
-#ifdef STAN_HAS_MPI
+#ifdef STAN_MPI
 #error "MPI not yet supported"
 #else
   return internal::map_rect_serial<call_id, F, T_shared_param, T_job_param>(
