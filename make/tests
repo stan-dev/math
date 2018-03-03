@@ -65,7 +65,7 @@ $(IDAS_TESTS) : $(LIBIDAS)
 # MPI tests
 ##
 
-MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *mpi*_test.cpp))
+MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *_mpi_*test.cpp))
 $(MPI_TESTS) : $(LIBMPI)
 
 
