@@ -110,13 +110,14 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<std::vector<double>>& x_r,
          const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
   static const char* function = "map_rect";
-  typedef Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
-                        Eigen::Dynamic, 1> return_type;
-  
-  check_matching_sizes(function, "job parameters", job_params,
-                       "real data", x_r);
-  check_matching_sizes(function, "job parameters", job_params,
-                       "int data", x_i);
+  typedef Eigen::Matrix<
+      typename stan::return_type<T_shared_param, T_job_param>::type,
+      Eigen::Dynamic, 1>
+      return_type;
+
+  check_matching_sizes(function, "job parameters", job_params, "real data",
+                       x_r);
+  check_matching_sizes(function, "job parameters", job_params, "int data", x_i);
 
   // check size consistency of inputs per job
   const std::vector<int> job_params_dims = dims(job_params);

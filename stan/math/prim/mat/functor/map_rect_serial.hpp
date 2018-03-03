@@ -22,7 +22,6 @@ map_rect_serial(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs = 0) {
-
   typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
   typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
 
@@ -55,7 +54,7 @@ map_rect_serial(
   return combine(world_output, world_f_out);
 }
 
-}
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 
