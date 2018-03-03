@@ -43,7 +43,7 @@ namespace math {
  * - The call_id template parameter is considered as a label for the
  *   functor F and data combination. Since MPI communication is
  *   expensive, the real and int data is transmitted only a single
- *   time per functor F / call_id combination.
+ *   time per functor F / call_id combination to the workers.
  * - The MPI implementation requires that the functor type fully
  *   specifies the functor and hence requires a default constructible
  *   function object. This choice reduces the need for communication
@@ -61,6 +61,8 @@ namespace math {
  *   evaluation. For large problems this results in speedups for the
  *   serial version even on a single core due to smaller AD graph
  *   sizes.
+ * - In MPI operation mode, no outputs from the workers are streamed
+ *   back to the root.
  * - Finally, each map_rect call must be registered with the
  *   STAN_REGISTER_MAP_RECT macro. This is required to enable
  *   communication between processes for the MPI case. The macro
