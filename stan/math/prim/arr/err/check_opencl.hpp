@@ -17,21 +17,6 @@ namespace stan {
 namespace math {
 
 /**
- * Function that throws the OpenCL exception with the
- * given explanation
- *
- * @param function the name of the function where the error occured
- * @param msg information on the OpenCL error
- *
- * @throw std::domain_error Always.
- */
-inline void throw_openCL(const char *function, const char *msg) {
-  std::string error_msg
-      = std::string() + function
-        + ": The OpenCL application ended with the error: " + msg;
-  throw std::logic_error(error_msg);
-}
-/**
  * Throws the domain error with specifying the OpenCL error that
  * occured. It outputs the OpenCL errors that are specified
  * in OpenCL 2.0. If no matching error number is found,
