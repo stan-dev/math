@@ -83,6 +83,8 @@ namespace math {
  * call_id/functor F pair. This is silently assumed to be immutable
  * between evaluations.
  *
+ * @tparam T_shared_param Type of shared parameters.
+ * @tparam T_job_param Type of job specific parameters.
  * @param shared_params shared parameter vector passed as first
  * argument to functor for all jobs
  * @param job_params Array of job specific parameter vectors. All job
@@ -96,8 +98,7 @@ namespace math {
  * details.
  * @tparam F Functor which is applied to all job specific parameters
  * with conventions described.
- * @tparam T_shared_param Type of shared parameters.
- * @tparam T_job_param Type of job specific parameters.
+ * @return concatenated results from all jobs
  */
 
 template <int call_id, typename F, typename T_shared_param,
@@ -113,7 +114,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
   typedef Eigen::Matrix<
       typename stan::return_type<T_shared_param, T_job_param>::type,
       Eigen::Dynamic, 1>
-      return_type;
+      return_t;
 
   check_matching_sizes(function, "job parameters", job_params, "real data",
                        x_r);
@@ -148,8 +149,8 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      size_x_i);
   }
 
-  if (unlikely(job_params_dims[0] == 0))
-    return return_type();
+  if (job_params_dims[0] == 0)
+    return return_t();
 
 #ifdef STAN_MPI
 #error "MPI not yet supported"

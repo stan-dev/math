@@ -21,25 +21,12 @@ struct map_rect_reduce<F, var, var> {
                       std::ostream* msgs = 0) const {
     const size_type num_shared_params = shared_params.rows();
     const size_type num_job_specific_params = job_specific_params.rows();
-    const size_type num_params = num_shared_params + num_job_specific_params;
-    matrix_d out(1 + num_params, 0);
+    matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
 
     try {
       start_nested();
-      vector_v shared_params_v(num_shared_params);
-      vector_v job_specific_params_v(num_job_specific_params);
-
-      for (size_type i = 0; i < num_shared_params; ++i)
-        shared_params_v(i) = shared_params(i);
-      for (size_type i = 0; i < num_job_specific_params; ++i)
-        job_specific_params_v(i) = job_specific_params(i);
-
-      std::vector<var> z_vars(num_params);
-
-      for (size_type i = 0; i < num_shared_params; ++i)
-        z_vars[i] = shared_params_v(i);
-      for (size_type i = 0; i < num_job_specific_params; ++i)
-        z_vars[num_shared_params + i] = job_specific_params_v(i);
+      vector_v shared_params_v = to_var(shared_params);
+      vector_v job_specific_params_v = to_var(job_specific_params);
 
       vector_v fx_v
           = F()(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
@@ -52,8 +39,10 @@ struct map_rect_reduce<F, var, var> {
         out(0, i) = fx_v(i).val();
         set_zero_all_adjoints_nested();
         fx_v(i).grad();
-        for (size_type j = 0; j < num_params; ++j)
-          out(1 + j, i) = z_vars[j].vi_->adj_;
+        for (size_type j = 0; j < num_shared_params; ++j)
+          out(1 + j, i) = shared_params_v(j).vi_->adj_;
+        for (size_type j = 0; j < num_job_specific_params; ++j)
+          out(1 + num_shared_params + j, i) = job_specific_params_v(j).vi_->adj_;
       }
       recover_memory_nested();
     } catch (const std::exception& e) {
@@ -76,10 +65,7 @@ struct map_rect_reduce<F, double, var> {
 
     try {
       start_nested();
-      vector_v job_specific_params_v(num_job_specific_params);
-
-      for (size_type i = 0; i < num_job_specific_params; ++i)
-        job_specific_params_v(i) = job_specific_params(i);
+      vector_v job_specific_params_v = to_var(job_specific_params);
 
       vector_v fx_v = F()(shared_params, job_specific_params_v, x_r, x_i, msgs);
 
@@ -115,12 +101,9 @@ struct map_rect_reduce<F, var, double> {
 
     try {
       start_nested();
-      vector_v shared_params_v(num_shared_params);
+      vector_v shared_params_v = to_var(shared_params);
 
-      for (size_type i = 0; i < num_shared_params; ++i)
-        shared_params_v(i) = shared_params(i);
-
-      vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, 0);
+      vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, msgs);
 
       const size_type size_f = fx_v.rows();
 
