@@ -31,7 +31,7 @@ map_rect_serial(
   matrix_d world_output(0, 0);
   std::vector<int> world_f_out(num_jobs, -1);
 
-  for (int offset = 0, i = 0; i < num_jobs; offset += world_f_out[i], ++i)  {
+  for (int offset = 0, i = 0; i < num_jobs; offset += world_f_out[i], ++i) {
     const matrix_d job_output = ReduceF()(
         shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs);
     world_f_out[i] = job_output.cols();
