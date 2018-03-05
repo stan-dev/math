@@ -13,7 +13,7 @@ namespace internal {
  *
  * This class wraps the user functor F which is executed with a shared
  * parameter vector and job specific parameters, real and int data.
- * 
+ *
  * The class exposes a double only signature for all inputs while the
  * template parameters determine what the client code is actually
  * expecting to be calculated. So whenever T_shared_param or/and
