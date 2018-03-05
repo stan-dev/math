@@ -94,4 +94,3 @@ TEST_F(map_rect, wrong_size_int_data_dd) {
                                                    job_params_d, x_r, x_i)),
                std::invalid_argument);
 }
-
