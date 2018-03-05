@@ -23,9 +23,9 @@ def mailBuildResults(String label, additionalEmails='') {
     )
 }
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
+def runTests(String testPath, String testFilter = "") {
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${testFilter}"
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" -f ${testFilter}}
     finally { junit 'test/**/*.xml' }
 }
 
@@ -136,14 +136,24 @@ pipeline {
                 }
             }
         }
+        stage('GPU tests') {
+          agent { label "gelman-group-mac"}
+          steps {
+            unstash 'MathSetup'
+            sh setupCC()
+            echo 'STAN_OPENCL=true' >> make/local
+            echo 'OPENCL_DEVICE=1' >> make/local
+            runTests("test/unit", "opencl")
+          }
+          post { always { retry(3) { deleteDir() } } }
+        }
         stage('Tests') {
             parallel {
                 stage('Unit') {
-                    agent { label "gelman-group-mac" }
+                    agent any
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
-                        sh "echo STAN_OPENCL=true>> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
