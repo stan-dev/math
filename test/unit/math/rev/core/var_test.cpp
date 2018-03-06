@@ -81,6 +81,12 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
+TEST_F(AgradRev,complexNotNullIssue123) {
+	stan::math::var x = 3;
+	std::complex<stan::math::var> z = x;
+ EXPECT_TRUE(z.imag().operator->()!=nullptr);
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
