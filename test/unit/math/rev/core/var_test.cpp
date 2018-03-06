@@ -82,8 +82,8 @@ TEST_F(AgradRev, ctorOverloads) {
 }
 
 TEST_F(AgradRev,complexNotNullIssue123) {
-	stan::math::var x = 3;
-	std::complex<stan::math::var> z = x;
+	AVAR x = 3;
+	std::complex<AVAR> z = x;
  EXPECT_TRUE(z.imag().operator->()!=nullptr);
 }
 
