@@ -81,33 +81,36 @@ TEST_F(AgradRev, ctorOverloads) {
   EXPECT_THROW(var(std::complex<long double>(37, 10)), std::invalid_argument);
 }
 
-TEST_F(AgradRev,complexNotNullIssue123) {
-	stan::math::start_nested();
-	AVAR x = 3;
-	std::complex<AVAR> z = x;
- ASSERT_TRUE(z.imag().operator->()!=nullptr);
-	EXPECT_TRUE(z.real().val());
- EXPECT_FALSE(z.imag().val());
- auto y(z.real()+1);
- z.imag(y);//gradient back propagates partly through imaginary -> y -> real -> x
- EXPECT_TRUE(z.imag().val());
- auto zabs(abs(z));
- EXPECT_EQ(zabs.val(),5);
- zabs.grad(); //z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
- EXPECT_EQ(x.adj(),1.4); //dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
-	//complex var left and right parameter coercions (i.e. correct instantiations)
-	auto q(8/((1+z)*2)); // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
-	q+=std::complex<double>(.5,1.5); // 0.5-0.5i + .5+1.5i = 1+1i
-	std::complex<AVAR> r(2*(z+1)/8); // 2*(3+4i+1)/8  = 1+1i
-	EXPECT_TRUE(q == std::complex<double>(1,1));
-	EXPECT_TRUE(std::complex<double>(1,1) == q);
-	EXPECT_TRUE(r == std::complex<double>(1,1));
-	EXPECT_TRUE(std::complex<double>(1,1) == r);
-	EXPECT_TRUE(q == r); // note q and r have different types
-	EXPECT_TRUE(r == q);
- stan::math::recover_memory_nested();
+TEST_F(AgradRev, complexNotNullIssue123) {
+  stan::math::start_nested();
+  AVAR x = 3;
+  std::complex<AVAR> z = x;
+  ASSERT_TRUE(z.imag().operator->() != nullptr);
+  EXPECT_TRUE(z.real().val());
+  EXPECT_FALSE(z.imag().val());
+  auto y(z.real() + 1);
+  z.imag(y);  // gradient back propagates partly through imaginary -> y -> real
+              // -> x
+  EXPECT_TRUE(z.imag().val());
+  auto zabs(abs(z));
+  EXPECT_EQ(zabs.val(), 5);
+  zabs.grad();  // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
+  EXPECT_EQ(x.adj(), 1.4);  // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5)
+                            // = 1.4
+  // complex var left and right parameter coercions (i.e. correct
+  // instantiations)
+  auto q(8
+         / ((1 + z) * 2));  // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
+  q += std::complex<double>(.5, 1.5);     // 0.5-0.5i + .5+1.5i = 1+1i
+  std::complex<AVAR> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
+  EXPECT_TRUE(q == std::complex<double>(1, 1));
+  EXPECT_TRUE(std::complex<double>(1, 1) == q);
+  EXPECT_TRUE(r == std::complex<double>(1, 1));
+  EXPECT_TRUE(std::complex<double>(1, 1) == r);
+  EXPECT_TRUE(q == r);  // note q and r have different types
+  EXPECT_TRUE(r == q);
+  stan::math::recover_memory_nested();
 }
-
 
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
