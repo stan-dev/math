@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
 #include <unsupported/Eigen/FFT>
 #include <complex>
@@ -105,6 +106,55 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
 
 /**
  * Write autocorrelation estimates for every lag for the specified
+ * input sequence into the specified result using the specified
+ * FFT engine.  The return vector be resized to the same length as
+ * the input sequence with lags given by array index.
+ *
+ * <p>The implementation involves a fast Fourier transform,
+ * followed by a normalization, followed by an inverse transform.
+ *
+ * <p>An FFT engine can be created for reuse for type double with:
+ *
+ * <pre>
+ *     Eigen::FFT<double> fft;
+ * </pre>
+ *
+ * @tparam T Scalar type.
+ * @param y Input sequence.
+ * @param ac Autocorrelations.
+ * @param fft FFT engine instance.
+ */
+template <typename T, typename DerivedA, typename DerivedB>
+void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
+                     Eigen::MatrixBase<DerivedB>& ac,
+                     Eigen::FFT<T>& fft) {
+  size_t N = y.size();
+  size_t M = fft_next_good_size(N);
+  size_t Mt2 = 2 * M;
+
+  Eigen::Matrix<std::complex<T>, Eigen::Dynamic, 1> freqvec;
+
+  // centered_signal = y-mean(y) followed by N zeros
+  Eigen::Matrix<T, Eigen::Dynamic, 1> centered_signal(Mt2);
+  centered_signal.setZero();
+  centered_signal.head(N) = y.array() - y.mean();
+
+  fft.fwd(freqvec, centered_signal);
+  // cwiseAbs2 == norm
+  freqvec = freqvec.cwiseAbs2();
+
+  fft.inv(ac, freqvec);
+  ac.derived().conservativeResize(N);
+
+  for (size_t i = 0; i < N; ++i)
+    ac(i) /= (N - i);
+  T var = ac(0);
+  ac = ac.array() / var;
+}
+
+
+/**
+ * Write autocorrelation estimates for every lag for the specified
  * input sequence into the specified result.  The return vector be
  * resized to the same length as the input sequence with lags
  * given by array index.
@@ -121,6 +171,29 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
  */
 template <typename T>
 void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
+  Eigen::FFT<T> fft;
+  return autocorrelation(y, ac, fft);
+}
+
+/**
+ * Write autocorrelation estimates for every lag for the specified
+ * input sequence into the specified result.  The return vector be
+ * resized to the same length as the input sequence with lags
+ * given by array index.
+ *
+ * <p>The implementation involves a fast Fourier transform,
+ * followed by a normalization, followed by an inverse transform.
+ *
+ * <p>This method is just a light wrapper around the three-argument
+ * autocorrelation function
+ *
+ * @tparam T Scalar type.
+ * @param y Input sequence.
+ * @param ac Autocorrelations.
+ */
+template <typename T, typename DerivedA, typename DerivedB>
+void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
+                     Eigen::MatrixBase<DerivedB>& ac) {
   Eigen::FFT<T> fft;
   return autocorrelation(y, ac, fft);
 }
