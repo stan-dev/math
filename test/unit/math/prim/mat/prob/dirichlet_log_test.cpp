@@ -14,8 +14,9 @@ TEST(ProbDirichlet, log_matches_lpmf) {
   EXPECT_FLOAT_EQ(
       (stan::math::dirichlet_lpmf<false, vector_d, vector_d>(theta, alpha)),
       (stan::math::dirichlet_log<false, vector_d, vector_d>(theta, alpha)));
-  EXPECT_FLOAT_EQ((stan::math::dirichlet_lpmf<vector_d, vector_d>(theta, alpha)),
-                  (stan::math::dirichlet_log<vector_d, vector_d>(theta, alpha)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::dirichlet_lpmf<vector_d, vector_d>(theta, alpha)),
+      (stan::math::dirichlet_log<vector_d, vector_d>(theta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::dirichlet_lpmf(theta, alpha)),
                   (stan::math::dirichlet_log(theta, alpha)));
   EXPECT_FLOAT_EQ((stan::math::dirichlet_lpmf<true>(theta, alpha)),

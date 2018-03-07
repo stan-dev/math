@@ -35,7 +35,8 @@ namespace math {
  * \f]
  *
  * \f[
- * \frac{\partial }{\partial \theta_x}\log(p(\theta\,|\,\alpha_1,\ldots,\alpha_k))=\frac{\alpha_x-1}{\theta_x}
+ * \frac{\partial }{\partial
+ * \theta_x}\log(p(\theta\,|\,\alpha_1,\ldots,\alpha_k))=\frac{\alpha_x-1}{\theta_x}
  * \f]
  *
  * \f[
@@ -53,14 +54,16 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type
-dirichlet_lpmf(const T_prob& theta, const T_prior_size& alpha) {
+typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
+    const T_prob& theta, const T_prior_size& alpha) {
   static const char* function = "dirichlet_lpmf";
 
-  typedef typename stan::partials_return_type<T_prob, T_prior_size>::type T_partials_return;
+  typedef typename stan::partials_return_type<T_prob, T_prior_size>::type
+      T_partials_return;
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
-  check_consistent_sizes(function, "probabilities", theta, "prior sample sizes", alpha);
+  check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",
+                         alpha);
   check_positive(function, "prior sample sizes", alpha);
   check_simplex(function, "probabilities", theta);
 
@@ -80,7 +83,9 @@ dirichlet_lpmf(const T_prob& theta, const T_prior_size& alpha) {
 
   T_partials_vec theta_deriv = (alpha_dbl.array() - 1.0) / theta_dbl.array();
 
-  T_partials_vec alpha_deriv = digamma(alpha_dbl.sum()) - digamma(alpha_dbl).array() + theta_dbl.array().log();
+  T_partials_vec alpha_deriv = digamma(alpha_dbl.sum())
+                               - digamma(alpha_dbl).array()
+                               + theta_dbl.array().log();
 
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
   if (!is_constant_struct<T_prob>::value)
@@ -93,8 +98,8 @@ dirichlet_lpmf(const T_prob& theta, const T_prior_size& alpha) {
 }
 
 template <typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type
-dirichlet_lpmf(const T_prob& theta, const T_prior_size& alpha) {
+typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
+    const T_prob& theta, const T_prior_size& alpha) {
   return dirichlet_lpmf<false>(theta, alpha);
 }
 
