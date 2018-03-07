@@ -25,8 +25,8 @@ struct rem_cvref {
 
 /// This class exists purely to forward the interface of std::complex and serve
 /// as a tag for the free functions below. Without this class, the free
-/// functions  would have to be written to extend std::complex, which would change
-/// its  semantics, or would have to be specialized to only stan types.
+/// functions  would have to be written to extend std::complex, which would
+/// change its  semantics, or would have to be specialized to only stan types.
 template <class T>
 struct complex : std::complex<T> {
   using std::complex<T>::complex;  ///< inherit all std::complex ctors
