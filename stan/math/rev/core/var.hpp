@@ -476,7 +476,7 @@ class var {
   }
 };
 
-namespace internal{
+namespace internal {
 
 /**
  * Var for std::complex that always initializes its pointer to implementation.
@@ -493,25 +493,28 @@ namespace internal{
  * to control the std::complex template. The rest of the interface is
  * inherited from var.
  */
-struct z_var: var{template<class Z=var> z_var(Z const z=0): var(z){};};
+struct z_var : var {
+  template <class Z = var>
+  z_var(Z const z = 0) : var(z){};
+};
 
 }  // namespace internal
 
 }  // namespace math
 }  // namespace stan
 
-
-namespace std{
+namespace std {
 
 /** Template specialization to std::complex to always initialize vars,
  * inheriting the interface of std::complex otherwise. This works by
  * making the std::complex template specialization for var indirectly inherit
  * from the general std::complex template using z_var. In this way, z_var is
  * hidden from end user code.*/
-template<> struct complex<stan::math::var> :
- stan::math::internal::complex<stan::math::internal::z_var>{
-	///inherit all ctors
- using stan::math::internal::complex<stan::math::internal::z_var>::complex;
+template <>
+struct complex<stan::math::var>
+    : stan::math::internal::complex<stan::math::internal::z_var> {
+  /// inherit all ctors
+  using stan::math::internal::complex<stan::math::internal::z_var>::complex;
 };
 
 }  // namespace std
