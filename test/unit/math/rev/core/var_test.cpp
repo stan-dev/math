@@ -99,12 +99,12 @@ TEST_F(AgradRev,complexNotNullIssue123) {
 	auto q(8/((1+z)*2)); // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
 	q+=std::complex<double>(.5,1.5); // 0.5-0.5i + .5+1.5i = 1+1i
 	std::complex<AVAR> r(2*(z+1)/8); // 2*(3+4i+1)/8  = 1+1i
-	EXPECT_FALSE(q == std::complex<double>(1,1));
-	EXPECT_FALSE(std::complex<double>(1,1) == q);
-	EXPECT_FALSE(r == std::complex<double>(1,1));
-	EXPECT_FALSE(std::complex<double>(1,1) == r);
-	EXPECT_FALSE(q == r); // note q and r have different types
-	EXPECT_FALSE(r == q);
+	EXPECT_TRUE(q == std::complex<double>(1,1));
+	EXPECT_TRUE(std::complex<double>(1,1) == q);
+	EXPECT_TRUE(r == std::complex<double>(1,1));
+	EXPECT_TRUE(std::complex<double>(1,1) == r);
+	EXPECT_TRUE(q == r); // note q and r have different types
+	EXPECT_TRUE(r == q);
  stan::math::recover_memory_nested();
 }
 
