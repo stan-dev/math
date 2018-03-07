@@ -59,10 +59,9 @@ void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
  * @param acov Autocovariance.
  * @param fft FFT engine instance.
  */
-template<typename T, typename DerivedA, typename DerivedB>
+template <typename T, typename DerivedA, typename DerivedB>
 void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
-                    Eigen::MatrixBase<DerivedB>& acov,
-                    Eigen::FFT<T>& fft) {
+                    Eigen::MatrixBase<DerivedB>& acov, Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
 
   T var = (y.array() - y.mean()).square().sum() / y.size();

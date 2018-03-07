@@ -126,8 +126,7 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
  */
 template <typename T, typename DerivedA, typename DerivedB>
 void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
-                     Eigen::MatrixBase<DerivedB>& ac,
-                     Eigen::FFT<T>& fft) {
+                     Eigen::MatrixBase<DerivedB>& ac, Eigen::FFT<T>& fft) {
   size_t N = y.size();
   size_t M = fft_next_good_size(N);
   size_t Mt2 = 2 * M;
@@ -151,7 +150,6 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
   T var = ac(0);
   ac = ac.array() / var;
 }
-
 
 /**
  * Write autocorrelation estimates for every lag for the specified
