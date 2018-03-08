@@ -40,7 +40,7 @@ CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_OS ?= -Wno-unused-but-set-variable
+  CXXFLAGS_OS ?= -Wno-unused-but-set-variable -Wno-unused-variable
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
