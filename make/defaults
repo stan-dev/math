@@ -18,7 +18,7 @@ INC ?= -I . -I $(EIGEN) -I $(BOOST) $(INC_CVODES) $(INC_IDAS)
 INC_CVODES ?= -I $(CVODES)/include
 INC_IDAS ?= -I $(IDAS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
-CXXFLAGS_LANG ?= -std=c++11
+CXXFLAGS_LANG ?= -std=c++1y
 CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
 CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
 CXXFLAGS_CVODES ?= -DNO_FPRINTF_OUTPUT -pipe
@@ -30,7 +30,7 @@ ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
 
-ifeq ($(OS),Windows)
+ifeq ($(OS),Windows_NT)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
@@ -41,9 +41,8 @@ ifeq ($(OS),Windows)
   endif
   CXXFLAGS_OS += -Wno-unused-but-set-variable
 
-  LDLIBS += -static-libgcc
-  ## FIXME(dl): shouldn't need this for cygwin? test.
-  LDLIBS += -static-libstdc++
+  ## FIXME(dl): shouldn't `-static-libstdc++` this for cygwin? test.
+  LDLIBS ?= -static-libgcc -static-libstdc++
 
   EXE := .exe
 endif
@@ -56,10 +55,10 @@ endif
 ifeq ($(OS),Linux)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   ifneq (,($findstring mingw32-g++,$(CXX)))
-    LDFLAGS += -static -lwinpthread
+    LDLIBS ?= -static -lwinpthread
     EXE := .exe
   else
-    LDFLAGS += -lpthread
+    LDLIBS ?= -lpthread
   endif
 endif
 
