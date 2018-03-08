@@ -95,9 +95,6 @@ LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | s
 .PHONY: generate-tests
 generate-tests: $(LIST_OF_GENERATED_TESTS)
 
-foo:
-	@echo $(LIST_OF_GENERATED_TESTS)
-
 ##
 # Include the test dependencies
 ##

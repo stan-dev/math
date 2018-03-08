@@ -1,7 +1,5 @@
 ##
-# Library locations
-##
-# Build rules for cvodes
+# Build rules for CVODES
 ##
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\

@@ -4,10 +4,10 @@
 MATH ?=
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 BOOST ?= $(MATH)lib/boost_1.66.0
-GTEST ?= $(MATH)lib/gtest_1.7.0
-CPPLINT ?= $(MATH)lib/cpplint_4.45
 IDAS ?= $(MATH)lib/idas-2.1.0
 CVODES ?= $(MATH)lib/cvodes-3.1.0
+GTEST ?= $(MATH)lib/gtest_1.7.0
+CPPLINT ?= $(MATH)lib/cpplint_4.45
 
 ##
 # Compiler options
@@ -50,7 +50,8 @@ endif
 
 
 ifeq ($(OS),Darwin)  # Mac OS X
-  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare -Wno-unneeded-internal-declaration
+  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
+  CXXFLAGS_OS += -Wno-unneeded-internal-declaration
 endif
 
 ifeq ($(OS),Linux)
