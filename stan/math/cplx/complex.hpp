@@ -11,11 +11,15 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template<class T> class complex; //forward declaration of stan's complex
+template <class T>
+class complex;  // forward declaration of stan's complex
 
-template<class> struct is_cplx : std::false_type {};
-template<class T> struct is_cplx<std::complex<T>> : std::true_type {};
-template<class T> struct is_cplx<complex<T>> : std::true_type {};
+template <class>
+struct is_cplx : std::false_type {};
+template <class T>
+struct is_cplx<std::complex<T>> : std::true_type {};
+template <class T>
+struct is_cplx<complex<T>> : std::true_type {};
 
 /// This class exists purely to forward the interface of std::complex and serve
 /// as a tag for the free functions below. Without this class, the free
@@ -36,9 +40,8 @@ struct complex : std::complex<T> {
    * param[in] real, the pure real component of the complex number.
    * param[in] imag, the pure imaginary component of the complex number*/
   template <class R = T, class I = T,
-			std::enable_if_t<!is_cplx<R>::value>* = nullptr>
-  complex(const R real = 0, const I imag = 0)
-      : std::complex<T>(real, imag) {}
+            std::enable_if_t<!is_cplx<R>::value>* = nullptr>
+  complex(const R real = 0, const I imag = 0) : std::complex<T>(real, imag) {}
 };
 
 // The free functions that follow extend stan::math::internal::complex beyond
