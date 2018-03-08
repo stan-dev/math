@@ -82,15 +82,28 @@ $(BOOST)/stage/lib/mpi.so:
 		echo "Hardcoding dynamic library paths on Mac..."; \
 		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_serialization.dylib; \
 		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi.dylib; \
+		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/mpi.so; \
+		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_python.dylib; \
+		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
 		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
+		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
+		install_name_tool -change libboost_python.dylib @rpath/libboost_python.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
+		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/mpi.so; \
+		install_name_tool -change libboost_mpi.dylib @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/mpi.so; \
+		install_name_tool -change libboost_mpi.dylib @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
+		install_name_tool -change libboost_python.dylib @rpath/libboost_python.dylib $(BOOST)/stage/lib/mpi.so; \
+		install_name_tool -change libboost_mpi_python.dylib @rpath/libboost_mpi_python.dylib $(BOOST)/stage/lib/mpi.so; \
 		install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_serialization.dylib; \
 		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
+		install_name_tool -id @rpath/mpi.so $(BOOST)/stage/lib/mpi.so; \
+		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_python.dylib; \
+		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
 	fi
 
 
 .PHONY: clean-libraries
 clean-libraries:
 	$(RM) $(sort $(SUNDIALS_CVODES) $(SUNDIALS_NVECSERIAL) $(LIBCVODES) $(SUNDIALS_IDAS) $(SUNDIALS_IDAS_NVECSERIAL) $(LIBIDAS))
-	[ -d "$(BOOST)/stage/lib" ] && $(RM) $(BOOST)/stage/lib/*  
-	[ -d "$(BOOST)/bin.v2" ] && $(RM) -rf $(BOOST)/bin.v2  
+	$(RM) $(BOOST)/stage/lib/*  
+	$(RM) -rf $(BOOST)/bin.v2  
 
