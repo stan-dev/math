@@ -5,8 +5,8 @@
 
 TEST(AgradFwdTrigamma, FvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::trigamma;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = trigamma(x);
@@ -21,8 +21,8 @@ TEST(AgradFwdTrigamma, FvarVar_1stDeriv) {
 }
 TEST(AgradFwdTrigamma, FvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::trigamma;
+  using stan::math::var;
 
   fvar<var> x(0.5, 1.3);
   fvar<var> a = trigamma(x);
@@ -59,8 +59,8 @@ TEST(AgradFwdTrigamma, FvarFvarDouble) {
 }
 TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::trigamma;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -95,8 +95,8 @@ TEST(AgradFwdTrigamma, FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::trigamma;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;
@@ -122,8 +122,8 @@ TEST(AgradFwdTrigamma, FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdTrigamma, FvarFvarVar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::trigamma;
+  using stan::math::var;
 
   fvar<fvar<var> > x;
   x.val_.val_ = 0.5;

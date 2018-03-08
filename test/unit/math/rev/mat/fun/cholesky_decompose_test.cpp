@@ -42,8 +42,8 @@ struct chol_functor {
   chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cov_matrix_constrain;
     using stan::math::cholesky_decompose;
+    using stan::math::cov_matrix_constrain;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
     Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
@@ -58,8 +58,8 @@ struct chol_functor_mult_scal {
   chol_functor_mult_scal(int K_, Eigen::VectorXd vec_) : K(K_), vec(vec_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cov_matrix_constrain;
     using stan::math::cholesky_decompose;
+    using stan::math::cov_matrix_constrain;
     using stan::math::multiply;
     using stan::math::transpose;
     T lp(0.0);
@@ -75,8 +75,8 @@ struct chol_functor_2 {
   explicit chol_functor_2(int K_) : K(K_) {}
   template <typename T>
   T operator()(Eigen::Matrix<T, -1, 1> x) const {
-    using stan::math::cov_matrix_constrain;
     using stan::math::cholesky_decompose;
+    using stan::math::cov_matrix_constrain;
     using stan::math::multi_normal_cholesky_log;
     T lp(0.0);
     Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
@@ -215,9 +215,9 @@ void test_gradients_simple(int size, double prec) {
 }
 
 void test_gp_grad(int mat_size, double prec) {
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using stan::math::var;
 
   Eigen::VectorXd test_vec(mat_size);
@@ -257,9 +257,9 @@ void test_gp_grad(int mat_size, double prec) {
 }
 
 void test_chol_mult(int mat_size, double prec) {
+  using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
-  using Eigen::MatrixXd;
   using stan::math::var;
 
   int vec_size = mat_size * (mat_size + 1) / 2;
@@ -350,10 +350,10 @@ double test_gradient(int size, double prec) {
   return grads_ad.sum();
 }
 TEST(AgradRevMatrix, mat_cholesky) {
-  using stan::math::matrix_v;
-  using stan::math::transpose;
   using stan::math::cholesky_decompose;
+  using stan::math::matrix_v;
   using stan::math::singular_values;
+  using stan::math::transpose;
 
   // symmetric
   matrix_v X(2, 2);

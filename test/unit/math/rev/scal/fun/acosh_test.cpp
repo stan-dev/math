@@ -32,8 +32,8 @@ TEST(AgradRev, acosh_1) {
 }
 
 TEST(MathFunctions, acosh_exception) {
-  using stan::math::var;
   using stan::math::acosh;
+  using stan::math::var;
   EXPECT_THROW(acosh(var(0.5)), std::domain_error);
 }
 

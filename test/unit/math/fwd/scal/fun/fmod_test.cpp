@@ -4,8 +4,8 @@
 
 TEST(AgradFwdFmod, Fvar) {
   using stan::math::fvar;
-  using std::fmod;
   using std::floor;
+  using std::fmod;
 
   fvar<double> x(2.0, 1.0);
   fvar<double> y(3.0, 2.0);

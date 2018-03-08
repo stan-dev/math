@@ -5,8 +5,8 @@
 using stan::math::fvar;
 
 TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_fd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -58,8 +58,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_fd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_fd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<double>, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -89,8 +89,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_fd) {
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_fd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<double>, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -101,8 +101,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_fd) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_fd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<double>, Dynamic, 1> x(3);
   x << 1, 2, 3;
@@ -158,8 +158,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_8_fd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_ffd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -213,8 +213,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_ffd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -247,8 +247,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_ffd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<fvar<double> >, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -260,8 +260,8 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_ffd) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<fvar<fvar<double> >, Dynamic, 1> x(3);
   x << 1, 2, 3;

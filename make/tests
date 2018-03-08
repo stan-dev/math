@@ -1,4 +1,3 @@
-
 GTEST_MAIN := $(GTEST)/src/gtest_main.cc
 
 ##
@@ -11,11 +10,11 @@ $(GTEST)/src/gtest-all.o: CXXFLAGS += $(CXXFLAGS_GTEST) $(INC_GTEST)
 ##
 test/%$(EXE) : CXXFLAGS += $(CXXFLAGS_GTEST) $(INC_GTEST)
 test/%$(EXE): test/%.cpp $(GTEST_MAIN) $(GTEST)/src/gtest-all.o
-	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+        $(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 DEPFLAGS = -MT $@ -MM -MG -MP -MF $@
 test/%.d: test/%.cpp
-	$(COMPILE.cpp) $(DEPFLAGS) $<
+        $(COMPILE.cpp) $(DEPFLAGS) $<
 
 -include $(patsubst %$(EXE),%.d,$(filter test/%,$(MAKECMDGOALS)))
 
@@ -25,23 +24,24 @@ test/%.d: test/%.cpp
 #   Add linking of LIBCVODES to the executable
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
 $(CVODES_TESTS) : $(LIBCVODES)
 
-# override this in make/local. If <= 0, N_TESTS + 1 is interpreted as the number of batches to group the tests into
-N_TESTS ?= 100
+############################################################
+#
+# IDAS tests
+##
+
+IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae_*_test.cpp))
+$(IDAS_TESTS) : $(LIBIDAS)
 
 
-# ##
-# # Adding a test for multiple translation units. If this fails,
-# # a new function is probably missing an inline
-# ##
-
-# test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.cpp
-# 	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION)
-
-# test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
-# 	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
+############################################################
+#
+# Target to verify header files within Stan has
+# enough include calls
+##
+HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
 
 # test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
@@ -61,12 +61,12 @@ N_TESTS ?= 100
 
 # .PHONY: HEADER_TESTS
 # %.hpp-test : %.hpp test/dummy.cpp
-# 	$(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
+#       $(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
 
 # test/dummy.cpp:
-# 	@mkdir -p test
-# 	@touch $@
-# 	@echo "int main() {return 0;}" >> $@
+#       @mkdir -p test
+#       @touch $@
+#       @echo "int main() {return 0;}" >> $@
 
 # .PHONY: test-headers
 # test-headers: $(HEADER_TESTS)
@@ -76,7 +76,7 @@ N_TESTS ?= 100
 # Test generator for distribution tests
 ##
 test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
-	$(LINK.cpp) $< $(OUTPUT_OPTION)
+        $(LINK.cpp) $< $(OUTPUT_OPTION)
 
 test/prob/%.hpp : test/prob/generate_tests$(EXE)
 
@@ -88,7 +88,7 @@ test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
 .SECONDEXPANSION:
 test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
-	$(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
+        $(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
 
 LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g')
 
@@ -96,7 +96,7 @@ LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | s
 generate-tests: $(LIST_OF_GENERATED_TESTS)
 
 foo:
-	@echo $(LIST_OF_GENERATED_TESTS)
+        @echo $(LIST_OF_GENERATED_TESTS)
 
 ##
 # Include the test dependencies

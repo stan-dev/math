@@ -51,8 +51,8 @@ TEST(AgradRevMatrix, tcrossprod) {
   test_tcrossprod(Q);
 }
 TEST(AgradRevMatrix, tcrossprodGrad1) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(1, 1);
   L << 3.0;
@@ -72,8 +72,8 @@ TEST(AgradRevMatrix, tcrossprodGrad1) {
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad2) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(2, 2);
   L << 1, 0, 2, 3;
@@ -122,8 +122,8 @@ TEST(AgradRevMatrix, tcrossprodGrad2) {
 }
 
 TEST(AgradRevMatrix, tcrossprodGrad3) {
-  using stan::math::tcrossprod;
   using stan::math::matrix_v;
+  using stan::math::tcrossprod;
 
   matrix_v L(3, 3);
   L << 1, 0, 0, 2, 3, 0, 4, 5, 6;

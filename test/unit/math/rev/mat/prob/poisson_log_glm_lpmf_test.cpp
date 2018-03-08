@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
-using stan::math::var;
 using Eigen::Dynamic;
 using Eigen::Matrix;
+using stan::math::var;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
@@ -96,26 +96,20 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_speed) {
   const int R = 30000;
   const int C = 1000;
-  
   Matrix<int,Dynamic,1> n(R, 1);
   for (size_t i = 0; i < R; i++) {
     n[i] = rand()%200;
   }
-  
   int T1 = 0;
   int T2 = 0;
-  
   for (size_t testnumber = 0; testnumber < 30; testnumber++){
     Matrix<double, Dynamic, Dynamic> xreal = Matrix<double, Dynamic,
 Dynamic>::Random(R, C); Matrix<double, Dynamic, 1> betareal = Matrix<double,
 Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
 1, 1>::Random(1, 1); Matrix<double, Dynamic, 1> alpharealvec = Matrix<double, R,
-1>::Ones() * alphareal;
-    
-    Matrix<var, Dynamic, 1> beta = betareal;
-    Matrix<var, Dynamic, 1> theta(R, 1);
+1>::Ones() * alphareal; Matrix<var, Dynamic, 1> beta = betareal; Matrix<var,
+Dynamic, 1> theta(R, 1);
 
-  
     TimeVar t1 = timeNow();
     theta = (xreal * beta) + alpharealvec;
     var lp = stan::math::poisson_log_lpmf(n, theta);
@@ -126,7 +120,6 @@ Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
     stan::math::recover_memory();
 
     Matrix<var, Dynamic, 1> beta2 = betareal;
-    
     TimeVar t3 = timeNow();
     var lp2 = stan::math::poisson_log_glm_lpmf(n, xreal, beta2, alphareal[0]);
     lp2.grad();
@@ -136,7 +129,6 @@ Dynamic, Dynamic>::Random(C, 1); Matrix<double, 1, 1> alphareal = Matrix<double,
     T2 += duration(t4 - t3);
 
   }
-  
   std::cout << "Existing Primitives:" << std::endl << T1 << std::endl  << "New
 Primitives:" << std::endl << T2 << std::endl;
 }

@@ -7,8 +7,8 @@
 
 template <typename F>
 void expect_int_types() {
-  using std::vector;
   using stan::test::expect_match_return_t;
+  using std::vector;
 
   expect_match_return_t<F, double, int>();
   expect_match_return_t<F, vector<double>, vector<int> >();
@@ -17,9 +17,9 @@ void expect_int_types() {
 
 template <typename F, typename T>
 void expect_types() {
+  using Eigen::Matrix;
   using stan::test::expect_match_return_t;
   using std::vector;
-  using Eigen::Matrix;
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
   typedef Eigen::Matrix<T, 1, Eigen::Dynamic> row_vector_t;

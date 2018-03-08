@@ -36,9 +36,9 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
               const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
-  using std::log;
-  using std::fabs;
   using std::exp;
+  using std::fabs;
+  using std::log;
 
   g_a1 = 0.0;
   g_b1 = 0.0;

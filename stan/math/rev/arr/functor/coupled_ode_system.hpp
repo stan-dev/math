@@ -20,24 +20,6 @@ namespace math {
 // specializations are treated as such.
 
 /**
- * Increment the state derived from the coupled system in the with
- * the original initial state.  This is necessary because the
- * coupled system subtracts out the initial state in its
- * representation when the initial state is unknown.
- *
- * @param[in] y0 original initial values to add back into the
- * coupled system.
- * @param[in, out] y state of the coupled system on input,
- * incremented with initial values on output.
- */
-inline void add_initial_values(const std::vector<var>& y0,
-                               std::vector<std::vector<var> >& y) {
-  for (size_t n = 0; n < y.size(); n++)
-    for (size_t m = 0; m < y0.size(); m++)
-      y[n][m] += y0[m];
-}
-
-/**
  * The coupled ODE system for known initial values and unknown
  * parameters.
  *
@@ -302,20 +284,12 @@ struct coupled_ode_system<F, var, double> {
                   double t) const {
     using std::vector;
 
-    std::vector<double> y(z.begin(), z.begin() + N_);
-    for (size_t n = 0; n < N_; n++)
-      y[n] += y0_dbl_[n];
-
     std::vector<double> grad(N_);
 
     try {
       start_nested();
 
-      vector<var> z_vars;
-      z_vars.reserve(N_);
-
-      vector<var> y_vars(y.begin(), y.end());
-      z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
+      vector<var> y_vars(z.begin(), z.begin() + N_);
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
@@ -325,13 +299,13 @@ struct coupled_ode_system<F, var, double> {
       for (size_t i = 0; i < N_; i++) {
         dz_dt[i] = dy_dt_vars[i].val();
         set_zero_all_adjoints_nested();
-        dy_dt_vars[i].grad(z_vars, grad);
+        dy_dt_vars[i].grad(y_vars, grad);
 
         for (size_t j = 0; j < N_; j++) {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = grad[j];
+          double temp_deriv = 0;
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
@@ -367,7 +341,12 @@ struct coupled_ode_system<F, var, double> {
    *   are 0.
    */
   std::vector<double> initial_state() const {
-    return std::vector<double>(size_, 0.0);
+    std::vector<double> initial(size_, 0.0);
+    for (size_t i = 0; i < N_; i++)
+      initial[i] = y0_dbl_[i];
+    for (size_t i = 0; i < N_; i++)
+      initial[N_ + i * N_ + i] = 1.0;
+    return initial;
   }
 
   /**
@@ -396,8 +375,6 @@ struct coupled_ode_system<F, var, double> {
       }
       y_return[i] = temp_vars;
     }
-
-    add_initial_values(y0_, y_return);
 
     return y_return;
   }
@@ -439,7 +416,7 @@ struct coupled_ode_system<F, var, double> {
  * @tparam F the functor for the base ode system
  */
 template <typename F>
-struct coupled_ode_system<F, var, stan::math::var> {
+struct coupled_ode_system<F, var, var> {
   const F& f_;
   const std::vector<var>& y0_;
   const std::vector<double> y0_dbl_;
@@ -501,10 +478,6 @@ struct coupled_ode_system<F, var, stan::math::var> {
                   double t) const {
     using std::vector;
 
-    vector<double> y(z.begin(), z.begin() + N_);
-    for (size_t n = 0; n < N_; n++)
-      y[n] += y0_dbl_[n];
-
     vector<double> grad(N_ + M_);
 
     try {
@@ -513,7 +486,7 @@ struct coupled_ode_system<F, var, stan::math::var> {
       vector<var> z_vars;
       z_vars.reserve(N_ + M_);
 
-      vector<var> y_vars(y.begin(), y.end());
+      vector<var> y_vars(z.begin(), z.begin() + N_);
       z_vars.insert(z_vars.end(), y_vars.begin(), y_vars.end());
 
       vector<var> theta_vars(theta_dbl_.begin(), theta_dbl_.end());
@@ -533,7 +506,7 @@ struct coupled_ode_system<F, var, stan::math::var> {
           // orders derivatives by equation (i.e. if there are 2 eqns
           // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = grad[j];
+          double temp_deriv = j < N_ ? 0 : grad[j];
           for (size_t k = 0; k < N_; k++)
             temp_deriv += z[N_ + N_ * j + k] * grad[k];
 
@@ -566,7 +539,12 @@ struct coupled_ode_system<F, var, stan::math::var> {
    * a vector of length size() where all elements are 0.
    */
   std::vector<double> initial_state() const {
-    return std::vector<double>(size_, 0.0);
+    std::vector<double> initial(size_, 0.0);
+    for (size_t i = 0; i < N_; i++)
+      initial[i] = y0_dbl_[i];
+    for (size_t i = 0; i < N_; i++)
+      initial[N_ + i * N_ + i] = 1.0;
+    return initial;
   }
 
   /**
@@ -598,7 +576,7 @@ struct coupled_ode_system<F, var, stan::math::var> {
       }
       y_return[i] = temp_vars;
     }
-    add_initial_values(y0_, y_return);
+
     return y_return;
   }
 };

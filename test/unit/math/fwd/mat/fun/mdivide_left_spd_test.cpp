@@ -33,8 +33,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_matrix_fd) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_vector_fd) {
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_fd;
 
   matrix_fd Av(2, 2);
   vector_fd Ad(2);
@@ -56,8 +56,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_vector_fd) {
   EXPECT_FLOAT_EQ(-0.10416666, I(1).d_);
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_matrix_d) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   using stan::math::mdivide_left_spd;
 
   matrix_fd Av(2, 2);
@@ -83,9 +83,9 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_matrix_d) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_vector_d) {
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
-  using stan::math::vector_d;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   matrix_fd Av(2, 2);
   vector_d Ad(2);
@@ -105,8 +105,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_fd_vector_d) {
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_);
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_matrix_fd) {
-  using stan::math::matrix_fd;
   using stan::math::matrix_d;
+  using stan::math::matrix_fd;
   using stan::math::mdivide_left_spd;
 
   matrix_d Av(2, 2);
@@ -132,8 +132,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_matrix_fd) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_vector_fd) {
   using stan::math::matrix_d;
-  using stan::math::vector_fd;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_fd;
 
   matrix_d Av(2, 2);
   vector_fd Ad(2);
@@ -153,12 +153,12 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_vector_fd) {
 
 TEST(AgradFwdMatrixMdivideLeftSPD, fd_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_fd;
-  using stan::math::vector_fd;
-  using stan::math::row_vector_fd;
   using stan::math::mdivide_left_spd;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_fd;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   matrix_fd fv1(3, 3), fv2(4, 4);
   fv1.setZero();
@@ -236,8 +236,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_matrix_ffd) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_vector_ffd) {
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_ffd;
 
   matrix_ffd Av(2, 2);
   vector_ffd Ad(2);
@@ -259,8 +259,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_vector_ffd) {
   EXPECT_FLOAT_EQ(-0.10416666, I(1).d_.val_);
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_matrix_d) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   using stan::math::mdivide_left_spd;
 
   matrix_ffd Av(2, 2);
@@ -286,9 +286,9 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_matrix_d) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_vector_d) {
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
-  using stan::math::vector_d;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   matrix_ffd Av(2, 2);
   vector_d Ad(2);
@@ -308,8 +308,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_ffd_vector_d) {
   EXPECT_FLOAT_EQ(-0.35416666, I(1).d_.val_);
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_matrix_ffd) {
-  using stan::math::matrix_ffd;
   using stan::math::matrix_d;
+  using stan::math::matrix_ffd;
   using stan::math::mdivide_left_spd;
 
   matrix_d Av(2, 2);
@@ -335,8 +335,8 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_matrix_ffd) {
 }
 TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_vector_ffd) {
   using stan::math::matrix_d;
-  using stan::math::vector_ffd;
   using stan::math::mdivide_left_spd;
+  using stan::math::vector_ffd;
 
   matrix_d Av(2, 2);
   vector_ffd Ad(2);
@@ -356,12 +356,12 @@ TEST(AgradFwdMatrixMdivideLeftSPD, matrix_d_vector_ffd) {
 
 TEST(AgradFwdMatrixMdivideLeftSPD, ffd_exceptions) {
   using stan::math::matrix_d;
-  using stan::math::vector_d;
-  using stan::math::row_vector_d;
   using stan::math::matrix_ffd;
-  using stan::math::vector_ffd;
-  using stan::math::row_vector_ffd;
   using stan::math::mdivide_left_spd;
+  using stan::math::row_vector_d;
+  using stan::math::row_vector_ffd;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   matrix_ffd fv1(3, 3), fv2(4, 4);
   fv1.setZero();

@@ -8,8 +8,8 @@ class AgradFwdSinh : public testing::Test {
 
 TEST_F(AgradFwdSinh, Fvar) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<double> x(0.5, 1.0);
 
@@ -30,8 +30,8 @@ TEST_F(AgradFwdSinh, Fvar) {
 
 TEST_F(AgradFwdSinh, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;

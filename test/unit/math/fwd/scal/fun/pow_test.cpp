@@ -4,9 +4,9 @@
 
 TEST(AgradFwdPow, Fvar) {
   using stan::math::fvar;
-  using std::pow;
-  using std::log;
   using std::isnan;
+  using std::log;
+  using std::pow;
 
   fvar<double> x(0.5, 1.0);
   double y = 5.0;
@@ -32,8 +32,8 @@ TEST(AgradFwdPow, Fvar) {
 
 TEST(AgradFwdPow, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::pow;
   using std::log;
+  using std::pow;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 0.5;

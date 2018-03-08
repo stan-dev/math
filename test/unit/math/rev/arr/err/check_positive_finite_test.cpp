@@ -3,8 +3,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::var;
 using stan::math::check_positive_finite;
+using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
   const char* function = "check_positive_finite";
@@ -55,9 +55,9 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
+  using stan::math::check_positive_finite;
   using stan::math::var;
   using std::vector;
-  using stan::math::check_positive_finite;
 
   int N = 5;
   const char* function = "check_positive_finite";

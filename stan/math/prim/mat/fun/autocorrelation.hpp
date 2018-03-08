@@ -55,8 +55,8 @@ size_t fft_next_good_size(size_t N) {
 template <typename T>
 void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
                      Eigen::FFT<T>& fft) {
-  using std::vector;
   using std::complex;
+  using std::vector;
 
   size_t N = y.size();
   size_t M = fft_next_good_size(N);

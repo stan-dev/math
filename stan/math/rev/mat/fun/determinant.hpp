@@ -44,8 +44,8 @@ class determinant_vari : public vari {
     return Ad.determinant();
   }
   virtual void chain() {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
     Matrix<double, R, C> adjA(rows_, cols_);
     adjA = (adj_ * val_)
            * Map<Matrix<double, R, C> >(A_, rows_, cols_).inverse().transpose();

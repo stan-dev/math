@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
+  using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::fvar;
 
   std::vector<var> val_dxs;
   val_dxs.push_back(1.0);
@@ -46,9 +46,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
+  using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::fvar;
 
   typedef Eigen::Matrix<fvar<var>, -1, -1> uni_mat_t;
   std::vector<var> val_dxs;

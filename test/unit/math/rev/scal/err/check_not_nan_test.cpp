@@ -3,8 +3,8 @@
 #include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
-  using stan::math::var;
   using stan::math::check_not_nan;
+  using stan::math::var;
   const char* function = "check_not_nan";
 
   var x = 0;
@@ -39,8 +39,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_not_nan;
+  using stan::math::var;
 
   const char* function = "check_not_nan";
   var a(5.0);
@@ -57,8 +57,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
 }
 
 TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
-  using stan::math::var;
   using stan::math::check_not_nan;
+  using stan::math::var;
 
   const char* function = "check_not_nan";
   var a(5.0);

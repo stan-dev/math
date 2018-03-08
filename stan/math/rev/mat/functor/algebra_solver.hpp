@@ -5,6 +5,7 @@
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
@@ -23,7 +24,7 @@ namespace math {
  * function theorem. The call to Jacobian() occurs outside the call to
  * chain() -- this prevents malloc issues.
  */
-template <typename FS, typename F, typename T, typename FX>
+template <typename Fs, typename F, typename T, typename Fx>
 struct algebra_solver_vari : public vari {
   /** vector of parameters */
   vari** y_;
@@ -36,11 +37,11 @@ struct algebra_solver_vari : public vari {
   /** Jacobian of the solution w.r.t parameters */
   double* Jx_y_;
 
-  algebra_solver_vari(const FS& fs, const F& f, const Eigen::VectorXd& x,
+  algebra_solver_vari(const Fs& fs, const F& f, const Eigen::VectorXd& x,
                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                       const std::vector<double>& dat,
                       const std::vector<int>& dat_int,
-                      const Eigen::VectorXd& theta_dbl, FX& fx,
+                      const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
       : vari(theta_dbl(0)),
         y_(ChainableStack::memalloc_.alloc_array<vari*>(y.size())),
@@ -49,8 +50,8 @@ struct algebra_solver_vari : public vari {
         theta_(ChainableStack::memalloc_.alloc_array<vari*>(x_size_)),
         Jx_y_(
             ChainableStack::memalloc_.alloc_array<double>(x_size_ * y_size_)) {
-    using Eigen::MatrixXd;
     using Eigen::Map;
+    using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i)
       y_[i] = y(i).vi_;
 
@@ -60,7 +61,7 @@ struct algebra_solver_vari : public vari {
 
     // Compute the Jacobian and store in array, using the
     // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    typedef hybrj_functor_solver<FS, F, double, double> f_y;
+    typedef hybrj_functor_solver<Fs, F, double, double> f_y;
     Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
         = -mdivide_left(fx.get_jacobian(theta_dbl),
                         f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
@@ -88,6 +89,7 @@ struct algebra_solver_vari : public vari {
  * norm as a metric to measure how far we are from the origin (0).
  *
  * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y parameter vector for the equation system. The function
@@ -102,7 +104,6 @@ struct algebra_solver_vari : public vari {
  * @param[in] max_num_steps  maximum number of function evaluations.
  * @return theta Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if y has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
@@ -118,15 +119,14 @@ struct algebra_solver_vari : public vari {
  * <code>std::runtime_error</code>) if the norm of the solution exceeds the
  * function tolerance.
  */
-template <typename F>
+template <typename F, typename T>
 Eigen::VectorXd algebra_solver(
-    const F& f, const Eigen::VectorXd& x, const Eigen::VectorXd& y,
-    const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = 0, double relative_tolerance = 1e-10,
-    double function_tolerance = 1e-6,
+    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+    const Eigen::VectorXd& y, const std::vector<double>& dat,
+    const std::vector<int>& dat_int, std::ostream* msgs = 0,
+    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
-  check_nonzero_size("algebra_solver", "parameter vector", y);
   for (int i = 0; i < x.size(); i++)
     check_finite("algebra_solver", "initial guess", x(i));
   for (int i = 0; i < y.size(); i++)
@@ -149,17 +149,18 @@ Eigen::VectorXd algebra_solver(
                      ", must be greater than 0");
 
   // Create functor for algebraic system
-  typedef system_functor<F, double, double, true> FS;
-  typedef hybrj_functor_solver<FS, F, double, double> FX;
-  FX fx(FS(), f, x, y, dat, dat_int, msgs);
-  Eigen::HybridNonLinearSolver<FX> solver(fx);
+  typedef system_functor<F, double, double, true> Fs;
+  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
+  Eigen::HybridNonLinearSolver<Fx> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(x), "the vector of unknowns, x,", x);
+                       fx.get_value(value_of(x)), "the vector of unknowns, x,",
+                       x);
 
   // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = x;
+  Eigen::VectorXd theta_dbl = value_of(x);
   solver.parameters.xtol = relative_tolerance;
   solver.parameters.maxfev = max_num_steps;
   solver.solve(theta_dbl);
@@ -179,7 +180,7 @@ Eigen::VectorXd algebra_solver(
     message2 << "algebra_solver: the norm of the algebraic function is: "
              << system_norm << " but should be lower than the function "
              << "tolerance: " << function_tolerance << ". Consider "
-             << "increasing the relative tolerance and the "
+             << "decreasing the relative tolerance and increasing the "
              << "max_num_steps.";
     throw boost::math::evaluation_error(message2.str());
   }
@@ -201,9 +202,10 @@ Eigen::VectorXd algebra_solver(
  * top, using the algebra_solver_vari class.
  *
  * @tparam F type of equation system function.
- * @tparam T  Type of elements in y vectors.
+ * @tparam T1  Type of elements in x vector.
+ * @tparam T2  Type of elements in y vector.
  * @param[in] f Functor that evaluates the system of equations.
- * @param[in] x Vector of starting values.
+ * @param[in] x Vector of starting values (initial guess).
  * @param[in] y parameter vector for the equation system.
  * @param[in] dat continuous data vector for the equation system.
  * @param[in] dat_int integer data vector for the equation system.
@@ -214,7 +216,6 @@ Eigen::VectorXd algebra_solver(
  * @param[in] max_num_steps  maximum number of function evaluations.
  * @return theta Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if y has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
@@ -230,10 +231,10 @@ Eigen::VectorXd algebra_solver(
  * <code>std::runtime_error</code>) if the norm of the solution exceeds the
  * function tolerance.
  */
-template <typename F, typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> algebra_solver(
-    const F& f, const Eigen::VectorXd& x,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+template <typename F, typename T1, typename T2>
+Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
+    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = 0, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
@@ -242,19 +243,19 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> algebra_solver(
       = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
                        function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> FY;
+  typedef system_functor<F, double, double, false> Fy;
 
   // TODO(charlesm93): a similar object gets constructed inside
   // the call to algebra_solver. Cache the previous result
   // and use it here (if possible).
-  typedef system_functor<F, double, double, true> FS;
-  typedef hybrj_functor_solver<FS, F, double, double> FX;
-  FX fx(FS(), f, x, value_of(y), dat, dat_int, msgs);
+  typedef system_functor<F, double, double, true> Fs;
+  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<FY, F, T, FX>* vi0
-      = new algebra_solver_vari<FY, F, T, FX>(FY(), f, x, y, dat, dat_int,
-                                              theta_dbl, fx, msgs);
+  algebra_solver_vari<Fy, F, T2, Fx>* vi0
+      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
+                                               dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)

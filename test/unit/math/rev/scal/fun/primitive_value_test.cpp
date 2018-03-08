@@ -3,8 +3,8 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRev, primitiveValue) {
-  using stan::math::var;
   using stan::math::primitive_value;
+  using stan::math::var;
 
   var a = 5.0;
   EXPECT_FLOAT_EQ(5.0, primitive_value(a));

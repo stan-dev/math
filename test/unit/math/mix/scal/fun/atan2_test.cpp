@@ -134,8 +134,8 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdAtan2, FvarFvarVar_Double_1stDeriv) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   using std::atan2;
 
   fvar<fvar<var> > x;
@@ -246,8 +246,8 @@ TEST(AgradFwdAtan2, FvarFvarVar_FvarFvarVar_3rdDeriv) {
 }
 
 TEST(AgradFwdAtan2, FvarFvarVar_Double_2ndDeriv) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   using std::atan2;
 
   fvar<fvar<var> > x;
@@ -264,8 +264,8 @@ TEST(AgradFwdAtan2, FvarFvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-2.0 / 9.0, g[0]);
 }
 TEST(AgradFwdAtan2, FvarFvarVar_Double_3rdDeriv) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   using std::atan2;
 
   fvar<fvar<var> > x;

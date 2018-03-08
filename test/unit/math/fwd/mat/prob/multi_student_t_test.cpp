@@ -5,8 +5,8 @@
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-using std::vector;
 using stan::math::multi_student_t_log;
+using std::vector;
 
 TEST(ProbDistributionsMultiStudentT, fvar_double) {
   using stan::math::fvar;

@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsExponential : public AgradDistributionTest {
  public:
@@ -70,17 +70,17 @@ class AgradDistributionsExponential : public AgradDistributionTest {
   typename stan::return_type<T_y, T_inv_scale>::type log_prob_function(
       const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
       const T5&) {
-    using stan::math::multiply_log;
     using boost::math::lgamma;
     using stan::math::NEG_LOG_TWO_OVER_TWO;
+    using stan::math::multiply_log;
 
     return log(beta) - beta * y;
   }
 };
 
 TEST(ProbDistributionsExponential, Cumulative) {
-  using std::numeric_limits;
   using stan::math::exponential_cdf;
+  using std::numeric_limits;
   EXPECT_FLOAT_EQ(0.95021293, exponential_cdf(2.0, 1.5));
   EXPECT_FLOAT_EQ(1.0, exponential_cdf(15.0, 3.9));
   EXPECT_FLOAT_EQ(0.62280765, exponential_cdf(0.25, 3.9));

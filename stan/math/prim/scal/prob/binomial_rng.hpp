@@ -38,8 +38,8 @@ namespace math {
  */
 template <class RNG>
 inline int binomial_rng(int N, double theta, RNG& rng) {
-  using boost::variate_generator;
   using boost::binomial_distribution;
+  using boost::variate_generator;
 
   static const char* function = "binomial_rng";
 

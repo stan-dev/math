@@ -12,9 +12,9 @@ namespace math {
 
 namespace {
 double log_sum_exp_as_double(const std::vector<var>& x) {
-  using std::numeric_limits;
   using std::exp;
   using std::log;
+  using std::numeric_limits;
   double max = -numeric_limits<double>::infinity();
   for (size_t i = 0; i < x.size(); ++i)
     if (x[i] > max)

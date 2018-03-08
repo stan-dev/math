@@ -37,8 +37,8 @@ TEST(AgradFwdMatrixColumnsDotSelf, matrix_fd) {
 
 TEST(AgradFwdMatrixColumnsDotSelf, matrix_ffd) {
   using stan::math::columns_dot_self;
-  using stan::math::matrix_ffd;
   using stan::math::fvar;
+  using stan::math::matrix_ffd;
 
   fvar<fvar<double> > a;
   fvar<fvar<double> > b;

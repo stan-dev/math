@@ -41,54 +41,54 @@ help:
 	@echo 'SUNDIALS_CVODES:                   ' $(SUNDIALS_CVODES)
 	@echo 'LIBCVODES:                         ' $(LIBCVODES)
 
-# 	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
-# 	@echo '  - CC (Compiler):              ' $(CC)
-# 	@echo '  - CC_TYPE                     ' $(CC_TYPE)
-# 	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
-# 	@echo '  - O (Optimization Level):     ' $(O)
-# 	@echo '  Library configuration:'
-# 	@echo '  - EIGEN                       ' $(EIGEN)
-# 	@echo '  - BOOST                       ' $(BOOST)
-# 	@echo '  - CVODES                      ' $(CVODES)
-# 	@echo '  - GTEST                       ' $(GTEST)
-# 	@echo ''
-# 	@echo 'Tests:'
-# 	@echo ''
-# 	@echo '  Unit tests are built through make by specifying the executable as the target'
-# 	@echo '  to make. For a test in test/*_test.cpp, the executable is test/*$(EXE).'
-# 	@echo ''
-# 	@echo '  Header tests'
-# 	@echo '  - test-headers  : tests all source headers to ensure they are compilable and'
-# 	@echo '                    include enough header files.'
-# 	@echo ''
-# 	@echo '  To run a single header test, add "-test" to the end of the file name.'
-# 	@echo '  Example: make stan/math/constants.hpp-test'
-# 	@echo ''
-# 	@echo '  - test-math-dependencies : walks through all the header files and indicates'
-# 	@echo '      when the math dependencies are violated. Dependencies should follow:'
-# 	@echo '      * rev -> prim'
-# 	@echo '      * fwd -> prim'
-# 	@echo '      * mix -> {rev, fwd, prim}'
-# 	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
-# 	@echo ''
-# 	@echo '  Cpplint'
-# 	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
-# 	@echo '                    cpplint is called using the CPPLINT variable:'
-# 	@echo '                      CPPLINT = $(CPPLINT)'
-# 	@echo '                    To set the version of python 2, set the PYTHON2 variable:'
-# 	@echo '                      PYTHON2 = $(PYTHON2)'
-# 	@echo ''
-# 	@echo 'Documentation:'
-# 	@echo '  Doxygen'
-# 	@echo '  - doxygen       : runs doxygen on source files. requires doxygen.'
-# 	@echo ''
-# 	@echo 'Clean:'
-# 	@echo '  - clean         : Basic clean. Leaves doc and compiled libraries intact.'
-# 	@echo '  - clean-deps    : Removes dependency files for tests. If tests stop building,'
-# 	@echo '                    run this target.'
-# 	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES.'
-# 	@echo '  - clean-all     : Cleans up all of Stan.'
-# 	@echo ''
+#	@echo '  - OS_TYPE (Operating System): ' $(OS_TYPE)
+#	@echo '  - CC (Compiler):              ' $(CC)
+#	@echo '  - CC_TYPE                     ' $(CC_TYPE)
+#	@echo '  - Compiler version:           ' $(CC_MAJOR).$(CC_MINOR)
+#	@echo '  - O (Optimization Level):     ' $(O)
+#	@echo '  Library configuration:'
+#	@echo '  - EIGEN                       ' $(EIGEN)
+#	@echo '  - BOOST                       ' $(BOOST)
+#	@echo '  - CVODES                      ' $(CVODES)
+#	@echo '  - GTEST                       ' $(GTEST)
+#	@echo ''
+#	@echo 'Tests:'
+#	@echo ''
+#	@echo '  Unit tests are built through make by specifying the executable as the target'
+#	@echo '  to make. For a test in test/*_test.cpp, the executable is test/*$(EXE).'
+#	@echo ''
+#	@echo '  Header tests'
+#	@echo '  - test-headers  : tests all source headers to ensure they are compilable and'
+#	@echo '                    include enough header files.'
+#	@echo ''
+#	@echo '  To run a single header test, add "-test" to the end of the file name.'
+#	@echo '  Example: make stan/math/constants.hpp-test'
+#	@echo ''
+#	@echo '  - test-math-dependencies : walks through all the header files and indicates'
+#	@echo '      when the math dependencies are violated. Dependencies should follow:'
+#	@echo '      * rev -> prim'
+#	@echo '      * fwd -> prim'
+#	@echo '      * mix -> {rev, fwd, prim}'
+#	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
+#	@echo ''
+#	@echo '  Cpplint'
+#	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
+#	@echo '                    cpplint is called using the CPPLINT variable:'
+#	@echo '                      CPPLINT = $(CPPLINT)'
+#	@echo '                    To set the version of python 2, set the PYTHON2 variable:'
+#	@echo '                      PYTHON2 = $(PYTHON2)'
+#	@echo ''
+#	@echo 'Documentation:'
+#	@echo '  Doxygen'
+#	@echo '  - doxygen       : runs doxygen on source files. requires doxygen.'
+#	@echo ''
+#	@echo 'Clean:'
+#	@echo '  - clean         : Basic clean. Leaves doc and compiled libraries intact.'
+#	@echo '  - clean-deps    : Removes dependency files for tests. If tests stop building,'
+#	@echo '                    run this target.'
+#	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES.'
+#	@echo '  - clean-all     : Cleans up all of Stan.'
+#	@echo ''
 	@echo '--------------------------------------------------------------------------------'
 
 ## doxygen

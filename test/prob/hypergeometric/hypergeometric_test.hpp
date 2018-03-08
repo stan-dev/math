@@ -1,9 +1,9 @@
 // Arguments: Ints, Ints, Ints, Ints
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsNegBinomial : public AgradDistributionTest {
  public:
