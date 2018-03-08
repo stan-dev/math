@@ -62,7 +62,7 @@ endif
 
 ifeq ($(OS),Linux)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
-  ifneq (,($findstring mingw32-g++,$(CXX)))
+  ifeq (mingw32-g++,$(CXX))
     LDLIBS ?= -static -lwinpthread
     EXE := .exe
   else
