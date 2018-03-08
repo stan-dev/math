@@ -89,18 +89,20 @@ TEST_F(AgradRev, complexNotNullIssue123) {
   EXPECT_TRUE(z.real().val());
   EXPECT_FALSE(z.imag().val());
   auto y(z.real() + 1);
-  z.imag(y);  // gradient back propagates partly through imaginary -> y -> real
-              // -> x
+  // gradient back propagates partly through imaginary -> y -> real -> x
+  z.imag(y);
   EXPECT_TRUE(z.imag().val());
   auto zabs(abs(z));
   EXPECT_EQ(zabs.val(), 5);
   zabs.grad();  // z^2 = x^2 + (x+1)^2 = 2x^2+2x+1 ==> 2z dz/dx = 4x + 2
-  EXPECT_EQ(x.adj(), 1.4);  // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5)
-                            // = 1.4
-  // complex var left and right parameter coercions (i.e. correct
-  // instantiations)
-  auto q(8
-         / ((1 + z) * 2));  // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
+  // dz/dx = (4x + 2)/(2 z) = (4 * 3 + 2)/(2 * 5) = 1.4
+  EXPECT_EQ(x.adj(), 1.4);
+
+  // the following are complex var left and right op parameter coercions
+  // (i.e. checks for correct instantiations)
+
+  // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
+  auto q(8/((1+z)*2));
   q += std::complex<double>(.5, 1.5);     // 0.5-0.5i + .5+1.5i = 1+1i
   std::complex<AVAR> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
   EXPECT_TRUE(q == std::complex<double>(1, 1));

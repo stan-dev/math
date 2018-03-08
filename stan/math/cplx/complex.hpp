@@ -9,24 +9,18 @@
 
 namespace stan {
 namespace math {
-
-// forward declarations
-class var;
-class fvar;
-
 namespace internal {
 
-// rem_cvref removes cv qualifiers and references and is used below in a ctor
-template <class T>
-struct rem_cvref {
-  typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type
-      type;
-};
+template<class T> class complex; //forward declaration of stan's complex
+
+template<class> struct is_cplx : std::false_type {};
+template<class T> struct is_cplx<std::complex<T>> : std::true_type {};
+template<class T> struct is_cplx<complex<T>> : std::true_type {};
 
 /// This class exists purely to forward the interface of std::complex and serve
 /// as a tag for the free functions below. Without this class, the free
 /// functions  would have to be written to extend std::complex, which would
-/// change its  semantics, or would have to be specialized to only stan types.
+/// change its semantics, or would have to be specialized to only stan types.
 template <class T>
 struct complex : std::complex<T> {
   using std::complex<T>::complex;  ///< inherit all std::complex ctors
@@ -36,15 +30,13 @@ struct complex : std::complex<T> {
    * from an (f)var fails, because the default implementation in the
    * std::complex template requires the argument type to match the template
    * type. This is the same reason why std::complex<double> can't be multiplied
-   * by an int tparam R type of real argument tparam I type of imaginary
-   * argument param[in] real, the pure real component of the complex number
+   * by an int.
+   * tparam R type of real argument. Won't fire if complex.
+   * tparam I type of imaginary argument.
+   * param[in] real, the pure real component of the complex number.
    * param[in] imag, the pure imaginary component of the complex number*/
   template <class R = T, class I = T,
-            typename std::enable_if<
-                std::is_same<typename rem_cvref<R>::type, var>::value
-                || std::is_same<typename rem_cvref<R>::type, fvar>::value
-                || std::is_fundamental<typename rem_cvref<R>::type>::value>::
-                type* = nullptr>  // enable_if won't fire if R is complex
+			std::enable_if_t<!is_cplx<R>::value>* = nullptr>
   complex(const R real = 0, const I imag = 0)
       : std::complex<T>(real, imag) {}
 };
