@@ -14,9 +14,10 @@ CPPLINT ?= $(MATH)lib/cpplint_4.45
 ##
 O ?= 3
 
-INC = -I . -I $(EIGEN) -I $(BOOST) $(INC_CVODES)
-INC_CVODES = -I $(CVODES)/include
-INC_GTEST = -I $(GTEST)/include -I $(GTEST)
+INC ?= -I . -I $(EIGEN) -I $(BOOST) $(INC_CVODES) $(INC_IDAS)
+INC_CVODES ?= -I $(CVODES)/include
+INC_IDAS ?= -I $(IDAS)/include
+INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 CXXFLAGS_LANG ?= -std=c++11
 CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
 CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
