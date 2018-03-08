@@ -29,7 +29,6 @@ ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
 
-
 ifeq ($(OS),Windows)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
   ## Detecting Process Bitness:
@@ -47,7 +46,6 @@ ifeq ($(OS),Windows)
 
   EXE := .exe
 endif
-
 
 ifeq ($(OS),Darwin)  # Mac OS X
   CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
