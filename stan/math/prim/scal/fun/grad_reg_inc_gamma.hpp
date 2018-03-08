@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
@@ -43,22 +44,15 @@ namespace math {
  (a-1)_k\right) \frac{1}{z^k} \end{array} \f]
  */
 template <typename T1, typename T2>
-typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
+typename return_type<T1, T2>::type grad_reg_inc_gamma(
     T1 a, T2 z, T1 g, T1 dig, double precision = 1e-6, int max_steps = 1e5) {
-  using std::domain_error;
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef typename boost::math::tools::promote_args<T1, T2>::type TP;
+  typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a))
-    return std::numeric_limits<T1>::quiet_NaN();
-  if (is_nan(z))
-    return std::numeric_limits<T2>::quiet_NaN();
-  if (is_nan(g))
-    return std::numeric_limits<T1>::quiet_NaN();
-  if (is_nan(dig))
-    return std::numeric_limits<T1>::quiet_NaN();
+  if (is_nan(a) || is_nan(z) || is_nan(g) || is_nan(dig))
+    return std::numeric_limits<TP>::quiet_NaN();
 
   T2 l = log(z);
   if (z >= a && z >= 8) {
@@ -81,14 +75,12 @@ typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
       delta = dfac / zpow;
 
       if (is_inf(delta))
-        stan::math::domain_error("grad_reg_inc_gamma", "is not converging", "",
-                                 "");
+        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
     }
 
     return gamma_q(a, z) * (l - dig) + exp(-z + (a - 1) * l) * S / g;
   } else {
     // gradient of series expansion http://dlmf.nist.gov/8.7#E3
-
     TP S = 0;
     TP log_s = 0.0;
     double s_sign = 1.0;
@@ -100,15 +92,13 @@ typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
       s_sign = -s_sign;
       log_delta = log_s - 2 * log(k + a);
       if (is_inf(log_delta))
-        stan::math::domain_error("grad_reg_inc_gamma", "is not converging", "",
-                                 "");
+        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
       if (log_delta <= log(precision))
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
     }
-    stan::math::domain_error("grad_reg_inc_gamma", "k (internal counter)",
-                             max_steps, "exceeded ",
-                             " iterations, gamma function"
-                             " gradient did not converge.");
+    domain_error("grad_reg_inc_gamma", "k (internal counter)",
+                 max_steps, "exceeded ",
+                 " iterations, gamma function gradient did not converge.");
     return std::numeric_limits<TP>::infinity();
   }
 }
