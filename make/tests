@@ -1,4 +1,4 @@
-GTEST_MAIN := $(GTEST)/src/gtest_main.cc
+gGTEST_MAIN := $(GTEST)/src/gtest_main.cc
 
 ##
 # Build the google test library.
@@ -43,33 +43,23 @@ $(IDAS_TESTS) : $(LIBIDAS)
 ##
 HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
 
-# test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
+ifeq ($(OS),Windows_NT)
+  DEV_NULL = nul
+else
+  DEV_NULL = /dev/null
+endif
 
+.PHONY: HEADER_TESTS
+%.hpp-test : %.hpp test/dummy.cpp
+	$(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
 
-# ############################################################
-# #
-# # Target to verify header files within Stan has
-# # enough include calls
-# ##
-# HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
+test/dummy.cpp:
+	@mkdir -p test
+	@touch $@
+	@echo "int main() {return 0;}" >> $@
 
-# ifeq ($(OS_TYPE),win)
-#   DEV_NULL = nul
-# else
-#   DEV_NULL = /dev/null
-# endif
-
-# .PHONY: HEADER_TESTS
-# %.hpp-test : %.hpp test/dummy.cpp
-#       $(COMPILE.cpp) -O0 -include $^ -o $(DEV_NULL)
-
-# test/dummy.cpp:
-#       @mkdir -p test
-#       @touch $@
-#       @echo "int main() {return 0;}" >> $@
-
-# .PHONY: test-headers
-# test-headers: $(HEADER_TESTS)
+.PHONY: test-headers
+test-headers: $(HEADER_TESTS)
 
 ############################################################
 ##
