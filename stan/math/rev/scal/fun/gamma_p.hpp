@@ -41,8 +41,7 @@ class gamma_p_vv_vari : public op_vv_vari {
     if (std::fabs(bvi_->val_ / avi_->val_) > 10)
       return;
 
-    avi_->adj_
-        += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_);
+    avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_);
     bvi_->adj_
         += adj_
            * std::exp(-bvi_->val_ + (avi_->val_ - 1.0) * std::log(bvi_->val_)
