@@ -65,9 +65,10 @@ $(IDAS_TESTS) : $(LIBIDAS)
 # MPI tests
 ##
 
-MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *_mpi_*test.cpp))
-$(MPI_TESTS) : $(LIBMPI)
-
+ifdef STAN_MPI
+  MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *_mpi_*test.cpp))
+  $(MPI_TESTS) : $(BOOST)/stage/lib/mpi.so
+endif
 
 ############################################################
 #
