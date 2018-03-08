@@ -10,6 +10,13 @@ GTEST ?= $(MATH)lib/gtest_1.7.0
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 
 ##
+# Detect operating system
+##
+ifneq ($(OS),Windows_NT)
+  OS := $(shell uname -s)
+endif
+
+##
 # Compiler options
 ##
 O ?= 3
@@ -19,19 +26,21 @@ INC_CVODES ?= -I $(CVODES)/include
 INC_IDAS ?= -I $(IDAS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 CXXFLAGS_LANG ?= -std=c++1y
-CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
+ifeq ($(OS),Windows_NT)
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized
+else
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-local-typedef
+endif
 CXXFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
 CXXFLAGS_CVODES ?= -DNO_FPRINTF_OUTPUT -pipe
 CXXFLAGS_EIGEN ?=
 CXXFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
 CXXFLAGS_OS ?=
 
-ifneq ($(OS),Windows_NT)
-  OS := $(shell uname -s)
-endif
 
 ifeq ($(OS),Windows_NT)
   CXXFLAGS_GTEST += -DGTEST_HAS_PTHREAD=0
+  CXXFLAGS_OS ?= -Wno-unused-but-set-variable
   ## Detecting Process Bitness:
   ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
   ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
@@ -39,7 +48,6 @@ ifeq ($(OS),Windows_NT)
   else
     CXXFLAGS_OS += -m64
   endif
-  CXXFLAGS_OS += -Wno-unused-but-set-variable
 
   ## FIXME(dl): shouldn't `-static-libstdc++` this for cygwin? test.
   LDLIBS ?= -static-libgcc -static-libstdc++
@@ -48,8 +56,8 @@ ifeq ($(OS),Windows_NT)
 endif
 
 ifeq ($(OS),Darwin)  # Mac OS X
-  CXXFLAGS_OS += -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare
-  CXXFLAGS_OS += -Wno-unneeded-internal-declaration
+  CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wsign-compare\
+    -Wno-unneeded-internal-declaration
 endif
 
 ifeq ($(OS),Linux)
