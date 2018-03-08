@@ -109,28 +109,17 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   using std::pow;
   typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a))
+  if (is_nan(a) || is_nan(z))
     return std::numeric_limits<TP>::quiet_NaN();
-  if (is_nan(z))
-    return std::numeric_limits<TP>::quiet_NaN();
-  if (a > 0 && is_inf(a))
-    domain_error("d_lower_reg_inc_gamma_da", "a", a, "The value ",
-                 " is not finite.");
-  if (z > 0 && is_inf(z))
-    domain_error("d_lower_reg_inc_gamma_da", "z", z, "The value ",
-                 " is not finite.");
-  if (a < 0)
-    domain_error("d_lower_reg_inc_gamma_da", "a", a, "The value ",
-                 " can not be negative.");
-  if (z < 0)
-    domain_error("d_lower_reg_inc_gamma_da", "z", z, "The value ",
-                 " can not be negative.");
+
+  check_positive_finite("grad_reg_lower_inc_gamma", "a", a);
 
   if (z == 0.0)
     return 0.0;
+  check_positive_finite("grad_reg_lower_inc_gamma", "z", z);
 
   if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
-      || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
+a      || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
                   + 60 * value_of_rec(z))) {
     T1 tg = tgamma(a);
     T1 dig = digamma(a);
@@ -141,9 +130,8 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   T2 emz = exp(-z);
 
   int n = 0;
+  T1 a_plus_n = a;
   TP sum_a = 0.0;
-
-  T1 a_plus_n = a;  // n begins at zero.
   T1 lgamma_a_plus_1 = lgamma(a + 1);
   T1 lgamma_a_plus_n_plus_1 = lgamma_a_plus_1;
   TP term;
@@ -153,7 +141,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     if (term <= precision)
       break;
     if (n >= max_steps)
-      domain_error("d_lower_reg_inc_gamma_da", "n (internal counter)",
+      domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
                    max_steps, "exceeded ",
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
@@ -163,8 +151,8 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   }
 
   n = 1;
+  a_plus_n = a + 1;
   TP sum_b = digamma(a + 1) * exp(a * log_z - lgamma_a_plus_1);
-  a_plus_n = a + 1;  // n begins at one.
   lgamma_a_plus_n_plus_1 = lgamma_a_plus_1 + log(a_plus_n);
   while (true) {
     term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1)
@@ -173,7 +161,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     if (term <= precision)
       return emz * (log_z * sum_a - sum_b);
     if (n >= max_steps)
-      domain_error("d_lower_reg_inc_gamma_da", "n (internal counter)",
+      domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
                    max_steps, "exceeded ",
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
