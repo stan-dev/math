@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
@@ -118,7 +119,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     return 0.0;
   check_positive_finite("grad_reg_lower_inc_gamma", "z", z);
 
-  if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0) a
+  if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
       || a < sqrt(-756 - value_of_rec(z) * value_of_rec(z)
                   + 60 * value_of_rec(z))) {
     T1 tg = tgamma(a);
