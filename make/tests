@@ -67,7 +67,7 @@ $(IDAS_TESTS) : $(LIBIDAS)
 
 ifdef STAN_MPI
   MPI_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *_mpi_*test.cpp))
-  $(MPI_TESTS) : $(BOOST)/stage/lib/mpi.so
+  $(MPI_TESTS) : $(BOOST)/stage/lib/libboost_mpi$(DLL) $(BOOST)/stage/lib/libboost_serialization$(DLL)
 endif
 
 ############################################################

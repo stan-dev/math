@@ -14,6 +14,8 @@ ifeq (clang++,$(CC_TYPE))
   CXXFLAGS += -Wsign-compare
 endif
 
+DLL = .dylib
+
 ifdef STAN_MPI
   LDFLAGS += -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
   CXXFLAGS += -DSTAN_MPI

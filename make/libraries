@@ -78,28 +78,19 @@ $(BOOST)/stage/lib/mpi.so:
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); echo "using mpi ;" >> user-config.jam
 	cd $(BOOST); ./b2 --user-config=user-config.jam --with-mpi --with-serialization
-	@if [ "$(OS_TYPE)" = "mac" ]; then\
-		echo "Hardcoding dynamic library paths on Mac..."; \
-		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_serialization.dylib; \
-		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi.dylib; \
-		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_python.dylib; \
-		install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
-		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
-		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
-		install_name_tool -change libboost_python.dylib @rpath/libboost_python.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
-		install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -change libboost_mpi.dylib @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -change libboost_mpi.dylib @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
-		install_name_tool -change libboost_python.dylib @rpath/libboost_python.dylib $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -change libboost_mpi_python.dylib @rpath/libboost_mpi_python.dylib $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_serialization.dylib; \
-		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi.dylib; \
-		install_name_tool -id @rpath/mpi.so $(BOOST)/stage/lib/mpi.so; \
-		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_python.dylib; \
-		install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi_python.dylib; \
-	fi
 
+$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
+
+$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
+	install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_serialization.dylib
+	install_name_tool -id @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_serialization.dylib
+
+$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
+
+$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so
+	install_name_tool -add_rpath $(BOOST)/stage/lib/ $(BOOST)/stage/lib/libboost_mpi.dylib
+	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib
+	install_name_tool -id @rpath/libboost_mpi.dylib $(BOOST)/stage/lib/libboost_mpi.dylib
 
 .PHONY: clean-libraries
 clean-libraries:
