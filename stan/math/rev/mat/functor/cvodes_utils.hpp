@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_UTILS_HPP
 
 #include <cvodes/cvodes.h>
-#include <cvodes/cvodes_band.h>
-#include <cvodes/cvodes_dense.h>
+#include <cvodes/cvodes_direct.h>
+#include <sundials/sundials_dense.h>
 #include <nvector/nvector_serial.h>
 #include <sstream>
 #include <stdexcept>
