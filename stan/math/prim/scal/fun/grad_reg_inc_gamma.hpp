@@ -44,8 +44,9 @@ namespace math {
  (a-1)_k\right) \frac{1}{z^k} \end{array} \f]
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_inc_gamma(
-    T1 a, T2 z, T1 g, T1 dig, double precision = 1e-6, int max_steps = 1e5) {
+typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
+                                                      double precision = 1e-6,
+                                                      int max_steps = 1e5) {
   using std::exp;
   using std::fabs;
   using std::log;
@@ -96,8 +97,8 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(
       if (log_delta <= log(precision))
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
     }
-    domain_error("grad_reg_inc_gamma", "k (internal counter)",
-                 max_steps, "exceeded ",
+    domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
+                 "exceeded ",
                  " iterations, gamma function gradient did not converge.");
     return std::numeric_limits<TP>::infinity();
   }
