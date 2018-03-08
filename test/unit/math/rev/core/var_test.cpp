@@ -102,7 +102,7 @@ TEST_F(AgradRev, complexNotNullIssue123) {
   // (i.e. checks for correct instantiations)
 
   // 8/((1+3+4i)*2) = 1/(1+1i) * (1-i)/(1-i) = (1-i)/2
-  auto q(8/((1+z)*2));
+  auto q(8 / ((1 + z) * 2));
   q += std::complex<double>(.5, 1.5);     // 0.5-0.5i + .5+1.5i = 1+1i
   std::complex<AVAR> r(2 * (z + 1) / 8);  // 2*(3+4i+1)/8  = 1+1i
   EXPECT_TRUE(q == std::complex<double>(1, 1));
