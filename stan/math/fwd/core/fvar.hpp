@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/meta/ad_promotable.hpp>
+#include <stan/math/cplx/complex.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <ostream>
 
@@ -285,6 +286,38 @@ struct fvar {
     return os << v.val_;
   }
 };
+
+namespace internal {
+
+/**
+ * Fvar for std::complex<fvar>.
+ *
+ * This class exists to unify fvar with the same extended-but-hidden interface
+ * of stan::math::complex's class template that exists behind std::complex<var>.
+ */
+template<class T>
+struct z_fvar : fvar<T> {
+	using fvar<T>::fvar;  ///< inherit all ctors
+ z_fvar(fvar<T> const& z) : fvar<T>(z){}; ///< converting ctor from fvar
+};
+
+}  // namespace internal
+
 }  // namespace math
 }  // namespace stan
+
+namespace std {
+
+/** Template specialization to std::complex<fvar> to inherit the shared
+ * extended-but-hidden interface of stan::math::complex<z_fvar>. In this way,
+ * z_fvar is hidden from end user code.*/
+template <>
+template <class T>
+struct complex<stan::math::fvar<T>>
+    : stan::math::internal::complex<stan::math::internal::z_fvar<T>> {
+  /// inherit all ctors
+  using stan::math::internal::complex<stan::math::internal::z_fvar<T>>::complex;
+};
+
+}  // namespace std
 #endif
