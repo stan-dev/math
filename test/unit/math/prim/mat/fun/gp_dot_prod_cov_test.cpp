@@ -31,6 +31,24 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2,
   return message;
 }
 
+TEST(MathPrimMat, dummy_function) {
+  // just testing templates here
+  
+  std::vector<double> x_0(2);
+  x_0[0] = 1;
+  x_0[1] = 2;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x_1(2);
+  for(size_t i = 0; i < x_1.size(); ++i) {
+    x_1[i].resize(3, 1);
+    x_1[i] << 2 * i, 3 * i, 4 * i;
+  }
+  
+  // stan::math::dummy_fun(x_0);
+  // stan::math::dummy_fun(x_1);
+}
+
+
 TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   double sigma = 0.5;
   double sigma_sq = pow(sigma, 2);
@@ -47,7 +65,7 @@ TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(sigma_sq + x[i] * x[j], cov(i, j))
-          << "index: (" << i << ", " << j << ")";
+        << "index: (" << i << ", " << j << ")";
 }
 
 TEST(MathPrimMat, vec_x_gp_dot_prod_cov0) {
@@ -107,8 +125,7 @@ TEST(MathPrimMat, vec_NaN_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
   EXPECT_TRUE(std::string::npos != msg.find(" x1")) << msg;
@@ -125,8 +142,7 @@ TEST(MathPrimMat, vec_NaN_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
   EXPECT_TRUE(std::string::npos != msg.find(" x2")) << msg;
@@ -143,8 +159,7 @@ TEST(MathPrimMat, vec_NaN_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
   EXPECT_TRUE(std::string::npos != msg.find(" sigma")) << msg;
@@ -185,8 +200,7 @@ TEST(MathPrimMat, vec_inf_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
   EXPECT_TRUE(std::string::npos != msg.find(" x1")) << msg;
@@ -203,8 +217,7 @@ TEST(MathPrimMat, vec_inf_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
   EXPECT_TRUE(std::string::npos != msg.find(" x2")) << msg;
@@ -221,8 +234,7 @@ TEST(MathPrimMat, vec_inf_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma),
-  std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
 
   std::string msg;
   msg = pull_msg(x1, x2, sigma);
@@ -292,7 +304,6 @@ TEST(MathPrimMat, rvec_vec_x1_x2_gp_dot_prod_cov0) {
     x2[i].resize(1, 3);
     x2[i] << 2 * i, 3 * i, 4 * i;
   }
-
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x1, x2, sigma));
@@ -367,8 +378,7 @@ TEST(MathPrimMat, rvec_rvec_x1_x2_gp_dot_prod_cov0) {
   }
 
   Eigen::MatrixXd cov;
-  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x1_rvec, x2_rvec,
-  sigma));
+  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x1_rvec, x2_rvec, sigma));
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       EXPECT_FLOAT_EQ(sigma * sigma +
