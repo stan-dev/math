@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
+#include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
