@@ -82,7 +82,6 @@
 #include <stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free.hpp>
 #include <stan/math/prim/mat/fun/cov_matrix_free_lkj.hpp>
-#include <stan/math/prim/mat/fun/cov_periodic.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
 #include <stan/math/prim/mat/fun/csr_extract_u.hpp>
 #include <stan/math/prim/mat/fun/csr_extract_v.hpp>
@@ -120,6 +119,7 @@
 #include <stan/math/prim/mat/fun/get_base1.hpp>
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>
+#include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/mat/fun/head.hpp>
 #include <stan/math/prim/mat/fun/initialize.hpp>
 #include <stan/math/prim/mat/fun/inv.hpp>
