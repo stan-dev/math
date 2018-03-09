@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
 #include <vector>
@@ -13,32 +14,26 @@ namespace internal {
 // Vectorized Univariate
 template <>
 class ops_partials_edge<double, std::vector<var> > {
- public:
-  typedef std::vector<var> Op;
-  typedef Eigen::VectorXd partials_t;
-  partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  explicit ops_partials_edge(const Op& op)
-      : partials_(partials_t::Zero(op.size())),
-        partials_vec_(partials_),
-        operands_(op) {}
-
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  const Op& operands_;
+  const size_t size_;
+  vari** operands_;
+  double* partials_underlying_;
 
-  void dump_partials(double* partials) {
-    for (int i = 0; i < this->partials_.size(); ++i) {
-      partials[i] = this->partials_[i];
+ public:
+  typedef Eigen::Map<Eigen::VectorXd> partials_t;
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  explicit ops_partials_edge(const Op& op)
+      : size_(op.size()) partials_underlying_(
+            ChainableStack::memalloc_.alloc_array<double>(size_)),
+        partials_(partials_t(partials_underlying_)),
+        partials_vec_(partials_) {
+    for () {
+      operands_[]
     }
   }
-  void dump_operands(vari** varis) {
-    for (size_t i = 0; i < this->operands_.size(); ++i) {
-      varis[i] = this->operands_[i].vi_;
-    }
-  }
-  int size() { return this->operands_.size(); }
 };
 
 template <int R, int C>
