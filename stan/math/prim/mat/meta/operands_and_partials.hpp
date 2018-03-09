@@ -12,8 +12,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-Eigen::Map<Eigen::VectorXd> stack_eigen)
-
 /* This class will be used for both multivariate (nested container)
    operands_and_partials edges as well as for the univariate case.
  */

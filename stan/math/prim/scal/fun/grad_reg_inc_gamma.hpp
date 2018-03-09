@@ -42,33 +42,26 @@ namespace math {
    && + \frac{z^{a-1}e^{-z}}{\Gamma(a)} \sum_{k=0}^N \left(\frac{d}{da}
  (a-1)_k\right) \frac{1}{z^k} \end{array} \f]
  */
-template <typename T1, typename T2>
-typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
-    T1 a, T2 z, T1 g, T1 dig, double precision = 1e-6, int max_steps = 1e5) {
+template <typename T>
+T grad_reg_inc_gamma(T a, T z, T g, T dig, double precision = 1e-6,
+                     int max_steps = 1e5) {
   using std::domain_error;
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef typename boost::math::tools::promote_args<T1, T2>::type TP;
 
-  if (is_nan(a))
-    return std::numeric_limits<T1>::quiet_NaN();
-  if (is_nan(z))
-    return std::numeric_limits<T2>::quiet_NaN();
-  if (is_nan(g))
-    return std::numeric_limits<T1>::quiet_NaN();
-  if (is_nan(dig))
-    return std::numeric_limits<T1>::quiet_NaN();
+  if (is_nan(a) || is_nan(z) || is_nan(g) || is_nan(dig))
+    return std::numeric_limits<T>::quiet_NaN();
 
-  T2 l = log(z);
+  T l = log(z);
   if (z >= a && z >= 8) {
     // asymptotic expansion http://dlmf.nist.gov/8.11#E2
-    TP S = 0;
-    T1 a_minus_one_minus_k = a - 1;
-    T1 fac = a_minus_one_minus_k;  // falling_factorial(a-1, k)
-    T1 dfac = 1;                   // d/da[falling_factorial(a-1, k)]
-    T2 zpow = z;                   // z ** k
-    TP delta = dfac / zpow;
+    T S = 0;
+    T a_minus_one_minus_k = a - 1;
+    T fac = a_minus_one_minus_k;  // falling_factorial(a-1, k)
+    T dfac = 1;                   // d/da[falling_factorial(a-1, k)]
+    T zpow = z;                   // z ** k
+    T delta = dfac / zpow;
 
     for (int k = 1; k < 10; ++k) {
       a_minus_one_minus_k -= 1;
@@ -89,11 +82,11 @@ typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
   } else {
     // gradient of series expansion http://dlmf.nist.gov/8.7#E3
 
-    TP S = 0;
-    TP log_s = 0.0;
+    T S = 0;
+    T log_s = 0.0;
     double s_sign = 1.0;
-    T2 log_z = log(z);
-    TP log_delta = log_s - 2 * log(a);
+    T log_z = log(z);
+    T log_delta = log_s - 2 * log(a);
     for (int k = 1; k <= max_steps; ++k) {
       S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
       log_s += log_z - log(k);
@@ -109,7 +102,7 @@ typename boost::math::tools::promote_args<T1, T2>::type grad_reg_inc_gamma(
                              max_steps, "exceeded ",
                              " iterations, gamma function"
                              " gradient did not converge.");
-    return std::numeric_limits<TP>::infinity();
+    return std::numeric_limits<T>::infinity();
   }
 }
 
