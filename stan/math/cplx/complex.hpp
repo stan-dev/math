@@ -14,6 +14,7 @@ namespace internal {
 template <class T>
 class complex;  // forward declaration of stan's complex
 
+///trait to see if the template parameter is std's or stan's complex
 template <class>
 struct is_cplx : std::false_type {};
 template <class T>
@@ -103,12 +104,12 @@ inline bool operator==(complex<T> t, complex<U> u) {
 }
 
 template <class T, class U>
-inline bool operator==(std::complex<U> u, complex<T> t) {
+inline bool operator==(complex<T> t, std::complex<U> u) {
   return complex<T>(u) == t;
 }
 
 template <class T, class U>
-inline bool operator==(complex<T> t, std::complex<U> u) {
+inline bool operator==(std::complex<U> u, complex<T> t) {
   return complex<T>(u) == t;
 }
 
@@ -134,7 +135,8 @@ inline bool operator!=(U u, complex<T> t) {
 
 template <class T, class U>
 inline complex<T> pow(complex<T> t, complex<U> u) {
-  return t == T() ? T() : std::exp(u * std::log(t));
+	 using std::exp; using std::log;
+  return t == T() ? T() : exp(u * log(t));
 }
 
 }  // namespace internal
