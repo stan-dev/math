@@ -95,14 +95,14 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
      *   x is nan or infinite
      */
 // old code without enable if
-//   template <typename T_sigma>
-// inline typename Eigen::Matrix<typename stan::return_type<double, T_sigma>::type,
-//                               Eigen::Dynamic, Eigen::Dynamic>
+  template <typename T_sigma>
+inline typename Eigen::Matrix<typename stan::return_type<double, T_sigma>::type,
+                              Eigen::Dynamic, Eigen::Dynamic>
 
-  template <typename T_x, typename T_sigma>
-inline typename boost::enable_if_c<
-    boost::is_same<typename scalar_type<T_x>::type, double>::value,
-  std::vector<double>>::type
+//   template <typename T_x, typename T_sigma>
+// inline typename boost::enable_if_c<
+//     boost::is_same<typename scalar_type<T_x>::type, double>::value,
+//   std::vector<double>>::type
 gp_dot_prod_cov(const std::vector<double> &x, const T_sigma &sigma) {
   using stan::math::square;
   using stan::math::dot_product;

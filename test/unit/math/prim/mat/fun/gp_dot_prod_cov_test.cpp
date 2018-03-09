@@ -33,21 +33,20 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2,
 
 TEST(MathPrimMat, dummy_function) {
   // just testing templates here
-  
+
   std::vector<double> x_0(2);
   x_0[0] = 1;
   x_0[1] = 2;
 
   std::vector<Eigen::Matrix<double, -1, 1>> x_1(2);
-  for(size_t i = 0; i < x_1.size(); ++i) {
+  for (size_t i = 0; i < x_1.size(); ++i) {
     x_1[i].resize(3, 1);
     x_1[i] << 2 * i, 3 * i, 4 * i;
   }
-  
+
   // stan::math::dummy_fun(x_0);
   // stan::math::dummy_fun(x_1);
 }
-
 
 TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   double sigma = 0.5;
@@ -65,7 +64,7 @@ TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)
       EXPECT_FLOAT_EQ(sigma_sq + x[i] * x[j], cov(i, j))
-        << "index: (" << i << ", " << j << ")";
+          << "index: (" << i << ", " << j << ")";
 }
 
 TEST(MathPrimMat, vec_x_gp_dot_prod_cov0) {
