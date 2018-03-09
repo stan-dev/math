@@ -90,7 +90,7 @@ class gp_periodic_cov_vari : public vari {
    * @param p period
    */
   gp_periodic_cov_vari(const std::vector<T_x>& x, const T_sigma& sigma,
-                    const T_l& l, const T_p& p)
+                       const T_l& l, const T_p& p)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -219,7 +219,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
    * @param p period
    */
   gp_periodic_cov_vari(const std::vector<T_x>& x, double sigma, const T_l& l,
-                    const T_p& p)
+                       const T_p& p)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -295,7 +295,7 @@ inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
 gp_periodic_cov(const std::vector<T_x>& x, const var& sigma, const var& l,
-             const var& p) {
+                const var& p) {
   const char* fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
@@ -347,7 +347,7 @@ inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> >::type
 gp_periodic_cov(const std::vector<T_x>& x, double sigma, const var& l,
-             const var& p) {
+                const var& p) {
   const char* fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
