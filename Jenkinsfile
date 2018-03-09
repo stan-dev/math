@@ -151,8 +151,8 @@ pipeline {
                     agent any
                     steps {
                         unstash 'MathSetup'
-                        sh setupCC()
-                        sh "echo STAN_MPI:=true >> /etc/make/local"
+                        sh "echo CC=mpicxx >> make/local"
+                        sh "echo STAN_MPI:=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
