@@ -60,7 +60,7 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps { 
+            steps {
                 script {
                     utils.killOldBuilds()
                 }
@@ -149,7 +149,7 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps { 
+                    steps {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
@@ -207,9 +207,11 @@ pipeline {
                         git checkout --detach
                         git branch -D gh-pages
                         git checkout --orphan gh-pages
-                        git add -f ./doc/
+                        git rm --cached stan test lib make
+                        git add -f doc
                         git commit -m "auto generated docs from Jenkins"
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
+                        git checkout -f master
                         exit 1
                         """
                     }
