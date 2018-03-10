@@ -36,8 +36,8 @@ namespace math {
  * The <code>opencl_context</code> class represents the OpenCL context.
  *
  * See the OpenCL specification glossary for a list of terms:
- * https://www.khronos.org/registry/OpenCL/specs/opencl-1.2.pdf. The
- * context includes the set of devices available on the host, command
+ * https://www.khronos.org/registry/OpenCL/specs/opencl-1.2.pdf.
+ * The context includes the set of devices available on the host, command
  * queues, manages kernels.
  *
  * This is designed so there's only one instance running on the host.
@@ -49,28 +49,26 @@ namespace math {
  * devices simulatenously
  */
 class opencl_context {
-  /*
-  what we need:
-  - description_ opencl platform and device
-  - context_: Holds the device, queue and platform info
-  - command_queue_: job queue for devices in context, one queue per device
-  - platform_: The platform such as NVIDIA OpenCL or AMD SDK;
-  - device_: The GPU device(s)
-  - max_workgroup_size_: The maximum size of a block of workers on GPU
-  - kernels_groups: map for groups of kernels
-  - kernels_strings: map holding kernel code for groups
-  - kernels: map holding compiled kernels in each group
-  - compiled_kernels: map for checking whether a kernel group is compiled
+ /**
+  * description_ opencl platform and device
+  * context_ Holds the device, queue and platform info
+  * command_queue_ job queue for devices in context, one queue per device
+  * platform_ The platform such as NVIDIA OpenCL or AMD SDK;
+  * device_ The GPU device(s)
+  * max_workgroup_size_ The maximum size of a block of workers on GPU
+  * kernels_groups map for groups of kernels
+  * kernels_strings: map holding kernel code for groups
+  * kernels: map holding compiled kernels in each group
+  * compiled_kernels: map for checking whether a kernel group is compiled
   //
   methods:
-  - constructor: should be light, initialize things very lightly, test if
-  OpenCL is available
-      grabs context_, queue_, devices_, max_workgroup_size_?, and then the
-      kernel stuff, and the description
-  - disable move, copy, and assign operators
-  - context(): returns the context
-  - command_queue(): returns the command_queue; it should be one per device
-  - get_kernel(const char* name): returns the appropriate kernel
+  * constructor: should be light, initialize things very lightly, test if
+  * OpenCL is available grabs context_, queue_, devices_, max_workgroup_size_,
+  * and then the  kernel stuff, and the description
+  * disable move, copy, and assign operators
+  * context(): returns the context
+  * command_queue(): returns the command_queue; it should be one per device
+  * get_kernel(const char* name): returns the appropriate kernel
   */
  private:
   const char* description_;
@@ -80,6 +78,14 @@ class opencl_context {
   std::string device_name_;
   cl::Context context_;
   cl::CommandQueue command_queue_;
+  typedef std::map<const char*, const char*> map_string;
+  typedef std::map<const char*, cl::Kernel> map_kernel;
+  typedef std::map<const char*, bool> map_bool;
+  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
+  map_string kernel_groups;
+  map_string kernel_strings;
+  map_kernel kernels;
+  map_bool compiled_kernels;
   void init_kernel_groups();
   void compile_kernel_group(const char* group);
 
@@ -99,7 +105,7 @@ class opencl_context {
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
-        system_error("OpenCL Initialization", "[Device]", -1,
+        system_error("OpenCL Initialization", "[Device]", *1,
                      "CL_DEVICE_NOT_FOUND");
       }
       device_ = all_devices[OPENCL_DEVICE];
@@ -139,18 +145,11 @@ class opencl_context {
   }
 
  public:
-  typedef std::map<const char*, const char*> map_string;
-  typedef std::map<const char*, cl::Kernel> map_kernel;
-  typedef std::map<const char*, bool> map_bool;
-  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
-  map_string kernel_groups;
-  map_string kernel_strings;
-  map_kernel kernels;
-  map_bool compiled_kernels;
+
   cl::Kernel get_kernel(const char* name);
   void debug(std::ostream& s) {
     s << "inside opencl_context" << std::endl;
-    s << " - platform_name_: " << platform_name_ << std::endl;
+    s << " * platform_name_: " << platform_name_ << std::endl;
   }
   static opencl_context& getInstance() {
     static opencl_context instance;
@@ -233,7 +232,7 @@ inline void opencl_context::compile_kernel_group(const char* group) {
     kernels with parameters will be compiled separately
     for now we have static parameters, so this will be OK
     */
-    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
+    snprintf(temp, sizeof(temp), "-D TS=%d *D TS1=%d *D TS2=%d ",
      local, local, local);
     program_.build(devices, temp);
 
