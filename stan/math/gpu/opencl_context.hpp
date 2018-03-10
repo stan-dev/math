@@ -256,9 +256,20 @@ inline void opencl_context::compile_kernel_group(const char* group) {
 }
 
 /**
- * Returns the reference to the compiled kernel.
  * If the kernel has not yet been compiled,
  * the kernel group is compiled first.
+ *
+ * @brief Passing the name of a kernel from <code> kernel_groups </code> will
+ * compile all kernels in the same group as the selected kernel.
+ * OpenCL kernels are compiled JIT, instead of compiling each kernel
+ * individually this function will compile all kernels
+ * in a predefined group. Groupings are made such that kernels commonly
+ * called with on another will be compiled at the same time. For example,
+ * An arithmetic group of kernels all compiled together contains the kernels
+ * for <code> add() </code>, <code> subtract() </code>,
+ * and <code> multiply() </code>. This function will only return the kernel
+ * which was called, but when a user asks for a kernel within the group those
+ * kernels will already be compiled.
  *
  * @param name The kernel name
  *
