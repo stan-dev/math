@@ -81,10 +81,10 @@ pipeline {
                             git checkout --detach
                             git branch -D gh-pages || true
                             git checkout --orphan gh-pages
-                            git rm --cached stan test lib make
+                            git rm --cached -r stan test lib make
                             git add -f doc
                             git commit -m "auto generated docs from Jenkins"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
+                            git push origin +gh-pages:gh-pages
                             git checkout -f test_jenkins_docs
                             exit 1
                             """
