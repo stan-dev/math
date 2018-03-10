@@ -153,7 +153,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
     return return_t();
 
 #ifdef STAN_MPI
-  // TODO: add MPI support
+    // TODO: add MPI support
 #else
   return internal::map_rect_serial<call_id, F, T_shared_param, T_job_param>(
       shared_params, job_params, x_r, x_i, msgs);
