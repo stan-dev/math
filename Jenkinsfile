@@ -23,9 +23,9 @@ def mailBuildResults(String label, additionalEmails='') {
     )
 }
 
-def runTests(String testPath, String testFilter = "") {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only -f ${testFilter}"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" -f ${testFilter}}
+def runTests(String testPath) {
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
@@ -65,6 +65,32 @@ pipeline {
                     utils.killOldBuilds()
                 }
             }
+        }
+        stage("Make-doxygen") {
+            agent any
+            steps {
+                    retry(3) { checkout scm }
+                    withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                        usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                        sh """#!/bin/bash
+                            set -x
+                            set -e
+                            make doxygen
+                            git config --global user.email "mc.stanislaw@gmail.com"
+                            git config --global user.name "Stan Jenkins"
+                            git checkout --detach
+                            git branch -D gh-pages || true
+                            git checkout --orphan gh-pages
+                            git rm --cached -r stan test lib make
+                            git add -f doc
+                            git commit -m "auto generated docs from Jenkins"
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
+                            git checkout -f test_jenkins_docs
+                            exit 1
+                            """
+               }
+            }
+            post { always { deleteDir() } }
         }
         stage("Clang-format") {
             agent any
@@ -124,7 +150,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
                     )
                 }
             }
@@ -135,17 +161,6 @@ pipeline {
                     deleteDir()
                 }
             }
-        }
-        stage('GPU tests') {
-          agent { label "gelman-group-mac"}
-          steps {
-            unstash 'MathSetup'
-            sh setupCC()
-            echo 'STAN_OPENCL=true' >> make/local
-            echo 'OPENCL_DEVICE=1' >> make/local
-            runTests("test/unit", "opencl")
-          }
-          post { always { retry(3) { deleteDir() } } }
         }
         stage('Tests') {
             parallel {
