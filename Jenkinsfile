@@ -66,6 +66,36 @@ pipeline {
                 }
             }
         }
+        stage("Make-doxygen") {
+            when {
+                 branch 'test_jenkins_docs'
+            }
+            agent any
+            steps {
+              script {
+                  retry(3) { checkout scm }
+                  withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                      usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                      sh """#!/bin/bash
+                          set -x
+                          make doxygen
+                          git config --global user.email "mc.stanislaw@gmail.com"
+                          git config --global user.name "Stan Jenkins"
+                          git checkout --detach
+                          git branch -D gh-pages
+                          git checkout --orphan gh-pages
+                          git rm --cached stan test lib make
+                          git add -f doc
+                          git commit -m "auto generated docs from Jenkins"
+                          git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
+                          git checkout -f test_jenkins_docs
+                          exit 1
+                          """
+                  }
+               }
+            }
+            post { always { deleteDir() } }
+        }
         stage("Clang-format") {
             agent any
             steps {
@@ -191,33 +221,6 @@ pipeline {
                                     parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
-            }
-        }
-        stage("Make-doxygen") {
-            agent any
-            steps {
-              script {
-                if (isBranch('master')) {
-                  withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-                      usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                      sh """#!/bin/bash
-                          set -x
-                          make doxygen
-                          git config --global user.email "mc.stanislaw@gmail.com"
-                          git config --global user.name "Stan Jenkins"
-                          git checkout --detach
-                          git branch -D gh-pages
-                          git checkout --orphan gh-pages
-                          git rm --cached stan test lib make
-                          git add -f doc
-                          git commit -m "auto generated docs from Jenkins"
-                          git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
-                          git checkout -f master
-                          exit 1
-                          """
-                      }
-                  }
-               }
             }
         }
     }
