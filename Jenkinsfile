@@ -76,11 +76,12 @@ pipeline {
                         usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh """#!/bin/bash
                             set -x
+                            set -e
                             make doxygen
                             git config --global user.email "mc.stanislaw@gmail.com"
                             git config --global user.name "Stan Jenkins"
                             git checkout --detach
-                            git branch -D gh-pages
+                            git branch -D gh-pages || true
                             git checkout --orphan gh-pages
                             git rm --cached stan test lib make
                             git add -f doc
