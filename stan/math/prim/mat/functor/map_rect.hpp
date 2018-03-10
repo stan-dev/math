@@ -8,7 +8,8 @@
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
 #ifdef STAN_MPI
-#error "MPI not yet supported"
+#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+// TODO(wds15): add MPI version
 #else
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 #endif
