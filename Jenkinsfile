@@ -60,11 +60,37 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps { 
+            steps {
                 script {
                     utils.killOldBuilds()
                 }
             }
+        }
+        stage("Make-doxygen") {
+            agent any
+            steps {
+                    retry(3) { checkout scm }
+                    withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                        usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                        sh """#!/bin/bash
+                            set -x
+                            set -e
+                            make doxygen
+                            git config --global user.email "mc.stanislaw@gmail.com"
+                            git config --global user.name "Stan Jenkins"
+                            git checkout --detach
+                            git branch -D gh-pages || true
+                            git checkout --orphan gh-pages
+                            git rm --cached -r stan test lib make
+                            git add -f doc
+                            git commit -m "auto generated docs from Jenkins"
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git +gh-pages:gh-pages
+                            git checkout -f test_jenkins_docs
+                            exit 1
+                            """
+               }
+            }
+            post { always { deleteDir() } }
         }
         stage("Clang-format") {
             agent any
@@ -149,7 +175,7 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps { 
+                    steps {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
