@@ -17,6 +17,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 #include <mutex>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -35,9 +36,7 @@ class mpi_stop_listen : public std::exception {
  * Exception thrown whenever the MPI resource is busy
  */
 class mpi_is_in_use : public std::exception {
-  virtual const char* what() const throw() {
-    return "MPI resource is in use.";
-  }
+  virtual const char* what() const throw() { return "MPI resource is in use."; }
 };
 
 /**
@@ -203,7 +202,8 @@ std::mutex mpi_cluster::in_use_;
  * @param command shared pointer to an instance of a command class
  * derived from mpi_command
  */
-inline std::unique_lock<std::mutex> mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
+inline std::unique_lock<std::mutex> mpi_broadcast_command(
+    boost::shared_ptr<mpi_command> command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)
@@ -212,11 +212,12 @@ inline std::unique_lock<std::mutex> mpi_broadcast_command(boost::shared_ptr<mpi_
   if (!mpi_cluster::is_listening())
     throw std::runtime_error("cluster is not listening to commands.");
 
-  std::unique_lock<std::mutex> cluster_lock(mpi_cluster::in_use_, std::try_to_lock);
+  std::unique_lock<std::mutex> cluster_lock(mpi_cluster::in_use_,
+                                            std::try_to_lock);
 
   if (!cluster_lock.owns_lock())
     throw mpi_is_in_use();
-  
+
   boost::mpi::broadcast(world, command, 0);
 
   return cluster_lock;

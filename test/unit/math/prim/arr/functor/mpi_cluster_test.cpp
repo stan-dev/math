@@ -6,6 +6,7 @@
 #include <test/unit/math/prim/mat/functor/mpi_test_env.hpp>
 
 #include <iostream>
+#include <vector>
 
 MPI_TEST(mpi_cluster, chunk_mapping) {
   if (rank != 0)
