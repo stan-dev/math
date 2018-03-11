@@ -25,6 +25,6 @@ endif
 DLL = .so
 
 ifdef STAN_MPI
-  LDFLAGS += -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
-  CXXFLAGS += -DSTAN_MPI
+  LDFLAGS_MPI := -L$(BOOST)/stage/lib -lboost_serialization -lboost_mpi -Wl,-rpath,$(BOOST)/stage/lib
+  CXXFLAGS_MPI := -DSTAN_MPI
 endif
