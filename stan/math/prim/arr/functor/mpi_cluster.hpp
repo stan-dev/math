@@ -16,7 +16,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <atomic>
+#include <mutex>
 
 namespace stan {
 namespace math {
@@ -32,6 +32,15 @@ class mpi_stop_listen : public std::exception {
 };
 
 /**
+ * Exception thrown whenever the MPI resource is busy
+ */
+class mpi_is_in_use : public std::exception {
+  virtual const char* what() const throw() {
+    return "MPI resource is in use.";
+  }
+};
+
+/**
  * MPI command used to stop childs nodes from listening for
  * further commands.
  */
@@ -43,18 +52,18 @@ struct mpi_stop_worker : public mpi_command {
   }
   void run() const {
     boost::mpi::communicator world;
-    //wds15: Should we leave this info message around?
+    // TODO(wds15): Remove debugging print
     std::cout << "Terminating worker " << world.rank() << std::endl;
     throw mpi_stop_listen();
   }
 };
 
 /**
- * Maps a number of jobs jobs of given chunk size to workers and
- * returns a vector of counts. The returned vector is indexed by the
- * rank of each worker and has size equal to the # of workers. Each
- * count per worker is the product of the number of assigned jobs
- * times the chunk size. The jobs are deterministically assigned to
+ * Maps jobs of given chunk size to workers and returning a vector
+ * of counts. The returned vector is indexed by the rank of each
+ * worker and has size equal to the # of workers. Each count per
+ * worker is the product of the number of assigned jobs times the
+ * chunk size. The jobs are deterministically assigned to
  * workers. This is used for static scheduling of jobs internally.
  *
  * So with num_workers workers, then the counts for worker with
@@ -78,17 +87,17 @@ inline std::vector<int> mpi_map_chunks(std::size_t num_jobs,
 
   std::vector<int> chunks(world_size, num_jobs / world_size);
 
-  for (std::size_t r = 0; r != num_jobs % world_size; ++r)
+  for (std::size_t r = 0; r != num_jobs % world_size; r++)
     ++chunks[r + 1];
 
-  for (std::size_t i = 0; i != world_size; ++i)
+  for (std::size_t i = 0; i != world_size; i++)
     chunks[i] *= chunk_size;
 
   return chunks;
 }
 
 template <typename T>
-void mpi_broadcast_command();
+std::unique_lock<std::mutex> mpi_broadcast_command();
 
 /**
  * MPI cluster holds MPI resources and must be initialized only
@@ -115,7 +124,7 @@ struct mpi_cluster {
   boost::mpi::environment env;
   boost::mpi::communicator world_;
   std::size_t const rank_ = world_.rank();
-  static std::atomic<bool> command_running_;
+  static std::mutex in_use_;
 
   mpi_cluster() {}
 
@@ -127,25 +136,28 @@ struct mpi_cluster {
 
   /**
    * Switches cluster into listening mode. That is, for the root
-   * process we only flag that the workers are now listening and as
-   * such can recieve commands while for the non-root processes we
-   * enter into a listening state. In the listening state on the
-   * non-root processes we wait for broadcasts of mpi_command objects
-   * which are initiated on the root using the mpi_broadcast_command
-   * function. Each recieved mpi_command is executed using the virtual
-   * run method.
+   * process we only flag that the workers are now listening and
+   * as such can recieve commands while for the non-root processes
+   * we enter into a listening state. In the listening state on
+   * the non-root processes we wait for broadcasts of mpi_command
+   * objects which are initiated on the root using the
+   * mpi_broadcast_command function below. Each recieved
+   * mpi_command is executed using the virtual run method.
    */
   void listen() {
     mpi_cluster::cluster_listens_ = true;
     if (rank_ == 0) {
       return;
     }
-    //wds15: This message is very useful for first-time use of this
-    //code, but can be removed or left as info message.
+    // TODO(wds15): Remove debugging print
     std::cout << "Worker " << rank_ << " listening for commands..."
               << std::endl;
 
     try {
+      // lock on the workers the cluster as MPI commands must be
+      // initiated from the root and any attempt to do this on the
+      // workers must fail
+      std::unique_lock<std::mutex> worker_lock(in_use_);
       while (1) {
         boost::shared_ptr<mpi_command> work;
 
@@ -154,6 +166,7 @@ struct mpi_cluster {
         work->run();
       }
     } catch (const mpi_stop_listen& e) {
+      // TODO(wds15): Remove debugging print
       std::cout << "Wrapping up MPI on worker " << rank_ << " ..." << std::endl;
     }
   }
@@ -180,7 +193,7 @@ struct mpi_cluster {
 };
 
 bool mpi_cluster::cluster_listens_ = false;
-std::atomic<bool> mpi_cluster::command_running_(false);
+std::mutex mpi_cluster::in_use_;
 
 /**
  * Broadcasts a command instance to the listening cluster. This
@@ -190,7 +203,7 @@ std::atomic<bool> mpi_cluster::command_running_(false);
  * @param command shared pointer to an instance of a command class
  * derived from mpi_command
  */
-inline void mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
+inline std::unique_lock<std::mutex> mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
   boost::mpi::communicator world;
 
   if (world.rank() != 0)
@@ -199,12 +212,14 @@ inline void mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
   if (!mpi_cluster::is_listening())
     throw std::runtime_error("cluster is not listening to commands.");
 
-  if (mpi_cluster::command_running_)
-    throw std::runtime_error("a cluster command is already running");
+  std::unique_lock<std::mutex> cluster_lock(mpi_cluster::in_use_, std::try_to_lock);
 
-  // not that we leave it up to the command to lock the cluster or not
-
+  if (!cluster_lock.owns_lock())
+    throw mpi_is_in_use();
+  
   boost::mpi::broadcast(world, command, 0);
+
+  return cluster_lock;
 }
 
 /**
@@ -214,7 +229,7 @@ inline void mpi_broadcast_command(boost::shared_ptr<mpi_command> command) {
  * mpi_command
  */
 template <typename T>
-void mpi_broadcast_command() {
+std::unique_lock<std::mutex> mpi_broadcast_command() {
   boost::shared_ptr<mpi_command> command(new T);
 
   return mpi_broadcast_command(command);
