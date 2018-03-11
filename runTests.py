@@ -97,10 +97,12 @@ def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
 
-def runTest(name, run_all=False):
+def runTest(name, run_all=False, mpi=False):
     executable = mungeName(name).replace("/", os.sep)
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
+    if mpi and "mpi_" in name:
+        command = "mpirun -np 2 " + command
     doCommand(command, not run_all)
 
 def findTests(base_path, filter_names):
@@ -125,6 +127,12 @@ def batched(tests):
 def main():
     inputs = processCLIArgs()
 
+    try:
+        with open("make/local") as f:
+            stan_mpi =  "STAN_MPI" in f.read()
+    except IOError:
+        stan_mpi = False
+
     # pass 0: generate all auto-generated tests
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
@@ -144,7 +152,7 @@ def main():
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
-            runTest(t, inputs.run_all)
+            runTest(t, inputs.run_all, mpi=stan_mpi)
 
 
 if __name__ == "__main__":

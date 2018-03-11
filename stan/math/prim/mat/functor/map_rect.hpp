@@ -8,7 +8,8 @@
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
 #ifdef STAN_MPI
-#error "MPI not yet supported"
+#include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+// TODO(wds15): add MPI version
 #else
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
 #endif
@@ -153,7 +154,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
     return return_t();
 
 #ifdef STAN_MPI
-#error "MPI not yet supported"
+    // TODO(wds15): add MPI support
 #else
   return internal::map_rect_serial<call_id, F, T_shared_param, T_job_param>(
       shared_params, job_params, x_r, x_i, msgs);

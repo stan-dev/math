@@ -60,7 +60,7 @@ pipeline {
                 not { branch 'develop' }
                 not { branch 'master' }
             }
-            steps { 
+            steps {
                 script {
                     utils.killOldBuilds()
                 }
@@ -147,9 +147,19 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Unit with MPI') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CC=mpicxx >> make/local"
+                        sh "echo STAN_MPI:=true >> make/local"
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
-                    steps { 
+                    steps {
                         unstash 'MathSetup'
                         sh """
                             ${setupCC(false)}
