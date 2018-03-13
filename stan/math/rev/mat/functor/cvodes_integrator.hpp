@@ -130,14 +130,16 @@ class cvodes_integrator {
       cvodes_set_options(cvodes_mem, relative_tolerance, absolute_tolerance,
                          max_num_steps);
 
-      // for the stiff solvers we need to reserve additional
-      // memory and provide a Jacobian function call
-      // new API since 3.0.0: create matrix object and linear solver object
+      // for the stiff solvers we need to reserve additional memory
+      // and provide a Jacobian function call. new API since 3.0.0:
+      // create matrix object and linear solver object; resource
+      // (de-)allocation is handled in the cvodes_ode_data
       cvodes_check_flag(
           CVDlsSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
           "CVDlsSetLinearSolver");
-      cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
-                        "CVDlsSetJacFn");
+      cvodes_check_flag(
+          CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
+          "CVDlsSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {

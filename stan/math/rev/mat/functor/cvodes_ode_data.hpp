@@ -110,7 +110,7 @@ class cvodes_ode_data {
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
-   * ODE RHS passed to CVODES. 
+   * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
@@ -119,7 +119,7 @@ class cvodes_ode_data {
   }
 
   /**
-   * Implements the function of type CVSensRhsFn which is the 
+   * Implements the function of type CVSensRhsFn which is the
    * RHS of the sensitivity ODE system.
    */
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
@@ -136,9 +136,9 @@ class cvodes_ode_data {
    * ode_rhs wrt to the states y. The jacobian is stored in column
    * major format.
    */
-  static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy, SUNMatrix J,
-                                void* user_data, N_Vector tmp1, N_Vector tmp2,
-                                N_Vector tmp3) {
+  static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
+                                SUNMatrix J, void* user_data, N_Vector tmp1,
+                                N_Vector tmp2, N_Vector tmp3) {
     const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
     return explicit_ode->jacobian_states(t, NV_DATA_S(y), J);
   }
@@ -159,11 +159,11 @@ class cvodes_ode_data {
 
   /**
    * Calculates the jacobian of the ODE RHS wrt to its states y at the
-   * given time-point t and state y. 
+   * given time-point t and state y.
    * Note that the jacobian of the ODE system is the coupled ode system for
    * varying states evaluated at the state y whenever we choose state
    * y to be the initial of the coupled ode system.
-  */
+   */
   inline int jacobian_states(double t, const double y[], SUNMatrix J) const {
     const std::vector<double> y_vec(y, y + N_);
     start_nested();
