@@ -42,11 +42,6 @@ def isPR() { env.CHANGE_URL != null }
 def fork() { env.CHANGE_FORK ?: "stan-dev" }
 def branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
 
-def writeIndexHTML() {
-  "echo '<head>' >> index.html"
-  "echo '<meta http-equiv=&quot;refresh&quot; content=&quot;0; url=https://github.com/stan-dev/math/tree/gh-pages/doc/api/html&quot; />' >> index.html"
-  "echo '</head>' >> index.html"
-}
 pipeline {
     agent none
     parameters {
@@ -85,12 +80,12 @@ pipeline {
                             git config --global user.name "Stan Jenkins"
                             git checkout --detach
                             git branch -D gh-pages
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git :gh-pages
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                             git checkout --orphan gh-pages
                             git rm --cached -r stan test lib make
                             git add -f doc
                             git commit -m "auto generated docs from Jenkins"
-                            git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git gh-pages
+                            git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
                             """
                }
             }
