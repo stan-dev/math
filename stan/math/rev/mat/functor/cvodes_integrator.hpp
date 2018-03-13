@@ -109,7 +109,7 @@ class cvodes_integrator {
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
     void* cvodes_mem = CVodeCreate(Lmm, CV_NEWTON);
-    if (cvodes_mem == NULL)
+    if (cvodes_mem == nullptr)
       throw std::runtime_error("CVodeCreate failed to allocate memory");
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
@@ -119,7 +119,7 @@ class cvodes_integrator {
 
     try {
       cvodes_check_flag(
-          CVodeInit(cvodes_mem, &ode_data::ode_rhs, t0, cvodes_data.nv_state_),
+          CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0, cvodes_data.nv_state_),
           "CVodeInit");
 
       // Assign pointer to this as user data
@@ -136,14 +136,14 @@ class cvodes_integrator {
       cvodes_check_flag(
           CVDlsSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
           "CVDlsSetLinearSolver");
-      cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::dense_jacobian),
+      cvodes_check_flag(CVDlsSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
                         "CVDlsSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
         cvodes_check_flag(
             CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
-                          &ode_data::ode_rhs_sens, cvodes_data.nv_state_sens_),
+                          &ode_data::cv_rhs_sens, cvodes_data.nv_state_sens_),
             "CVodeSensInit");
 
         cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
