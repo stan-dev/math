@@ -67,6 +67,7 @@ ifeq ($(OS),Linux)
     EXE := .exe
   else
     LDLIBS ?= -lpthread
+    CXXFLAGS += -stdlib=libc++
   endif
 endif
 
