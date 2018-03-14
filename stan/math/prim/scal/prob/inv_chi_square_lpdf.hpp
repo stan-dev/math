@@ -109,7 +109,7 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   }
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(nu_vec, lgamma_half_nu, log_y, inv_y, ops_partials, \

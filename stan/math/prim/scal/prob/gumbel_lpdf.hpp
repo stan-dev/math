@@ -85,7 +85,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
       log_beta[i] = log(value_of(beta_vec[i]));
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, beta_vec, ops_partials, inv_beta, log_beta, N)

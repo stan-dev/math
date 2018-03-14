@@ -65,7 +65,7 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
   size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(theta_vec, ops_partials, N, n_vec)
 #endif

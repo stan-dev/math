@@ -55,7 +55,7 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lccdf(
   double log_half = std::log(0.5);
 
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     default(none) reduction(+ : ccdf_log) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, log_half, N)

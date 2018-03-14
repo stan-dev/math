@@ -59,7 +59,7 @@ typename return_type<T_y, T_low, T_high>::type uniform_lccdf(
   }
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : ccdf_log) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, N)

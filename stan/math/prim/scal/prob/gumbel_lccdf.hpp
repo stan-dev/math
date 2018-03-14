@@ -69,7 +69,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
   scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, mu, beta);
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : ccdf_log) default(none) \
     shared(y_vec, mu_vec, beta_vec, ops_partials, N)

@@ -51,7 +51,7 @@ typename return_type<T_y, T_inv_scale>::type exponential_lcdf(
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : cdf_log) default(none) \
     shared(beta_vec, y_vec, ops_partials, N)

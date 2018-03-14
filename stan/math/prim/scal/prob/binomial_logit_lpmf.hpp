@@ -78,7 +78,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   operands_and_partials<T_prob> ops_partials(alpha);
 
   if (include_summand<propto>::value) {
-    #ifndef STAN_MATH_MIX_SCAL_HPP
+    #ifndef STAN_MATH_FWD_CORE_HPP
       #pragma omp parallel for default(none) if (size > 0) \
         shared(N_vec, n_vec, size) reduction(+ : logp)
     #endif
@@ -90,14 +90,16 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
       length(alpha));
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
       length(alpha));
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for default(none) if (length(alpha) > 0) \
     shared(log_inv_logit_alpha, alpha_vec, alpha, log_inv_logit_neg_alpha)
+#endif
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
     shared(n_vec, log_inv_logit_alpha, N_vec, log_inv_logit_neg_alpha, size)
 #endif
@@ -119,8 +121,10 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
+#ifndef STAN_MATH_FWD_CORE_HPP
       #pragma omp parallel for default(none) if (size > 0) \
         shared(ops_partials, alpha_vec, size, n_vec, N_vec)
+#endif
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]
             += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))

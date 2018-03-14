@@ -91,7 +91,7 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lccdf(
     }
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, s_vec, N)

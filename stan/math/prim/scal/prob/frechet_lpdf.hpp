@@ -109,7 +109,7 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
     }
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);  
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(alpha_vec, log_alpha, log_y, log_sigma, \

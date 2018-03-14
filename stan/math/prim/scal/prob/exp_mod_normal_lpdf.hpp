@@ -66,7 +66,7 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, sigma_vec, lambda_vec, ops_partials, N)

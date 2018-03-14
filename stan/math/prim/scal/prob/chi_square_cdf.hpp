@@ -93,9 +93,10 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
     }
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-    reduction(* : cdf) default(none) shared(y_vec, nu_vec, ops_partials, N)
+    reduction(* : cdf) default(none) \
+    shared(y_vec, nu_vec, ops_partials, N, gamma_vec, digamma_vec)
 #endif
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values

@@ -100,7 +100,7 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
   for (size_t i = 0; i < len_np; ++i)
     n_plus_phi[i] = n_vec[i] + phi__[i];
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, phi__, n_plus_phi, ops_partials, logsumexp_eta_logphi, \

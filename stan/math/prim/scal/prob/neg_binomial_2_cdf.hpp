@@ -80,7 +80,7 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
     }
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(n_vec, mu_vec, phi_vec, ops_partials, digamma_phi_vec, \

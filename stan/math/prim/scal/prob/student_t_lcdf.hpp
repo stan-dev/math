@@ -92,7 +92,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lcdf(
     }
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(sigma_vec, y_vec, mu_vec, nu_vec, ops_partials, digammaNu_vec, \

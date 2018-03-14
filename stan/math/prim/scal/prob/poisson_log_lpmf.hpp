@@ -77,7 +77,7 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
     if (include_summand<propto, T_log_rate>::value)
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(alpha_vec, n_vec, exp_alpha, ops_partials, size)

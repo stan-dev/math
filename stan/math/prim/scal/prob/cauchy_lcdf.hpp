@@ -71,7 +71,7 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lcdf(
   using std::atan;
   using std::log;
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : cdf_log) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)

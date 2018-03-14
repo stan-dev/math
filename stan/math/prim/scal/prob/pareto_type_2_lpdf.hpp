@@ -104,10 +104,12 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
   }
 
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, lambda_vec, alpha_vec, log_alpha, log1p_scaled_diff, \
            ops_partials, inv_alpha, log_lambda, N)
+#endif
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

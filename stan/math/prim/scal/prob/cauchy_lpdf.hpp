@@ -91,7 +91,7 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, mu_vec, \
     sigma_vec, ops_partials, inv_sigma, log_sigma, sigma_squared, N)

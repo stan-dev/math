@@ -87,7 +87,7 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lpdf(
       log_sigma[i] = log(value_of(sigma_vec[i]));
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, ops_partials, inv_sigma, log_sigma, N)

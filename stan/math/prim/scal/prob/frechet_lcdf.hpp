@@ -54,7 +54,7 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lcdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, sigma, alpha);
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : cdf_log) default(none) \
     shared(y_vec, sigma_vec, alpha_vec, ops_partials, N)

@@ -67,7 +67,7 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
 
   if (length(theta) == 1) {
     size_t sum = 0;
-  #ifndef STAN_MATH_MIX_SCAL_HPP
+  #ifndef STAN_MATH_FWD_CORE_HPP
     #pragma omp parallel for if(N > 3 * omp_get_max_threads()) \
       reduction(+ : sum) default(none) shared(n_vec, N)
   #endif
@@ -97,7 +97,7 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
       }
     }
   } else {
-    #ifndef STAN_MATH_MIX_SCAL_HPP
+    #ifndef STAN_MATH_FWD_CORE_HPP
       #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
         reduction(+ : logp) \
         default(none) shared(n_vec, theta_vec, ops_partials, N)

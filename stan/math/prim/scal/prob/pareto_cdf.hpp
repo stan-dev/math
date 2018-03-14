@@ -62,7 +62,7 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_cdf(
       return ops_partials.build(0.0);
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(y_min_vec, y_vec, alpha_vec, ops_partials, N)

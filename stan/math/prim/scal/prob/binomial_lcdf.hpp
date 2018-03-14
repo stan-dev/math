@@ -87,7 +87,7 @@ typename return_type<T_prob>::type binomial_lcdf(const T_n& n, const T_N& N,
       return ops_partials.build(negative_infinity());
   }
 
-#ifndef STAN_MATH_MIX_SCAL_HPP
+#ifndef STAN_MATH_FWD_CORE_HPP
   #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(n_vec, N_vec, theta_vec, ops_partials, size)
