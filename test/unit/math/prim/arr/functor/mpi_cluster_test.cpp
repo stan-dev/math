@@ -113,12 +113,12 @@ MPI_TEST(mpi_cluster, communication_apply) {
 struct shared_secret : public stan::math::mpi_command {
   shared_secret() {}
   shared_secret(double common) : common_(common) {}
-  
+
   friend class boost::serialization::access;
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(stan::math::mpi_command);
-    ar & common_;
+    ar& BOOST_SERIALIZATION_BASE_OBJECT_NVP(stan::math::mpi_command);
+    ar& common_;
   }
 
   void run() const {
@@ -129,6 +129,7 @@ struct shared_secret : public stan::math::mpi_command {
     std::vector<double> secrets;
     boost::mpi::gather(world, worker_secret, secrets, 0);
   }
+
  private:
   double common_;
 };
@@ -142,7 +143,7 @@ MPI_TEST(mpi_cluster, communication_command) {
 
   boost::mpi::communicator world;
 
-  const double common = 2*3.14;
+  const double common = 2 * 3.14;
 
   boost::shared_ptr<stan::math::mpi_command> command(new shared_secret(common));
   std::unique_lock<std::mutex> cluster_lock;
