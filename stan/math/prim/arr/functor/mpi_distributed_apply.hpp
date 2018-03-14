@@ -1,3 +1,5 @@
+#ifdef STAN_MPI
+
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_DISTRIBUTED_APPLY_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_DISTRIBUTED_APPLY_HPP
 
@@ -41,5 +43,7 @@ struct mpi_distributed_apply : public mpi_command {
 
 #define STAN_REGISTER_MPI_DISTRIBUTED_APPLY(APPLY_FUNCTOR) \
   STAN_REGISTER_MPI_COMMAND(stan::math::mpi_distributed_apply<APPLY_FUNCTOR>)
+
+#endif
 
 #endif

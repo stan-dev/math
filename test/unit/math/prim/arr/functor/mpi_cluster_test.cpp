@@ -64,7 +64,7 @@ struct make_secret {
 // register worker command
 STAN_REGISTER_MPI_DISTRIBUTED_APPLY(make_secret)
 
-MPI_TEST(mpi_cluster, communication) {
+MPI_TEST(mpi_cluster, communication_apply) {
   if (rank != 0)
     return;
 
@@ -86,6 +86,76 @@ MPI_TEST(mpi_cluster, communication) {
 
   double common = 3.14;
   boost::mpi::broadcast(world, common, 0);
+
+  std::vector<double> msgs(world_size, 0.0);
+
+  for (std::size_t i = 0; i < world_size; ++i)
+    msgs[i] = i;
+
+  double root_value = -1;
+
+  boost::mpi::scatter(world, msgs, root_value, 0);
+
+  EXPECT_DOUBLE_EQ(msgs[0], root_value);
+
+  double root_secret = common * root_value;
+
+  std::vector<double> secrets(world_size);
+
+  boost::mpi::gather(world, root_secret, secrets, 0);
+
+  for (std::size_t i = 0; i < world_size; ++i)
+    EXPECT_DOUBLE_EQ(common * msgs[i], secrets[i]);
+}
+
+// example using command which is serialized (which adds extra MPI
+// overhead)
+struct shared_secret : public stan::math::mpi_command {
+  shared_secret() {}
+  shared_secret(double common) : common_(common) {}
+  
+  friend class boost::serialization::access;
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(stan::math::mpi_command);
+    ar & common_;
+  }
+
+  void run() const {
+    boost::mpi::communicator world;
+    double worker_value;
+    boost::mpi::scatter(world, worker_value, 0);
+    double worker_secret = common_ * worker_value;
+    std::vector<double> secrets;
+    boost::mpi::gather(world, worker_secret, secrets, 0);
+  }
+ private:
+  double common_;
+};
+
+// register worker command
+STAN_REGISTER_MPI_COMMAND(shared_secret)
+
+MPI_TEST(mpi_cluster, communication_command) {
+  if (rank != 0)
+    return;
+
+  boost::mpi::communicator world;
+
+  const double common = 2*3.14;
+
+  boost::shared_ptr<stan::math::mpi_command> command(new shared_secret(common));
+  std::unique_lock<std::mutex> cluster_lock;
+  EXPECT_NO_THROW((cluster_lock = stan::math::mpi_broadcast_command(command)));
+
+  EXPECT_TRUE(cluster_lock.owns_lock());
+
+  // this one will fail
+  std::unique_lock<std::mutex> cluster_lock_fail;
+  EXPECT_THROW((cluster_lock_fail = stan::math::mpi_broadcast_command(command)),
+               stan::math::mpi_is_in_use);
+
+  EXPECT_FALSE(cluster_lock_fail.owns_lock());
 
   std::vector<double> msgs(world_size, 0.0);
 

@@ -1,3 +1,5 @@
+#ifdef STAN_MPI
+
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_COMMAND_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_COMMAND_HPP
 
@@ -44,5 +46,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(stan::math::mpi_command)
                              boost::serialization::object_serializable) \
   BOOST_CLASS_EXPORT(command)                                           \
   BOOST_CLASS_TRACKING(command, boost::serialization::track_never)
+
+#endif
 
 #endif

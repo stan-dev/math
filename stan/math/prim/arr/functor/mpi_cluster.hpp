@@ -1,3 +1,5 @@
+#ifdef STAN_MPI
+
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
 
@@ -201,6 +203,7 @@ std::mutex mpi_cluster::in_use_;
  *
  * @param command shared pointer to an instance of a command class
  * derived from mpi_command
+ * @return A unique_lock instance locking the mpi_cluster
  */
 inline std::unique_lock<std::mutex> mpi_broadcast_command(
     boost::shared_ptr<mpi_command> command) {
@@ -228,6 +231,7 @@ inline std::unique_lock<std::mutex> mpi_broadcast_command(
  *
  * @tparam T default constructible command class derived from
  * mpi_command
+ * @return A unique_lock instance locking the mpi_cluster
  */
 template <typename T>
 std::unique_lock<std::mutex> mpi_broadcast_command() {
@@ -241,5 +245,7 @@ std::unique_lock<std::mutex> mpi_broadcast_command() {
 
 // register stop worker command
 STAN_REGISTER_MPI_COMMAND(stan::math::mpi_stop_worker)
+
+#endif
 
 #endif
