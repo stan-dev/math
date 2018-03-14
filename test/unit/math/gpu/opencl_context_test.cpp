@@ -60,4 +60,18 @@ TEST(opencl_context, devices) {
   }
   //std::cout << msg.str() << std::endl;
 }
+
+TEST(opencl_context, compile_kernel_rawcode) {
+  // build dummy kernel
+  cl::Context cl = stan::math::opencl_context.context();
+  std::vector<cl::Device> dv = stan::math::opencl_context.device();
+  const char* dummy_kernel_src
+      = "__kernel void dummy(__global const int* foo) { };";
+  cl::Program::Sources source(
+      1, std::make_pair(dummy_kernel_src, strlen(dummy_kernel_src)));
+  cl::Program program_ = cl::Program(cl, source);
+    program_.build(dv);
+    cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy", NULL);
+
+}
 #endif
