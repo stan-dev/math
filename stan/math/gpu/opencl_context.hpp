@@ -66,7 +66,8 @@ class opencl_context {
   typedef std::map<const char*, const char*> map_string;
   typedef std::map<const char*, cl::Kernel> map_kernel;
   typedef std::map<const char*, bool> map_bool;
-  std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
+  // TODO(Dan): Did you put this here?
+  std::map<const char*, std::tuple<bool, const char*, const char*>> kernel_source;
   void init_kernel_groups();
   void compile_kernel_group(const char* group);
 
@@ -130,7 +131,7 @@ class opencl_context {
   map_string kernel_groups; // map for groups of kernels
   map_string kernel_strings; // map holding kernel code for each kernel
   map_kernel kernels; // map holding compiled kernels in each group
-  map_bool compiled_kernels; //map for whether a kernel group is compiled
+  map_bool check_compiled_kernels; //map for whether a kernel group is compiled
 
   cl::Kernel get_kernel(const char* name);
   // FIXME:(Steve/Dan) should probably be deleted before merge
@@ -182,39 +183,34 @@ class opencl_context {
  * hold the OpenCL kernel sources (<code> kernel_strings </code>), the groups to
  * which kernel is assigned (<code> kernel_groups </code>), and the
  * information about which kernel was already compiled
- * (<code> compiled_kernels </code>).
+ * (<code> check_compiled_kernels </code>). std::tuple<bool, char*, cl::Kernel>
  */
 inline void opencl_context::init_kernel_groups() {
+  // Messing around with how kernel_source would look
+  kernel_source["dummy"] = {0, "timing",
+   "__kernel void dummy(__global const int* foo) { };"};
 
   kernel_groups["dummy"] = "timing";
-
-  /*Kernel group strings
-  the dummy kernel is the only one not included in files
-  so it is treated before the loop that iterates
-  through  kernels to load all
-  */
   kernel_strings["timing"] =
    "__kernel void dummy(__global const int* foo) { };";
-  compiled_kernels["timing"] = false;
+  check_compiled_kernels["timing"] = false;
 }
 
 /**
- * Compiles all the kernels in the specified group. The side effect of this
- *  function places the compiled kernels inside of the map of
- *  <code> kernels </code>.
+ * Compiles all the kernels in the specified kernel group defined by
+ * <code> kernel_groups </code>. The side effect of this
+ *  method places all compiled kernels for a group inside of <code> kernels
+ *  </code>.
  *
- * @param group The kernel group name
+ * @param group_name[in] The kernel group name
  *
  * @throw std::system_error if there are compilation errors
  * when compiling the specified kernel group sources
- *
- * @sideeffect
- *
  */
-inline void opencl_context::compile_kernel_group(const char* group) {
+inline void opencl_context::compile_kernel_group(const char* group_name) {
   cl::Context &ctx = context();
   std::vector<cl::Device> devices = ctx.getInfo<CL_CONTEXT_DEVICES>();
-  const char* kernel_source = kernel_strings[group];
+  const char* kernel_source = kernel_strings[group_name];
   cl::Program::Sources source(
       1, std::make_pair(kernel_source, strlen(kernel_source)));
   cl::Program program_ = cl::Program(ctx, source);
@@ -234,14 +230,11 @@ inline void opencl_context::compile_kernel_group(const char* group) {
     program_.build(devices, temp);
 
     cl_int err = CL_SUCCESS;
-    /*
-    Iterate over the kernel list
-    and get all the kernels from this group
-    */
-    for (auto it : kernel_groups) {
-      if (strcmp(group, it.second) == 0) {
-        kernels[(it.first)]
-            = cl::Kernel(program_, it.first, &err);
+    // Iterate over the kernel list and get all the kernels from this group
+    for (auto kernel_group : kernel_groups) {
+      if (strcmp(group_name, kernel_group.second) == 0) {
+        kernels[(kernel_group.first)]
+            = cl::Kernel(program_, kernel_group.first, &err);
       }
     }
   } catch (const cl::Error &e) {
@@ -268,17 +261,17 @@ inline void opencl_context::compile_kernel_group(const char* group) {
  * which was called, but when a user asks for a kernel within the group those
  * kernels will already be compiled.
  *
- * @param name The kernel name
+ * @param[in] kernel_name The kernel name
  *
  * @return a copy of the cl::Kernel object
  */
-inline cl::Kernel opencl_context::get_kernel(const char* name) {
+inline cl::Kernel opencl_context::get_kernel(const char* kernel_name) {
   // Compile the kernel group and return the kernel
-  if (!compiled_kernels[kernel_groups[name]]) {
-    compile_kernel_group(kernel_groups[name]);
-    compiled_kernels[kernel_groups[name]] = true;
+  if (!check_compiled_kernels[kernel_groups[kernel_name]]) {
+    compile_kernel_group(kernel_groups[kernel_name]);
+    check_compiled_kernels[kernel_groups[kernel_name]] = true;
   }
-  return kernels[name];
+  return kernels[kernel_name];
 }
 
 static opencl_context opencl_context

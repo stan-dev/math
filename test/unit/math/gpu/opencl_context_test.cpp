@@ -12,7 +12,7 @@ TEST(MathGpu, kernel_construction) {
   EXPECT_EQ(1, stan::math::opencl_context.kernel_groups.size());
   EXPECT_EQ(1, stan::math::opencl_context.kernel_strings.size());
   EXPECT_EQ(0, stan::math::opencl_context.kernels.size());
-  EXPECT_EQ(1, stan::math::opencl_context.compiled_kernels.size());
+  EXPECT_EQ(1, stan::math::opencl_context.check_compiled_kernels.size());
   stan::math::opencl_context.get_kernel("dummy");
   EXPECT_EQ(1, stan::math::opencl_context.kernels.size());
 }
@@ -35,6 +35,7 @@ TEST(opencl_context, platform) {
       << "expecting to find one platform" << std::endl
       << msg.str();
 }
+
 TEST(opencl_context, devices) {
   cl::Platform platform = cl::Platform::get();
   std::vector<cl::Device> all_devices;
