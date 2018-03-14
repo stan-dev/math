@@ -67,7 +67,7 @@ namespace math {
  */
 template <typename F, typename T1, typename T2>
 std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-integrate_ode_rk45(const F& f, const std::vector<T1> y0, double t0,
+integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<double>& ts, const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
                    std::ostream* msgs = 0, double relative_tolerance = 1e-6,
