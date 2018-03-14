@@ -4,17 +4,19 @@
 
  TEST(MathGpu, getInfo) {
    cl::Context cl = stan::math::opencl_context.context();
-   EXPECT_NE("", stan::math::opencl_context.description());
+   EXPECT_NE("",stan::math::opencl_context.description());
+   auto foo = stan::math::opencl_context.description();
+   std::cout << "test" << foo << std::endl;
    EXPECT_EQ(1024, stan::math::opencl_context.max_workgroup_size());
  }
 
 TEST(MathGpu, kernel_construction) {
-  EXPECT_EQ(1, stan::math::opencl_context.kernel_groups.size());
-  EXPECT_EQ(1, stan::math::opencl_context.kernel_strings.size());
   EXPECT_EQ(0, stan::math::opencl_context.kernels.size());
-  EXPECT_EQ(1, stan::math::opencl_context.check_compiled_kernels.size());
   stan::math::opencl_context.get_kernel("dummy");
-  EXPECT_EQ(1, stan::math::opencl_context.kernels.size());
+  EXPECT_EQ(2, stan::math::opencl_context.kernels.size());
+  stan::math::opencl_context.get_kernel("dummy2");
+  EXPECT_EQ(2, stan::math::opencl_context.kernels.size());
+
 }
 
 TEST(opencl_context, construction) {

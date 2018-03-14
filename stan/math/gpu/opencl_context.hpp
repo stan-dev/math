@@ -49,17 +49,9 @@ namespace math {
  * devices simulatenously
  */
 class opencl_context {
- /**
-  methods:
-  * constructor: should be light, initialize things very lightly, test if
-  * OpenCL is available grabs context_, queue_, devices_, max_workgroup_size_,
-  * and then the  kernel stuff, and the description
-  * disable move, copy, and assign operators
-  * context(): returns the context
-  */
  private:
-   cl::Context context_; // Manages the the device, queue, platform, memory,etc.
-   cl::CommandQueue command_queue_; // job queue for device, one per device
+  cl::Context context_; // Manages the the device, queue, platform, memory,etc.
+  cl::CommandQueue command_queue_; // job queue for device, one per device
   std::vector<cl::Platform> platforms_; // Vector of available platforms
   cl::Platform platform_ ;// The platform for compiling kernels
   std::string platform_name_; // The platform such as NVIDIA OpenCL or AMD SDK
@@ -68,15 +60,25 @@ class opencl_context {
   std::string device_name_; // The name of the GPU
   const char* description_; // string of platform and device info
   size_t max_workgroup_size_; // The maximum size of a block of workers on GPU
-  typedef std::map<const char*, const char*> map_string;
-  typedef std::map<const char*, cl::Kernel> map_kernel;
-  typedef std::map<const char*, bool> map_bool;
+  /** Holds meta information about a kernel
+   * @param exists a bool to identify whether
+   * @param group The name of the compilation group for the kernel
+   * @param code The source code for the kernel
+   */
   struct kernel_meta_info {
     bool exists;
     const char* group;
     const char* code; //FIXME(Steve): Need a better name
   };
-  std::map<const char*, kernel_meta_info> kernel_info;
+  /**
+  * Map of a kernel name (first) and it's meta information (second).
+  */
+  typedef std::map<const char*, kernel_meta_info> map_kernel_info;
+  /**
+  * map holding compiled kernels in each group.
+  */
+  typedef std::map<const char*, cl::Kernel> map_kernel;
+
   void init_kernel_groups();
   void compile_kernel_group(const char* group);
 
@@ -111,24 +113,22 @@ class opencl_context {
       context_ = cl::Context(device_);
       command_queue_ = cl::CommandQueue(context_, device_,
                                         CL_QUEUE_PROFILING_ENABLE, nullptr);
+      // setup kernel groups
+      init_kernel_groups();
       // device info
       std::ostringstream description_message;
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_workgroup_size_);
-      device_name_ = device_.getInfo<CL_DEVICE_NAME>();
-      // setup kernel groups
-      init_kernel_groups();
+
 
     } catch (const cl::Error& e) {
-      check_ocl_error("build", e);
+      check_ocl_error("opencl_context", e.what(), e.err());
     }
   }
 
  public:
-  map_string kernel_groups; // map for groups of kernels
-  map_string kernel_strings; // map holding kernel code for each kernel
-  map_kernel kernels; // map holding compiled kernels in each group
-  map_bool check_compiled_kernels; //map for whether a kernel group is compiled
+   map_kernel_info kernel_info;
+   map_kernel kernels;
 
   cl::Kernel get_kernel(const char* name);
   // FIXME:(Steve/Dan) should probably be deleted before merge
@@ -150,7 +150,45 @@ class opencl_context {
    * Devices will be a GPU and Platforms are a specific OpenCL implimenation
    * such as AMD SDK's or Nvidia's OpenCL implimentation.
    */
-  inline const char* description() const { return description_; }
+  inline const char* description() const {
+        std::vector<cl::Platform> platforms;
+        cl::Platform::get(&platforms);
+        std::stringstream msg;
+        msg.str("");
+        int platform_id = 0;
+        int device_id = 0;
+
+        msg << "Number of Platforms: " << platforms.size() << std::endl;
+
+        for(auto it : platforms) {
+            cl::Platform platform(it);
+
+            msg << "Platform ID: " << platform_id++ << std::endl;
+            msg << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
+            msg << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;
+
+            std::vector<cl::Device> devices;
+            platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &devices);
+
+            for(auto it2 : devices) {
+                cl::Device device(it2);
+
+                msg << "\tDevice " << device_id++ << ": " << std::endl;
+                msg << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+                msg << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
+                msg << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;
+                msg << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+                msg << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
+                msg << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
+                msg << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
+                msg << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
+                msg << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
+                msg << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
+            }
+            msg << std::endl;
+        }
+        return msg.str().c_str();
+    }
 
   /**
    * Returns the reference to the OpenCL context. The OpenCL context manages
@@ -193,14 +231,10 @@ class opencl_context {
  * (<code> check_compiled_kernels </code>). std::tuple<bool, char*, cl::Kernel>
  */
 inline void opencl_context::init_kernel_groups() {
-  // Messing around with how kernel_source would look
   kernel_info["dummy"] = {false, "timing",
    "__kernel void dummy(__global const int* foo) { };"};
-
-  kernel_groups["dummy"] = "timing";
-  kernel_strings["timing"] =
-   "__kernel void dummy(__global const int* foo) { };";
-  check_compiled_kernels["timing"] = false;
+  kernel_info["dummy2"] = {false, "timing",
+  "__kernel void dummy2(__global const int* foo) { };"};
 }
 
 /**
@@ -222,19 +256,12 @@ inline void opencl_context::compile_kernel_group(const char* kernel_name) {
   int gpu_local_max = sqrt(max_workgroup_size());
   if (gpu_local_max < local)
     local = gpu_local_max;
-  /*
-  parameters that have special limits are for now handled here
-  kernels with parameters will be compiled separately
-  for now we have static parameters, so this will be OK
-  */
   snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
    local, local, local);
-
+  std::string kernel_source = "";
   const char* kernel_group = kernel_info[kernel_name].group;
-  std::string kernel_source = kernel_info[kernel_name].code;
   for (auto kern : kernel_info) {
-    if (strcmp(kern.second.group, kernel_group) == 0 &&
-     strcmp(kern.first, kernel_name) == 1) {
+    if (strcmp(kern.second.group, kernel_group) == 0) {
       kernel_source += kern.second.code;
     }
   }
@@ -247,32 +274,30 @@ inline void opencl_context::compile_kernel_group(const char* kernel_name) {
 
     cl_int err = CL_SUCCESS;
     // Iterate over the kernel list and get all the kernels from this group
+    // and mark them as compiled.
     for (auto kern : kernel_info) {
       if (strcmp(kern.second.group, kernel_group) == 0) {
         kernels[(kern.first)]
             = cl::Kernel(program_, kern.first, &err);
+        kern.second.exists = true;
       }
     }
   } catch (const cl::Error &e) {
-    //program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0])
-    system_error(
-        "OpenCL Initialization", e.what(), e.err(),
-        "\nRetrieving build log\n",
-        "Meaningful error message here");
+    check_ocl_error("Kernel Compilation", e.what(), e.err());
   }
 }
 
 /**
- * If the kernel has not yet been compiled,
- * the kernel group is compiled first.
+ * Returns the kernel specified in kernel_name.
+ * If the kernel has not yet been compiled, the kernel group is compiled first.
  *
- * @brief Passing the name of a kernel from <code> kernel_groups </code> will
+ * @brief Passing the name of a kernel from will
  * compile all kernels in the same group as the selected kernel.
  * OpenCL kernels are compiled JIT, instead of compiling each kernel
  * individually this function will compile all kernels
  * in a predefined group. Groupings are made such that kernels commonly
- * called with on another will be compiled at the same time. For example,
- * An arithmetic group of kernels all compiled together contains the kernels
+ * called with one another will be compiled at the same time. For example,
+ * An arithmetic group of kernels compiled together could contain the kernels
  * for <code> add() </code>, <code> subtract() </code>,
  * and <code> multiply() </code>. This function will only return the kernel
  * which was called, but when a user asks for a kernel within the group those
@@ -286,7 +311,6 @@ inline cl::Kernel opencl_context::get_kernel(const char* kernel_name) {
   // Compile the kernel group and return the kernel
   if (!kernel_info[kernel_name].exists) {
     compile_kernel_group(kernel_name);
-    kernel_info[kernel_name].exists = true;
   }
   return kernels[kernel_name];
 }
