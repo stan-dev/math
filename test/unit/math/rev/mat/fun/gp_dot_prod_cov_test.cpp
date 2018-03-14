@@ -41,19 +41,17 @@ TEST(RevMath, gp_dot_prod_cov_vvv) {
 
       x[0] = -2;
       x[1] = -1;
-      x[2] = -0.5;      
+      x[2] = -0.5;
 
-      //EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma));
-      
+      // EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma));
+
       // std::vector<double> grad;
       // std::vector<stan::math::var> params;
       // params.push_back(sigma);
       // params.push_back(x[i]);
       // params.push_back(x[j]);
 
-
       // cov(i, j).grad(params, grad);
-
     }
   }
 }
@@ -80,6 +78,6 @@ TEST(RevMath, gpdot_prod_cov_nan_error_training) {
   }
 
   Eigen::Matrix<var, -1, -1> cov;
-  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x_1, x_2, sigma));  // function call works
-  
+  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(
+                      x_1, x_2, sigma));  // function call works
 }
