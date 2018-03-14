@@ -21,17 +21,15 @@
 /**
  *  @file stan/math/gpu/opencl_context.hpp
  *  @brief Initialization for OpenCL:
- *    1. find OpenCL platforms and devices available
- *    2. create context
- *    3. set up job queue
+ *    1. create context
+ *    2. Find OpenCL platforms and devices available
+ *    3. set up command queue
  *    4. initialize kernel groups
  */
 
 namespace stan {
 namespace math {
 
-// TODO(Rok): select some other platform/device than 0
-// TODO(Rok): option to turn profiling OFF
 /**
  * The <code>opencl_context</code> class represents the OpenCL context.
  *
@@ -50,42 +48,25 @@ namespace math {
  */
 class opencl_context {
  /**
-  * description_ opencl platform and device
-  * context_ Holds the device, queue and platform info
-  * command_queue_ job queue for devices in context, one queue per device
-  * platform_ The platform such as NVIDIA OpenCL or AMD SDK;
-  * device_ The GPU device(s)
-  * max_workgroup_size_ The maximum size of a block of workers on GPU
-  * kernels_groups map for groups of kernels
-  * kernels_strings: map holding kernel code for groups
-  * kernels: map holding compiled kernels in each group
-  * compiled_kernels: map for checking whether a kernel group is compiled
-  //
   methods:
   * constructor: should be light, initialize things very lightly, test if
   * OpenCL is available grabs context_, queue_, devices_, max_workgroup_size_,
   * and then the  kernel stuff, and the description
   * disable move, copy, and assign operators
   * context(): returns the context
-  * command_queue(): returns the command_queue; it should be one per device
-  * get_kernel(const char* name): returns the appropriate kernel
   */
  private:
-  const char* description_;
-  size_t max_workgroup_size_;
-  std::string platform_name_;
-  cl::Device device_;
-  std::string device_name_;
-  cl::Context context_;
-  cl::CommandQueue command_queue_;
+  const char* description_; // string of platform and device info
+  size_t max_workgroup_size_; // The maximum size of a block of workers on GPU
+  std::string platform_name_; // The platform such as NVIDIA OpenCL or AMD SDK
+  cl::Device device_; // The GPU device(s)
+  std::string device_name_; // The name of the GPU
+  cl::Context context_; // Manages the the device, queue, platform, memory, etc.
+  cl::CommandQueue command_queue_; // job queue for device, one per device
   typedef std::map<const char*, const char*> map_string;
   typedef std::map<const char*, cl::Kernel> map_kernel;
   typedef std::map<const char*, bool> map_bool;
   std::map<const char*, std::tuple<bool, char*, cl::Kernel>> kernels_;
-  map_string kernel_groups;
-  map_string kernel_strings;
-  map_kernel kernels;
-  map_bool compiled_kernels;
   void init_kernel_groups();
   void compile_kernel_group(const char* group);
 
@@ -94,6 +75,7 @@ class opencl_context {
    * OpenCL context, devices, command queues, and kernel
    * groups.
    *
+   * For information about
    * @throw std::system_error if an OpenCL error occurs
    */
   opencl_context() {
@@ -105,7 +87,7 @@ class opencl_context {
       std::vector<cl::Device> all_devices;
       platform.getDevices(DEVICE_FILTER, &all_devices);
       if (all_devices.size() == 0) {
-        system_error("OpenCL Initialization", "[Device]", *1,
+        system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
       }
       device_ = all_devices[OPENCL_DEVICE];
@@ -145,41 +127,51 @@ class opencl_context {
   }
 
  public:
+  map_string kernel_groups; // map for groups of kernels
+  map_string kernel_strings; // map holding kernel code for each kernel
+  map_kernel kernels; // map holding compiled kernels in each group
+  map_bool compiled_kernels; //map for whether a kernel group is compiled
 
   cl::Kernel get_kernel(const char* name);
+  // FIXME:(Steve/Dan) should probably be deleted before merge
   void debug(std::ostream& s) {
     s << "inside opencl_context" << std::endl;
     s << " * platform_name_: " << platform_name_ << std::endl;
   }
+  /**
+  * Initializes the OpenCL context. This is made with a static local singleton
+  * design so that only one context is available.
+  */
   static opencl_context& getInstance() {
     static opencl_context instance;
     return instance;
   }
-  /*!
-    The copy and move constructors and assign operators are
-    disabled
-  */
-  // opencl_context(opencl_context const&) = delete;
-  // opencl_context(opencl_context&&) = delete;
-  // opencl_context& operator = (opencl_context const&) = delete;
-  // opencl_context& operator = (opencl_context &&) = delete;
 
   /**
-   * Returns the description of the OpenCL
-   * platform and device that is used.
+   * Returns the description of the OpenCL platform and device that is used.
+   * Devices will be a GPU and Platforms are a specific OpenCL implimenation
+   * such as AMD SDK's or Nvidia's OpenCL implimentation.
    */
   inline const char* description() const { return description_; }
 
   /**
-   * Returns the reference to the OpenCL context.
+   * Returns the reference to the OpenCL context. The OpenCL context manages
+   * objects such as the device, memory, command queue, program, and kernel
+   * objects. For stan, there should only be one context, queue, device, and
+   * program with multiple kernels.
    */
   inline cl::Context& context() { return context_; }
   /**
-   * Returns the reference to the active OpenCL command queue.
+   * Returns the reference to the active OpenCL command queue for the device.
+   * One command queue will exist per device where
+   * kernels are placed on the command queue and by default executed in order.
    */
   inline cl::CommandQueue& queue() { return command_queue_; }
   /**
-   * Returns the maximum workgroup size for the device in the context.
+   * Returns the maximum workgroup size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
+   * for the device in the context. This is the maximum product of work group
+   * dimensions for a particular device. IE a max workgoup of 256 would allow
+   * work groups of sizes (16,16), (128,2), (8, 32), etc.
    */
   inline int max_workgroup_size() { return max_workgroup_size_; }
 };
@@ -187,9 +179,10 @@ class opencl_context {
 
 /**
  * Initalizes the global std::map variables that
- * hold the OpenCL kernel sources, the groups to
- * which kernel is assigned to and the
- * information about which kernel was already compiled.
+ * hold the OpenCL kernel sources (<code> kernel_strings </code>), the groups to
+ * which kernel is assigned (<code> kernel_groups </code>), and the
+ * information about which kernel was already compiled
+ * (<code> compiled_kernels </code>).
  */
 inline void opencl_context::init_kernel_groups() {
 
@@ -206,12 +199,16 @@ inline void opencl_context::init_kernel_groups() {
 }
 
 /**
- * Compiles all the kernels in the specified group
+ * Compiles all the kernels in the specified group. The side effect of this
+ *  function places the compiled kernels inside of the map of
+ *  <code> kernels </code>.
  *
  * @param group The kernel group name
  *
  * @throw std::system_error if there are compilation errors
  * when compiling the specified kernel group sources
+ *
+ * @sideeffect
  *
  */
 inline void opencl_context::compile_kernel_group(const char* group) {
@@ -232,7 +229,7 @@ inline void opencl_context::compile_kernel_group(const char* group) {
     kernels with parameters will be compiled separately
     for now we have static parameters, so this will be OK
     */
-    snprintf(temp, sizeof(temp), "-D TS=%d *D TS1=%d *D TS2=%d ",
+    snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ",
      local, local, local);
     program_.build(devices, temp);
 
