@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, distance) {
   double x1 = 1;
