@@ -97,12 +97,12 @@ def makeTest(name, j):
     """Run the make command for a given single test."""
     doCommand('make -j%d %s' % (j or 1, name))
 
-def runTest(name, run_all=False, mpi=False):
+def runTest(name, run_all=False, mpi=False, j=1):
     executable = mungeName(name).replace("/", os.sep)
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
-    if mpi and "mpi_" in name:
-        command = "mpirun -np 2 " + command
+    if mpi:
+        command = "mpirun -np {} {}".format(j > 2 and j or 2, command)
     doCommand(command, not run_all)
 
 def findTests(base_path, filter_names):
@@ -152,7 +152,7 @@ def main():
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
-            runTest(t, inputs.run_all, mpi=stan_mpi)
+            runTest(t, inputs.run_all, mpi = stan_mpi, j = inputs.j)
 
 
 if __name__ == "__main__":

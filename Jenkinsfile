@@ -152,7 +152,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         sh "echo CC=mpicxx >> make/local"
-                        sh "echo STAN_MPI:=true >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
