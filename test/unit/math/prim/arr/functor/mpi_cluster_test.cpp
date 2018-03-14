@@ -112,7 +112,7 @@ MPI_TEST(mpi_cluster, communication_apply) {
 // overhead)
 struct shared_secret : public stan::math::mpi_command {
   shared_secret() {}
-  shared_secret(double common) : common_(common) {}
+  explicit shared_secret(double common) : common_(common) {}
 
   friend class boost::serialization::access;
   template <class Archive>
