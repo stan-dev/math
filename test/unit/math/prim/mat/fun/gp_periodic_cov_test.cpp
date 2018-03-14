@@ -2,6 +2,9 @@
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/gp_periodic_cov.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <string>
+#include <vector>
 
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l,
           typename T_p>
