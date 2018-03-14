@@ -117,7 +117,6 @@ class gp_periodic_cov_vari : public vari {
         double sin_dist_sq = square(sin_dist);
         dist_[pos] = dist;
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        ;
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
             sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
@@ -245,7 +244,6 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         double sin_dist_sq = square(sin_dist);
         dist_[pos] = dist;
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        ;
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
             sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
