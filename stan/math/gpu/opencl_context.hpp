@@ -60,10 +60,10 @@ class opencl_context {
   cl::Device device_;                    // The selected GPU device
   std::string device_name_;              // The name of the GPU
   size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
-  /** Holds meta information about a kernel
-   * @param exists a bool to identify whether a kernel has been compiled
-   * @param group The name of the compilation group for the kernel
-   * @param code The source code for the kernel
+  /** Holds meta information about a kernel.
+   * @param exists a bool to identify whether a kernel has been compiled.
+   * @param group The name of the compilation group for the kernel.
+   * @param code The source code for the kernel.
    */
   struct kernel_meta_info {
     bool exists;
@@ -88,14 +88,14 @@ class opencl_context {
    *
    * This constructor does the following:
    * 1. Gets the available platforms and selects the platform
-   *  with id OPENCL_PLATFORM_ID
+   *  with id OPENCL_PLATFORM_ID.
    * 2. Gets the available devices and selects the device with id
-   *  OPENCL_DEVICE_ID
-   * 3. Creates the OpenCL context with the device
-   * 4. Creates the OpenCL command queue for the selected device
+   *  OPENCL_DEVICE_ID.
+   * 3. Creates the OpenCL context with the device.
+   * 4. Creates the OpenCL command queue for the selected device.
    * 5. Initializes the kernel groups by filling the <code> kernel_info </code>
    *  map.
-   * @throw std::system_error if an OpenCL error occurs
+   * @throw std::system_error if an OpenCL error occurs.
    */
   opencl_context() {
     try {
@@ -123,7 +123,7 @@ class opencl_context {
     }
   }
   /**
-   * Initalizes the <code> kernel_info </code> where each kernel is mapped to
+   * Initializes the <code> kernel_info </code> where each kernel is mapped to
    * a logical flag to mark if the kernel was already compiled,
    * the name of the kernel group, and the OpenCL kernel sources.
    */
@@ -135,14 +135,14 @@ class opencl_context {
   }
 
   /**
-   * Compiles all the kernels in the specified. The side effect of this
+   * Compiles all the kernels in the specified group. The side effect of this
    *  method places all compiled kernels for a group inside of <code> kernels
    *  </code>.
    *
-   * @param kernel_name[in] The kernel name
+   * @param kernel_name[in] The kernel name.
    *
    * @throw std::system_error if there are compilation errors
-   * when compiling the specified kernel group sources
+   * when compiling the specified kernel group's source code.
    */
   inline void compile_kernel_group(const char* kernel_name) {
     char temp[100];
