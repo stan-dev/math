@@ -116,6 +116,8 @@
 #include <stan/math/prim/mat/fun/factor_U.hpp>
 #include <stan/math/prim/mat/fun/fill.hpp>
 #include <stan/math/prim/mat/fun/floor.hpp>
+#include <stan/math/prim/mat/fun/gp_dot_prod_cov.hpp>
+#include <stan/math/prim/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/get_base1.hpp>
 #include <stan/math/prim/mat/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/mat/fun/get_lp.hpp>

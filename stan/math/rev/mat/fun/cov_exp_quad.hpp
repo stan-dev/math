@@ -28,6 +28,8 @@ namespace math {
  * matrix, along with a pointer to the vari for sigma,
  * and the vari for l.
  *
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
+ *
  * @tparam T_x type of std::vector of elements
  * @tparam T_sigma type of sigma
  * @tparam T_l type of length scale
@@ -58,6 +60,8 @@ class cov_exp_quad_vari : public vari {
    * popped onto the var_nochain_stack_. This is
    * controlled to the second argument to
    * vari's constructor.
+   *
+   * @deprecated use <code>gp_exp_quad_cov_vari</code>
    *
    * @param x std::vector input that can be used in square distance
    *    Assumes each element of x is the same size
@@ -120,6 +124,8 @@ class cov_exp_quad_vari : public vari {
  * matrix, along with a pointer to the vari for sigma,
  * and the vari for l.
  *
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
+ *
  * @tparam T_x type of std::vector of elements
  * @tparam T_l type of length scale
  */
@@ -148,6 +154,8 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
    * popped onto the var_nochain_stack_. This is
    * controlled to the second argument to
    * vari's constructor.
+   *
+   * @deprecated use <code>gp_exp_quad_cov_vari</code>
    *
    * @param x std::vector input that can be used in square distance
    *    Assumes each element of x is the same size
@@ -194,6 +202,8 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
 /**
  * Returns a squared exponential kernel.
  *
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
+ *
  * @param x std::vector input that can be used in square distance
  *    Assumes each element of x is the same size
  * @param sigma standard deviation
@@ -207,34 +217,13 @@ inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
-  check_positive("cov_exp_quad", "sigma", sigma);
-  check_positive("cov_exp_quad", "l", l);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
-    check_not_nan("cov_exp_quad", "x", x[i]);
-
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
-    return cov;
-
-  cov_exp_quad_vari<T_x, var, var>* baseVari
-      = new cov_exp_quad_vari<T_x, var, var>(x, sigma, l);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
-    }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
-  return cov;
+  return gp_exp_quad_cov(x, sigma, l);
 }
 
 /**
  * Returns a squared exponential kernel.
+ *
+ * @deprecated use <code>gp_exp_quad_cov_vari</code>
  *
  * @param x std::vector input that can be used in square distance
  *    Assumes each element of x is the same size
@@ -249,30 +238,7 @@ inline typename boost::enable_if_c<
     boost::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, -1, -1> >::type
 cov_exp_quad(const std::vector<T_x>& x, double sigma, const var& l) {
-  check_positive("cov_exp_quad", "marginal variance", sigma);
-  check_positive("cov_exp_quad", "length-scale", l);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
-    check_not_nan("cov_exp_quad", "x", x[i]);
-
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
-    return cov;
-
-  cov_exp_quad_vari<T_x, double, var>* baseVari
-      = new cov_exp_quad_vari<T_x, double, var>(x, sigma, l);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
-    }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
-  return cov;
+  return gp_exp_quad_cov(x, sigma, l);
 }
 
 }  // namespace math
