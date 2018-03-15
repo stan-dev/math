@@ -65,7 +65,7 @@ typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type exp_mod_normal_cdf(
     }
   }
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if(N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : cdf) default(none) \
     shared(y_vec, mu_vec, sigma_vec, lambda_vec, ops_partials, N)
 #endif
