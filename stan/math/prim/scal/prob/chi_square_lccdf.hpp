@@ -77,9 +77,9 @@ typename return_type<T_y, T_dof>::type chi_square_lccdf(const T_y& y,
 
   using boost::math::tgamma;
   using std::exp;
-  using std::pow;
-  using std::log;
   using std::exp;
+  using std::log;
+  using std::pow;
 
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(stan::length(nu));

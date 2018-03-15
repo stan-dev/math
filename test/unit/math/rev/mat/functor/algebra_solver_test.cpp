@@ -6,10 +6,12 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 // Every test exists in duplicate to test the case
 // where y (the auxiliary parameters) are passed as
 // data (double type) or parameters (var types).
+
 TEST(MathMatrix, simple_Eq) {
   using stan::math::var;
 
@@ -73,6 +75,46 @@ TEST(MathMatrix, simple_Eq_tuned_dbl) {
 
   Eigen::VectorXd theta
       = simple_eq_test(simple_eq_functor(), y, true, xtol, ftol, maxfev);
+}
+
+TEST(MathMatrix, simple_Eq_nopara) {
+  std::vector<double> dat(3);
+  dat[0] = 5;
+  dat[1] = 4;
+  dat[2] = 2;
+
+  int n_x = 2;
+  Eigen::VectorXd x(n_x);
+  x << 1, 1;  // initial guess
+  Eigen::VectorXd y_dummy;
+  std::vector<int> dummy_dat_int;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> theta;
+
+  theta = stan::math::algebra_solver(simple_eq_functor_nopara(), x, y_dummy,
+                                     dat, dummy_dat_int);
+
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+TEST(MathMatrix, simple_Eq_init_is_para) {
+  using stan::math::var;
+  Eigen::VectorXd y(3);
+  y << 5, 4, 2;
+
+  int n_x = 2;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x(n_x);
+  x << 1, 1;
+
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+
+  Eigen::VectorXd theta
+      = stan::math::algebra_solver(simple_eq_functor(), x, y, dat, dat_int);
+
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
 }
 
 TEST(MathMatrix, non_linear_eq) {
@@ -236,5 +278,37 @@ TEST(MathMatrix, degenerate_dbl) {
   x << 1, 1;  // Initial Guess
   theta = degenerate_test(y, x);
   EXPECT_FLOAT_EQ(5, theta(0));
+  EXPECT_FLOAT_EQ(5, theta(1));
+
+  // See if the initial guess determines neighborhood of the
+  // solution, when solutions have different scales.
+  y << 5, 100;
+  x << 1, 1;  // initial guess
+  theta = degenerate_test(y, x);
   EXPECT_FLOAT_EQ(5, theta(0));
+  EXPECT_FLOAT_EQ(5, theta(1));
+
+  x << 120, 120;  // Initial guess
+  theta = degenerate_test(y, x);
+  EXPECT_FLOAT_EQ(100, theta(0));
+  EXPECT_FLOAT_EQ(100, theta(1));
+}
+
+// unit test to demo issue #696
+// system functor init bug issue #696
+TEST(MathMatrix, system_functor_constructor) {
+  using stan::math::system_functor;
+
+  Eigen::VectorXd y(2);
+  y << 5, 8;
+  Eigen::VectorXd x(2);
+  x << 10, 1;
+  std::vector<double> dat{0.0, 0.0};
+  std::vector<int> dat_int{0, 0};
+  std::ostream* msgs = 0;
+  int f = 99;
+
+  system_functor<int, double, double, true> fs(f, x, y, dat, dat_int, msgs);
+
+  EXPECT_EQ(fs.f_, f);
 }

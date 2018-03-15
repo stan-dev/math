@@ -54,9 +54,9 @@ TEST(ProbInternalMath, gradRegIncGamma_ffd) {
 }
 
 TEST(ProbInternalMath, gradRegIncGamma_fv) {
+  using stan::math::digamma;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::digamma;
 
   fvar<var> a = 0.5;
   fvar<var> b = 1.0;
@@ -68,10 +68,10 @@ TEST(ProbInternalMath, gradRegIncGamma_fv) {
 }
 
 TEST(ProbInternalMath, gradRegIncGamma_fv_1stderiv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
+  using stan::math::fvar;
   using stan::math::tgamma;
+  using stan::math::var;
 
   fvar<var> a = 0.5;
   a.d_ = 1.0;
@@ -89,10 +89,10 @@ TEST(ProbInternalMath, gradRegIncGamma_fv_1stderiv) {
 }
 
 TEST(ProbInternalMath, gradRegIncGamma_fv_2ndderiv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::digamma;
+  using stan::math::fvar;
   using stan::math::tgamma;
+  using stan::math::var;
 
   fvar<var> a = 0.5;
   a.d_ = 1.0;

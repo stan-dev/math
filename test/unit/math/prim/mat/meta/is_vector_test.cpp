@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, is_vector) {
-  using stan::is_vector;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::is_vector;
 
   typedef Matrix<double, Dynamic, 1> temp_vec_d;
   EXPECT_TRUE(is_vector<temp_vec_d>::value);

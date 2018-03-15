@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
 TEST(AgradRevMatrix, cols_vector) {
-  using stan::math::vector_v;
-  using stan::math::row_vector_v;
   using stan::math::cols;
+  using stan::math::row_vector_v;
+  using stan::math::vector_v;
 
   vector_v v(5);
   v << 0, 1, 2, 3, 4;
@@ -15,8 +15,8 @@ TEST(AgradRevMatrix, cols_vector) {
   EXPECT_EQ(1U, cols(v));
 }
 TEST(AgradRevMatrix, cols_rowvector) {
-  using stan::math::row_vector_v;
   using stan::math::cols;
+  using stan::math::row_vector_v;
 
   row_vector_v rv(5);
   rv << 0, 1, 2, 3, 4;
@@ -26,8 +26,8 @@ TEST(AgradRevMatrix, cols_rowvector) {
   EXPECT_EQ(0U, cols(rv));
 }
 TEST(AgradRevMatrix, cols_matrix) {
-  using stan::math::matrix_v;
   using stan::math::cols;
+  using stan::math::matrix_v;
 
   matrix_v m(2, 3);
   m << 0, 1, 2, 3, 4, 5;

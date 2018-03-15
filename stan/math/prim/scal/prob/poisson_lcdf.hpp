@@ -47,8 +47,8 @@ typename return_type<T_rate>::type poisson_lcdf(const T_n& n,
   scalar_seq_view<T_rate> lambda_vec(lambda);
   size_t size = max_size(n, lambda);
 
-  using std::log;
   using std::exp;
+  using std::log;
 
   operands_and_partials<T_rate> ops_partials(lambda);
 

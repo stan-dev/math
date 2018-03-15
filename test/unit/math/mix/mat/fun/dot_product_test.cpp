@@ -4,10 +4,10 @@
 #include <vector>
 
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d vd_1(3), vd_2(3);
   vector_fv vv_1(3), vv_2(3);
@@ -42,10 +42,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d vd_1(3), vd_2(3);
   vector_fv vv_1(3), vv_2(3);
@@ -87,12 +87,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_exception) {
   EXPECT_THROW(stan::math::dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -129,12 +129,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -165,10 +165,10 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_2ndDeriv) {
 }
 
 TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -181,12 +181,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -223,12 +223,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -259,10 +259,10 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_2ndDeriv) {
 }
 
 TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -275,9 +275,9 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -313,9 +313,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -357,9 +357,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_1stDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<var> > fv1;
   vector<fvar<var> > fv2;
@@ -394,9 +394,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_1stDeriv) {
   EXPECT_FLOAT_EQ(6.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_2ndDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<var> > fv1;
   vector<fvar<var> > fv2;
@@ -424,10 +424,10 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, matrix_matrix_fv_exception) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
   using stan::math::dot_product;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   matrix_d d1(3, 3);
@@ -490,10 +490,10 @@ TEST(AgradMixMatrixDotProduct, matrix_matrix_fv_exception) {
   EXPECT_THROW(dot_product(d2, v6), std::invalid_argument);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d vd_1(3), vd_2(3);
   vector_fv vv_1(3), vv_2(3);
@@ -529,10 +529,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d vd_1(3), vd_2(3);
   vector_fv vv_1(3), vv_2(3);
@@ -568,10 +568,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -609,10 +609,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_no_exception_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_fv_no_exception_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -643,12 +643,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_fv_no_exception_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -686,12 +686,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -723,12 +723,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_fv_length_2ndDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_fv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -767,12 +767,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_fv_no_exception_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -803,12 +803,12 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -846,12 +846,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -883,12 +883,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_fv_length_2ndDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_fv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -927,12 +927,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_fv_no_exception_length_2ndDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_fv;
 
   vector_d d1(3);
   vector_fv v1(3);
@@ -963,9 +963,9 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_length_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1002,9 +1002,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_length_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1035,9 +1035,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_fv_length_2ndDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_fv_no_exception_length_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -1075,9 +1075,9 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_fv_no_exception_length_2ndDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -1107,9 +1107,9 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_length_1stDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<var> > fv1;
   vector<fvar<var> > fv2;
@@ -1144,9 +1144,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_length_2ndDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<var> > fv1;
   vector<fvar<var> > fv2;
@@ -1181,10 +1181,10 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_fv_length_2ndDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, matrix_matrix_fv_exception_length) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
   using stan::math::dot_product;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_fv;
   using stan::math::var;
 
   stan::math::size_type length = 3;
@@ -1241,10 +1241,10 @@ TEST(AgradMixMatrixDotProduct, matrix_matrix_fv_exception_length) {
   EXPECT_THROW(dot_product(d2, v6, length), std::invalid_argument);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -1280,10 +1280,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -1312,10 +1312,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -1344,10 +1344,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -1396,12 +1396,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_exception) {
   EXPECT_THROW(stan::math::dot_product(v1, v2), std::invalid_argument);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1439,12 +1439,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1475,12 +1475,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1511,12 +1511,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1553,10 +1553,10 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1569,12 +1569,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -1612,12 +1612,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -1648,12 +1648,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -1684,12 +1684,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -1727,10 +1727,10 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_3rdDeriv) {
 }
 
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_exception) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -1743,9 +1743,9 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1782,9 +1782,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1814,9 +1814,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1846,9 +1846,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -1897,9 +1897,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_exception) {
 }
 
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_1stDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -1934,9 +1934,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(6.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_1) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -1964,9 +1964,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_2) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -1994,9 +1994,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_3rdDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -2027,10 +2027,10 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, matrix_matrix_ffv_exception) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
   using stan::math::dot_product;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   matrix_d d1(3, 3);
@@ -2093,10 +2093,10 @@ TEST(AgradMixMatrixDotProduct, matrix_matrix_ffv_exception) {
   EXPECT_THROW(dot_product(d2, v6), std::invalid_argument);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -2139,10 +2139,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -2172,10 +2172,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -2205,10 +2205,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d vd_1(3), vd_2(3);
   vector_ffv vv_1(3), vv_2(3);
@@ -2244,10 +2244,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2287,10 +2287,10 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_1stDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      vector_vector_ffv_no_exception_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2323,10 +2323,10 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      vector_vector_ffv_no_exception_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2358,10 +2358,10 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2399,12 +2399,12 @@ TEST(AgradMixMatrixDotProduct, vector_vector_ffv_no_exception_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2443,12 +2443,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2480,12 +2480,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2517,12 +2517,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2561,12 +2561,12 @@ TEST(AgradMixMatrixDotProduct, rowvector_vector_ffv_length_3rdDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_ffv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2606,12 +2606,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_ffv_no_exception_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2644,12 +2644,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_ffv_no_exception_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2682,12 +2682,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_vector_ffv_no_exception_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -2725,12 +2725,12 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2769,12 +2769,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2806,12 +2806,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2843,12 +2843,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2887,12 +2887,12 @@ TEST(AgradMixMatrixDotProduct, vector_rowvector_ffv_length_3rdDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_ffv_no_exception_length_1stDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2932,12 +2932,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -2970,12 +2970,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -3008,12 +3008,12 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      vector_rowvector_ffv_no_exception_length_3rdDeriv) {
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_d d1(3);
   vector_ffv v1(3);
@@ -3051,9 +3051,9 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -3091,9 +3091,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -3124,9 +3124,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -3157,9 +3157,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(3);
@@ -3197,9 +3197,9 @@ TEST(AgradMixMatrixDotProduct, rowvector_rowvector_ffv_length_3rdDeriv) {
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_ffv_no_exception_length_1stDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -3238,9 +3238,9 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_ffv_no_exception_length_2ndDeriv_1) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -3272,9 +3272,9 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_ffv_no_exception_length_2ndDeriv_2) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -3306,9 +3306,9 @@ TEST(AgradMixMatrixDotProduct,
 }
 TEST(AgradMixMatrixDotProduct,
      rowvector_rowvector_ffv_no_exception_length_3rdDeriv) {
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
-  using stan::math::fvar;
   using stan::math::var;
 
   row_vector_d d1(3), d2(2);
@@ -3345,9 +3345,9 @@ TEST(AgradMixMatrixDotProduct,
   EXPECT_FLOAT_EQ(0.0, h[5]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_1stDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -3382,9 +3382,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_1stDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_1) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -3419,9 +3419,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_2) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -3456,9 +3456,9 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_3rdDeriv) {
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   vector<fvar<fvar<var> > > fv1;
   vector<fvar<fvar<var> > > fv2;
@@ -3496,10 +3496,10 @@ TEST(AgradMixMatrixDotProduct, stdvector_stdvector_ffv_length_3rdDeriv) {
   EXPECT_FLOAT_EQ(0.0, h[2]);
 }
 TEST(AgradMixMatrixDotProduct, matrix_matrix_ffv_exception_length) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
   using stan::math::dot_product;
   using stan::math::fvar;
+  using stan::math::matrix_d;
+  using stan::math::matrix_ffv;
   using stan::math::var;
 
   stan::math::size_type length = 3;

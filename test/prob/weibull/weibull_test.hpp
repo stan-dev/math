@@ -1,9 +1,9 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsWeibull : public AgradDistributionTest {
  public:
@@ -69,9 +69,9 @@ class AgradDistributionsWeibull : public AgradDistributionTest {
   typename stan::return_type<T_y, T_shape, T_scale>::type log_prob_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
+    using stan::math::multiply_log;
     using std::log;
     using std::pow;
-    using stan::math::multiply_log;
 
     return log(alpha) + multiply_log(alpha - 1.0, y)
            - multiply_log(alpha, sigma) - pow(y / sigma, alpha);

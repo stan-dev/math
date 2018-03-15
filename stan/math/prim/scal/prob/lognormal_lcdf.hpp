@@ -35,8 +35,8 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lcdf(
   T_partials_return cdf_log = 0.0;
 
   using boost::math::tools::promote_args;
-  using std::log;
   using std::exp;
+  using std::log;
 
   if (size_zero(y, mu, sigma))
     return cdf_log;

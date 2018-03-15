@@ -88,8 +88,8 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
   size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 
-  using boost::math::lgamma;
   using boost::math::digamma;
+  using boost::math::lgamma;
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,

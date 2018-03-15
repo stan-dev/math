@@ -41,8 +41,8 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lcdf(
   static const char* function = "logistic_lcdf";
 
   using boost::math::tools::promote_args;
-  using std::log;
   using std::exp;
+  using std::log;
 
   T_partials_return P(0.0);
 

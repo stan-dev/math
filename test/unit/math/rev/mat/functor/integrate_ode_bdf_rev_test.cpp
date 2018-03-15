@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <boost/numeric/odeint.hpp>
-#include <test/unit/math/rev/mat/functor/util_cvodes.hpp>
+#include <test/unit/math/rev/mat/functor/util_cvodes_bdf.hpp>
 #include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/arr/functor/lorenz.hpp>
 #include <iostream>
@@ -13,8 +13,8 @@ template <typename F, typename T_y0, typename T_theta>
 void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
   std::vector<std::vector<var> > ode_res_vd = stan::math::integrate_ode_bdf(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
@@ -88,8 +88,8 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
                     std::vector<double>& x, std::vector<int>& x_int,
                     std::string error_msg) {
-  using stan::math::var;
   using stan::math::promote_scalar;
+  using stan::math::var;
 
   EXPECT_THROW_MSG(
       stan::math::integrate_ode_bdf(harm_osc, promote_scalar<T_y0>(y0), t0, ts,
@@ -100,12 +100,12 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
 // TODO(carpenter): g++6 failure
 TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
   sho_finite_diff_test(0);
-  sho_finite_diff_test(1.0);
-  sho_finite_diff_test(-1.0);
+  sho_finite_diff_test(2.0);
+  sho_finite_diff_test(-2.0);
 
   sho_data_finite_diff_test(0);
-  sho_data_finite_diff_test(1.0);
-  sho_data_finite_diff_test(-1.0);
+  sho_data_finite_diff_test(2.5);
+  sho_data_finite_diff_test(-2.5);
 }
 
 TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {

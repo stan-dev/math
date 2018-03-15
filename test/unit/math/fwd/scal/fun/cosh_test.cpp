@@ -4,8 +4,8 @@
 
 TEST(AgradFwdCosh, Fvar) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<double> x(0.5, 1.0);
 
@@ -26,8 +26,8 @@ TEST(AgradFwdCosh, Fvar) {
 
 TEST(AgradFwdCosh, FvarFvarDouble) {
   using stan::math::fvar;
-  using std::sinh;
   using std::cosh;
+  using std::sinh;
 
   fvar<fvar<double> > x;
   x.val_.val_ = 1.5;

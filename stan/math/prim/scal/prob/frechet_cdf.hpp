@@ -38,8 +38,8 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_cdf(
   static const char* function = "frechet_cdf";
 
   using boost::math::tools::promote_args;
-  using std::log;
   using std::exp;
+  using std::log;
 
   if (size_zero(y, alpha, sigma))
     return 1.0;

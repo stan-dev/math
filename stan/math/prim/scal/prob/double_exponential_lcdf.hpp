@@ -57,9 +57,9 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_lcdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale Parameter", sigma);
 
+  using std::exp;
+  using std::exp;
   using std::log;
-  using std::exp;
-  using std::exp;
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

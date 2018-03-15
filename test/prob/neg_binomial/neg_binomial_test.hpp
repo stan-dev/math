@@ -1,9 +1,10 @@
 // Arguments: Ints, Doubles, Doubles
 #include <stan/math/prim/scal.hpp>
+#include <stdexcept>
 
-using std::vector;
-using std::numeric_limits;
 using stan::math::var;
+using std::numeric_limits;
+using std::vector;
 
 class AgradDistributionsNegBinomial : public AgradDistributionTest {
  public:
@@ -65,10 +66,10 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
   typename stan::return_type<T_shape, T_inv_scale>::type log_prob_function(
       const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
-    using std::log;
     using stan::math::binomial_coefficient_log;
     using stan::math::log1m;
     using stan::math::multiply_log;
+    using std::log;
 
     if (alpha > 1e10)
       return -lgamma(n + 1.0) + multiply_log(n, alpha / beta) - alpha / beta;
@@ -76,6 +77,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_shape>::type>(n + alpha - 1.0, n)
              - n * log1p(beta) + alpha * log(beta / (1 + beta));
-    return -1.0 / 0;  // FIXME: What is supposed to happen when n == 0?
+    return log(0.0);
   }
 };

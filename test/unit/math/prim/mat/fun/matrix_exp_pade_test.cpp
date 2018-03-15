@@ -42,8 +42,8 @@ TEST(MathMatrix, matrix_exp_pade_3x3_2) {
 }
 
 TEST(MathMatrix, matrix_exp_100x100) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
 
   int size = 100;
   Matrix<double, Dynamic, Dynamic> S = Eigen::MatrixXd::Identity(size, size),

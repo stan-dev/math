@@ -67,15 +67,15 @@ namespace math {
  */
 template <typename F, typename T1, typename T2>
 std::vector<std::vector<typename stan::return_type<T1, T2>::type> >
-integrate_ode_rk45(const F& f, const std::vector<T1> y0, double t0,
+integrate_ode_rk45(const F& f, const std::vector<T1>& y0, double t0,
                    const std::vector<double>& ts, const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
                    std::ostream* msgs = 0, double relative_tolerance = 1e-6,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
-  using boost::numeric::odeint::runge_kutta_dopri5;
   using boost::numeric::odeint::max_step_checker;
+  using boost::numeric::odeint::runge_kutta_dopri5;
 
   check_finite("integrate_ode_rk45", "initial state", y0);
   check_finite("integrate_ode_rk45", "initial time", t0);

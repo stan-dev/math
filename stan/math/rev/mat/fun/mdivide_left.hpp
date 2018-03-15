@@ -39,8 +39,8 @@ class mdivide_left_vv_vari : public vari {
             sizeof(vari *) * B.rows() * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
             sizeof(vari *) * B.rows() * B.cols()))) {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; j++) {
@@ -74,8 +74,8 @@ class mdivide_left_vv_vari : public vari {
   }
 
   virtual void chain() {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
     Eigen::Matrix<double, R1, C1> adjA(M_, M_);
     Eigen::Matrix<double, R2, C2> adjB(M_, N_);
     Eigen::Matrix<double, R1, C2> adjC(M_, N_);
@@ -127,8 +127,8 @@ class mdivide_left_dv_vari : public vari {
             sizeof(vari *) * B.rows() * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
             sizeof(vari *) * B.rows() * B.cols()))) {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; j++) {
@@ -161,8 +161,8 @@ class mdivide_left_dv_vari : public vari {
   }
 
   virtual void chain() {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
     Eigen::Matrix<double, R2, C2> adjB(M_, N_);
     Eigen::Matrix<double, R1, C2> adjC(M_, N_);
 
@@ -206,8 +206,8 @@ class mdivide_left_vd_vari : public vari {
             sizeof(vari *) * A.rows() * A.cols()))),
         variRefC_(reinterpret_cast<vari **>(ChainableStack::memalloc_.alloc(
             sizeof(vari *) * B.rows() * B.cols()))) {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
 
     size_t pos = 0;
     for (size_type j = 0; j < M_; j++) {
@@ -231,8 +231,8 @@ class mdivide_left_vd_vari : public vari {
   }
 
   virtual void chain() {
-    using Eigen::Matrix;
     using Eigen::Map;
+    using Eigen::Matrix;
     Eigen::Matrix<double, R1, C1> adjA(M_, M_);
     Eigen::Matrix<double, R1, C2> adjC(M_, N_);
 

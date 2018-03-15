@@ -2,11 +2,11 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixLogSoftmax, fd) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_fd;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
+  using stan::math::vector_fd;
 
   EXPECT_THROW(softmax(vector_fd()), std::invalid_argument);
 
@@ -47,11 +47,11 @@ TEST(AgradFwdMatrixLogSoftmax, fd) {
   EXPECT_FLOAT_EQ(-1.6699361e-05, theta3[2].d_);
 }
 TEST(AgradFwdMatrixLogSoftmax, ffd) {
-  using stan::math::log_softmax;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
-  using stan::math::vector_ffd;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::log_softmax;
+  using stan::math::vector_ffd;
 
   EXPECT_THROW(softmax(vector_ffd()), std::invalid_argument);
 

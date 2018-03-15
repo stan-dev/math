@@ -52,9 +52,9 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha>::type
       T_partials_return;
 
-  using std::exp;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::exp;
 
   if (size_zero(n, x, beta))
     return 0.0;

@@ -53,10 +53,10 @@ normal_id_glm_lpdf(const T_n &n, const T_x &x, const T_beta &beta,
   typedef typename stan::partials_return_type<T_n, T_x, T_beta, T_alpha,
                                               T_scale>::type T_partials_return;
 
-  using std::exp;
+  using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using Eigen::Array;
+  using std::exp;
 
   if (!(stan::length(n) && stan::length(x) && stan::length(beta)
         && stan::length(sigma)))

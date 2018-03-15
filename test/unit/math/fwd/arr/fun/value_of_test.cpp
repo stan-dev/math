@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(MathMatrix, value_of) {
+  using stan::math::fvar;
   using stan::math::value_of;
   using std::vector;
-  using stan::math::fvar;
 
   vector<double> a_vals;
   for (size_t i = 0; i < 10; ++i)

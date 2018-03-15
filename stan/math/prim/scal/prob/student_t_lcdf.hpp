@@ -68,9 +68,9 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lcdf(
       return ops_partials.build(negative_infinity());
   }
 
-  using std::pow;
   using std::exp;
   using std::log;
+  using std::pow;
 
   T_partials_return digammaHalf = 0;
 

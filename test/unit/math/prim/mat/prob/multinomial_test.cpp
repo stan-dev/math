@@ -5,8 +5,8 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Matrix;
 using Eigen::Dynamic;
+using Eigen::Matrix;
 
 TEST(ProbDistributionsMultinomial, RNGSize) {
   boost::random::mt19937 rng;

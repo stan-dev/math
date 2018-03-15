@@ -48,9 +48,9 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 
-  using std::log;
-  using std::exp;
   using stan::is_constant_struct;
+  using std::exp;
+  using std::log;
 
   if (size_zero(y, mu, beta))
     return 0.0;

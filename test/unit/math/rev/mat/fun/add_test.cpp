@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/mat/util.hpp>
 
 TEST(AgradRevMatrix, add_scalar) {
-  using stan::math::matrix_v;
   using stan::math::add;
+  using stan::math::matrix_v;
 
   matrix_v v(2, 2);
   v << 1, 2, 3, 4;

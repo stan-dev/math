@@ -83,10 +83,10 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
 
-  using std::pow;
+  using std::exp;
   using std::exp;
   using std::log;
-  using std::exp;
+  using std::pow;
 
   VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>

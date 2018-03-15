@@ -53,9 +53,9 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
     return 0.0;
 
   using boost::math::erfc;
-  using std::sqrt;
-  using std::log;
   using std::exp;
+  using std::log;
+  using std::sqrt;
 
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);
