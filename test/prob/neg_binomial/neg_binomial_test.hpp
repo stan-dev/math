@@ -76,5 +76,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_shape>::type>(n + alpha - 1.0, n)
              - n * log1p(beta) + alpha * log(beta / (1 + beta));
+    return -1.0 / 0;  // FIXME: What is supposed to happen when n == 0?
   }
 };
