@@ -151,7 +151,7 @@ pipeline {
                     agent any
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CC=mpicxx >> make/local"
+                        sh "echo CC=mpicxx -cxx=${CXX} >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
