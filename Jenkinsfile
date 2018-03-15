@@ -193,7 +193,7 @@ pipeline {
                 }
             }
         }
-        stage("Make-doxygen") {
+        stage('master') {
             agent any
             when { branch 'PR-795'}
             steps {
@@ -209,7 +209,6 @@ pipeline {
                             git branch -D gh-pages
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                             git checkout --orphan gh-pages
-                            git rm --cached -r stan test lib make
                             git add -f doc
                             git commit -m "auto generated docs from Jenkins"
                             git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
