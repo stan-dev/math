@@ -22,6 +22,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -63,7 +66,7 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
                 T_scale>
       log_sigma(length(sigma));
 #pragma omp parallel for if (length(sigma)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(inv_sigma, sigma_vec, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -72,7 +75,7 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, inv_sigma, ops_partials, log_sigma, N)
 #endif

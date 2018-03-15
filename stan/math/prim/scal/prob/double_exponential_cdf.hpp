@@ -20,6 +20,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -66,7 +69,7 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
   size_t N = max_size(y, mu, sigma);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : cdf) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
 #endif
@@ -83,7 +86,7 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
       cdf *= 1.0 - 0.5 / exp_scaled_diff;
   }
 
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, cdf, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

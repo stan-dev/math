@@ -29,6 +29,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -104,7 +107,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
                 T_partials_return, T_y>
       log1m_y(length(y));
 
-#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(log_y, y_vec, log1m_y, y)
   for (size_t n = 0; n < length(y); n++) {
     if (include_summand<propto, T_y, T_scale_succ>::value)
@@ -121,7 +124,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       digamma_alpha(length(alpha));
 
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(lgamma_alpha, alpha_vec, digamma_alpha, alpha)
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_scale_succ>::value)
@@ -138,7 +141,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       digamma_beta(length(beta));
 
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(lgamma_beta, beta_vec, digamma_beta, beta)
   for (size_t n = 0; n < length(beta); n++) {
     if (include_summand<propto, T_scale_fail>::value)
@@ -156,7 +159,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
       digamma_alpha_beta(max_size(alpha, beta));
 
 #pragma omp parallel for if (length(alpha)                                    \
-                             > 3 * omp_get_max_threads()) default(none)       \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none)       \
     shared(lgamma_alpha_beta, alpha_vec, beta_vec, digamma_alpha_beta, alpha, \
            beta)
   for (size_t n = 0; n < max_size(alpha, beta); n++) {
@@ -169,7 +172,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, alpha_vec, \
     beta_vec, lgamma_alpha_beta, lgamma_alpha, lgamma_beta, log_y, log1m_y, \
     N, ops_partials, digamma_alpha_beta, digamma_alpha, digamma_beta)

@@ -22,6 +22,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -68,7 +71,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_cdf(
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, sigma, alpha);
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : cdf) default(none) \
     shared(y_vec, sigma_vec, alpha_vec, ops_partials, N)
 #endif
@@ -92,21 +95,21 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, cdf, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_shape>::value) {
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(ops_partials, cdf, y)
     for (size_t n = 0; n < length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_scale>::value) {
 #pragma omp parallel for if (length(sigma)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(ops_partials, cdf, sigma)
     for (size_t n = 0; n < length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;

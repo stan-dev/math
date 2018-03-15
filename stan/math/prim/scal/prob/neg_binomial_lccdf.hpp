@@ -27,6 +27,9 @@
 #include <limits>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -79,7 +82,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
 
   if (!is_constant_struct<T_shape>::value) {
 #pragma omp parallel for if (length(alpha)                                   \
-                             > 3 * omp_get_max_threads()) default(none)      \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none)      \
     shared(n_vec, alpha_vec, digammaN_vec, digammaAlpha_vec, digammaSum_vec, \
            alpha)
     for (size_t i = 0; i < stan::length(alpha); i++) {
@@ -93,7 +96,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(n_vec, alpha_vec, beta_vec, ops_partials, digammaN_vec, \
            digammaAlpha_vec, digammaSum_vec, size)

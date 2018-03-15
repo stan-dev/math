@@ -23,6 +23,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -85,7 +88,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
   }
 
   /* This causes a test failure with F32()
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+  #pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials, size)
    */

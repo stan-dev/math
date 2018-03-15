@@ -29,6 +29,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -101,7 +104,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
       digamma_sum_vec(max_size(alpha, beta));
 
   if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(alpha_vec, beta_vec, digamma_alpha_vec, digamma_beta_vec,      \
            digamma_sum_vec, N)
     for (size_t i = 0; i < N; i++) {

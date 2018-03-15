@@ -20,6 +20,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -66,7 +69,7 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
   operands_and_partials<T_prob> ops_partials(theta);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(theta_vec, ops_partials, N, n_vec)
 #endif
   for (size_t n = 0; n < N; n++) {

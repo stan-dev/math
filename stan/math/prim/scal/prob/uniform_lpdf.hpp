@@ -19,6 +19,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -85,7 +88,7 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
                 T_partials_return, T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
   size_t local_size = max_size(alpha, beta);
-#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(inv_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
@@ -96,7 +99,7 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   local_size = max_size(alpha, beta);
-#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(log_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
@@ -105,7 +108,7 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(log_beta_minus_alpha, inv_beta_minus_alpha, ops_partials, N)
 #endif

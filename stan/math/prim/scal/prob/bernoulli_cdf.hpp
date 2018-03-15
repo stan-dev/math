@@ -19,6 +19,9 @@
 #include <boost/random/variate_generator.hpp>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -67,7 +70,7 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : P) default(none) shared(n_vec, theta_vec, ops_partials, size)
 #endif
   for (size_t i = 0; i < size; i++) {
@@ -86,7 +89,7 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
 
   if (!is_constant_struct<T_prob>::value) {
     size_t local_size = stan::length(theta);
-#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, local_size)
     for (size_t i = 0; i < local_size; ++i)
       ops_partials.edge1_.partials_[i] *= P;

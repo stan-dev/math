@@ -21,6 +21,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -78,7 +81,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
                 T_scale>
       log_beta(length(beta));
 #pragma omp parallel for if (length(beta)                               \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(beta_vec, log_beta, inv_beta, beta)
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
@@ -87,7 +90,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, beta_vec, ops_partials, inv_beta, log_beta, N)
 #endif

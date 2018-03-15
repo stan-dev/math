@@ -24,6 +24,9 @@
 #include <limits>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -87,7 +90,7 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(nu_vec, gamma_vec, digamma_vec, nu)
     for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
@@ -97,7 +100,7 @@ typename return_type<T_y, T_dof>::type chi_square_lcdf(const T_y& y,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : cdf_log) default(none) \
     shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, N)
 #endif

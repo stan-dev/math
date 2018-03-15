@@ -20,6 +20,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -95,7 +98,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
   {
     scalar_seq_view<T_n> n_vec(n);
     scalar_seq_view<T_precision> phi_vec(phi);
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(n_arr, n_vec, phi_arr, phi_vec)
     for (size_t n = 0; n < N; ++n) {
       n_arr[n] = n_vec[n];
@@ -106,7 +109,7 @@ neg_binomial_2_log_glm_lpmf(const T_n& n, const T_x& x, const T_beta& beta,
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
-#pragma omp parallel for if (M > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (M > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(beta_dbl, beta_vec)
     for (size_t m = 0; m < M; ++m) {
       beta_dbl[m] = value_of(beta_vec[m]);

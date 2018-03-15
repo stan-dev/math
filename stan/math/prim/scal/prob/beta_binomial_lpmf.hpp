@@ -23,6 +23,9 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -84,7 +87,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n, T_N>
       normalizing_constant(max_size(N, n));
 #pragma omp parallel for if (max_size(N, n)                             \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(normalizing_constant, N_vec, n_vec, N, n)
   for (size_t i = 0; i < max_size(N, n); i++)
     if (include_summand<propto>::value)
@@ -93,7 +96,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
   VectorBuilder<include_summand<propto, T_size1, T_size2>::value,
                 T_partials_return, T_n, T_N, T_size1, T_size2>
       lbeta_numerator(size);
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(lbeta_numerator, n_vec, alpha_vec, N_vec, beta_vec, size)
   for (size_t i = 0; i < size; i++)
     if (include_summand<propto, T_size1, T_size2>::value)
@@ -104,7 +107,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
                 T_partials_return, T_size1, T_size2>
       lbeta_denominator(max_size(alpha, beta));
 #pragma omp parallel for if (max_size(alpha, beta)                      \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(lbeta_denominator, alpha_vec, beta_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_size1, T_size2>::value)
@@ -115,7 +118,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
                 T_size1>
       digamma_n_plus_alpha(max_size(n, alpha));
 #pragma omp parallel for if (max_size(n, alpha)                         \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(digamma_n_plus_alpha, n_vec, alpha_vec, n, alpha)
   for (size_t i = 0; i < max_size(n, alpha); i++)
     if (!is_constant_struct<T_size1>::value)
@@ -125,7 +128,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
                 T_partials_return, T_N, T_size1, T_size2>
       digamma_N_plus_alpha_plus_beta(max_size(N, alpha, beta));
   size_t local_size = max_size(N, alpha, beta);
-#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(digamma_N_plus_alpha_plus_beta, N_vec, alpha_vec, beta_vec,  \
                  local_size)
   for (size_t i = 0; i < local_size; i++)
@@ -137,7 +140,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
                 T_partials_return, T_size1, T_size2>
       digamma_alpha_plus_beta(max_size(alpha, beta));
   local_size = max_size(alpha, beta);
-#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(digamma_alpha_plus_beta, alpha_vec, beta_vec, local_size)
   for (size_t i = 0; i < local_size; i++)
     if (contains_nonconstant_struct<T_size1, T_size2>::value)
@@ -147,7 +150,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
   VectorBuilder<!is_constant_struct<T_size1>::value, T_partials_return, T_size1>
       digamma_alpha(length(alpha));
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(digamma_alpha, alpha_vec, alpha)
   for (size_t i = 0; i < length(alpha); i++)
     if (!is_constant_struct<T_size1>::value)
@@ -156,14 +159,14 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
   VectorBuilder<!is_constant_struct<T_size2>::value, T_partials_return, T_size2>
       digamma_beta(length(beta));
 #pragma omp parallel for if (length(beta)                               \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(digamma_beta, beta_vec, beta)
   for (size_t i = 0; i < length(beta); i++)
     if (!is_constant_struct<T_size2>::value)
       digamma_beta[i] = digamma(value_of(beta_vec[i]));
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(normalizing_constant, lbeta_numerator, lbeta_denominator, \
            ops_partials, digamma_n_plus_alpha, digamma_alpha, size, \

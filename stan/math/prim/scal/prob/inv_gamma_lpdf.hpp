@@ -27,6 +27,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -109,7 +112,7 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(lgamma_alpha, alpha_vec, digamma_alpha, alpha)
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value)
@@ -123,14 +126,14 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
       log_beta(length(beta));
   if (include_summand<propto, T_shape, T_scale>::value) {
 #pragma omp parallel for if (length(beta)                               \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(log_beta, beta_vec, beta)
     for (size_t n = 0; n < length(beta); n++)
       log_beta[n] = log(value_of(beta_vec[n]));
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(alpha_vec, beta_vec, \
     lgamma_alpha, inv_y, ops_partials, log_beta, log_y, digamma_alpha, N)
 #endif

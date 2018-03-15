@@ -21,6 +21,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -79,7 +82,7 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
                 T_scale>
       log_sigma(length(sigma));
 #pragma omp parallel for if (length(sigma)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(sigma_vec, inv_sigma, sigma_squared, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
@@ -93,7 +96,7 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lpdf(
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, mu_vec, \
     sigma_vec, ops_partials, inv_sigma, log_sigma, sigma_squared, N)
 #endif

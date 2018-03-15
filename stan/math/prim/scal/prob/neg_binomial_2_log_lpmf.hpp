@@ -26,6 +26,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -70,38 +73,38 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
   size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials_return, T_log_location> eta__(length(eta));
-#pragma omp parallel for if (length(eta) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(eta) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(eta__, eta_vec, eta)
   for (size_t i = 0; i < length(eta); ++i)
     eta__[i] = value_of(eta_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
-#pragma omp parallel for if (length(phi) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(phi) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(phi__, phi_vec, phi)
   for (size_t i = 0; i < length(phi); ++i)
     phi__[i] = value_of(phi_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-#pragma omp parallel for if (length(phi) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(phi) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(log_phi, phi__, phi)
   for (size_t i = 0; i < length(phi); ++i)
     log_phi[i] = log(phi__[i]);
 
   VectorBuilder<true, T_partials_return, T_log_location, T_precision>
       logsumexp_eta_logphi(len_ep);
-#pragma omp parallel for if (len_ep > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (len_ep > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(logsumexp_eta_logphi, eta__, log_phi, len_ep)
   for (size_t i = 0; i < len_ep; ++i)
     logsumexp_eta_logphi[i] = log_sum_exp(eta__[i], log_phi[i]);
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-#pragma omp parallel for if (len_np > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (len_np > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(n_plus_phi, n_vec, phi__, len_np)
   for (size_t i = 0; i < len_np; ++i)
     n_plus_phi[i] = n_vec[i] + phi__[i];
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, phi__, n_plus_phi, ops_partials, logsumexp_eta_logphi, \
            eta__, log_phi, size)

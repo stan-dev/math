@@ -20,6 +20,9 @@
 #include <limits>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -68,7 +71,7 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
       digamma_sum_vec(stan::length(phi));
 
   if (!is_constant_struct<T_precision>::value) {
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(n_vec, phi_vec, digamma_phi_vec, digamma_sum_vec, phi)
     for (size_t i = 0; i < stan::length(phi); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -80,7 +83,7 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(n_vec, mu_vec, phi_vec, ops_partials, digamma_phi_vec, \
            digamma_sum_vec, size)
@@ -112,14 +115,14 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
   }
 
   if (!is_constant_struct<T_location>::value) {
-#pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(mu) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, mu)
     for (size_t i = 0; i < stan::length(mu); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 
   if (!is_constant_struct<T_precision>::value) {
-#pragma omp parallel for if (length(phi) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(phi) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, phi)
     for (size_t i = 0; i < stan::length(phi); ++i)
       ops_partials.edge2_.partials_[i] *= P;

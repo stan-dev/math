@@ -20,6 +20,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -67,7 +70,7 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
                 T_scale>
       log_bessel0(length(kappa));
 #pragma omp parallel for if (length(kappa)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(kappa_dbl, kappa_vec, log_bessel0, kappa)
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
@@ -80,7 +83,7 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
 
   size_t N = max_size(y, mu, kappa);
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, ops_partials, kappa_dbl, log_bessel0, N)
 #endif

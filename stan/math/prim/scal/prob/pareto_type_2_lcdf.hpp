@@ -20,6 +20,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -69,7 +72,7 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
                 T_loc, T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(y_vec, mu_vec, lambda_vec, alpha_vec, cdf_log,                 \
            inv_p1_pow_alpha_minus_one, log_1p_y_over_lambda, N)
   for (size_t i = 0; i < N; i++) {
@@ -86,7 +89,7 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : P) default(none) \
     shared(y_vec, mu_vec, lambda_vec, cdf_log, ops_partials, \
            inv_p1_pow_alpha_minus_one, log_1p_y_over_lambda, alpha_vec, N)

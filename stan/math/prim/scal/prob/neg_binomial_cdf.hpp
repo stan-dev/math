@@ -22,6 +22,9 @@
 #include <limits>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -68,7 +71,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
 
   if (!is_constant_struct<T_shape>::value) {
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(n_vec, alpha_vec, digamma_alpha_vec, digamma_sum_vec)
     for (size_t i = 0; i < length(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -80,7 +83,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : P) default(none) shared(n_vec, alpha_vec, beta_vec, \
     ops_partials, digamma_alpha_vec, digamma_sum_vec, size)
 #endif
@@ -110,7 +113,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
 
   if (!is_constant_struct<T_shape>::value) {
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, alpha)
     for (size_t i = 0; i < length(alpha); ++i)
       ops_partials.edge1_.partials_[i] *= P;
@@ -118,7 +121,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
 
   if (!is_constant_struct<T_inv_scale>::value) {
 #pragma omp parallel for if (length(beta)                               \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, beta)
     for (size_t i = 0; i < length(beta); ++i)
       ops_partials.edge2_.partials_[i] *= P;

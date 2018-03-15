@@ -27,6 +27,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -91,7 +94,7 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(nu_vec, gamma_vec, digamma_vec, nu)
     for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
@@ -101,7 +104,7 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(y_vec, nu_vec, gamma_vec, digamma_vec, ops_partials, N, s_vec)
 #endif
@@ -145,19 +148,19 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, nu)
     for (size_t n = 0; n < length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-#pragma omp parallel for if (length(s) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(s) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(ops_partials, P, s)
     for (size_t n = 0; n < stan::length(s); ++n)
       ops_partials.edge3_.partials_[n] *= P;

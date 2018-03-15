@@ -21,6 +21,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -77,7 +80,7 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
                 T_inv_scale>
       log_beta(length(beta));
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(beta_vec, log_beta, beta)
   for (size_t i = 0; i < length(beta); i++)
     if (include_summand<propto, T_inv_scale>::value)
@@ -86,7 +89,7 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(beta_vec, y_vec, log_beta, ops_partials, N)
 #endif

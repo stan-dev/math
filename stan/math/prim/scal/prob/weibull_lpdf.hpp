@@ -22,6 +22,9 @@
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
+#ifndef OMP_TRIGGER
+#define OMP_TRIGGER 3
+#endif
 #endif
 
 namespace stan {
@@ -78,7 +81,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
                 T_shape>
       log_alpha(length(alpha));
 #pragma omp parallel for if (length(alpha)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(log_alpha, alpha_vec, alpha)
   for (size_t i = 0; i < length(alpha); i++)
     if (include_summand<propto, T_shape>::value)
@@ -87,7 +90,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
     none) shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y, T_shape>::value)
@@ -97,7 +100,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
                 T_partials_return, T_scale>
       log_sigma(length(sigma));
 #pragma omp parallel for if (length(sigma)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(log_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_shape, T_scale>::value)
@@ -107,7 +110,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
                 T_partials_return, T_scale>
       inv_sigma(length(sigma));
 #pragma omp parallel for if (length(sigma)                              \
-                             > 3 * omp_get_max_threads()) default(none) \
+                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(inv_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++)
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
@@ -116,7 +119,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_y, T_shape, T_scale>
       y_div_sigma_pow_alpha(N);
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
     shared(y_vec, alpha_vec, y_div_sigma_pow_alpha, N, inv_sigma)
   for (size_t i = 0; i < N; i++)
     if (include_summand<propto, T_y, T_shape, T_scale>::value) {
@@ -127,7 +130,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 #ifndef STAN_MATH_FWD_CORE_HPP
-#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, sigma_vec, alpha_vec, ops_partials, inv_sigma, log_alpha, \
            log_y, y_div_sigma_pow_alpha, log_sigma, N)
