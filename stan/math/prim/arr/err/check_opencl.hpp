@@ -27,8 +27,8 @@ namespace math {
  *
  * @throw std::domain_error Always.
  */
-inline void check_ocl_error(const char *function, const char * name,
-   const cl::Error &e) {
+inline void check_ocl_error(const char *function, const char *name,
+                            const cl::Error &e) {
   switch (e.err()) {
     case 0:
       // CL_SUCCESS - no need to throw
@@ -91,7 +91,8 @@ inline void check_ocl_error(const char *function, const char * name,
     case -38:
       system_error(function, name, e.err(), "CL_INVALID_MEM_OBJECT");
     case -39:
-      system_error(function, name, e.err(), "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR");
+      system_error(function, name, e.err(),
+                   "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR");
     case -40:
       system_error(function, name, e.err(), "CL_INVALID_IMAGE_SIZE");
     case -41:
@@ -149,7 +150,8 @@ inline void check_ocl_error(const char *function, const char * name,
     case -67:
       system_error(function, name, e.err(), "CL_INVALID_LINKER_OPTIONS");
     case -68:
-      system_error(function, name, e.err(), "CL_INVALID_DEVICE_PARTITION_COUNT");
+      system_error(function, name, e.err(),
+                   "CL_INVALID_DEVICE_PARTITION_COUNT");
     case -69:
       system_error(function, name, e.err(), "CL_INVALID_PIPE_SIZE");
     case -70:
@@ -167,7 +169,8 @@ inline void check_ocl_error(const char *function, const char * name,
       system_error(function, name, e.err(),
                    "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR");
     case -1005:
-      system_error(function, name, e.err(), "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR");
+      system_error(function, name, e.err(),
+                   "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR");
     case -1006:
       system_error(function, name, e.err(), "CL_INVALID_D3D11_DEVICE_KHR");
     case -1007:
@@ -176,7 +179,8 @@ inline void check_ocl_error(const char *function, const char * name,
       system_error(function, name, e.err(),
                    "CL_D3D11_RESOURCE_ALREADY_ACQUIRED_KHR");
     case -1009:
-      system_error(function, name, e.err(), "CL_D3D11_RESOURCE_NOT_ACQUIRED_KHR");
+      system_error(function, name, e.err(),
+                   "CL_D3D11_RESOURCE_NOT_ACQUIRED_KHR");
     case -101:
       system_error(function, name, e.err(), "CL_INVALID_D3D9_DEVICE_NV ");
     case -1011:
@@ -196,7 +200,8 @@ inline void check_ocl_error(const char *function, const char * name,
     case -1094:
       system_error(function, name, e.err(), "CL_INVALID_ACCELERATOR_INTEL");
     case -1095:
-      system_error(function, name, e.err(), "CL_INVALID_ACCELERATOR_TYPE_INTEL");
+      system_error(function, name, e.err(),
+                   "CL_INVALID_ACCELERATOR_TYPE_INTEL");
     case -1096:
       system_error(function, name, e.err(),
                    "CL_INVALID_ACCELERATOR_DESCRIPTOR_INTEL");
