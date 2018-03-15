@@ -181,39 +181,39 @@ pipeline {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "CmdStan/${params.cmdstan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
                 stage('Stan Upstream Tests') {
                     when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
                     steps {
                         build(job: "Stan/${params.stan_pr}",
-                                    parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
+                              parameters: [string(name: 'math_pr', value: env.BRANCH_NAME)])
                     }
                 }
             }
         }
-        stage('master') {
+        stage('Upload doxygen') {
             agent any
-            when { branch 'PR-795'}
+            when { branch 'master'}
             steps {
-                    retry(3) { checkout scm }
-                    withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-                        usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                        sh """#!/bin/bash
-                            set -x
-                            make doxygen
-                            git config --global user.email "mc.stanislaw@gmail.com"
-                            git config --global user.name "Stan Jenkins"
-                            git checkout --detach
-                            git branch -D gh-pages
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
-                            git checkout --orphan gh-pages
-                            git add -f doc
-                            git commit -m "auto generated docs from Jenkins"
-                            git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
-                            """
-               }
+                retry(3) { checkout scm }
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                                                  usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        make doxygen
+                        git config --global user.email "mc.stanislaw@gmail.com"
+                        git config --global user.name "Stan Jenkins"
+                        git checkout --detach
+                        git branch -D gh-pages
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
+                        git checkout --orphan gh-pages
+                        git add -f doc
+                        git commit -m "auto generated docs from Jenkins"
+                        git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
+                        """
+                }
             }
             post { always { deleteDir() } }
         }
