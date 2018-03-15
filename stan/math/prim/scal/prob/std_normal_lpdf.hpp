@@ -13,7 +13,7 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -50,7 +50,7 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
   scalar_seq_view<T_y> y_vec(y);
   T_partials_return logp(0.0);
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(y_vec, ops_partials, y)
 #endif
   for (size_t n = 0; n < length(y); n++) {

@@ -19,7 +19,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -69,7 +69,7 @@ typename return_type<T_prob>::type bernoulli_lcdf(const T_n& n,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : P) default(none) shared(n_vec, theta_vec, ops_partials, size)
 #endif
   for (size_t i = 0; i < size; i++) {

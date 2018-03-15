@@ -20,7 +20,7 @@
 #include <cmath>
 #include <limits>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -62,7 +62,7 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(n_vec, lambda_vec, ops_partials, size)
 #endif
@@ -84,8 +84,9 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
   }
 
   if (!is_constant_struct<T_rate>::value) {
-    #pragma omp parallel for default(none) if (stan::length(lambda) > \
-      3 * omp_get_max_threads()) shared(ops_partials, P, lambda)
+#pragma omp parallel for default(none) if (stan::length(lambda)         \
+                                           > 3 * omp_get_max_threads()) \
+    shared(ops_partials, P, lambda)
     for (size_t i = 0; i < stan::length(lambda); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

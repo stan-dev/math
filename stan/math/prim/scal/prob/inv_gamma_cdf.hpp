@@ -28,7 +28,7 @@
 #include <cmath>
 #include <limits>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -96,8 +96,9 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
-      default(none) shared(alpha_vec, gamma_vec, digamma_vec, alpha)
+#pragma omp parallel for if (length(alpha)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(alpha_vec, gamma_vec, digamma_vec, alpha)
     for (size_t i = 0; i < length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -106,7 +107,7 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, gamma_vec, digamma_vec, N)
 #endif
@@ -143,20 +144,22 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, P, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_shape>::value) {
-    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, alpha)
+#pragma omp parallel for if (length(alpha)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, alpha)
     for (size_t n = 0; n < length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, beta)
+#pragma omp parallel for if (length(beta)                               \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, beta)
     for (size_t n = 0; n < length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

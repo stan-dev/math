@@ -20,7 +20,7 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -63,7 +63,7 @@ typename return_type<T_y, T_inv_scale>::type exponential_cdf(
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : cdf) default(none) shared(beta_vec, y_vec, N)
 #endif
   for (size_t n = 0; n < N; n++) {
@@ -74,8 +74,8 @@ typename return_type<T_y, T_inv_scale>::type exponential_cdf(
     cdf *= one_m_exp;
   }
 
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-    default(none) shared(beta_vec, y_vec, cdf, ops_partials, N)
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+    shared(beta_vec, y_vec, cdf, ops_partials, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);

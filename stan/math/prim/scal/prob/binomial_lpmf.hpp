@@ -26,7 +26,7 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -80,22 +80,23 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
   operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
-    #ifndef STAN_MATH_FWD_CORE_HPP
-      #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#ifndef STAN_MATH_FWD_CORE_HPP
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
         reduction(+ : logp) default(none) shared(N_vec, n_vec, size)
-    #endif
+#endif
     for (size_t i = 0; i < size; ++i)
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
-  #pragma omp parallel for if (length(theta) > 3 * omp_get_max_threads()) \
-    default(none) shared(log1m_theta, theta_vec, theta)
+#pragma omp parallel for if (length(theta)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(log1m_theta, theta_vec, theta)
   for (size_t i = 0; i < length(theta); ++i)
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, theta_vec, N_vec, log1m_theta, size)
 #endif
@@ -117,8 +118,8 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
-      #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
-        default(none) shared(ops_partials, n_vec, theta_vec, N_vec, size)
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, n_vec, theta_vec, N_vec, size)
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]
             += n_vec[i] / value_of(theta_vec[i])

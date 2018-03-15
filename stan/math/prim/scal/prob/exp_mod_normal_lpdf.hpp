@@ -17,7 +17,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -67,7 +67,7 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   size_t N = max_size(y, mu, sigma, lambda);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, sigma_vec, lambda_vec, ops_partials, N)
 #endif

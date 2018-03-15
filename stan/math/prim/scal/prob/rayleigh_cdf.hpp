@@ -21,7 +21,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -56,14 +56,15 @@ typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y& y,
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
-    default(none) shared(inv_sigma, sigma_vec)
+#pragma omp parallel for if (length(sigma)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(inv_sigma, sigma_vec)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : cdf) default(none) shared(y_vec, inv_sigma, N)
 #endif
   for (size_t n = 0; n < N; n++) {
@@ -76,8 +77,8 @@ typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y& y,
       cdf *= (1.0 - exp_val);
   }
 
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-    default(none) shared(y_vec, inv_sigma, ops_partials, cdf, N)
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+    shared(y_vec, inv_sigma, ops_partials, cdf, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_sqr = square(y_dbl);

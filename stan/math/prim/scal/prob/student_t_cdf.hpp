@@ -26,7 +26,7 @@
 #include <limits>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -82,8 +82,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
 
   if (!is_constant_struct<T_dof>::value) {
     digammaHalf = digamma(0.5);
-    #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-      default(none) shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec, nu)
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+    shared(nu_vec, digammaNu_vec, digammaNuPlusHalf_vec, nu)
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);
@@ -92,7 +92,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(y_vec, sigma_vec, mu_vec, ops_partials, digammaNu_vec, digammaHalf, \
            digammaNuPlusHalf_vec, nu_vec, N)
@@ -182,27 +182,27 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, P, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_dof>::value) {
-    #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, nu)
+#pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, P, nu)
     for (size_t n = 0; n < length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, mu)
+#pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, P, mu)
     for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
     size_t local_size = stan::length(sigma);
-    #pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, local_size)
+#pragma omp parallel for if (local_size > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, P, local_size)
     for (size_t n = 0; n < local_size; ++n)
       ops_partials.edge4_.partials_[n] *= P;
   }

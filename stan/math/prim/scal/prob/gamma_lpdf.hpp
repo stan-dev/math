@@ -24,7 +24,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -96,8 +96,8 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
                 T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(y_vec, log_y, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(y_vec, log_y, y)
     for (size_t n = 0; n < length(y); n++) {
       if (value_of(y_vec[n]) > 0)
         log_y[n] = log(value_of(y_vec[n]));
@@ -109,8 +109,9 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
-  #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
-    default(none) shared(alpha_vec, lgamma_alpha, digamma_alpha, alpha)
+#pragma omp parallel for if (length(alpha)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(alpha_vec, lgamma_alpha, digamma_alpha, alpha)
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value)
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
@@ -122,14 +123,15 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
                 T_partials_return, T_inv_scale>
       log_beta(length(beta));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
-    #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
-      default(none) shared(beta_vec, log_beta, beta)
+#pragma omp parallel for if (length(beta)                               \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(beta_vec, log_beta, beta)
     for (size_t n = 0; n < length(beta); n++)
       log_beta[n] = log(value_of(beta_vec[n]));
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, alpha_vec, beta_vec, ops_partials, log_y, \
            lgamma_alpha, digamma_alpha, log_beta, N)

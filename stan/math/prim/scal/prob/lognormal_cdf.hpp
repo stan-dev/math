@@ -19,7 +19,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -62,7 +62,7 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(* : cdf) default(none) \
     shared(y_vec, mu_vec, sigma_vec, ops_partials, N)
 #endif
@@ -88,20 +88,21 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, cdf, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, cdf, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_loc>::value) {
-    #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, cdf, mu)
+#pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) default( \
+    none) shared(ops_partials, cdf, mu)
     for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_scale>::value) {
-    #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, cdf, sigma)
+#pragma omp parallel for if (length(sigma)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, cdf, sigma)
     for (size_t n = 0; n < length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

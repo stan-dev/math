@@ -19,7 +19,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -67,10 +67,10 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
 
   if (length(theta) == 1) {
     size_t sum = 0;
-  #ifndef STAN_MATH_FWD_CORE_HPP
-    #pragma omp parallel for if(N > 3 * omp_get_max_threads()) \
+#ifndef STAN_MATH_FWD_CORE_HPP
+#pragma omp parallel for if(N > 3 * omp_get_max_threads()) \
       reduction(+ : sum) default(none) shared(n_vec, N)
-  #endif
+#endif
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);
     }
@@ -97,11 +97,11 @@ typename return_type<T_prob>::type bernoulli_lpmf(const T_n& n,
       }
     }
   } else {
-    #ifndef STAN_MATH_FWD_CORE_HPP
-      #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#ifndef STAN_MATH_FWD_CORE_HPP
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
         reduction(+ : logp) \
         default(none) shared(n_vec, theta_vec, ops_partials, N)
-    #endif
+#endif
     for (size_t n = 0; n < N; n++) {
       const int n_int = value_of(n_vec[n]);
       const T_partials_return theta_dbl = value_of(theta_vec[n]);

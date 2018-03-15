@@ -26,7 +26,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -86,7 +86,7 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(* : P) default(none) \
     shared(n_vec, N_vec, theta_vec, ops_partials, size)
 #endif
@@ -113,8 +113,9 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_struct<T_prob>::value) {
-    #pragma omp parallel for if (length(theta) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P)
+#pragma omp parallel for if (length(theta)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P)
     for (size_t i = 0; i < length(theta); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

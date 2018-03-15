@@ -16,7 +16,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -105,7 +105,7 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_bar_vec, s_squared_vec, n_obs_vec, mu_vec, sigma_vec, \
            ops_partials, N)

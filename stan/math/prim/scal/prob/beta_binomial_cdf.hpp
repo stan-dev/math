@@ -22,7 +22,7 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -84,7 +84,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_cdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(* : P) \
     default(none) shared(n_vec, N_vec, alpha_vec, beta_vec, ops_partials, size)
 #endif
@@ -144,14 +144,16 @@ typename return_type<T_size1, T_size2>::type beta_binomial_cdf(
   }
 
   if (!is_constant_struct<T_size1>::value) {
-    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, alpha)
+#pragma omp parallel for if (length(alpha)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, alpha)
     for (size_t i = 0; i < length(alpha); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
   if (!is_constant_struct<T_size2>::value) {
-    #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
-      default(none) shared(ops_partials, P, beta)
+#pragma omp parallel for if (length(beta)                               \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, beta)
     for (size_t i = 0; i < length(beta); ++i)
       ops_partials.edge2_.partials_[i] *= P;
   }

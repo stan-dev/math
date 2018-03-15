@@ -26,7 +26,7 @@
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -78,10 +78,10 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   operands_and_partials<T_prob> ops_partials(alpha);
 
   if (include_summand<propto>::value) {
-    #ifndef STAN_MATH_FWD_CORE_HPP
-      #pragma omp parallel for default(none) if (size > 0) \
+#ifndef STAN_MATH_FWD_CORE_HPP
+#pragma omp parallel for default(none) if (size > 0) \
         shared(N_vec, n_vec, size) reduction(+ : logp)
-    #endif
+#endif
     for (size_t i = 0; i < size; ++i)
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
   }
@@ -91,7 +91,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
       length(alpha));
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for default(none) if (length(alpha) > 0) \
+#pragma omp parallel for default(none) if (length(alpha) > 0) \
     shared(log_inv_logit_alpha, alpha_vec, alpha, log_inv_logit_neg_alpha)
 #endif
   for (size_t i = 0; i < length(alpha); ++i) {
@@ -100,7 +100,7 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
+#pragma omp parallel for default(none) if (size > 0) reduction(+ : logp) \
     shared(n_vec, log_inv_logit_alpha, N_vec, log_inv_logit_neg_alpha, size)
 #endif
   for (size_t i = 0; i < size; ++i)
@@ -122,8 +122,8 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
   } else {
     if (!is_constant_struct<T_prob>::value) {
 #ifndef STAN_MATH_FWD_CORE_HPP
-      #pragma omp parallel for default(none) if (size > 0) \
-        shared(ops_partials, alpha_vec, size, n_vec, N_vec)
+#pragma omp parallel for default(none) if (size > 0) \
+    shared(ops_partials, alpha_vec, size, n_vec, N_vec)
 #endif
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]

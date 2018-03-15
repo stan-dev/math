@@ -21,7 +21,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -62,8 +62,9 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
-  #pragma omp parallel for if (length(sigma) > 3 * omp_get_max_threads()) \
-    default(none) shared(inv_sigma, sigma_vec, log_sigma, sigma)
+#pragma omp parallel for if (length(sigma)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(inv_sigma, sigma_vec, log_sigma, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value)
@@ -71,7 +72,7 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, inv_sigma, ops_partials, log_sigma, N)
 #endif

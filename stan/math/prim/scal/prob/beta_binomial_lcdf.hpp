@@ -22,7 +22,7 @@
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {

@@ -24,7 +24,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -86,8 +86,8 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_dof>
       half_nu(length(nu));
-  #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
-    default(none) shared(half_nu, nu_vec, nu)
+#pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) default( \
+    none) shared(half_nu, nu_vec, nu)
   for (size_t i = 0; i < length(nu); i++)
     if (include_summand<propto, T_dof, T_y, T_scale>::value)
       half_nu[i] = 0.5 * value_of(nu_vec[i]);
@@ -95,8 +95,8 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-  #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-    default(none) shared(log_y, y_vec, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_dof, T_y>::value)
       log_y[i] = log(value_of(y_vec[i]));
@@ -104,8 +104,8 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_y>
       inv_y(length(y));
-  #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-    default(none) shared(inv_y, y_vec, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(inv_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_dof, T_y, T_scale>::value)
       inv_y[i] = 1.0 / value_of(y_vec[i]);
@@ -113,8 +113,8 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
                 T_partials_return, T_scale>
       log_s(length(s));
-  #pragma omp parallel for if (length(s) > 3 * omp_get_max_threads()) \
-    default(none) shared(log_s, s_vec, s)
+#pragma omp parallel for if (length(s) > 3 * omp_get_max_threads()) default( \
+    none) shared(log_s, s_vec, s)
   for (size_t i = 0; i < length(s); i++)
     if (include_summand<propto, T_dof, T_scale>::value)
       log_s[i] = log(value_of(s_vec[i]));
@@ -125,8 +125,8 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
       lgamma_half_nu(length(nu));
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
-  #pragma omp parallel for if (length(nu) > 3 * omp_get_max_threads()) \
-    default(none) \
+#pragma omp parallel for if (length(nu)                                 \
+                             > 3 * omp_get_max_threads()) default(none) \
     shared(half_nu, lgamma_half_nu, digamma_half_nu_over_two, nu, log_half_nu)
   for (size_t i = 0; i < length(nu); i++) {
     if (include_summand<propto, T_dof>::value)
@@ -139,7 +139,7 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
 
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(s_vec, nu_vec, half_nu, lgamma_half_nu, digamma_half_nu_over_two, \
            log_s, inv_y, log_y, ops_partials, log_half_nu, N)

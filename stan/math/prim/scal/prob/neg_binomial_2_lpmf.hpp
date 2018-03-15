@@ -27,7 +27,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -70,15 +70,15 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
   size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials_return, T_location> mu__(length(mu));
-  #pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) \
-    default(none) shared(mu__, mu_vec, mu)
+#pragma omp parallel for if (length(mu) > 3 * omp_get_max_threads()) default( \
+    none) shared(mu__, mu_vec, mu)
   for (size_t i = 0; i < length(mu); ++i)
     mu__[i] = value_of(mu_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
   VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-  #pragma omp parallel for if (length(phi) > 3 * omp_get_max_threads()) \
-    default(none) shared(phi__, phi_vec, log_phi, phi)
+#pragma omp parallel for if (length(phi) > 3 * omp_get_max_threads()) default( \
+    none) shared(phi__, phi_vec, log_phi, phi)
   for (size_t i = 0; i < length(phi); ++i) {
     phi__[i] = value_of(phi_vec[i]);
     log_phi[i] = log(phi__[i]);
@@ -86,19 +86,19 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
 
   VectorBuilder<true, T_partials_return, T_location, T_precision>
       log_mu_plus_phi(len_ep);
-  #pragma omp parallel for if (len_ep > 3 * omp_get_max_threads()) \
-    default(none) shared(log_mu_plus_phi, mu__, phi__, len_ep)
+#pragma omp parallel for if (len_ep > 3 * omp_get_max_threads()) default(none) \
+    shared(log_mu_plus_phi, mu__, phi__, len_ep)
   for (size_t i = 0; i < len_ep; ++i)
     log_mu_plus_phi[i] = log(mu__[i] + phi__[i]);
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-  #pragma omp parallel for if (len_np > 3 * omp_get_max_threads()) \
-    default(none) shared(n_plus_phi, n_vec, phi__, len_np)
+#pragma omp parallel for if (len_np > 3 * omp_get_max_threads()) default(none) \
+    shared(n_plus_phi, n_vec, phi__, len_np)
   for (size_t i = 0; i < len_np; ++i)
     n_plus_phi[i] = n_vec[i] + phi__[i];
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, phi__, n_plus_phi, log_mu_plus_phi, mu__, ops_partials, \
            log_phi, size)
@@ -117,7 +117,7 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
 
     // if phi is large we probably overflow, defer to Poisson:
     if (phi__[i] > 1e5) {
-      logp = poisson_lpmf(n_vec[i], mu__[i]); // should this be += ?
+      logp = poisson_lpmf(n_vec[i], mu__[i]);  // should this be += ?
     }
 
     if (!is_constant_struct<T_location>::value)

@@ -21,7 +21,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -67,8 +67,8 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
                 T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(log_y, y_vec, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(log_y, y_vec, y)
     for (size_t n = 0; n < length(y); n++)
       log_y[n] = log(value_of(y_vec[n]));
   }
@@ -77,8 +77,8 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
                 T_partials_return, T_y>
       inv_y(length(y));
   if (contains_nonconstant_struct<T_y, T_shape>::value) {
-    #pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) \
-      default(none) shared(inv_y, y_vec, y)
+#pragma omp parallel for if (length(y) > 3 * omp_get_max_threads()) default( \
+    none) shared(inv_y, y_vec, y)
     for (size_t n = 0; n < length(y); n++)
       inv_y[n] = 1 / value_of(y_vec[n]);
   }
@@ -87,8 +87,9 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
                 T_partials_return, T_scale>
       log_y_min(length(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
-    #pragma omp parallel for if (length(y_min) > 3 * omp_get_max_threads()) \
-      default(none) shared(log_y_min, y_min_vec, y_min)
+#pragma omp parallel for if (length(y_min)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(log_y_min, y_min_vec, y_min)
     for (size_t n = 0; n < length(y_min); n++)
       log_y_min[n] = log(value_of(y_min_vec[n]));
   }
@@ -97,14 +98,15 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lpdf(
                 T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
-    #pragma omp parallel for if (length(alpha) > 3 * omp_get_max_threads()) \
-      default(none) shared(log_alpha, alpha_vec, alpha)
+#pragma omp parallel for if (length(alpha)                              \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(log_alpha, alpha_vec, alpha)
     for (size_t n = 0; n < length(alpha); n++)
       log_alpha[n] = log(value_of(alpha_vec[n]));
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(alpha_vec, log_alpha, log_y_min, log_y, inv_y, ops_partials, \
            y_min_vec, N)

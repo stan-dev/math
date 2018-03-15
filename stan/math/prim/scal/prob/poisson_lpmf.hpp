@@ -21,7 +21,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <limits>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -64,7 +64,7 @@ typename return_type<T_rate>::type poisson_lpmf(const T_n& n,
   operands_and_partials<T_rate> ops_partials(lambda);
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (size > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(n_vec, lambda_vec, ops_partials, size)
 #endif

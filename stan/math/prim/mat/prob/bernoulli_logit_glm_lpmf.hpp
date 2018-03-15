@@ -16,7 +16,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -79,8 +79,8 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   Matrix<T_partials_return, Dynamic, 1> signs(N, 1);
   {
     scalar_seq_view<T_n> n_vec(n);
-    #pragma omp parallel for if (N > 3 * omp_get_max_threads())\
-      default(none) shared(signs, n_vec)
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+    shared(signs, n_vec)
     for (size_t n = 0; n < N; ++n) {
       signs[n] = 2 * n_vec[n] - 1;
     }
@@ -88,8 +88,8 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
-    #pragma omp parallel for if (M > 3 * omp_get_max_threads()) \
-      default(none) shared(beta_dbl, beta_vec)
+#pragma omp parallel for if (M > 3 * omp_get_max_threads()) default(none) \
+    shared(beta_dbl, beta_vec)
     for (size_t m = 0; m < M; ++m) {
       beta_dbl[m] = value_of(beta_vec[m]);
     }
@@ -105,7 +105,7 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
 
   static const double cutoff = 20.0;
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) shared(ntheta, exp_m_ntheta)
 #endif
   for (size_t n = 0; n < N; ++n) {
@@ -124,8 +124,8 @@ typename return_type<T_x, T_beta, T_alpha>::type bernoulli_logit_glm_lpmf(
   if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
         && is_constant_struct<T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative(N, 1);
-    #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
-      default(none) shared(ntheta, theta_derivative, signs, exp_m_ntheta)
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) default(none) \
+    shared(ntheta, theta_derivative, signs, exp_m_ntheta)
     for (size_t n = 0; n < N; ++n) {
       if (ntheta[n] > cutoff)
         theta_derivative[n] = -exp_m_ntheta[n];

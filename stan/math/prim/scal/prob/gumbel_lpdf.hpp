@@ -20,7 +20,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #endif
 
 namespace stan {
@@ -77,8 +77,9 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_beta(length(beta));
-  #pragma omp parallel for if (length(beta) > 3 * omp_get_max_threads()) \
-    default(none) shared(beta_vec, log_beta, inv_beta, beta)
+#pragma omp parallel for if (length(beta)                               \
+                             > 3 * omp_get_max_threads()) default(none) \
+    shared(beta_vec, log_beta, inv_beta, beta)
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
     if (include_summand<propto, T_scale>::value)
@@ -86,7 +87,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   }
 
 #ifndef STAN_MATH_FWD_CORE_HPP
-  #pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
+#pragma omp parallel for if (N > 3 * omp_get_max_threads()) \
     reduction(+ : logp) default(none) \
     shared(y_vec, mu_vec, beta_vec, ops_partials, inv_beta, log_beta, N)
 #endif
