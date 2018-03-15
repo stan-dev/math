@@ -29,10 +29,16 @@ ifeq (g++,$(CC_TYPE))
   CXXFLAGS += -Wno-unused-but-set-variable
   LDLIBS += -static-libgcc
   LDLIBS += -static-libstdc++
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 ifeq (mingw32-g++,$(CC_TYPE))
   LDLIBS += -static-libgcc
 #  LDLIBS += -static-libstdc++
+  ifdef STAN_OPENCL
+    LDFLAGS += -lOpenCL
+  endif
 endif
 
 ifdef STAN_OPENCL
