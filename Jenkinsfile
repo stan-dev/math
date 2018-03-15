@@ -124,7 +124,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh 'make test-math-dependencies' } ,
                         Documentation: { sh 'make doxygen' },
-                        Headers: { sh "make -j${env.PARALLEL} test-headers" }
+                        Headers: { sh "make -j${env.PARALLEL} test-headers STAN_OPENCL=true" }
                     )
                 }
             }
@@ -139,10 +139,11 @@ pipeline {
         stage('Tests') {
             parallel {
                 stage('Unit') {
-                    agent any
+                    agent { label "gelman-group-mac" }
                     steps {
                         unstash 'MathSetup'
                         sh setupCC()
+                        sh "echo STAN_OPENCL=true>> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
