@@ -16,11 +16,8 @@ TEST(MathGpu, getInfo) {
 }
 
 TEST(MathGpu, kernel_construction) {
-  EXPECT_EQ(0, stan::math::opencl_context.kernels.size());
   cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");
-  EXPECT_EQ(2, stan::math::opencl_context.kernels.size());
   cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
-  EXPECT_EQ(2, stan::math::opencl_context.kernels.size());
 }
 
 TEST(opencl_context, construction) {

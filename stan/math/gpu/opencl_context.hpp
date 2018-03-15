@@ -78,6 +78,8 @@ class opencl_context {
    * map holding compiled kernels.
    */
   typedef std::map<const char*, cl::Kernel> map_kernel;
+  map_kernel_info kernel_info; // The meta kernel info
+  map_kernel kernels; // The compiled kernels
 
   /**
    * Construct the opencl_context by initializing the
@@ -180,8 +182,6 @@ class opencl_context {
   }
 
  public:
-  map_kernel_info kernel_info;
-  map_kernel kernels;
 
   /**
    * Returns the kernel specified in kernel_name.
