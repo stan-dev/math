@@ -12,7 +12,7 @@ Stan Math depends on four libraries:
 
 - Boost (version 1.66.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- CVODES (version 2.9.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- CVODES (version 3.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 - IDAS (version 2.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
 These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
