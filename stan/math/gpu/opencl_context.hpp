@@ -217,8 +217,14 @@ class opencl_context {
     s << "inside opencl_context" << std::endl;
     s << " * platform_name_: " << platform_name_ << std::endl;
   }
-
-  static opencl_context instance;
+  /**
+   * Initializes the OpenCL context. This is made with a static local singleton
+   * design so that only one context is available.
+   */
+  static opencl_context& getInstance() {
+    static opencl_context instance;
+    return instance;
+  }
 
   /**
    * Returns the description of the OpenCL platform and device that is used.
@@ -333,7 +339,8 @@ class opencl_context {
   inline std::vector<cl::Platform> platform() { return {platform_}; }
 };
 
-static opencl_context opencl_context;
+static opencl_context opencl_context
+    = stan::math::opencl_context::getInstance();
 
 }  // namespace math
 }  // namespace stan
