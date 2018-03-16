@@ -3,25 +3,25 @@
 #include <gtest/gtest.h>
 
 TEST(MathGpu, getInfo) {
-  cl::Context cl = stan::math::opencl_context.context();
-  EXPECT_NE("", stan::math::opencl_context.description());
-  EXPECT_NE("", stan::math::opencl_context.capabilities());
-  //auto foo = stan::math::opencl_context.capabilities();
+  cl::Context cl = stan::math::opencl_context::getInstance().context();
+  EXPECT_NE("", stan::math::opencl_context::getInstance().description());
+  EXPECT_NE("", stan::math::opencl_context::getInstance().capabilities());
+  //auto foo = stan::math::opencl_context::getInstance().capabilities();
   //std::cout << foo << std::endl;
-  EXPECT_EQ(1024, stan::math::opencl_context.max_workgroup_size());
-  cl::Context cv = stan::math::opencl_context.context();
-  cl::CommandQueue cq = stan::math::opencl_context.queue();
-  std::vector<cl::Device> dv = stan::math::opencl_context.device();
-  std::vector<cl::Platform> pl = stan::math::opencl_context.platform();
+  EXPECT_EQ(1024, stan::math::opencl_context::getInstance().max_workgroup_size());
+  cl::Context cv = stan::math::opencl_context::getInstance().context();
+  cl::CommandQueue cq = stan::math::opencl_context::getInstance().queue();
+  std::vector<cl::Device> dv = stan::math::opencl_context::getInstance().device();
+  std::vector<cl::Platform> pl = stan::math::opencl_context::getInstance().platform();
 }
 
 TEST(MathGpu, kernel_construction) {
-  cl::Kernel dummy = stan::math::opencl_context.get_kernel("dummy");
-  cl::Kernel dummy2 = stan::math::opencl_context.get_kernel("dummy2");
+  cl::Kernel dummy = stan::math::opencl_context::getInstance().get_kernel("dummy");
+  cl::Kernel dummy2 = stan::math::opencl_context::getInstance().get_kernel("dummy2");
 }
 
 TEST(opencl_context, construction) {
-  stan::math::opencl_context.debug(std::cout);
+  stan::math::opencl_context::getInstance().debug(std::cout);
 }
 
 TEST(opencl_context, platform) {
@@ -67,8 +67,8 @@ TEST(opencl_context, devices) {
 
 TEST(opencl_context, compile_kernel_rawcode) {
   // build dummy kernel
-  cl::Context cl = stan::math::opencl_context.context();
-  std::vector<cl::Device> dv = stan::math::opencl_context.device();
+  cl::Context cl = stan::math::opencl_context::getInstance().context();
+  std::vector<cl::Device> dv = stan::math::opencl_context::getInstance().device();
   const char* dummy_kernel_src
       = "__kernel void dummy(__global const int* foo) { };";
   cl::Program::Sources source(

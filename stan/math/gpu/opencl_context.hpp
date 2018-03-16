@@ -339,9 +339,6 @@ class opencl_context {
   inline std::vector<cl::Platform> platform() { return {platform_}; }
 };
 
-static opencl_context opencl_context
-    = stan::math::opencl_context::getInstance();
-
 }  // namespace math
 }  // namespace stan
 
