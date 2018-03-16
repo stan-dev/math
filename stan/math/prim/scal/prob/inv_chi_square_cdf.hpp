@@ -91,8 +91,10 @@ typename return_type<T_y, T_dof>::type inv_chi_square_cdf(const T_y& y,
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(nu_vec, gamma_vec, digamma_vec, nu)
+#pragma omp parallel for if (length(nu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(nu_vec, gamma_vec, digamma_vec, nu)
     for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
@@ -134,14 +136,18 @@ typename return_type<T_y, T_dof>::type inv_chi_square_cdf(const T_y& y,
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, nu)
+#pragma omp parallel for if (length(nu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, nu)
     for (size_t n = 0; n < length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }

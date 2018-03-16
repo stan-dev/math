@@ -87,8 +87,8 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
   }
 
   if (!is_constant_struct<T_rate>::value) {
-#pragma omp parallel for default(none) if (stan::length(lambda)         \
-                                           > OMP_TRIGGER * omp_get_max_threads()) \
+#pragma omp parallel for default(                                         \
+    none) if (stan::length(lambda) > OMP_TRIGGER * omp_get_max_threads()) \
     shared(ops_partials, P, lambda)
     for (size_t i = 0; i < stan::length(lambda); ++i)
       ops_partials.edge1_.partials_[i] *= P;

@@ -89,8 +89,10 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
 
   if (!is_constant_struct<T_prob>::value) {
     size_t local_size = stan::length(theta);
-#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, local_size)
+#pragma omp parallel for if (local_size                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, local_size)
     for (size_t i = 0; i < local_size; ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

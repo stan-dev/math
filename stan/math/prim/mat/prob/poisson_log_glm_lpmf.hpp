@@ -81,8 +81,8 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
   Matrix<T_partials_return, Dynamic, 1> n_vec(N, 1);
   {
     scalar_seq_view<T_n> n_seq_view(n);
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(n_vec, n_seq_view)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(n_vec, n_seq_view)
     for (size_t n = 0; n < N; ++n) {
       n_vec[n] = n_seq_view[n];
     }
@@ -91,8 +91,8 @@ typename return_type<T_x, T_beta, T_alpha>::type poisson_log_glm_lpmf(
   Matrix<T_partials_return, Dynamic, 1> beta_dbl(M, 1);
   {
     scalar_seq_view<T_beta> beta_vec(beta);
-#pragma omp parallel for if (M > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(beta_dbl, beta_vec)
+#pragma omp parallel for if (M > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(beta_dbl, beta_vec)
     for (size_t m = 0; m < M; ++m) {
       beta_dbl[m] = value_of(beta_vec[m]);
     }

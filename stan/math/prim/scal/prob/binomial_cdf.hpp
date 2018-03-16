@@ -116,8 +116,9 @@ typename return_type<T_prob>::type binomial_cdf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_struct<T_prob>::value) {
-#pragma omp parallel for if (length(theta)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(theta)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P)
     for (size_t i = 0; i < length(theta); ++i)
       ops_partials.edge1_.partials_[i] *= P;

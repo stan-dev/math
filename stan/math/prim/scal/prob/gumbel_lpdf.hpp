@@ -80,8 +80,9 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_beta(length(beta));
-#pragma omp parallel for if (length(beta)                               \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(beta)                                 \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(beta_vec, log_beta, inv_beta, beta)
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);

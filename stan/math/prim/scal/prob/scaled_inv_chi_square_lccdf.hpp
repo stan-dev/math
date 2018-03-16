@@ -85,8 +85,10 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lccdf(
       digamma_vec(stan::length(nu));
 
   if (!is_constant_struct<T_dof>::value) {
-#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(nu_vec, gamma_vec, digamma_vec, nu)
+#pragma omp parallel for if (length(nu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(nu_vec, gamma_vec, digamma_vec, nu)
     for (size_t i = 0; i < length(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);

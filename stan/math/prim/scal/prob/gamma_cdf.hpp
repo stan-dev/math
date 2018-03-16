@@ -96,8 +96,9 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_cdf(
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(alpha_vec, gamma_vec, digamma_vec, alpha)
     for (size_t i = 0; i < length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -141,21 +142,25 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_shape>::value) {
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, alpha)
     for (size_t n = 0; n < length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_inv_scale>::value) {
-#pragma omp parallel for if (length(beta)                               \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(beta)                                 \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, beta)
     for (size_t n = 0; n < length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= P;

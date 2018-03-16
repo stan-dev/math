@@ -73,15 +73,19 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
   size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials_return, T_location> mu__(length(mu));
-#pragma omp parallel for if (length(mu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(mu__, mu_vec, mu)
+#pragma omp parallel for if (length(mu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(mu__, mu_vec, mu)
   for (size_t i = 0; i < length(mu); ++i)
     mu__[i] = value_of(mu_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
   VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-#pragma omp parallel for if (length(phi) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(phi__, phi_vec, log_phi, phi)
+#pragma omp parallel for if (length(phi)                                  \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(phi__, phi_vec, log_phi, phi)
   for (size_t i = 0; i < length(phi); ++i) {
     phi__[i] = value_of(phi_vec[i]);
     log_phi[i] = log(phi__[i]);
@@ -89,13 +93,17 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_lpmf(
 
   VectorBuilder<true, T_partials_return, T_location, T_precision>
       log_mu_plus_phi(len_ep);
-#pragma omp parallel for if (len_ep > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (len_ep                                       \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(log_mu_plus_phi, mu__, phi__, len_ep)
   for (size_t i = 0; i < len_ep; ++i)
     log_mu_plus_phi[i] = log(mu__[i] + phi__[i]);
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-#pragma omp parallel for if (len_np > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (len_np                                       \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(n_plus_phi, n_vec, phi__, len_np)
   for (size_t i = 0; i < len_np; ++i)
     n_plus_phi[i] = n_vec[i] + phi__[i];

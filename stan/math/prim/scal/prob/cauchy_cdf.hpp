@@ -114,20 +114,25 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_loc>::value) {
-#pragma omp parallel for if (length(mu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P)
+#pragma omp parallel for if (length(mu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P)
     for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale>::value) {
-#pragma omp parallel for if (length(sigma)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(sigma)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P)
     for (size_t n = 0; n < length(sigma); ++n)
       ops_partials.edge3_.partials_[n] *= P;

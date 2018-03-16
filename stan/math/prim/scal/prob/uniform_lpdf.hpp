@@ -88,8 +88,10 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
                 T_partials_return, T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
   size_t local_size = max_size(alpha, beta);
-#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(inv_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
+#pragma omp parallel for if (local_size                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(inv_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
       inv_beta_minus_alpha[i]
@@ -99,8 +101,10 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   local_size = max_size(alpha, beta);
-#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(log_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
+#pragma omp parallel for if (local_size                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(log_beta_minus_alpha, beta_vec, alpha_vec, alpha, beta)
   for (size_t i = 0; i < max_size(alpha, beta); i++)
     if (include_summand<propto, T_low, T_high>::value)
       log_beta_minus_alpha[i]

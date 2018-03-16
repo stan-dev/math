@@ -69,8 +69,9 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_bessel0(length(kappa));
-#pragma omp parallel for if (length(kappa)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(kappa)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(kappa_dbl, kappa_vec, log_bessel0, kappa)
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);

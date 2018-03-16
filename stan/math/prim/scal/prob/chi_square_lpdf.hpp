@@ -91,8 +91,10 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
       inv_y(length(y));
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(y_vec, inv_y, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(y_vec, inv_y, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y>::value)
       inv_y[i] = 1.0 / value_of(y_vec[i]);
@@ -102,8 +104,10 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
 
-#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(nu_vec, lgamma_half_nu, digamma_half_nu_over_two, nu)
+#pragma omp parallel for if (length(nu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(nu_vec, lgamma_half_nu, digamma_half_nu_over_two, nu)
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value)

@@ -99,8 +99,10 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
                 T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(y_vec, log_y, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(y_vec, log_y, y)
     for (size_t n = 0; n < length(y); n++) {
       if (value_of(y_vec[n]) > 0)
         log_y[n] = log(value_of(y_vec[n]));
@@ -112,8 +114,9 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(alpha_vec, lgamma_alpha, digamma_alpha, alpha)
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value)
@@ -126,8 +129,9 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
                 T_partials_return, T_inv_scale>
       log_beta(length(beta));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
-#pragma omp parallel for if (length(beta)                               \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(beta)                                 \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(beta_vec, log_beta, beta)
     for (size_t n = 0; n < length(beta); n++)
       log_beta[n] = log(value_of(beta_vec[n]));

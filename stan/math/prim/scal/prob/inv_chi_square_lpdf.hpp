@@ -83,16 +83,20 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
                 T_y>
       log_y(length(y));
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(log_y, y_vec, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(log_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y, T_dof>::value)
       log_y[i] = log(value_of(y_vec[i]));
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
       inv_y(length(y));
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(inv_y, y_vec, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(inv_y, y_vec, y)
   for (size_t i = 0; i < length(y); i++)
     if (include_summand<propto, T_y>::value)
       inv_y[i] = 1.0 / value_of(y_vec[i]);
@@ -101,8 +105,10 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
       lgamma_half_nu(length(nu));
   VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
-#pragma omp parallel for if (length(nu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(nu_vec, lgamma_half_nu, digamma_half_nu_over_two, nu)
+#pragma omp parallel for if (length(nu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(nu_vec, lgamma_half_nu, digamma_half_nu_over_two, nu)
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value)

@@ -70,8 +70,9 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
       digamma_sum_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(n_vec, alpha_vec, digamma_alpha_vec, digamma_sum_vec)
     for (size_t i = 0; i < length(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
@@ -112,16 +113,18 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_cdf(
   }
 
   if (!is_constant_struct<T_shape>::value) {
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, alpha)
     for (size_t i = 0; i < length(alpha); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 
   if (!is_constant_struct<T_inv_scale>::value) {
-#pragma omp parallel for if (length(beta)                               \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(beta)                                 \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, beta)
     for (size_t i = 0; i < length(beta); ++i)
       ops_partials.edge2_.partials_[i] *= P;

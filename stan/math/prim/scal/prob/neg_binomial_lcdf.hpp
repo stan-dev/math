@@ -82,7 +82,8 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lcdf(
 
   if (!is_constant_struct<T_shape>::value) {
 #pragma omp parallel for if (length(alpha)                                   \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none)      \
+                             > OMP_TRIGGER                                   \
+                                   * omp_get_max_threads()) default(none)    \
     shared(n_vec, alpha_vec, digammaN_vec, digammaAlpha_vec, digammaSum_vec, \
            alpha)
     for (size_t i = 0; i < stan::length(alpha); i++) {

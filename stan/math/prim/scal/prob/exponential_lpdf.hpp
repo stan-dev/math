@@ -80,8 +80,8 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
                 T_inv_scale>
       log_beta(length(beta));
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(beta_vec, log_beta, beta)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(beta_vec, log_beta, beta)
   for (size_t i = 0; i < length(beta); i++)
     if (include_summand<propto, T_inv_scale>::value)
       log_beta[i] = log(value_of(beta_vec[i]));

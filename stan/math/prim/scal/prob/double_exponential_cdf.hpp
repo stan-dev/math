@@ -86,8 +86,8 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
       cdf *= 1.0 - 0.5 / exp_scaled_diff;
   }
 
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(y_vec, mu_vec, sigma_vec, ops_partials, cdf, N)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(y_vec, mu_vec, sigma_vec, ops_partials, cdf, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

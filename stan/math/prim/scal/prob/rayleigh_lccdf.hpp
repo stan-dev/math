@@ -57,8 +57,9 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-#pragma omp parallel for if (length(sigma)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(sigma)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(inv_sigma, sigma_vec, sigma)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);

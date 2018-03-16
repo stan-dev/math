@@ -95,20 +95,25 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (length(y) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, cdf, y)
+#pragma omp parallel for if (length(y)                                    \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, cdf, y)
     for (size_t n = 0; n < length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_loc>::value) {
-#pragma omp parallel for if (length(mu) > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, cdf, mu)
+#pragma omp parallel for if (length(mu)                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, cdf, mu)
     for (size_t n = 0; n < length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
   if (!is_constant_struct<T_scale>::value) {
-#pragma omp parallel for if (length(beta)                               \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(beta)                                 \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, cdf, beta)
     for (size_t n = 0; n < length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;

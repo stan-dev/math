@@ -86,8 +86,9 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_struct<T_shape>::value) {
-#pragma omp parallel for if (length(alpha)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(alpha)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(alpha_vec, gamma_vec, digamma_vec, alpha)
     for (size_t i = 0; i < length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);

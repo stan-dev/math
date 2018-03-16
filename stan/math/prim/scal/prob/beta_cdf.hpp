@@ -103,9 +103,9 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
       digamma_sum_vec(max_size(alpha, beta));
 
   if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(alpha_vec, beta_vec, digamma_alpha_vec, digamma_beta_vec,      \
-           digamma_sum_vec, N)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(alpha_vec, beta_vec, digamma_alpha_vec, digamma_beta_vec,     \
+                 digamma_sum_vec, N)
     for (size_t n = 0; n < N; n++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
       const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -152,23 +152,28 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
   }
 
   if (!is_constant_struct<T_y>::value) {
-#pragma omp parallel for if (stan::length(y)                            \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (stan::length(y)                              \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(ops_partials, P, y)
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale_succ>::value) {
     size_t local_size = stan::length(alpha);
-#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, local_size)
+#pragma omp parallel for if (local_size                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, local_size)
     for (size_t n = 0; n < local_size; ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
   if (!is_constant_struct<T_scale_fail>::value) {
     size_t local_size = stan::length(beta);
-#pragma omp parallel for if (local_size > OMP_TRIGGER * omp_get_max_threads()) default( \
-    none) shared(ops_partials, P, local_size)
+#pragma omp parallel for if (local_size                                   \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
+    shared(ops_partials, P, local_size)
     for (size_t n = 0; n < local_size; ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

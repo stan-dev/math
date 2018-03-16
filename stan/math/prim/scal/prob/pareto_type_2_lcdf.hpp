@@ -72,9 +72,9 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
                 T_loc, T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(y_vec, mu_vec, lambda_vec, alpha_vec, cdf_log,                 \
-           inv_p1_pow_alpha_minus_one, log_1p_y_over_lambda, N)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(y_vec, mu_vec, lambda_vec, alpha_vec, cdf_log,                \
+                 inv_p1_pow_alpha_minus_one, log_1p_y_over_lambda, N)
   for (size_t i = 0; i < N; i++) {
     const T_partials_return temp = 1.0
                                    + (value_of(y_vec[i]) - value_of(mu_vec[i]))

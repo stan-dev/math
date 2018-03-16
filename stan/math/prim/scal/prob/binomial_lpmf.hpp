@@ -92,8 +92,9 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
-#pragma omp parallel for if (length(theta)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(theta)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(log1m_theta, theta_vec, theta)
   for (size_t i = 0; i < length(theta); ++i)
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
@@ -121,7 +122,8 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
     }
   } else {
     if (!is_constant_struct<T_prob>::value) {
-#pragma omp parallel for if (size > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (size > OMP_TRIGGER                                \
+                                        * omp_get_max_threads()) default(none) \
     shared(ops_partials, n_vec, theta_vec, N_vec, size)
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]

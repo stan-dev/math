@@ -59,8 +59,9 @@ typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y& y,
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-#pragma omp parallel for if (length(sigma)                              \
-                             > OMP_TRIGGER * omp_get_max_threads()) default(none) \
+#pragma omp parallel for if (length(sigma)                                \
+                             > OMP_TRIGGER                                \
+                                   * omp_get_max_threads()) default(none) \
     shared(inv_sigma, sigma_vec)
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -80,8 +81,8 @@ typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y& y,
       cdf *= (1.0 - exp_val);
   }
 
-#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default(none) \
-    shared(y_vec, inv_sigma, ops_partials, cdf, N)
+#pragma omp parallel for if (N > OMP_TRIGGER * omp_get_max_threads()) default( \
+    none) shared(y_vec, inv_sigma, ops_partials, cdf, N)
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return y_sqr = square(y_dbl);
