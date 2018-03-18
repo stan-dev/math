@@ -151,7 +151,8 @@ pipeline {
                     agent any
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local" sh "echo STAN_MPI=true >> make/local"
+                        sh "echo CC=${MPICXX} -cxx=${CXX} >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
