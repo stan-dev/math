@@ -97,7 +97,7 @@ class opencl_context {
    *  map.
    * @throw std::system_error if an OpenCL error occurs.
    */
-  opencl_context() {
+  void initialize_() {
     try {
       // platform
       cl::Platform::get(&platforms_);
@@ -183,6 +183,7 @@ class opencl_context {
 
  public:
 
+  opencl_context(){initialize_();}
   /**
    * Returns the kernel specified in kernel_name.
    * If the kernel has not yet been compiled, the kernel group is compiled
@@ -217,14 +218,7 @@ class opencl_context {
     s << "inside opencl_context" << std::endl;
     s << " * platform_name_: " << platform_name_ << std::endl;
   }
-  /**
-   * Initializes the OpenCL context. This is made with a static local singleton
-   * design so that only one context is available.
-   */
-  static opencl_context& getInstance() {
-    static opencl_context instance;
-    return instance;
-  }
+
 
   /**
    * Returns the description of the OpenCL platform and device that is used.
@@ -338,9 +332,10 @@ class opencl_context {
    */
   inline std::vector<cl::Platform> platform() { return {platform_}; }
 };
-
+static opencl_context opencl_context;
 }  // namespace math
 }  // namespace stan
+
 
 #endif
 #endif
