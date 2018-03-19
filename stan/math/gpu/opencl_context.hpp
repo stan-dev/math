@@ -331,6 +331,10 @@ class opencl_context {
    * Returns a vector containing the OpenCL platform used to create the context
    */
   inline std::vector<cl::Platform> platform() { return {platform_}; }
+  opencl_context(const opencl_context&) = delete;   // Avoid any copy/move
+  opencl_context(opencl_context&&) = delete;
+  opencl_context& operator=(const opencl_context&) = delete;
+  opencl_context& operator=(opencl_context&&) = delete;
 };
 static opencl_context opencl_context;
 }  // namespace math
