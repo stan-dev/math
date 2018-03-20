@@ -34,7 +34,8 @@ namespace stan {
 namespace math {
 
 /**
- * The <code>opencl_context</code> class represents the OpenCL context.
+ * The <code>opencl_context_base</code> class represents an OpenCL context
+ * in the standard Meyers singleton design pattern.
  *
  * See the OpenCL specification glossary for a list of terms:
  * https://www.khronos.org/registry/OpenCL/specs/opencl-1.2.pdf.
@@ -49,38 +50,10 @@ namespace math {
  * - we are assuming a single OpenCL device. We may want to run on multiple
  * devices simulatenously
  */
-class opencl_context {
- private:
-  cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
-  cl::CommandQueue command_queue_;       // job queue for device, one per device
-  std::vector<cl::Platform> platforms_;  // Vector of available platforms
-  cl::Platform platform_;                // The platform for compiling kernels
-  std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
-  std::vector<cl::Device> devices_;  // All available GPU devices
-  cl::Device device_;                    // The selected GPU device
-  std::string device_name_;              // The name of the GPU
-  size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
-  /** Holds meta information about a kernel.
-   * @param exists a bool to identify whether a kernel has been compiled.
-   * @param group The name of the compilation group for the kernel.
-   * @param code The source code for the kernel.
-   */
-  struct kernel_meta_info {
-    bool exists;
-    const char* group;
-    const char* raw_code;
-  };
-  /**
-   * Map of a kernel name (first) and it's meta information (second).
-   */
-  typedef std::map<const char*, kernel_meta_info> map_kernel_info;
-  /**
-   * map holding compiled kernels.
-   */
-  typedef std::map<const char*, cl::Kernel> map_kernel;
-  map_kernel_info kernel_info; // The meta kernel info
-  map_kernel kernels; // The compiled kernels
+class opencl_context_base {
+  friend class opencl_context;
 
+ private:
   /**
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
@@ -97,7 +70,7 @@ class opencl_context {
    *  map.
    * @throw std::system_error if an OpenCL error occurs.
    */
-  void initialize_() {
+  opencl_context_base() {
     try {
       // platform
       cl::Platform::get(&platforms_);
@@ -133,7 +106,51 @@ class opencl_context {
     kernel_info["dummy2"] = {
         false, "timing", "__kernel void dummy2(__global const int* foo) { };"};
   }
+  static opencl_context_base instance_;
 
+ protected:
+  cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
+  cl::CommandQueue command_queue_;       // job queue for device, one per device
+  std::vector<cl::Platform> platforms_;  // Vector of available platforms
+  cl::Platform platform_;                // The platform for compiling kernels
+  std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
+  std::vector<cl::Device> devices_;  // All available GPU devices
+  cl::Device device_;                // The selected GPU device
+  std::string device_name_;          // The name of the GPU
+  size_t max_workgroup_size_;  // The maximum size of a block of workers on GPU
+  /** Holds meta information about a kernel.
+   * @param exists a bool to identify whether a kernel has been compiled.
+   * @param group The name of the compilation group for the kernel.
+   * @param code The source code for the kernel.
+   */
+  struct kernel_meta_info {
+    bool exists;
+    const char* group;
+    const char* raw_code;
+  };
+  /**
+   * Map of a kernel name (first) and it's meta information (second).
+   */
+  typedef std::map<const char*, kernel_meta_info> map_kernel_info;
+  /**
+   * map holding compiled kernels.
+   */
+  typedef std::map<const char*, cl::Kernel> map_kernel;
+  map_kernel_info kernel_info;  // The meta kernel info
+  map_kernel kernels;           // The compiled kernels
+  static opencl_context_base& getInstance() {
+    static opencl_context_base instance_;
+    return instance_;
+  }
+
+  opencl_context_base(opencl_context_base const&) = delete;
+  void operator=(opencl_context_base const&) = delete;
+};
+
+/**
+ * The API to access the methods and values in opencl_context_base
+ */
+class opencl_context {
   /**
    * Compiles all the kernels in the specified group. The side effect of this
    *  method places all compiled kernels for a group inside of <code> kernels
@@ -153,8 +170,8 @@ class opencl_context {
     snprintf(temp, sizeof(temp), "-D TS=%d -D TS1=%d -D TS2=%d ", local, local,
              local);
     std::string kernel_source = "";
-    const char* kernel_group = kernel_info[kernel_name].group;
-    for (auto kern : kernel_info) {
+    const char* kernel_group = kernel_info()[kernel_name].group;
+    for (auto kern : kernel_info()) {
       if (strcmp(kern.second.group, kernel_group) == 0) {
         kernel_source += kern.second.raw_code;
       }
@@ -164,15 +181,15 @@ class opencl_context {
       cl::Program::Sources source(
           1,
           std::make_pair(kernel_source.c_str(), strlen(kernel_source.c_str())));
-      cl::Program program_ = cl::Program(context_ , source);
-      program_.build({device_}, temp);
+      cl::Program program_ = cl::Program(context(), source);
+      program_.build({device()}, temp);
 
       cl_int err = CL_SUCCESS;
       // Iterate over the kernel list and get all the kernels from this group
       // and mark them as compiled.
-      for (auto kern : kernel_info) {
+      for (auto kern : kernel_info()) {
         if (strcmp(kern.second.group, kernel_group) == 0) {
-          kernels[(kern.first)] = cl::Kernel(program_, kern.first, &err);
+          kernels()[(kern.first)] = cl::Kernel(program_, kern.first, &err);
           kern.second.exists = true;
         }
       }
@@ -182,8 +199,7 @@ class opencl_context {
   }
 
  public:
-
-  opencl_context(){initialize_();}
+  opencl_context() = default;
   /**
    * Returns the kernel specified in kernel_name.
    * If the kernel has not yet been compiled, the kernel group is compiled
@@ -207,18 +223,18 @@ class opencl_context {
    */
   inline cl::Kernel get_kernel(const char* kernel_name) {
     // Compile the kernel group and return the kernel
-    if (!kernel_info[kernel_name].exists) {
+    if (!kernel_info()[kernel_name].exists) {
       compile_kernel_group(kernel_name);
     }
-    return kernels[kernel_name];
+    return kernels()[kernel_name];
   }
 
   // FIXME:(Steve/Dan) should probably be deleted before merge
   void debug(std::ostream& s) {
     s << "inside opencl_context" << std::endl;
-    s << " * platform_name_: " << platform_name_ << std::endl;
+    s << " * platform_name_: "
+      << opencl_context_base::getInstance().platform_name_ << std::endl;
   }
-
 
   /**
    * Returns the description of the OpenCL platform and device that is used.
@@ -227,26 +243,51 @@ class opencl_context {
    */
   inline std::string description() const {
     std::ostringstream msg;
+
     msg << "Platform ID: " << OPENCL_DEVICE_ID << "\n";
-    msg << "Platform Name: " << platform_.getInfo<CL_PLATFORM_NAME>() << "\n";
-    msg << "Platform Vendor: " << platform_.getInfo<CL_PLATFORM_VENDOR>()
+    msg << "Platform Name: "
+        << opencl_context_base::getInstance()
+               .platform_.getInfo<CL_PLATFORM_NAME>()
+        << "\n";
+    msg << "Platform Vendor: "
+        << opencl_context_base::getInstance()
+               .platform_.getInfo<CL_PLATFORM_VENDOR>()
         << "\n";
     msg << "\tDevice " << OPENCL_DEVICE_ID << ": "
         << "\n";
-    msg << "\t\tDevice Name: " << device_.getInfo<CL_DEVICE_NAME>() << "\n";
-    msg << "\t\tDevice Type: " << device_.getInfo<CL_DEVICE_TYPE>() << "\n";
-    msg << "\t\tDevice Vendor: " << device_.getInfo<CL_DEVICE_VENDOR>() << "\n";
+    msg << "\t\tDevice Name: "
+        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_NAME>()
+        << "\n";
+    msg << "\t\tDevice Type: "
+        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_TYPE>()
+        << "\n";
+    msg << "\t\tDevice Vendor: "
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_VENDOR>()
+        << "\n";
     msg << "\t\tDevice Max Compute Units: "
-        << device_.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n";
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
+        << "\n";
     msg << "\t\tDevice Global Memory: "
-        << device_.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << "\n";
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
+        << "\n";
     msg << "\t\tDevice Max Clock Frequency: "
-        << device_.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << "\n";
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
+        << "\n";
     msg << "\t\tDevice Max Allocateable Memory: "
-        << device_.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << "\n";
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
+        << "\n";
     msg << "\t\tDevice Local Memory: "
-        << device_.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << "\n";
-    msg << "\t\tDevice Available: " << device_.getInfo<CL_DEVICE_AVAILABLE>()
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
+        << "\n";
+    msg << "\t\tDevice Available: "
+        << opencl_context_base::getInstance()
+               .device_.getInfo<CL_DEVICE_AVAILABLE>()
         << "\n";
     return msg.str();
   }
@@ -307,39 +348,58 @@ class opencl_context {
    * objects. For stan, there should only be one context, queue, device, and
    * program with multiple kernels.
    */
-  inline cl::Context& context() { return context_; }
+  inline cl::Context& context() {
+    return opencl_context_base::getInstance().context_;
+  }
   /**
    * Returns the reference to the active OpenCL command queue for the device.
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
    */
-  inline cl::CommandQueue& queue() { return command_queue_; }
+  inline cl::CommandQueue& queue() {
+    return opencl_context_base::getInstance().command_queue_;
+  }
   /**
    * Returns the maximum workgroup size defined by CL_DEVICE_MAX_WORK_GROUP_SIZE
    * for the device in the context. This is the maximum product of work group
    * dimensions for a particular device. IE a max workgoup of 256 would allow
    * work groups of sizes (16,16), (128,2), (8, 32), etc.
    */
-  inline int max_workgroup_size() { return max_workgroup_size_; }
+  inline int max_workgroup_size() {
+    return opencl_context_base::getInstance().max_workgroup_size_;
+  }
 
   /**
    * Returns a vector containing the OpenCL device used to create the context
    */
-  inline std::vector<cl::Device> device() { return {device_}; }
+  inline std::vector<cl::Device> device() {
+    return {opencl_context_base::getInstance().device_};
+  }
 
   /**
    * Returns a vector containing the OpenCL platform used to create the context
    */
-  inline std::vector<cl::Platform> platform() { return {platform_}; }
-  opencl_context(const opencl_context&) = delete;   // Avoid any copy/move
-  opencl_context(opencl_context&&) = delete;
-  opencl_context& operator=(const opencl_context&) = delete;
-  opencl_context& operator=(opencl_context&&) = delete;
+  inline std::vector<cl::Platform> platform() {
+    return {opencl_context_base::getInstance().platform_};
+  }
+
+  /**
+   * return information on the kernel_source
+   */
+  inline opencl_context_base::map_kernel_info kernel_info() {
+    return opencl_context_base::getInstance().kernel_info;
+  }
+
+  /**
+   *
+   */
+  inline opencl_context_base::map_kernel kernels() {
+    return opencl_context_base::getInstance().kernels;
+  }
 };
 static opencl_context opencl_context;
 }  // namespace math
 }  // namespace stan
-
 
 #endif
 #endif
