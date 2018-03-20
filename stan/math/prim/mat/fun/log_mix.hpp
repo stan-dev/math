@@ -169,20 +169,22 @@ log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs
-      = (lam_dbl - logp.transpose().replicate(M, 1))
-            .unaryExpr([](T_partials_return x) { return exp(x); });
-
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
-  if (!is_constant_struct<T_theta>::value) {
-    for (int m = 0; m < M; ++m)
-      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
-  }
 
-  if (!is_constant_struct<T_lam>::value) {
-    for (int n = 0; n < N; ++n)
-      ops_partials.edge2_.partials_vec_[n]
-          = derivs.col(n).cwiseProduct(theta_dbl);
+  if (!(is_constant_struct<T_theta>::value && is_constant_struct<T_lam>::value)){
+      T_partials_mat derivs
+          = (lam_dbl - logp.transpose().replicate(M, 1))
+                .unaryExpr([](T_partials_return x) { return exp(x); });
+    if (!is_constant_struct<T_theta>::value) {
+      for (int m = 0; m < M; ++m)
+        ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+    }
+  
+    if (!is_constant_struct<T_lam>::value) {
+      for (int n = 0; n < N; ++n)
+        ops_partials.edge2_.partials_vec_[n]
+            = derivs.col(n).cwiseProduct(theta_dbl);
+    }
   }
   return ops_partials.build(logp.sum());
 }
@@ -258,20 +260,23 @@ log_mix(const T_theta& theta,
   for (int n = 0; n < N; ++n)
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
 
-  T_partials_mat derivs
-      = (lam_dbl - logp.transpose().replicate(M, 1))
-            .unaryExpr([](T_partials_return x) { return exp(x); });
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
-  if (!is_constant_struct<T_theta>::value) {
-    for (int m = 0; m < M; ++m)
-      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
-  }
+  if (!(is_constant_struct<T_theta>::value && is_constant_struct<T_lam>::value)){
+    T_partials_mat derivs
+        = (lam_dbl - logp.transpose().replicate(M, 1))
+              .unaryExpr([](T_partials_return x) { return exp(x); });
+              
+    if (!is_constant_struct<T_theta>::value) {
+      for (int m = 0; m < M; ++m)
+        ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+    }
 
-  if (!is_constant_struct<T_lam>::value) {
-    for (int n = 0; n < N; ++n)
-      ops_partials.edge2_.partials_vec_[n]
-          = derivs.col(n).cwiseProduct(theta_dbl);
+    if (!is_constant_struct<T_lam>::value) {
+      for (int n = 0; n < N; ++n)
+        ops_partials.edge2_.partials_vec_[n]
+            = derivs.col(n).cwiseProduct(theta_dbl);
+    }
   }
   return ops_partials.build(logp.sum());
 }
