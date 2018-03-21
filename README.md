@@ -4,7 +4,7 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](https://raw.githubusercontent.com/stan-dev/math/develop/licenses/stan-math-library-license.txt).
+The Stan Math Library is licensed under the [new BSD license](LICENSE.md).
 
 Required Libraries
 ------------------
@@ -15,11 +15,12 @@ Stan Math depends on four libraries:
 - CVODES (version 3.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 - IDAS (version 2.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 
-These are distributed under the `lib/` subdirectory. Only these three versions of the dependent libraries have been tested with Stan Math.
+These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
 
 Installation
 ------------
-The Stan Math Library is a header-only C++ library.
+The Stan Math Library is largely a header-only C++ library, with
+exceptions for the Sundials code.
 
 A simple hello world program using Stan Math is as follows:
 
