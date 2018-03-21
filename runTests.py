@@ -102,7 +102,11 @@ def runTest(name, run_all=False, mpi=False, j=1):
     xml = mungeName(name).replace(winsfx, "")
     command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
     if mpi:
-        command = "mpirun -np {} {}".format(j > 2 and j or 2, command)
+        if "mpi_" in name:
+            j = j > 2 and j or 2
+        else:
+            j = 1
+        command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
 def findTests(base_path, filter_names):
