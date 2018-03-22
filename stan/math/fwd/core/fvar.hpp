@@ -295,10 +295,10 @@ namespace internal {
  * This class exists to unify fvar with the same extended-but-hidden interface
  * of stan::math::complex's class template that exists behind std::complex<var>.
  */
-template<class T>
+template<class T=double>
 struct z_fvar : fvar<T> {
 	using fvar<T>::fvar;  ///< inherit all ctors
- z_fvar(fvar<T> const& z) : fvar<T>(z){}; ///< converting ctor from fvar
+ z_fvar(fvar<T> const& z=0.) : fvar<T>(z){}; ///< converting ctor from fvar
 };
 
 }  // namespace internal
