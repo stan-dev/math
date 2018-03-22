@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <Eigen/Dense>
+#include <complex>
 #include <vector>
 
 namespace stan {
@@ -112,6 +113,32 @@ struct apply_scalar_unary<F, int> {
    * @return Result of applying F to the scalar.
    */
   static inline return_t apply(int x) { return F::fun(static_cast<double>(x)); }
+};
+
+/**
+ * Template specialization for vectorized functions applying to
+ * complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ * @tparam T Underlying type of the complex type
+ */
+template <typename F,class T>
+struct apply_scalar_unary<F, std::complex<T>> {
+  /**
+   * The return type, complex.
+   */
+  typedef std::complex<T> return_t;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for complex
+   * arguments.
+   *
+   * @param x Argument scalar.
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(std::complex<T> x) { return F::fun(x); }
 };
 
 /**
