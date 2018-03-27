@@ -54,9 +54,9 @@ inline fvar<T> operator*(const fvar<T>& x, double y) {
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<fvar<T>>
-operator*(const fvar<T>& x,const std::complex<double>& y) {
-  return std::complex<fvar<T>>(x*y.real(),x*y.imag());
+inline std::complex<fvar<T>> operator*(const fvar<T>& x,
+                                       const std::complex<double>& y) {
+  return std::complex<fvar<T>>(x * y.real(), x * y.imag());
 }
 
 /**
@@ -68,9 +68,9 @@ operator*(const fvar<T>& x,const std::complex<double>& y) {
  * @return product of arguments
  */
 template <typename T>
-inline std::complex<fvar<T>>
-operator*(const std::complex<double>& x,const fvar<T>& y) {
-  return std::complex<fvar<T>>(x.real()*y,x.imag()*y);
+inline std::complex<fvar<T>> operator*(const std::complex<double>& x,
+                                       const fvar<T>& y) {
+  return std::complex<fvar<T>>(x.real() * y, x.imag() * y);
 }
 
 }  // namespace math
