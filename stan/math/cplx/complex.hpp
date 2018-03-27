@@ -16,7 +16,7 @@ namespace internal {
 template <class T>
 class complex;  // forward declaration of stan's complex
 
-///trait to see if the template parameter is std's or stan's complex
+/// trait to see if the template parameter is std's or stan's complex
 template <class>
 struct is_cplx : std::false_type {};
 template <class T>
@@ -26,20 +26,26 @@ struct is_cplx<complex<T>> : std::true_type {};
 template <class T>
 inline constexpr bool is_cplx_v = is_cplx<T>::value;
 
-///trait to remove the complex wrapper around a type
-template<class T>
-struct rm_cplx{typedef T type;};
-template<class T>
-struct rm_cplx<std::complex<T>>{typedef T type;};
-template<class T>
-struct rm_cplx<complex<T>>{typedef T type;};
-template<class T>
+/// trait to remove the complex wrapper around a type
+template <class T>
+struct rm_cplx {
+  typedef T type;
+};
+template <class T>
+struct rm_cplx<std::complex<T>> {
+  typedef T type;
+};
+template <class T>
+struct rm_cplx<complex<T>> {
+  typedef T type;
+};
+template <class T>
 using rm_cplx_t = typename rm_cplx<T>::type;
 
-///trait to disentangle eigen from complex
-template<class T>
-struct is_eigen : std::is_base_of<Eigen::EigenBase<std::remove_cv_t<T>>, T>{};
-template<class T>
+/// trait to disentangle eigen from complex
+template <class T>
+struct is_eigen : std::is_base_of<Eigen::EigenBase<std::remove_cv_t<T>>, T> {};
+template <class T>
 inline constexpr bool is_eigen_v = is_eigen<T>::value;
 
 /// This class exists purely to forward the interface of std::complex and serve
@@ -155,7 +161,8 @@ inline bool operator!=(U u, complex<T> t) {
 
 template <class T, class U>
 inline complex<T> pow(complex<T> t, complex<U> u) {
-	 using std::exp; using std::log;
+  using std::exp;
+  using std::log;
   return t == T() ? T() : exp(u * log(t));
 }
 
@@ -165,7 +172,7 @@ inline complex<T> pow(complex<T> t, complex<U> u) {
 
 namespace Eigen {
 
-///Eigen scalar op traits specialization for complex variables.
+/// Eigen scalar op traits specialization for complex variables.
 template<class T1,class T2,template<class,class>class OP>
 struct ScalarBinaryOpTraits<T1,std::enable_if_t<!std::is_same_v<T1,T2> &&
  !stan::math::internal::is_eigen_v<T1>&& !stan::math::internal::is_eigen_v<T2>&&
@@ -174,12 +181,12 @@ struct ScalarBinaryOpTraits<T1,std::enable_if_t<!std::is_same_v<T1,T2> &&
   (stan::math::internal::is_cplx_v<T2>&& //next boolean avoids Eigen's template
     !std::is_same_v<T1,stan::math::internal::rm_cplx_t<T2>>)),T2>,
  OP<T1,T2>>{
- typedef std::complex<typename boost::math::tools::promote_args<
-   stan::math::internal::rm_cplx_t<T1>,
-   stan::math::internal::rm_cplx_t<T2>>::type>
-  ReturnType;
+  typedef std::complex<typename boost::math::tools::promote_args<
+      stan::math::internal::rm_cplx_t<T1>,
+      stan::math::internal::rm_cplx_t<T2>>::type>
+      ReturnType;
 };
 
-} // namespace Eigen
+}  // namespace Eigen
 
 #endif
