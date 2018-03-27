@@ -249,6 +249,7 @@
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
 #include <stan/math/prim/mat/functor/map_rect.hpp>
 #include <stan/math/prim/mat/functor/map_rect_serial.hpp>
+#include <stan/math/prim/mat/functor/map_rect_async.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 
