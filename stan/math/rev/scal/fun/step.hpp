@@ -23,7 +23,7 @@ namespace math {
  * value is greater than or equal to 0.0, and value 0.0 otherwise.
  */
 inline var step(const var& a) {
-  return var(new vari(a.vi_->val_ < 0.0 ? 0.0 : 1.0));
+  return var(new vari(a.vi_->val_ > 0.0));
 }
 
 }  // namespace math
