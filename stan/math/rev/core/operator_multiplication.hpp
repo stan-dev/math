@@ -113,6 +113,37 @@ inline var operator*(double a, const var& b) {
   return var(new multiply_vd_vari(b.vi_, a));  // by symmetry
 }
 
+
+/**
+ * Multiplication operator for a variable and a complex number (C++).
+ *
+ * The partial derivative for the variable is
+ *
+ * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
+ *
+ * @param a Variable operand.
+ * @param b complex operand.
+ * @return complex Variable result of multiplying operands.
+ */
+inline std::complex<var> operator*(const var& a,const std::complex<double>& b) {
+  return std::complex<var>(a * b.real(), a * b.imag());
+}
+
+/**
+ * Multiplication operator for a complex number and a variable (C++).
+ *
+ * The partial derivative for the variable is
+ *
+ * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
+ *
+ * @param a complex operand.
+ * @param b Variable operand.
+ * @return complex Variable result of multiplying the operands.
+ */
+inline std::complex<var> operator*(const std::complex<double>& a, const var& b){
+  return std::complex<var>(b * a.real(), b * a.imag());
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
