@@ -24,7 +24,9 @@ include_directories(
 
 include_directories(
   lib/boost_1.66.0
+  lib/cvodes-3.1.0/include
   lib/eigen_3.3.3
+  lib/idas-2.1.0/include
   ${CMAKE_SOURCE_DIR}
 )
 
