@@ -24,6 +24,7 @@ include_directories(
 
 include_directories(
   lib/boost_1.66.0
+  lib/eigen_3.3.3
   ${CMAKE_SOURCE_DIR}
 )
 
