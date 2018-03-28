@@ -22,6 +22,8 @@ include_directories(
 
 ### boost include
 
+add_subdirectory(lib/cvodes-3.1.0/)
+
 include_directories(
   lib/boost_1.66.0
   lib/cvodes-3.1.0/include
