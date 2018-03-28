@@ -107,8 +107,6 @@ typedef long double realtype;
  *------------------------------------------------------------------
  */
 
-#define SUNDIALS_INT64_T 1
-
 #if defined(SUNDIALS_INT64_T)
 
 #if __STDC_VERSION__ >= 199901L
