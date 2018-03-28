@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 project(math)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 
 ### googletest include
@@ -14,9 +14,9 @@ include_directories(
 
 ### boost include
 # set (BOOST_ROOT "lib/boost_1.66.0")
-# set(Boost_USE_STATIC_LIBS OFF) 
-# set(Boost_USE_MULTITHREADED ON)  
-# set(Boost_USE_STATIC_RUNTIME OFF) 
+# set(Boost_USE_STATIC_LIBS OFF)
+# set(Boost_USE_MULTITHREADED ON)
+# set(Boost_USE_STATIC_RUNTIME OFF)
 
 # FIND_PACKAGE( Boost 1.66.0 COMPONENTS program_options REQUIRED )
 
@@ -33,8 +33,12 @@ include_directories(
 
 enable_testing()
 
-add_executable(broken_test
-        test/unit/math/rev/core/agrad_test.cpp
-)
+file(GLOB_RECURSE EXECUTABLES RELATIVE ${CMAKE_SOURCE_DIR} test/unit/*_test.cpp)
 
-target_link_libraries (broken_test gtest gtest_main)
+foreach(testsourcefile ${EXECUTABLES})
+  string(REPLACE ".cpp" "" testname ${testsourcefile} )
+  string(REPLACE "/" "_" testname ${testname} )
+  message(${testname})
+  add_executable(${testname} ${testsourcefile})
+  target_link_libraries (${testname} gtest gtest_main)
+endforeach(testsourcefile ${EXECUTABLES})
