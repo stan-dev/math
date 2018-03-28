@@ -9,6 +9,11 @@ include_directories(
   ${gtest_SOURCE_DIR}/include
 )
 
-add_executable(math
+include_directories(
+  ${CMAKE_SOURCE_DIR}
+)
+
+
+add_executable(broken_test
         test/unit/math/rev/core/agrad_test.cpp
 )
