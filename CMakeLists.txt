@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(math)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-O3")
 
 
 ### googletest include
@@ -46,4 +47,5 @@ foreach(testsourcefile ${EXECUTABLES})
   add_executable(${testname} ${testsourcefile})
   target_link_libraries (${testname} gtest gtest_main sundials_cvodes_static
     sundials_nvecserial_static)
+  #add_test(NAME ${testname} COMMAND ${CMAKE_SOURCE_DIR}/build/${testname})
 endforeach(testsourcefile ${EXECUTABLES})
