@@ -31,6 +31,10 @@ include_directories(
 )
 
 
+enable_testing()
+
 add_executable(broken_test
         test/unit/math/rev/core/agrad_test.cpp
 )
+
+target_link_libraries (broken_test gtest gtest_main)
