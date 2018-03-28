@@ -44,5 +44,6 @@ foreach(testsourcefile ${EXECUTABLES})
   string(REPLACE "/" "_" testname ${testname} )
   message(${testname})
   add_executable(${testname} ${testsourcefile})
-  target_link_libraries (${testname} gtest gtest_main)
+  target_link_libraries (${testname} gtest gtest_main sundials_cvodes_static
+    sundials_nvecserial_static)
 endforeach(testsourcefile ${EXECUTABLES})
