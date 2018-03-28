@@ -22,7 +22,7 @@ include_directories(
 
 ### boost include
 
-add_subdirectory(lib/cvodes-3.1.0/)
+add_subdirectory(lib/cvodes-3.1.0)
 
 include_directories(
   lib/boost_1.66.0
@@ -42,5 +42,6 @@ foreach(testsourcefile ${EXECUTABLES})
   string(REPLACE "/" "_" testname ${testname} )
   message(${testname})
   add_executable(${testname} ${testsourcefile})
-  target_link_libraries (${testname} gtest gtest_main)
+  target_link_libraries (${testname} gtest gtest_main sundials_cvodes_static
+    sundials_nvecserial_static)
 endforeach(testsourcefile ${EXECUTABLES})
