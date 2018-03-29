@@ -44,7 +44,7 @@ map_rect_async(
   };
 
   const char* env_stan_threads = std::getenv("STAN_THREADS");
-  int num_threads = stan_threads == nullptr ? 1 : std::atoi(env_stan_threads);
+  int num_threads = env_stan_threads == nullptr ? 1 : std::atoi(env_stan_threads);
   if (num_threads == 0) num_threads = 1;
   const int num_jobs_per_thread = num_jobs / num_threads;
   int num_jobs_per_thread_remainder = num_jobs % num_threads;
