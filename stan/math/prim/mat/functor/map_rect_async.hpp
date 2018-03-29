@@ -10,6 +10,8 @@
 #include <thread>
 #include <mutex>
 #include <future>
+#include <tuple>
+#include <cstdlib>
 
 namespace stan {
 namespace math {
@@ -30,33 +32,59 @@ map_rect_async(
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
-
-  std::vector<std::future<matrix_d>> futures;
-  //futures.reserve(num_jobs);
-
-  // queue jobs
-  for (int i = 0; i < num_jobs; i++) {
-    futures.push_back(std::async(std::launch::async, ReduceF(), shared_params_dbl,
-                                    value_of(job_params[i]), x_r[i], x_i[i], msgs));
-  }
+  std::vector<std::future<std::vector<matrix_d>>> futures;
   
-  matrix_d world_output(0, 0);
-  std::vector<int> world_f_out(num_jobs, -1);
+  auto chunk_job = [&](int start, int end) {
+    const int size = end - start;
+    std::vector<matrix_d> chunk_f_out;
+    chunk_f_out.reserve(size);
+    for (int i = start; i != end; i++)
+      chunk_f_out.push_back(ReduceF()(shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
+    return chunk_f_out;
+  };
+
+  const char* env_stan_threads = std::getenv("STAN_THREADS");
+  int num_threads = stan_threads == nullptr ? 1 : std::atoi(env_stan_threads);
+  if (num_threads == 0) num_threads = 1;
+  const int num_jobs_per_thread = num_jobs / num_threads;
+  int num_jobs_per_thread_remainder = num_jobs % num_threads;
+  const int num_jobs_min = num_threads - num_jobs_per_thread_remainder;
+  int job_start = 0;
+  for (int j = 0; j < num_threads - 1; j++) {
+    int job_end = job_start + num_jobs_per_thread;
+    // the excess jobs are assigned to the last processes
+    if (j >= num_jobs_min && num_jobs_per_thread_remainder > 0) {
+      job_end++;
+      num_jobs_per_thread_remainder--;
+    }
+    futures.emplace_back(std::async(std::launch::async, chunk_job, job_start, job_end));
+    job_start = job_end;
+  }
+  futures.emplace_back(std::async(std::launch::async, chunk_job, job_start, num_jobs));
 
   // collect results
-  for (int offset = 0, i = 0; i < num_jobs; offset += world_f_out[i], ++i) {
-    const matrix_d& job_output = futures[i].get();
-    world_f_out[i] = job_output.cols();
+  std::vector<int> world_f_out;
+  world_f_out.reserve(num_jobs);
+  matrix_d world_output(0, 0);
 
-    if (i == 0)
-      world_output.resize(job_output.rows(), num_jobs * world_f_out[i]);
+  for (int j = 0, offset = 0; j < num_threads; j++) {
+    const std::vector<matrix_d>& chunk_result = futures[j].get();
+    if (j == 0)
+      world_output.resize(chunk_result[0].rows(), num_jobs * chunk_result[0].cols());
+    
+    for (const auto& job_result : chunk_result) {
+      const int num_job_outputs = job_result.cols();
+      world_f_out.push_back(num_job_outputs);
+      
+      if (world_output.cols() < offset + num_job_outputs)
+        world_output.conservativeResize(Eigen::NoChange,
+                                        2 * (offset + num_job_outputs));
 
-    if (world_output.cols() < offset + world_f_out[i])
-      world_output.conservativeResize(Eigen::NoChange,
-                                      2 * (offset + world_f_out[i]));
+      world_output.block(0, offset, world_output.rows(), num_job_outputs)
+          = job_result;
 
-    world_output.block(0, offset, world_output.rows(), world_f_out[i])
-        = job_output;
+      offset += num_job_outputs;
+    }
   }
 
   CombineF combine(shared_params, job_params);
