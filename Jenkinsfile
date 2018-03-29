@@ -24,7 +24,7 @@ def mailBuildResults(String label, additionalEmails='') {
 }
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --cmake --make-only"
     try { sh "./runTests.py -j${env.PARALLEL} --cmake ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
