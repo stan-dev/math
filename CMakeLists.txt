@@ -11,7 +11,6 @@ add_subdirectory(lib/gtest_1.7.0)
 include_directories(
   ${gtest_SOURCE_DIR}/include
 )
-### googletest include
 
 ### boost include
 # set (BOOST_ROOT "lib/boost_1.66.0")

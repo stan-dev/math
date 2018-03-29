@@ -100,10 +100,9 @@ def makeTest(name, j):
     doCommand('make -j%d %s' % (j or 1, name))
 
 def cmakeTest(tests, j):
-    doCommand('mkdir -p build')
+    doCommand('mkdir -p build && cd build && cmake -G "Ninja" ..')
     tests = [t.replace("/", "_") for t in tests]
-    doCommand('pushd build && cmake -G "Ninja" .. && ninja {}'
-              .format(" ".join(tests)))
+    doCommand('cd build && ninja {}'.format(" ".join(tests)))
     return ["build/" + t for t in tests]
 
 def runTest(name, run_all=False):
@@ -142,13 +141,13 @@ def main():
     if not tests:
         stopErr("No matching tests found.", -1)
 
-    # pass 1: make test executables
-    for batch in batched(tests):
-        if inputs.debug:
-            print("Test batch: ", batch)
-        if inputs.cmake:
-            tests = cmakeTest(batch, inputs.j)
-        else:
+    if inputs.cmake:
+        tests = cmakeTest(tests, inputs.j)
+    else:
+        # pass 1: make test executables
+        for batch in batched(tests):
+            if inputs.debug:
+                print("Test batch: ", batch)
             makeTest(" ".join(batch), inputs.j)
 
     if not inputs.make_only:
