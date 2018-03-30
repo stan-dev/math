@@ -37,7 +37,7 @@ test/unit/multiple_translation_units%.o : test/unit/multiple_translation_units%.
 	$(COMPILE.cpp) -fPIC -O$O $< $(OUTPUT_OPTION)
 
 test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o
-	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^
+	$(LINK.cpp) -shared -fPIC $(OUTPUT_OPTION) $^ $(LDLIBS_OPENCL)
 
 test/unit/multiple_translation_units_test.cpp : test/unit/libmultiple.so
 
