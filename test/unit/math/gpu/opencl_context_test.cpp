@@ -1,6 +1,8 @@
 #ifdef STAN_OPENCL
 #include <stan/math/gpu/opencl_context.hpp>
 #include <gtest/gtest.h>
+#include <vector>
+#include <fstream>
 
 TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
