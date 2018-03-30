@@ -113,7 +113,6 @@ inline var operator*(double a, const var& b) {
   return var(new multiply_vd_vari(b.vi_, a));  // by symmetry
 }
 
-
 /**
  * Multiplication operator for a variable and a complex number (C++).
  *
@@ -125,7 +124,8 @@ inline var operator*(double a, const var& b) {
  * @param b complex operand.
  * @return complex Variable result of multiplying operands.
  */
-inline std::complex<var> operator*(const var& a,const std::complex<double>& b) {
+inline std::complex<var> operator*(const var& a,
+                                   const std::complex<double>& b) {
   return std::complex<var>(a * b.real(), a * b.imag());
 }
 
@@ -140,7 +140,8 @@ inline std::complex<var> operator*(const var& a,const std::complex<double>& b) {
  * @param b Variable operand.
  * @return complex Variable result of multiplying the operands.
  */
-inline std::complex<var> operator*(const std::complex<double>& a, const var& b){
+inline std::complex<var> operator*(const std::complex<double>& a,
+                                   const var& b) {
   return std::complex<var>(b * a.real(), b * a.imag());
 }
 
