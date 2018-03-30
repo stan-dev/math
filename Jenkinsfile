@@ -139,6 +139,15 @@ pipeline {
         stage('Tests') {
             parallel {
                 stage('Unit') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        sh setupCC()
+                        runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Unit with GPU') {
                     agent { label "gelman-group-mac" }
                     steps {
                         unstash 'MathSetup'
