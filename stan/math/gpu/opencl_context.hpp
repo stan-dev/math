@@ -91,7 +91,7 @@ class opencl_context_base {
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_workgroup_size_);
     } catch (const cl::Error& e) {
-      check_ocl_error("opencl_context", e.what(), e.err());
+      check_ocl_error("opencl_context", e);
     }
   }
   /**
@@ -193,7 +193,7 @@ class opencl_context {
         }
       }
     } catch (const cl::Error& e) {
-      check_ocl_error("Kernel Compilation", e.what(), e.err());
+      check_ocl_error("Kernel Compilation", e);
     }
   }
 
