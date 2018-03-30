@@ -6,8 +6,8 @@ TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
   EXPECT_NE("", stan::math::opencl_context.description());
   EXPECT_NE("", stan::math::opencl_context.capabilities());
-  //auto foo = stan::math::opencl_context.capabilities();
-  //std::cout << foo << std::endl;
+  // auto foo = stan::math::opencl_context.capabilities();
+  // std::cout << foo << std::endl;
   EXPECT_EQ(1024, stan::math::opencl_context.max_workgroup_size());
   cl::Context cv = stan::math::opencl_context.context();
   cl::CommandQueue cq = stan::math::opencl_context.queue();
