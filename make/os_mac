@@ -15,10 +15,6 @@ ifeq (clang++,$(CC_TYPE))
 endif
 
 ifdef STAN_OPENCL
-  ifeq (clang++,$(CC_TYPE))
-    LDFLAGS += -framework OpenCL
-  endif
-  ifeq (g++,$(CC_TYPE))
-    LDLIBS_OPENCL = -framework OpenCL
-  endif
+  LDLIBS_OPENCL ?= -framework OpenCL
+  OPENCL_DEVICE ?= 0
 endif

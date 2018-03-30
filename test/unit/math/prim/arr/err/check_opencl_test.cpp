@@ -5,8 +5,9 @@
 
 TEST(ErrorHandlingOpenCL, checkThrows) {
   const char* function = "test_func";
-  const char* msg = "test";
-  EXPECT_THROW(stan::math::throw_openCL(function, msg), std::domain_error);
+  cl::Error e(-5, "CL_OUT_OF_RESOURCES");
+  EXPECT_THROW(stan::math::check_ocl_error(function, e.what(), e.err()),
+               std::system_error);
 }
 #else
 #include <gtest/gtest.h>

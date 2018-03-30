@@ -40,8 +40,8 @@ ifeq (mingw32-g++,$(CC_TYPE))
     LDFLAGS += -lOpenCL
   endif
 endif
-ifeq (clang++,$(CC_TYPE))
-  ifdef STAN_OPENCL
-    LDFLAGS += -lOpenCL
-  endif
+
+ifdef STAN_OPENCL
+  LDLIBS_OPENCL ?= -lOpenCL
+  OPENCL_DEVICE ?= 0
 endif
